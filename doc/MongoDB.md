@@ -50,31 +50,11 @@ Pour se connecter et interroger le service :
 
 > mongo
 
-## Mongo Express - Interface d'administration
+## Genghis - Interface d'administration
 
 ### Guide d'installation
 
-Dépendances :
-
-> sudo aptitude install npm nodejs 
-> sudo ln -s /usr/bin/nodejs /usr/bin/node
-
-
-Installation globale :
-
-> sudo npm install -g mongo-express
-
-### Configuration
-
-> sudo cp /usr/local/lib/node_modules/mongo-express/config.default.js /usr/local/lib/node_modules/mongo-express/config.js
-
-Editez le fichier config.js, pour configurer l'accès.
-
-### Interface
-
-> mongo-express -u superuser -p password -d database_name
-
-et rendez-vous sur la page : http://localhost:8081/
+http://genghisapp.com/
 
 
 ## Premier pas avec MongoDB
