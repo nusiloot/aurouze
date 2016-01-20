@@ -22,6 +22,21 @@ class Passages {
      * @MongoDB\Id
      */
     protected $id;
+    
+    /**
+     * @MongoDB\String
+     */
+    protected $etablissementId;
+    
+    /**
+     * @MongoDB\String
+     */
+    protected $societeId;
+    
+    /**
+     * @MongoDB\String
+     */
+    protected $telephone;
 
     /**
      * @MongoDB\String
@@ -41,6 +56,11 @@ class Passages {
     public function getId()
     {
         return $this->id;
+    }
+    
+    public function __construct($etablissement,$contrat) {
+        
+        $this->setId('PASSAGE-'.$etablissement->getId().'-'.$contrat->getId().'-'.$numPassage);
     }
 
     /**
@@ -85,5 +105,71 @@ class Passages {
     public function getPrice()
     {
         return $this->price;
+    }
+
+    /**
+     * Set etablissementId
+     *
+     * @param string $etablissementId
+     * @return self
+     */
+    public function setEtablissementId($etablissementId)
+    {
+        $this->etablissementId = $etablissementId;
+        return $this;
+    }
+
+    /**
+     * Get etablissementId
+     *
+     * @return string $etablissementId
+     */
+    public function getEtablissementId()
+    {
+        return $this->etablissementId;
+    }
+
+    /**
+     * Set societeId
+     *
+     * @param string $societeId
+     * @return self
+     */
+    public function setSocieteId($societeId)
+    {
+        $this->societeId = $societeId;
+        return $this;
+    }
+
+    /**
+     * Get societeId
+     *
+     * @return string $societeId
+     */
+    public function getSocieteId()
+    {
+        return $this->societeId;
+    }
+
+    /**
+     * Set telephone
+     *
+     * @param string $telephone
+     * @return self
+     */
+    public function setTelephone($telephone)
+    {
+        $this->telephone = $telephone;
+        return $this;
+    }
+
+    /**
+     * Get telephone
+     *
+     * @return string $telephone
+     */
+    public function getTelephone()
+    {
+        return $this->telephone;
     }
 }
