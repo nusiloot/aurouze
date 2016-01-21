@@ -20,4 +20,15 @@ class EtablissementRepository extends DocumentRepository
             ->getQuery()
             ->execute();
     }
+    
+    public function findAllEtablissementsIdentifiants() {
+        $etablissements = $this->findAllOrderedByIdentifiant();
+        $allEtablissementsIdentifiants = array();
+        if (count($etablissements)) {
+            foreach ($etablissements as $etablissement) {
+                $allEtablissementsIdentifiants[$etablissement->getIdentifiant()] = $etablissement->getIdentifiant();
+            }
+        }
+        return $allEtablissementsIdentifiants;
+    }
 }
