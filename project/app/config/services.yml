@@ -7,3 +7,14 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    app.manager.etablissement:
+        class: AppBundle\Manager\EtablissementManager
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
+
+    app.importer.passage:
+        class: AppBundle\Import\PassageCsvImporter
+        arguments: [@doctrine_mongodb.odm.default_document_manager, app.manager.passage]
+
+    app.manager.passage:
+        class: AppBundle\Manager\PassageManager
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
