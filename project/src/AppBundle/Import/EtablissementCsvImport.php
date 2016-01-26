@@ -48,7 +48,7 @@ class EtablissementCsvImport extends CsvFile {
 
 
         foreach ($csv as $data) {
-            $etablissement = $etablissementManager->createFromImport($data);
+            $etablissement = $this->createFromImport($data);
             $this->dm->persist($etablissement);
             $this->dm->flush();
         }
