@@ -45,6 +45,12 @@ class Etablissement {
      */
     protected $raison_sociale;
     
+    /**
+     * @MongoDB\String
+     */
+    protected $nom;
+    
+    
      /**
      * @MongoDB\String
      */
