@@ -36,6 +36,8 @@ class EtablissementCsvImport extends CsvFile {
     const CSV_EMAIL = 13;
     const CSV_CMT = 14; # A contacter
     const CSV_ACTIF = 15;
+    const CSV_RAISON_SOCIALE = 22;
+    const CSV_TYPE_ETABLISSEMENT = 26;
 
     public function setManager($dm) {
         $this->dm = $dm;
@@ -72,19 +74,20 @@ class EtablissementCsvImport extends CsvFile {
         $etablissement->setTelephonePortable($ligne[EtablissementCSVImport::CSV_TEL_MOBILE]);
         $etablissement->setFax($ligne[EtablissementCSVImport::CSV_FAX]);
         $etablissement->setNomContact($ligne[EtablissementCSVImport::CSV_CMT]);
+        $etablissement->setRaisonSociale($ligne[EtablissementCSVImport::CSV_RAISON_SOCIALE]);
 
-//        if ($ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT] == "") {
-//            $etablissement->setTypeEtablissement(self::TYPE_ETB_NON_SPECIFIE);
-//        } else {
-//
-//            $types_etablissements = self::$type_etablissements_libelles;
-//            $types_etablissements_values = array_values($types_etablissements);
-//
-//            $type_etb_libelle = $types_etablissements_values[$ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT]];
-//            $types_etb_key = array_keys($types_etablissements, $type_etb_libelle);
-//
-//            $etablissement->setTypeEtablissement($types_etb_key[0]);
-//        }
+        if ($ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT] == "") {
+            $etablissement->setTypeEtablissement(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
+        } else {
+
+            $types_etablissements = EtablissementManager::$type_etablissements_libelles;
+            $types_etablissements_values = array_values($types_etablissements);
+
+            $type_etb_libelle = $types_etablissements_values[$ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT]];
+            $types_etb_key = array_keys($types_etablissements, $type_etb_libelle);
+
+            $etablissement->setTypeEtablissement($types_etb_key[0]);
+        }
 
         return $etablissement;
     }
