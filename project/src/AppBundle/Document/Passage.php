@@ -53,16 +53,16 @@ class Passage {
      */
     protected $createAt;
 
-    
     /**
      * @MongoDB\EmbedOne(targetDocument="PassageEtablissement")
      */
     protected $passageEtablissement;
-    
+
     /**
      * @MongoDB\Boolean
      */
     protected $planifie;
+
     /**
      * Get id
      *
@@ -77,13 +77,15 @@ class Passage {
      *
      * @return id $id
      */
-    public function setId() {
-        $this->id = $this->generateId();
+    public function setId($fromImport = false) {
+        $this->id = $this->generateId($fromImport);
     }
 
-    public function generateId() {
+    public function generateId($fromImport = false) {
         $date = new \DateTime('today');
-        $this->setCreateAt($date);
+        if (!$fromImport) {
+            $this->setCreateAt($date);
+        }
         return self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->createAt->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
     }
 
@@ -187,7 +189,7 @@ class Passage {
         return $this->numeroPassageIdentifiant;
     }
 
-    public function updateEtablissementInfos(Etablissement $etb) {       
+    public function updateEtablissementInfos(Etablissement $etb) {
         $this->passageEtablissement = new PassageEtablissement();
         $this->passageEtablissement->setRaisonSociale($etb->getRaisonSociale());
         $this->passageEtablissement->setNomContact($etb->getNomContact());
@@ -198,15 +200,13 @@ class Passage {
         $this->passageEtablissement->setTypeEtablissement($etb->getTypeEtablissement());
     }
 
-
     /**
      * Set etablissement
      *
      * @param AppBundle\Document\PassageEtablissement $etablissement
      * @return self
      */
-    public function setEtablissement(\AppBundle\Document\PassageEtablissement $etablissement)
-    {
+    public function setEtablissement(\AppBundle\Document\PassageEtablissement $etablissement) {
         $this->etablissement = $etablissement;
         return $this;
     }
@@ -216,8 +216,7 @@ class Passage {
      *
      * @return AppBundle\Document\PassageEtablissement $etablissement
      */
-    public function getEtablissement()
-    {
+    public function getEtablissement() {
         return $this->etablissement;
     }
 
@@ -227,8 +226,7 @@ class Passage {
      * @param AppBundle\Document\PassageEtablissement $passageEtablissement
      * @return self
      */
-    public function setPassageEtablissement(\AppBundle\Document\PassageEtablissement $passageEtablissement)
-    {
+    public function setPassageEtablissement(\AppBundle\Document\PassageEtablissement $passageEtablissement) {
         $this->passageEtablissement = $passageEtablissement;
         return $this;
     }
@@ -238,8 +236,7 @@ class Passage {
      *
      * @return AppBundle\Document\PassageEtablissement $passageEtablissement
      */
-    public function getPassageEtablissement()
-    {
+    public function getPassageEtablissement() {
         return $this->passageEtablissement;
     }
 
@@ -249,8 +246,7 @@ class Passage {
      * @param boolean $planifie
      * @return self
      */
-    public function setPlanifie($planifie)
-    {
+    public function setPlanifie($planifie) {
         $this->planifie = $planifie;
         return $this;
     }
@@ -260,11 +256,9 @@ class Passage {
      *
      * @return boolean $planifie
      */
-    public function getPlanifie()
-    {
+    public function getPlanifie() {
         return $this->planifie;
     }
-
 
     /**
      * Set createAt
@@ -272,8 +266,7 @@ class Passage {
      * @param date $createAt
      * @return self
      */
-    public function setCreateAt($createAt)
-    {
+    public function setCreateAt($createAt) {
         $this->createAt = $createAt;
         return $this;
     }
@@ -283,8 +276,8 @@ class Passage {
      *
      * @return date $createAt
      */
-    public function getCreateAt()
-    {
+    public function getCreateAt() {
         return $this->createAt;
     }
+
 }
