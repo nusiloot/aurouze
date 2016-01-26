@@ -33,7 +33,7 @@ class ImporterCommand extends ContainerAwareCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $importer = $this->getContainer($input->getArgument('service'));
+        $importer = $this->getContainer()->get($input->getArgument('service'));
         $importer->import($input->getArgument('path'), $output);
     }
 

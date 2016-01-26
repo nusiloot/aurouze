@@ -17,6 +17,7 @@ use AppBundle\Document\Passage;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\PassageManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use AppBundle\Import\CsvFile;
 
 class PassageCsvImporter {
 
@@ -32,19 +33,16 @@ class PassageCsvImporter {
         $this->pm = $pm;
     }
 
-    public function import(string $file, OutputInterface $output) {
-        $csvFile = new CsvFile();
+    public function import($file, OutputInterface $output) {
+        $csvFile = new CsvFile($file);
 
         $csv = $csvFile->getCsv();
-        $etablissementManager = new EtablissementManager($this->dm);
-
 
         foreach ($csv as $data) {
             $passage = new Passage();
-            $passage
 
-            $this->dm->persist($passage);
-            $this->dm->flush();
+            //$this->dm->persist($passage);
+            //$this->dm->flush();
         }
     }
 
