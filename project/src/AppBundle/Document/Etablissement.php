@@ -81,6 +81,11 @@ class Etablissement {
      */
     protected $telephone_fixe;
     
+     /**
+     * @MongoDB\String
+     */
+    protected $fax;
+    
     /**
      * @MongoDB\String
      */
@@ -351,5 +356,27 @@ class Etablissement {
     public function getRaisonSociale()
     {
         return $this->raison_sociale;
+    }
+
+    /**
+     * Set fax
+     *
+     * @param string $fax
+     * @return self
+     */
+    public function setFax($fax)
+    {
+        $this->fax = $fax;
+        return $this;
+    }
+
+    /**
+     * Get fax
+     *
+     * @return string $fax
+     */
+    public function getFax()
+    {
+        return $this->fax;
     }
 }

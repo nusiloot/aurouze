@@ -53,7 +53,7 @@ class EtablissementCsvImport extends CsvFile {
             $this->dm->flush();
         }
     }
-    
+
     public function createFromImport($ligne) {
 
         $etablissement = new Etablissement();
@@ -62,22 +62,30 @@ class EtablissementCsvImport extends CsvFile {
 
         $etablissement->setNom($ligne[EtablissementCSVImport::CSV_NOM_ETB]);
         $adresse = $ligne[EtablissementCSVImport::CSV_ADRESS_1];
-        if($ligne[EtablissementCSVImport::CSV_ADRESS_2])
-        $etablissement->setAdresse();
-
-        if ($ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT] == "") {
-            $etablissement->setTypeEtablissement(self::TYPE_ETB_NON_SPECIFIE);
-        } else {
-
-            $types_etablissements = self::$type_etablissements_libelles;
-            $types_etablissements_values = array_values($types_etablissements);
-
-            $type_etb_libelle = $types_etablissements_values[$ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT]];
-            $types_etb_key = array_keys($types_etablissements, $type_etb_libelle);
-
-            $etablissement->setTypeEtablissement($types_etb_key[0]);
+        if ($ligne[EtablissementCSVImport::CSV_ADRESS_2]) {
+            $adresse .= ', ' . $ligne[EtablissementCSVImport::CSV_ADRESS_2];
         }
-        
+        $etablissement->setAdresse($adresse);
+        $etablissement->setCodePostal($ligne[EtablissementCSVImport::CSV_CP]);
+        $etablissement->setCommune($ligne[EtablissementCSVImport::CSV_VILLE]);
+        $etablissement->setTelephoneFixe($ligne[EtablissementCSVImport::CSV_TEL_FIXE]);
+        $etablissement->setTelephonePortable($ligne[EtablissementCSVImport::CSV_TEL_MOBILE]);
+        $etablissement->setFax($ligne[EtablissementCSVImport::CSV_FAX]);
+        $etablissement->setNomContact($ligne[EtablissementCSVImport::CSV_CMT]);
+
+//        if ($ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT] == "") {
+//            $etablissement->setTypeEtablissement(self::TYPE_ETB_NON_SPECIFIE);
+//        } else {
+//
+//            $types_etablissements = self::$type_etablissements_libelles;
+//            $types_etablissements_values = array_values($types_etablissements);
+//
+//            $type_etb_libelle = $types_etablissements_values[$ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT]];
+//            $types_etb_key = array_keys($types_etablissements, $type_etb_libelle);
+//
+//            $etablissement->setTypeEtablissement($types_etb_key[0]);
+//        }
+
         return $etablissement;
     }
 
