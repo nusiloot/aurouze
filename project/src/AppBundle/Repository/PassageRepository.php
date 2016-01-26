@@ -12,18 +12,19 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
  */
 class PassageRepository extends DocumentRepository {
 
-    public function findByEtablissementAndPrestation($etablissementIdentifiant, $prestationIdentifiant) {
+    public function findByEtablissementAndCreateAt($etablissementIdentifiant, $createAt) {
         return $this->findBy(
-                                array('etablissementIdentifiant' => $etablissementIdentifiant, 'prestationIdentifiant' => $prestationIdentifiant));
+                                array('etablissementIdentifiant' => $etablissementIdentifiant, 'createAt' => $createAt));
     }
 
-    public function findPassagesForEtablissementsAndPrestationIdentifiants($etablissementIdentifiant, $prestationIdentifiant) {
-        $passagesByEtablissementAndPrestation = $this->findByEtablissementAndPrestation($etablissementIdentifiant, $prestationIdentifiant);
+    public function findPassagesForEtablissementsAndDay($etablissementIdentifiant, $date) {
+        
+        $passagesByEtablissementAndCreationDate = $this->findByEtablissementAndCreateAt($etablissementIdentifiant, $date);
         
         $allPassagesNumeros = array();
-        if (count($passagesByEtablissementAndPrestation)) {
-            foreach ($passagesByEtablissementAndPrestation as $passageByEtablissementAndPrestation) {
-                $allPassagesNumeros[$passageByEtablissementAndPrestation->getNumeroPassageIdentifiant()] = $passageByEtablissementAndPrestation->getNumeroPassageIdentifiant();
+        if (count($passagesByEtablissementAndCreationDate)) {
+            foreach ($passagesByEtablissementAndCreationDate as $passageByEtablissementAndCreationDate) {
+                $allPassagesNumeros[$passageByEtablissementAndCreationDate->getNumeroPassageIdentifiant()] = $passageByEtablissementAndCreationDate->getNumeroPassageIdentifiant();
             }
         }
         return $allPassagesNumeros;

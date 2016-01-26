@@ -49,6 +49,12 @@ class Passage {
     protected $societeIdentifiant;
 
     /**
+     * @MongoDB\Date
+     */
+    protected $createAt;
+
+    
+    /**
      * @MongoDB\EmbedOne(targetDocument="PassageEtablissement")
      */
     protected $passageEtablissement;
@@ -76,7 +82,9 @@ class Passage {
     }
 
     public function generateId() {
-        return self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->prestationIdentifiant . '-' . $this->numeroPassageIdentifiant;
+        $date = new \DateTime('today');
+        $this->setCreateAt($date);
+        return self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->createAt->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
     }
 
     /**
@@ -179,7 +187,8 @@ class Passage {
         return $this->numeroPassageIdentifiant;
     }
 
-    public function updateEtablissementInfos(Etablissement $etb) {
+    public function updateEtablissementInfos(Etablissement $etb) {       
+        $this->passageEtablissement = new PassageEtablissement();
         $this->passageEtablissement->setRaisonSociale($etb->getRaisonSociale());
         $this->passageEtablissement->setNomContact($etb->getNomContact());
         $this->passageEtablissement->setAdresse($etb->getAdresse());
@@ -254,5 +263,28 @@ class Passage {
     public function getPlanifie()
     {
         return $this->planifie;
+    }
+
+
+    /**
+     * Set createAt
+     *
+     * @param date $createAt
+     * @return self
+     */
+    public function setCreateAt($createAt)
+    {
+        $this->createAt = $createAt;
+        return $this;
+    }
+
+    /**
+     * Get createAt
+     *
+     * @return date $createAt
+     */
+    public function getCreateAt()
+    {
+        return $this->createAt;
     }
 }
