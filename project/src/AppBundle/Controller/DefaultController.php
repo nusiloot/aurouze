@@ -12,6 +12,14 @@ use AppBundle\Manager\EtablissementManager as EtablissementManager;
 class DefaultController extends Controller {
 
     /**
+     * @Route("/", name="accueil")
+     */
+    public function indexAction(Request $request) {
+
+        return $this->render('default/index.html.twig');
+    }
+
+    /**
      * @Route("/passage/{identifiantEtablissement}", name="passageEtablissement")
      */
     public function passageEtablissementAction(Request $request) {

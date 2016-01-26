@@ -50,6 +50,10 @@ Pour se connecter et interroger le service :
 
 > mongo
 
+## Mongo et PHP
+
+> sudo aptitude install php5-mongo
+
 ## Genghis - Interface d'administration
 
 ### Guide d'installation

@@ -8,9 +8,12 @@ $(function () {
         header: {
             left: 'prev, next',
             center: 'title',
-            right: 'month, basicWeek'
+            right: 'month, agendaWeek'
         },
         lang: 'fr',
+		selectable: true,
+		editable: true,
+		eventLimit: true,
         lazyFetching: true,
         timeFormat: {
             // for agendaWeek and agendaDay
