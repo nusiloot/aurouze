@@ -26,26 +26,26 @@ class PassageManager {
         $this->dm = $dm;
     }
 
-    function create(Etablissement $etablissement, $prestationIdentifiant = "123567") {
+    function create(Etablissement $etablissement) {
         $passage = new Passage();
         
-        $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());       
-        $passage->setPrestationIdentifiant($prestationIdentifiant);  
+        $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());  
         
-        $numeroPassageIdentifiant = $this->getNextNumeroPassage($etablissement->getIdentifiant(),$prestationIdentifiant);
-        
+        $numeroPassageIdentifiant = $this->getNextNumeroPassage($etablissement->getIdentifiant());
         $passage->setNumeroPassageIdentifiant($numeroPassageIdentifiant);       
         $passage->setId();
         $passage->updateEtablissementInfos($etablissement);
         return $passage;
     }
 
-    public function getNextNumeroPassage($etablissementIdentifiant, $prestationIdentifiant) {
-        $allPassagesForEtablissementsAndPrestationIdentifiants = $this->dm->getRepository('AppBundle:Passage')->findPassagesForEtablissementsAndPrestationIdentifiants($etablissementIdentifiant,$prestationIdentifiant);
-        if(!count($allPassagesForEtablissementsAndPrestationIdentifiants)){
+    public function getNextNumeroPassage($etablissementIdentifiant) {
+       $today = new \DateTime('today');
+       $allPassagesForEtablissementsInDay = $this->dm->getRepository('AppBundle:Passage')->findPassagesForEtablissementsAndDay($etablissementIdentifiant,$today);
+       
+        if(!count($allPassagesForEtablissementsInDay)){
             return sprintf("%03d", 1);
         }
-        return sprintf("%03d", max($allPassagesForEtablissementsAndPrestationIdentifiants) + 1);
+        return sprintf("%03d", max($allPassagesForEtablissementsInDay) + 1);
     }    
     
 }

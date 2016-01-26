@@ -31,7 +31,6 @@ class EtablissementCsvImport extends CsvFile {
     public function import() {
         $this->errors = array();
         $csv = $this->getCsv();
-
         $etablissementManager = new EtablissementManager($this->dm);
 
 
