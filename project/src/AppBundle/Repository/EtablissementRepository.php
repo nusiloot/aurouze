@@ -13,22 +13,20 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
 class EtablissementRepository extends DocumentRepository
 {
     
-     public function findAllOrderedByIdentifiant()
+     public function findAllOrderedByIdentifiantSociete($societeIdentifiant)
     {
-        return $this->createQueryBuilder()
-            ->sort('identifiant', 'ASC')
-            ->getQuery()
-            ->execute();
+       return $this->findBy(array('identifiant_societe' => $societeIdentifiant));
     }
     
-    public function findAllEtablissementsIdentifiants() {
-        $etablissements = $this->findAllOrderedByIdentifiant();
-        $allEtablissementsIdentifiants = array();
+    public function findAllPostfixByIdentifiantSociete($societeIdentifiant) {
+        $etablissements = $this->findAllOrderedByIdentifiantSociete($societeIdentifiant);
+        $allPostfixByIdentifiantSociete = array();
         if (count($etablissements)) {
             foreach ($etablissements as $etablissement) {
-                $allEtablissementsIdentifiants[$etablissement->getIdentifiant()] = $etablissement->getIdentifiant();
+                $postfix = substr($etablissement->getIdentifiant(), 6);
+                $allPostfixByIdentifiantSociete[$postfix] = $postfix;
             }
         }
-        return $allEtablissementsIdentifiants;
+        return $allPostfixByIdentifiantSociete;
     }
 }
