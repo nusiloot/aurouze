@@ -1,0 +1,3 @@
+TMP=/tmp/aurouze
+
+mkdir $TMP 2> /dev/null
