@@ -33,6 +33,9 @@ join -t ';' -1 2 -2 1 /tmp/AUROUZE_DATAS/adresse.csv.temp /tmp/AUROUZE_DATAS/ent
 
 php app/console import:data "Etablissement" $DATA_DIR/adresse.csv
 
+#### IMPORT des Societe ####
+php app/console import:data "Societe" $DATA_DIR/entite.csv.temp
+
 #### CREATION PASSAGES.CSV ####
 echo "Récupération de passage.csv"
 
