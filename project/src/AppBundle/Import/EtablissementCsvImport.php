@@ -62,10 +62,11 @@ class EtablissementCsvImport extends CsvFile {
 
         $etablissement = new Etablissement();
         
-        $societeId = sprintf("%06d", $ligne[self::CSV_ID_SOCIETE]);
+        $adresseId = sprintf("%06d", $ligne[self::CSV_ID_ADRESSE]);
         
-        $etablissement->setIdentifiantSociete($societeId);
-        $etablissement->setIdentifiant($societeId.$this->etablissementManager->getNextNumeroEtablissement($societeId));
+        $etablissement->setIdentifiantSociete(sprintf("%06d", $ligne[self::CSV_ID_SOCIETE]));
+    //    $etablissement->setIdentifiant($societeId.$this->etablissementManager->getNextNumeroEtablissement($societeId));
+          $etablissement->setIdentifiant($adresseId);
         
         $etablissement->setId();
 
