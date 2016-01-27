@@ -16,7 +16,7 @@ class CalendarController extends Controller {
     	
     	$etablissement = $request->get('etablissement');
     	
-    	return $this->render('default/calendar.html.twig', array('etablissement' => $etablissement));
+    	return $this->render('calendar/calendar.html.twig', array('etablissement' => $etablissement));
     }
     
     /**
@@ -74,9 +74,9 @@ class CalendarController extends Controller {
     }
     
     /**
-     * @Route("/calendar/{etablissement}/delete", name="calendarDelete", options={"expose" = "true"})
+     * @Route("/calendar/{etablissement}/read", name="calendarRead", options={"expose" = "true"})
      */
-    public function calendarDeleteAction(Request $request) {
+    public function calendarReadAction(Request $request) {
     	
     	if (!$request->isXmlHttpRequest()) {
     		throw $this->createNotFoundException();
@@ -84,16 +84,31 @@ class CalendarController extends Controller {
     	
     	$error = false;
     	
-    	$request->get('etablissement');
-    	$request->get('id');
+    	$etablissement = $request->get('etablissement');
+    	$id = $request->get('id');
     	
     	if ($error) {
     		throw new \Exception();
     	}
     	
-    	$response = new Response(json_encode(array('id' => "E-001-P-001")));
-    	$response->headers->set('Content-Type', 'application/json');
-    	return $response;
+    	return $this->render('calendar/calendarModal.html.twig', array('etablissement' => $etablissement, 'id' => $id));
+    }
+    
+    /**
+     * @Route("/calendar/{etablissement}/delete/{id}", name="calendarDelete", options={"expose" = "true"})
+     */
+    public function calendarDeleteAction(Request $request) {
+    	
+    	$error = false;
+    	
+    	$etablissement = $request->get('etablissement');
+    	$id = $request->get('id');
+    	
+    	if ($error) {
+    		throw new \Exception();
+    	}
+    	
+    	return $this->redirect($this->generateUrl('calendar', array('etablissement' => $etablissement)));
     }
 
 }
