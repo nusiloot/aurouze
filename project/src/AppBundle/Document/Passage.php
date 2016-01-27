@@ -73,10 +73,15 @@ class Passage {
      */
     protected $libelle;
 
-        /**
+    /**
      * @MongoDB\String
      */
     protected $description;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $technicien;
 
 
     /**
@@ -98,11 +103,11 @@ class Passage {
     }
 
     public function generateId($fromImport = false) {
-        if (!$this->getCreateAt()) {
-            $this->setCreateAt(new \DateTime());
+        if (!$this->getDateCreation()) {
+            $this->setDateCreation(new \DateTime());
         }
 
-        return self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->createAt->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
+        return self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->dateCreation->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
     }
 
     /**
@@ -207,12 +212,14 @@ class Passage {
 
     public function updateEtablissementInfos(Etablissement $etb) {
         $this->passageEtablissement = new PassageEtablissement();
+        $this->passageEtablissement->setNom($etb->getNom());
         $this->passageEtablissement->setRaisonSociale($etb->getRaisonSociale());
         $this->passageEtablissement->setNomContact($etb->getNomContact());
-        $this->passageEtablissement->setAdresse($etb->getAdresse());
-        $this->passageEtablissement->setCodePostal($etb->getCodePostal());
-        $this->passageEtablissement->setCommune($etb->getCommune());
-        $this->passageEtablissement->setTelephonePortable($etb->getTelephonePortable());
+        $this->passageEtablissement->setAdresse($etb->getAdresse()->getAdresse());
+        $this->passageEtablissement->setCodePostal($etb->getAdresse()->getCodePostal());
+        $this->passageEtablissement->setCommune($etb->getAdresse()->getCommune());
+        $this->passageEtablissement->setTelephonePortable($etb->getAdresse()->getTelephonePortable());
+        $this->passageEtablissement->setTelephoneFixe($etb->getAdresse()->getTelephoneFixe());
         $this->passageEtablissement->setTypeEtablissement($etb->getTypeEtablissement());
     }
 
@@ -365,5 +372,27 @@ class Passage {
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set technicien
+     *
+     * @param string $technicien
+     * @return self
+     */
+    public function setTechnicien($technicien)
+    {
+        $this->technicien = $technicien;
+        return $this;
+    }
+
+    /**
+     * Get technicien
+     *
+     * @return string $technicien
+     */
+    public function getTechnicien()
+    {
+        return $this->technicien;
     }
 }

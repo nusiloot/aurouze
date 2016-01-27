@@ -46,6 +46,8 @@ class PassageCsvImporter {
 
         $csv = $csvFile->getCsv();
 
+        $i=0;
+
         foreach ($csv as $data) {
 
             $etablissement = $this->em->getRepository()->findOneByIdentifiant($data[self::CSV_ETABLISSEMENT_ID]);
@@ -55,16 +57,33 @@ class PassageCsvImporter {
                 continue;
             }
 
-            $output->writeln(sprintf("<success>L'établissement %s existe</success>", $data[self::CSV_ETABLISSEMENT_ID]));
-
             $passage = new Passage();
-            $passage->etablissementIdentifiant();
+            $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
+            $passage->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
+            $passage->updateEtablissementInfos($etablissement);
+            $passage->setNumeroPassageIdentifiant($this->pm->getNextNumeroPassage($passage->getEtablissementIdentifiant(), $passage->getDateCreation()));       
             $passage->setId($passage->generateId());
+            $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
+            if(!$data[self::CSV_DUREE]) {
+                $output->writeln(sprintf("<error>La durée du passage n'a pas été renseigné : %s</error>", $passage->getId()));
+                continue;
+            }
+            $passage->setDateFin(clone $passage->getDateDebut());
+            $passage->getDateFin()->modify(sprintf("+%s minutes", $data[self::CSV_DUREE]));
             $passage->setLibelle($data[self::CSV_LIBELLE]);
-            $passage->setDescription($data[self::CSV_DESCRIPTION]);
-            //$this->dm->persist($passage);
-            //$this->dm->flush();
+            $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
+            $passage->setTechnicien(trim($data[self::CSV_TECHNICIEN]));
+            $this->dm->persist($passage);
+            $i++;
+
+            if($i >= 1000) {
+                $this->dm->flush();
+                $i=0;
+            }
+
         }
+
+        $this->dm->flush();
     }
 
 }

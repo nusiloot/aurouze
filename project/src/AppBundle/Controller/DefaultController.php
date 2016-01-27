@@ -16,7 +16,10 @@ class DefaultController extends Controller {
      */
     public function indexAction(Request $request) {
 
-        return $this->render('default/index.html.twig');
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $etablissementsChoiceForm = $dm->getRepository('AppBundle:Etablissement')->findAll();
+        
+        return $this->render('default/etablissementChoixForm.html.twig',array('etablissements' => $etablissements));
     }
 
     /**
