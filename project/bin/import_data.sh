@@ -22,6 +22,8 @@ fi
 
 #####IMPORT des Etablissements ##### 
 
+echo "Récupération des établissements"
+
 # Gère les retours charriots dans les champs 
 cat  $DATA_DIR/tblAdresse.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 2,2 > $DATA_DIR/adresse.csv.temp
 

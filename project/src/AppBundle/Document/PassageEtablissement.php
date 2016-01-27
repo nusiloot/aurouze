@@ -18,6 +18,11 @@ class PassageEtablissement {
     /**
      * @MongoDB\String
      */
+    protected $nom;
+
+    /**
+     * @MongoDB\String
+     */
     protected $nom_contact;
 
     /**
@@ -231,5 +236,27 @@ class PassageEtablissement {
     public function getRaisonSociale()
     {
         return $this->raison_sociale;
+    }
+
+    /**
+     * Set nom
+     *
+     * @param string $nom
+     * @return self
+     */
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+        return $this;
+    }
+
+    /**
+     * Get nom
+     *
+     * @return string $nom
+     */
+    public function getNom()
+    {
+        return $this->nom;
     }
 }
