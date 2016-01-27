@@ -32,6 +32,9 @@ join -t ';' -1 2 -2 1 $DATA_DIR/adresse.csv.temp $DATA_DIR/entite.csv.temp > $DA
 
 php app/console import:data "Etablissement" $DATA_DIR/adresse.csv
 
+#### IMPORT des Societe ####
+php app/console import:data "Societe" $DATA_DIR/entite.csv.temp
+
 #### CREATION PASSAGES.CSV ####
 echo "Récupération des passages"
 

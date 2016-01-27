@@ -72,12 +72,15 @@ class EtablissementManager {
 
     public function getNextIdentifiant() {
         $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllEtablissementsIdentifiants();
-        if (!count($allEtablissementsIdentifiants)) {
-            return sprintf("%08d", 1);
-        }
-        return sprintf("%08d", max($allEtablissementsIdentifiants) + 1);
     }
 
-    
+    public function getNextNumeroEtablissement($societeIdentifiant) {
+        $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllPostfixByIdentifiantSociete($societeIdentifiant);        
+        
+        if (!count($allEtablissementsIdentifiants)) {
+            return sprintf("%02d", 1);
+        }
+        return sprintf("%02d", max($allEtablissementsIdentifiants) + 1);
+    }
 
 }

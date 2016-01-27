@@ -14,14 +14,16 @@ namespace AppBundle\Import;
  * @author mathurin
  */
 use AppBundle\Document\Etablissement as Etablissement;
+use AppBundle\Document\Adresse as Adresse;
 use AppBundle\Manager\EtablissementManager as EtablissementManager;
 
 class EtablissementCsvImport extends CsvFile {
 
     protected $dm;
+    protected $etablissementManager;
 
-    const CSV_ID = 0;
-    const CSV_ID_SOCIETE = 1;
+    const CSV_ID_SOCIETE = 0;
+    const CSV_ID_ADRESSE = 1;
     const CSV_ADRESSE_TYPE = 2;
     const CSV_NOM_ETB = 3;
     const CSV_ADRESS_1 = 4;
@@ -46,7 +48,7 @@ class EtablissementCsvImport extends CsvFile {
     public function import() {
         $this->errors = array();
         $csv = $this->getCsv();
-        $etablissementManager = new EtablissementManager($this->dm);
+        $this->etablissementManager = new EtablissementManager($this->dm);
 
 
         foreach ($csv as $data) {
@@ -59,31 +61,40 @@ class EtablissementCsvImport extends CsvFile {
     public function createFromImport($ligne) {
 
         $etablissement = new Etablissement();
-        $etablissement->setIdentifiant(sprintf("%06d", $ligne[self::CSV_ID]));
+        
+        $societeId = sprintf("%06d", $ligne[self::CSV_ID_SOCIETE]);
+        
+        $etablissement->setIdentifiantSociete($societeId);
+        $etablissement->setIdentifiant($societeId.$this->etablissementManager->getNextNumeroEtablissement($societeId));
+        
         $etablissement->setId();
 
-        $etablissement->setNom($ligne[EtablissementCSVImport::CSV_NOM_ETB]);
-        $adresse = $ligne[EtablissementCSVImport::CSV_ADRESS_1];
-        if ($ligne[EtablissementCSVImport::CSV_ADRESS_2]) {
-            $adresse .= ', ' . $ligne[EtablissementCSVImport::CSV_ADRESS_2];
+        $etablissement->setNom($ligne[self::CSV_NOM_ETB]);
+        $adresse_str = $ligne[self::CSV_ADRESS_1];
+        if ($ligne[self::CSV_ADRESS_2]) {
+            $adresse_str .= ', ' . $ligne[self::CSV_ADRESS_2];
         }
+        $etablissement->setNomContact($ligne[self::CSV_CMT]);
+        $etablissement->setRaisonSociale($ligne[self::CSV_RAISON_SOCIALE]);
+        
+        $adresse = new Adresse();
+        $adresse->setAdresse($adresse_str);        
+        $adresse->setCodePostal($ligne[self::CSV_CP]);
+        $adresse->setCommune($ligne[self::CSV_VILLE]);
+        $adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
+        $adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
+        $adresse->setFax($ligne[self::CSV_FAX]);
+        
         $etablissement->setAdresse($adresse);
-        $etablissement->setCodePostal($ligne[EtablissementCSVImport::CSV_CP]);
-        $etablissement->setCommune($ligne[EtablissementCSVImport::CSV_VILLE]);
-        $etablissement->setTelephoneFixe($ligne[EtablissementCSVImport::CSV_TEL_FIXE]);
-        $etablissement->setTelephonePortable($ligne[EtablissementCSVImport::CSV_TEL_MOBILE]);
-        $etablissement->setFax($ligne[EtablissementCSVImport::CSV_FAX]);
-        $etablissement->setNomContact($ligne[EtablissementCSVImport::CSV_CMT]);
-        $etablissement->setRaisonSociale($ligne[EtablissementCSVImport::CSV_RAISON_SOCIALE]);
 
-        if ($ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT] == "") {
+        if ($ligne[self::CSV_TYPE_ETABLISSEMENT] == "") {
             $etablissement->setTypeEtablissement(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
         } else {
 
             $types_etablissements = EtablissementManager::$type_etablissements_libelles;
             $types_etablissements_values = array_values($types_etablissements);
 
-            $type_etb_libelle = $types_etablissements_values[$ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT]];
+            $type_etb_libelle = $types_etablissements_values[$ligne[self::CSV_TYPE_ETABLISSEMENT]];
             $types_etb_key = array_keys($types_etablissements, $type_etb_libelle);
 
             $etablissement->setTypeEtablissement($types_etb_key[0]);
