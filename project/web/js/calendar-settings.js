@@ -1,9 +1,7 @@
 $(function () {
-    var date = new Date();
-    var d = date.getDate();
-    var m = date.getMonth();
-    var y = date.getFullYear();
-
+	/**
+	 * FullCalendar Settings
+	 */
     $('#calendrier').fullCalendar({
         header: {
             left: 'prev, title, next',
@@ -14,56 +12,43 @@ $(function () {
 		allDaySlot: false,
 		scrollTime: "08:00:00",
 		editable: true,
-		droppable: true,
 		hiddenDays: [0],
 		defaultView: "agendaWeek",
         eventSources: [
             {
-                url: Routing.generate('calendarPopulate', {"identifiantEtablissement": $('#calendrier').attr('data-identifiant-etablissement')}),
-                type: 'POST',
-                error: function() {
-                	console.log("populate erreur");
-                }
+                url: $('#calendrier').data('urlPopulate'),
+                type: 'POST'
             }
         ],
-        eventResize: function(event) {
-        	console.log("=== resize ===");      
-        	console.log(event.id);     
-        	console.log(event.start.format());   
-        	console.log(event.end.format());
+        eventClick: function(event) {
+        	alert(event.id);
         },
-        eventDrop: function(event) {  
-        	console.log("=== drag ===");       
-        	console.log(event.id);  
-        	console.log(event.start.format());   
-        	console.log(event.end.format());
-        },
-        eventReceive: function(event) {  
+        dayClick: function(moment, jsEvent, view) {
         	$.post(
-        		Routing.generate('calendarUpdate', {"identifiantEtablissement": $('#calendrier').attr('data-identifiant-etablissement')}), { 
+        			$('#calendrier').data('urlUpdate'), { 
+        			id: null, 
+        			start: moment.format(),
+        			end: null,
+        		}, function(data) {
+        			$('#calendrier').fullCalendar('addEventSource', [data]);
+        		}
+        	);
+        },
+        eventResize: function(event) {
+        	$.post(
+        			$('#calendrier').data('urlUpdate'), { 
         			id: event.id, 
         			start: event.start.format(),
         			end: event.end.format(),
-        		}, function(data) {
-                	if (data.error) {
-                		console.log("erreur");
-                	} else {
-                		console.log("ok");
-                		event.id = data.id;
-                	}
-        	});
+        		});
         },
-    });
-    $('#fc-events .event').each(function() {
-    	$(this).data('event', {
-    		title: $(this).attr('data-title'),
-    		stick: true
-    	});
-    	$(this).draggable({
-    		zIndex: 999,
-    		revert: true,
-    		revertDuration: 0
-    	});
-
+        eventDrop: function(event) {    
+        	$.post(
+        			$('#calendrier').data('urlUpdate'), { 
+        			id: event.id, 
+        			start: event.start.format(),
+        			end: event.end.format(),
+        		});
+        },
     });
 });

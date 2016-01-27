@@ -3,11 +3,7 @@
 {% block body %}
     <div id="wrapper">
         <div id="container">
-        	
-        	<div id="fc-events" class="text-center">
-				<div class="event btn btn-primary" data-duration="01:00" data-title="Martial // Le petit opportun"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Passage</div>
-			</div>
-        	<div id="calendrier" data-identifiant-etablissement="001" style="max-width: 650px;margin:0 auto;"></div>
+        	<div id="calendrier" data-url-populate="{{path('calendarPopulate', {'etablissement': etablissement})}}" data-url-update="{{path('calendarUpdate', {'etablissement': etablissement})}}" data-url-delete="{{path('calendarDelete', {'etablissement': etablissement}) }}" style="max-width: 900px;margin:0 auto;"></div>
         </div>
     </div>
 {% endblock %}

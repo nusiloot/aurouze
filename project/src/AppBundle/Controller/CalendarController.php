@@ -10,16 +10,17 @@ use Symfony\Component\HttpFoundation\Response;
 class CalendarController extends Controller {
     
     /**
-     * @Route("/calendar", name="calendar")
+     * @Route("/calendar/{etablissement}", name="calendar")
      */
     public function calendarAction(Request $request) {
     	
-    
-    	return $this->render('default/calendar.html.twig');
+    	$etablissement = $request->get('etablissement');
+    	
+    	return $this->render('default/calendar.html.twig', array('etablissement' => $etablissement));
     }
     
     /**
-     * @Route("/calendar/{identifiantEtablissement}/update", name="calendarUpdate", options={"expose" = "true"})
+     * @Route("/calendar/{etablissement}/update", name="calendarUpdate", options={"expose" = "true"})
      */
     public function calendarUpdateAction(Request $request) {
     	
@@ -29,18 +30,30 @@ class CalendarController extends Controller {
     	
     	$error = false;
     	
-    	/*var_dump($request->get('identifiantEtablissement'));
-    	var_dump($request->get('id'));
-    	var_dump($request->get('start'));
-    	var_dump($request->get('end'));*/
+    	$request->get('etablissement');
+    	$id = $request->get('id');
+    	$start = $request->get('start');
+    	$end = $request->get('end');
+    	$duration = "2";
+    	if (!$end) {
+    		$end = new \DateTime($start);
+    		$end->modify("+$duration hour");
+    		$end = str_replace($end->format('P'), '', $end->format('c'));
+    	}
     	
-    	$response = ($error)? new Response(json_encode(array('id' => null, 'error' => 1))) : new Response(json_encode(array('id' => "E-001-P-001", 'error' => 0)));
+    	if ($error) {
+    		throw new \Exception();
+    	}
+
+    	$event = array('id' => "E-001-P-001", 'title' => "Martial // Le petit opportun", 'start' => $start, 'end' => $end, 'backgroundColor' => "blue", 'textColor' => "white");
+    	
+    	$response = new Response(json_encode($event));
     	$response->headers->set('Content-Type', 'application/json');
     	return $response;
     }
     
     /**
-     * @Route("/calendar/{identifiantEtablissement}/populate", name="calendarPopulate", options={"expose" = "true"})
+     * @Route("/calendar/{etablissement}/populate", name="calendarPopulate", options={"expose" = "true"})
      */
     public function calendarPopulateAction(Request $request) {
     	
@@ -56,6 +69,29 @@ class CalendarController extends Controller {
     	);
     	
     	$response = new Response(json_encode($events));
+    	$response->headers->set('Content-Type', 'application/json');
+    	return $response;
+    }
+    
+    /**
+     * @Route("/calendar/{etablissement}/delete", name="calendarDelete", options={"expose" = "true"})
+     */
+    public function calendarDeleteAction(Request $request) {
+    	
+    	if (!$request->isXmlHttpRequest()) {
+    		throw $this->createNotFoundException();
+    	}
+    	
+    	$error = false;
+    	
+    	$request->get('etablissement');
+    	$request->get('id');
+    	
+    	if ($error) {
+    		throw new \Exception();
+    	}
+    	
+    	$response = new Response(json_encode(array('id' => "E-001-P-001")));
     	$response->headers->set('Content-Type', 'application/json');
     	return $response;
     }
