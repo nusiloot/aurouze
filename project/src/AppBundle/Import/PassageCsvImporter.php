@@ -53,7 +53,7 @@ class PassageCsvImporter {
             $etablissement = $this->em->getRepository()->findOneByIdentifiant($data[self::CSV_ETABLISSEMENT_ID]);
             
             if (!$etablissement) {
-                //$output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
+                $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
             }
 
@@ -64,12 +64,16 @@ class PassageCsvImporter {
             $passage->setNumeroPassageIdentifiant($this->pm->getNextNumeroPassage($passage->getEtablissementIdentifiant(), $passage->getDateCreation()));       
             $passage->setId($passage->generateId());
             $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
-            $passage->setDateFin($passage->getDateDebut()->modify(sprintf("+%s minutes", $data[self::CSV_DUREE])));
+            if(!$data[self::CSV_DUREE]) {
+                $output->writeln(sprintf("<error>La durée du passage n'a pas été renseigné : %s</error>", $passage->getId()));
+                continue;
+            }
+            $passage->setDateFin(clone $passage->getDateDebut());
+            $passage->getDateFin()->modify(sprintf("+%s minutes", $data[self::CSV_DUREE]));
             $passage->setLibelle($data[self::CSV_LIBELLE]);
-            $passage->setDescription($data[self::CSV_DESCRIPTION]);
+            $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
             $passage->setTechnicien(trim($data[self::CSV_TECHNICIEN]));
             $this->dm->persist($passage);
-            $output->writeln(sprintf("<info>Création du passage %s</info>", $passage->getId()));
             $i++;
 
             if($i >= 1000) {

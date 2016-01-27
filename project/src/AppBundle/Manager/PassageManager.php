@@ -38,8 +38,13 @@ class PassageManager {
         return $passage;
     }
 
+    public function getRepository() {
+
+        return $this->dm->getRepository('AppBundle:Passage');
+    }
+
     public function getNextNumeroPassage($etablissementIdentifiant, \DateTime $date) {
-       $allPassagesForEtablissementsInDay = $this->dm->getRepository('AppBundle:Passage')->findPassagesForEtablissementsAndDay($etablissementIdentifiant, $date);
+       $allPassagesForEtablissementsInDay = $this->getRepository()->findPassagesForEtablissementsAndDay($etablissementIdentifiant, $date);
        
         if(!count($allPassagesForEtablissementsInDay)){
             return sprintf("%03d", 1);

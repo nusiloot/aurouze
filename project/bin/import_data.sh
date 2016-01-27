@@ -113,3 +113,4 @@ cat $DATA_DIR/passagesadressestechniciens.csv | awk -F ';'  '{
 
 }' > $DATA_DIR/passages.csv
 
+php app/console importer:csv passage.importer $DATA_DIR/passages.csv
