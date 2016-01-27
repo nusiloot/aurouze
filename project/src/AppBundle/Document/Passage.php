@@ -51,7 +51,17 @@ class Passage {
     /**
      * @MongoDB\Date
      */
-    protected $createAt;
+    protected $dateCreation;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $dateDebut;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $dateFin;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="PassageEtablissement")
@@ -59,9 +69,15 @@ class Passage {
     protected $passageEtablissement;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\String
      */
-    protected $planifie;
+    protected $libelle;
+
+        /**
+     * @MongoDB\String
+     */
+    protected $description;
+
 
     /**
      * Get id
@@ -77,15 +93,15 @@ class Passage {
      *
      * @return id $id
      */
-    public function setId($fromImport = false) {
-        $this->id = $this->generateId($fromImport);
+    public function setId($id) {
+        $this->id = $id;
     }
 
     public function generateId($fromImport = false) {
-        $date = new \DateTime('today');
-        if (!$fromImport) {
-            $this->setCreateAt($date);
+        if (!$this->getCreateAt()) {
+            $this->setCreateAt(new \DateTime());
         }
+
         return self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->createAt->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
     }
 
@@ -240,44 +256,114 @@ class Passage {
         return $this->passageEtablissement;
     }
 
+
     /**
-     * Set planifie
+     * Set dateCreation
      *
-     * @param boolean $planifie
+     * @param date $dateCreation
      * @return self
      */
-    public function setPlanifie($planifie) {
-        $this->planifie = $planifie;
+    public function setDateCreation($dateCreation)
+    {
+        $this->dateCreation = $dateCreation;
         return $this;
     }
 
     /**
-     * Get planifie
+     * Get dateCreation
      *
-     * @return boolean $planifie
+     * @return date $dateCreation
      */
-    public function getPlanifie() {
-        return $this->planifie;
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
     }
 
     /**
-     * Set createAt
+     * Set dateDebut
      *
-     * @param date $createAt
+     * @param date $dateDebut
      * @return self
      */
-    public function setCreateAt($createAt) {
-        $this->createAt = $createAt;
+    public function setDateDebut($dateDebut)
+    {
+        $this->dateDebut = $dateDebut;
         return $this;
     }
 
     /**
-     * Get createAt
+     * Get dateDebut
      *
-     * @return date $createAt
+     * @return date $dateDebut
      */
-    public function getCreateAt() {
-        return $this->createAt;
+    public function getDateDebut()
+    {
+        return $this->dateDebut;
     }
 
+    /**
+     * Set dateFin
+     *
+     * @param date $dateFin
+     * @return self
+     */
+    public function setDateFin($dateFin)
+    {
+        $this->dateFin = $dateFin;
+        return $this;
+    }
+
+    /**
+     * Get dateFin
+     *
+     * @return date $dateFin
+     */
+    public function getDateFin()
+    {
+        return $this->dateFin;
+    }
+
+    /**
+     * Set libelle
+     *
+     * @param string $libelle
+     * @return self
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+        return $this;
+    }
+
+    /**
+     * Get libelle
+     *
+     * @return string $libelle
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return self
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string $description
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }
