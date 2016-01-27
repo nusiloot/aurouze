@@ -2,6 +2,7 @@
 
 . bin/config.inc
 
+
 REMOTE_DATA=$1
 
 SYMFODIR=$(pwd);
@@ -37,7 +38,7 @@ cat  $DATA_DIR/tblEntite.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[
 
 join -t ';' -1 2 -2 1 $DATA_DIR/adresse_application.csv $DATA_DIR/entite.csv.temp > $DATA_DIR/etablissements.csv
 
-php app/console import:data "Etablissement" $DATA_DIR/etablissements.csv
+php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv
 
 #### IMPORT des Societe ####
 
@@ -47,7 +48,7 @@ cat $DATA_DIR/adresse.csv.temp | grep -e "^[0-9]*;[0-9]*;1" > $DATA_DIR/adresse_
 
 join -t ';' -1 2 -2 1 $DATA_DIR/adresse_facturation.csv $DATA_DIR/entite.csv.temp > $DATA_DIR/societes.csv
 
-php app/console import:data "Societe" $DATA_DIR/societes.csv
+php app/console importer:csv societe.importer $DATA_DIR/societes.csv
 
 #### CREATION PASSAGES.CSV ####
 echo "Récupération des passages"

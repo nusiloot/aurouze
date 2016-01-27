@@ -16,11 +16,13 @@ namespace AppBundle\Import;
 use AppBundle\Document\Etablissement as Etablissement;
 use AppBundle\Document\Adresse as Adresse;
 use AppBundle\Manager\EtablissementManager as EtablissementManager;
+use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
+use Symfony\Component\Console\Output\OutputInterface;
 
-class EtablissementCsvImport extends CsvFile {
+class EtablissementCsvImporter extends CsvFile {
 
     protected $dm;
-    protected $etablissementManager;
+    protected $em;
 
     const CSV_ID_SOCIETE = 0;
     const CSV_ID_ADRESSE = 1;
@@ -41,33 +43,38 @@ class EtablissementCsvImport extends CsvFile {
     const CSV_RAISON_SOCIALE = 22;
     const CSV_TYPE_ETABLISSEMENT = 26;
 
-    public function setManager($dm) {
+    public function __construct(DocumentManager $dm, EtablissementManager $em) {
         $this->dm = $dm;
+        $this->em = $em;
     }
 
-    public function import() {
-        $this->errors = array();
-        $csv = $this->getCsv();
-        $this->etablissementManager = new EtablissementManager($this->dm);
+    public function import($file, OutputInterface $output) {
+        $csvFile = new CsvFile($file);
 
-
+        $csv = $csvFile->getCsv();
+        $cpt = 0;
         foreach ($csv as $data) {
             $etablissement = $this->createFromImport($data);
             $this->dm->persist($etablissement);
-            $this->dm->flush();
+            if ($cpt > 1000) {
+                $this->dm->flush();
+                $cpt = 0;
+            }
+            $cpt++;
         }
+        $this->dm->flush();
     }
 
     public function createFromImport($ligne) {
 
         $etablissement = new Etablissement();
-        
+
         $adresseId = sprintf("%06d", $ligne[self::CSV_ID_ADRESSE]);
-        
+
         $etablissement->setIdentifiantSociete(sprintf("%06d", $ligne[self::CSV_ID_SOCIETE]));
-    //    $etablissement->setIdentifiant($societeId.$this->etablissementManager->getNextNumeroEtablissement($societeId));
-          $etablissement->setIdentifiant($adresseId);
-        
+        //    $etablissement->setIdentifiant($societeId.$this->etablissementManager->getNextNumeroEtablissement($societeId));
+        $etablissement->setIdentifiant($adresseId);
+
         $etablissement->setId();
 
         $etablissement->setNom($ligne[self::CSV_NOM_ETB]);
@@ -77,15 +84,15 @@ class EtablissementCsvImport extends CsvFile {
         }
         $etablissement->setNomContact($ligne[self::CSV_CMT]);
         $etablissement->setRaisonSociale($ligne[self::CSV_RAISON_SOCIALE]);
-        
+
         $adresse = new Adresse();
-        $adresse->setAdresse($adresse_str);        
+        $adresse->setAdresse($adresse_str);
         $adresse->setCodePostal($ligne[self::CSV_CP]);
         $adresse->setCommune($ligne[self::CSV_VILLE]);
         $adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
         $adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
         $adresse->setFax($ligne[self::CSV_FAX]);
-        
+
         $etablissement->setAdresse($adresse);
 
         if ($ligne[self::CSV_TYPE_ETABLISSEMENT] == "") {
