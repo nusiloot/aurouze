@@ -4,35 +4,66 @@ $(function () {
     var m = date.getMonth();
     var y = date.getFullYear();
 
-    $('#calendar-holder').fullCalendar({
+    $('#calendrier').fullCalendar({
         header: {
-            left: 'prev, next',
-            center: 'title',
+            left: 'prev, title, next',
             right: 'month, agendaWeek'
         },
         lang: 'fr',
-		selectable: true,
+		timeFormat: 'H:mm',
+		allDaySlot: false,
+		scrollTime: "08:00:00",
 		editable: true,
-		eventLimit: true,
-        lazyFetching: true,
-        timeFormat: {
-            // for agendaWeek and agendaDay
-            agenda: 'h:mmt',    // 5:00 - 6:30
-
-            // for all other views
-            '': 'h:mmt'         // 7p
-        },
+		droppable: true,
+		hiddenDays: [0],
+		defaultView: "agendaWeek",
         eventSources: [
             {
-                url: Routing.generate('fullcalendar_loader'),
+                url: Routing.generate('calendarPopulate', {"identifiantEtablissement": $('#calendrier').attr('data-identifiant-etablissement')}),
                 type: 'POST',
-                // A way to add custom filters to your event listeners
-                data: {
-                },
                 error: function() {
-                   //alert('There was an error while fetching Google Calendar!');
+                	console.log("populate erreur");
                 }
             }
-        ]
+        ],
+        eventResize: function(event) {
+        	console.log("=== resize ===");      
+        	console.log(event.id);     
+        	console.log(event.start.format());   
+        	console.log(event.end.format());
+        },
+        eventDrop: function(event) {  
+        	console.log("=== drag ===");       
+        	console.log(event.id);  
+        	console.log(event.start.format());   
+        	console.log(event.end.format());
+        },
+        eventReceive: function(event) {  
+        	$.post(
+        		Routing.generate('calendarUpdate', {"identifiantEtablissement": $('#calendrier').attr('data-identifiant-etablissement')}), { 
+        			id: event.id, 
+        			start: event.start.format(),
+        			end: event.end.format(),
+        		}, function(data) {
+                	if (data.error) {
+                		console.log("erreur");
+                	} else {
+                		console.log("ok");
+                		event.id = data.id;
+                	}
+        	});
+        },
+    });
+    $('#fc-events .event').each(function() {
+    	$(this).data('event', {
+    		title: $(this).attr('data-title'),
+    		stick: true
+    	});
+    	$(this).draggable({
+    		zIndex: 999,
+    		revert: true,
+    		revertDuration: 0
+    	});
+
     });
 });
