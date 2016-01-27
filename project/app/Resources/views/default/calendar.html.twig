@@ -3,11 +3,7 @@
 {% block body %}
     <div id="wrapper">
         <div id="container">
-        
-        	<h1>Calendar Bundle</h1>
-
-        	{% include 'ADesignsCalendarBundle::calendar.html.twig' %}
-
+        	<div id="calendrier" data-url-populate="{{path('calendarPopulate', {'etablissement': etablissement})}}" data-url-update="{{path('calendarUpdate', {'etablissement': etablissement})}}" data-url-delete="{{path('calendarDelete', {'etablissement': etablissement}) }}" style="max-width: 900px;margin:0 auto;"></div>
         </div>
     </div>
 {% endblock %}

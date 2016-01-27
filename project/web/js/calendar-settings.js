@@ -1,38 +1,54 @@
 $(function () {
-    var date = new Date();
-    var d = date.getDate();
-    var m = date.getMonth();
-    var y = date.getFullYear();
-
-    $('#calendar-holder').fullCalendar({
+	/**
+	 * FullCalendar Settings
+	 */
+    $('#calendrier').fullCalendar({
         header: {
-            left: 'prev, next',
-            center: 'title',
+            left: 'prev, title, next',
             right: 'month, agendaWeek'
         },
         lang: 'fr',
-		selectable: true,
+		timeFormat: 'H:mm',
+		allDaySlot: false,
+		scrollTime: "08:00:00",
 		editable: true,
-		eventLimit: true,
-        lazyFetching: true,
-        timeFormat: {
-            // for agendaWeek and agendaDay
-            agenda: 'h:mmt',    // 5:00 - 6:30
-
-            // for all other views
-            '': 'h:mmt'         // 7p
-        },
+		hiddenDays: [0],
+		defaultView: "agendaWeek",
         eventSources: [
             {
-                url: Routing.generate('fullcalendar_loader'),
-                type: 'POST',
-                // A way to add custom filters to your event listeners
-                data: {
-                },
-                error: function() {
-                   //alert('There was an error while fetching Google Calendar!');
-                }
+                url: $('#calendrier').data('urlPopulate'),
+                type: 'POST'
             }
-        ]
+        ],
+        eventClick: function(event) {
+        	alert(event.id);
+        },
+        dayClick: function(moment, jsEvent, view) {
+        	$.post(
+        			$('#calendrier').data('urlUpdate'), { 
+        			id: null, 
+        			start: moment.format(),
+        			end: null,
+        		}, function(data) {
+        			$('#calendrier').fullCalendar('addEventSource', [data]);
+        		}
+        	);
+        },
+        eventResize: function(event) {
+        	$.post(
+        			$('#calendrier').data('urlUpdate'), { 
+        			id: event.id, 
+        			start: event.start.format(),
+        			end: event.end.format(),
+        		});
+        },
+        eventDrop: function(event) {    
+        	$.post(
+        			$('#calendrier').data('urlUpdate'), { 
+        			id: event.id, 
+        			start: event.start.format(),
+        			end: event.end.format(),
+        		});
+        },
     });
 });

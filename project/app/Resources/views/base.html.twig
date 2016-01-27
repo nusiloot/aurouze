@@ -17,6 +17,16 @@
   </head>
 
   <body>
+  
+  <div id="ajax_notifications">
+		<div id="ajax_form_progress_notification">
+		    Enregistrement en cours...
+		</div>
+		<div id="ajax_form_error_notification">
+		    Oops, une erreur est survenue ! </br>
+		    Vous pouvez <a href="javascript:location.reload();">recharger la page</a><br />ou si le problème persiste contactez le 24eme.
+		</div>
+	</div>
 
     <!-- Fixed navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -47,6 +57,7 @@
     <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script type="text/javascript" src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
     <script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/component/bootstrap/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/component/moment/js/moment.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('/component/fullcalendar/js/fullcalendar.min.js') }}"></script>
