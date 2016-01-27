@@ -1,3 +1,42 @@
 body {
-    padding-top: 50px;
+    padding-top: 60px;
+}
+
+#ajax_notifications {
+	position: fixed;
+	width: 100%;
+	top: 0;
+	z-index: 1199;
+}
+
+#ajax_form_progress_notification, #ajax_form_error_notification {
+	display: none;  
+	margin: 2px auto;
+	color: #fff;
+	padding: 5px;
+	text-align: center;
+	// .opacite(0.9);
+}
+
+#ajax_form_progress_notification {
+	background: #114C8D;
+	z-index: 1200;
+	width: 150px;
+}
+
+#ajax_form_error_notification {
+	z-index: 1201;
+	background: #900000;
+	width: 400px;
+    a
+    {
+        color: #fff;
+        text-decoration : underline;
+    }
+
+   a:hover { text-decoration : none; }
+}
+
+#calendrier .fc-view-container {
+	cursor: cell;
 }
