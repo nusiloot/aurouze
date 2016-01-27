@@ -10,6 +10,10 @@ services:
     etablissement.manager:
         class: AppBundle\Manager\EtablissementManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
+        
+    etablissement.importer:
+        class: AppBundle\Import\EtablissementCsvImporter
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @etablissement.manager]
 
     passage.manager:
         class: AppBundle\Manager\PassageManager
@@ -19,4 +23,7 @@ services:
         class: AppBundle\Import\PassageCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @passage.manager, @etablissement.manager]
 
+    societe.importer:
+        class: AppBundle\Import\SocieteCsvImporter
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
 

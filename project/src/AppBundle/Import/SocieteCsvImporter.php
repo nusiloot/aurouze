@@ -15,9 +15,10 @@ namespace AppBundle\Import;
  */
 use AppBundle\Document\Societe as Societe;
 use AppBundle\Document\Adresse as Adresse;
-use AppBundle\Manager\EtablissementManager as EtablissementManager;
+use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
+use Symfony\Component\Console\Output\OutputInterface;
 
-class SocieteCsvImport extends CsvFile {
+class SocieteCsvImporter extends CsvFile {
 
     protected $dm;
 
@@ -33,21 +34,20 @@ class SocieteCsvImport extends CsvFile {
     const CSV_SITEWEB = 12;
     const CSV_EMAIL = 13;
     const CSV_ADRESSE_COMMENTAIRE = 14;
-    
     const CSV_SOUS_TRAITANT = 21;
     const CSV_RAISON_SOCIALE = 22;
     const CSV_COMMENTAIRE = 25;
     const CSV_TYPE_SOCIETE = 26;
     const CSV_CODE_COMPTABLE = 30;
 
-    public function setManager($dm) {
+    public function __construct(DocumentManager $dm) {
         $this->dm = $dm;
     }
 
-    public function import() {
-        $this->errors = array();
-        $csv = $this->getCsv();
+    public function import($file, OutputInterface $output) {
+        $csvFile = new CsvFile($file);
 
+        $csv = $csvFile->getCsv();
 
         foreach ($csv as $data) {
             $societe = $this->createFromImport($data);
@@ -68,12 +68,12 @@ class SocieteCsvImport extends CsvFile {
         $societe->setCodeComptable($ligne[self::CSV_CODE_COMPTABLE]);
         $societe->setCommentaire($ligne[self::CSV_COMMENTAIRE]);
         $societe->setSousTraitant(!($ligne[self::CSV_SOUS_TRAITANT]));
-        
+
         $adresse = new Adresse();
-        
+
         $adresseStr = $ligne[self::CSV_ADRESSE_SOCIETE_1];
-        if($ligne[self::CSV_ADRESSE_SOCIETE_2]){
-            $adresseStr .=", ". $ligne[self::CSV_ADRESSE_SOCIETE_2];
+        if ($ligne[self::CSV_ADRESSE_SOCIETE_2]) {
+            $adresseStr .=", " . $ligne[self::CSV_ADRESSE_SOCIETE_2];
         }
         $adresse->setAdresse($adresseStr);
         $adresse->setCodePostal($ligne[self::CSV_CP]);
@@ -81,7 +81,7 @@ class SocieteCsvImport extends CsvFile {
         $adresse->setFax($ligne[self::CSV_FAX]);
         $adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
         $adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
-        
+
         $societe->setAdresse($adresse);
         if ($ligne[self::CSV_TYPE_SOCIETE] == "") {
             $societe->setTypeSociete(EtablissementManager::TYPE_ETB_NON_SPECIFIE);

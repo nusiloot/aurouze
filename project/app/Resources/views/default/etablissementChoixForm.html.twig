@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <br/>
+    <br/>
+    <div class="row">
+        {% for etb in etablissements %}
+            <div class="col-xs-12">
+                {{ etb.nom }}
+            </div>
+        {% endfor %}
+    </div>
+    <br/>
+{% endblock %}
