@@ -73,28 +73,6 @@ class EtablissementManager {
         return sprintf("%08d", max($allEtablissementsIdentifiants) + 1);
     }
 
-    public function createFromImport($ligne) {
-
-        $etablissement = new Etablissement();
-        $etablissement->setIdentifiant(sprintf("%06d", $ligne[EtablissementCSVImport::CSV_ID]) . '01');
-        $etablissement->setId();
-
-        $etablissement->setRaisonSociale($ligne[EtablissementCSVImport::CSV_LIBELLE]);
-
-        if ($ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT] == "") {
-            $etablissement->setTypeEtablissement(self::TYPE_ETB_NON_SPECIFIE);
-        } else {
-
-            $types_etablissements = self::$type_etablissements_libelles;
-            $types_etablissements_values = array_values($types_etablissements);
-
-            $type_etb_libelle = $types_etablissements_values[$ligne[EtablissementCSVImport::CSV_TYPE_ETABLISSEMENT]];
-            $types_etb_key = array_keys($types_etablissements, $type_etb_libelle);
-
-            $etablissement->setTypeEtablissement($types_etb_key[0]);
-        }
-        
-        return $etablissement;
-    }
+    
 
 }
