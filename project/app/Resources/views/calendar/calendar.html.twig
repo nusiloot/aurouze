@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="wrapper">
+    	
+    	
+    	<div class="modal fade" id="modal-calendrier-infos" tabindex="-1" role="dialog">
+  			<div class="modal-dialog" role="document">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        				<h4 class="modal-title" id="modal-title">Modal title</h4>
+      				</div>
+      				<div class="modal-body" id="modal-body"></div>
+      				<div class="modal-footer">
+        				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      				</div>
+    			</div>
+  			</div>
+		</div>
+    	
+    	
+    	
+    	
+        <div id="container">
+        	<div id="calendrier" data-url-populate="{{path('calendarPopulate', {'etablissement': etablissement})}}" data-url-update="{{path('calendarUpdate', {'etablissement': etablissement})}}" data-url-read="{{path('calendarRead', {'etablissement': etablissement}) }}" style="max-width: 900px;margin:0 auto;"></div>
+        </div>
+    </div>
+{% endblock %}
+
