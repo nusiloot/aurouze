@@ -5,7 +5,7 @@ $(function () {
     $('#calendrier').fullCalendar({
         header: {
             left: 'prev, title, next',
-            right: 'month, agendaWeek'
+            right: 'month, agendaWeek, agendaDay'
         },
         lang: 'fr',
 		timeFormat: 'H:mm',
@@ -21,7 +21,15 @@ $(function () {
             }
         ],
         eventClick: function(event) {
-        	alert(event.id);
+        		$.post(
+        			$('#calendrier').data('urlRead'), { 
+        			id: event.id
+        		}, function(response) {
+        			$('#modal-title').text(event.title);
+        			$('#modal-body').html(response);
+        			$('#modal-calendrier-infos').modal();
+        		}
+        	);
         },
         dayClick: function(moment, jsEvent, view) {
         	$.post(
