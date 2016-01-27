@@ -65,6 +65,15 @@ class EtablissementManager {
         return $etablissement;
     }
 
+    public function getRepository() {
+
+        return $this->dm->getRepository('AppBundle:Etablissement');
+    }
+
+    public function getNextIdentifiant() {
+        $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllEtablissementsIdentifiants();
+    }
+
     public function getNextNumeroEtablissement($societeIdentifiant) {
         $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllPostfixByIdentifiantSociete($societeIdentifiant);        
         
