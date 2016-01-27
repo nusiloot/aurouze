@@ -52,11 +52,17 @@ class EtablissementCsvImporter extends CsvFile {
         $csvFile = new CsvFile($file);
 
         $csv = $csvFile->getCsv();
+        $cpt = 0;
         foreach ($csv as $data) {
             $etablissement = $this->createFromImport($data);
             $this->dm->persist($etablissement);
-            $this->dm->flush();
+            if ($cpt > 1000) {
+                $this->dm->flush();
+                $cpt = 0;
+            }
+            $cpt++;
         }
+        $this->dm->flush();
     }
 
     public function createFromImport($ligne) {

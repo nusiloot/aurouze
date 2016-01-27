@@ -17,6 +17,7 @@ use AppBundle\Document\Societe as Societe;
 use AppBundle\Document\Adresse as Adresse;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
+use AppBundle\Manager\EtablissementManager as EtablissementManager;
 
 class SocieteCsvImporter extends CsvFile {
 
@@ -48,12 +49,17 @@ class SocieteCsvImporter extends CsvFile {
         $csvFile = new CsvFile($file);
 
         $csv = $csvFile->getCsv();
-
+        $cpt = 0;
         foreach ($csv as $data) {
             $societe = $this->createFromImport($data);
             $this->dm->persist($societe);
-            $this->dm->flush();
-        }
+            if ($cpt > 1000) {
+                $this->dm->flush();
+                $cpt = 0;
+            }
+            $cpt++;
+        } 
+        $this->dm->flush();
     }
 
     public function createFromImport($ligne) {
