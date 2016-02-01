@@ -16,7 +16,12 @@ class DefaultController extends Controller {
      * @Route("/", name="accueil")
      */
     public function indexAction(Request $request) {
-
+        if($request->get("etablissement_choice") && count($request->get("etablissement_choice"))){
+            $etb_choices = $request->get("etablissement_choice");
+            if($etb_choices["etablissements"]){
+                return $this->redirectToRoute('passageEtablissement',array('identifiantEtablissement' => $etb_choices["etablissements"]));
+            }
+        }
         $dm = $this->get('doctrine_mongodb')->getManager();
         $form = $this->createForm(new EtablissementChoiceType(), array(
             'action' => $this->generateUrl('etablissement_choice'),
@@ -71,17 +76,7 @@ class DefaultController extends Controller {
      */
     public function passageEtablissementAction(Request $request) {
 
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $etablissementManager = new EtablissementManager($dm);
-        $etablissement = $etablissementManager->create();
-        $dm->persist($etablissement);
-        $dm->flush();
-
-        return new Response('Created product id ' . $etablissement->getId());
-
-        return $this->render('default/index.html.twig', array(
-                    'base_dir' => realpath($this->getParameter('kernel.root_dir') . '/..'),
-        ));
+        return $this->render('default/passageEtablissement.html.twig', array());
     }
 
     /**
