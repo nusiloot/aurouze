@@ -50,7 +50,7 @@
     $.initSelect2Ajax = function () {
 
         $('.select2-ajax').each(function () {
-            var urlComponent = "http://dev.aurouze.fr" + $(this).data('url');
+            var urlComponent = $(this).data('url');
 
             $(this).select2({
                 minimumInputLength: 3,
