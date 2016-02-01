@@ -94,14 +94,10 @@ class SocieteCsvImporter extends CsvFile {
         } else {
 
             $types_etablissements = EtablissementManager::$type_etablissements_libelles;
-            $types_etablissements_values = array_values($types_etablissements);
-
-            $type_etb_libelle = $types_etablissements_values[$ligne[self::CSV_TYPE_SOCIETE]];
-            $types_etb_key = array_keys($types_etablissements, $type_etb_libelle);
-
-            $societe->setTypeSociete($types_etb_key[0]);
+            $types_etb_keys = array_keys($types_etablissements);
+        
+            $societe->setTypeSociete($types_etb_keys[intval($ligne[self::CSV_TYPE_SOCIETE])-1]);
         }
-
         return $societe;
     }
 

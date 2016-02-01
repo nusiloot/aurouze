@@ -100,12 +100,9 @@ class EtablissementCsvImporter extends CsvFile {
         } else {
 
             $types_etablissements = EtablissementManager::$type_etablissements_libelles;
-            $types_etablissements_values = array_values($types_etablissements);
-
-            $type_etb_libelle = $types_etablissements_values[$ligne[self::CSV_TYPE_ETABLISSEMENT]];
-            $types_etb_key = array_keys($types_etablissements, $type_etb_libelle);
-
-            $etablissement->setTypeEtablissement($types_etb_key[0]);
+            $types_etb_keys = array_keys($types_etablissements);
+        
+            $etablissement->setTypeEtablissement($types_etb_keys[intval($ligne[self::CSV_TYPE_ETABLISSEMENT])-1]);
         }
 
         return $etablissement;

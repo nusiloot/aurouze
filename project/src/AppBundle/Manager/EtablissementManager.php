@@ -50,6 +50,21 @@ class EtablissementManager {
         self::TYPE_ETB_AUTRE => "Autre",
         self::TYPE_ETB_HOTEL => "Hôtel",
         self::TYPE_ETB_NON_SPECIFIE => "Non spécifié");
+    
+    public static $type_etablissements_pictos = array(
+        self::TYPE_ETB_BOULANGERIE => "local-pizza",
+        self::TYPE_ETB_RESTAURANT => "local-dining",
+        self::TYPE_ETB_ADMINISTRATION => "description",
+        self::TYPE_ETB_MAIRIE => "account-balance",
+        self::TYPE_ETB_ENTREPRISE_PRIVEE => "store",
+        self::TYPE_ETB_PARTICULIER => "face",
+        self::TYPE_ETB_FERME => "spa",
+        self::TYPE_ETB_SYNDIC => "home",
+        self::TYPE_ETB_COMMERCE => "local-grocery-store",
+        self::TYPE_ETB_CAFE_BRASSERIE => "local-cafe",
+        self::TYPE_ETB_AUTRE => "place",
+        self::TYPE_ETB_HOTEL => "local-hotel",
+        self::TYPE_ETB_NON_SPECIFIE => "do-not-disturb");
 
     function __construct(DocumentManager $dm) {
         $this->dm = $dm;

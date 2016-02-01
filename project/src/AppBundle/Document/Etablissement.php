@@ -15,6 +15,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Manager\EtablissementManager as EtablissementManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository")
@@ -258,6 +259,15 @@ class Etablissement {
      */
     public function getAdressecomplete() {
         return $this->adresse->getAdressecomplete();
+    }
+    
+     /**
+     * Get iconTypeEtb
+     *
+     * @return string $adressecomplete
+     */
+    public function getIconTypeEtb() {
+        return EtablissementManager::$type_etablissements_pictos[ $this->type_etablissement];
     }
 
 }
