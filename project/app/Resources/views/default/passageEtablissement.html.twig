@@ -43,7 +43,7 @@
             <div class="list-group-item list-group-item-xs">
                 <div class="row">
                     <div class="col-xs-6">
-                        {{ pe.dateCreation | localizeddate('full', 'none') }}
+                        {{ pe.dateCreation | localizeddate('full', 'none') }} {{ pe.dateCreation | localizeddate('none', 'short') }}
                     </div>
                     <div class="col-xs-6">
                         <span class="pull-right">
@@ -51,8 +51,12 @@
                         </span>
                     </div>
                 </div>
-
-                {{ pe.descriptionTransformed }}
+                <br/>
+                <div class="row">
+                    <div class="col-xs-12">
+                        {{ pe.descriptionTransformed | nl2br }}
+                    </div>
+                </div>
             </div>
         {% endfor %}
     </div>
