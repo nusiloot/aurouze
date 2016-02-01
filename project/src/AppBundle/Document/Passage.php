@@ -36,6 +36,11 @@ class Passage {
     /**
      * @MongoDB\String
      */
+    protected $identifiant;
+    
+    /**
+     * @MongoDB\String
+     */
     protected $prestationIdentifiant;
 
     /**
@@ -83,7 +88,6 @@ class Passage {
      */
     protected $technicien;
 
-
     /**
      * Get id
      *
@@ -106,8 +110,8 @@ class Passage {
         if (!$this->getDateCreation()) {
             $this->setDateCreation(new \DateTime());
         }
-
-        return self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->dateCreation->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
+        $this->identifiant = $this->dateCreation->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
+        return self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->identifiant;
     }
 
     /**
@@ -263,15 +267,13 @@ class Passage {
         return $this->passageEtablissement;
     }
 
-
     /**
      * Set dateCreation
      *
      * @param date $dateCreation
      * @return self
      */
-    public function setDateCreation($dateCreation)
-    {
+    public function setDateCreation($dateCreation) {
         $this->dateCreation = $dateCreation;
         return $this;
     }
@@ -281,8 +283,7 @@ class Passage {
      *
      * @return date $dateCreation
      */
-    public function getDateCreation()
-    {
+    public function getDateCreation() {
         return $this->dateCreation;
     }
 
@@ -292,8 +293,7 @@ class Passage {
      * @param date $dateDebut
      * @return self
      */
-    public function setDateDebut($dateDebut)
-    {
+    public function setDateDebut($dateDebut) {
         $this->dateDebut = $dateDebut;
         return $this;
     }
@@ -303,8 +303,7 @@ class Passage {
      *
      * @return date $dateDebut
      */
-    public function getDateDebut()
-    {
+    public function getDateDebut() {
         return $this->dateDebut;
     }
 
@@ -314,8 +313,7 @@ class Passage {
      * @param date $dateFin
      * @return self
      */
-    public function setDateFin($dateFin)
-    {
+    public function setDateFin($dateFin) {
         $this->dateFin = $dateFin;
         return $this;
     }
@@ -325,8 +323,7 @@ class Passage {
      *
      * @return date $dateFin
      */
-    public function getDateFin()
-    {
+    public function getDateFin() {
         return $this->dateFin;
     }
 
@@ -336,8 +333,7 @@ class Passage {
      * @param string $libelle
      * @return self
      */
-    public function setLibelle($libelle)
-    {
+    public function setLibelle($libelle) {
         $this->libelle = $libelle;
         return $this;
     }
@@ -347,8 +343,7 @@ class Passage {
      *
      * @return string $libelle
      */
-    public function getLibelle()
-    {
+    public function getLibelle() {
         return $this->libelle;
     }
 
@@ -358,8 +353,7 @@ class Passage {
      * @param string $description
      * @return self
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) {
         $this->description = $description;
         return $this;
     }
@@ -369,8 +363,7 @@ class Passage {
      *
      * @return string $description
      */
-    public function getDescription()
-    {
+    public function getDescription() {
         return $this->description;
     }
 
@@ -380,8 +373,7 @@ class Passage {
      * @param string $technicien
      * @return self
      */
-    public function setTechnicien($technicien)
-    {
+    public function setTechnicien($technicien) {
         $this->technicien = $technicien;
         return $this;
     }
@@ -391,12 +383,54 @@ class Passage {
      *
      * @return string $technicien
      */
-    public function getTechnicien()
-    {
+    public function getTechnicien() {
         return $this->technicien;
     }
-    
+
     public function getDescriptionTransformed() {
         return str_replace('\n', "\n", $this->description);
+    }
+
+    public function getDuree() {
+        if (!$this->dateFin || !$this->dateDebut) {
+            return null;
+        }
+        $interval = $this->dateFin->diff($this->dateDebut);
+        return $interval->format('%Hh%I');
+    }
+
+    public function isRealise() {
+        return false;
+        return boolval($this->dateEffectue);
+    }
+
+    public function isPlanifie() {
+        return boolval($this->dateFin) && boolval($this->dateDebut);
+    }
+    public function isNonPlanifie() {
+        return ! boolval($this->dateFin) || ! boolval($this->dateDebut);
+    }
+
+
+    /**
+     * Set identifiant
+     *
+     * @param string $identifiant
+     * @return self
+     */
+    public function setIdentifiant($identifiant)
+    {
+        $this->identifiant = $identifiant;
+        return $this;
+    }
+
+    /**
+     * Get identifiant
+     *
+     * @return string $identifiant
+     */
+    public function getIdentifiant()
+    {
+        return $this->identifiant;
     }
 }

@@ -259,4 +259,13 @@ class PassageEtablissement {
     {
         return $this->nom;
     }
+    
+    /**
+     * Get adressecomplete
+     *
+     * @return string $adressecomplete
+     */
+    public function getAdressecomplete() {
+        return $this->adresse." ".$this->code_postal." ".$this->commune;
+    }
 }

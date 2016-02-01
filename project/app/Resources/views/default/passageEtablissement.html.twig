@@ -22,7 +22,7 @@
                     </div>
                     <div class="col-xs-2">
                         <i class="pull-right mdi mdi-{{ etablissement.iconTypeEtb }} mdi-4x"></i>
-                        
+
                     </div>
                 </div>
                 <div class="row">
@@ -51,7 +51,27 @@
                             {{ pe.libelle }}
                         </span>
                     </div>
-                </div>                        
+                </div>   
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ pe.dateDebut | localizeddate('full', 'none') }} {{ pe.dateDebut | localizeddate('none', 'short') }}</span> 
+                            </div>
+                            <div class="col-xs-6">
+                                {% if(pe.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ pe.duree }}</span>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <span class="pull-right">
+                            {% if(pe.realise) %} <span class="label label-success">Réalisé</span>
+                            {% elseif(pe.planifie)  %} <span class="label label-default">Planifié non réalisé</span>
+                            {% elseif(pe.nonplanifie)  %} <a href="{{path('calendar', {'etablissement' : pe.etablissementIdentifiant, 'passage' : pe.identifiant,'technicien' : "1"})}}"><span class="label label-warning">Planifier le passage</span> </a>
+                                  {% endif %}  
+                        </span>
+                    </div>
+                </div>              
                 <br/>
                 <div class="row">
                     <div class="col-xs-12">
