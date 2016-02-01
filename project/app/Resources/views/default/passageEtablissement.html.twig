@@ -4,7 +4,57 @@
     <br/>
     <br/>
     <div class="row">
-ICIC
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <strong>{{ etablissement.nom }}</strong>
+                    </div>
+                    <div class="col-xs-6">
+                        Société {{ etablissement.raisonsociale }}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-10">
+                        {{ etablissement.adressecomplete }}
+                    </div>
+                    <div class="col-xs-2">
+                        {{ etablissement.typeetablissement }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Tél fixe : {{ etablissement.adresse.telephonefixe }}
+                    </div>
+                    <div class="col-xs-6">
+                        Tél portable : {{ etablissement.adresse.telephoneportable }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <div class="row list-group">
+
+        {% for pe in passagesForEtablissement %}
+            <div class="list-group-item list-group-item-xs">
+                <div class="row">
+                    <div class="col-xs-6">
+                        {{ pe.dateCreation | localizeddate('full', 'none') }}
+                    </div>
+                    <div class="col-xs-6">
+                        <span class="pull-right">
+                            {{ pe.libelle }}
+                        </span>
+                    </div>
+                </div>
+
+                {{ pe.descriptionTransformed }}
+            </div>
+        {% endfor %}
+    </div>
 </div>
-<br/>
 {% endblock %}

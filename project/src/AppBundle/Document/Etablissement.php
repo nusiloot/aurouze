@@ -250,5 +250,14 @@ class Etablissement {
     public function getIdentifiantSociete() {
         return $this->identifiant_societe;
     }
+    
+    /**
+     * Get adressecomplete
+     *
+     * @return string $adressecomplete
+     */
+    public function getAdressecomplete() {
+        return $this->adresse->getAdressecomplete();
+    }
 
 }

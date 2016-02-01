@@ -75,8 +75,11 @@ class DefaultController extends Controller {
      * @Route("/passage/{identifiantEtablissement}", name="passageEtablissement")
      */
     public function passageEtablissementAction(Request $request) {
-
-        return $this->render('default/passageEtablissement.html.twig', array());
+        $identifiantEtb = $request->get("identifiantEtablissement");
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneByIdentifiant($identifiantEtb);
+        $passagesForEtablissement = $dm->getRepository('AppBundle:Passage')->findPassagesForEtablissement($identifiantEtb);
+        return $this->render('default/passageEtablissement.html.twig', array('etablissement' => $etablissement,'passagesForEtablissement' => $passagesForEtablissement));
     }
 
     /**

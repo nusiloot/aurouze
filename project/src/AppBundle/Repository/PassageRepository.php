@@ -14,13 +14,13 @@ class PassageRepository extends DocumentRepository {
 
     public function findByEtablissementAndCreateAt($etablissementIdentifiant, $createAt) {
         return $this->findBy(
-                                array('etablissementIdentifiant' => $etablissementIdentifiant, 'createAt' => $createAt));
+                        array('etablissementIdentifiant' => $etablissementIdentifiant, 'createAt' => $createAt));
     }
 
     public function findPassagesForEtablissementsAndDay($etablissementIdentifiant, $date) {
-        
+
         $passagesByEtablissementAndCreationDate = $this->findByEtablissementAndCreateAt($etablissementIdentifiant, $date);
-        
+
         $allPassagesNumeros = array();
         if (count($passagesByEtablissementAndCreationDate)) {
             foreach ($passagesByEtablissementAndCreationDate as $passageByEtablissementAndCreationDate) {
@@ -28,6 +28,12 @@ class PassageRepository extends DocumentRepository {
             }
         }
         return $allPassagesNumeros;
+    }
+
+    public function findPassagesForEtablissement($etablissementIdentifiant) {
+
+        return $this->findBy(
+                        array('etablissementIdentifiant' => $etablissementIdentifiant));
     }
 
 }

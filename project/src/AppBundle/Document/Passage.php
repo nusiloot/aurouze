@@ -395,4 +395,8 @@ class Passage {
     {
         return $this->technicien;
     }
+    
+    public function getDescriptionTransformed() {
+        return str_replace('\n', "\n", $this->description);
+    }
 }
