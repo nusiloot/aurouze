@@ -4,6 +4,7 @@
     $(document).ready(function ()
     {
         $.initAjaxPost();
+        $.initSelect2();
         $.initSelect2Ajax();
     });
 
@@ -46,6 +47,12 @@
                 }
         );
     };
+
+    $.initSelect2 = function () {
+    	$('.select2-simple').each(function () {
+    		$(this).select2();
+    	 });
+    }
 
     $.initSelect2Ajax = function () {
 

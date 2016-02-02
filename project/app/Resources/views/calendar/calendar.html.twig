@@ -21,6 +21,7 @@
     	
     	
     	
+    	{{ include('technicien/choixForm.html.twig', { 'form': form, 'technicien': technicien }) }}
     	
         <div id="container">
         	<div id="calendrier" data-url-populate="{{path('calendarPopulate', {'etablissement': etablissement,'passage': passage,'technicien': technicien})}}" data-url-update="{{path('calendarUpdate', {'etablissement': etablissement,'passage': passage,'technicien': technicien})}}" data-url-read="{{path('calendarRead', {'etablissement': etablissement,'passage': passage,'technicien': technicien}) }}" style="max-width: 900px;margin:0 auto;"></div>
