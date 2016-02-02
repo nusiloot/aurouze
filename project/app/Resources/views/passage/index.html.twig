@@ -9,15 +9,17 @@
         <h3>Liste des passages à planifier</h3>
         <div class="list-group">
         {% for passage in passages %}
-            <a href="{{ path('passage_etablissement', { identifiantEtablissement: passage.etablissementIdentifiant }) }}" class="col-xs-12 list-group-item">
-            <div class="col-sm-7 col-sm-12">
-            <i class="mdi mdi-{{ passage.passageEtablissement.iconTypeEtb }} mdi-1x"></i>
-            {{ passage.passageEtablissement.nom }}
-            <span class="text-muted">{{ passage.passageEtablissement.codePostal }} {{ passage.passageEtablissement.commune }} <small>({{ passage.passageEtablissement.adresse }})</small></span>
-            </div>
-            <div class="col-sm-5 col-sm-12 text-right">
-            <small class="text-muted">Estimé pour le</small> {{ passage.dateCreation | localizeddate('full', 'none') }} <small class="text-muted">avec</small> {{ passage.technicien }}
-            </div>
+            <a href="{{ path('passage_etablissement', { identifiantEtablissement: passage.etablissementIdentifiant }) }}" class="list-group-item">
+                <div class="row">
+                    <div class="col-sm-7 col-sm-12">
+                    <i class="mdi mdi-{{ passage.passageEtablissement.iconTypeEtb }} mdi-lg"></i>
+                    {{ passage.passageEtablissement.nom }}
+                    <span class="text-muted">{{ passage.passageEtablissement.codePostal }} {{ passage.passageEtablissement.commune }} <small>({{ passage.passageEtablissement.adresse }})</small></span>
+                    </div>
+                    <div class="col-sm-5 col-sm-12 text-right">
+                    <small class="text-muted">Estimé pour le</small> {{ passage.dateCreation | localizeddate('full', 'none') }} <small class="text-muted">avec</small> {{ passage.technicien }}
+                    </div>
+                </div>
             </a>
         {% endfor %}
         </div>
