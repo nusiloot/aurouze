@@ -49,9 +49,12 @@
         	                            <div class="col-xs-6">
         	                                <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ pe.dateDebut | localizeddate('full', 'none') }} {{ pe.dateDebut | localizeddate('none', 'short') }}</span> 
         	                            </div>
-        	                            <div class="col-xs-6">
+        	                            <div class="col-xs-2">
         	                                {% if(pe.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ pe.duree }}</span>{% endif %}
         	                            </div>
+                                        <div class="col-xs-4">
+                                            <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ pe.technicien }}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-xs-4">
