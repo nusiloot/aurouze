@@ -6,6 +6,7 @@ namespace AppBundle\Document;
  * AppBundle\Document\PassageEtablissement
  */
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Manager\EtablissementManager;
 
 /** @MongoDB\EmbeddedDocument */
 class PassageEtablissement {
@@ -267,5 +268,9 @@ class PassageEtablissement {
      */
     public function getAdressecomplete() {
         return $this->adresse." ".$this->code_postal." ".$this->commune;
+    }
+
+    public function getIconTypeEtb() {
+        return EtablissementManager::$type_etablissements_pictos[$this->type_etablissement];
     }
 }

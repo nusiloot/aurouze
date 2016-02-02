@@ -13,31 +13,23 @@ use AppBundle\Type\EtablissementChoiceType as EtablissementChoiceType;
 class DefaultController extends Controller {
 
     /**
-     * @Route("/", name="accueil")
+     * @Route("/etablissement-choix", name="etablissement_choice")
      */
-    public function indexAction(Request $request) {
+    public function choiceAction(Request $request) {
 
-        return $this->redirectToRoute('passage');
-
-        /*if($request->get("etablissement_choice") && count($request->get("etablissement_choice"))){
-            $etb_choices = $request->get("etablissement_choice");
-            if($etb_choices["etablissements"]){
-                return $this->redirectToRoute('passageEtablissement',array('identifiantEtablissement' => $etb_choices["etablissements"]));
-            }
-        }
         $dm = $this->get('doctrine_mongodb')->getManager();
         $form = $this->createForm(new EtablissementChoiceType(), array(
             'action' => $this->generateUrl('etablissement_choice'),
             'method' => 'POST',
         ));
 
-        return $this->render('default/etablissementChoixForm.html.twig', array('form' => $form->createView()));*/
+        return $this->render('default/etablissementChoixForm.html.twig', array('etablissements' => $etablissements));
     }
 
     /**
      * @Route("/etablissement-search", name="etablissement_search")
      */
-    public function etablissementSearchAction(Request $request) {
+    public function searchAction(Request $request) {
 
         $term = $request->get('term');
         $response = new Response();
@@ -59,5 +51,4 @@ class DefaultController extends Controller {
         $response->setContent($data);
         return $response;
     }
-
 }

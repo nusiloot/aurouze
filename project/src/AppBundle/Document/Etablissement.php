@@ -15,7 +15,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use AppBundle\Manager\EtablissementManager as EtablissementManager;
+use AppBundle\Manager\EtablissementManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository")
