@@ -63,13 +63,18 @@ class PassageCsvImporter {
             $passage->updateEtablissementInfos($etablissement);
             $passage->setNumeroPassageIdentifiant($this->pm->getNextNumeroPassage($passage->getEtablissementIdentifiant(), $passage->getDateCreation()));       
             $passage->setId($passage->generateId());
-            $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
+            if($data[self::CSV_DATE_DEBUT]) {
+                $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
+            } 
+            
             if(!$data[self::CSV_DUREE]) {
                 $output->writeln(sprintf("<error>La durée du passage n'a pas été renseigné : %s</error>", $passage->getId()));
                 continue;
             }
-            $passage->setDateFin(clone $passage->getDateDebut());
-            $passage->getDateFin()->modify(sprintf("+%s minutes", $data[self::CSV_DUREE]));
+            if($passage->getDateDebut()) {
+                $passage->setDateFin(clone $passage->getDateDebut());
+                $passage->getDateFin()->modify(sprintf("+%s minutes", $data[self::CSV_DUREE]));
+            }
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
             $passage->setTechnicien(trim($data[self::CSV_TECHNICIEN]));

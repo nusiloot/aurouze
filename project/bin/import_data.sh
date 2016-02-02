@@ -123,6 +123,4 @@ cat $DATA_DIR/passagesadressestechniciens.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+
 
 }' > $DATA_DIR/passages.csv
 
-cat /tmp/aurouze/AUROUZE_DATAS/passages.csv  | sed -r 's/([A-Za-z]+)[ ]+[0-9]+[ ]+([0-9]+)[ ]+[0-9:]+[A-Z]+;/\2 \1;/' |cut -d ";" -f 1 | sort | uniq -c | sed -r 's/^[ ]+//' |sort -t " " -k 2,3
-
 php app/console importer:csv passage.importer $DATA_DIR/passages.csv

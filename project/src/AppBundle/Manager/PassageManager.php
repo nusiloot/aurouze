@@ -50,6 +50,6 @@ class PassageManager {
             return sprintf("%03d", 1);
         }
         return sprintf("%03d", max($allPassagesForEtablissementsInDay) + 1);
-    }    
+    }
     
 }

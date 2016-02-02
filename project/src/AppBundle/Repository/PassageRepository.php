@@ -53,4 +53,13 @@ class PassageRepository extends DocumentRepository {
         return $this->findBy(array('etablissementIdentifiant' => $etablissementIdentifiant));
     }
 
+    public function findToPlan() {
+        $query = $this->createQueryBuilder('Passage')
+                      ->field('dateDebut')->exists(false)
+                      ->sort('dateCreation', 'asc')
+                      ->getQuery();
+
+        return $query->execute();
+    } 
+
 }

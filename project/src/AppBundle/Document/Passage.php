@@ -408,7 +408,7 @@ class Passage {
         return boolval($this->dateFin) && boolval($this->dateDebut);
     }
     public function isNonPlanifie() {
-        return ! boolval($this->dateFin) || ! boolval($this->dateDebut);
+        return !boolval($this->dateFin) || ! boolval($this->dateDebut);
     }
 
 
