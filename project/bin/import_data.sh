@@ -2,7 +2,6 @@
 
 . bin/config.inc
 
-
 REMOTE_DATA=$1
 
 SYMFODIR=$(pwd);
@@ -49,6 +48,10 @@ join -t ';' -1 2 -2 1 $DATA_DIR/adresse_facturation.csv $DATA_DIR/entite.csv.tem
 
 php app/console importer:csv societe.importer $DATA_DIR/societes.csv
 
+echo "Récupération des contrats"
+
+cat  $DATA_DIR/tblPrestation.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/tblPrestation.cleaned.csv
+
 #### CREATION PASSAGES.CSV ####
 echo "Récupération des passages"
 
@@ -63,25 +66,46 @@ cat $DATA_DIR/tblUtilisateur.csv | tr -d '\r' | cut -d ";" -f 1,2 | sed 's/^.*Re
 
 join -t ";" -1 4 -2 1 $DATA_DIR/passagesadresses.csv $DATA_DIR/techniciens.csv | sort -r > $DATA_DIR/passagesadressestechniciens.csv
 
-cat $DATA_DIR/passagesadressestechniciens.csv | awk -F ';'  '{
+#head -n 1 $DATA_DIR/passagesadressestechniciens.csv | tr ";" "\n" | awk -F ";" 'BEGIN { nb=0 } { nb = nb + 1; print nb ";" $0 }'
+cat $DATA_DIR/passagesadressestechniciens.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}[A-Z]{2}/\1 \2 \3 \4/g' | awk -F ';'  '{
     etablissement_id=sprintf("%06d", $25);
-    date_passage_debut=$7;
-    if(!date_passage_debut) { date_passage_debut=$6; }
-    if(!date_passage_debut) { date_passage_debut=$19; }
+    d=$7;
+    d_creation=$19;
+    date_passage_debut="";
+    if(d) {
+        "date --date=\""d"\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; 
+    }
+    date_creation=$19;
+
+    #if(!date_passage_debut && $6) { "date --date=\"$6\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; }
+    #if(!date_passage_debut && $19) { "date --date=\"$19\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; }
+        
     effectue=$13;
     planifie=$18;
+    facture=$12;
+    imprime=$14;
     duree=$8;
 
     if(!duree) { duree=60; }
 
-    if(!planifie) {
+    if(!effectue && date_passage_debut < "2016-01-15 00:00:00") {
+        next;
+    }
+
+    if(!effectue && date_passage_debut > "2016-03-01 00:00:00") {
         next;
     }
 
     date_creation=date_passage_debut;
 
-    if(!date_creation) {
+    if(!effectue) {
+        date_passage_debut="";
+    } else if(effectue && !date_passage_debut) {
         next;
+    }
+
+    if(!date_creation) {
+        date_creation="2016-01-01 00:00:00";        
     }
 
     libelle=$4; 
@@ -98,5 +122,7 @@ cat $DATA_DIR/passagesadressestechniciens.csv | awk -F ';'  '{
     print date_creation ";" etablissement_id ";" date_passage_debut ";;" duree ";" technicien ";" libelle ";" description
 
 }' > $DATA_DIR/passages.csv
+
+cat /tmp/aurouze/AUROUZE_DATAS/passages.csv  | sed -r 's/([A-Za-z]+)[ ]+[0-9]+[ ]+([0-9]+)[ ]+[0-9:]+[A-Z]+;/\2 \1;/' |cut -d ";" -f 1 | sort | uniq -c | sed -r 's/^[ ]+//' |sort -t " " -k 2,3
 
 php app/console importer:csv passage.importer $DATA_DIR/passages.csv
