@@ -20,8 +20,9 @@ class PassageRepository extends DocumentRepository {
         $query = $this->createQueryBuilder('Passage')
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
+                ->field('technicien')->equals($identifiantTech)
                 ->getQuery();
-        return$query->execute();
+        return $query->execute();
     }
 
     public function findOneByIdentifiantEtablissementAndIdentifiantPassage($identifiantEtb, $identifiantPassage) {
@@ -49,8 +50,26 @@ class PassageRepository extends DocumentRepository {
     }
 
     public function findPassagesForEtablissement($etablissementIdentifiant) {
-
-        return $this->findBy(array('etablissementIdentifiant' => $etablissementIdentifiant));
+    	$query = $this->createQueryBuilder('Passage')
+    	->field('etablissementIdentifiant')->equals($etablissementIdentifiant)
+    	->sort('dateDebut', 'desc')
+    	->getQuery();
+    	return$query->execute();
+    }
+    
+    public function findTechniciens() {
+    	$techniciens = array();
+    	$query = $this->createQueryBuilder('Passage')
+    	->group(array('technicien' => 1), array('count' => 0))
+    	->reduce('function (obj, prev) { prev.count++; }')
+    	->getQuery();
+    	$result =  $query->execute();
+    	if (count($result)) {
+    		foreach ($result as $item) {
+    			$techniciens[$item['technicien']] = $item['technicien'];
+    		}
+    	}
+    	return $techniciens;
     }
 
     public function findToPlan() {

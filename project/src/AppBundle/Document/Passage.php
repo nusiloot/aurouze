@@ -319,6 +319,26 @@ class Passage {
     }
 
     /**
+     * Get dateEffectue
+     *
+     * @return date $dateEffectue
+     */
+    public function getEffectue() {
+        return $this->dateEffectue;
+    }
+
+    /**
+     * Set dateEffectue
+     *
+     * @param date dateEffectue
+     * @return self
+     */
+    public function setDateEffectue($dateEffectue) {
+        $this->dateEffectue = $dateEffectue;
+        return $this;
+    }
+
+    /**
      * Get dateFin
      *
      * @return date $dateFin

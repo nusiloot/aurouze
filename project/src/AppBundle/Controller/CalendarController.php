@@ -13,11 +13,20 @@ class CalendarController extends Controller {
      * @Route("/calendar/{etablissement}/{passage}/{technicien}", name="calendar")
      */
     public function calendarAction(Request $request) {
-
-        $etablissement = $request->get('etablissement');
+    	
+    	$etablissement = $request->get('etablissement');
         $passage = $request->get('passage');
-        $technicien = $request->get('technicien');
-        return $this->render('calendar/calendar.html.twig', array('etablissement' => $etablissement, 'passage' => $passage, 'technicien' => $technicien));
+        $technicien = ($request->get('technicien_choice'))? $request->get('technicien_choice')['technicien'] : $request->get('technicien');
+        $technicienForm = $this->get('technicien.choix');
+        
+        
+        $form = $this->createForm($technicienForm, null,array(
+        		'action' => $this->generateUrl('calendar', array('etablissement' => $etablissement, 'passage' => $passage, 'technicien' => $technicien)),
+        		'method' => 'GET',
+        ));
+        
+        
+        return $this->render('calendar/calendar.html.twig', array('etablissement' => $etablissement, 'passage' => $passage, 'technicien' => $technicien, 'form' => $form->createView()));
     }
 
     /**
@@ -82,11 +91,14 @@ class CalendarController extends Controller {
         $periodeStart = $request->get('start');
         $periodeEnd = $request->get('end');
         $etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneByIdentifiant($request->get('etablissement'));
-        $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, "1");
+        $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $request->get('technicien'));
 
         $passagesCalendar = array();
 
         foreach ($passagesTech as $passageTech) {
+        	if (!$passageTech->getDateFin()) {
+        		continue;
+        	}
             $passageArr = array('id' => $passageTech->getId(),
                 'title' => $passageTech->getPassageEtablissement()->getNom() . ' ' . $passageTech->getPassageEtablissement()->getAdressecomplete(),
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),

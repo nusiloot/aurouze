@@ -38,46 +38,44 @@
     </div>
     <br/>
 
-    <div class="row list-group">
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         {% for pe in passages %}
-            <div class="list-group-item list-group-item-xs">
+        <div class="panel panel-default">
+		    <div class="panel-heading" role="tab" id="heading-{{ pe.identifiant }}">
+		      <h4 class="panel-title">
                 <div class="row">
-                    <div class="col-xs-6">
-                        {{ pe.dateCreation | localizeddate('full', 'none') }} {{ pe.dateCreation | localizeddate('none', 'short') }}
-                    </div>
-                    <div class="col-xs-6">
-                        <span class="pull-right">
-                            {{ pe.libelle }}
-                        </span>
-                    </div>
-                </div>   
-                <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-xs-8">
                         <div class="row">
-                            <div class="col-xs-6">
-                                <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ pe.dateDebut | localizeddate('full', 'none') }} {{ pe.dateDebut | localizeddate('none', 'short') }}</span> 
-                            </div>
-                            <div class="col-xs-6">
-                                {% if(pe.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ pe.duree }}</span>{% endif %}
-                            </div>
+	                            <div class="col-xs-6">
+	                                <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ pe.dateDebut | localizeddate('full', 'none') }} {{ pe.dateDebut | localizeddate('none', 'short') }}</span> 
+	                            </div>
+	                            <div class="col-xs-6">
+	                                {% if(pe.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ pe.duree }}</span>{% endif %}
+	                            </div>
                         </div>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-xs-4">
                         <span class="pull-right">
                             {% if(pe.realise) %} <span class="label label-success">Réalisé</span>
                             {% elseif(pe.planifie)  %} <span class="label label-default">Planifié non réalisé</span>
-                            {% elseif(pe.nonplanifie)  %} <a href="{{path('calendar', {'etablissement' : pe.etablissementIdentifiant, 'passage' : pe.identifiant,'technicien' : "1"})}}"><span class="label label-warning">Planifier le passage</span> </a>
-                                  {% endif %}  
+                            {% elseif(pe.nonplanifie)  %} <a href="{{path('calendar', {'etablissement' : pe.etablissementIdentifiant, 'passage' : pe.identifiant,'technicien' : pe.technicien})}}"><span class="label label-warning">Planifier le passage</span> </a>
+                            {% endif %}  
                         </span>
                     </div>
-                </div>              
-                <br/>
-                <div class="row">
-                    <div class="col-xs-12">
-                        {{ pe.descriptionTransformed | nl2br }}
-                    </div>
-                </div>
-            </div>
+                </div> 
+                <h5>
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ pe.identifiant }}" aria-expanded="false" aria-controls="collapseOne">
+	          		{{ pe.libelle }}
+	        	</a>
+	        	</h5>
+		      </h4>
+		    </div>
+		    <div id="collapse-{{ pe.identifiant }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ pe.identifiant }}">
+		      <div class="panel-body">
+		        {{ pe.descriptionTransformed | nl2br }}
+		      </div>
+		    </div>
+		  </div>
         {% endfor %}
     </div>
 </div>
