@@ -52,7 +52,7 @@ class PassageRepository extends DocumentRepository {
     public function findPassagesForEtablissement($etablissementIdentifiant) {
     	$query = $this->createQueryBuilder('Passage')
     	->field('etablissementIdentifiant')->equals($etablissementIdentifiant)
-    	->sort('dateDebut', 'desc')
+    	->sort('dateCreation', 'desc')
     	->getQuery();
     	return$query->execute();
     }
