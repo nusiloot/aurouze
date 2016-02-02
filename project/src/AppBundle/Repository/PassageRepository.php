@@ -72,4 +72,13 @@ class PassageRepository extends DocumentRepository {
     	return $techniciens;
     }
 
+    public function findToPlan() {
+        $query = $this->createQueryBuilder('Passage')
+                      ->field('dateDebut')->exists(false)
+                      ->sort('dateCreation', 'asc')
+                      ->getQuery();
+
+        return $query->execute();
+    } 
+
 }

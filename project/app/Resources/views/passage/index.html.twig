@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="col-xs-12">
+<h3>Liste des passages à planifier</h3>
+<div class="list-group">
+{% for passage in passages %}
+    <a href="{{ path('passageEtablissement', { identifiantEtablissement: passage.etablissementIdentifiant }) }}" class="list-group-item">
+    {{ passage.passageEtablissement.nom }}
+    <button class="btn btn-xs btn-default">{{ passage.passageEtablissement.typeEtablissement }}</button>
+    <span class="text-muted">{{ passage.passageEtablissement.codePostal }} {{ passage.passageEtablissement.commune }} <small>({{ passage.passageEtablissement.adresse }})</small></span>
+    <span class="pull-right">Pour le {{ passage.dateCreation | localizeddate('full', 'none') }}</span>
+    </a>
+{% endfor %}
+</div>
+{% endblock %}
