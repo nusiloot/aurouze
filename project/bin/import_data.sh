@@ -73,7 +73,9 @@ cat $DATA_DIR/passagesadressestechniciens.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+
     d_creation=$19;
     date_passage_debut="";
     if(d) {
-        "date --date=\""d"\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; 
+        cmd="date --date=\""d"\" \"+%Y-%m-%d %H:%M:%S\"";
+        cmd | getline date_passage_debut;
+        close(cmd);
     }
     date_creation=$19;
 
