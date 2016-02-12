@@ -1,5 +1,20 @@
 $(function () {
 	/**
+	 * Dropping Elements
+	 */
+	$('#fc-events .event').each(function() {
+		$(this).data('event', {
+			title: $.trim($(this).data('title')),
+			stick: true
+		});
+		$(this).draggable({
+			zIndex: 999,
+			revert: true,
+			revertDuration: 0 
+		});
+
+	});
+	/**
 	 * FullCalendar Settings
 	 */
     $('#calendrier').fullCalendar({
@@ -10,8 +25,8 @@ $(function () {
         lang: 'fr',
 		timeFormat: 'H:mm',
 		allDaySlot: false,
-		scrollTime: "08:00:00",
 		editable: true,
+		droppable: true,
 		hiddenDays: [0],
 		defaultView: "agendaWeek",
         eventSources: [
@@ -31,31 +46,34 @@ $(function () {
         		}
         	);
         },
-        dayClick: function(moment, jsEvent, view) {
+        eventReceive: function(event) {
         	$.post(
         			$('#calendrier').data('urlUpdate'), { 
         			id: null, 
-        			start: moment.format(),
-        			end: null,
+        			start: event.start.format(),
+        			end: event.end.format()
         		}, function(data) {
-        			$('#calendrier').fullCalendar('addEventSource', [data]);
+        			event.id = data.id;
         		}
         	);
         },
+        drop: function() {
+				$(this).remove();
+		},
         eventResize: function(event) {
         	$.post(
         			$('#calendrier').data('urlUpdate'), { 
         			id: event.id, 
         			start: event.start.format(),
-        			end: event.end.format(),
+        			end: event.end.format()
         		});
         },
-        eventDrop: function(event) {    
+        eventDrop: function(event) {  
         	$.post(
         			$('#calendrier').data('urlUpdate'), { 
         			id: event.id, 
         			start: event.start.format(),
-        			end: event.end.format(),
+        			end: event.end.format()
         		});
         },
     });

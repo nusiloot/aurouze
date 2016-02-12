@@ -36,7 +36,3 @@ body {
 
    a:hover { text-decoration : none; }
 }
-
-#calendrier .fc-view-container {
-	cursor: cell;
-}

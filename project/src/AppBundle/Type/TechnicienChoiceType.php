@@ -35,7 +35,7 @@ class TechnicienChoiceType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
         $builder->add('technicien', 'choice', array("choices" => $this->getChoices(),
-            'label' => 'Chercher',
+            'label' => 'Rechercher un technicien',
             'expanded' => false,
             'multiple' => false,
             "attr" => array("class" => "form-control select2")))

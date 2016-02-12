@@ -273,4 +273,8 @@ class PassageEtablissement {
     public function getIconTypeEtb() {
         return EtablissementManager::$type_etablissements_pictos[$this->type_etablissement];
     }
+    
+    public function getIntitule() {
+    	return $this->getNom() . ' ' . $this->getAdressecomplete();
+    }
 }

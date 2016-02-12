@@ -453,4 +453,16 @@ class Passage {
     {
         return $this->identifiant;
     }
+    
+
+
+    public function getIntitule() 
+    {
+    	return $this->getPassageEtablissement()->getIntitule();
+    }
+    
+    public function getDureePrevisionnelle()
+    {
+    	return '01:00';
+    }
 }

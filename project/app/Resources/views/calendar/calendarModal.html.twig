@@ -1,2 +1,39 @@
-<p>Bonjour Modal</p>
-<p><a href="{{path('calendarDelete', {'etablissement': etablissement,'passage': passage,'technicien': technicien, 'id': id})}}">Supprimer le passage</a></p>
+ <div class="row">
+ 	<div class="col-xs-12">
+        <p class="text-right">
+            {% if(passage.realise) %} <span class="label label-success">Réalisé</span>
+            {% elseif(passage.planifie)  %} <span class="label label-default">Planifié non réalisé</span>
+            {% elseif(passage.nonplanifie)  %} <span class="label label-warning">Non Planifié</span>
+            {% endif %}  
+        </p>
+ 	</div>
+ </div>
+ <div class="row" style="margin-top: 20px;">
+ 	<div class="col-xs-6">
+        <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ passage.dateDebut | localizeddate('full', 'none') }} <strong>{{ passage.dateDebut | localizeddate('none', 'short') }}</strong></span> 
+    </div>
+    <div class="col-xs-6 text-right">
+        <span>{{ passage.libelle }}</span> 
+    </div>
+ </div>
+  <div class="row">
+ 	<div class="col-xs-6">
+        {% if(passage.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ passage.duree }}</span>{% endif %}
+    </div>
+    <div class="col-xs-6 text-right">
+        <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ passage.technicien }}
+    </div>
+  </div>
+<div class="row">
+	<div class="col-xs-12">
+	<p style="margin-top: 40px">
+		 {{ passage.descriptionTransformed | nl2br }}
+	</p>
+	</div>
+</div>                        
+<hr />   
+<div class="row"> 
+	<div class="col-xs-12">      
+		<a class="btn btn-danger pull-right" href="{{path('calendarDelete', {'etablissement': etablissement,'passage': passage.identifiant,'technicien': technicien, 'id': id})}}">Déplannifier</a>
+	</div>
+</div>

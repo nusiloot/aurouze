@@ -50,7 +50,9 @@
 
     $.initSelect2 = function () {
     	$('.select2-simple').each(function () {
-    		$(this).select2();
+    		$(this).select2({
+                    language: 'fr' 
+            });
     	 });
     }
 
@@ -58,9 +60,9 @@
 
         $('.select2-ajax').each(function () {
             var urlComponent = $(this).data('url');
-
             $(this).select2({
                 minimumInputLength: 3,
+                language: 'fr',
                 ajax: {
                     type: "POST",
                     url: urlComponent,
