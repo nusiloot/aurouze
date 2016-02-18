@@ -16,12 +16,13 @@ class EtablissementRepository extends DocumentRepository {
         return $this->findBy(array('identifiant_societe' => $societeIdentifiant));
     }
 
-    public function findByTerm($term) {
-        return $this->createQueryBuilder()
+    public function findByTerm($term,$criteria) {
+        $request = $this->createQueryBuilder()
                 ->find()
-                ->field('nom')->equals(new \MongoRegex('/.*'.$term.'.*/i'))
+                ->field($criteria)->equals(new \MongoRegex('/.*'.$term.'.*/i'))
                 ->getQuery()
                 ->execute();
+        return $request;
     }
 
     public function findAllPostfixByIdentifiantSociete($societeIdentifiant) {

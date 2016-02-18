@@ -40,6 +40,11 @@ class PassageController extends Controller {
         $etablissement = $this->get('etablissement.manager')->getRepository()->findOneByIdentifiant($identifiantEtablissement);
         $passages = $this->get('passage.manager')->getRepository()->findPassagesForEtablissement($etablissement->getIdentifiant());
 
-        return $this->render('passage/etablissement.html.twig', array('etablissement' => $etablissement, 'passages' => $passages));
+        $formEtablissement = $this->createForm(new EtablissementChoiceType(), array('etablissements' => $etablissement->getIdentifiant(), 'etablissement' => $etablissement), array(
+            'action' => $this->generateUrl('passage_etablissement_choice'),
+            'method' => 'POST',
+        ));
+
+        return $this->render('passage/etablissement.html.twig', array('etablissement' => $etablissement, 'passages' => $passages, 'formEtablissement' => $formEtablissement->createView()));
     }
 }

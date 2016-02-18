@@ -1,6 +1,9 @@
 {% set _menu_active = 'passage' %}
 {% extends 'base.html.twig' %}
 {% block body %}
+
+{{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+
     <div class="row">
         <div class="col-xs-12">
             <div class="panel panel-default">
