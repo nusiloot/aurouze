@@ -84,11 +84,15 @@ class PassageRepository extends DocumentRepository {
     	->reduce('function (obj, prev) { prev.count++; }')
     	->getQuery();
     	$result =  $query->execute();
+
     	if (count($result)) {
     		foreach ($result as $item) {
     			$techniciens[$item['technicien']] = $item['technicien'];
     		}
     	}
+
+        ksort($techniciens);
+        
     	return $techniciens;
     }
 
