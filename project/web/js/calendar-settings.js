@@ -50,6 +50,7 @@ $(function () {
             );
         },
         eventReceive: function (event) {
+            $('#retour_technicien_btn').removeClass('hidden');
             $.post(
                     $('#calendrier').data('urlUpdate'), {
                 id: null,
@@ -65,15 +66,15 @@ $(function () {
         },
         eventResize: function (event) {
             $.post(
-                    $('#calendrier').data('urlUpdate'), {
+               $('#calendrier').data('urlUpdate'), {
                 id: event.id,
                 start: event.start.format(),
                 end: event.end.format()
             });
         },
-        eventDrop: function (event) {
+        eventDrop: function (event) {           
             $.post(
-                    $('#calendrier').data('urlUpdate'), {
+               $('#calendrier').data('urlUpdate'), {
                 id: event.id,
                 start: event.start.format(),
                 end: event.end.format()
