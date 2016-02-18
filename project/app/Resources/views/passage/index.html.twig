@@ -7,9 +7,18 @@
 <div class="row">
     <div class="col-xs-12">
         <h3>Liste des passages à planifier</h3>
-        <div class="list-group">
+        
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12">
+                    <input type="hidden" data-placeholder="Saisissez un techinicien, un code postal, ..." data-hamzastyle-container="#liste_passage" class="hamzastyle form-control select2" style="width: 100%;" />
+                </div>
+            </div>
+        </div>
+
+        <div id="liste_passage" class="list-group">
         {% for passage in passages %}
-            <a href="{{ path('passage_etablissement', { identifiantEtablissement: passage.etablissementIdentifiant }) }}" class="list-group-item">
+            <a data-words='{{ [passage.technicien, passage.passageEtablissement.codePostal, passage.passageEtablissement.commune, passage.passageEtablissement.typeEtablissement, passage.dateCreation | localizeddate('full', 'none'), passage.passageEtablissement.nom]|json_encode() }}' href="{{ path('passage_etablissement', { identifiantEtablissement: passage.etablissementIdentifiant }) }}" class="list-group-item hamzastyle-item">
                 <div class="row">
                     <div class="col-sm-7 col-sm-12">
                     <i class="mdi mdi-{{ passage.passageEtablissement.iconTypeEtb }} mdi-lg"></i>
