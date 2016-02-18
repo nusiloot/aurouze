@@ -52,7 +52,7 @@ class EtablissementManager {
         self::TYPE_ETB_NON_SPECIFIE => "Non spécifié");
     
     public static $type_etablissements_pictos = array(
-        self::TYPE_ETB_BOULANGERIE => "local-pizza",
+        self::TYPE_ETB_BOULANGERIE => "cake",
         self::TYPE_ETB_RESTAURANT => "local-dining",
         self::TYPE_ETB_ADMINISTRATION => "description",
         self::TYPE_ETB_MAIRIE => "account-balance",
