@@ -27,8 +27,10 @@
 			</div>
 			<ul class="nav nav-tabs" role="tablist" style="margin-bottom: 15px; font-size: 13px;">
 				<li role="presentation"{% if not technicien %} class="active"{% endif %}><a href="{{ path('calendar') }}" role="tab" style="color: black;"><strong>Tous</strong></a></li>
-			{% for tech in techniciens %}
-		        <li role="presentation"{% if tech == technicien %} class="active"{% endif %}><a href="{{ path('calendar',{'technicien': tech}) }}" role="tab" style="color: {{ colors[tech] }};"><strong>{{ tech }}</strong></a></li>
+            {% set i=0 %}
+			{% for tech in techniciens if i < 8 %}
+		        <li role="presentation"{% if tech == technicien %} class="active"{% endif %}><a href="{{ path('calendar',{'technicien': tech}) }}" role="tab" style="color: {{ colors[loop.index0] }};"><strong>{{ tech }}</strong></a></li>
+                {% set i=loop.index %}
 		    {% endfor %}
 		    </ul>
         	<div class="row">

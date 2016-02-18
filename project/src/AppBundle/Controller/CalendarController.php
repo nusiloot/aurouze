@@ -9,14 +9,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CalendarController extends Controller {
 	public static $colors = array(
-			"Leonard" => "#ABC8E2", // bleu
-			"Manu" => "#FDD131", // jaune
-			"Vincent RUDEAUX" => "#B0CC99", // vert
-			"Fabien PINON" => "#EFA0FF", // violet
-			"Laurent TOUYA" => "#C44C51", // rouge
-			"Anthony SCHIRMER" => "#FF5B2B", // orange
-			"Jean Paul HERVILLARD" => "#BF8273", // marron
-			"Bernard RIDARD" => "#C0BFA9"	// moche	
+			"#ABC8E2", // bleu
+			"#FDD131", // jaune
+			"#B0CC99", // vert
+			"#EFA0FF", // violet
+			"#C44C51", // rouge
+			"#FF5B2B", // orange
+			"#BF8273", // marron
+            "#C0BFA9",   // moche    
+            "#000000",   // noir 
+			"#ed85d8",	// rose	
 	);
     /**
      * @Route("/calendar", name="calendar")

@@ -75,7 +75,11 @@
         		    </div>
         		    <div id="collapse-{{ pe.identifiant }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ pe.identifiant }}">
             		    <div class="panel-body">
+                            {% if pe.descriptionTransformed %}
             		        {{ pe.descriptionTransformed | nl2br }}
+                            {% else %}
+                            <span class="text-muted">Aucun rapport de passage</span>
+                            {% endif %}
             		    </div>
         		    </div>
         		</div>
