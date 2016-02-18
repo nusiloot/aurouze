@@ -64,7 +64,7 @@
                                     <span class="pull-right">
                                         {% if(pe.realise) %} <span class="label label-success">Réalisé</span>
                                         {% elseif(pe.planifie)  %} <span class="label label-default">Planifié non réalisé</span>
-                                        {% elseif(pe.nonplanifie)  %} <a class="btn btn-sm btn-warning" href="{{path('calendar', {'etablissement' : pe.etablissementIdentifiant, 'passage' : pe.identifiant,'technicien' : pe.technicien})}}">Planifier le passage</a>
+                                        {% elseif(pe.nonplanifie)  %} <a class="btn btn-sm btn-warning" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : pe.technicien})}}">Planifier le passage</a>
                                         {% endif %}  
                                     </span>
                                 </div>

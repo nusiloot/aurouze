@@ -19,19 +19,31 @@
         <div id="container">
         	
         	<div class="row">
-        		<div class="col-sm-8">
-	        		{{ include('technicien/choixForm.html.twig', { 'form': form, 'technicien': technicien }) }}
-	    		</div>
-				<div id="fc-events" class="col-sm-4">
-					{% if not passage.dateFin %}
+				<div id="fc-events" class="col-sm-12">
+					{% if passage and not passage.dateFin %}
 					<div class="event btn btn-sm btn-primary pull-right" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.intitule }}</div>
 					{% endif %}
 				</div>
 			</div>
-			<hr />
+			<ul class="nav nav-tabs" role="tablist" style="margin-bottom: 15px; font-size: 13px;">
+				<li role="presentation"{% if not technicien %} class="active"{% endif %}><a href="{{ path('calendar') }}" role="tab" style="color: black;"><strong>Tous</strong></a></li>
+			{% for tech in techniciens %}
+		        <li role="presentation"{% if tech == technicien %} class="active"{% endif %}><a href="{{ path('calendar',{'technicien': tech}) }}" role="tab" style="color: {{ colors[tech] }};"><strong>{{ tech }}</strong></a></li>
+		    {% endfor %}
+		    </ul>
         	<div class="row">
         		<div class="col-sm-12">
-        			<div id="calendrier" data-url-populate="{{path('calendarPopulate', {'etablissement': etablissement,'passage': passage.identifiant,'technicien': technicien})}}" data-url-update="{{path('calendarUpdate', {'etablissement': etablissement,'passage': passage.identifiant,'technicien': technicien})}}" data-url-read="{{path('calendarRead', {'etablissement': etablissement,'passage': passage.identifiant,'technicien': technicien}) }}"></div>
+        			<div 
+        				id="calendrier" 
+        				data-url-populate="{{path('calendarPopulate', {'technicien': technicien})}}" 
+        				data-url-read="{{path('calendarRead') }}"
+        				{% if passage %}
+        				data-url-update="{{path('calendarUpdate')}}" 
+        				{% else %}
+        				data-url-update="" 
+        				{% endif %}
+        			>
+        			</div>
         		</div>
         	</div>
         </div>

@@ -506,5 +506,9 @@ class Passage {
     public function getStatut() {
         return $this->statut;
     }
-
+    public function getPassageIdentifiant()
+    {
+    	return $this->etablissementIdentifiant.'-'.$this->identifiant;
+    }
+    
 }
