@@ -103,4 +103,10 @@
             });
         });
     }
+
+    $(".select2SubmitOnChange").on("change", function (e) {
+        if ($(this).val()) {
+            $(this).parents('form').submit();
+        }
+    });
 })(jQuery);

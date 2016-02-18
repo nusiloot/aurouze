@@ -6,7 +6,7 @@
                 <div class="form-group">
                     <div class="col-xs-9">
                         <div class="error_list">{{ form_errors(form.etablissements) }}</div>
-                        {{ form_widget(form.etablissements, {'attr': {'class': 'form-control select2 select2-ajax', 'data-placeholder': 'Rechercher un établissement', 'data-url' : path('etablissement_search') } }) }}
+                        {{ form_widget(form.etablissements, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher un établissement', 'data-url' : path('etablissement_search') } }) }}
                     </div>     
                 <div class="col-xs-1">
                     <button type="submit" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-search"></span></button>
