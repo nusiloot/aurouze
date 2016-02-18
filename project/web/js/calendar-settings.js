@@ -41,7 +41,8 @@ $(function () {
         eventClick: function (event) {
             $.post(
                     $('#calendrier').data('urlRead'), {
-                id: event.id
+                id: event.id,
+                light: 0
             }, function (response) {
                 $('#modal-title').text(event.title);
                 $('#modal-body').html(response);
@@ -78,6 +79,43 @@ $(function () {
                 start: event.start.format(),
                 end: event.end.format()
             });
+        },
+    });
+    /**
+     * FullCalendar Light Settings
+     */
+    $('#calendrier-light').fullCalendar({
+        minTime: '06:00:00',
+        maxTime: '18:00:00',
+        height: 600,
+        header: {
+            left: 'prev, title, next',
+            right: 'month, agendaWeek, agendaDay',
+        },
+        lang: 'fr',
+        timeFormat: 'H:mm',
+        allDaySlot: false,
+        editable: false,
+        droppable: false,
+        hiddenDays: [0],
+        defaultView: "agendaWeek",
+        eventSources: [
+            {
+                url: $('#calendrier-light').data('urlPopulate'),
+                type: 'POST'
+            }
+        ],
+        eventClick: function (event) {
+            $.post(
+                    $('#calendrier-light').data('urlRead'), {
+                id: event.id,
+                light: 1
+            }, function (response) {
+                $('#modal-title').text(event.title);
+                $('#modal-body').html(response);
+                $('#modal-calendrier-infos').modal();
+            }
+            );
         },
     });
 });
