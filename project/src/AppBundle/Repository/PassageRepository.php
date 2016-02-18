@@ -25,6 +25,22 @@ class PassageRepository extends DocumentRepository {
         return $query->execute();
     }
 
+    public function findAllByPeriode($startDate, $endDate) {
+        $mongoStartDate = new MongoDate(strtotime($startDate));
+        $mongoEndDate = new MongoDate(strtotime($endDate));
+        $query = $this->createQueryBuilder('Passage')
+                ->field('dateDebut')->gte($mongoStartDate)
+                ->field('dateDebut')->lte($mongoEndDate)
+                ->getQuery();
+        return $query->execute();
+    }
+
+    public function findOneByIdentifiantPassage($identifiantPassage) {
+
+        return $this->findOneBy(
+                        array('id' => 'PASSAGE-' . $identifiantPassage));
+    }
+
     public function findOneByIdentifiantEtablissementAndIdentifiantPassage($identifiantEtb, $identifiantPassage) {
 
         return $this->findOneBy(
@@ -59,7 +75,11 @@ class PassageRepository extends DocumentRepository {
     
     public function findTechniciens() {
     	$techniciens = array();
+    	$date = new \DateTime();
+    	$date->modify('-1 month');
+    	$mongoStartDate = new MongoDate(strtotime($date->format('Y-m-d')));
     	$query = $this->createQueryBuilder('Passage')
+    	->field('dateDebut')->gte($mongoStartDate)
     	->group(array('technicien' => 1), array('count' => 0))
     	->reduce('function (obj, prev) { prev.count++; }')
     	->getQuery();

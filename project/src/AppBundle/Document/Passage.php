@@ -465,4 +465,9 @@ class Passage {
     {
     	return '01:00';
     }
+    
+    public function getPassageIdentifiant()
+    {
+    	return $this->etablissementIdentifiant.'-'.$this->identifiant;
+    }
 }
