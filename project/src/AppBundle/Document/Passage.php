@@ -15,9 +15,13 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\PrePersist;
+use AppBundle\Manager\PassageManager;
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository")
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository")  @HasLifecycleCallbacks
+ * 
  */
 class Passage {
 
@@ -37,7 +41,7 @@ class Passage {
      * @MongoDB\String
      */
     protected $identifiant;
-    
+
     /**
      * @MongoDB\String
      */
@@ -88,6 +92,18 @@ class Passage {
      */
     protected $technicien;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $statut;
+
+    
+    /** @PrePersist */
+    public function prePersist()
+    {
+        $this->updateStatut();
+    }
+    
     /**
      * Get id
      *
@@ -420,17 +436,28 @@ class Passage {
     }
 
     public function isRealise() {
-        return false;
-        return boolval($this->dateEffectue);
+        return $this->statut == PassageManager::STATUT_REALISE;
     }
 
     public function isPlanifie() {
-        return boolval($this->dateFin) && boolval($this->dateDebut);
-    }
-    public function isNonPlanifie() {
-        return !boolval($this->dateFin) || ! boolval($this->dateDebut);
+        return $this->statut == PassageManager::STATUT_PLANNIFIE;
     }
 
+    public function isNonPlanifie() {
+        return $this->statut == PassageManager::STATUT_NON_PLANNIFIE;
+    }
+
+    public function updateStatut() {
+        if (!boolval($this->dateFin) || !boolval($this->dateDebut)) {
+            $this->setStatut(PassageManager::STATUT_NON_PLANNIFIE);
+        }
+        if (boolval($this->dateFin) && boolval($this->dateDebut)) {
+            $this->setStatut(PassageManager::STATUT_PLANNIFIE);
+        }
+//        if (boolval($this->dateEffectue)) {
+//            $this->setStatut(PassageManager::STATUT_REALISE);
+//        }
+    }
 
     /**
      * Set identifiant
@@ -438,8 +465,7 @@ class Passage {
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant)
-    {
+    public function setIdentifiant($identifiant) {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -449,25 +475,40 @@ class Passage {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant()
-    {
+    public function getIdentifiant() {
         return $this->identifiant;
     }
-    
 
+    public function getIntitule() {
+        return $this->getPassageEtablissement()->getIntitule();
+    }
 
-    public function getIntitule() 
-    {
-    	return $this->getPassageEtablissement()->getIntitule();
+    public function getDureePrevisionnelle() {
+        return '01:00';
     }
-    
-    public function getDureePrevisionnelle()
-    {
-    	return '01:00';
+
+    /**
+     * Set statut
+     *
+     * @param string $statut
+     * @return self
+     */
+    public function setStatut($statut) {
+        $this->statut = $statut;
+        return $this;
     }
-    
+
+    /**
+     * Get statut
+     *
+     * @return string $statut
+     */
+    public function getStatut() {
+        return $this->statut;
+    }
     public function getPassageIdentifiant()
     {
     	return $this->etablissementIdentifiant.'-'.$this->identifiant;
     }
+    
 }
