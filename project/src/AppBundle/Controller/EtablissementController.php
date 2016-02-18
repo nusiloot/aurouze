@@ -36,17 +36,25 @@ class DefaultController extends Controller {
         $etablissementsResult = array();
         if (strlen($term) > 3) {
             $dm = $this->get('doctrine_mongodb')->getManager();
-            $etablissements = $dm->getRepository('AppBundle:Etablissement')->findByTerm($term);
-            foreach ($etablissements as $etablissement) {
-                $newResult = new \stdClass();
-                $newResult->id = $etablissement->getIdentifiant();
-                $newResult->term = $etablissement->getLibelleLong();
-                $etablissementsResult[] = $newResult;
-            }
+            $etablissementsByNom = $dm->getRepository('AppBundle:Etablissement')->findByTerm($term, 'nom');
+            $etablissementsByCommune = $dm->getRepository('AppBundle:Etablissement')->findByTerm($term, 'commune');
+            $this->contructSearchResult($etablissementsByNom,$etablissementsResult);
+             $this->contructSearchResult($etablissementsByCommune,$etablissementsResult);
         }
         $data = json_encode($etablissementsResult);
         $response->headers->set('Content-Type', 'application/json');
         $response->setContent($data);
         return $response;
     }
+
+    public function contructSearchResult($etablissementsByCriteria, &$etablissementsResult) {
+
+        foreach ($etablissementsByCriteria as $etablissement) {
+            $newResult = new \stdClass();
+            $newResult->id = $etablissement->getIdentifiant();
+            $newResult->term = $etablissement->getLibelleLong();
+            $etablissementsResult[] = $newResult;
+        }
+    }
+
 }
