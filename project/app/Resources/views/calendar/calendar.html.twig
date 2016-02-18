@@ -18,12 +18,16 @@
     	
         <div id="container">
         	
-        	<div class="row">
+            <div class="row" style="padding-bottom: 10px;">
 				<div id="fc-events" class="col-sm-12">
 					{% if passage and not passage.dateFin %}
 					<div class="event btn btn-sm btn-primary pull-right" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.intitule }}</div>
 					{% endif %}
 				</div>
+                                 <div class="col-sm-12 hidden" id="retour_technicien_btn" >
+                    <a class="btn btn-sm btn-default pull-right" href="{{ path('passage')~'#filtre=["'~technicien~'"]' }}"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux passages prévus pour {{technicien}}</a>
+                </div>
+                <br/>
 			</div>
 			<ul class="nav nav-tabs" role="tablist" style="margin-bottom: 15px; font-size: 13px;">
 				<li role="presentation"{% if not technicien %} class="active"{% endif %}><a href="{{ path('calendar') }}" role="tab" style="color: black;"><strong>Tous</strong></a></li>
