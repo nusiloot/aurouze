@@ -8,36 +8,32 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CalendarController extends Controller {
-
+	public static $colors = array(
+			"Leonard" => "#ABC8E2", // bleu
+			"Manu" => "#FDD131", // jaune
+			"Vincent RUDEAUX" => "#B0CC99", // vert
+			"Fabien PINON" => "#EFA0FF", // violet
+			"Laurent TOUYA" => "#C44C51", // rouge
+			"Anthony SCHIRMER" => "#FF5B2B", // orange
+			"Jean Paul HERVILLARD" => "#BF8273", // marron
+			"Bernard RIDARD" => "#C0BFA9"	// moche	
+	);
     /**
-     * @Route("/calendar", name="calendar_all")
-     */
-    public function calendarAllAction(Request $request) {
-    	$dm = $this->get('doctrine_mongodb')->getManager();
-        
-        return $this->render('calendar/calendar.html.twig');
-    }
-    /**
-     * @Route("/calendar/{etablissement}/{passage}/{technicien}", name="calendar")
+     * @Route("/calendar", name="calendar")
      */
     public function calendarAction(Request $request) {
     	$dm = $this->get('doctrine_mongodb')->getManager();
-    	$etablissement = $request->get('etablissement');
-        $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantEtablissementAndIdentifiantPassage($request->get('etablissement'), $request->get('passage'));
-        $technicien = ($request->get('technicien_choice'))? $request->get('technicien_choice')['technicien'] : $request->get('technicien');
-        $technicienForm = $this->get('technicien.choix');
-        
-        $form = $this->createForm($technicienForm, null,array(
-        		'action' => $this->generateUrl('calendar', array('etablissement' => $etablissement, 'passage' => $passage->getIdentifiant(), 'technicien' => $technicien)),
-        		'method' => 'GET',
-        ));
+    	
+        $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
+        $technicien = $request->get('technicien');
+        $techniciens = $dm->getRepository('AppBundle:Passage')->findTechniciens();
         
         
-        return $this->render('calendar/calendar.html.twig', array('etablissement' => $etablissement, 'passage' => $passage, 'technicien' => $technicien, 'form' => $form->createView()));
+        return $this->render('calendar/calendar.html.twig', array('colors' => self::$colors, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien));
     }
 
     /**
-     * @Route("/calendar/{etablissement}/{passage}/{technicien}/update", name="calendarUpdate", options={"expose" = "true"})
+     * @Route("/calendar/update", name="calendarUpdate", options={"expose" = "true"})
      */
     public function calendarUpdateAction(Request $request) {
 
@@ -47,15 +43,8 @@ class CalendarController extends Controller {
 
         $error = false;
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneByIdentifiant($request->get('etablissement'));
-        $request->get('etablissement');
-
-        $id = $request->get('id');
-        $passageToMove = (!$id)?
-                $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantEtablissementAndIdentifiantPassage($request->get('etablissement'), $request->get('passage')) 
-                : $dm->getRepository('AppBundle:Passage')->findOneById($request->get('id'));
-
-        $id = $passageToMove->getId();
+        
+        $passageToMove = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('id'));
 
         $start = $request->get('start');
         $end = $request->get('end');
@@ -64,10 +53,13 @@ class CalendarController extends Controller {
             throw new \Exception();
         }
 
-        $event = array('id' => $id,
-            'title' => $passageToMove->getPassageEtablissement()->getIntitule(),
+        $event = array('id' => $passageToMove->getPassageIdentifiant(),
+            'title' => $passageToMove->getIntitule(),
             'start' => $start,
-            'end' => $end, 'backgroundColor' => "yellow", 'textColor' => "black");
+            'end' => $end, 
+        	'backgroundColor' => (isset(self::$colors[$passageToMove->getTechnicien()])) ? self::$colors[$passageToMove->getTechnicien()] : "yellow", 
+        	'textColor' => "black"
+        );
 
         $passageToMove->setDateDebut($start);
         $passageToMove->setDateFin($end);
@@ -81,7 +73,7 @@ class CalendarController extends Controller {
     }
 
     /**
-     * @Route("/calendar/{etablissement}/{passage}/{technicien}/populate", name="calendarPopulate", options={"expose" = "true"})
+     * @Route("/calendar/populate", name="calendarPopulate", options={"expose" = "true"})
      */
     public function calendarPopulateAction(Request $request) {
 
@@ -91,8 +83,9 @@ class CalendarController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $periodeStart = $request->get('start');
         $periodeEnd = $request->get('end');
-        $etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneByIdentifiant($request->get('etablissement'));
-        $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $request->get('technicien'));
+        $passagesTech = ($request->get('technicien'))?
+        	$dm->getRepository('AppBundle:Passage')->findAllByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $request->get('technicien')) :
+        	$dm->getRepository('AppBundle:Passage')->findAllByPeriode($periodeStart, $periodeEnd);
 
         $passagesCalendar = array();
 
@@ -100,10 +93,12 @@ class CalendarController extends Controller {
         	if (!$passageTech->getDateFin()) {
         		continue;
         	}
-            $passageArr = array('id' => $passageTech->getId(),
-                'title' => $passageTech->getPassageEtablissement()->getNom() . ' ' . $passageTech->getPassageEtablissement()->getAdressecomplete(),
+            $passageArr = array('id' => $passageTech->getPassageIdentifiant(),
+                'title' => $passageTech->getPassageEtablissement()->getIntitule(),
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
-                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'), 'backgroundColor' => "yellow", 'textColor' => "black");
+                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'), 
+            	'backgroundColor' => (isset(self::$colors[$passageTech->getTechnicien()])) ? self::$colors[$passageTech->getTechnicien()] : "yellow",
+            	'textColor' => "black");
             $passagesCalendar[] = $passageArr;
         }
         $response = new Response(json_encode($passagesCalendar));
@@ -112,7 +107,7 @@ class CalendarController extends Controller {
     }
 
     /**
-     * @Route("/calendar/{etablissement}/{passage}/{technicien}/read", name="calendarRead", options={"expose" = "true"})
+     * @Route("/calendar/read", name="calendarRead", options={"expose" = "true"})
      */
     public function calendarReadAction(Request $request) {
 
@@ -121,32 +116,27 @@ class CalendarController extends Controller {
         }
 
         $error = false;
-
-        $etablissement = $request->get('etablissement');
-        $technicien = $request->get('technicien');
-        $id = $request->get('id');
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('id'));
+        $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('id'));
+        
 
         if ($error) {
             throw new \Exception();
         }
 
-        return $this->render('calendar/calendarModal.html.twig', array('etablissement' => $etablissement, 'passage' => $passage, 'technicien' => $technicien, 'id' => $id));
+        return $this->render('calendar/calendarModal.html.twig', array('passage' => $passage));
     }
 
     /**
-     * @Route("/calendar/{etablissement}/{passage}/{technicien}/{id}/delete", name="calendarDelete", options={"expose" = "true"})
+     * @Route("/calendar/delete", name="calendarDelete", options={"expose" = "true"})
      */
     public function calendarDeleteAction(Request $request) {
 
         $error = false;
 
-        $etablissement = $request->get('etablissement');
-        $passage = $request->get('passage');
-        $technicien = $request->get('technicien');
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $passageToDelete = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('id'));
+        $passageToDelete = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
+        $technicien = $passageToDelete->getTechnicien();
 
         $passageToDelete->setDateFin(null);
         $dm->persist($passageToDelete);
@@ -155,7 +145,7 @@ class CalendarController extends Controller {
             throw new \Exception();
         }
 
-        return $this->redirect($this->generateUrl('calendar', array('etablissement' => $etablissement, 'passage' => $passage, 'technicien' => $technicien)));
+        return $this->redirect($this->generateUrl('calendar', array('passage' => $request->get('passage'), 'technicien' => $technicien)));
     }
 
 }
