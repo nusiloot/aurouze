@@ -68,6 +68,7 @@
             $(this).select2({
                 minimumInputLength: 3,
                 language: 'fr',
+                allowClear: true,
                 ajax: {
                     type: "POST",
                     url: urlComponent,
@@ -102,4 +103,10 @@
             });
         });
     }
+
+    $(".select2SubmitOnChange").on("change", function (e) {
+        if ($(this).val()) {
+            $(this).parents('form').submit();
+        }
+    });
 })(jQuery);

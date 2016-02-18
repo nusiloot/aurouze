@@ -26,7 +26,12 @@ class EtablissementChoiceType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
-        $builder->add('etablissements', 'choice', array("choices" => array(),
+        $defaultChoice = array();
+        if(isset($options['data']) && isset($options['data']['etablissement'])) {
+            $defaultChoice = array($options['data']['etablissement']->getIdentifiant() => $options['data']['etablissement']->getLibelleLong());
+        }
+
+        $builder->add('etablissements', 'choice', array("choices" => $defaultChoice,
             'label' => 'Chercher',
             'expanded' => false,
             'multiple' => false,

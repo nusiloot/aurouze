@@ -270,4 +270,10 @@ class Etablissement {
         return EtablissementManager::$type_etablissements_pictos[ $this->type_etablissement];
     }
 
+
+    public function getLibelleLong() {
+        return $this->getNom() . ' ' . $this->getAdresse()->getAdresse()
+                        . ' ' . $this->getAdresse()->getCodePostal()
+                        . ' ' . $this->getAdresse()->getCommune();
+    }
 }
