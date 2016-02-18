@@ -1,5 +1,5 @@
+{% set _menu_active = 'passage' %}
 {% extends 'base.html.twig' %}
-
 {% block body %}
     <div class="row">
         <div class="col-xs-12">
@@ -20,7 +20,7 @@
                             {{ etablissement.adressecomplete }}
                         </div>
                         <div class="col-xs-2">
-                            <i class="pull-right mdi mdi-{{ etablissement.iconTypeEtb }} mdi-4x"></i>
+                            <i style="cursor: default;" class="pull-right mdi mdi-{{ etablissement.iconTypeEtb }} mdi-4x" title="{{ etablissement.typeEtablissement }}" data-toggle="tooltip" ></i>
 
                         </div>
                     </div>

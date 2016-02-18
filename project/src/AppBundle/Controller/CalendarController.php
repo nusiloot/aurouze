@@ -10,6 +10,14 @@ use Symfony\Component\HttpFoundation\Response;
 class CalendarController extends Controller {
 
     /**
+     * @Route("/calendar", name="calendar_all")
+     */
+    public function calendarAllAction(Request $request) {
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+        
+        return $this->render('calendar/calendar.html.twig');
+    }
+    /**
      * @Route("/calendar/{etablissement}/{passage}/{technicien}", name="calendar")
      */
     public function calendarAction(Request $request) {

@@ -6,8 +6,13 @@
         $.initAjaxPost();
         $.initSelect2();
         $.initSelect2Ajax();
+        $.initTooltips();
     });
-
+    
+    $.initTooltips = function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+    
     $.initAjaxPost = function ()
     {
 
@@ -49,11 +54,11 @@
     };
 
     $.initSelect2 = function () {
-    	$('.select2-simple').each(function () {
-    		$(this).select2({
-                    language: 'fr' 
+        $('.select2-simple').each(function () {
+            $(this).select2({
+                language: 'fr'
             });
-    	 });
+        });
     }
 
     $.initSelect2Ajax = function () {
@@ -76,7 +81,7 @@
                         return queryParameters;
                     },
                     processResults: function (data) {
-                        
+
                         return {
                             results: $.map(data, function (item) {
                                 return {
