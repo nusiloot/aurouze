@@ -68,6 +68,7 @@
             $(this).select2({
                 minimumInputLength: 3,
                 language: 'fr',
+                allowClear: true,
                 ajax: {
                     type: "POST",
                     url: urlComponent,

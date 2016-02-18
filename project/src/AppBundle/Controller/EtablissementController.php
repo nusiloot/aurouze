@@ -40,9 +40,7 @@ class DefaultController extends Controller {
             foreach ($etablissements as $etablissement) {
                 $newResult = new \stdClass();
                 $newResult->id = $etablissement->getIdentifiant();
-                $newResult->term = $etablissement->getNom() . ' ' . $etablissement->getAdresse()->getAdresse()
-                        . ' ' . $etablissement->getAdresse()->getCodePostal()
-                        . ' ' . $etablissement->getAdresse()->getCommune();
+                $newResult->term = $etablissement->getLibelleLong();
                 $etablissementsResult[] = $newResult;
             }
         }
