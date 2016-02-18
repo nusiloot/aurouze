@@ -31,6 +31,7 @@ class PassageRepository extends DocumentRepository {
         $query = $this->createQueryBuilder('Passage')
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
+    			->sort('technicien', 'desc')
                 ->getQuery();
         return $query->execute();
     }

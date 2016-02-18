@@ -100,10 +100,10 @@ class CalendarController extends Controller {
         		continue;
         	}
             $passageArr = array('id' => $passageTech->getPassageIdentifiant(),
-                'title' => $passageTech->getPassageEtablissement()->getIntitule(),
+                'title' => ($request->get('title'))? $passageTech->getPassageEtablissement()->getIntitule() : "",
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'), 
-            	'backgroundColor' => (isset(self::$colors[$passageTech->getTechnicien()])) ? self::$colors[$passageTech->getTechnicien()] : "yellow",
+            	'backgroundColor' => $this->getColor($passageTech->getTechnicien()),
             	'textColor' => "black");
             $passagesCalendar[] = $passageArr;
         }
@@ -153,6 +153,25 @@ class CalendarController extends Controller {
         }
 
         return $this->redirect($this->generateUrl('calendar', array('passage' => $request->get('passage'), 'technicien' => $technicien)));
+    }
+    
+
+	/*
+	 * Fonction temporaire
+	 */
+    public function getColor($technicien) {
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+    	$techniciens = $dm->getRepository('AppBundle:Passage')->findTechniciens();
+    	$index = 0;
+    	$find = false;
+    	foreach ($techniciens as $tech) {
+    		if ($tech == $technicien) {
+    			$find = true;
+    			break;
+    		}
+    		$index++;
+    	}
+    	return ($find)? self::$colors[$index] : 'yellow';
     }
 
 }
