@@ -43,8 +43,10 @@ class CalendarController extends Controller {
 
         $error = false;
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $id = ($request->get('passage'))? $request->get('passage') : $request->get('id');
+        $technicien =  $request->get('technicien');
         
-        $passageToMove = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('id'));
+        $passageToMove = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($id);
 
         $start = $request->get('start');
         $end = $request->get('end');
@@ -60,7 +62,9 @@ class CalendarController extends Controller {
         	'backgroundColor' => (isset(self::$colors[$passageToMove->getTechnicien()])) ? self::$colors[$passageToMove->getTechnicien()] : "yellow", 
         	'textColor' => "black"
         );
-
+		if ($technicien) {
+        	$passageToMove->setTechnicien($technicien);
+		}
         $passageToMove->setDateDebut($start);
         $passageToMove->setDateFin($end);
         $dm->persist($passageToMove);
@@ -118,13 +122,14 @@ class CalendarController extends Controller {
         $error = false;
         $dm = $this->get('doctrine_mongodb')->getManager();
         $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('id'));
+        $technicien =  $request->get('technicien');
         
 
         if ($error) {
             throw new \Exception();
         }
 
-        return $this->render('calendar/calendarModal.html.twig', array('passage' => $passage));
+        return $this->render('calendar/calendarModal.html.twig', array('passage' => $passage, 'technicien' => $technicien));
     }
 
     /**
@@ -136,7 +141,7 @@ class CalendarController extends Controller {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $passageToDelete = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
-        $technicien = $passageToDelete->getTechnicien();
+        $technicien =  $request->get('technicien');
 
         $passageToDelete->setDateFin(null);
         $dm->persist($passageToDelete);

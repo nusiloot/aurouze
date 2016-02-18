@@ -28,7 +28,13 @@
 			<ul class="nav nav-tabs" role="tablist" style="margin-bottom: 15px; font-size: 13px;">
 				<li role="presentation"{% if not technicien %} class="active"{% endif %}><a href="{{ path('calendar') }}" role="tab" style="color: black;"><strong>Tous</strong></a></li>
 			{% for tech in techniciens %}
-		        <li role="presentation"{% if tech == technicien %} class="active"{% endif %}><a href="{{ path('calendar',{'technicien': tech}) }}" role="tab" style="color: {{ colors[tech] }};"><strong>{{ tech }}</strong></a></li>
+		        <li role="presentation"{% if tech == technicien %} class="active"{% endif %}>
+		        	{% if passage %}
+		        	<a href="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': tech}) }}" role="tab" style="color: {{ colors[tech] }};"><strong>{{ tech }}</strong></a>
+		        	{% else %}
+    				<a href="{{ path('calendar',{'technicien': tech}) }}" role="tab" style="color: {{ colors[tech] }};"><strong>{{ tech }}</strong></a>
+    				{% endif %}
+		        </li>
 		    {% endfor %}
 		    </ul>
         	<div class="row">
@@ -36,11 +42,11 @@
         			<div 
         				id="calendrier" 
         				data-url-populate="{{path('calendarPopulate', {'technicien': technicien})}}" 
-        				data-url-read="{{path('calendarRead') }}"
+        				data-url-read="{{path('calendarRead', {'technicien': technicien})}}" 
         				{% if passage %}
-        				data-url-update="{{path('calendarUpdate')}}" 
+        				data-url-update="{{path('calendarUpdate', {'passage': passage.passageIdentifiant(), 'technicien': technicien})}}" 
         				{% else %}
-        				data-url-update="" 
+        				data-url-update="{{path('calendarUpdate', {'technicien': technicien})}}" 
         				{% endif %}
         			>
         			</div>
