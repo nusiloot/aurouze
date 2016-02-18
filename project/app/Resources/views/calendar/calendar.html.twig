@@ -31,7 +31,7 @@
 			{% for tech in techniciens  if i < 8 %}
                 <li role="presentation"{% if tech == technicien %} class="active"{% endif %}>
                     {% if passage %}
-                    <a href="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': tech}) }}" role="tab" style="color: {{ colors[tech] }};"><strong>{{ tech }}</strong></a>
+                    <a href="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': tech}) }}" role="tab" style="color: {{ colors[i] }};"><strong>{{ tech }}</strong></a>
                     {% else %}
                     <a href="{{ path('calendar',{'technicien': tech}) }}" role="tab" style="color: {{ colors[i] }};"><strong>{{ tech }}</strong></a>
                     {% endif %}
