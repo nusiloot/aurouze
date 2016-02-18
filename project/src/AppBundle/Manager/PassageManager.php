@@ -19,7 +19,10 @@ use AppBundle\Document\Etablissement as Etablissement;
 use AppBundle\Document\Passage as Passage;
 
 class PassageManager {
-
+const STATUT_NON_PLANNIFIE = "NON_PLANNIFIE";
+const STATUT_PLANNIFIE = "PLANNIFIE";
+const STATUT_REALISE = "REALISE";
+    
     protected $dm;
 
     function __construct(DocumentManager $dm) {
