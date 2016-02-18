@@ -131,7 +131,7 @@ class CalendarController extends Controller {
             throw new \Exception();
         }
 
-        return $this->render('calendar/calendarModal.html.twig', array('passage' => $passage, 'technicien' => $technicien));
+        return $this->render('calendar/calendarModal.html.twig', array('passage' => $passage, 'technicien' => $technicien, 'light' => $request->get('light')));
     }
 
     /**
