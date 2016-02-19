@@ -32,17 +32,16 @@ Créez le vhost apache2
 
 > sudo vim /etc/apache2/site-available/*project_name*.conf
 
-<VirtualHost *:80>
-	ServerName uri_local_project_name
-	DocumentRoot "/path_to_your_project/project_name/project/web"
-	DirectoryIndex index.php
-
-	<Directory "/path_to_your_project/project_name/project/web">
-		AllowOverride All
-		Require all granted
-	</Directory>
-
-</VirtualHost>
+	<VirtualHost *:80>
+		ServerName uri_local_project_name
+		DocumentRoot "/path_to_your_project/project_name/project/web"
+		DirectoryIndex index.php
+	
+		<Directory "/path_to_your_project/project_name/project/web">
+			AllowOverride All
+			Require all granted
+		</Directory>
+	</VirtualHost>
 
 > sudo a2ensite *project_name*.conf
 
