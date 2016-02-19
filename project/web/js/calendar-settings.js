@@ -30,12 +30,16 @@ $(function () {
         allDaySlot: false,
         editable: true,
         droppable: true,
+        slotEventOverlap: false,
         hiddenDays: [0],
         defaultView: "agendaWeek",
         eventSources: [
             {
                 url: $('#calendrier').data('urlPopulate'),
-                type: 'POST'
+                type: 'POST',
+                data: {
+                    title: 1,
+                }
             }
         ],
         eventClick: function (event) {
@@ -91,19 +95,26 @@ $(function () {
         height: 600,
         header: {
             left: 'prev, title, next',
-            right: 'month, agendaWeek, agendaDay',
+            right: 'agendaWeek, agendaDay',
         },
         lang: 'fr',
-        timeFormat: 'H:mm',
+        timeFormat: ' ',
         allDaySlot: false,
         editable: false,
         droppable: false,
+        slotEventOverlap: false,
         hiddenDays: [0],
         defaultView: "agendaWeek",
+        eventAfterRender: function(event, element, view) {
+            $(element).css('max-width','20%');
+        },
         eventSources: [
             {
                 url: $('#calendrier-light').data('urlPopulate'),
-                type: 'POST'
+                type: 'POST',
+                data: {
+                    title: 0,
+                }
             }
         ],
         eventClick: function (event) {
