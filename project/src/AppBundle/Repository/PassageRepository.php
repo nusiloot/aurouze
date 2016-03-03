@@ -32,6 +32,7 @@ class PassageRepository extends DocumentRepository {
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
     			->sort('technicien', 'desc')
+    			->sort('dateDebut', 'asc')
                 ->getQuery();
         return $query->execute();
     }
@@ -77,10 +78,12 @@ class PassageRepository extends DocumentRepository {
     public function findTechniciens() {
     	$techniciens = array();
     	$date = new \DateTime();
+    	$mongoEndDate = new MongoDate(strtotime($date->format('Y-m-d')));
     	$date->modify('-1 month');
     	$mongoStartDate = new MongoDate(strtotime($date->format('Y-m-d')));
     	$query = $this->createQueryBuilder('Passage')
-    	->field('dateDebut')->gte($mongoStartDate)
+    	->field('dateFin')->gte($mongoStartDate)
+    	->field('dateFin')->lte($mongoEndDate)
     	->group(array('technicien' => 1), array('count' => 0))
     	->reduce('function (obj, prev) { prev.count++; }')
     	->getQuery();
