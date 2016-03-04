@@ -34,7 +34,7 @@ class CalendarController extends Controller {
         return $this->render('calendar/calendar.html.twig', array('colors' => self::$colors, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien));
     }
     /**
-     * @Route("/calendar/manuel", name="calendarManuel")
+     * @Route("/calendar/global", name="calendarManuel")
      */
     public function calendarManuelAction(Request $request) {
     	$dm = $this->get('doctrine_mongodb')->getManager();
