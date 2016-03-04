@@ -27,6 +27,10 @@ class PassageController extends Controller {
             $feature = new \stdClass();
             $feature->type="Feature";
             $feature->properties = new \stdClass();
+            $feature->properties->_id = $passage->getId();
+            $feature->properties->nom = $passage->getPassageEtablissement()->getNom();
+            $feature->properties->color = 'orange';
+            $feature->properties->icon = 'mdi-'.$passage->getPassageEtablissement()->getIconTypeEtb();
             $feature->geometry = new \stdClass();
             $feature->geometry->type = "Point";
             $feature->geometry->coordinates = array($passage->getPassageEtablissement()->getCoordinates()->getX(), $passage->getPassageEtablissement()->getCoordinates()->getY());
