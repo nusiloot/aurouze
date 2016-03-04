@@ -2,36 +2,45 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 
-{{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+    {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
 
-<div class="row">
-    <div class="col-xs-12">
-        <h3>Liste des passages à planifier</h3>
-        
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-12">
-                    <input type="hidden" data-placeholder="Saisissez un techinicien, un code postal, ..." data-hamzastyle-container="#liste_passage" class="hamzastyle" style="width: 100%;" />
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Liste des passages à planifier</h3>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="hidden" data-placeholder="Saisissez un techinicien, un code postal, ..." data-hamzastyle-container="#liste_passage" class="hamzastyle" style="width: 100%;" />
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="liste_passage" class="list-group">
-        {% for passage in passages %}
-            <a data-words='{{ [passage.technicien, passage.passageEtablissement.codePostal, passage.passageEtablissement.commune, passage.passageEtablissement.typeEtablissement, passage.dateCreation | localizeddate('full', 'none'), passage.passageEtablissement.nom]|json_encode() }}' href="{{ path('passage_etablissement', { identifiantEtablissement: passage.etablissementIdentifiant }) }}" class="list-group-item hamzastyle-item">
-                <div class="row">
-                    <div class="col-sm-7 col-sm-12">
-                    <i class="mdi mdi-{{ passage.passageEtablissement.iconTypeEtb }} mdi-lg"></i>
-                    {{ passage.passageEtablissement.nom }}
-                    <span class="text-muted">{{ passage.passageEtablissement.codePostal }} {{ passage.passageEtablissement.commune }} <small>({{ passage.passageEtablissement.adresse }})</small></span>
-                    </div>
-                    <div class="col-sm-5 col-sm-12 text-right">
-                    <small class="text-muted">Estimé pour le</small> {{ passage.dateCreation | localizeddate('full', 'none') }} <small class="text-muted">avec</small> {{ passage.technicien }}
-                    </div>
-                </div>
-            </a>
-        {% endfor %}
+            <div id="liste_passage" class="list-group">
+                {% for passage in passages %}
+                    <a data-words='{{ [passage.technicien, passage.passageEtablissement.codePostal, passage.passageEtablissement.commune, passage.passageEtablissement.typeEtablissement, passage.dateCreation | localizeddate('full', 'none'), passage.passageEtablissement.nom]|json_encode() }}' href="{{ path('passage_etablissement', { identifiantEtablissement: passage.etablissementIdentifiant }) }}" class="list-group-item hamzastyle-item">
+                        <div class="row">
+                            <div class="col-sm-7 col-sm-12">
+                                <i class="mdi mdi-{{ passage.passageEtablissement.iconTypeEtb }} mdi-lg"></i>
+                                {{ passage.passageEtablissement.nom }}
+                                <span class="text-muted">{{ passage.passageEtablissement.codePostal }} {{ passage.passageEtablissement.commune }} <small>({{ passage.passageEtablissement.adresse }})</small></span>
+                            </div>
+                            <div class="col-sm-5 col-sm-12 text-right">
+                                {{ passage.dateCreation | localizeddate("medium", "none", null, null, "MMMM YYYY ") }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-7 col-sm-12">
+                                <i class="mdi mdi-call mdi-lg"></i>
+                                {{ passage.passageEtablissement.telephonePortable }} {{ passage.passageEtablissement.telephoneFixe }}
+                            </div>
+                            <div class="col-sm-5 col-sm-12 text-right">
+                                 {{ passage.technicien }}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
