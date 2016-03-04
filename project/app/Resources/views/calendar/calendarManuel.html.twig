@@ -29,6 +29,29 @@
     		<div class="row">
 				<div class="col-sm-12">
 					<div class="fc fc-ltr fc-unthemed">
+						<div class="fc-toolbar">
+							<div class="fc-left">
+								<button class="fc-prevButton-button fc-button fc-state-default fc-corner-left fc-corner-right" type="button"
+								{% if passage %}
+		        				onclick="window.location.href='{{ path('calendarManuel',{'passage': passage.passageIdentifiant(), 'calendrier': calendarTool.getSemainePrecedente('Y-m-d')}) }}'" 
+		        				{% else %}
+		        				onclick="window.location.href='{{ path('calendarManuel',{'calendrier': calendarTool.getSemainePrecedente('Y-m-d')}) }}'" 
+		        				{% endif %}
+								>
+									<span class="fc-icon fc-icon-left-single-arrow"></span>
+								</button>
+								<h2>{% if calendarTool.getDateDebutSemaine('n') == calendarTool.getDateFinSemaine('n') %}{{ calendarTool.getDateDebutSemaine('j') }}{% else %}{{ calendarTool.getDateDebutSemaine('j') ~ " " ~ calendarTool.getShortLibelleMois(calendarTool.getDateDebutSemaine('n')) }}{% endif %} &mdash; {{ calendarTool.getDateFinSemaine('j') ~ " " ~ calendarTool.getShortLibelleMois(calendarTool.getDateFinSemaine('n')) ~ " " ~ calendarTool.getDateFinSemaine('Y') }}</h2>
+								<button class="fc-nextButton-button fc-button fc-state-default fc-corner-left fc-corner-right" type="button"
+								{% if passage %}
+		        				onclick="window.location.href='{{ path('calendarManuel',{'passage': passage.passageIdentifiant(), 'calendrier': calendarTool.getSemaineSuivante('Y-m-d')}) }}'"  
+		        				{% else %}
+		        				onclick="window.location.href='{{ path('calendarManuel',{'calendrier': calendarTool.getSemaineSuivante('Y-m-d')}) }}'"   
+		        				{% endif %}
+								>
+									<span class="fc-icon fc-icon-right-single-arrow"></span>
+								</button>
+							</div>
+							<div class="fc-center"></div><div class="fc-clear"></div></div>
 						<div class="fc-view-container">
 							<div class="fc-view fc-agendaWeek-view fc-agenda-view">
 								<table>
@@ -40,12 +63,9 @@
 														<thead>
 															<tr>
 																<th class="fc-axis fc-widget-header" style="width: 17px;"></th>
-																<th data-date="2016-02-29" class="fc-day-header fc-widget-header fc-mon">lun. 29/2</th>
-																<th data-date="2016-03-01" class="fc-day-header fc-widget-header fc-tue">mar. 1/3</th>
-																<th data-date="2016-03-02" class="fc-day-header fc-widget-header fc-wed">mer. 2/3</th>
-																<th data-date="2016-03-03" class="fc-day-header fc-widget-header fc-thu">jeu. 3/3</th>
-																<th data-date="2016-03-04" class="fc-day-header fc-widget-header fc-fri">ven. 4/3</th>
-																<th data-date="2016-03-05" class="fc-day-header fc-widget-header fc-sat">sam. 5/3</th>
+																{% for date, eventDate in eventsDates %}
+																<th data-date="{{ date }}" class="fc-day-header fc-widget-header fc-mon">{{ calendarTool.getShortLibelleJour(date|date("N")) }} {{ date|date("j") }}/{{ date|date("n") }}</th>
+																{% endfor %}
 															</tr>
 														</thead>
 													</table>
@@ -63,12 +83,9 @@
 																<tbody>
 																	<tr>
 																		<td class="fc-axis fc-widget-content" style="width: 17px;"></td>
-																		<td data-date="2016-02-29" class="fc-day fc-widget-content fc-mon fc-past"></td>
-																		<td data-date="2016-03-01" class="fc-day fc-widget-content fc-tue fc-past"></td>
-																		<td data-date="2016-03-02" class="fc-day fc-widget-content fc-wed fc-past"></td>
-																		<td data-date="2016-03-03" class="fc-day fc-widget-content fc-thu fc-today fc-state-highlight"></td>
-																		<td data-date="2016-03-04" class="fc-day fc-widget-content fc-fri fc-future"></td>
-																		<td data-date="2016-03-05" class="fc-day fc-widget-content fc-sat fc-future"></td>
+																		{% for date, eventDate in eventsDates %}
+																		<td data-date="" class="fc-day fc-widget-content{% if date == calendarTool.getAujourdhui('Y-m-d') %} fc-today fc-state-highlight{% endif %}"></td>
+																		{% endfor %}
 																	</tr>
 																</tbody>
 															</table>

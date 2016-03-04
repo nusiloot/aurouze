@@ -3,7 +3,6 @@
 
     $(document).ready(function ()
     {
-
         if($('#map').length) {
             var map = L.map('map').setView([48.8593829, 2.347227], 12);
 

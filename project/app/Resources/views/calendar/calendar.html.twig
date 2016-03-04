@@ -30,18 +30,20 @@
                 <br/>
 			</div>
 			<ul class="nav nav-tabs" role="tablist" style="margin-bottom: 15px; font-size: 13px;">
+				<li role="presentation"{% if not technicien %} class="active"{% endif %}>
 				{% if passage %}
-					<li role="presentation"{% if not technicien %} class="active"{% endif %}><a href="{{ path('calendarManuel',{'passage': passage.passageIdentifiant()}) }}" role="tab" style="color: black;"><strong>Tous</strong></a></li>
+					<a href="{{ path('calendarManuel',{'passage': passage.passageIdentifiant(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
 				{% else %}
-                    <li role="presentation"{% if not technicien %} class="active"{% endif %}><a href="{{ path('calendarManuel') }}" role="tab" style="color: black;"><strong>Tous</strong></a></li>
+                    <a href="{{ path('calendarManuel', {'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
                 {% endif %}
+                </li>
             {% set i=0 %}
 			{% for tech in techniciens  if i < 8 %}
                 <li role="presentation"{% if tech == technicien %} class="active"{% endif %}>
                     {% if passage %}
-                    <a href="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': tech}) }}" role="tab" style="color: {{ colors[i] }};"><strong>{{ tech }}</strong></a>
+                    <a href="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': tech, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ colors[i] }};"><strong>{{ tech }}</strong></a>
                     {% else %}
-                    <a href="{{ path('calendar',{'technicien': tech}) }}" role="tab" style="color: {{ colors[i] }};"><strong>{{ tech }}</strong></a>
+                    <a href="{{ path('calendar',{'technicien': tech, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ colors[i] }};"><strong>{{ tech }}</strong></a>
                     {% endif %}
                 </li>
                 {% set i=loop.index %}
@@ -51,12 +53,17 @@
         		<div class="col-sm-12">
         			<div 
         				id="calendrier{% if not technicien %}-light{% endif %}"
-        				data-url-populate="{{path('calendarPopulate', {'technicien': technicien})}}" 
-        				data-url-read="{{path('calendarRead', {'technicien': technicien})}}" 
+        				data-goto-date="{{ calendarTool.getDateDebutSemaine('Y-m-d') }}"
+        				data-url-populate="{{path('calendarPopulate', {'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}" 
+        				data-url-read="{{path('calendarRead', {'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}" 
         				{% if passage %}
-        				data-url-update="{{path('calendarUpdate', {'passage': passage.passageIdentifiant(), 'technicien': technicien})}}" 
+        				data-url-update="{{path('calendarUpdate', {'passage': passage.passageIdentifiant(), 'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
+        				data-url-prev="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': technicien, 'calendrier': calendarTool.getSemainePrecedente('Y-m-d')}) }}" 
+        				data-url-next="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': technicien, 'calendrier': calendarTool.getSemaineSuivante('Y-m-d')}) }}"  
         				{% else %}
-        				data-url-update="{{path('calendarUpdate', {'technicien': technicien})}}" 
+        				data-url-update="{{path('calendarUpdate', {'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
+        				data-url-prev="{{ path('calendar',{'technicien': technicien, 'calendrier': calendarTool.getSemainePrecedente('Y-m-d')}) }}" 
+        				data-url-next="{{ path('calendar',{'technicien': technicien, 'calendrier': calendarTool.getSemaineSuivante('Y-m-d')}) }}"   
         				{% endif %}
         			>
         			</div>

@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Tool\CalendarDateTool;
 
 class CalendarController extends Controller {
 	public static $colors = array(
@@ -30,8 +31,10 @@ class CalendarController extends Controller {
         $technicien = $request->get('technicien');
         $techniciens = $dm->getRepository('AppBundle:Passage')->findTechniciens();
         
+        $calendrier = $request->get('calendrier');
+        $calendarTool = new CalendarDateTool($calendrier);
         
-        return $this->render('calendar/calendar.html.twig', array('colors' => self::$colors, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien));
+        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'colors' => self::$colors, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien));
     }
     /**
      * @Route("/calendar/global", name="calendarManuel")
@@ -39,9 +42,12 @@ class CalendarController extends Controller {
     public function calendarManuelAction(Request $request) {
     	$dm = $this->get('doctrine_mongodb')->getManager();
         $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
+        
+        $calendrier = $request->get('calendrier');
+        $calendarTool = new CalendarDateTool($calendrier);
     	
-    	$periodeStart = '2016-01-11';
-    	$periodeEnd = '2016-01-17'; 
+    	$periodeStart = $calendarTool->getDateDebutSemaine('Y-m-d');
+    	$periodeEnd = $calendarTool->getDateFinSemaine('Y-m-d');
     	
 		$passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriode($periodeStart, $periodeEnd);
     	
@@ -107,7 +113,7 @@ class CalendarController extends Controller {
     			}
     		}
     	}
-        return $this->render('calendar/calendarManuel.html.twig', array('eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage, 'colors' => self::$colors));
+        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage, 'colors' => self::$colors));
     }
 
     /**
