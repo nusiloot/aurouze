@@ -38,6 +38,7 @@ class CalendarController extends Controller {
      */
     public function calendarManuelAction(Request $request) {
     	$dm = $this->get('doctrine_mongodb')->getManager();
+        $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
     	
     	$periodeStart = '2016-01-11';
     	$periodeEnd = '2016-01-17'; 
@@ -98,15 +99,15 @@ class CalendarController extends Controller {
     		foreach ($techniciens as $technicien) {
     			$eventsDates[$date][$technicien] = array();
     			if (isset($passagesCalendar[$technicien])) {
-    				foreach ($passagesCalendar[$technicien] as $passage) {
-    					if (preg_match("/^$date/", $passage['start'])) {
-    						$eventsDates[$date][$technicien][] = $passage;
+    				foreach ($passagesCalendar[$technicien] as $p) {
+    					if (preg_match("/^$date/", $p['start'])) {
+    						$eventsDates[$date][$technicien][] = $p;
     					}
     				}
     			}
     		}
     	}
-        return $this->render('calendar/calendarManuel.html.twig', array('eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens)));
+        return $this->render('calendar/calendarManuel.html.twig', array('eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage, 'colors' => self::$colors));
     }
 
     /**

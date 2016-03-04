@@ -86,48 +86,4 @@ $(function () {
             });
         },
     });
-    /**
-     * FullCalendar Light Settings
-     */
-    $('#calendrier-light').fullCalendar({
-        minTime: '06:00:00',
-        maxTime: '18:00:00',
-        height: 600,
-        header: {
-            left: 'prev, title, next',
-            right: 'agendaWeek, agendaDay',
-        },
-        lang: 'fr',
-        timeFormat: ' ',
-        allDaySlot: false,
-        editable: false,
-        droppable: false,
-        slotEventOverlap: false,
-        hiddenDays: [0],
-        defaultView: "agendaWeek",
-        eventAfterRender: function(event, element, view) {
-            $(element).css('max-width','20%');
-        },
-        eventSources: [
-            {
-                url: $('#calendrier-light').data('urlPopulate'),
-                type: 'POST',
-                data: {
-                    title: 0,
-                }
-            }
-        ],
-        eventClick: function (event) {
-            $.post(
-                    $('#calendrier-light').data('urlRead'), {
-                id: event.id,
-                light: 1
-            }, function (response) {
-                $('#modal-title').text(event.title);
-                $('#modal-body').html(response);
-                $('#modal-calendrier-infos').modal();
-            }
-            );
-        },
-    });
 });

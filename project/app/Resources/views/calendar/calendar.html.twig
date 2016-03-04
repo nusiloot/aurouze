@@ -30,7 +30,11 @@
                 <br/>
 			</div>
 			<ul class="nav nav-tabs" role="tablist" style="margin-bottom: 15px; font-size: 13px;">
-				<li role="presentation"{% if not technicien %} class="active"{% endif %}><a href="{{ path('calendar') }}" role="tab" style="color: black;"><strong>Tous</strong></a></li>
+				{% if passage %}
+					<li role="presentation"{% if not technicien %} class="active"{% endif %}><a href="{{ path('calendarManuel',{'passage': passage.passageIdentifiant()}) }}" role="tab" style="color: black;"><strong>Tous</strong></a></li>
+				{% else %}
+                    <li role="presentation"{% if not technicien %} class="active"{% endif %}><a href="{{ path('calendarManuel') }}" role="tab" style="color: black;"><strong>Tous</strong></a></li>
+                {% endif %}
             {% set i=0 %}
 			{% for tech in techniciens  if i < 8 %}
                 <li role="presentation"{% if tech == technicien %} class="active"{% endif %}>
