@@ -16,21 +16,29 @@
             </div>
         </div>
 
-        <div id="liste_passage" class="list-group">
-        {% for passage in passages %}
-            <a data-words='{{ [passage.technicien, passage.passageEtablissement.codePostal, passage.passageEtablissement.commune, passage.passageEtablissement.typeEtablissement, passage.dateCreation | localizeddate('full', 'none'), passage.passageEtablissement.nom]|json_encode() }}' href="{{ path('passage_etablissement', { identifiantEtablissement: passage.etablissementIdentifiant }) }}" class="list-group-item hamzastyle-item">
-                <div class="row">
-                    <div class="col-sm-7 col-sm-12">
-                    <i class="mdi mdi-{{ passage.passageEtablissement.iconTypeEtb }} mdi-lg"></i>
-                    {{ passage.passageEtablissement.nom }}
-                    <span class="text-muted">{{ passage.passageEtablissement.codePostal }} {{ passage.passageEtablissement.commune }} <small>({{ passage.passageEtablissement.adresse }})</small></span>
-                    </div>
-                    <div class="col-sm-5 col-sm-12 text-right">
-                    <small class="text-muted">Estimé pour le</small> {{ passage.dateCreation | localizeddate('full', 'none') }} <small class="text-muted">avec</small> {{ passage.technicien }}
-                    </div>
+        <div class="row">
+            <div class="col-xs-6">
+                <div id="liste_passage" class="list-group">
+                {% for passage in passages %}
+                    <a data-words='{{ [passage.technicien, passage.passageEtablissement.codePostal, passage.passageEtablissement.commune, passage.passageEtablissement.typeEtablissement, passage.dateCreation | localizeddate('full', 'none'), passage.passageEtablissement.nom]|json_encode() }}' href="{{ path('passage_etablissement', { identifiantEtablissement: passage.etablissementIdentifiant }) }}" class="list-group-item hamzastyle-item">
+                        <div class="row">
+                            <div class="col-sm-7 col-sm-12">
+                            <i class="mdi mdi-{{ passage.passageEtablissement.iconTypeEtb }} mdi-lg"></i>
+                            {{ passage.passageEtablissement.nom }}
+                            <span class="text-muted">{{ passage.passageEtablissement.codePostal }} {{ passage.passageEtablissement.commune }} <small>({{ passage.passageEtablissement.adresse }})</small></span>
+                            </div>
+                            <div class="col-sm-5 col-sm-12 text-right">
+                            <small class="text-muted">Estimé pour le</small> {{ passage.dateCreation | localizeddate('full', 'none') }} <small class="text-muted">avec</small> {{ passage.technicien }}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
                 </div>
-            </a>
-        {% endfor %}
+            </div>
+
+            <div class="col-xs-6">
+                <div id="map" style="width: 100%; height: 600px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
+            </div>
         </div>
     </div>
 </div>

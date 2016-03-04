@@ -8,7 +8,11 @@ namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\EtablissementManager;
 
-/** @MongoDB\EmbeddedDocument */
+/** 
+ * @MongoDB\EmbeddedDocument
+ * @MongoDB\Index(keys={"coordinates"="2d"})
+*/
+
 class PassageEtablissement {
 
     /**
@@ -55,6 +59,16 @@ class PassageEtablissement {
      * @MongoDB\String
      */
     protected $type_etablissement;
+
+    /** 
+     * @MongoDB\EmbedOne(targetDocument="Coordinates") 
+     */
+    protected $coordinates;
+
+    /** 
+     * @MongoDB\Distance 
+     */
+    protected $distance;
 
     /**
      * Set etablissement
@@ -276,5 +290,49 @@ class PassageEtablissement {
     
     public function getIntitule() {
     	return $this->getNom() . ' ' . $this->getAdressecomplete();
+    }
+
+    /**
+     * Set coordinates
+     *
+     * @param AppBundle\Document\Coordinates $coordinates
+     * @return self
+     */
+    public function setCoordinates(\AppBundle\Document\Coordinates $coordinates)
+    {
+        $this->coordinates = $coordinates;
+        return $this;
+    }
+
+    /**
+     * Get coordinates
+     *
+     * @return AppBundle\Document\Coordinates $coordinates
+     */
+    public function getCoordinates()
+    {
+        return $this->coordinates;
+    }
+
+    /**
+     * Set distance
+     *
+     * @param string $distance
+     * @return self
+     */
+    public function setDistance($distance)
+    {
+        $this->distance = $distance;
+        return $this;
+    }
+
+    /**
+     * Get distance
+     *
+     * @return string $distance
+     */
+    public function getDistance()
+    {
+        return $this->distance;
     }
 }
