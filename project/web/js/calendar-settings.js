@@ -21,8 +21,24 @@ $(function () {
         minTime: '06:00:00',
         maxTime: '18:00:00',
         height: 600,
+        customButtons: {
+            prevButton: {
+                text: '',
+                click: function() {
+                    window.location.href = $('#calendrier').data('urlPrev');
+                },
+                icon: 'left-single-arrow'
+            },
+            nextButton: {
+                text: '',
+                click: function() {
+                    window.location.href = $('#calendrier').data('urlNext');
+                },
+                icon: 'right-single-arrow'
+            }
+        },
         header: {
-            left: 'prev, title, next',
+            left: 'prevButton, title, nextButton',
             right: 'month, agendaWeek, agendaDay',
         },
         lang: 'fr',
@@ -86,4 +102,5 @@ $(function () {
             });
         },
     });
+    $('#calendrier').fullCalendar('gotoDate', $('#calendrier').data('gotoDate'));
 });
