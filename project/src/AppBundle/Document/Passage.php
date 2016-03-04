@@ -20,7 +20,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations\PrePersist;
 use AppBundle\Manager\PassageManager;
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository")  @HasLifecycleCallbacks
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
  * 
  */
 class Passage {
@@ -241,6 +241,9 @@ class Passage {
         $this->passageEtablissement->setTelephonePortable($etb->getAdresse()->getTelephonePortable());
         $this->passageEtablissement->setTelephoneFixe($etb->getAdresse()->getTelephoneFixe());
         $this->passageEtablissement->setTypeEtablissement($etb->getTypeEtablissement());
+        $this->passageEtablissement->setCoordinates(new Coordinates());
+        $this->passageEtablissement->getCoordinates()->y = ('48.8'.rand('2000', '8000'))*1.0;
+        $this->passageEtablissement->getCoordinates()->x = ('2.'.rand('2500', '4500'))*1.0;
     }
 
     /**
