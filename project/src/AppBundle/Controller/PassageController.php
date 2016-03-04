@@ -20,8 +20,20 @@ class PassageController extends Controller {
         ));
 
         $passages = $this->get('passage.manager')->getRepository()->findToPlan();
-        
-        return $this->render('passage/index.html.twig', array('passages' => $passages, 'formEtablissement' => $formEtablissement->createView()));
+        $geojson = new \stdClass();
+        $geojson->type = "FeatureCollection";
+        $geojson->features = array();
+        foreach($passages as $passage) {
+            $feature = new \stdClass();
+            $feature->type="Feature";
+            $feature->properties = new \stdClass();
+            $feature->geometry = new \stdClass();
+            $feature->geometry->type = "Point";
+            $feature->geometry->coordinates = array($passage->getPassageEtablissement()->getCoordinates()->getX(), $passage->getPassageEtablissement()->getCoordinates()->getY());
+            $geojson->features[] =  $feature;
+        }
+
+        return $this->render('passage/index.html.twig', array('passages' => $passages, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson));
     }
 
     /**
