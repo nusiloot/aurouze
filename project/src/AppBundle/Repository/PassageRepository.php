@@ -79,7 +79,7 @@ class PassageRepository extends DocumentRepository {
     	$techniciens = array();
     	$date = new \DateTime();
     	$mongoEndDate = new MongoDate(strtotime($date->format('Y-m-d')));
-    	$date->modify('-1 month');
+    	$date->modify('-2 month');
     	$mongoStartDate = new MongoDate(strtotime($date->format('Y-m-d')));
     	$query = $this->createQueryBuilder('Passage')
     	->field('dateFin')->gte($mongoStartDate)
