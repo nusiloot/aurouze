@@ -36,3 +36,7 @@ services:
         class: AppBundle\Type\TechnicienChoiceType
         arguments: [@doctrine_mongodb.odm.default_document_manager]
 
+    user.importer:
+        class: AppBundle\Import\UserCsvImporter
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
+

@@ -16,7 +16,7 @@ class CalendarController extends Controller {
 			"#EFA0FF", // violet
 			"#C44C51", // rouge
 			"#FF5B2B", // orange
-			"#BF8273", // marron
+			"#BF8273", // marron ----
             "#C0BFA9",   // moche    
             "#000000",   // noir 
 			"#ed85d8",	// rose	
