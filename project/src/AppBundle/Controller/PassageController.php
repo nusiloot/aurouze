@@ -51,6 +51,15 @@ class PassageController extends Controller {
 
         return $this->render('passage/etablissement.html.twig', array('etablissement' => $etablissement, 'passages' => $passages, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson));
     }
+    
+    /**
+     * @Route("/etablissement-all", name="etablissement_all")
+     */
+    public function allAction(Request $request) {
+        $etablissementsResult = $this->get('etablissement.manager')->getRepository()->findBy(array(),null,3000);
+        $geojson = $this->buildGeoJson($etablissementsResult);
+       return $this->render('etablissement/all.html.twig', array('geojson' => $geojson));
+    }
 
     private function buildGeoJson($listDocuments) {
         $geojson = new \stdClass();
@@ -69,13 +78,15 @@ class PassageController extends Controller {
             } else {
                 $coordinates = $document->getAdresse()->getCoordinates();
             }
+            if(!$coordinates->getLon() || !$coordinates->getLat()){ continue; }
             $feature->properties->nom = $etbInfos->getNom();
             $feature->properties->color = 'orange';
             $feature->properties->icon = 'mdi-' . $etbInfos->getIconTypeEtb();
             $feature->geometry = new \stdClass();
             $feature->geometry->type = "Point";
-            $feature->geometry->coordinates = array($coordinates->getY(),$coordinates->getX());
+            $feature->geometry->coordinates = array($coordinates->getLon(),$coordinates->getLat());
             $geojson->features[] = $feature;
+           
         }
         return $geojson;
     }

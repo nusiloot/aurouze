@@ -43,35 +43,16 @@ cat  $DATA_DIR/tblEntite.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[
 
 join -t ';' -1 2 -2 1 $DATA_DIR/adresse_application.csv $DATA_DIR/entite.csv.temp > $DATA_DIR/etablissements.csv.tmp
 
-cat $DATA_DIR/etablissements.csv.tmp | awk -F ";" '{ 
-adresse_complete="";
-adresse=$5; 
-adresse_complementaire=$6;
-codep=$7;
-commune=$8;
-gsub(","," ",adresse); gsub("\"","",adresse);
-gsub(","," ",adresse_complementaire); gsub("\"","",adresse_complementaire);
-gsub(","," ",codep); gsub("\"","",codep);
-gsub(","," ",commune); gsub("\"","",commune);
-
-
-adresse_complete=adresse" "codep" "commune;
-if($6!=""){
-adresse_complete=adresse", "adresse_complementaire" "codep" "commune;
-}
-print $0";"adresse_complete;
- }' > $DATA_DIR/etablissementsWithCompleteAdresse.csv
-
 rm $DATA_DIR/etablissements.csv;
 touch $DATA_DIR/etablissements.csv;
+
 while read line  
 do   
-   ADRESSE=`echo $line | cut -d ';' -f 38`;
-   COORDONNEES=`grep "$ADRESSE" $DATA_DIR/etablissementsCoordonees.csv | head -n 1 | cut -d ";" -f 2,3`
-
-  
-   echo -e $line";"$COORDONNEES >> $DATA_DIR/etablissements.csv
-done < $DATA_DIR/etablissementsWithCompleteAdresse.csv
+   IDENTIFIANT=`echo $line | cut -d ';' -f 2`;
+   COORDONNEES=`grep "\"$IDENTIFIANT\";" $DATA_DIR/etablissementsCoordonees.csv | cut -d ";" -f 2,3`;
+   echo $line";"$COORDONNEES >> $DATA_DIR/etablissements.csv;
+   
+done < $DATA_DIR/etablissements.csv.tmp
 
 php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv
 

@@ -1,0 +1,20 @@
+{% set _menu_active = 'passage' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Carte des Etablissements</h3>
+
+
+            <div class="row">
+
+                <div class="col-xs-12">
+                    <div id="map" style="width: 100%; height: 700px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
+                    <pre>{{ geojson | json_encode() }}</pre>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
