@@ -20,6 +20,12 @@ if test "$REMOTE_DATA"; then
     cd $SYMFODIR
 fi
 
+#####IMPORT des Users ##### 
+
+echo "Récupération des users"
+
+php app/console importer:csv user.importer $DATA_DIR/blUser.csv 
+
 #####IMPORT des Etablissements ##### 
 
 echo "Récupération des établissements"

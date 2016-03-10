@@ -7,20 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Tool\CalendarDateTool;
+use AppBundle\Document\User;
 
 class CalendarController extends Controller {
-	public static $colors = array(
-			"#ABC8E2", // bleu
-			"#FDD131", // jaune
-			"#B0CC99", // vert
-			"#EFA0FF", // violet
-			"#C44C51", // rouge
-			"#FF5B2B", // orange
-			"#BF8273", // marron
-            "#C0BFA9",   // moche    
-            "#000000",   // noir 
-			"#ed85d8",	// rose	
-	);
     /**
      * @Route("/calendar", name="calendar")
      */
@@ -29,12 +18,12 @@ class CalendarController extends Controller {
     	
         $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
         $technicien = $request->get('technicien');
-        $techniciens = $dm->getRepository('AppBundle:Passage')->findTechniciens();
+        $techniciens = $dm->getRepository('AppBundle:User')->findAllByType(User::USER_TYPE_TECHNICIEN);
         
         $calendrier = $request->get('calendrier');
         $calendarTool = new CalendarDateTool($calendrier);
         
-        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'colors' => self::$colors, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien));
+        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien));
     }
     /**
      * @Route("/calendar/global", name="calendarManuel")
@@ -52,7 +41,7 @@ class CalendarController extends Controller {
 		$passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriode($periodeStart, $periodeEnd);
     	
     	$eventsDates = array();
-    	$techniciens = array();
+    	$techniciens = $dm->getRepository('AppBundle:User')->findAllByType(User::USER_TYPE_TECHNICIEN);
     	
 		while (strtotime($periodeStart) < strtotime($periodeEnd)) {
 			$eventsDates[$periodeStart] = array();
@@ -61,17 +50,14 @@ class CalendarController extends Controller {
     	
     	$passagesCalendar = array();
     	$index = 0;
-    	$indexColor = 0;
     	foreach ($passagesTech as $passageTech) {
     		if (!$passageTech->getDateFin()) {
     			continue;
     		}
-    		$techniciens[$passageTech->getTechnicien()] = $passageTech->getTechnicien();
 
     		if (!isset($passagesCalendar[$passageTech->getTechnicien()])) {
     			$passagesCalendar[$passageTech->getTechnicien()] = array();
     			$index = 0;
-    			$indexColor++;
     		} 
     		
     		if (isset($passagesCalendar[$passageTech->getTechnicien()]) && isset($passagesCalendar[$passageTech->getTechnicien()][($index - 1)]) && $passagesCalendar[$passageTech->getTechnicien()][($index - 1)]['end'] >= $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'))
@@ -86,11 +72,11 @@ class CalendarController extends Controller {
     		$dateDebut = new \DateTime($passageTech->getDateDebut()->format('Y-m-d').'T06:00:00');
     		$diffDebut = (strtotime($passageTech->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d').' 06:00:00')) / 60;
     		$diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d').' 06:00:00')) / 60;
-    		
+    		$tech = $dm->getRepository('AppBundle:User')->findByIdentite($passageTech->getTechnicien());
     		$passageArr = array(
     				'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
     				'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
-    				'backgroundColor' => (isset(self::$colors[$indexColor]))? self::$colors[$indexColor] : 'yellow',
+    				'backgroundColor' => ($tech)? $tech->getCouleur() : User::COULEUR_DEFAUT,
     				'textColor' => "black",
     				'coefStart' => round($diffDebut / 30, 1),
     				'coefEnd' => round($diffFin / 30, 2),
@@ -100,20 +86,19 @@ class CalendarController extends Controller {
     		$passagesCalendar[$passageTech->getTechnicien()][] = $passageArr;
     	}
     	
-    	
     	foreach ($eventsDates as $date => $value) {
     		foreach ($techniciens as $technicien) {
-    			$eventsDates[$date][$technicien] = array();
-    			if (isset($passagesCalendar[$technicien])) {
-    				foreach ($passagesCalendar[$technicien] as $p) {
+    			$eventsDates[$date][$technicien->getIdentite()] = array();
+    			if (isset($passagesCalendar[$technicien->getIdentite()])) {
+    				foreach ($passagesCalendar[$technicien->getIdentite()] as $p) {
     					if (preg_match("/^$date/", $p['start'])) {
-    						$eventsDates[$date][$technicien][] = $p;
+    						$eventsDates[$date][$technicien->getIdentite()][] = $p;
     					}
     				}
     			}
     		}
     	}
-        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage, 'colors' => self::$colors));
+        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage));
     }
 
     /**
@@ -138,12 +123,12 @@ class CalendarController extends Controller {
         if ($error) {
             throw new \Exception();
         }
-
+        $tech = $dm->getRepository('AppBundle:User')->findByIdentite($technicien);
         $event = array('id' => $passageToMove->getPassageIdentifiant(),
             'title' => $passageToMove->getIntitule(),
             'start' => $start,
             'end' => $end, 
-        	'backgroundColor' => (isset(self::$colors[$passageToMove->getTechnicien()])) ? self::$colors[$passageToMove->getTechnicien()] : "yellow", 
+        	'backgroundColor' => ($tech)? $tech->getCouleur() : User::COULEUR_DEFAUT,
         	'textColor' => "black"
         );
 		if ($technicien) {
@@ -181,11 +166,12 @@ class CalendarController extends Controller {
         	if (!$passageTech->getDateFin()) {
         		continue;
         	}
+        	$tech = $dm->getRepository('AppBundle:User')->findByIdentite($passageTech->getTechnicien());
             $passageArr = array('id' => $passageTech->getPassageIdentifiant(),
                 'title' => ($request->get('title'))? $passageTech->getPassageEtablissement()->getIntitule() : "",
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'), 
-            	'backgroundColor' => $this->getColor($passageTech->getTechnicien()),
+            	'backgroundColor' => ($tech)? $tech->getCouleur() : User::COULEUR_DEFAUT,
             	'textColor' => "black");
             $passagesCalendar[] = $passageArr;
         }
@@ -235,25 +221,6 @@ class CalendarController extends Controller {
         }
 
         return $this->redirect($this->generateUrl('calendar', array('passage' => $request->get('passage'), 'technicien' => $technicien)));
-    }
-    
-
-	/*
-	 * Fonction temporaire
-	 */
-    public function getColor($technicien) {
-    	$dm = $this->get('doctrine_mongodb')->getManager();
-    	$techniciens = $dm->getRepository('AppBundle:Passage')->findTechniciens();
-    	$index = 0;
-    	$find = false;
-    	foreach ($techniciens as $tech) {
-    		if ($tech == $technicien) {
-    			$find = true;
-    			break;
-    		}
-    		$index++;
-    	}
-    	return ($find)? self::$colors[$index] : 'yellow';
     }
 
 }

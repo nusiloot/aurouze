@@ -21,7 +21,7 @@
             <div class="row" style="padding-bottom: 10px;">
 				<div id="fc-events" class="col-sm-12">
 					{% if passage and not passage.dateFin %}
-					<div class="event btn btn-sm btn-primary pull-right" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.intitule }}</div>
+					<div class="event btn btn-sm btn-warning pull-right" data-identifiant="{{ passage.passageIdentifiant() }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.passageEtablissement.nom }}</strong> <small>{{ passage.passageEtablissement.codePostal }} {{ passage.passageEtablissement.commune }} ({{ passage.passageEtablissement.adresse }})</small></div>
 					{% endif %}
 				</div>
                                  <div class="col-sm-12 hidden" id="retour_technicien_btn" >
@@ -38,12 +38,12 @@
                 {% endif %}
                 </li>
             {% set i=0 %}
-			{% for tech in techniciens  if i < 8 %}
-                <li role="presentation"{% if tech == technicien %} class="active"{% endif %}>
+			{% for tech in techniciens %}
+                <li role="presentation"{% if tech.getIdentite() == technicien %} class="active"{% endif %}>
                     {% if passage %}
-                    <a href="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': tech, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ colors[i] }};"><strong>{{ tech }}</strong></a>
+                    <a href="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': tech.getIdentite(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getIdentite() }}</strong></a>
                     {% else %}
-                    <a href="{{ path('calendar',{'technicien': tech, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ colors[i] }};"><strong>{{ tech }}</strong></a>
+                    <a href="{{ path('calendar',{'technicien': tech.getIdentite(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getIdentite() }}</strong></a>
                     {% endif %}
                 </li>
                 {% set i=loop.index %}

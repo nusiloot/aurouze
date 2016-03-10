@@ -39,3 +39,9 @@ services:
     tool.osm:
         class: AppBundle\Tool\OSMAdresses
         arguments: [%osm.url_search%,%osm.return_format%]
+
+    user.importer:
+        class: AppBundle\Import\UserCsvImporter
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
+
+
