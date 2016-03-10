@@ -16,7 +16,10 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
-/** @MongoDB\EmbeddedDocument */
+/** 
+ * @MongoDB\EmbeddedDocument
+ * @MongoDB\Index(keys={"coordinates"="2d"})
+*/
 class Adresse {
 
     /**
@@ -49,6 +52,11 @@ class Adresse {
      */
     protected $fax;
 
+    
+     /** 
+     * @MongoDB\EmbedOne(targetDocument="Coordinates") 
+     */
+    protected $coordinates;
 
     /**
      * Set adresse
@@ -189,5 +197,27 @@ class Adresse {
      */
     public function getAdressecomplete() {
         return $this->adresse." ".$this->code_postal." ".$this->commune;
+    }
+
+    /**
+     * Set coordinates
+     *
+     * @param AppBundle\Document\Coordinates $coordinates
+     * @return self
+     */
+    public function setCoordinates(\AppBundle\Document\Coordinates $coordinates)
+    {
+        $this->coordinates = $coordinates;
+        return $this;
+    }
+
+    /**
+     * Get coordinates
+     *
+     * @return AppBundle\Document\Coordinates $coordinates
+     */
+    public function getCoordinates()
+    {
+        return $this->coordinates;
     }
 }

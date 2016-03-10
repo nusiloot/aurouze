@@ -17,10 +17,12 @@ namespace AppBundle\Manager;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use AppBundle\Document\Etablissement as Etablissement;
 use AppBundle\Import\EtablissementCsvImport as EtablissementCSVImport;
+use AppBundle\Tool\OSMAdresses;
 
 class EtablissementManager {
 
     protected $dm;
+    protected $osmAdresse;
 
     const TYPE_ETB_BOULANGERIE = "BOULANGERIE";
     const TYPE_ETB_RESTAURANT = "RESTAURANT";
@@ -50,7 +52,6 @@ class EtablissementManager {
         self::TYPE_ETB_AUTRE => "Autre",
         self::TYPE_ETB_HOTEL => "Hôtel",
         self::TYPE_ETB_NON_SPECIFIE => "Non spécifié");
-    
     public static $type_etablissements_pictos = array(
         self::TYPE_ETB_BOULANGERIE => "cake",
         self::TYPE_ETB_RESTAURANT => "local-dining",
@@ -66,8 +67,9 @@ class EtablissementManager {
         self::TYPE_ETB_HOTEL => "local-hotel",
         self::TYPE_ETB_NON_SPECIFIE => "do-not-disturb");
 
-    function __construct(DocumentManager $dm) {
+    function __construct(DocumentManager $dm, OSMAdresses $osmAdresse) {
         $this->dm = $dm;
+        $this->osmAdresse = $osmAdresse;
     }
 
     function create() {
@@ -90,12 +92,16 @@ class EtablissementManager {
     }
 
     public function getNextNumeroEtablissement($societeIdentifiant) {
-        $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllPostfixByIdentifiantSociete($societeIdentifiant);        
-        
+        $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllPostfixByIdentifiantSociete($societeIdentifiant);
+
         if (!count($allEtablissementsIdentifiants)) {
             return sprintf("%02d", 1);
         }
         return sprintf("%02d", max($allEtablissementsIdentifiants) + 1);
+    }
+    
+    public function getOSMAdresse() {
+        return $this->osmAdresse;
     }
 
 }

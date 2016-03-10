@@ -242,8 +242,9 @@ class Passage {
         $this->passageEtablissement->setTelephoneFixe($etb->getAdresse()->getTelephoneFixe());
         $this->passageEtablissement->setTypeEtablissement($etb->getTypeEtablissement());
         $this->passageEtablissement->setCoordinates(new Coordinates());
-        $this->passageEtablissement->getCoordinates()->y = ('48.8'.rand('2000', '8000'))*1.0;
-        $this->passageEtablissement->getCoordinates()->x = ('2.'.rand('2500', '4500'))*1.0;
+        
+        $this->passageEtablissement->getCoordinates()->lon = $etb->getAdresse()->getCoordinates()->getLon();
+        $this->passageEtablissement->getCoordinates()->lat = $etb->getAdresse()->getCoordinates()->getLat();
     }
 
     /**

@@ -12,56 +12,55 @@ class Coordinates
     /**
      * @MongoDB\Float
      */
-    public $x;
+    public $lat;
 
     /**
      * @MongoDB\Float
      */
-    public $y;
+    public $lon;
+  
 
     /**
-     * Set x
+     * Set lat
      *
-     * @param float $x
+     * @param float $lat
      * @return self
      */
-    public function setX($x)
+    public function setLat($lat)
     {
-        $this->x = $x;
-
+        $this->lat = $lat;
         return $this;
     }
 
     /**
-     * Get x
+     * Get lat
      *
-     * @return float $x
+     * @return float $lat
      */
-    public function getX()
+    public function getLat()
     {
-        return $this->x;
+        return $this->lat;
     }
 
     /**
-     * Set y
+     * Set lon
      *
-     * @param float $y
+     * @param float $lon
      * @return self
      */
-    public function setY($y)
+    public function setLon($lon)
     {
-        $this->y = $y;
-        
+        $this->lon = $lon;
         return $this;
     }
 
     /**
-     * Get y
+     * Get lon
      *
-     * @return float $y
+     * @return float $lon
      */
-    public function getY()
+    public function getLon()
     {
-        return $this->y;
+        return $this->lon;
     }
 }

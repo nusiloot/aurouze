@@ -60,7 +60,7 @@ class PassageCsvImporter {
             $passage = new Passage();
             $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
             $passage->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
-            $passage->updateEtablissementInfos($etablissement);
+            $passage->updateEtablissementInfos($etablissement);            
             $passage->setNumeroPassageIdentifiant($this->pm->getNextNumeroPassage($passage->getEtablissementIdentifiant(), $passage->getDateCreation()));       
             $passage->setId($passage->generateId());
             if($data[self::CSV_DATE_DEBUT]) {

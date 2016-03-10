@@ -15,6 +15,7 @@ namespace AppBundle\Import;
  */
 use AppBundle\Document\Etablissement as Etablissement;
 use AppBundle\Document\Adresse as Adresse;
+use AppBundle\Document\Coordinates;
 use AppBundle\Manager\EtablissementManager as EtablissementManager;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,6 +43,8 @@ class EtablissementCsvImporter extends CsvFile {
     const CSV_ACTIF = 15;
     const CSV_RAISON_SOCIALE = 22;
     const CSV_TYPE_ETABLISSEMENT = 26;
+    const CSV_COORD_LAT = 38;
+    const CSV_COORD_LON = 39;
 
     public function __construct(DocumentManager $dm, EtablissementManager $em) {
         $this->dm = $dm;
@@ -92,7 +95,21 @@ class EtablissementCsvImporter extends CsvFile {
         $adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
         $adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
         $adresse->setFax($ligne[self::CSV_FAX]);
-
+       
+        $adresse->setCoordinates(new Coordinates());
+        if ($ligne[self::CSV_COORD_LAT] && $ligne[self::CSV_COORD_LON]) {
+            $lat = $ligne[self::CSV_COORD_LAT];
+            $lon = $ligne[self::CSV_COORD_LON];
+            $adresse->getCoordinates()->setLat($lat);
+            $adresse->getCoordinates()->setLon($lon);
+             echo "lat=$lat lon=$lon déjà enregistré \n";
+        } else {
+            $msg = $this->em->getOSMAdresse()->calculCoordonnees($adresse);
+            sleep(0.5);
+            if ($msg && is_string($msg)) {
+                echo $msg . "\n";
+            }
+        }
         $etablissement->setAdresse($adresse);
 
         if ($ligne[self::CSV_TYPE_ETABLISSEMENT] == "") {
@@ -101,8 +118,8 @@ class EtablissementCsvImporter extends CsvFile {
 
             $types_etablissements = EtablissementManager::$type_etablissements_libelles;
             $types_etb_keys = array_keys($types_etablissements);
-        
-            $etablissement->setTypeEtablissement($types_etb_keys[intval($ligne[self::CSV_TYPE_ETABLISSEMENT])-1]);
+
+            $etablissement->setTypeEtablissement($types_etb_keys[intval($ligne[self::CSV_TYPE_ETABLISSEMENT]) - 1]);
         }
 
         return $etablissement;

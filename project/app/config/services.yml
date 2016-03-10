@@ -14,7 +14,7 @@ services:
             
     etablissement.manager:
         class: AppBundle\Manager\EtablissementManager
-        arguments: [@doctrine_mongodb.odm.default_document_manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager,@tool.osm]
         
     etablissement.importer:
         class: AppBundle\Import\EtablissementCsvImporter
@@ -36,3 +36,6 @@ services:
         class: AppBundle\Type\TechnicienChoiceType
         arguments: [@doctrine_mongodb.odm.default_document_manager]
 
+    tool.osm:
+        class: AppBundle\Tool\OSMAdresses
+        arguments: [%osm.url_search%,%osm.return_format%]
