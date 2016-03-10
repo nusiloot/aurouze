@@ -35,7 +35,8 @@
 <hr />   
 <div class="row"> 
 	<div class="col-xs-12">      
-		<a class="btn btn-danger pull-right" href="{{path('calendarDelete', {'passage': passage.passageIdentifiant, 'technicien': technicien})}}">Déplannifier</a>
+		<a class="btn btn-danger pull-left" href="{{path('calendarDelete', {'passage': passage.passageIdentifiant, 'technicien': technicien})}}">Déplannifier</a>
+		<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span>&nbsp;Fermer</button>
 	</div>
 </div>
 {% endif %}

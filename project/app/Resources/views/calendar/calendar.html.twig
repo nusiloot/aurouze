@@ -21,7 +21,7 @@
             <div class="row" style="padding-bottom: 10px;">
 				<div id="fc-events" class="col-sm-12">
 					{% if passage and not passage.dateFin %}
-					<div class="event btn btn-sm btn-primary pull-right" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.intitule }}</div>
+					<div class="event btn btn-sm btn-warning pull-right" data-identifiant="{{ passage.passageIdentifiant() }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.passageEtablissement.nom }}</strong> <small>{{ passage.passageEtablissement.codePostal }} {{ passage.passageEtablissement.commune }} ({{ passage.passageEtablissement.adresse }})</small></div>
 					{% endif %}
 				</div>
                                  <div class="col-sm-12 hidden" id="retour_technicien_btn" >

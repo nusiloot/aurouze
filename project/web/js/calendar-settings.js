@@ -12,6 +12,20 @@ $(function () {
             revert: true,
             revertDuration: 0
         });
+        $(this).click(function () {
+        	var id = $(this).data('identifiant');
+        	var title = $.trim($(this).data('title'));
+        	$.post(
+            $('#calendrier').data('urlRead'), {
+                id: id,
+                light: 0
+            }, function (response) {
+                $('#modal-title').text(title);
+                $('#modal-body').html(response);
+                $('#modal-calendrier-infos').modal();
+            }
+            );
+        });
 
     });
     /**
