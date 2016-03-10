@@ -11,20 +11,23 @@
             }).addTo(map);
 
             var geojson = JSON.parse($('#map').attr('data-geojson'));
+            var markers = [];
             L.geoJson(geojson, 
                 {
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup(feature.properties.nom);
                     },
                     pointToLayer: function (feature, latlng) {
-                        return L.marker(latlng, {icon: L.ExtraMarkers.icon({
+                        var marker = L.marker(latlng, {icon: L.ExtraMarkers.icon({
                                                     icon: feature.properties.icon,
-                                                    markerColor: feature.properties.color,
                                                     markerColor: feature.properties.color,
                                                     iconColor: 'black',
                                                     shape: 'circle',
                                                     prefix: 'mdi'
                                                 })});
+                        markers.push(marker);
+                        
+                        return marker;
                     }
                 }
             ).addTo(map);
