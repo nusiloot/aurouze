@@ -8,6 +8,8 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 class User {
 
     const PREFIX = "USER";
+    const USER_TYPE_TECHNICIEN = "TECHNICIEN";
+    const COULEUR_DEFAUT = 'yellow';
 
     /**
      * @MongoDB\Id(strategy="NONE", type="string")
@@ -157,28 +159,6 @@ class User {
     {
         return $this->identite;
     }
-
-    /**
-     * Set couleur
-     *
-     * @param string $couleur
-     * @return self
-     */
-    public function setCouleur($couleur)
-    {
-        $this->couleur = $couleur;
-        return $this;
-    }
-
-    /**
-     * Get couleur
-     *
-     * @return string $couleur
-     */
-    public function getCouleur()
-    {
-        return $this->couleur;
-    }
     
 
     /**
@@ -201,5 +181,27 @@ class User {
     public function getTypeUser()
     {
         return $this->type_user;
+    }
+
+    /**
+     * Set couleur
+     *
+     * @param string $couleur
+     * @return self
+     */
+    public function setCouleur($couleur)
+    {
+        $this->couleur = $couleur;
+        return $this;
+    }
+
+    /**
+     * Get couleur
+     *
+     * @return string $couleur
+     */
+    public function getCouleur()
+    {
+        return $this->couleur;
     }
 }

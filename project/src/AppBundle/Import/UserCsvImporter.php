@@ -3,7 +3,6 @@ namespace AppBundle\Import;
 use AppBundle\Document\User as User;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
-use AppBundle\Manager\EtablissementManager as EtablissementManager;
 
 class UserCsvImporter extends CsvFile {
 
@@ -14,6 +13,7 @@ class UserCsvImporter extends CsvFile {
     const CSV_NOM = 2;
     const CSV_PRENOM = 3;
     const CSV_COULEUR = 4;
+    const CSV_USER_TYPE = 5;
 
     public function __construct(DocumentManager $dm) {
         $this->dm = $dm;
@@ -46,6 +46,7 @@ class UserCsvImporter extends CsvFile {
         $user->setNom($ligne[self::CSV_NOM]);
         $user->setPrenom($ligne[self::CSV_PRENOM]);
         $user->setCouleur($ligne[self::CSV_COULEUR]);
+        $user->setTypeUser($ligne[self::CSV_USER_TYPE]);
         return $user;
     }
 
