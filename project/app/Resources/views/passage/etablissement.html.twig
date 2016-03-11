@@ -20,19 +20,19 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-xs-10">
-                            {{ etablissement.adressecomplete }}
+                            {{ etablissement.adresse.intitule }}
                         </div>
                         <div class="col-xs-2">
-                            <i style="cursor: default;" class="pull-right mdi mdi-{{ etablissement.iconTypeEtb }} mdi-4x" title="{{ etablissement.typeEtablissement }}" data-toggle="tooltip" ></i>
+                            <i style="cursor: default;" class="pull-right mdi mdi-{{ etablissement.icon }} mdi-4x" title="{{ etablissement.type }}" data-toggle="tooltip" ></i>
 
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-6">
-                            Tél fixe : {{ etablissement.adresse.telephonefixe }}
+                            Tél fixe : {{ etablissement.telephonefixe }}
                         </div>
                         <div class="col-xs-6">
-                            Tél portable : {{ etablissement.adresse.telephoneportable }}
+                            Tél portable : {{ etablissement.telephoneportable }}
                         </div>
                     </div>
                 </div>

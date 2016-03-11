@@ -15,12 +15,14 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Model\EtablissementInfosInterface;
+use AppBundle\Document\Adresse;
 use AppBundle\Manager\EtablissementManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository")
  */
-class Etablissement {
+class Etablissement implements EtablissementInfosInterface {
 
     const PREFIX = "ETABLISSEMENT";
 
@@ -37,12 +39,12 @@ class Etablissement {
     /**
      * @MongoDB\string
      */
-    protected $identifiant_societe;
+    protected $societeId;
 
     /**
      * @MongoDB\String
      */
-    protected $raison_sociale;
+    protected $raisonSociale;
 
     /**
      * @MongoDB\String
@@ -52,7 +54,7 @@ class Etablissement {
     /**
      * @MongoDB\String
      */
-    protected $nom_contact;
+    protected $contact;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="Adresse")
@@ -62,34 +64,42 @@ class Etablissement {
     /**
      * @MongoDB\String
      */
-    protected $commentaire;
+    protected $type;
 
     /**
      * @MongoDB\String
      */
-    protected $type_etablissement;
+    protected $commentaire;
 
-    /**
-     * Get id
-     *
-     * @return id $id
-     */
-    public function getId() {
-        return $this->id;
+    public function __construct() {
+        $this->adresse = new Adresse();
+    }
+
+    public function generateId() {
+
+        $this->setId(self::PREFIX . '-' . $this->identifiant);
     }
 
     /**
      * Set id
      *
-     * @return id $id
+     * @param string $id
+     * @return self
      */
-    public function setId() {
-        $this->id = $this->generateId();
+    public function setId($id)
+    {
+        $this->id = $id;
         return $this;
     }
 
-    public function generateId() {
-        return self::PREFIX . '-' . $this->identifiant;
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -98,7 +108,8 @@ class Etablissement {
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant) {
+    public function setIdentifiant($identifiant)
+    {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -108,68 +119,31 @@ class Etablissement {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant() {
+    public function getIdentifiant()
+    {
         return $this->identifiant;
     }
 
     /**
-     * Set nom
+     * Set societeId
      *
-     * @param string $nom
+     * @param string $societeId
      * @return self
      */
-    public function setNom($nom) {
-        $this->nom = $nom;
+    public function setSocieteId($societeId)
+    {
+        $this->societeId = $societeId;
         return $this;
     }
 
     /**
-     * Get nom
+     * Get societeId
      *
-     * @return string $nom
+     * @return string $societeId
      */
-    public function getNom() {
-        return $this->nom;
-    }
-
-    /**
-     * Set nomContact
-     *
-     * @param string $nomContact
-     * @return self
-     */
-    public function setNomContact($nomContact) {
-        $this->nom_contact = $nomContact;
-        return $this;
-    }
-
-    /**
-     * Get nomContact
-     *
-     * @return string $nomContact
-     */
-    public function getNomContact() {
-        return $this->nom_contact;
-    }
-
-    /**
-     * Set typeEtablissement
-     *
-     * @param string $typeEtablissement
-     * @return self
-     */
-    public function setTypeEtablissement($typeEtablissement) {
-        $this->type_etablissement = $typeEtablissement;
-        return $this;
-    }
-
-    /**
-     * Get typeEtablissement
-     *
-     * @return string $typeEtablissement
-     */
-    public function getTypeEtablissement() {
-        return $this->type_etablissement;
+    public function getSocieteId()
+    {
+        return $this->societeId;
     }
 
     /**
@@ -178,8 +152,9 @@ class Etablissement {
      * @param string $raisonSociale
      * @return self
      */
-    public function setRaisonSociale($raisonSociale) {
-        $this->raison_sociale = $raisonSociale;
+    public function setRaisonSociale($raisonSociale)
+    {
+        $this->raisonSociale = $raisonSociale;
         return $this;
     }
 
@@ -188,28 +163,9 @@ class Etablissement {
      *
      * @return string $raisonSociale
      */
-    public function getRaisonSociale() {
-        return $this->raison_sociale;
-    }
-
-    /**
-     * Set adresse
-     *
-     * @param AppBundle\Document\Adresse $adresse
-     * @return self
-     */
-    public function setAdresse(\AppBundle\Document\Adresse $adresse) {
-        $this->adresse = $adresse;
-        return $this;
-    }
-
-    /**
-     * Get adresse
-     *
-     * @return AppBundle\Document\Adresse $adresse
-     */
-    public function getAdresse() {
-        return $this->adresse;
+    public function getRaisonSociale()
+    {
+        return $this->raisonSociale;
     }
 
     /**
@@ -218,7 +174,8 @@ class Etablissement {
      * @param string $commentaire
      * @return self
      */
-    public function setCommentaire($commentaire) {
+    public function setCommentaire($commentaire)
+    {
         $this->commentaire = $commentaire;
         return $this;
     }
@@ -228,52 +185,118 @@ class Etablissement {
      *
      * @return string $commentaire
      */
-    public function getCommentaire() {
+    public function getCommentaire()
+    {
         return $this->commentaire;
     }
 
     /**
-     * Set identifiantSociete
+     * Set nom
      *
-     * @param string $identifiantSociete
+     * @param string $nom
      * @return self
      */
-    public function setIdentifiantSociete($identifiantSociete) {
-        $this->identifiant_societe = $identifiantSociete;
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
         return $this;
     }
 
     /**
-     * Get identifiantSociete
+     * Get nom
      *
-     * @return string $identifiantSociete
+     * @return string $nom
      */
-    public function getIdentifiantSociete() {
-        return $this->identifiant_societe;
+    public function getNom()
+    {
+        return $this->nom;
     }
-    
+
     /**
-     * Get adressecomplete
+     * Set contact
      *
-     * @return string $adressecomplete
+     * @param string $contact
+     * @return self
      */
-    public function getAdressecomplete() {
-        return $this->adresse->getAdressecomplete();
+    public function setContact($contact)
+    {
+        $this->contact = $contact;
+        return $this;
+    }
+
+    /**
+     * Get contact
+     *
+     * @return string $contact
+     */
+    public function getContact()
+    {
+        return $this->contact;
+    }
+
+    /**
+     * Set adresse
+     *
+     * @param Adresse $adresse
+     * @return self
+     */
+    public function setAdresse(Adresse $adresse)
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+
+    /**
+     * Get adresse
+     *
+     * @return Adresse $adresse
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return self
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string $type
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function getTelephoneFixe() {
+
+    }
+
+    public function getTelephonePortable() {
+        
+    }
+
+    public function getFax() {
+        
+    }
+
+    public function getIcon() {
+
+        return EtablissementManager::$type_icon[$this->getType()];
     }
     
-     /**
-     * Get iconTypeEtb
-     *
-     * @return string $adressecomplete
-     */
-    public function getIconTypeEtb() {
-        return EtablissementManager::$type_etablissements_pictos[ $this->type_etablissement];
-    }
+    public function getIntitule() {
 
-
-    public function getLibelleLong() {
-        return $this->getNom() . ' ' . $this->getAdresse()->getAdresse()
-                        . ' ' . $this->getAdresse()->getCodePostal()
-                        . ' ' . $this->getAdresse()->getCommune();
+        return $this->getNom() . ' ' . $this->getAdresse()->getIntitule();
     }
 }

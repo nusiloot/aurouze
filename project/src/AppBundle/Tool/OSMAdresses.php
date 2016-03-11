@@ -42,8 +42,8 @@ class OSMAdresses {
         }
         $lat = $result->response->docs[0]->lat;
         $lon = $result->response->docs[0]->lng;
-        $this->document->getCoordinates()->setLat($lat);
-        $this->document->getCoordinates()->setLon($lon);
+        $this->document->getCoordonnees()->setLat($lat);
+        $this->document->getCoordonnees()->setLon($lon);
         return "Nouvelle coordonnées : $lat,$lon pour $fullAdresse";
     }
 

@@ -52,7 +52,7 @@ class DefaultController extends Controller {
         foreach ($etablissementsByCriteria as $etablissement) {
             $newResult = new \stdClass();
             $newResult->id = $etablissement->getIdentifiant();
-            $newResult->term = $etablissement->getLibelleLong();
+            $newResult->term = $etablissement->getIntitule();
             $etablissementsResult[] = $newResult;
         }
     }

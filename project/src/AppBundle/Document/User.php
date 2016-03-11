@@ -44,8 +44,11 @@ class User {
     /**
      * @MongoDB\String
      */
-    protected $type_user;
+    protected $type;
 
+    public function generateId() {
+        $this->setId(self::PREFIX . '-' . $this->identifiant);
+    }
 
     /**
      * Set id
@@ -53,13 +56,10 @@ class User {
      * @param string $id
      * @return self
      */
-     public function setId() {
-        $this->id = $this->generateId();
+    public function setId($id)
+    {
+        $this->id = $id;
         return $this;
-    }
-
-    public function generateId() {
-        return self::PREFIX . '-' . $this->identifiant;
     }
 
     /**
@@ -159,29 +159,6 @@ class User {
     {
         return $this->identite;
     }
-    
-
-    /**
-     * Set typeUser
-     *
-     * @param string $typeUser
-     * @return self
-     */
-    public function setTypeUser($typeUser)
-    {
-        $this->type_user = $typeUser;
-        return $this;
-    }
-
-    /**
-     * Get typeUser
-     *
-     * @return string $typeUser
-     */
-    public function getTypeUser()
-    {
-        return $this->type_user;
-    }
 
     /**
      * Set couleur
@@ -203,5 +180,27 @@ class User {
     public function getCouleur()
     {
         return $this->couleur;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return self
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string $type
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

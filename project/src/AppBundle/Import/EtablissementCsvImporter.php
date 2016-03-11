@@ -15,7 +15,7 @@ namespace AppBundle\Import;
  */
 use AppBundle\Document\Etablissement as Etablissement;
 use AppBundle\Document\Adresse as Adresse;
-use AppBundle\Document\Coordinates;
+use AppBundle\Document\Coordonnees;
 use AppBundle\Manager\EtablissementManager as EtablissementManager;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -72,54 +72,52 @@ class EtablissementCsvImporter extends CsvFile {
 
         $etablissement = new Etablissement();
 
-        $adresseId = sprintf("%06d", $ligne[self::CSV_ID_ADRESSE]);
+        $identifiant = sprintf("%06d", $ligne[self::CSV_ID_ADRESSE]);
 
-        $etablissement->setIdentifiantSociete(sprintf("%06d", $ligne[self::CSV_ID_SOCIETE]));
-        //    $etablissement->setIdentifiant($societeId.$this->etablissementManager->getNextNumeroEtablissement($societeId));
-        $etablissement->setIdentifiant($adresseId);
-
-        $etablissement->setId();
+        $etablissement->setSocieteId(sprintf("SOCIETE-%06d", $ligne[self::CSV_ID_SOCIETE]));
+        $etablissement->setIdentifiant($identifiant);
+        $etablissement->generateId();
 
         $etablissement->setNom($ligne[self::CSV_NOM_ETB]);
         $adresse_str = $ligne[self::CSV_ADRESS_1];
         if ($ligne[self::CSV_ADRESS_2]) {
             $adresse_str .= ', ' . $ligne[self::CSV_ADRESS_2];
         }
-        $etablissement->setNomContact($ligne[self::CSV_CMT]);
+        $etablissement->setContact($ligne[self::CSV_CMT]);
         $etablissement->setRaisonSociale($ligne[self::CSV_RAISON_SOCIALE]);
 
         $adresse = new Adresse();
         $adresse->setAdresse($adresse_str);
         $adresse->setCodePostal($ligne[self::CSV_CP]);
         $adresse->setCommune($ligne[self::CSV_VILLE]);
-        $adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
-        $adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
-        $adresse->setFax($ligne[self::CSV_FAX]);
+        //$adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
+        //$adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
+        //$adresse->setFax($ligne[self::CSV_FAX]);
        
-        $adresse->setCoordinates(new Coordinates());
+        $adresse->setCoordonnees(new Coordonnees());
         if ($ligne[self::CSV_COORD_LAT] && $ligne[self::CSV_COORD_LON]) {
             $lat = $ligne[self::CSV_COORD_LAT];
             $lon = $ligne[self::CSV_COORD_LON];
-            $adresse->getCoordinates()->setLat($lat);
-            $adresse->getCoordinates()->setLon($lon);
-             echo "lat=$lat lon=$lon déjà enregistré \n";
+            $adresse->getCoordonnees()->setLat($lat);
+            $adresse->getCoordonnees()->setLon($lon);
+            //echo "lat=$lat lon=$lon déjà enregistré \n";
         } else {
             $msg = $this->em->getOSMAdresse()->calculCoordonnees($adresse);
             sleep(0.5);
             if ($msg && is_string($msg)) {
-                echo $msg . "\n";
+                //echo $msg . "\n";
             }
         }
         $etablissement->setAdresse($adresse);
 
         if ($ligne[self::CSV_TYPE_ETABLISSEMENT] == "") {
-            $etablissement->setTypeEtablissement(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
+            $etablissement->setType(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
         } else {
 
-            $types_etablissements = EtablissementManager::$type_etablissements_libelles;
+            $types_etablissements = EtablissementManager::$type_libelles;
             $types_etb_keys = array_keys($types_etablissements);
 
-            $etablissement->setTypeEtablissement($types_etb_keys[intval($ligne[self::CSV_TYPE_ETABLISSEMENT]) - 1]);
+            $etablissement->setType($types_etb_keys[intval($ligne[self::CSV_TYPE_ETABLISSEMENT]) - 1]);
         }
 
         return $etablissement;

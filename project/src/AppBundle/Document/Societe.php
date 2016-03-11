@@ -1,11 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace AppBundle\Document;
 
 /**
@@ -35,12 +29,12 @@ class Societe {
     /**
      * @MongoDB\String
      */
-    protected $raison_sociale;
+    protected $raisonSociale;
 
     /**
      * @MongoDB\Boolean
      */
-    protected $sous_traitant;
+    protected $sousTraitant;
 
     /**
      * @MongoDB\String
@@ -50,17 +44,23 @@ class Societe {
     /**
      * @MongoDB\String
      */
-    protected $type_societe;
+    protected $type;
 
     /**
      * @MongoDB\String
      */
-    protected $code_comptable;
+    protected $codeComptable;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="Adresse")
      */
     protected $adresse;
+
+
+    public function generateId() {
+
+        return $this->setId(self::PREFIX . '-' . $this->identifiant);
+    }
 
 
     /**
@@ -69,13 +69,10 @@ class Societe {
      * @param string $id
      * @return self
      */
-     public function setId() {
-        $this->id = $this->generateId();
+    public function setId($id)
+    {
+        $this->id = $id;
         return $this;
-    }
-
-    public function generateId() {
-        return self::PREFIX . '-' . $this->identifiant;
     }
 
     /**
@@ -118,7 +115,7 @@ class Societe {
      */
     public function setRaisonSociale($raisonSociale)
     {
-        $this->raison_sociale = $raisonSociale;
+        $this->raisonSociale = $raisonSociale;
         return $this;
     }
 
@@ -129,7 +126,7 @@ class Societe {
      */
     public function getRaisonSociale()
     {
-        return $this->raison_sociale;
+        return $this->raisonSociale;
     }
 
     /**
@@ -140,7 +137,7 @@ class Societe {
      */
     public function setSousTraitant($sousTraitant)
     {
-        $this->sous_traitant = $sousTraitant;
+        $this->sousTraitant = $sousTraitant;
         return $this;
     }
 
@@ -151,7 +148,7 @@ class Societe {
      */
     public function getSousTraitant()
     {
-        return $this->sous_traitant;
+        return $this->sousTraitant;
     }
 
     /**
@@ -177,25 +174,25 @@ class Societe {
     }
 
     /**
-     * Set typeSociete
+     * Set type
      *
-     * @param string $typeSociete
+     * @param string $type
      * @return self
      */
-    public function setTypeSociete($typeSociete)
+    public function setType($type)
     {
-        $this->type_societe = $typeSociete;
+        $this->type = $type;
         return $this;
     }
 
     /**
-     * Get typeSociete
+     * Get type
      *
-     * @return string $typeSociete
+     * @return string $type
      */
-    public function getTypeSociete()
+    public function getType()
     {
-        return $this->type_societe;
+        return $this->type;
     }
 
     /**
@@ -206,7 +203,7 @@ class Societe {
      */
     public function setCodeComptable($codeComptable)
     {
-        $this->code_comptable = $codeComptable;
+        $this->codeComptable = $codeComptable;
         return $this;
     }
 
@@ -217,16 +214,16 @@ class Societe {
      */
     public function getCodeComptable()
     {
-        return $this->code_comptable;
+        return $this->codeComptable;
     }
 
     /**
      * Set adresse
      *
-     * @param AppBundle\Document\Adresse $adresse
+     * @param $adresse
      * @return self
      */
-    public function setAdresse(\AppBundle\Document\Adresse $adresse)
+    public function setAdresse(Adresse $adresse)
     {
         $this->adresse = $adresse;
         return $this;

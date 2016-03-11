@@ -28,7 +28,7 @@ class EtablissementChoiceType extends AbstractType {
 
         $defaultChoice = array();
         if(isset($options['data']) && isset($options['data']['etablissement'])) {
-            $defaultChoice = array($options['data']['etablissement']->getIdentifiant() => $options['data']['etablissement']->getLibelleLong());
+            $defaultChoice = array($options['data']['etablissement']->getIdentifiant() => $options['data']['etablissement']->getIntitule());
         }
 
         $builder->add('etablissements', 'choice', array("choices" => $defaultChoice,

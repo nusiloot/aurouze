@@ -73,15 +73,15 @@ class PassageController extends Controller {
             $etbInfos = $document;
             $coordinates = null;
             if (!($document instanceof Etablissement)) {
-                $etbInfos = $document->getPassageEtablissement();
-                $coordinates = $document->getPassageEtablissement()->getCoordinates();
+                $etbInfos = $document->getEtablissementInfos();
+                $coordinates = $document->getEtablissementInfos()->getAdresse()->getCoordonnees();
             } else {
-                $coordinates = $document->getAdresse()->getCoordinates();
+                $coordinates = $document->getAdresse()->getCoordonnees();
             }
             if(!$coordinates->getLon() || !$coordinates->getLat()){ continue; }
             $feature->properties->nom = $etbInfos->getNom();
             $feature->properties->color = 'orange';
-            $feature->properties->icon = 'mdi-' . $etbInfos->getIconTypeEtb();
+            $feature->properties->icon = 'mdi-' . $etbInfos->getIcon();
             $feature->geometry = new \stdClass();
             $feature->geometry->type = "Point";
             $feature->geometry->coordinates = array($coordinates->getLon(),$coordinates->getLat());

@@ -49,20 +49,19 @@ class PassageCsvImporter {
         $i=0;
 
         foreach ($csv as $data) {
-
             $etablissement = $this->em->getRepository()->findOneByIdentifiant($data[self::CSV_ETABLISSEMENT_ID]);
             
             if (!$etablissement) {
                 $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
             }
-
             $passage = new Passage();
             $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
+            $passage->setEtablissementId($etablissement->getId());
             $passage->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
-            $passage->updateEtablissementInfos($etablissement);            
+            $passage->getEtablissementInfos()->pull($etablissement);            
             $passage->setNumeroPassageIdentifiant($this->pm->getNextNumeroPassage($passage->getEtablissementIdentifiant(), $passage->getDateCreation()));       
-            $passage->setId($passage->generateId());
+            $passage->generateId();
             if($data[self::CSV_DATE_DEBUT]) {
                 $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
             } 

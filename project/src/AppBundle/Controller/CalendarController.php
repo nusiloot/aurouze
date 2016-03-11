@@ -14,8 +14,8 @@ class CalendarController extends Controller {
      * @Route("/calendar", name="calendar")
      */
     public function calendarAction(Request $request) {
-    	$dm = $this->get('doctrine_mongodb')->getManager();
-    	
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        
         $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
         $technicien = $request->get('technicien');
         $techniciens = $dm->getRepository('AppBundle:User')->findAllByType(User::USER_TYPE_TECHNICIEN);
@@ -168,7 +168,7 @@ class CalendarController extends Controller {
         	}
         	$tech = $dm->getRepository('AppBundle:User')->findByIdentite($passageTech->getTechnicien());
             $passageArr = array('id' => $passageTech->getPassageIdentifiant(),
-                'title' => ($request->get('title'))? $passageTech->getPassageEtablissement()->getIntitule() : "",
+                'title' => ($request->get('title'))? $passageTech->getEtablissementInfos()->getIntitule() : "",
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'), 
             	'backgroundColor' => ($tech)? $tech->getCouleur() : User::COULEUR_DEFAUT,

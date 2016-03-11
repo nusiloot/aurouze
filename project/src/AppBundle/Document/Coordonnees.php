@@ -7,7 +7,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 /** 
  * @MongoDB\EmbeddedDocument
  */
-class Coordinates
+class Coordonnees
 {
     /**
      * @MongoDB\Float
@@ -18,7 +18,6 @@ class Coordinates
      * @MongoDB\Float
      */
     public $lon;
-  
 
     /**
      * Set lat
