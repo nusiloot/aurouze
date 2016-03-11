@@ -16,6 +16,7 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\EtablissementManager;
+use AppBundle\Document\Contrat;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository")
@@ -68,6 +69,11 @@ class Etablissement {
      * @MongoDB\String
      */
     protected $type_etablissement;
+    
+    /***
+     *  @MongoDB\ReferenceMany(targetDocument="Contrat", mappedBy="etablissement") 
+     */
+    protected $contrats = array();
 
     /**
      * Get id
@@ -87,6 +93,7 @@ class Etablissement {
         $this->id = $this->generateId();
         return $this;
     }
+    
 
     public function generateId() {
         return self::PREFIX . '-' . $this->identifiant;
@@ -130,6 +137,37 @@ class Etablissement {
      */
     public function getNom() {
         return $this->nom;
+    }
+
+    /**
+     * Set contrats
+     *
+     * @param array $contrats
+     * @return self
+     */
+    public function setContrats($contrats) {
+        $this->contrats = $contrats;
+        return $this;
+    }
+
+    /**
+     * Add contrats
+     *
+     * @param Contrat $contrat
+     * @return self
+     */
+    public function addContrat($contrat) {
+        $this->contrats[] = $contrat;
+        return $this;
+    }
+
+    /**
+     * Get contrats
+     *
+     * @return array contrats
+     */
+    public function getContrats() {
+        return $this->contrats;
     }
 
     /**
