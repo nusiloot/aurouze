@@ -24,7 +24,7 @@ fi
 
 echo "Récupération des users"
 
-php app/console importer:csv user.importer $DATA_DIR/blUser.csv 
+php app/console importer:csv user.importer $DATA_DIR/tblUser.csv 
 
 #####IMPORT des Etablissements ##### 
 
