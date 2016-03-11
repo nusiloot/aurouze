@@ -103,8 +103,15 @@ class Passage {
      */
     protected $statut;
 
+    /**
+     * @MongoDB\EmbedOne(targetDocument="UserInfos")
+     */
+    protected $technicienInfos;
+
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
+        $this->technicienInfos = new UserInfos();
     }
 
     /** @PrePersist */
@@ -501,6 +508,26 @@ class Passage {
     public function getStatut()
     {
         return $this->statut;
+    }
+
+    /**
+     * Set technicienInfos
+     *
+     * @param AppBundle\Document\UserInfos $technicienInfos
+     * @return self
+     */
+    public function setTechnicienInfos(\AppBundle\Document\UserInfos $technicienInfos) {
+        $this->technicienInfos = $technicienInfos;
+        return $this;
+    }
+
+    /**
+     * Get technicienInfos
+     *
+     * @return AppBundle\Document\UserInfos $technicienInfos
+     */
+    public function getTechnicienInfos() {
+        return $this->technicienInfos;
     }
 
 }

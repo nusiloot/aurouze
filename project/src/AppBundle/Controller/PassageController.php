@@ -75,13 +75,15 @@ class PassageController extends Controller {
             if (!($document instanceof Etablissement)) {
                 $etbInfos = $document->getEtablissementInfos();
                 $coordinates = $document->getEtablissementInfos()->getAdresse()->getCoordonnees();
+                $feature->properties->color = $document->getTechnicienInfos()->getCouleur();
             } else {
                 $coordinates = $document->getAdresse()->getCoordonnees();
+                $feature->properties->color = "black";
             }
             if(!$coordinates->getLon() || !$coordinates->getLat()){ continue; }
             $feature->properties->nom = $etbInfos->getNom();
-            $feature->properties->color = 'orange';
-            $feature->properties->icon = 'mdi-' . $etbInfos->getIcon();
+            
+            $feature->properties->icon = 'mdi-' . $etbInfos->getIconTypeEtb();
             $feature->geometry = new \stdClass();
             $feature->geometry->type = "Point";
             $feature->geometry->coordinates = array($coordinates->getLon(),$coordinates->getLat());

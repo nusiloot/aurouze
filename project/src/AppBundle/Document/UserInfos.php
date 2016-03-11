@@ -1,21 +1,24 @@
 <?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 namespace AppBundle\Document;
-use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use AppBundle\Manager\UserManager;
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\UserRepository")
+ * Description of TechnicienInfos
+ *
+ * @author mathurin
  */
-class User {
-
-    const PREFIX = "USER";
-    const USER_TYPE_TECHNICIEN = "TECHNICIEN";
-    const COULEUR_DEFAUT = 'yellow';
-
-    /**
-     * @MongoDB\Id(strategy="NONE", type="string")
-     */
-    protected $id;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Manager\UserManager;
+/**
+ * @MongoDB\EmbeddedDocument
+ */
+class UserInfos {
 
     /**
      * @MongoDB\string
@@ -43,43 +46,12 @@ class User {
     protected $couleur;
 
     /**
-     * @MongoDB\String
-     */
-    protected $type;
-
-    public function generateId() {
-        $this->setId(self::PREFIX . '-' . $this->identifiant);
-    }
-
-    /**
-     * Get id
-     *
-     * @return id $id
-     */
-    public function getId() {
-        return $this->id;
-    }
-
-    /**
-     * Set id
-     *
-     * @return id $id
-     */
-
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
      * Set identifiant
      *
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant)
-    {
+    public function setIdentifiant($identifiant) {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -89,8 +61,7 @@ class User {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant()
-    {
+    public function getIdentifiant() {
         return $this->identifiant;
     }
 
@@ -100,8 +71,7 @@ class User {
      * @param string $nom
      * @return self
      */
-    public function setNom($nom)
-    {
+    public function setNom($nom) {
         $this->nom = $nom;
         return $this;
     }
@@ -111,8 +81,7 @@ class User {
      *
      * @return string $nom
      */
-    public function getNom()
-    {
+    public function getNom() {
         return $this->nom;
     }
 
@@ -122,8 +91,7 @@ class User {
      * @param string $prenom
      * @return self
      */
-    public function setPrenom($prenom)
-    {
+    public function setPrenom($prenom) {
         $this->prenom = $prenom;
         return $this;
     }
@@ -133,8 +101,7 @@ class User {
      *
      * @return string $prenom
      */
-    public function getPrenom()
-    {
+    public function getPrenom() {
         return $this->prenom;
     }
 
@@ -144,8 +111,7 @@ class User {
      * @param string $identite
      * @return self
      */
-    public function setIdentite($identite)
-    {
+    public function setIdentite($identite) {
         $this->identite = $identite;
         return $this;
     }
@@ -155,8 +121,7 @@ class User {
      *
      * @return string $identite
      */
-    public function getIdentite()
-    {
+    public function getIdentite() {
         return $this->identite;
     }
 
@@ -166,8 +131,7 @@ class User {
      * @param string $couleur
      * @return self
      */
-    public function setCouleur($couleur)
-    {
+    public function setCouleur($couleur) {
         $this->couleur = $couleur;
         return $this;
     }
@@ -177,40 +141,24 @@ class User {
      *
      * @return string $couleur
      */
-    public function getCouleur()
-    {
+    public function getCouleur() {
         return $this->couleur;
     }
 
-    /**
-     * Set type
-     *
-     * @param string $type
-     * @return self
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-        return $this;
+    public function copyFromUser($user) {
+        $this->setIdentifiant($user->getCouleur());
+        $this->setIdentite($user->getIdentite());
+        $this->setNom($user->getNom());
+        $this->setPrenom($user->getPrenom());
+        $this->setCouleur($user->getCouleur());
     }
-
-    /**
-     * Get type
-     *
-     * @return string $type
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-    
     /**
      * Get getCouleurForLabel
      *
      * @return string 
      */
     public function getCouleurForLabel() {
-        
         return UserManager::$couleur_for_label[$this->getCouleur()];
     }
+
 }
