@@ -11,7 +11,10 @@ services:
         class: Twig_Extensions_Extension_Intl
         tags:
             - { name: twig.extension }
-            
+    user.manager:
+        class: AppBundle\Manager\UserManager
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
+        
     etablissement.manager:
         class: AppBundle\Manager\EtablissementManager
         arguments: [@doctrine_mongodb.odm.default_document_manager,@tool.osm]
@@ -26,7 +29,7 @@ services:
 
     passage.importer:
         class: AppBundle\Import\PassageCsvImporter
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @passage.manager, @etablissement.manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @passage.manager, @etablissement.manager,@user.manager]
 
     societe.importer:
         class: AppBundle\Import\SocieteCsvImporter

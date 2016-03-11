@@ -18,30 +18,30 @@
             </div>
             <div class="row">
                 <div class="col-xs-6">
-                    <div id="liste_passage" class="list-group">
+                    <div id="liste_passage" class="list-group" style="height: 600px; overflow: auto;">
                         {% for passage in passages %}
-                            <a data-words='{{ [passage.technicien, passage.passageEtablissement.codePostal, passage.passageEtablissement.commune, passage.passageEtablissement.typeEtablissement, passage.dateCreation | localizeddate('full', 'none'), passage.passageEtablissement.nom]|json_encode() }}' href="{{path('calendar', {'passage' : passage.passageIdentifiant,'technicien' : passage.technicien})}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
+                            <a data-words='{{ [passage.technicienInfos.identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.dateCreation | localizeddate('full', 'none'), passage.etablissementInfos.nom]|json_encode() }}' href="{{path('calendar', {'passage' : passage.passageIdentifiant,'technicien' : passage.technicienInfos.identite})}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <i class="mdi mdi-{{ passage.passageEtablissement.iconTypeEtb }} mdi-lg"></i>
-                                        <strong>{{ passage.passageEtablissement.nom|capitalize }}</strong>
-                                        <span class="text-muted"><small>{{ passage.passageEtablissement.codePostal }} {{ passage.passageEtablissement.commune }}</small></span>
+                                        <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
+                                        <strong>{{ passage.etablissementInfos.nom|capitalize }}</strong>
+                                        <span class="text-muted"><small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small></span>
                                     </div>
-                                    {% if passage.passageEtablissement.telephoneFixe or passage.passageEtablissement.telephonePortable %}
+                                    {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
 	                                <div class="col-sm-12">
                                         <i class="mdi mdi-call mdi-lg"></i>
-                                        <small>{{ passage.passageEtablissement.telephoneFixe }}</small> 
-                                        {% if passage.passageEtablissement.telephoneFixe and passage.passageEtablissement.telephonePortable %}
+                                        <small>{{ passage.etablissementInfos.telephoneFixe }}</small> 
+                                        {% if passage.etablissementInfos.telephoneFixe and passage.etablissementInfos.telephonePortable %}
                                         /
                                     	{% endif %}
-                                        <small>{{ passage.passageEtablissement.telephonePortable }}</small>
+                                        <small>{{ passage.etablissementInfos.telephonePortable }}</small>
                                     </div>
                                     {% endif %}
                                 </div>
                                  <div class="row" style="margin-top:10px;">
                                     <div class="col-sm-5 text-left">
                                     	<i class="mdi mdi-person mdi-lg"></i>
-                                        <small>{{ passage.technicien }}</small>
+                                        <span class="label" style="background-color: {{ passage.technicienInfos.couleurForLabel['background-color'] }};color: {{ passage.technicienInfos.couleurForLabel['color'] }};"><small>{{ passage.technicienInfos.identite }}</small></span>
 	                                </div>
                                     <div class="col-sm-2 text-center">
                                     	<i class="mdi mdi-schedule mdi-lg"></i>

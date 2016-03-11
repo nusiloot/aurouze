@@ -68,7 +68,7 @@ class SocieteCsvImporter extends CsvFile {
 
         $societe->setIdentifiant(sprintf("%06d", $ligne[self::CSV_ID_SOCIETE]));
 
-        $societe->setId();
+        $societe->generateId();
 
         $societe->setRaisonSociale($ligne[self::CSV_RAISON_SOCIALE]);
         $societe->setCodeComptable($ligne[self::CSV_CODE_COMPTABLE]);
@@ -84,19 +84,19 @@ class SocieteCsvImporter extends CsvFile {
         $adresse->setAdresse($adresseStr);
         $adresse->setCodePostal($ligne[self::CSV_CP]);
         $adresse->setCommune($ligne[self::CSV_VILLE]);
-        $adresse->setFax($ligne[self::CSV_FAX]);
-        $adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
-        $adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
+        // $adresse->setFax($ligne[self::CSV_FAX]);
+        // $adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
+        // $adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
 
         $societe->setAdresse($adresse);
         if ($ligne[self::CSV_TYPE_SOCIETE] == "") {
-            $societe->setTypeSociete(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
+            $societe->setType(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
         } else {
 
-            $types_etablissements = EtablissementManager::$type_etablissements_libelles;
+            $types_etablissements = EtablissementManager::$type_libelles;
             $types_etb_keys = array_keys($types_etablissements);
         
-            $societe->setTypeSociete($types_etb_keys[intval($ligne[self::CSV_TYPE_SOCIETE])-1]);
+            $societe->setType($types_etb_keys[intval($ligne[self::CSV_TYPE_SOCIETE])-1]);
         }
         return $societe;
     }

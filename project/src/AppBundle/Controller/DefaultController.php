@@ -50,7 +50,7 @@ class DefaultController extends Controller {
             $etablissementsByCommune = $dm->getRepository('AppBundle:Etablissement')->findByTerm($term, 'adresse.commune');
             $this->contructSearchResult($etablissementsByNom, $etablissementsResult);
             $this->contructSearchResult($etablissementsByAdresse, $etablissementsResult);
-           $this->contructSearchResult($etablissementsByCp, $etablissementsResult);
+            $this->contructSearchResult($etablissementsByCp, $etablissementsResult);
             $this->contructSearchResult($etablissementsByCommune, $etablissementsResult);
         }
         $data = json_encode($etablissementsResult);
@@ -64,9 +64,7 @@ class DefaultController extends Controller {
         foreach ($etablissementsByCriteria as $etablissement) {
             $newResult = new \stdClass();
             $newResult->id = $etablissement->getIdentifiant();
-            $newResult->term = $etablissement->getNom() . ' ' . $etablissement->getAdresse()->getAdresse()
-                        . ' ' . $etablissement->getAdresse()->getCodePostal()
-                        . ' ' . $etablissement->getAdresse()->getCommune();
+            $newResult->term = $etablissement->getIntitule();
             $etablissementsResult[] = $newResult;
         }
     }

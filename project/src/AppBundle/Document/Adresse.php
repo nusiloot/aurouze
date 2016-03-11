@@ -15,10 +15,11 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Document\Coordonnees;
 
 /** 
  * @MongoDB\EmbeddedDocument
- * @MongoDB\Index(keys={"coordinates"="2d"})
+ * @MongoDB\Index(keys={"coordonnees"="2d"})
 */
 class Adresse {
 
@@ -30,33 +31,26 @@ class Adresse {
     /**
      * @MongoDB\String
      */
-    protected $code_postal;
+    protected $codePostal;
 
     /**
      * @MongoDB\String
      */
     protected $commune;
 
-    /**
-     * @MongoDB\String
-     */
-    protected $telephone_portable;
-
-    /**
-     * @MongoDB\String
-     */
-    protected $telephone_fixe;
-
-    /**
-     * @MongoDB\String
-     */
-    protected $fax;
-
-    
      /** 
-     * @MongoDB\EmbedOne(targetDocument="Coordinates") 
+     * @MongoDB\EmbedOne(targetDocument="Coordonnees") 
      */
-    protected $coordinates;
+    protected $coordonnees;
+
+    /** 
+     * @MongoDB\Distance 
+     */
+    protected $distance;
+
+    public function __construct() {
+        $this->coordonnees = new Coordonnees();
+    }
 
     /**
      * Set adresse
@@ -88,7 +82,7 @@ class Adresse {
      */
     public function setCodePostal($codePostal)
     {
-        $this->code_postal = $codePostal;
+        $this->codePostal = $codePostal;
         return $this;
     }
 
@@ -99,7 +93,7 @@ class Adresse {
      */
     public function getCodePostal()
     {
-        return $this->code_postal;
+        return $this->codePostal;
     }
 
     /**
@@ -125,99 +119,51 @@ class Adresse {
     }
 
     /**
-     * Set telephonePortable
+     * Set coordonnees
      *
-     * @param string $telephonePortable
+     * @param Coordonnees $coordonnees
      * @return self
      */
-    public function setTelephonePortable($telephonePortable)
+    public function setCoordonnees($coordonnees)
     {
-        $this->telephone_portable = $telephonePortable;
+        $this->coordonnees = $coordonnees;
         return $this;
     }
 
     /**
-     * Get telephonePortable
+     * Get coordonnees
      *
-     * @return string $telephonePortable
+     * @return Coordonnees $coordonnees
      */
-    public function getTelephonePortable()
+    public function getCoordonnees()
     {
-        return $this->telephone_portable;
+        return $this->coordonnees;
     }
 
     /**
-     * Set telephoneFixe
+     * Set distance
      *
-     * @param string $telephoneFixe
+     * @param string $distance
      * @return self
      */
-    public function setTelephoneFixe($telephoneFixe)
+    public function setDistance($distance)
     {
-        $this->telephone_fixe = $telephoneFixe;
+        $this->distance = $distance;
         return $this;
     }
 
     /**
-     * Get telephoneFixe
+     * Get distance
      *
-     * @return string $telephoneFixe
+     * @return string $distance
      */
-    public function getTelephoneFixe()
+    public function getDistance()
     {
-        return $this->telephone_fixe;
+        return $this->distance;
     }
 
-    /**
-     * Set fax
-     *
-     * @param string $fax
-     * @return self
-     */
-    public function setFax($fax)
-    {
-        $this->fax = $fax;
-        return $this;
-    }
+    public function getIntitule() {
 
-    /**
-     * Get fax
-     *
-     * @return string $fax
-     */
-    public function getFax()
-    {
-        return $this->fax;
-    }
-    
-     /**
-     * Get adressecomplete
-     *
-     * @return string $adressecomplete
-     */
-    public function getAdressecomplete() {
-        return $this->adresse." ".$this->code_postal." ".$this->commune;
-    }
-
-    /**
-     * Set coordinates
-     *
-     * @param AppBundle\Document\Coordinates $coordinates
-     * @return self
-     */
-    public function setCoordinates(\AppBundle\Document\Coordinates $coordinates)
-    {
-        $this->coordinates = $coordinates;
-        return $this;
-    }
-
-    /**
-     * Get coordinates
-     *
-     * @return AppBundle\Document\Coordinates $coordinates
-     */
-    public function getCoordinates()
-    {
-        return $this->coordinates;
+        return sprintf("%s %s %s", $this->getAdresse(), $this->getCodePostal(), $this->getCommune());
     }
 }

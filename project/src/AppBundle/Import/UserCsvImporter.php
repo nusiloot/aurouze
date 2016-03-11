@@ -13,7 +13,7 @@ class UserCsvImporter extends CsvFile {
     const CSV_NOM = 2;
     const CSV_PRENOM = 3;
     const CSV_COULEUR = 4;
-    const CSV_USER_TYPE = 5;
+    const CSV_TYPE = 5;
 
     public function __construct(DocumentManager $dm) {
         $this->dm = $dm;
@@ -41,12 +41,12 @@ class UserCsvImporter extends CsvFile {
         $user = new User();
 
         $user->setIdentifiant($ligne[self::CSV_IDENTIFIANT_USER]);
-        $user->setId();
+        $user->generateId();
         $user->setIdentite($ligne[self::CSV_IDENTITE]);
         $user->setNom($ligne[self::CSV_NOM]);
         $user->setPrenom($ligne[self::CSV_PRENOM]);
         $user->setCouleur($ligne[self::CSV_COULEUR]);
-        $user->setTypeUser($ligne[self::CSV_USER_TYPE]);
+        $user->setType($ligne[self::CSV_TYPE]);
         return $user;
     }
 

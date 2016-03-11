@@ -38,7 +38,7 @@ class EtablissementManager {
     const TYPE_ETB_HOTEL = "HOTEL";
     const TYPE_ETB_NON_SPECIFIE = "NON_SPECIFIE";
 
-    public static $type_etablissements_libelles = array(
+    public static $type_libelles = array(
         self::TYPE_ETB_BOULANGERIE => "Boulangerie",
         self::TYPE_ETB_RESTAURANT => "Restaurant",
         self::TYPE_ETB_ADMINISTRATION => "Administration",
@@ -52,7 +52,7 @@ class EtablissementManager {
         self::TYPE_ETB_AUTRE => "Autre",
         self::TYPE_ETB_HOTEL => "Hôtel",
         self::TYPE_ETB_NON_SPECIFIE => "Non spécifié");
-    public static $type_etablissements_pictos = array(
+    public static $type_icon = array(
         self::TYPE_ETB_BOULANGERIE => "cake",
         self::TYPE_ETB_RESTAURANT => "local-dining",
         self::TYPE_ETB_ADMINISTRATION => "description",
