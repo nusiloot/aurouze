@@ -20,7 +20,7 @@ class PassageRepository extends DocumentRepository {
         $query = $this->createQueryBuilder('Passage')
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
-                ->field('technicien')->equals($identifiantTech)
+                ->field('technicienInfos.identite')->equals($identifiantTech)
                 ->getQuery();
         return $query->execute();
     }
