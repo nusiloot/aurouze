@@ -18,9 +18,9 @@
             </div>
             <div class="row">
                 <div class="col-xs-6">
-                    <div id="liste_passage" class="list-group">
+                    <div id="liste_passage" class="list-group" style="height: 600px; overflow: auto;">
                         {% for passage in passages %}
-                            <a data-words='{{ [passage.technicien, passage.passageEtablissement.codePostal, passage.passageEtablissement.commune, passage.passageEtablissement.typeEtablissement, passage.dateCreation | localizeddate('full', 'none'), passage.passageEtablissement.nom]|json_encode() }}' href="{{path('calendar', {'passage' : passage.passageIdentifiant,'technicien' : passage.technicien})}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
+                            <a data-words='{{ [passage.technicienInfos.identite, passage.passageEtablissement.codePostal, passage.passageEtablissement.commune, passage.passageEtablissement.typeEtablissement, passage.dateCreation | localizeddate('full', 'none'), passage.passageEtablissement.nom]|json_encode() }}' href="{{path('calendar', {'passage' : passage.passageIdentifiant,'technicien' : passage.technicienInfos.identite})}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <i class="mdi mdi-{{ passage.passageEtablissement.iconTypeEtb }} mdi-lg"></i>
@@ -41,7 +41,7 @@
                                  <div class="row" style="margin-top:10px;">
                                     <div class="col-sm-5 text-left">
                                     	<i class="mdi mdi-person mdi-lg"></i>
-                                        <small>{{ passage.technicien }}</small>
+                                        <span class="label" style="background-color: {{ passage.technicienInfos.couleurForLabel['background-color'] }};color: {{ passage.technicienInfos.couleurForLabel['color'] }};"><small>{{ passage.technicienInfos.identite }}</small></span>
 	                                </div>
                                     <div class="col-sm-2 text-center">
                                     	<i class="mdi mdi-schedule mdi-lg"></i>

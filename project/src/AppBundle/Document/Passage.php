@@ -88,22 +88,20 @@ class Passage {
     protected $description;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\EmbedOne(targetDocument="UserInfos")
      */
-    protected $technicien;
+    protected $technicienInfos;
 
     /**
      * @MongoDB\String
      */
     protected $statut;
 
-    
     /** @PrePersist */
-    public function prePersist()
-    {
+    public function prePersist() {
         $this->updateStatut();
     }
-    
+
     /**
      * Get id
      *
@@ -242,7 +240,7 @@ class Passage {
         $this->passageEtablissement->setTelephoneFixe($etb->getAdresse()->getTelephoneFixe());
         $this->passageEtablissement->setTypeEtablissement($etb->getTypeEtablissement());
         $this->passageEtablissement->setCoordinates(new Coordinates());
-        
+
         $this->passageEtablissement->getCoordinates()->lon = $etb->getAdresse()->getCoordinates()->getLon();
         $this->passageEtablissement->getCoordinates()->lat = $etb->getAdresse()->getCoordinates()->getLat();
     }
@@ -407,26 +405,6 @@ class Passage {
         return $this->description;
     }
 
-    /**
-     * Set technicien
-     *
-     * @param string $technicien
-     * @return self
-     */
-    public function setTechnicien($technicien) {
-        $this->technicien = $technicien;
-        return $this;
-    }
-
-    /**
-     * Get technicien
-     *
-     * @return string $technicien
-     */
-    public function getTechnicien() {
-        return $this->technicien;
-    }
-
     public function getDescriptionTransformed() {
         return str_replace('\n', "\n", $this->description);
     }
@@ -510,9 +488,29 @@ class Passage {
     public function getStatut() {
         return $this->statut;
     }
-    public function getPassageIdentifiant()
-    {
-    	return $this->etablissementIdentifiant.'-'.$this->identifiant;
+
+    public function getPassageIdentifiant() {
+        return $this->etablissementIdentifiant . '-' . $this->identifiant;
     }
-    
+
+    /**
+     * Set technicienInfos
+     *
+     * @param AppBundle\Document\UserInfos $technicienInfos
+     * @return self
+     */
+    public function setTechnicienInfos(\AppBundle\Document\UserInfos $technicienInfos) {
+        $this->technicienInfos = $technicienInfos;
+        return $this;
+    }
+
+    /**
+     * Get technicienInfos
+     *
+     * @return AppBundle\Document\UserInfos $technicienInfos
+     */
+    public function getTechnicienInfos() {
+        return $this->technicienInfos;
+    }
+
 }
