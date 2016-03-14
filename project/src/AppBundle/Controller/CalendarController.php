@@ -130,7 +130,7 @@ class CalendarController extends Controller {
             'title' => $passageToMove->getIntitule(),
             'start' => $start,
             'end' => $end,
-            'backgroundColor' => ($tech) ? $tech->getCouleurForLabel()['background-color'] : User::COULEUR_DEFAUT,
+            'backgroundColor' => ($tech) ? $tech->getCouleur() : User::COULEUR_DEFAUT,
             'textColor' => "black"
         );
         if ($technicien) {

@@ -21,9 +21,10 @@
                         var marker = L.marker(latlng, {icon: L.ExtraMarkers.icon({
                                                     icon: feature.properties.icon,
                                                     markerColor: feature.properties.color,
-                                                    iconColor: 'black',
+                                                    iconColor: feature.properties.colorText,
                                                     shape: 'circle',
-                                                    prefix: 'mdi'
+                                                    prefix: 'mdi',
+                                                    svg: true
                                                 })});
                         markers.push(marker);
                         

@@ -177,9 +177,21 @@ class User {
      *
      * @return string $couleur
      */
-    public function getCouleur()
-    {
+    public function getCouleur() {
+        if(!$this->couleur) {
+
+            return '#ffffff';
+        }
         return $this->couleur;
+    }
+
+    public function getCouleurText() {
+        if(!$this->getCouleur() || $this->getCouleur() == '#ffffff') {
+
+            return '#000000';
+        }
+
+        return '#ffffff';
     }
 
     /**
@@ -204,13 +216,4 @@ class User {
         return $this->type;
     }
     
-    /**
-     * Get getCouleurForLabel
-     *
-     * @return string 
-     */
-    public function getCouleurForLabel() {
-        
-        return UserManager::$couleur_for_label[$this->getCouleur()];
-    }
 }

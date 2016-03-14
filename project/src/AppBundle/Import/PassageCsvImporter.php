@@ -91,7 +91,7 @@ class PassageCsvImporter {
             if($user){
                 $userInfos->copyFromUser($user);
             }else{
-                $userInfos->setCouleur("white");
+                $userInfos->setCouleur("#ffffff");
                 $userInfos->setIdentite($data[self::CSV_TECHNICIEN]);                
             }
             $passage->setTechnicienInfos($userInfos);
