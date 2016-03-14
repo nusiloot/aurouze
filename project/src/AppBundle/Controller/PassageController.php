@@ -76,9 +76,11 @@ class PassageController extends Controller {
                 $etbInfos = $document->getEtablissementInfos();
                 $coordinates = $document->getEtablissementInfos()->getAdresse()->getCoordonnees();
                 $feature->properties->color = $document->getTechnicienInfos()->getCouleur();
+                $feature->properties->colorText = $document->getTechnicienInfos()->getCouleurText();
             } else {
                 $coordinates = $document->getAdresse()->getCoordonnees();
-                $feature->properties->color = "black";
+                $feature->properties->color = "#fff";
+                $feature->properties->colorText = "#000";
             }
             if(!$coordinates->getLon() || !$coordinates->getLat()){ continue; }
             $feature->properties->nom = $etbInfos->getNom();
