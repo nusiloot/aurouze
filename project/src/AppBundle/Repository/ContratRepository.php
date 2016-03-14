@@ -13,16 +13,20 @@ class ContratRepository extends DocumentRepository
 		return $etablissement->getContrats();
 	}
 	
-	public function findNextNumero($etablissement) 
+        public function findByEtablissementAndDateCreation($etablissement, $dateCreation) {
+        return $this->findBy(
+                        array('etablissement.identifiant' => $etablissement->getIdentifiant(), 'dateCreation' => $dateCreation));
+    }
+        
+	public function findNextNumero($etablissement,$dateCreation) 
 	{
-	
-		$contrats = $this->findByEtablissement($etablissement);
-	
+		$contrats = $this->findByEtablissementAndDateCreation($etablissement,$dateCreation);
+            
 		$identifiants = array();
 		foreach ($contrats as $contrat) {
 			$identifiants[$contrat->getIdentifiant()] = $contrat->getIdentifiant();
 		}
-		return (count($identifiants) > 0)? (substr(max($identifiants),-6) + 1) : null;
+		return (count($identifiants) > 0)? (substr(max($identifiants),-3) + 1) : 1;
 	}
 
 }

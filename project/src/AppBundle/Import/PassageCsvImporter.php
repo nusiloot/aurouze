@@ -37,6 +37,7 @@ class PassageCsvImporter {
     const CSV_TECHNICIEN = 5;
     const CSV_LIBELLE = 6;
     const CSV_DESCRIPTION = 7;
+    const CSV_CONTRAT_ID = 8;
 
     public function __construct(DocumentManager $dm, PassageManager $pm, EtablissementManager $em, UserManager $um) {
         $this->dm = $dm;
@@ -85,6 +86,7 @@ class PassageCsvImporter {
             }
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
+            $passage->setContratId($data[self::CSV_CONTRAT_ID]);
             
             $userInfos = new UserInfos();            
             $user = $this->um->getRepository()->findOneByIdentite($data[self::CSV_TECHNICIEN]);

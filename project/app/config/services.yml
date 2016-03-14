@@ -26,14 +26,22 @@ services:
     passage.manager:
         class: AppBundle\Manager\PassageManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
+        
+    contrat.manager:
+        class: AppBundle\Manager\ContratManager
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
 
     passage.importer:
         class: AppBundle\Import\PassageCsvImporter
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @passage.manager, @etablissement.manager,@user.manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @passage.manager, @etablissement.manager, @user.manager]
 
     societe.importer:
         class: AppBundle\Import\SocieteCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager]
+        
+    contrat.importer:
+        class: AppBundle\Import\ContratCsvImporter
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, @passage.manager, @etablissement.manager, @user.manager]
         
     technicien.choix:
         class: AppBundle\Type\TechnicienChoiceType
