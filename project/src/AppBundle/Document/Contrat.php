@@ -41,7 +41,7 @@ class Contrat {
     /**
      * @MongoDB\ReferenceMany(targetDocument="Passage")
      */
-    protected $passages = array();
+    protected $passages;
 
     
     /**
@@ -118,6 +118,7 @@ class Contrat {
     public function __construct()
     {
         $this->prestations = new ArrayCollection();
+        $this->passages = new ArrayCollection();
     }
     
     /**
