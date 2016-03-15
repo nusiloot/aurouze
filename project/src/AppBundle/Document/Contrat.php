@@ -496,20 +496,6 @@ class Contrat {
         $this->statut = $statut;
         return $this;
     }
-
-    /**
-     * Get statut
-     *
-     * @return string $statut
-     */
-    public function getStatut()
-    {
-        return $this->statut;
-    }
-    public function __construct()
-    {
-        $this->passages = new \Doctrine\Common\Collections\ArrayCollection();
-    }
     
     /**
      * Add passage
