@@ -59,6 +59,7 @@ class ContratCsvImporter {
         $csv = $csvFile->getCsv();
 
         $i = 0;
+        $cptTotal = 0;
         foreach ($csv as $data) {
             if ($data[self::CSV_ID_ETABLISSEMENT] == "000000") {
                 continue;
@@ -78,6 +79,8 @@ class ContratCsvImporter {
             $contrat->setEtablissement($etablissement);
             $contrat->setIdentifiant($this->cm->getNextNumero($etablissement, $contrat->getDateCreation()));
             $contrat->generateId();
+            
+            
             if ($data[self::CSV_DATE_DEBUT]) {
                 $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
             }
@@ -98,8 +101,12 @@ class ContratCsvImporter {
 
             $this->dm->persist($contrat);
             $i++;
-
-            if ($i >= 5000) {
+            $cptTotal++;
+            if ($cptTotal % 1000 == 0) {
+                $output->writeln(sprintf("<info> %01.02f", ($cptTotal / (float) count($csv)) * 100)."%  </info>");
+            }
+            
+            if ($i >= 1000) {
                 $this->dm->flush();
                 $i = 0;
             }
