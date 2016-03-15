@@ -42,7 +42,7 @@ class PassageController extends Controller {
     public function etablissementAction(Request $request, $identifiantEtablissement) {
         $etablissement = $this->get('etablissement.manager')->getRepository()->findOneByIdentifiant($identifiantEtablissement);
         
-        $contrats = $this->get('contrat.manager')->getRepository()->findByEtablissement($etablissement, 'descending');
+        $contrats = $this->get('contrat.manager')->getRepository()->findByEtablissement($etablissement);
 
         krsort($contrats);
         

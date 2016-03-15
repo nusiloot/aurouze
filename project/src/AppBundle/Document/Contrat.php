@@ -568,7 +568,7 @@ class Contrat {
     public function getDateFin() {
 
         $dateFin = clone $this->getDateDebut();
-        $dateFin->modify("+ ".$this->getDuree()." month");
+        $dateFin->modify("+ ".$this->getDuree()." months");
 
         return $dateFin;
     }
@@ -576,5 +576,16 @@ class Contrat {
     public function isTerminee() {
 
         return ($this->getDateFin() < new \DateTime());
+    }
+
+    public function getNbPassagePrevu() {
+        foreach($this->getPassages() as $passage) {
+            if(preg_match("/Passage[n° ]*[0-9]+ sur ([0-9]+)/i", $passage->getLibelle(), $matches)) {
+
+                return $matches[1];
+            }
+        }
+
+        return 1;
     }
 }
