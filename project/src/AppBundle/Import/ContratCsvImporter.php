@@ -31,7 +31,6 @@ class ContratCsvImporter {
     protected $em;
     protected $um;
 
-   
     const CSV_ID_CONTRAT = 0;
     const CSV_ID_ETABLISSEMENT = 1;
     const CSV_ID_SOCIETE = 2;
@@ -70,29 +69,37 @@ class ContratCsvImporter {
                 $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ID_ETABLISSEMENT]));
                 continue;
             }
-            if ($etablissement->getSocieteId() != 'SOCIETE-'.$data[self::CSV_ID_SOCIETE]) {
+            if ($etablissement->getSocieteId() != 'SOCIETE-' . $data[self::CSV_ID_SOCIETE]) {
                 $output->writeln(sprintf("<error>Le contrat %s avec l'établissement %s n'a pas la même société que dans la base : %s</error>", $data[self::CSV_ID_CONTRAT], $data[self::CSV_ID_ETABLISSEMENT], $data[self::CSV_ID_SOCIETE]));
                 continue;
             }
-            $contrat = new Contrat(); 
+            $contrat = new Contrat();
             $contrat->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
             $contrat->setEtablissement($etablissement);
-            $contrat->setIdentifiant($this->cm->getNextNumero($etablissement,$contrat->getDateCreation()));
+            $contrat->setIdentifiant($this->cm->getNextNumero($etablissement, $contrat->getDateCreation()));
             $contrat->generateId();
             if ($data[self::CSV_DATE_DEBUT]) {
                 $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
             }
 
-           $contrat->setDuree($data[self::CSV_DUREE]);
-           $contrat->setDureeGarantie($data[self::CSV_GARANTIE]);
-           $contrat->setLocalisationTraitement($data[self::CSV_LOCALISATION_TRAITEMENT]);
-           $contrat->setPrixHt($data[self::CSV_PRIXHT]);
+            $contrat->setDuree($data[self::CSV_DUREE]);
+            $contrat->setDureeGarantie($data[self::CSV_GARANTIE]);
+            $contrat->setLocalisationTraitement($data[self::CSV_LOCALISATION_TRAITEMENT]);
+            $contrat->setPrixHt($data[self::CSV_PRIXHT]);
+            $this->dm->persist($contrat);
 
-           $this->cm->updatePassages($contrat,$data[self::CSV_ID_CONTRAT]);
+            $passages = $this->pm->getRepository()->findByContratId($data[self::CSV_ID_CONTRAT]);
+
+            foreach ($passages as $passage) {
+                $contrat->addPassage($passage);
+                $passage->setContratId($contrat->getId());
+                $this->dm->persist($passage);
+            }
+
             $this->dm->persist($contrat);
             $i++;
 
-            if ($i >= 1000) {
+            if ($i >= 5000) {
                 $this->dm->flush();
                 $i = 0;
             }

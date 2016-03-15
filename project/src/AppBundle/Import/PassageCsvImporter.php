@@ -100,8 +100,10 @@ class PassageCsvImporter {
 
             $this->dm->persist($passage);
             $i++;
-
-            if ($i >= 1000) {
+            if($i%4000 == 0){
+            echo sprintf("%02d", ($i/69456)*100)."%\n";
+            }
+            if ($i >= 4000) {
                 $this->dm->flush();
                 $i = 0;
             }

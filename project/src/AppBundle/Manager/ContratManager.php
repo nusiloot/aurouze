@@ -35,18 +35,20 @@ class ContratManager {
         $next = $this->getRepository()->findNextNumero($etablissement, $dateCreation);
         return $etablissement->getIdentifiant() . '-' . $dateCreation->format('Ymd') . '-' . sprintf("%03d", $next);
     }
-    
+    /*
     public function updatePassages(Contrat $c,$old_id = "") {
         $contrat_id = $c->getId();
         if($old_id){
             $contrat_id = $old_id;
         }
         $passages = $this->dm->getRepository('AppBundle:Passage')->findByContratId($contrat_id);
+        
         foreach ($passages as $passage) {
             $c->addPassage($passage);
             $passage->setContratId($c->getId());
             $this->dm->persist($passage);
-        }        
-    }
+        }    
+        $this->dm->flush();
+    }*/
 
 }

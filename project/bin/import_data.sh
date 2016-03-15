@@ -137,7 +137,7 @@ cat $DATA_DIR/passagesadressestechniciens.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+
 
     description=$17;
     technicien=$26;
-    contrat_id=sprintf("%06d",$3);
+    contrat_id=$3;
     print date_creation ";" etablissement_id ";" date_passage_debut ";;" duree ";" technicien ";" libelle ";" description ";" contrat_id
 
 }' > $DATA_DIR/passages.csv
@@ -151,8 +151,8 @@ cat $DATA_DIR/tblPrestationAdresse.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestati
 
 join -t ';' -1 2 -2 1 $DATA_DIR/prestationAdresse.sorted.csv $DATA_DIR/tblPrestation.cleaned.csv > $DATA_DIR/prestation.tmp.csv
 
-cat $DATA_DIR/prestation.tmp.csv | awk -F ';'  '{
-    contrat_id=sprintf("%06d", $2);
+cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
+    contrat_id=$1;
     societe_id=sprintf("%06d", $5);
     etablissement_id=sprintf("%06d", $3);
     commercial_id=sprintf("%06d", $8);
@@ -163,7 +163,13 @@ cat $DATA_DIR/prestation.tmp.csv | awk -F ';'  '{
     date_contrat=$13;
     date_creation_contrat="";
     if(date_contrat) {
-        cmd="date --date=\""d"\" \"+%Y-%m-%d %H:%M:%S\"";
+        cmd="date --date=\""date_contrat"\" \"+%Y-%m-%d %H:%M:%S\"";
+        cmd | getline date_creation_contrat;
+        close(cmd);
+    }
+    date_acceptation=$19;
+    if(!date_creation_contrat){
+        cmd="date --date=\""date_acceptation"\" \"+%Y-%m-%d %H:%M:%S\"";
         cmd | getline date_creation_contrat;
         close(cmd);
     }
@@ -171,10 +177,11 @@ cat $DATA_DIR/prestation.tmp.csv | awk -F ';'  '{
     date_debut=$20;
     date_debut_contrat="";
     if(date_debut) {
-        cmd="date --date=\""d"\" \"+%Y-%m-%d %H:%M:%S\"";
+        cmd="date --date=\""date_debut"\" \"+%Y-%m-%d %H:%M:%S\"";
         cmd | getline date_debut_contrat;
         close(cmd);
     }
+
     duree=$21;
     garantie=$33;
     prixht=$29;
