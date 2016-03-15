@@ -63,7 +63,7 @@
 
             $('#liste_passage .list-group-item').hover(function() {
                 var marker = markers[$(this).attr('id')];
-                $('.leaflet-marker-icon').css('opacity', '0.5');
+                $('.leaflet-marker-icon').css('opacity', '0.3');
                 $(marker._icon).css('opacity', '1');
                 marker.setZIndexOffset(1001);
             }, function() {

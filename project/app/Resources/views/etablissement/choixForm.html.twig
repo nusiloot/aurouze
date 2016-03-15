@@ -1,18 +1,18 @@
 <div class="row">
-    <div class="col-xs-12" style="margin-bottom: 20px;">
+    <div class="col-xs-12">
         <h3>Rechercher par établissement</h3>
-        {{ form_start(form, {'attr': { 'novalidate': 'novalidate' } }) }} 
-            <div class="row">  
-                <div class="form-group">
-                    <div class="col-xs-9">
-                        <div class="error_list">{{ form_errors(form.etablissements) }}</div>
-                        {{ form_widget(form.etablissements, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher un établissement', 'data-url' : path('etablissement_search') } }) }}
-                    </div>     
-                    <div class="col-xs-1">
-                        <button type="submit" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-search"></span></button>
-                    </div>
+        {{ form_start(form, {'attr': { 'novalidate': 'novalidate', 'class': 'form-horizontal' } }) }}
+        <div class="form-group">
+            <div class="col-xs-12">
+                {{ form_errors(form.etablissements) }}
+                <div class="input-group select2-bootstrap-append">
+                    {{ form_widget(form.etablissements, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher un établissement', 'data-url' : path('etablissement_search'), 'aria-hidden': true } }) }}
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-default" type="button">Accéder</button>
+                    </span>
                 </div>
             </div>
+        </div>
         {{form_end(form)}}
     </div>
 </div> 
