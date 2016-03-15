@@ -13,6 +13,7 @@
             var geojson = JSON.parse($('#map').attr('data-geojson'));
             var markers = [];
             var hoverTimeout = null;
+
             L.geoJson(geojson, 
                 {
                     onEachFeature: function (feature, layer) {
@@ -33,7 +34,6 @@
                                     element.focus();
                                 }, 400);
                             });
-
                             layer.on('mouseout', function(e) {
                                 if(hoverTimeout) {
                                     clearTimeout(hoverTimeout);
@@ -59,22 +59,40 @@
                                                 })});
                         markers[feature.properties._id] = marker;
                         return marker;
+                        }
                     }
-                }
             ).addTo(map);
 
-            $('#liste_passage .list-group-item').hover(function() {
+            $('#liste_passage .list-group-item').hover(function () {
                 var marker = markers[$(this).attr('id')];
                 $('.leaflet-marker-icon').css('opacity', '0.3');
                 $(marker._icon).css('opacity', '1');
                 marker.setZIndexOffset(1001);
-            }, function() {
+            }, function () {
                 var marker = markers[$(this).attr('id')];
                 marker.setZIndexOffset(900);
                 $('.leaflet-marker-icon').css('opacity', '1');
             });
-        }
+            
+            $(window).on('hashchange', function () {
+                $('#liste_passage .list-group-item').each(function () {
+                    if (!$(this).is(':visible')) {
+                        var marker = markers[$(this).attr('id')];
+                        $(marker._icon).css('opacity', '0');
+                        $(marker._icon).addClass('hidden');
+                        $(marker._shadow).addClass('hidden');
+                        marker.setZIndexOffset(1001);
+                    }else{
+                        var marker = markers[$(this).attr('id')];
+                        $(marker._icon).css('opacity', '1');
+                        $(marker._icon).removeClass('hidden');
+                        $(marker._shadow).removeClass('hidden');
+                        marker.setZIndexOffset(900);
+                    }
 
+                });
+            });
+        }
     });
 
 })(jQuery);
