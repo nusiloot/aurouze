@@ -142,23 +142,28 @@ class UserInfos {
      * @return string $couleur
      */
     public function getCouleur() {
+        if(!$this->couleur) {
+
+            return '#ffffff';
+        }
         return $this->couleur;
     }
 
+    public function getCouleurText() {
+        if(!$this->getCouleur() || $this->getCouleur() == '#ffffff') {
+
+            return '#000000';
+        }
+
+        return '#ffffff';
+    }
+
     public function copyFromUser($user) {
-        $this->setIdentifiant($user->getCouleur());
+        $this->setIdentifiant($user->getIdentifiant());
         $this->setIdentite($user->getIdentite());
         $this->setNom($user->getNom());
         $this->setPrenom($user->getPrenom());
         $this->setCouleur($user->getCouleur());
-    }
-    /**
-     * Get getCouleurForLabel
-     *
-     * @return string 
-     */
-    public function getCouleurForLabel() {
-        return UserManager::$couleur_for_label[$this->getCouleur()];
     }
 
 }

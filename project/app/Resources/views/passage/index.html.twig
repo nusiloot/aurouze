@@ -7,25 +7,23 @@
     <div class="row">
         <div class="col-xs-12">
             <h3>Liste des passages à planifier</h3>
-
-
-            <div class="form-group">
-                <div class="row">
+            <div class="form-horizontal">
+                <div class="form-group">
                     <div class="col-xs-12">
-                        <input type="hidden" data-placeholder="Saisissez un techinicien, un code postal, ..." data-hamzastyle-container="#liste_passage" class="hamzastyle" style="width: 100%;" />
+                        <select mulitple="multiple" data-placeholder="Saisissez un techinicien, un code postal, ..." data-hamzastyle-container="#liste_passage" class="hamzastyle form-control select2"></select>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-xs-6">
-                    <div id="liste_passage" class="list-group" style="height: 600px; overflow: auto;">
+                    <div id="liste_passage" class="list-group well" style="height: 650px; overflow: auto; position: relative;">
                         {% for passage in passages %}
                             <a data-words='{{ [passage.technicienInfos.identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.dateCreation | localizeddate('full', 'none'), passage.etablissementInfos.nom]|json_encode() }}' href="{{path('calendar', {'passage' : passage.passageIdentifiant,'technicien' : passage.technicienInfos.identite})}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
                                         <strong>{{ passage.etablissementInfos.nom|capitalize }}</strong>
-                                        <span class="text-muted"><small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small></span>
+                                        <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
                                     </div>
                                     {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
 	                                <div class="col-sm-12">
@@ -41,7 +39,7 @@
                                  <div class="row" style="margin-top:10px;">
                                     <div class="col-sm-5 text-left">
                                     	<i class="mdi mdi-person mdi-lg"></i>
-                                        <span class="label" style="color: black;"><small>{{ passage.technicienInfos.identite }}</small></span>
+                                        <span class="label" style="background-color: {{ passage.technicienInfos.couleur }};color: {{ passage.technicienInfos.couleurText }};"><small>{{ passage.technicienInfos.identite }}</small></span>
 	                                </div>
                                     <div class="col-sm-2 text-center">
                                     	<i class="mdi mdi-schedule mdi-lg"></i>
@@ -58,9 +56,8 @@
 
                 </div>
                 <div class="col-xs-6">
-                    <div id="map" style="width: 100%; height: 600px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
-                        <pre>{{ geojson | json_encode() }}</pre>
-
+                    <div id="map" class="well" style="width: 100%; height: 650px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
+                    <pre class="hidden">{{ geojson | json_encode() }}</pre>
                 </div>
             </div>
         </div>

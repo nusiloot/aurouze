@@ -12,25 +12,67 @@
 
             var geojson = JSON.parse($('#map').attr('data-geojson'));
             var markers = [];
+            var hoverTimeout = null;
             L.geoJson(geojson, 
                 {
                     onEachFeature: function (feature, layer) {
-                        layer.bindPopup(feature.properties.nom);
+                        if($('#liste_passage').length) {
+                            layer.on('mouseover', function(e) {
+                                $('.leaflet-marker-icon').css('opacity', '0.5');
+                                $(e.target._icon).css('opacity', '1');
+                                e.target.setZIndexOffset(1001);
+                                if(hoverTimeout) {
+                                    clearTimeout(hoverTimeout);
+                                }
+                                hoverTimeout = setTimeout(function(){
+                                    $('#liste_passage .list-group-item').blur();
+                                    var element = $('#'+e.target.feature.properties._id);
+                                    var list = $('#liste_passage');
+                                    list.scrollTop(0);
+                                    list.scrollTop(element.position().top - (list.height()/2) + (element.height()));
+                                    element.focus();
+                                }, 400);
+                            });
+
+                            layer.on('mouseout', function(e) {
+                                if(hoverTimeout) {
+                                    clearTimeout(hoverTimeout);
+                                }
+                                e.target.setZIndexOffset(900);
+                                $('#'+e.target.feature.properties._id).blur();
+                                $('.leaflet-marker-icon').css('opacity', '1');
+                            });
+
+                            layer.on('click', function(e) {
+                                document.location.href= $('#'+e.target.feature.properties._id).attr('href');
+                            });
+                        }
                     },
                     pointToLayer: function (feature, latlng) {
                         var marker = L.marker(latlng, {icon: L.ExtraMarkers.icon({
                                                     icon: feature.properties.icon,
                                                     markerColor: feature.properties.color,
-                                                    iconColor: 'black',
+                                                    iconColor: feature.properties.colorText,
                                                     shape: 'circle',
-                                                    prefix: 'mdi'
+                                                    prefix: 'mdi',
+                                                    svg: true
                                                 })});
-                        markers.push(marker);
-                        
+                        markers[feature.properties._id] = marker;
                         return marker;
                     }
                 }
             ).addTo(map);
+
+            $('#liste_passage .list-group-item').hover(function() {
+                var marker = markers[$(this).attr('id')];
+                $('.leaflet-marker-icon').css('opacity', '0.3');
+                $(marker._icon).css('opacity', '1');
+                marker.setZIndexOffset(1001);
+            }, function() {
+                var marker = markers[$(this).attr('id')];
+                marker.setZIndexOffset(900);
+                $('.leaflet-marker-icon').css('opacity', '1');
+            });
         }
 
     });

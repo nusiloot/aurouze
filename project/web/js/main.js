@@ -94,18 +94,17 @@
     $.initSelect2 = function () {
         $('.select2-simple').each(function () {
             $(this).select2({
-                language: 'fr'
+                theme: 'bootstrap'
             });
         });
     }
 
     $.initSelect2Ajax = function () {
-
         $('.select2-ajax').each(function () {
             var urlComponent = $(this).data('url');
             $(this).select2({
+                theme: 'bootstrap',
                 minimumInputLength: 3,
-                language: 'fr',
                 allowClear: true,
                 ajax: {
                     type: "POST",
@@ -160,11 +159,12 @@
         var data = [];
         for (key in words) {
             if (words[key] + "") {
-                data.push({id: (words[key] + ""), text: (words[key] + "")});
+                data.push({id: words[key]+"", text: (words[key] + "")});
             }
         }
 
         select2.select2({
+            theme: 'bootstrap',
             multiple: true,
             data: data
         })
@@ -197,10 +197,10 @@
 
                 var select2Data = [];
                 for (key in filtres) {
-                    select2Data.push({id: filtres[key], text: filtres[key]});
+                    select2Data.push(filtres[key]);
                 }
 
-                $(document).find('.hamzastyle').select2("data", select2Data);
+                $(document).find('.hamzastyle').val(select2Data).trigger("change");
 
                 $(document).find('.hamzastyle-item').each(function () {
                     var words = $(this).attr('data-words');

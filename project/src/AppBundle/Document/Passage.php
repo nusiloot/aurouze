@@ -104,6 +104,11 @@ class Passage {
     protected $statut;
 
     /**
+     * @MongoDB\String
+     */
+    protected $contratId;
+    
+    /**
      * @MongoDB\EmbedOne(targetDocument="UserInfos")
      */
     protected $technicienInfos;
@@ -530,4 +535,26 @@ class Passage {
         return $this->technicienInfos;
     }
 
+
+    /**
+     * Set contratId
+     *
+     * @param string $contratId
+     * @return self
+     */
+    public function setContratId($contratId)
+    {
+        $this->contratId = $contratId;
+        return $this;
+    }
+
+    /**
+     * Get contratId
+     *
+     * @return string $contratId
+     */
+    public function getContratId()
+    {
+        return $this->contratId;
+    }
 }

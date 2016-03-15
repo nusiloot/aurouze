@@ -39,6 +39,12 @@ class Contrat {
     protected $technicien;
 
     /**
+     * @MongoDB\ReferenceMany(targetDocument="Passage")
+     */
+    protected $passages = array();
+
+    
+    /**
      * @MongoDB\String
      */
     protected $identifiant;
@@ -499,5 +505,39 @@ class Contrat {
     public function getStatut()
     {
         return $this->statut;
+    }
+    public function __construct()
+    {
+        $this->passages = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add passage
+     *
+     * @param AppBundle\Document\Passage $passage
+     */
+    public function addPassage(\AppBundle\Document\Passage $passage)
+    {
+        $this->passages[] = $passage;
+    }
+
+    /**
+     * Remove passage
+     *
+     * @param AppBundle\Document\Passage $passage
+     */
+    public function removePassage(\AppBundle\Document\Passage $passage)
+    {
+        $this->passages->removeElement($passage);
+    }
+
+    /**
+     * Get passages
+     *
+     * @return \Doctrine\Common\Collections\Collection $passages
+     */
+    public function getPassages()
+    {
+        return $this->passages;
     }
 }

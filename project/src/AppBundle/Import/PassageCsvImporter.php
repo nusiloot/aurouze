@@ -37,6 +37,7 @@ class PassageCsvImporter {
     const CSV_TECHNICIEN = 5;
     const CSV_LIBELLE = 6;
     const CSV_DESCRIPTION = 7;
+    const CSV_CONTRAT_ID = 8;
 
     public function __construct(DocumentManager $dm, PassageManager $pm, EtablissementManager $em, UserManager $um) {
         $this->dm = $dm;
@@ -51,14 +52,14 @@ class PassageCsvImporter {
         $csv = $csvFile->getCsv();
 
         $i = 0;
-
+        $cptTotal = 0;
         foreach ($csv as $data) {
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
             }
 
             $etablissement = $this->em->getRepository()->findOneByIdentifiant($data[self::CSV_ETABLISSEMENT_ID]);
-            
+
             if (!$etablissement) {
                 $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
@@ -68,10 +69,11 @@ class PassageCsvImporter {
             $passage->setEtablissementId($etablissement->getId());
             $passage->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
 
-            $passage->getEtablissementInfos()->pull($etablissement);            
-            $passage->setNumeroPassageIdentifiant($this->pm->getNextNumeroPassage($passage->getEtablissementIdentifiant(), $passage->getDateCreation()));       
+            $passage->getEtablissementInfos()->pull($etablissement);
+            $passage->setNumeroPassageIdentifiant($this->pm->getNextNumeroPassage($passage->getEtablissementIdentifiant(), $passage->getDateCreation()));
             $passage->generateId();
-            if($data[self::CSV_DATE_DEBUT]) {
+
+            if ($data[self::CSV_DATE_DEBUT]) {
                 $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
             }
 
@@ -85,20 +87,24 @@ class PassageCsvImporter {
             }
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
-            
-            $userInfos = new UserInfos();            
+            $passage->setContratId($data[self::CSV_CONTRAT_ID]);
+
+            $userInfos = new UserInfos();
             $user = $this->um->getRepository()->findOneByIdentite($data[self::CSV_TECHNICIEN]);
-            if($user){
+            if ($user) {
                 $userInfos->copyFromUser($user);
-            }else{
-                $userInfos->setCouleur("white");
-                $userInfos->setIdentite($data[self::CSV_TECHNICIEN]);                
+            } else {
+                $userInfos->setCouleur("#ffffff");
+                $userInfos->setIdentite($data[self::CSV_TECHNICIEN]);
             }
             $passage->setTechnicienInfos($userInfos);
 
             $this->dm->persist($passage);
             $i++;
-
+            $cptTotal++;
+            if ($cptTotal % 1000 == 0) {
+                $output->writeln(sprintf("<info> %01.02f", ($cptTotal / (float) count($csv)) * 100)."%  </info>");
+            }
             if ($i >= 1000) {
                 $this->dm->flush();
                 $i = 0;
