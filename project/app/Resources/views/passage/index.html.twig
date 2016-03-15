@@ -16,7 +16,7 @@
             </div>
             <div class="row">
                 <div class="col-xs-6">
-                    <div id="liste_passage" class="list-group well" style="height: 600px; overflow: auto; position: relative;">
+                    <div id="liste_passage" class="list-group well" style="height: 650px; overflow: auto; position: relative;">
                         {% for passage in passages %}
                             <a data-words='{{ [passage.technicienInfos.identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.dateCreation | localizeddate('full', 'none'), passage.etablissementInfos.nom]|json_encode() }}' href="{{path('calendar', {'passage' : passage.passageIdentifiant,'technicien' : passage.technicienInfos.identite})}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
                                 <div class="row">
@@ -56,9 +56,8 @@
 
                 </div>
                 <div class="col-xs-6">
-                    <div id="map" class="well" style="width: 100%; height: 600px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
-                        <pre>{{ geojson | json_encode() }}</pre>
-
+                    <div id="map" class="well" style="width: 100%; height: 650px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
+                    <pre class="hidden">{{ geojson | json_encode() }}</pre>
                 </div>
             </div>
         </div>

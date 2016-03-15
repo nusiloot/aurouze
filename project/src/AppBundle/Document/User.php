@@ -215,5 +215,10 @@ class User {
     {
         return $this->type;
     }
+
+    public function getInituleCourt() {
+
+        return $this->getPrenom();
+    }
     
 }
