@@ -10,6 +10,7 @@ class User {
 
     const PREFIX = "USER";
     const USER_TYPE_TECHNICIEN = "TECHNICIEN";
+    const USER_TYPE_COMMERCIAL = "COMMERCIAL";
     const COULEUR_DEFAUT = 'yellow';
 
     /**
@@ -212,5 +213,9 @@ class User {
     public function getCouleurForLabel() {
         
         return UserManager::$couleur_for_label[$this->getCouleur()];
+    }
+    
+    public function __toString() {
+    	return $this->getIdentite();
     }
 }

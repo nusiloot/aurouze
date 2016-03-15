@@ -11,24 +11,72 @@ use AppBundle\Document\Contrat;
 use AppBundle\Type\ContratType;
 
 class ContratController extends Controller {
+	
+	/**
+	 * @Route("/contrat/{identifiantEtablissement}/creation", name="contrat_creation")
+	 */
+	public function creationAction(Request $request, $identifiantEtablissement) {
+		$dm = $this->get('doctrine_mongodb')->getManager();
+		$etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneByIdentifiant($identifiantEtablissement);
+		$contrat = $this->get('contrat.manager')->create($etablissement);
+		return $this->redirectToRoute('contrat_modification', array('identifiantContrat' => $contrat->getIdentifiant()));
+	}
 
     /**
-     * @Route("/contrat/{identifiantEtablissement}/creation", name="contrat_creation")
+     * @Route("/contrat/{identifiantContrat}/modification", name="contrat_modification")
      */
-    public function creationAction(Request $request, $identifiantEtablissement) {
+    public function modificationAction(Request $request, $identifiantContrat) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneByIdentifiant($identifiantEtablissement);
-        $contrat = $this->get('contrat.manager')->create($etablissement);
-        
-        $form = $this->createForm(new ContratType(), $contrat, array(
-          'action' => $this->generateUrl('contrat_creation', array('identifiantEtablissement' => $etablissement->getIdentifiant())),
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneByIdentifiant($identifiantContrat);
+        $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
+          'action' => $this->generateUrl('contrat_modification', array('identifiantContrat' => $identifiantContrat)),
           'method' => 'POST',
           ));
-
-        $dm->persist($contrat);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+        	$contrat = $form->getData();
+        	$dm->persist($contrat);
+        	$dm->flush();
+        	return $this->redirectToRoute('contrat_validation', array('identifiantContrat' => $contrat->getIdentifiant()));
+        }
+        return $this->render('contrat/modification.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
+    }
+    
+    /**
+     * @Route("/contrat/{identifiantContrat}/validation", name="contrat_validation")
+     */
+    public function validationAction(Request $request, $identifiantContrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneByIdentifiant($identifiantContrat);
+        if ($request->get('valide')) {
+        	$contrat->setStatut(Contrat::STATUT_VALIDE);
+        	$dm->persist($contrat);
+        	$dm->flush();
+        	return $this->redirectToRoute('contrat_visualisation', array('identifiantContrat' => $contrat->getIdentifiant()));
+        }
+    	return $this->render('contrat/validation.html.twig', array('contrat' => $contrat));
+    }
+    
+    /**
+     * @Route("/contrat/{identifiantContrat}/visualisation", name="contrat_visualisation")
+     */
+    public function visualisationAction(Request $request, $identifiantContrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneByIdentifiant($identifiantContrat);
+    	return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat));
+    }
+    
+    /**
+     * @Route("/contrat/{identifiantContrat}/suppression", name="contrat_suppression")
+     */
+    public function suppressionAction(Request $request, $identifiantContrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneByIdentifiant($identifiantContrat);
+        $etablissementIdentifiant = $contrat->getEtablissement()->getIdentifiant();
+        $dm->remove($contrat);
         $dm->flush();
-        return $this->render('contrat/creationForm.html.twig', array('etablissement' => $etablissement, 'contrat' => $contrat, 'form' => $form->createView()));
+        return $this->redirectToRoute('passage_etablissement', array('identifiantEtablissement' => $etablissementIdentifiant));
     }
 
 }

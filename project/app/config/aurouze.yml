@@ -1,4 +1,7 @@
 parameters:
+    type_facturation:
+      "MONO": "Mono"
+      "MULTI": "Multi"
     contrat_type:
       "AUTRE": "Autre"
       "PONCTUEL": "Ponctuel"
@@ -10,7 +13,7 @@ parameters:
       "DERATISATION": "Dératisation"
       "DESINFECTION_DESODORISATION": "Désinfection / Désodorisation"
       "DESINSECTISATION": "Désinsectisation"
-      "LOCATION": "Location"
+      "LOCATION": "Location materiel"
       "TRAITEMENT_BOIS": "Traitement des bois"
       "DIVERS": "Travaux divers"
     animaux_type:

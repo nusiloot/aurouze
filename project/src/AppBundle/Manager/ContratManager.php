@@ -20,6 +20,7 @@ class ContratManager {
         $contrat->setEtablissement($etablissement);  
         $contrat->setIdentifiant($this->getNextNumero($etablissement));       
         $contrat->generateId();
+        $contrat->setStatut(Contrat::STATUT_BROUILLON);
         return $contrat;
     }
 
