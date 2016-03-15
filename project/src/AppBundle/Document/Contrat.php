@@ -54,6 +54,11 @@ class Contrat {
      */
     protected $typeContrat;
 
+     /**
+     * @MongoDB\String
+     */
+    protected $localisation;
+
     /**
      * @MongoDB\EmbedMany(targetDocument="Prestation")
      */
@@ -525,5 +530,37 @@ class Contrat {
     public function getPassages()
     {
         return $this->passages;
+    }
+
+    /**
+     * Set localisation
+     *
+     * @param string $localisation
+     * @return self
+     */
+    public function setLocalisation($localisation)
+    {
+        $this->localisation = $localisation;
+        return $this;
+    }
+
+    /**
+     * Get localisation
+     *
+     * @return string $localisation
+     */
+    public function getLocalisation()
+    {
+        return $this->localisation;
+    }
+
+    /**
+     * Get statut
+     *
+     * @return string $statut
+     */
+    public function getStatut()
+    {
+        return $this->statut;
     }
 }

@@ -87,7 +87,7 @@ class ContratCsvImporter {
 
             $contrat->setDuree($data[self::CSV_DUREE]);
             $contrat->setDureeGarantie($data[self::CSV_GARANTIE]);
-            $contrat->setLocalisationTraitement($data[self::CSV_LOCALISATION_TRAITEMENT]);
+            $contrat->setLocalisation($data[self::CSV_LOCALISATION_TRAITEMENT]);
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $this->dm->persist($contrat);
 
