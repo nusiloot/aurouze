@@ -87,7 +87,6 @@ class PassageController extends Controller {
             }
             if(!$coordinates->getLon() || !$coordinates->getLat()){ continue; }
             $feature->properties->nom = $etbInfos->getNom();
-            
             $feature->properties->icon = 'mdi-' . $etbInfos->getIcon();
             $feature->geometry = new \stdClass();
             $feature->geometry->type = "Point";

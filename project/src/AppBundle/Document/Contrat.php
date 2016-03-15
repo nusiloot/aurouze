@@ -3,7 +3,10 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
-use AppBundle\Manager\ContratManager;
+use Doctrine\Common\Collections\ArrayCollection;
+use AppBundle\Document\Etablissement;
+use AppBundle\Document\User;
+use AppBundle\Document\Prestation;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
@@ -12,6 +15,8 @@ use AppBundle\Manager\ContratManager;
 class Contrat {
 
     const PREFIX = "CONTRAT";
+    const STATUT_BROUILLON = "BROUILLON";
+    const STATUT_VALIDE = "VALIDE";
 
     /**
      * @MongoDB\Id(strategy="NONE", type="string")
@@ -24,12 +29,12 @@ class Contrat {
     protected $etablissement;
 
     /**
-     * @MongoDB\EmbedOne(targetDocument="User")
+     * @MongoDB\ReferenceOne(targetDocument="User")
      */
     protected $commercial;
     
     /**
-     * @MongoDB\EmbedOne(targetDocument="User")
+     * @MongoDB\ReferenceOne(targetDocument="User")
      */
     protected $technicien;
 
@@ -50,14 +55,9 @@ class Contrat {
     protected $typeContrat;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\EmbedMany(targetDocument="Prestation")
      */
-    protected $typePrestation;
-
-    /**
-     * @MongoDB\String
-     */
-    protected $localisationTraitement;
+    protected $prestations;
 
     /**
      * @MongoDB\Date
@@ -109,8 +109,12 @@ class Contrat {
      */
     protected $statut;  
 
+  
+    public function __construct()
+    {
+        $this->prestations = new ArrayCollection();
+    }
     
-
     /**
      * Set id
      *
@@ -122,11 +126,6 @@ class Contrat {
         $this->id = $id;
         return $this;
     }
-    
-    public function generateId() 
-    {
-    	return $this->setId(self::PREFIX . '-' . $this->identifiant);
-    }
 
     /**
      * Get id
@@ -136,6 +135,16 @@ class Contrat {
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Generate id
+     *
+     * @return self
+     */
+    public function generateId()
+    {
+    	return $this->setId(self::PREFIX . '-' . $this->identifiant);
     }
 
     /**
@@ -249,47 +258,33 @@ class Contrat {
     }
 
     /**
-     * Set typePrestation
+     * Add prestation
      *
-     * @param string $typePrestation
-     * @return self
+     * @param Prestation $prestation
      */
-    public function setTypePrestation($typePrestation)
+    public function addPrestation(Prestation $prestation)
     {
-        $this->typePrestation = $typePrestation;
-        return $this;
+        $this->prestations[] = $prestation;
     }
 
     /**
-     * Get typePrestation
+     * Remove prestation
      *
-     * @return string $typePrestation
+     * @param Prestation $prestation
      */
-    public function getTypePrestation()
+    public function removePrestation(Prestation $prestation)
     {
-        return $this->typePrestation;
+        $this->prestations->removeElement($prestation);
     }
 
     /**
-     * Set localisationTraitement
+     * Get prestations
      *
-     * @param string $localisationTraitement
-     * @return self
+     * @return \Doctrine\Common\Collections\Collection $prestations
      */
-    public function setLocalisationTraitement($localisationTraitement)
+    public function getPrestations()
     {
-        $this->localisationTraitement = $localisationTraitement;
-        return $this;
-    }
-
-    /**
-     * Get localisationTraitement
-     *
-     * @return string $localisationTraitement
-     */
-    public function getLocalisationTraitement()
-    {
-        return $this->localisationTraitement;
+        return $this->prestations;
     }
 
     /**
@@ -469,28 +464,6 @@ class Contrat {
     }
 
     /**
-     * Set statut
-     *
-     * @param string $statut
-     * @return self
-     */
-    public function setStatut($statut)
-    {
-        $this->statut = $statut;
-        return $this;
-    }
-
-    /**
-     * Get statut
-     *
-     * @return string $statut
-     */
-    public function getStatut()
-    {
-        return $this->statut;
-    }
-
-    /**
      * Set prixHt
      *
      * @param float $prixHt
@@ -510,6 +483,28 @@ class Contrat {
     public function getPrixHt()
     {
         return $this->prixHt;
+    }
+
+    /**
+     * Set statut
+     *
+     * @param string $statut
+     * @return self
+     */
+    public function setStatut($statut)
+    {
+        $this->statut = $statut;
+        return $this;
+    }
+
+    /**
+     * Get statut
+     *
+     * @return string $statut
+     */
+    public function getStatut()
+    {
+        return $this->statut;
     }
     public function __construct()
     {

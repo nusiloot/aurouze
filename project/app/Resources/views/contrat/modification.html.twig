@@ -1,0 +1,114 @@
+{% set _menu_active = '' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div id="wrapper">
+    	<h1>Création Contrat</h1>
+    	{{ form_start(form) }}
+    		<div class="panel panel-default">
+				<div class="panel-heading">Contrat</div>
+			  	<div class="panel-body">
+			  		<div class="row">
+			    		<div class="form-group col-xs-6">
+					       {{ form_row(form.commercial) }}
+					    </div>
+			    		<div class="form-group col-xs-6">
+					       {{ form_row(form.technicien) }}
+					    </div>
+				 	</div>
+			  		<div class="row">
+			    		<div class="form-group col-xs-3">
+					       {{ form_row(form.type_contrat) }}
+					    </div>
+			    		<div class="form-group col-xs-3">
+					        {{ form_label(form.date_debut) }}
+					        {{ form_errors(form.date_debut) }}
+					        <div class="input-group">
+					        	{{ form_widget(form.date_debut) }}
+				      			<div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+			      			</div>
+					    </div>
+			    		<div class="form-group col-xs-3">
+					        {{ form_label(form.duree) }}
+					        {{ form_errors(form.duree) }}
+					        <div class="input-group">
+					        	{{ form_widget(form.duree) }}
+				      			<div class="input-group-addon">mois</div>
+			      			</div>
+					    </div>
+			    		<div class="form-group col-xs-3">
+					        {{ form_label(form.duree_garantie) }}
+					        {{ form_errors(form.duree_garantie) }}
+					        <div class="input-group">
+					        	{{ form_widget(form.duree_garantie) }}
+				      			<div class="input-group-addon">mois</div>
+			      			</div>
+					    </div>
+				 	</div>
+			  		<div class="row">
+			    		<div class="form-group col-xs-3">
+					       {{ form_row(form.nb_passage) }}
+					    </div>
+			    		<div class="form-group col-xs-3">
+					        {{ form_label(form.duree_passage) }}
+					        {{ form_errors(form.duree_passage) }}
+					        <div class="input-group">
+					        	{{ form_widget(form.duree_passage) }}
+				      			<div class="input-group-addon">min.</div>
+			      			</div>
+					    </div>
+					</div>
+			  	</div>
+			</div>
+			
+			
+    		<div class="panel panel-default">
+				<div class="panel-heading">Prestations <a href="javascript:void(0);" id="add_prestation_link" class="pull-right" style="font-size: 18px;"><span class="glyphicon glyphicon-plus-sign"></span></a></div>
+			  	<div class="panel-body">
+			  		<div class="row" id="prestations" data-prototype="{{ form_widget(form.prestations.vars.prototype)|e }}">
+				        {% for prestation in form.prestations %}
+				            <div class="col-xs-4 prestation">
+				            	<div class="form-group">
+				            	{{ form_row(prestation.prestationType) }}
+				            	</div>
+				            	<div class="form-group">
+				            	{{ form_row(prestation.animal) }}
+				            	</div>
+				            	<div class="form-group">
+				            	{{ form_row(prestation.localisation) }}
+				            	</div>
+				            	<div class="form-group">
+				            	{{ form_row(prestation.commentaire) }}
+				            	</div>
+				            </div>
+				        {% endfor %}
+				    </div>
+			  	</div>
+			</div>
+			
+    		<div class="panel panel-default">
+				<div class="panel-heading">Facturation</div>
+			  	<div class="panel-body">
+			  		<div class="row">
+			    		<div class="form-group col-xs-4">
+					       {{ form_row(form.type_facturation) }}
+					    </div>
+			    		<div class="form-group col-xs-4">
+					       {{ form_row(form.frequence_facturation) }}
+					    </div>
+			    		<div class="form-group col-xs-4">
+					        {{ form_label(form.prix_ht) }}
+					        {{ form_errors(form.prix_ht) }}
+					        <div class="input-group">
+						        {{ form_widget(form.prix_ht) }}
+				      			<div class="input-group-addon">€</div>
+			      			</div>
+					    </div>
+					</div>
+			  	</div>
+			</div>
+		    {{ form_widget(form.save) }}
+		{{ form_end(form) }}
+    </div>
+
+{% endblock %}
+

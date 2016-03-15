@@ -1,0 +1,39 @@
+<div class="panel panel-default">
+	<div class="panel-heading">Contrat de type <strong>{{ contrat.getTypeContrat() }}</strong></div>
+  	<div class="panel-body">
+	  	<div class="rows">
+	  		<div class="col-xs-6">
+	  		Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
+	  		<strong>{{ contrat.getDateDebut()|date("m/d/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />
+	  		Garantie : <strong>{{ contrat.getDureeGarantie() }}</strong> mois
+	  		</div>
+	  		<div class="col-xs-6">
+	  		Technicien : <strong>{{ contrat.getTechnicien().getIdentite() }}</strong><br />
+	  		<strong>{{ contrat.getNbPassage() }}</strong> passage{% if contrat.getNbPassage() > 1 %}s{% endif %} de <strong>{{ contrat.getDureePassage() }}</strong> min.
+	  		</div>
+		</div>
+  	</div>
+</div>
+
+<h1 class="text-center">
+	{{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT</small><br />
+	<small>({{ contrat.getFrequenceFacturation() }} facture{% if contrat.getFrequenceFacturation() > 1 %}s{% endif %})</small>	        
+</h1>
+
+<div class="panel panel-default">
+	<div class="panel-heading">Prestations</div>
+  	<div class="panel-body">
+	  	<div class="rows">
+	  	{% for prestation in contrat.prestations %}
+	  		<div class="panel panel-default col-xs-4">
+				<div class="panel-body">
+					<strong>{{ prestation.getPrestationType() }} >> {{ prestation.getAnimal() }}</strong><br />
+					{{ prestation.getLocalisation() }}<br />
+					{{ prestation.getCommentaire() }}
+			  	</div>
+			</div>
+		{% endfor %}
+		</div>
+  	</div>
+</div>
+
