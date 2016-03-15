@@ -46,8 +46,12 @@
         <div class="col-xs-12">
             <a href="{{ path('contrat_creation', {'identifiantEtablissement': etablissement.getIdentifiant()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
                 {% for contrat in contrats if(contrat.passages | length > 0) %}
-                <h2>Contrat en cours <small>{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "d MMMM YYYY") }} sur {{ contrat.duree }} mois</small></h2>
-                <p>{{ contrat.localisationTraitement | nl2br }}</p>
+                {% if contrat.isTerminee %}
+                <h3>Contrat terminé le {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }} <small>sur {{ contrat.duree }} mois</small></h3>
+                {% else %}
+                <h3>Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }} <small>sur {{ contrat.duree }} mois</small></h3>
+                {% endif %}
+                <p>{{ contrat.localisation | nl2br }}</p>
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     {% for pe in contrat.passages %}
                         <div class="panel panel-default">

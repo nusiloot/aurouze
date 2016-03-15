@@ -563,4 +563,17 @@ class Contrat {
     {
         return $this->statut;
     }
+
+    public function getDateFin() {
+
+        $dateFin = clone $this->getDateDebut();
+        $dateFin->modify("+ ".$this->getDuree()." month");
+
+        return $dateFin;
+    }
+
+    public function isTerminee() {
+
+        return ($this->getDateFin() < new \DateTime());
+    }
 }
