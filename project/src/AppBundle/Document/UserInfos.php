@@ -159,7 +159,7 @@ class UserInfos {
     }
 
     public function copyFromUser($user) {
-        $this->setIdentifiant($user->getCouleur());
+        $this->setIdentifiant($user->getIdentifiant());
         $this->setIdentite($user->getIdentite());
         $this->setNom($user->getNom());
         $this->setPrenom($user->getPrenom());
