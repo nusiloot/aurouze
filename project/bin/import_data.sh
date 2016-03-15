@@ -138,6 +138,11 @@ cat $DATA_DIR/passagesadressestechniciens.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+
     description=$17;
     technicien=$26;
     contrat_id=$3;
+
+    if(date_passage_debut && date_passage_debut < "2013-01-01 00:00:00") {
+        next;
+    }
+
     print date_creation ";" etablissement_id ";" date_passage_debut ";;" duree ";" technicien ";" libelle ";" description ";" contrat_id
 
 }' > $DATA_DIR/passages.csv
@@ -180,6 +185,10 @@ cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)
         cmd="date --date=\""date_debut"\" \"+%Y-%m-%d %H:%M:%S\"";
         cmd | getline date_debut_contrat;
         close(cmd);
+    }
+
+    if(date_debut_contrat < "2013-01-01 00:00:00") {
+        next;
     }
 
     duree=$21;
