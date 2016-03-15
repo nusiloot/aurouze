@@ -19,6 +19,8 @@ class ContratController extends Controller {
 		$dm = $this->get('doctrine_mongodb')->getManager();
 		$etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneByIdentifiant($identifiantEtablissement);
 		$contrat = $this->get('contrat.manager')->create($etablissement);
+        $dm->persist($contrat);
+        $dm->flush();
 		return $this->redirectToRoute('contrat_modification', array('identifiantContrat' => $contrat->getIdentifiant()));
 	}
 
