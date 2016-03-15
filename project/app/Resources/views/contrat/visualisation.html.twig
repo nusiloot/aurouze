@@ -1,0 +1,13 @@
+{% set _menu_active = '' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div id="wrapper">
+    	<h1>Contrat <small>{{ contrat.getIdentifiant() }}</small></h1>
+    	
+    	{{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
+    	
+
+    </div>
+
+{% endblock %}
+

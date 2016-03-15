@@ -10,6 +10,7 @@ class User {
 
     const PREFIX = "USER";
     const USER_TYPE_TECHNICIEN = "TECHNICIEN";
+    const USER_TYPE_COMMERCIAL = "COMMERCIAL";
     const COULEUR_DEFAUT = 'yellow';
 
     /**
@@ -221,4 +222,7 @@ class User {
         return $this->getPrenom();
     }
     
+    public function __toString() {
+    	return $this->getIdentite();
+    }
 }

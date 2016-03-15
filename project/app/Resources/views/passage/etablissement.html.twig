@@ -37,65 +37,62 @@
                     </div>
                 </div>
             </div>
-            <br/>
-            <div class="row">
-
-                <div class="col-xs-12">
-                    <a href="{{ path('contrat_creation', {'identifiantEtablissement': etablissement.getIdentifiant()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
-                        {% for contrat in contrats %}
-                        <h2>{{ contrat.id }}</h2>
-                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                            {% for pe in contrat.passages %}
-                                <div class="panel panel-default">
-                                    <div class="panel-heading" role="tab" id="heading-{{ pe.identifiant }}">
-                                        <h4 class="panel-title">
+        </div>
+        <div class="col-xs-4">
+            <div id="map" style="width: 100%; height: 148px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <a href="{{ path('contrat_creation', {'identifiantEtablissement': etablissement.getIdentifiant()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
+                {% for contrat in contrats if(contrat.passages | length > 0) %}
+                <h2>Contrat en cours <small>{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "d MMMM YYYY") }} sur {{ contrat.duree }} mois</small></h2>
+                <p>{{ contrat.localisationTraitement | nl2br }}</p>
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    {% for pe in contrat.passages %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="heading-{{ pe.identifiant }}">
+                                <h4 class="panel-title">
+                                    <div class="row">
+                                        <div class="col-xs-8">
                                             <div class="row">
-                                                <div class="col-xs-8">
-                                                    <div class="row">
-                                                        <div class="col-xs-6">
-                                                            <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ pe.dateDebut | localizeddate('full', 'none') }} {{ pe.dateDebut | localizeddate('none', 'short') }}</span> 
-                                                        </div>
-                                                        <div class="col-xs-2">
-                                                            {% if(pe.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ pe.duree }}</span>{% endif %}
-                                                        </div>
-                                                        <div class="col-xs-4">
-                                                            <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ pe.technicien }}
-                                                        </div>
-                                                    </div>
+                                                <div class="col-xs-6">
+                                                    <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ pe.dateDebut | localizeddate('full', 'none') }} {{ pe.dateDebut | localizeddate('none', 'short') }}</span> 
+                                                </div>
+                                                <div class="col-xs-2">
+                                                    {% if(pe.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ pe.duree }}</span>{% endif %}
                                                 </div>
                                                 <div class="col-xs-4">
-                                                    <span class="pull-right">
-                                                        {% if(pe.realise) %} <span class="label label-success">Réalisé</span>
-                                                        {% elseif(pe.planifie)  %} <span class="label label-default">Planifié non réalisé</span>
-                                                        {% elseif(pe.nonplanifie)  %} <a class="btn btn-sm btn-warning" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : pe.technicien})}}">Planifier le passage</a>
-                                                        {% endif %}  
-                                                    </span>
+                                                    <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ pe.technicien }}
                                                 </div>
-                                            </div> 
-                                            <h5><a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ pe.identifiant }}" aria-expanded="false" aria-controls="collapseOne">{{ pe.libelle }}</a>
-                                            </h5>
-                                        </h4>
-                                    </div>
-                                    <div id="collapse-{{ pe.identifiant }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ pe.identifiant }}">
-                                        <div class="panel-body">
-                                            {% if pe.descriptionTransformed %}
-                                                {{ pe.descriptionTransformed | nl2br }}
-                                            {% else %}
-                                                <span class="text-muted">Aucun rapport de passage</span>
-                                            {% endif %}
+                                            </div>
                                         </div>
-                                    </div>
+                                        <div class="col-xs-4">
+                                            <span class="pull-right">
+                                                {% if(pe.realise) %} <span class="label label-success">Réalisé</span>
+                                                {% elseif(pe.planifie)  %} <span class="label label-default">Planifié non réalisé</span>
+                                                {% elseif(pe.nonplanifie)  %} <a class="btn btn-sm btn-warning" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : pe.technicien})}}">Planifier le passage</a>
+                                                {% endif %}  
+                                            </span>
+                                        </div>
+                                    </div> 
+                                    <h5><a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ pe.identifiant }}" aria-expanded="false" aria-controls="collapseOne">{{ pe.libelle }}</a>
+                                    </h5>
+                                </h4>
+                            </div>
+                            <div id="collapse-{{ pe.identifiant }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ pe.identifiant }}">
+                                <div class="panel-body">
+                                    {% if pe.descriptionTransformed %}
+                                        {{ pe.descriptionTransformed | nl2br }}
+                                    {% else %}
+                                        <span class="text-muted">Aucun rapport de passage</span>
+                                    {% endif %}
                                 </div>
-                            {% endfor %}
+                            </div>
                         </div>
                     {% endfor %}
                 </div>
-            </div>
-        </div>
-        <div class="col-xs-4">
-            <div id="map" style="width: 100%; height: 600px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
-            <pre>{{ geojson | json_encode() }}</pre>
-
+            {% endfor %}
         </div>
     </div>
 

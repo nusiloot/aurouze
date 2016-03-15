@@ -1,0 +1,16 @@
+{% set _menu_active = '' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div id="wrapper">
+    	<h1>Contrat <small>{{ contrat.getIdentifiant() }}</small> <a href="{{ path('contrat_modification', {'identifiantContrat': contrat.getIdentifiant()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a></h1>
+    	
+    	{{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
+    	
+    	<div class="rows">
+    		<a href="{{ path('contrat_suppression', {'identifiantContrat': contrat.getIdentifiant()}) }}" class="pull-left btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
+    		<a href="{{ path('contrat_validation', {'identifiantContrat': contrat.getIdentifiant(), 'valide': 1}) }}" class="pull-right btn btn-success"><span class="glyphicon glyphicon-check"></span>&nbsp;Valider</a>
+    	</div>
+    </div>
+
+{% endblock %}
+

@@ -8,7 +8,44 @@
         $.initSelect2Ajax();
         $.initTooltips();
         $.initQueryHash();
+        $.initJsFunctions();
+        $('.datepicker').datepicker();
     });
+    
+    $.initJsFunctions = function () {
+    	
+    	var collectionHolder = $('#prestations');
+        var addPrestationLink = $('#add_prestation_link');
+        collectionHolder.data('index', collectionHolder.find(':input').length);
+        
+        collectionHolder.find('div.prestation').each(function() {
+        	var removeFormA = $('<a href="javascript:void(0)" class="btn btn-danger btn-xs pull-right"><span class="glyphicon glyphicon-remove-sign"></span></a>');
+        	var formLi = $(this);
+        	formLi.append(removeFormA);
+
+            removeFormA.on('click', function(e) {
+                e.preventDefault();
+                formLi.remove();
+            });
+        });
+
+        addPrestationLink.on('click', function(e) {
+            e.preventDefault();
+            var prototype = collectionHolder.data('prototype');
+            var index = collectionHolder.data('index');
+            var newForm = prototype.replace(/__name__/g, index);
+            collectionHolder.data('index', index + 1);
+            var newFormLi = $('<div class="col-xs-4"></div>').append(newForm);
+            var removeFormA = $('<a href="javascript:void(0)" class="btn btn-danger btn-xs pull-right"><span class="glyphicon glyphicon-remove-sign"></span></a>');
+            newFormLi.append(removeFormA);
+            removeFormA.on('click', function(e) {
+                e.preventDefault();
+                newFormLi.remove();
+            });
+            collectionHolder.append(newFormLi);
+            
+        });
+    }
     
     $.initTooltips = function () {
         $('[data-toggle="tooltip"]').tooltip();
