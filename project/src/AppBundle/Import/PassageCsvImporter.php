@@ -102,10 +102,10 @@ class PassageCsvImporter {
             $this->dm->persist($passage);
             $i++;
             $cptTotal++;
-            if ($cptTotal % 1000 == 0) {
+            if ($cptTotal % 10000 == 0) {
                 $output->writeln(sprintf("<info> %01.02f", ($cptTotal / (float) count($csv)) * 100)."%  </info>");
             }
-            if ($i >= 1000) {
+            if ($i >= 10000) {
                 $this->dm->flush();
                 $i = 0;
             }
