@@ -539,8 +539,12 @@ class Contrat {
     public function getNextPassage() {
         if (count($this->getPassages()) < $this->nbPassage) {
             $passage = new Passage();
+            $passage->setEtablissementIdentifiant($this->getEtablissement()->getIdentifiant());
             $passage->setEtablissementId($this->getEtablissement()->getId());
             $passage->setDateCreation($this->getDateNextPassage());
+            $passage->getEtablissementInfos()->pull($this->getEtablissement());
+            $passage->setNumeroPassageIdentifiant("001");
+            $passage->generateId();
             $passage->setContratId($this->id);
             return $passage;
         }
@@ -573,8 +577,11 @@ class Contrat {
     }
 
     public function getNbPassagePrevu() {
-        foreach($this->getPassages() as $passage) {
-            if(preg_match("/Passage[n° ]*[0-9]+ sur ([0-9]+)/i", $passage->getLibelle(), $matches)) {
+        if($this->getNbPassage()){
+            return $this->getNbPassage();
+        }
+        foreach ($this->getPassages() as $passage) {
+            if (preg_match("/Passage[n° ]*[0-9]+ sur ([0-9]+)/i", $passage->getLibelle(), $matches)) {
 
                 return $matches[1];
             }
@@ -583,11 +590,10 @@ class Contrat {
         return 1;
     }
 
-    public function getPassagesSorted()
-    {
+    public function getPassagesSorted() {
         $passagesSorted = array();
 
-        foreach($this->getPassages() as $passage) {
+        foreach ($this->getPassages() as $passage) {
             $passagesSorted[$passage->getId()] = $passage;
         }
 
@@ -595,4 +601,5 @@ class Contrat {
 
         return $passagesSorted;
     }
+
 }
