@@ -37,9 +37,6 @@
 	<div class="col-xs-4">      
 		<a class="btn btn-danger" href="{{path('calendarDelete', {'passage': passage.passageIdentifiant, 'technicien': technicien})}}">Déplannifier</a>
     </div>
-    <div class="col-xs-4 text-center">  
-        <a href="{{ path('passage_etablissement', {'identifiantEtablissement': passage.etablissementIdentifiant}) }}" class="btn btn-default">Voir l'établissement</a>
-    </div>
     <div class="col-xs-4 text-right">
 		<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span>&nbsp;Fermer</button>
 	</div>

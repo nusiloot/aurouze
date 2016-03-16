@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,15 +48,15 @@ class PassageController extends Controller {
     public function etablissementChoiceAction(Request $request) {
         $formData = $request->get('etablissement_choice');
 
-        return $this->redirectToRoute('passage_etablissement', array('identifiantEtablissement' => $formData['etablissements']));
+        return $this->redirectToRoute('passage_etablissement', array('id' => $formData['etablissements']));
     }
 
     /**
-     * @Route("/passage/{identifiantEtablissement}", name="passage_etablissement")
+     * @Route("/passage/{id}", name="passage_etablissement")
+     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
      */
-    public function etablissementAction(Request $request, $identifiantEtablissement) {
-        $etablissement = $this->get('etablissement.manager')->getRepository()->findOneByIdentifiant($identifiantEtablissement);
-        
+    public function etablissementAction(Request $request, Etablissement $etablissement) {
+
         $contrats = $this->get('contrat.manager')->getRepository()->findByEtablissement($etablissement);
 
         krsort($contrats);

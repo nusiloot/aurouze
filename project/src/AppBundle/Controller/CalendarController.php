@@ -24,7 +24,10 @@ class CalendarController extends Controller {
 
         $calendrier = $request->get('calendrier');
         $calendarTool = new CalendarDateTool($calendrier);
-		$etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneByIdentifiant($passage->getEtablissementIdentifiant());
+        $etablissement = null;
+        if($passage) {
+		    $etablissement = $dm->getRepository('AppBundle:Etablissement')->find($passage->getEtablissementId());
+        }
         return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'etablissement' => $etablissement));
     }
 

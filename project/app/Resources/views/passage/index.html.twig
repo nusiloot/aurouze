@@ -17,7 +17,7 @@
                 <div class="col-xs-6">
                     <div id="liste_passage" class="list-group well" style="height: 650px; overflow: auto; position: relative;">
                         {% for passage in passages %}
-                            <a data-words='{{ [passage.technicienInfos.identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.dateCreation | localizeddate('full', 'none'), passage.etablissementInfos.nom]|json_encode() }}' href="{{path('calendar', {'passage' : passage.passageIdentifiant,'technicien' : passage.technicienInfos.identite})}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
+                            <a data-words='{{ [passage.technicienInfos.identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.dateCreation | localizeddate('full', 'none'), passage.etablissementInfos.nom]|json_encode() }}' href="{{path('passage_etablissement', {'id': passage.etablissementId})}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
