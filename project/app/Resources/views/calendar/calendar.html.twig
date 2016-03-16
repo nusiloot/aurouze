@@ -17,7 +17,44 @@
 <div class="row">
 	<div id="fc-events" class="col-sm-12">
 		{% if passage and not passage.dateFin %}
-		<div class="event btn btn-sm btn-warning pull-right" data-identifiant="{{ passage.passageIdentifiant() }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }}</strong> <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }} ({{ passage.etablissementInfos.adresse.adresse }})</small></div>
+		<div class="row">
+	        <div class="col-xs-8">
+	            <div class="panel panel-default">
+	                <div class="panel-heading">
+	                    <div class="row">
+	                        <div class="col-xs-6">
+	                            <a href="{{ path('passage_etablissement', {'identifiantEtablissement': etablissement.identifiant}) }}"><strong>{{ etablissement.nom }}</strong></a>
+	                        </div>
+	                        <div class="col-xs-6">
+	                            Société {{ etablissement.raisonsociale }}
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="panel-body">
+	                    <div class="row">
+	                        <div class="col-xs-10">
+	                            {{ etablissement.adresse.intitule }}
+	                        </div>
+	                        <div class="col-xs-2">
+	                            <i style="cursor: default;" class="pull-right mdi mdi-{{ etablissement.icon }} mdi-4x" title="{{ etablissement.type }}" data-toggle="tooltip" ></i>
+	
+	                        </div>
+	                    </div>
+	                    <div class="row">
+	                        <div class="col-xs-6">
+	                            Tél fixe : {{ etablissement.telephonefixe }}
+	                        </div>
+	                        <div class="col-xs-6">
+	                            Tél portable : {{ etablissement.telephoneportable }}
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="col-xs-4">
+	            <div class="event btn btn-sm btn-warning pull-right" data-identifiant="{{ passage.passageIdentifiant() }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }}</strong> <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }} ({{ passage.etablissementInfos.adresse.adresse }})</small></div>
+	        </div>
+	    </div>
 		{% endif %}
 	</div>
     <div class="col-sm-12 hidden" id="retour_technicien_btn" >

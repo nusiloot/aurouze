@@ -10,6 +10,20 @@ use AppBundle\Type\EtablissementChoiceType;
 use AppBundle\Document\Etablissement;
 
 class PassageController extends Controller {
+	
+	/**
+	 * @Route("/passage/etablissements", name="passage_etablissements")
+	 */
+	public function choiceAction(Request $request) {
+	
+		$dm = $this->get('doctrine_mongodb')->getManager();
+		 $formEtablissement = $this->createForm(new EtablissementChoiceType(), null, array(
+            'action' => $this->generateUrl('passage_etablissement_choice'),
+            'method' => 'POST',
+        ));
+	
+		return $this->render('passage/etablissements.html.twig', array('formEtablissement' => $formEtablissement->createView()));
+	}
 
     /**
      * @Route("/passage", name="passage")
