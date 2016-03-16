@@ -588,4 +588,17 @@ class Contrat {
 
         return 1;
     }
+
+    public function getPassagesSorted()
+    {
+        $passagesSorted = array();
+
+        foreach($this->getPassages() as $passage) {
+            $passagesSorted[$passage->getId()] = $passage;
+        }
+
+        krsort($passagesSorted);
+
+        return $passagesSorted;
+    }
 }
