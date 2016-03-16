@@ -23,7 +23,7 @@
 	                <div class="panel-heading">
 	                    <div class="row">
 	                        <div class="col-xs-6">
-	                            <a href="{{ path('passage_etablissement', {'identifiantEtablissement': etablissement.identifiant}) }}"><strong>{{ etablissement.nom }}</strong></a>
+	                            <a href="{{ path('passage_etablissement', {id: etablissement.id }) }}"><strong>{{ etablissement.nom }}</strong></a>
 	                        </div>
 	                        <div class="col-xs-6">
 	                            Société {{ etablissement.raisonsociale }}
