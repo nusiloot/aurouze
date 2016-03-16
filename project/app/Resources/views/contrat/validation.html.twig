@@ -2,14 +2,21 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <div id="wrapper">
-    	<h1>Contrat <small>{{ contrat.getIdentifiant() }}</small> <a href="{{ path('contrat_modification', {'identifiantContrat': contrat.getIdentifiant()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a></h1>
-    	
-    	{{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
-    	
-    	<div class="rows">
-    		<a href="{{ path('contrat_suppression', {'identifiantContrat': contrat.getIdentifiant()}) }}" class="pull-left btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
-    		<a href="{{ path('contrat_validation', {'identifiantContrat': contrat.getIdentifiant(), 'valide': 1}) }}" class="pull-right btn btn-success"><span class="glyphicon glyphicon-check"></span>&nbsp;Valider</a>
-    	</div>
+        <h1>Contrat en attente d'approbation <small>{{ contrat.getIdentifiant() }}</small> <a href="{{ path('contrat_modification', {'identifiantContrat': contrat.getIdentifiant()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a></h1>
+
+        {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
+
+        <div class="row">
+            <div class="col-xs-4 text-left">
+                <a href="{{ path('passage_etablissement', {'identifiantEtablissement': contrat.getEtablissement().identifiant}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux contrats</a>
+            </div>
+            <div class="col-xs-4 text-center">
+                <a href="{{ path('contrat_suppression', {'identifiantContrat': contrat.getIdentifiant()}) }}" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
+            </div>
+            <div class="col-xs-4 text-right">
+                <a href="{{ path('contrat_validation', {'identifiantContrat': contrat.getIdentifiant(), 'valide': 1}) }}" class="btn btn-success"><span class="glyphicon glyphicon-check"></span>&nbsp;Valider</a>
+            </div>
+        </div>
     </div>
 
 {% endblock %}

@@ -58,7 +58,7 @@ class Contrat {
     /**
      * @MongoDB\String
      */
-    protected $localisation;
+    protected $nomenclature;
 
     /**
      * @MongoDB\EmbedMany(targetDocument="Prestation")
@@ -494,25 +494,7 @@ class Contrat {
         return $this->passages;
     }
 
-    /**
-     * Set localisation
-     *
-     * @param string $localisation
-     * @return self
-     */
-    public function setLocalisation($localisation) {
-        $this->localisation = $localisation;
-        return $this;
-    }
-
-    /**
-     * Get localisation
-     *
-     * @return string $localisation
-     */
-    public function getLocalisation() {
-        return $this->localisation;
-    }
+    
 
     /**
      * Get statut
@@ -570,7 +552,7 @@ class Contrat {
     public function getLastPassageTermine() {
         $passages = array();
         foreach ($this->getPassages() as $passage) {
-            if ($passage->getDateFin() && $passage->isTermine()) {
+            if ($passage->getDateFin() && $passage->isRealise()) {
                 $passages[$passage->getDateFin()->format('Ymd')] = $passage;
             }
         }
@@ -602,4 +584,26 @@ class Contrat {
         return $passagesSorted;
     }
 
+
+    /**
+     * Set nomenclature
+     *
+     * @param string $nomenclature
+     * @return self
+     */
+    public function setNomenclature($nomenclature)
+    {
+        $this->nomenclature = $nomenclature;
+        return $this;
+    }
+
+    /**
+     * Get nomenclature
+     *
+     * @return string $nomenclature
+     */
+    public function getNomenclature()
+    {
+        return $this->nomenclature;
+    }
 }

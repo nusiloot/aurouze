@@ -6,11 +6,9 @@
     	
     	{{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
     	
-        <div class="rows">
+        <div class="row">
     		<a href="{{ path('passage_etablissement', {'identifiantEtablissement': contrat.getEtablissement().identifiant}) }}" class="pull-left btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour</a>
         </div>
-        
     </div>
-
 {% endblock %}
 

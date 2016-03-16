@@ -22,6 +22,7 @@ use AppBundle\Manager\EtablissementManager;
 use AppBundle\Manager\UserManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Import\CsvFile;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class ContratCsvImporter {
 
@@ -38,7 +39,7 @@ class ContratCsvImporter {
     const CSV_ID_TECHNICIEN = 4;
     const CSV_TYPE_CONTRAT = 5;
     const CSV_TYPE_PRESTATION = 6;
-    const CSV_LOCALISATION_TRAITEMENT = 7;
+    const CSV_NOMENCLATURE = 7;
     const CSV_DATE_CREATION = 8;
     const CSV_DATE_DEBUT = 9;
     const CSV_DUREE = 10;
@@ -55,6 +56,10 @@ class ContratCsvImporter {
 
     public function import($file, OutputInterface $output) {
         $csvFile = new CsvFile($file);
+
+
+        $progress = new ProgressBar($output, 100);
+        $progress->start();
 
         $csv = $csvFile->getCsv();
 
@@ -79,15 +84,15 @@ class ContratCsvImporter {
             $contrat->setEtablissement($etablissement);
             $contrat->setIdentifiant($this->cm->getNextNumero($etablissement, $contrat->getDateCreation()));
             $contrat->generateId();
-            
-            
+
+
             if ($data[self::CSV_DATE_DEBUT]) {
                 $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
             }
 
             $contrat->setDuree($data[self::CSV_DUREE]);
             $contrat->setDureeGarantie($data[self::CSV_GARANTIE]);
-            $contrat->setLocalisation(str_replace('\n', "\n", $data[self::CSV_LOCALISATION_TRAITEMENT]));
+            $contrat->setNomenclature(str_replace('\n', "\n", $data[self::CSV_NOMENCLATURE]));
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $this->dm->persist($contrat);
 
@@ -102,10 +107,10 @@ class ContratCsvImporter {
             $this->dm->persist($contrat);
             $i++;
             $cptTotal++;
-            if ($cptTotal % 1000 == 0) {
-                $output->writeln(sprintf("<info> %01.02f", ($cptTotal / (float) count($csv)) * 100)."%  </info>");
+            if ($cptTotal % (count($csv) / 100) == 0) {
+                $progress->advance();
             }
-            
+
             if ($i >= 1000) {
                 $this->dm->flush();
                 $i = 0;
@@ -113,6 +118,7 @@ class ContratCsvImporter {
         }
 
         $this->dm->flush();
+        $progress->finish();
     }
 
 }
