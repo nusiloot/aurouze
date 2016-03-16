@@ -38,6 +38,9 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
         	$contrat = $form->getData();
+//                $nextPassage = $contrat->getNextPassage();
+//                $dm->persist($nextPassage);
+//                $contrat->addPassage($nextPassage);
         	$dm->persist($contrat);
         	$dm->flush();
         	return $this->redirectToRoute('contrat_validation', array('identifiantContrat' => $contrat->getIdentifiant()));
