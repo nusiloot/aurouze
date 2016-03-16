@@ -87,11 +87,11 @@ class ContratCsvImporter {
 
             $contrat->setDuree($data[self::CSV_DUREE]);
             $contrat->setDureeGarantie($data[self::CSV_GARANTIE]);
-            $contrat->setLocalisation($data[self::CSV_LOCALISATION_TRAITEMENT]);
+            $contrat->setLocalisation(str_replace('\n', "\n", $data[self::CSV_LOCALISATION_TRAITEMENT]));
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $this->dm->persist($contrat);
 
-            $passages = $this->pm->getRepository()->findByContratId($data[self::CSV_ID_CONTRAT]);
+            $passages = $this->pm->getRepository()->findByContratId($data[self::CSV_ID_CONTRAT], array('id' => 'DESC'));
 
             foreach ($passages as $passage) {
                 $contrat->addPassage($passage);

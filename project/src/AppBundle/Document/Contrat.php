@@ -572,4 +572,27 @@ class Contrat {
         }
     }
 
+    public function getNbPassagePrevu() {
+        foreach($this->getPassages() as $passage) {
+            if(preg_match("/Passage[n° ]*[0-9]+ sur ([0-9]+)/i", $passage->getLibelle(), $matches)) {
+
+                return $matches[1];
+            }
+        }
+
+        return 1;
+    }
+
+    public function getPassagesSorted()
+    {
+        $passagesSorted = array();
+
+        foreach($this->getPassages() as $passage) {
+            $passagesSorted[$passage->getId()] = $passage;
+        }
+
+        krsort($passagesSorted);
+
+        return $passagesSorted;
+    }
 }
