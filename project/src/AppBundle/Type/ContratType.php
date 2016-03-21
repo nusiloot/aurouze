@@ -36,22 +36,11 @@ class ContratType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
                 ->add('typeContrat', ChoiceType::class, array('choices' => array_merge(array('' => ''), $this->container->getParameter('contrat_type')), "attr" => array("class" => "select2 select2-simple")))
-                ->add('nomenclature', TextareaType::class, array("attr" => array("class" => "form-control")))
-                ->add('dateDebut', DateType::class, array(
-                    "attr" => array(
-                        'class' => 'input-inline datepicker',
-                        'data-provide' => 'datepicker',
-                        'data-date-format' => 'dd/mm/yyyy'
-                    ),
-                    'widget' => 'single_text',
-                    'format' => 'dd/MM/yyyy'
-                ))
-                ->add('duree', IntegerType::class)
-                ->add('duree_garantie', IntegerType::class)
-                ->add('nbPassage', IntegerType::class)
-                ->add('dureePassage', IntegerType::class)
-                ->add('frequenceFacturation', IntegerType::class)
-                ->add('typeFacturation', ChoiceType::class, array('choices' => array_merge(array('' => ''), $this->container->getParameter('type_facturation')), "attr" => array("class" => "select2 select2-simple")))
+                ->add('nomenclature', TextareaType::class, array("attr" => array("class" => "form-control", "rows" => 6)))
+                ->add('duree', TextType::class)
+                ->add('duree_garantie', TextType::class)
+                ->add('nbPassage', TextType::class)
+                ->add('dureePassage', TextType::class)
                 ->add('prixHt', NumberType::class, array('scale' => 2))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")));
 

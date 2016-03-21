@@ -10,6 +10,7 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\UserInfos;
 use AppBundle\Type\ContratType;
+use AppBundle\Type\ContratInterventionsType;
 
 class ContratController extends Controller {
 
@@ -40,6 +41,7 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
+            $contrat->generateInterventions();
            
             $nextPassage = $contrat->getNextPassage();
             if ($nextPassage) {
@@ -57,9 +59,31 @@ class ContratController extends Controller {
             }
             $dm->persist($contrat);
             $dm->flush();
-            return $this->redirectToRoute('contrat_validation', array('id' => $contrat->getId()));
+            return $this->redirectToRoute('contrat_interventions', array('id' => $contrat->getId()));
         }
         return $this->render('contrat/modification.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
+    }
+
+    /**
+     * @Route("/contrat/{id}/interventions", name="contrat_interventions")
+     */
+    public function interventionssAction(Request $request, $id) {
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
+      
+        $form = $this->createForm(new ContratInterventionsType($this->container, $dm), $contrat, array(
+            'action' => $this->generateUrl('contrat_interventions', array('id' => $id)),
+            'method' => 'POST',
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $contrat = $form->getData();
+            $dm->persist($contrat);
+            $dm->flush();
+            return $this->redirectToRoute('contrat_validation', array('id' => $contrat->getId()));
+        }
+        return $this->render('contrat/interventions.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
     }
 
     /**

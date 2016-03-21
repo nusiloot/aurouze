@@ -9,6 +9,7 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\User;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Passage;
+use AppBundle\Document\Intervention;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
@@ -66,6 +67,11 @@ class Contrat {
     protected $prestations;
 
     /**
+     * @MongoDB\EmbedMany(targetDocument="Intervention")
+     */
+    protected $interventions;
+
+    /**
      * @MongoDB\Date
      */
     protected $dateCreation;
@@ -118,6 +124,7 @@ class Contrat {
     public function __construct() {
         $this->prestations = new ArrayCollection();
         $this->passages = new ArrayCollection();
+        $this->interventions = new ArrayCollection();
     }
 
     /**
@@ -274,6 +281,33 @@ class Contrat {
      */
     public function getPrestations() {
         return $this->prestations;
+    }
+    
+    /**
+     * Add intervention
+     *
+     * @param Intervention $intervention
+     */
+    public function addIntervention(Intervention $intervention) {
+    	$this->interventions[] = $intervention;
+    }
+    
+    /**
+     * Remove intervention
+     *
+     * @param Intervention $intervention
+     */
+    public function removeIntervention(Intervention $intervention) {
+    	$this->interventions->removeElement($intervention);
+    }
+    
+    /**
+     * Get interventions
+     *
+     * @return \Doctrine\Common\Collections\Collection $interventions
+     */
+    public function getInterventions() {
+    	return $this->interventions;
     }
 
     /**
@@ -605,5 +639,20 @@ class Contrat {
     public function getNomenclature()
     {
         return $this->nomenclature;
+    }
+    
+    public function generateInterventions()
+    {
+        $this->interventions = new ArrayCollection();
+    	if ($nbPassage = $this->getNbPassage()) {
+    		for ($i=0; $i<$nbPassage; $i++) {
+    			$intervention = new Intervention();
+    			$intervention->setFacturable(false);
+    			foreach ($this->getPrestations() as $prestation) {
+    				$intervention->addPrestation($prestation);
+    			}
+    			$this->addIntervention($intervention);
+    		}
+    	}
     }
 }

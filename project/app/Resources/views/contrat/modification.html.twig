@@ -17,23 +17,30 @@
                 </div>
 
                 <div class="row"> 
-                    <div class="form-group col-xs-12">
-                        {{ form_row(form.nomenclature) }}
-                    </div>
-                </div>
-
-                <div class="row">
                     <div class="form-group col-xs-3">
                         {{ form_row(form.typeContrat) }}
                     </div>
                     <div class="form-group col-xs-3">
-                        {{ form_label(form.dateDebut) }}
-                        {{ form_errors(form.dateDebut) }}
+                        {{ form_label(form.prixHt) }}
+                        {{ form_errors(form.prixHt) }}
                         <div class="input-group">
-                            {{ form_widget(form.dateDebut) }}
-                            <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                            {{ form_widget(form.prixHt) }}
+                            <div class="input-group-addon">€</div>
                         </div>
                     </div>
+                    <div class="form-group col-xs-3">
+                        {{ form_row(form.nbPassage) }}
+                    </div>
+                    <div class="form-group col-xs-3">
+                        {{ form_label(form.dureePassage) }}
+                        {{ form_errors(form.dureePassage) }}
+                        <div class="input-group">
+                            {{ form_widget(form.dureePassage) }}
+                            <div class="input-group-addon">min.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row"> 
                     <div class="form-group col-xs-3">
                         {{ form_label(form.duree) }}
                         {{ form_errors(form.duree) }}
@@ -51,65 +58,44 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="form-group col-xs-3">
-                        {{ form_row(form.nbPassage) }}
-                    </div>
-                    <div class="form-group col-xs-3">
-                        {{ form_label(form.dureePassage) }}
-                        {{ form_errors(form.dureePassage) }}
-                        <div class="input-group">
-                            {{ form_widget(form.dureePassage) }}
-                            <div class="input-group-addon">min.</div>
-                        </div>
+
+                <div class="row"> 
+                    <div class="form-group col-xs-12">
+                        {{ form_row(form.nomenclature) }}
                     </div>
                 </div>
             </div>
         </div>
 
-
-        <div class="panel panel-default">
+		<style>
+			#prestations li {
+				margin: 0;
+				padding: 10px 9px 10px 0;
+				border-top: none;
+			}
+			.badge {
+				background-color: #fff;
+			}
+			.glyphicon-remove-sign {
+				font-size: 18px;
+			}
+		</style>
+        <div class="panel panel-default" style="margin-bottom: 0;">
             <div class="panel-heading">Prestations <a href="javascript:void(0);" id="add_prestation_link" class="pull-right" style="font-size: 18px;"><span class="glyphicon glyphicon-plus-sign"></span></a></div>
-            <div class="panel-body">
-                <div class="row" id="prestations" data-prototype="{{ form_widget(form.prestations.vars.prototype)|e }}">
+        </div>
+                <ul class="list-group" id="prestations" data-prototype="{% filter escape %}{{ include('contrat/prestation_prototype.html.twig', { 'form': form.prestations.vars.prototype }) }}{% endfilter %}">
                     {% for prestation in form.prestations %}
-                        <div class="col-xs-4 prestation">
-                            <div class="form-group">
+                         <li class="list-group-item row">
+                            <div class="form-group col-xs-4">
                                 {{ form_row(prestation.prestationType) }}
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-xs-4">
                                 {{ form_row(prestation.animal) }}
-                            </div>				            	
-                            <div class="form-group">
-                                {{ form_row(prestation.commentaire) }}
                             </div>
-                        </div>
+                        </li>
                     {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">Facturation</div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="form-group col-xs-4">
-                        {{ form_row(form.typeFacturation) }}
-                    </div>
-                    <div class="form-group col-xs-4">
-                        {{ form_row(form.frequenceFacturation) }}
-                    </div>
-                    <div class="form-group col-xs-4">
-                        {{ form_label(form.prixHt) }}
-                        {{ form_errors(form.prixHt) }}
-                        <div class="input-group">
-                            {{ form_widget(form.prixHt) }}
-                            <div class="input-group-addon">€</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                </ul>
+        
         {{ form_widget(form.save) }}
         {{ form_end(form) }}
     </div>

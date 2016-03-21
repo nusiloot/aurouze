@@ -6,11 +6,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use AppBundle\Type\PrestationType;
 
-class PrestationType extends AbstractType {
+class InterventionType extends AbstractType {
 	
 	protected $container;
 	protected $dm;
@@ -28,15 +30,22 @@ class PrestationType extends AbstractType {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
 	{
 		$builder
-		->add('prestationType', ChoiceType::class, array('choices'  => array_merge(array('' => ''), $this->container->getParameter('prestations_type')), "attr" => array("class" => "form-control select2 select2-simple")))
-		->add('animal', ChoiceType::class, array('choices'  => array_merge(array('' => ''), $this->container->getParameter('animaux')), "attr" => array("class" => "form-control select2 select2-simple")))
+		->add('facturable', CheckboxType::class)
 		;
+		
+		$builder->add('prestations', CollectionType::class, array(
+				'entry_type' => new PrestationType($this->container, $this->dm),
+				'allow_add' => true,
+				'allow_delete' => true,
+				'delete_empty' => true,
+				'label' => ' ',
+		));
 	}
 	
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'AppBundle\Document\Prestation',
+				'data_class' => 'AppBundle\Document\Intervention',
 		));
 	}
 	
@@ -45,6 +54,6 @@ class PrestationType extends AbstractType {
 	 */
 	public function getName() 
 	{
-		return 'prestation';
+		return 'intervention';
 	}
 }
