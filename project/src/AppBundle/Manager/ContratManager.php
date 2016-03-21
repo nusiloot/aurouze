@@ -21,6 +21,7 @@ class ContratManager {
         }
         $contrat = new Contrat();
         $contrat->setEtablissement($etablissement);
+        $contrat->setDateCreation($dateCreation);
         $contrat->setIdentifiant($this->getNextNumero($etablissement,$dateCreation));
         $contrat->generateId();
         $contrat->setStatut(Contrat::STATUT_BROUILLON);

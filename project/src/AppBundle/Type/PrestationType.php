@@ -30,7 +30,6 @@ class PrestationType extends AbstractType {
 		$builder
 		->add('prestationType', ChoiceType::class, array('choices'  => array_merge(array('' => ''), $this->container->getParameter('prestations_type')), "attr" => array("class" => "form-control select2 select2-simple")))
 		->add('animal', ChoiceType::class, array('choices'  => array_merge(array('' => ''), $this->container->getParameter('animaux')), "attr" => array("class" => "form-control select2 select2-simple")))
-		->add('localisation', TextareaType::class, array("attr" => array("class" => "form-control")))
 		->add('commentaire', TextareaType::class, array("attr" => array("class" => "form-control")));
 	}
 	

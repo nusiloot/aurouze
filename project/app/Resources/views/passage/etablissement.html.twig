@@ -44,16 +44,16 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <a href="{{ path('contrat_creation', {'identifiantEtablissement': etablissement.getIdentifiant()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
+            <a href="{{ path('contrat_creation', {'id': etablissement.getId()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
             <hr />
             {% for contrat in contrats %}
                 {% if contrat.isTerminee %}
-                <h3><span class="pull-right">{{ contrat.passages | length }} réalisés / {{ contrat.getNbPassagePrevu}} prévus</span><a data-toggle="collapse" href="#passages-{{ contrat.id }}" >Contrat terminé le {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</a> <small>sur {{ contrat.duree }} mois</small> <a class="btn btn-default" href="{{ path('contrat_visualisation', { 'identifiantContrat': contrat.identifiant }) }}">Voir</a></h3>
+                <h3><span class="pull-right">{{ contrat.passages | length }} réalisés / {{ contrat.getNbPassagePrevu}} prévus</span><a data-toggle="collapse" href="#passages-{{ contrat.id }}" >Contrat terminé le {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</a> <small>sur {{ contrat.duree }} mois</small> <a class="btn btn-default" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a></h3>
                 {% else %}
-                <h3><span class="pull-right">{{ contrat.passages | length }} réalisés / {{ contrat.getNbPassagePrevu}} prévus</span>Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }} <small>sur {{ contrat.duree }} mois</small> <a class="btn btn-default" href="{{ path('contrat_visualisation', { 'identifiantContrat': contrat.identifiant }) }}">Voir</a></h3>
+                <h3><span class="pull-right">{{ contrat.passages | length }} réalisés / {{ contrat.getNbPassagePrevu}} prévus</span>Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }} <small>sur {{ contrat.duree }} mois</small> <a class="btn btn-default" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a></h3>
                 {% endif %}
                 <div style="padding-left: 20px;" class="panel-group {% if(contrat.isTerminee) %}collapse{% endif %}" id="passages-{{ contrat.id }}" role="tablist" aria-multiselectable="true">
-                <blockquote class="text-muted" style="max-height: 120px; overflow: auto; font-size: 10px;">{{ contrat.localisation | nl2br }}</blockquote>
+                <blockquote class="text-muted" style="max-height: 120px; overflow: auto; font-size: 10px;">{{ contrat.nomenclature | nl2br }}</blockquote>
                     {% for pe in contrat.getPassagesSorted %}
                         <div class="panel panel-default">
                             <div class="panel-heading" role="tab" id="heading-{{ pe.identifiant }}">

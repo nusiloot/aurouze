@@ -23,10 +23,7 @@ class Prestation {
      */
     protected $animal;
 
-     /** 
-     * @MongoDB\String
-     */
-    protected $localisation;
+
 
      /** 
      * @MongoDB\String
@@ -99,28 +96,6 @@ class Prestation {
     public function getAnimal()
     {
         return $this->animal;
-    }
-
-    /**
-     * Set localisation
-     *
-     * @param string $localisation
-     * @return self
-     */
-    public function setLocalisation($localisation)
-    {
-        $this->localisation = $localisation;
-        return $this;
-    }
-
-    /**
-     * Get localisation
-     *
-     * @return string $localisation
-     */
-    public function getLocalisation()
-    {
-        return $this->localisation;
     }
 
     /**

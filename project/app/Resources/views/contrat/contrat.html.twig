@@ -20,9 +20,16 @@
 </div>
 
 <h1 class="text-center">
-	{{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT</small><br />
-	<small>({{ contrat.getFrequenceFacturation() }} facture{% if contrat.getFrequenceFacturation() > 1 %}s{% endif %})</small>	        
+	{{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT</small>&nbsp;
+	<small>(payé en {{ contrat.getFrequenceFacturation() }} facture{% if contrat.getFrequenceFacturation() > 1 %}s{% endif %})</small>
+     
 </h1>
+<div class="panel panel-default">
+	<div class="panel-heading">Nomenclature</div>
+  	<div class="panel-body">
+            {{ contrat.getNomenclature() }}
+        </div>
+</div>
 
 <div class="panel panel-default">
 	<div class="panel-heading">Prestations</div>
@@ -32,7 +39,7 @@
 	  		<div class="panel panel-default col-xs-4">
 				<div class="panel-body">
 					<strong>{{ prestation.getPrestationType() }} >> {{ prestation.getAnimal() }}</strong><br />
-					{{ prestation.getLocalisation() }}<br />
+					
 					{{ prestation.getCommentaire() }}
 			  	</div>
 			</div>
