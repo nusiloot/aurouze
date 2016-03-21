@@ -58,6 +58,7 @@ $(function () {
         lang: 'fr',
         timeFormat: 'H:mm',
         allDaySlot: false,
+        eventBackgroundColor: "#fff",
         editable: true,
         droppable: true,
         slotEventOverlap: false,
@@ -93,6 +94,9 @@ $(function () {
                 end: event.end.format()
             }, function (data) {
                 event.id = data.id;
+                event.backgroundColor = data.backgroundColor;
+                event.textColor = data.textColor;
+                $('#calendrier').fullCalendar('updateEvent', event);
             }
             );
         },
