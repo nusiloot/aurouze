@@ -10,6 +10,8 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\UserInfos;
 use AppBundle\Type\ContratType;
+use AppBundle\Manager\ContratManager;
+use Knp\Snappy\Pdf;
 
 class ContratController extends Controller {
 
@@ -31,8 +33,9 @@ class ContratController extends Controller {
     public function modificationAction(Request $request, $id) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $contratManager = new ContratManager($dm);
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
-      
+
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
             'action' => $this->generateUrl('contrat_modification', array('id' => $id)),
             'method' => 'POST',
@@ -40,18 +43,9 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
-           
-            $nextPassage = $contrat->getNextPassage();
+            $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+            $nextPassage = $contratManager->getNextPassgeForContrat($contrat);
             if ($nextPassage) {
-                $userInfos = new UserInfos();
-                $user = $dm->getRepository('AppBundle:User')->findOneById($contrat->getTechnicien()->getId());
-                if ($user) {
-                    $userInfos->copyFromUser($user);
-                } else {
-                    $userInfos->setCouleur("#ffffff");
-                    $userInfos->setIdentite($data[self::CSV_TECHNICIEN]);
-                }
-                $nextPassage->setTechnicienInfos($userInfos);
                 $contrat->addPassage($nextPassage);
                 $dm->persist($nextPassage);
             }
@@ -96,6 +90,27 @@ class ContratController extends Controller {
         $dm->remove($contrat);
         $dm->flush();
         return $this->redirectToRoute('passage_etablissement', array('id' => $etablissementId));
+    }
+
+    /**
+     * @Route("/contrat/{id}/pdf", name="contrat_pdf")
+     */
+    public function pdfAction(Request $request, $id) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
+
+        $contratVisuUrl =  $this->generateUrl('contrat_visualisation', array('id' => $contrat->getId()), true);
+//        $html = $this->renderView('contrat/validation.html.twig', array('contrat' => $contrat));
+        
+//        return $this->render('contrat/validation.html.twig', array('contrat' => $contrat));
+        
+        $fileName = "AUROUZE_" . $contrat->getId() . ".pdf";
+        return new Response(
+                $this->container->get('knp_snappy.pdf')->getOutput($contratVisuUrl), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"'
+                )
+        );
     }
 
 }
