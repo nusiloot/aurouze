@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{{ asset('/component/leaflet-extra-markers/css/leaflet.extra-markers.css') }}">
     <link rel="stylesheet" media="print" href="{{ asset('/component/fullcalendar/css/fullcalendar.print.css') }}" />
     <link rel="stylesheet" href="{{ asset('/css/main.css') }}" />
-    
+
     {% block stylesheets %}{% endblock %}
   </head>
 
@@ -48,7 +48,8 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="{%if (_menu_active == 'passage') %}active{% endif %}"><a href="{{ path('passage') }}">Planification</a></li>
-            <li class="{%if (_menu_active == 'etablissement') %}active{% endif %}"><a href="{{ path('passage_etablissements') }}">Passages</a></li>
+            <li class="{%if (_menu_active == 'etablissement') %}active{% endif %}"><a href="{{ path('passage_etablissements') }}">Passage</a></li>
+            <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{{ path('facture') }}">Facture</a></li>
             <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}">Calendrier</a></li>
           </ul>
         </div>

@@ -1,0 +1,34 @@
+{% set _menu_active = 'facture' %}
+{% extends 'base.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block _facture_lignes_entry_row %}
+    <div class="row form-group ">
+        <div class="col-xs-6">
+            {{ form_widget(form.libelle) }}
+        </div>
+        <div class="col-xs-2">
+            {{ form_widget(form.quantite) }}
+        </div>
+        <div class="col-xs-2">
+            {{ form_widget(form.prixUnitaire) }}
+        </div>
+        <div class="col-xs-1">
+            <button type="button" tabindex="-1" class="btn btn-default"><span class="glyphicon glyphicon-remove-sign"></span></button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+    {{ form_label(form.lignes) }}
+    {{ form_widget(form.lignes) }}
+
+    <a href="javascript:void(0);" id="add_prestation_link">Ajouter</a>
+    {{ form_row(form.lignes) }}
+
+    {{ form_end(form) }}
+
+{% endblock %}
