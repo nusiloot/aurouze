@@ -16,7 +16,14 @@
                     </div>
                 </div>
 
-                <div class="row"> 
+
+                <div class="row">
+                    <div class="form-group col-xs-12">
+                        {{ form_row(form.nomenclature) }}
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="form-group col-xs-3">
                         {{ form_row(form.typeContrat) }}
                     </div>
@@ -91,6 +98,10 @@
                             </div>
                             <div class="form-group col-xs-4">
                                 {{ form_row(prestation.animal) }}
+
+                            </div>
+                            <div class="form-group">
+                                {{ form_row(prestation.commentaire) }}
                             </div>
                         </li>
                     {% endfor %}
@@ -101,4 +112,3 @@
     </div>
 
 {% endblock %}
-

@@ -68,7 +68,7 @@ class PassageCsvImporter {
             $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
             $passage->setEtablissementId($etablissement->getId());
             $passage->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
-
+            $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_CREATION]));
             $passage->getEtablissementInfos()->pull($etablissement);
             $passage->setNumeroPassageIdentifiant("001");
             $passage->generateId();
@@ -103,7 +103,7 @@ class PassageCsvImporter {
             $i++;
             $cptTotal++;
             if ($cptTotal % 10000 == 0) {
-                $output->writeln(sprintf("<info> %01.02f", ($cptTotal / (float) count($csv)) * 100)."%  </info>");
+                $output->writeln(sprintf("<info> %01.02f", ($cptTotal / (float) count($csv)) * 100) . "%  </info>");
             }
             if ($i >= 10000) {
                 $this->dm->flush();

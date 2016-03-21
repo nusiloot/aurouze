@@ -1,17 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of EtablissementManager
- *
- * @author mathurin
- */
-
 namespace AppBundle\Manager;
 
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
@@ -19,10 +7,10 @@ use AppBundle\Document\Etablissement as Etablissement;
 use AppBundle\Document\Passage as Passage;
 
 class PassageManager {
-const STATUT_NON_PLANNIFIE = "NON_PLANNIFIE";
-const STATUT_PLANNIFIE = "PLANNIFIE";
+const STATUT_NON_PLANIFIE = "NON_PLANIFIE";
+const STATUT_PLANIFIE = "PLANIFIE";
 const STATUT_REALISE = "REALISE";
-    
+
     protected $dm;
 
     function __construct(DocumentManager $dm) {
@@ -31,11 +19,11 @@ const STATUT_REALISE = "REALISE";
 
     function create(Etablissement $etablissement) {
         $passage = new Passage();
-        
-        $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());  
-        
+
+        $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
+
         $numeroPassageIdentifiant = $this->getNextNumeroPassage($etablissement->getIdentifiant());
-        $passage->setNumeroPassageIdentifiant($numeroPassageIdentifiant);       
+        $passage->setNumeroPassageIdentifiant($numeroPassageIdentifiant);
         $passage->setId();
         $passage->updateEtablissementInfos($etablissement);
         return $passage;
@@ -48,11 +36,11 @@ const STATUT_REALISE = "REALISE";
 
     public function getNextNumeroPassage($etablissementIdentifiant, \DateTime $date) {
        $allPassagesForEtablissementsInDay = $this->getRepository()->findPassagesForEtablissementsAndDay($etablissementIdentifiant, $date);
-       
+
         if(!count($allPassagesForEtablissementsInDay)){
             return sprintf("%03d", 1);
         }
         return sprintf("%03d", max($allPassagesForEtablissementsInDay) + 1);
     }
-    
+
 }
