@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,7 @@ class ContratController extends Controller {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
-      
+
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
             'action' => $this->generateUrl('contrat_modification', array('id' => $id)),
             'method' => 'POST',
@@ -40,7 +41,7 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
-           
+
             $nextPassage = $contrat->getNextPassage();
             if ($nextPassage) {
                 $userInfos = new UserInfos();
@@ -79,10 +80,11 @@ class ContratController extends Controller {
 
     /**
      * @Route("/contrat/{id}/visualisation", name="contrat_visualisation")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
-    public function visualisationAction(Request $request, $id) {
+    public function visualisationAction(Request $request, $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
+
         return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat));
     }
 
