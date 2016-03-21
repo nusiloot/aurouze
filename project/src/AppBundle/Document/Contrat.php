@@ -17,8 +17,6 @@ use AppBundle\Document\Passage;
 class Contrat {
 
     const PREFIX = "CONTRAT";
-    const STATUT_BROUILLON = "BROUILLON";
-    const STATUT_VALIDE = "VALIDE";
 
     /**
      * @MongoDB\Id(strategy="NONE", type="string")

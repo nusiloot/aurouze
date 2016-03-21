@@ -6,9 +6,15 @@ use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Passage;
+use AppBundle\Document\UserInfos;
 
 class ContratManager {
 
+
+    const STATUT_BROUILLON = "BROUILLON";
+    const STATUT_EN_ATTENTE_ACCEPTATION = "EN_ATTENTE_ACCEPTATION";
+    const STATUT_VALIDE = "VALIDE";    
+    
     protected $dm;
 
     function __construct(DocumentManager $dm) {
@@ -22,9 +28,9 @@ class ContratManager {
         $contrat = new Contrat();
         $contrat->setEtablissement($etablissement);
         $contrat->setDateCreation($dateCreation);
-        $contrat->setIdentifiant($this->getNextNumero($etablissement,$dateCreation));
+        $contrat->setIdentifiant($this->getNextNumero($etablissement, $dateCreation));
         $contrat->generateId();
-        $contrat->setStatut(Contrat::STATUT_BROUILLON);
+        $contrat->setStatut(self::STATUT_BROUILLON);
         return $contrat;
     }
 
@@ -37,20 +43,19 @@ class ContratManager {
         $next = $this->getRepository()->findNextNumero($etablissement, $dateCreation);
         return $etablissement->getIdentifiant() . '-' . $dateCreation->format('Ymd') . '-' . sprintf("%03d", $next);
     }
-    /*
-    public function updatePassages(Contrat $c,$old_id = "") {
-        $contrat_id = $c->getId();
-        if($old_id){
-            $contrat_id = $old_id;
-        }
-        $passages = $this->dm->getRepository('AppBundle:Passage')->findByContratId($contrat_id);
-        
-        foreach ($passages as $passage) {
-            $c->addPassage($passage);
-            $passage->setContratId($c->getId());
-            $this->dm->persist($passage);
-        }    
-        $this->dm->flush();
-    }*/
 
+    public function getNextPassgeForContrat($contrat) {
+        $nextPassage = $contrat->getNextPassage();
+        if ($nextPassage) {
+            $userInfos = new UserInfos();
+            $user = $this->dm->getRepository('AppBundle:User')->findOneById($contrat->getTechnicien()->getId());
+            if ($user) {
+                $userInfos->copyFromUser($user);
+            }
+            $nextPassage->setTechnicienInfos($userInfos);          
+        }
+        return $nextPassage;
+    }
+
+   
 }
