@@ -46,12 +46,13 @@ class ContratController extends Controller {
             $contrat = $form->getData();
 
             $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
-            $nextPassage = $contratManager->getNextPassgeForContrat($contrat);
+            $nextPassage = $contratManager->getNextPassageForContrat($contrat);
 
             if ($nextPassage) {
                 $contrat->addPassage($nextPassage);
                 $dm->persist($nextPassage);
             }
+            
             $dm->persist($contrat);
             $dm->flush();
             return $this->redirectToRoute('contrat_validation', array('id' => $contrat->getId()));

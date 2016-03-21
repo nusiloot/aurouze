@@ -44,7 +44,7 @@ class ContratManager {
         return $etablissement->getIdentifiant() . '-' . $dateCreation->format('Ymd') . '-' . sprintf("%03d", $next);
     }
 
-    public function getNextPassgeForContrat($contrat) {
+    public function getNextPassageForContrat($contrat) {
         $nextPassage = $contrat->getNextPassage();
         if ($nextPassage) {
             $userInfos = new UserInfos();

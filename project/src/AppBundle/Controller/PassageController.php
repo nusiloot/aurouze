@@ -11,22 +11,23 @@ use AppBundle\Type\EtablissementChoiceType;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
+use AppBundle\Manager\ContratManager;
 
 class PassageController extends Controller {
 
-	/**
-	 * @Route("/passage/etablissements", name="passage_etablissements")
-	 */
-	public function choiceAction(Request $request) {
+    /**
+     * @Route("/passage/etablissements", name="passage_etablissements")
+     */
+    public function choiceAction(Request $request) {
 
-		$dm = $this->get('doctrine_mongodb')->getManager();
-		 $formEtablissement = $this->createForm(new EtablissementChoiceType(), null, array(
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $formEtablissement = $this->createForm(new EtablissementChoiceType(), null, array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
             'method' => 'POST',
         ));
 
-		return $this->render('passage/etablissements.html.twig', array('formEtablissement' => $formEtablissement->createView()));
-	}
+        return $this->render('passage/etablissements.html.twig', array('formEtablissement' => $formEtablissement->createView()));
+    }
 
     /**
      * @Route("/passage", name="passage")
@@ -54,7 +55,7 @@ class PassageController extends Controller {
     }
 
     /**
-     * @Route("/passage/etablissement/{id}", name="passage_etablissement")
+     * @Route("/passages/{id}/etablissement", name="passage_etablissement")
      * @ParamConverter("etablissement", class="AppBundle:Etablissement")
      */
     public function etablissementAction(Request $request, Etablissement $etablissement) {
@@ -77,34 +78,44 @@ class PassageController extends Controller {
      * @ParamConverter("passage", class="AppBundle:Passage")
      */
     public function editionAction(Request $request, Passage $passage) {
-		$dm = $this->get('doctrine_mongodb')->getManager();
+        $dm = $this->get('doctrine_mongodb')->getManager();
 
-		$form = $this->createForm(new PassageType(), $passage, array(
+        $form = $this->createForm(new PassageType(), $passage, array(
             'action' => $this->generateUrl('passage_edition', array('id' => $passage->getId())),
             'method' => 'POST',
         ));
 
-		$form->handleRequest($request);
+        $form->handleRequest($request);
 
-		if (!$form->isSubmitted() || !$form->isValid()) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
 
-			return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
-		}
+            return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+        }
+        
+        $contratManager = new ContratManager($dm);
+        $contrat = $contratManager->getRepository()->findOneById($passage->getContratId());
+        
+        $nextPassage = $contratManager->getNextPassageForContrat($contrat);
+
+        if ($nextPassage) {
+            $contrat->addPassage($nextPassage);
+            $dm->persist($nextPassage);
+        }
 
         $dm->flush();
 
 
 
-		return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissementId()));
+        return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissementId()));
     }
 
     /**
      * @Route("/etablissement-all", name="etablissement_all")
      */
     public function allAction(Request $request) {
-        $etablissementsResult = $this->get('etablissement.manager')->getRepository()->findBy(array(),null,3000);
+        $etablissementsResult = $this->get('etablissement.manager')->getRepository()->findBy(array(), null, 3000);
         $geojson = $this->buildGeoJson($etablissementsResult);
-       return $this->render('etablissement/all.html.twig', array('geojson' => $geojson));
+        return $this->render('etablissement/all.html.twig', array('geojson' => $geojson));
     }
 
     private function buildGeoJson($listDocuments) {
@@ -128,14 +139,15 @@ class PassageController extends Controller {
                 $feature->properties->color = "#fff";
                 $feature->properties->colorText = "#000";
             }
-            if(!$coordinates->getLon() || !$coordinates->getLat()){ continue; }
+            if (!$coordinates->getLon() || !$coordinates->getLat()) {
+                continue;
+            }
             $feature->properties->nom = $etbInfos->getNom();
             $feature->properties->icon = 'mdi-' . $etbInfos->getIcon();
             $feature->geometry = new \stdClass();
             $feature->geometry->type = "Point";
-            $feature->geometry->coordinates = array($coordinates->getLon(),$coordinates->getLat());
+            $feature->geometry->coordinates = array($coordinates->getLon(), $coordinates->getLat());
             $geojson->features[] = $feature;
-
         }
         return $geojson;
     }

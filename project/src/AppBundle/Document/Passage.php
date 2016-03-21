@@ -60,7 +60,7 @@ class Passage {
      */
     protected $etablissementIdentifiant;
 
-        /**
+    /**
      * @MongoDB\String
      */
     protected $etablissementId;
@@ -109,7 +109,7 @@ class Passage {
         if (!$this->getDateCreation()) {
             $this->setDateCreation(new \DateTime());
         }
-        $this->identifiant = $this->dateCreation->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
+        $this->identifiant = $this->dateDebut->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
         $this->setId(self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->identifiant);
     }
 
@@ -138,8 +138,12 @@ class Passage {
     }
 
     /** @MongoDB\PreUpdate */
-    public function preUpdate()
-    {
+    public function preUpdate() {
+        $this->updateStatut();
+    }
+
+    /** @MongoDB\PrePersist */
+    public function prePersist() {
         $this->updateStatut();
     }
 
@@ -165,11 +169,9 @@ class Passage {
         return '01:00';
     }
 
-    public function getPassageIdentifiant()
-    {
-    	return $this->etablissementIdentifiant.'-'.$this->identifiant;
+    public function getPassageIdentifiant() {
+        return $this->etablissementIdentifiant . '-' . $this->identifiant;
     }
-
 
     /**
      * Set id
@@ -177,8 +179,7 @@ class Passage {
      * @param string $id
      * @return self
      */
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
         return $this;
     }
@@ -188,8 +189,7 @@ class Passage {
      *
      * @return string $id
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -199,8 +199,7 @@ class Passage {
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant)
-    {
+    public function setIdentifiant($identifiant) {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -210,8 +209,7 @@ class Passage {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant()
-    {
+    public function getIdentifiant() {
         return $this->identifiant;
     }
 
@@ -221,8 +219,7 @@ class Passage {
      * @param string $prestationIdentifiant
      * @return self
      */
-    public function setPrestationIdentifiant($prestationIdentifiant)
-    {
+    public function setPrestationIdentifiant($prestationIdentifiant) {
         $this->prestationIdentifiant = $prestationIdentifiant;
         return $this;
     }
@@ -232,8 +229,7 @@ class Passage {
      *
      * @return string $prestationIdentifiant
      */
-    public function getPrestationIdentifiant()
-    {
+    public function getPrestationIdentifiant() {
         return $this->prestationIdentifiant;
     }
 
@@ -243,8 +239,7 @@ class Passage {
      * @param string $numeroPassageIdentifiant
      * @return self
      */
-    public function setNumeroPassageIdentifiant($numeroPassageIdentifiant)
-    {
+    public function setNumeroPassageIdentifiant($numeroPassageIdentifiant) {
         $this->numeroPassageIdentifiant = $numeroPassageIdentifiant;
         return $this;
     }
@@ -254,8 +249,7 @@ class Passage {
      *
      * @return string $numeroPassageIdentifiant
      */
-    public function getNumeroPassageIdentifiant()
-    {
+    public function getNumeroPassageIdentifiant() {
         return $this->numeroPassageIdentifiant;
     }
 
@@ -265,8 +259,7 @@ class Passage {
      * @param string $societeIdentifiant
      * @return self
      */
-    public function setSocieteIdentifiant($societeIdentifiant)
-    {
+    public function setSocieteIdentifiant($societeIdentifiant) {
         $this->societeIdentifiant = $societeIdentifiant;
         return $this;
     }
@@ -276,8 +269,7 @@ class Passage {
      *
      * @return string $societeIdentifiant
      */
-    public function getSocieteIdentifiant()
-    {
+    public function getSocieteIdentifiant() {
         return $this->societeIdentifiant;
     }
 
@@ -287,8 +279,7 @@ class Passage {
      * @param date $dateCreation
      * @return self
      */
-    public function setDateCreation($dateCreation)
-    {
+    public function setDateCreation($dateCreation) {
         $this->dateCreation = $dateCreation;
         return $this;
     }
@@ -298,8 +289,7 @@ class Passage {
      *
      * @return date $dateCreation
      */
-    public function getDateCreation()
-    {
+    public function getDateCreation() {
         return $this->dateCreation;
     }
 
@@ -309,8 +299,7 @@ class Passage {
      * @param date $dateDebut
      * @return self
      */
-    public function setDateDebut($dateDebut)
-    {
+    public function setDateDebut($dateDebut) {
         $this->dateDebut = $dateDebut;
         return $this;
     }
@@ -320,8 +309,7 @@ class Passage {
      *
      * @return date $dateDebut
      */
-    public function getDateDebut()
-    {
+    public function getDateDebut() {
         return $this->dateDebut;
     }
 
@@ -331,8 +319,7 @@ class Passage {
      * @param date $dateFin
      * @return self
      */
-    public function setDateFin($dateFin)
-    {
+    public function setDateFin($dateFin) {
         $this->dateFin = $dateFin;
         return $this;
     }
@@ -342,8 +329,7 @@ class Passage {
      *
      * @return date $dateFin
      */
-    public function getDateFin()
-    {
+    public function getDateFin() {
         return $this->dateFin;
     }
 
@@ -353,8 +339,7 @@ class Passage {
      * @param string $etablissementIdentifiant
      * @return self
      */
-    public function setEtablissementIdentifiant($etablissementIdentifiant)
-    {
+    public function setEtablissementIdentifiant($etablissementIdentifiant) {
         $this->etablissementIdentifiant = $etablissementIdentifiant;
         return $this;
     }
@@ -364,8 +349,7 @@ class Passage {
      *
      * @return string $etablissementIdentifiant
      */
-    public function getEtablissementIdentifiant()
-    {
+    public function getEtablissementIdentifiant() {
         return $this->etablissementIdentifiant;
     }
 
@@ -375,8 +359,7 @@ class Passage {
      * @param string $etablissementId
      * @return self
      */
-    public function setEtablissementId($etablissementId)
-    {
+    public function setEtablissementId($etablissementId) {
         $this->etablissementId = $etablissementId;
         return $this;
     }
@@ -386,8 +369,7 @@ class Passage {
      *
      * @return string $etablissementId
      */
-    public function getEtablissementId()
-    {
+    public function getEtablissementId() {
         return $this->etablissementId;
     }
 
@@ -397,8 +379,7 @@ class Passage {
      * @param EtablissementInfos $etablissementInfos
      * @return self
      */
-    public function setEtablissementInfos(EtablissementInfos $etablissementInfos)
-    {
+    public function setEtablissementInfos(EtablissementInfos $etablissementInfos) {
         $this->etablissementInfos = $etablissementInfos;
         return $this;
     }
@@ -408,8 +389,7 @@ class Passage {
      *
      * @return EtablissementInfos $etablissementInfos
      */
-    public function getEtablissementInfos()
-    {
+    public function getEtablissementInfos() {
         return $this->etablissementInfos;
     }
 
@@ -419,8 +399,7 @@ class Passage {
      * @param string $libelle
      * @return self
      */
-    public function setLibelle($libelle)
-    {
+    public function setLibelle($libelle) {
         $this->libelle = $libelle;
         return $this;
     }
@@ -430,8 +409,7 @@ class Passage {
      *
      * @return string $libelle
      */
-    public function getLibelle()
-    {
+    public function getLibelle() {
         return $this->libelle;
     }
 
@@ -441,8 +419,7 @@ class Passage {
      * @param string $description
      * @return self
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) {
         $this->description = $description;
         return $this;
     }
@@ -452,8 +429,7 @@ class Passage {
      *
      * @return string $description
      */
-    public function getDescription()
-    {
+    public function getDescription() {
         return $this->description;
     }
 
@@ -463,8 +439,7 @@ class Passage {
      * @param string $technicien
      * @return self
      */
-    public function setTechnicien($technicien)
-    {
+    public function setTechnicien($technicien) {
         $this->technicien = $technicien;
         return $this;
     }
@@ -474,8 +449,7 @@ class Passage {
      *
      * @return string $technicien
      */
-    public function getTechnicien()
-    {
+    public function getTechnicien() {
         return $this->technicien;
     }
 
@@ -485,8 +459,7 @@ class Passage {
      * @param string $statut
      * @return self
      */
-    public function setStatut($statut)
-    {
+    public function setStatut($statut) {
         $this->statut = $statut;
         return $this;
     }
@@ -496,8 +469,7 @@ class Passage {
      *
      * @return string $statut
      */
-    public function getStatut()
-    {
+    public function getStatut() {
         return $this->statut;
     }
 
@@ -521,15 +493,13 @@ class Passage {
         return $this->technicienInfos;
     }
 
-
     /**
      * Set contratId
      *
      * @param string $contratId
      * @return self
      */
-    public function setContratId($contratId)
-    {
+    public function setContratId($contratId) {
         $this->contratId = $contratId;
         return $this;
     }
@@ -539,8 +509,8 @@ class Passage {
      *
      * @return string $contratId
      */
-    public function getContratId()
-    {
+    public function getContratId() {
         return $this->contratId;
     }
+
 }

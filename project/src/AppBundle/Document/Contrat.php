@@ -517,11 +517,12 @@ class Contrat {
     }
 
     public function getNextPassage() {
-        if (count($this->getPassages()) < $this->nbPassage) {
+        if ((count($this->getPassages()) < $this->nbPassage) && $this->getDateNextPassage()) {
             $passage = new Passage();
             $passage->setEtablissementIdentifiant($this->getEtablissement()->getIdentifiant());
             $passage->setEtablissementId($this->getEtablissement()->getId());
-            $passage->setDateCreation($this->getDateNextPassage());
+            $passage->setDateCreation(new \DateTime());
+            $passage->setDateDebut($this->getDateNextPassage());
             $passage->getEtablissementInfos()->pull($this->getEtablissement());
             $passage->setNumeroPassageIdentifiant("001");
             $passage->generateId();
@@ -534,26 +535,34 @@ class Contrat {
     public function getDateNextPassage() {
 
         $nbPassage = $this->getNbPassage();
-        if ($nbPassage <= 1) {
+        if ($nbPassage >= 1 && !count($this->getPassages())) {
             return $this->getDateDebut();
         }
-        $monthInterval = ($nbPassage / floatval($this->getDuree()));
-
-        if (!count($this->getLastPassageTermine())) {
-            return $this->getDateDebut();
-        }
+      
+        if (!count($this->getLastPassageTermine()) && $this->getLastPassageTermine()) {
+            return null;
+        }        
+        
         $dateDebutDernierPassage = clone $this->getLastPassageTermine()->getDateDebut();
-        $dateDebutDernierPassage->modify("+ " . $monthInterval . " month");
+        
+        $monthInterval = (floatval($this->getDuree()) / floatval($nbPassage));
+        $nb_month = intval($monthInterval);
+        
+        $monthDate = clone $this->getLastPassageTermine()->getDateDebut();
+        $nextMonth = $monthDate->modify("+" . $nb_month . " month");
+        $nb_days = intval(($monthInterval - $nb_month) * cal_days_in_month(CAL_GREGORIAN,$nextMonth->format('m'),$nextMonth->format('Y')));       
+        $dateDebutDernierPassage->modify("+" . $nb_month . " month")->modify("+" . $nb_days . " day");        
         return $dateDebutDernierPassage;
     }
 
     public function getLastPassageTermine() {
         $passages = array();
         foreach ($this->getPassages() as $passage) {
-            if ($passage->getDateFin() && $passage->isRealise()) {
+            if ($passage->getDateFin()) {
                 $passages[$passage->getDateFin()->format('Ymd')] = $passage;
             }
-        }
+        } 
+        return end($passages);
     }
 
     public function getNbPassagePrevu() {
