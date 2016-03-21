@@ -9,7 +9,7 @@
         $.initTooltips();
         $.initQueryHash();
         $.initJsFunctions();
-        $('.datepicker').datepicker();
+        $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "bottom right", daysOfWeekDisabled: "0"});
     });
     
     $.initJsFunctions = function () {
