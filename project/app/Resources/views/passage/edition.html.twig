@@ -1,0 +1,20 @@
+{% set _menu_active = 'etablissement' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+<h1>Saisie du rapport de passage</h1>
+{{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="form-group">
+            <div class="col-xs-12">
+                {{ form_errors(form.description) }}
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ form_widget(form.save) }}
+{{ form_end(form) }}
+{% endblock %}

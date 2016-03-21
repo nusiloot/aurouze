@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,8 +44,10 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
+
             $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
             $nextPassage = $contratManager->getNextPassgeForContrat($contrat);
+
             if ($nextPassage) {
                 $contrat->addPassage($nextPassage);
                 $dm->persist($nextPassage);
@@ -73,10 +76,11 @@ class ContratController extends Controller {
 
     /**
      * @Route("/contrat/{id}/visualisation", name="contrat_visualisation")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
-    public function visualisationAction(Request $request, $id) {
+    public function visualisationAction(Request $request, $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
+
         return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat));
     }
 

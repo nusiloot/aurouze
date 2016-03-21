@@ -8,7 +8,7 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
-    converter.doctrine.mongodb:
+    param_converter.doctrine.mongodb:
         class: Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter
         arguments: [@doctrine_mongodb]
         tags:
@@ -20,11 +20,11 @@ services:
     user.manager:
         class: AppBundle\Manager\UserManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
-        
+
     etablissement.manager:
         class: AppBundle\Manager\EtablissementManager
         arguments: [@doctrine_mongodb.odm.default_document_manager,@tool.osm]
-        
+
     etablissement.importer:
         class: AppBundle\Import\EtablissementCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @etablissement.manager]
@@ -32,7 +32,7 @@ services:
     passage.manager:
         class: AppBundle\Manager\PassageManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
-        
+
     contrat.manager:
         class: AppBundle\Manager\ContratManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
@@ -44,14 +44,10 @@ services:
     societe.importer:
         class: AppBundle\Import\SocieteCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager]
-        
+
     contrat.importer:
         class: AppBundle\Import\ContratCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, @passage.manager, @etablissement.manager, @user.manager]
-        
-    technicien.choix:
-        class: AppBundle\Type\TechnicienChoiceType
-        arguments: [@doctrine_mongodb.odm.default_document_manager]
 
     contrat.manager:
         class: AppBundle\Manager\ContratManager
@@ -64,5 +60,3 @@ services:
     user.importer:
         class: AppBundle\Import\UserCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager]
-
-

@@ -3,12 +3,13 @@
 {% block body %}
     <div id="wrapper">
     	<h1>Contrat <small>{{ contrat.getIdentifiant() }}</small></h1>
-    	
+
     	{{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
-    	
+
         <div class="row">
+
     		<a href="{{ path('passage_etablissement', {'id': contrat.getEtablissement().getId()}) }}" class="pull-left btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour</a>
+
         </div>
     </div>
 {% endblock %}
-
