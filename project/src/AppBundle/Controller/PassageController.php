@@ -9,20 +9,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\EtablissementChoiceType;
 use AppBundle\Document\Etablissement;
+use AppBundle\Document\Passage;
 
 class PassageController extends Controller {
-	
+
 	/**
 	 * @Route("/passage/etablissements", name="passage_etablissements")
 	 */
 	public function choiceAction(Request $request) {
-	
+
 		$dm = $this->get('doctrine_mongodb')->getManager();
 		 $formEtablissement = $this->createForm(new EtablissementChoiceType(), null, array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
             'method' => 'POST',
         ));
-	
+
 		return $this->render('passage/etablissements.html.twig', array('formEtablissement' => $formEtablissement->createView()));
 	}
 
@@ -52,7 +53,7 @@ class PassageController extends Controller {
     }
 
     /**
-     * @Route("/passage/{id}", name="passage_etablissement")
+     * @Route("/passage/etablissement/{id}", name="passage_etablissement")
      * @ParamConverter("etablissement", class="AppBundle:Etablissement")
      */
     public function etablissementAction(Request $request, Etablissement $etablissement) {
@@ -60,7 +61,7 @@ class PassageController extends Controller {
         $contrats = $this->get('contrat.manager')->getRepository()->findByEtablissement($etablissement);
 
         krsort($contrats);
-        
+
         $geojson = $this->buildGeoJson(array($etablissement));
         $formEtablissement = $this->createForm(new EtablissementChoiceType(), array('etablissements' => $etablissement->getIdentifiant(), 'etablissement' => $etablissement), array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
@@ -69,7 +70,16 @@ class PassageController extends Controller {
 
         return $this->render('passage/etablissement.html.twig', array('etablissement' => $etablissement, 'contrats' => $contrats, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson));
     }
-    
+
+    /**
+     * @Route("/passage/edition/{id}", name="passage_edition")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function editionAction(Request $request, Passage $passage) {
+
+		return $this->render('passage/edition.html.twig', array('passage' => $passage));
+    }
+
     /**
      * @Route("/etablissement-all", name="etablissement_all")
      */
@@ -107,7 +117,7 @@ class PassageController extends Controller {
             $feature->geometry->type = "Point";
             $feature->geometry->coordinates = array($coordinates->getLon(),$coordinates->getLat());
             $geojson->features[] = $feature;
-           
+
         }
         return $geojson;
     }
