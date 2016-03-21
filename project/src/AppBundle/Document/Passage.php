@@ -4,13 +4,12 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
-use Doctrine\ODM\MongoDB\Mapping\Annotations\PrePersist;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Document\EtablissementInfos;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
- *
  */
 class Passage {
 
@@ -101,16 +100,9 @@ class Passage {
      */
     protected $technicienInfos;
 
-
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->technicienInfos = new UserInfos();
-    }
-
-    /** @PrePersist */
-    public function prePersist()
-    {
-        $this->updateStatut();
     }
 
     public function generateId($fromImport = false) {
@@ -138,23 +130,29 @@ class Passage {
     }
 
     public function isPlanifie() {
-        return $this->statut == PassageManager::STATUT_PLANNIFIE;
+        return $this->statut == PassageManager::STATUT_PLANIFIE;
     }
 
     public function isNonPlanifie() {
-        return $this->statut == PassageManager::STATUT_NON_PLANNIFIE;
+        return $this->statut == PassageManager::STATUT_NON_PLANIFIE;
+    }
+
+    /** @MongoDB\PreUpdate */
+    public function preUpdate()
+    {
+        $this->updateStatut();
     }
 
     public function updateStatut() {
-        if (!boolval($this->dateFin) || !boolval($this->dateDebut)) {
-            $this->setStatut(PassageManager::STATUT_NON_PLANNIFIE);
+        if (!boolval($this->getDateFin()) || !boolval($this->getDateDebut())) {
+            $this->setStatut(PassageManager::STATUT_NON_PLANIFIE);
         }
-        if (boolval($this->dateFin) && boolval($this->dateDebut)) {
-            $this->setStatut(PassageManager::STATUT_PLANNIFIE);
+        if (boolval($this->getDateFin()) && boolval($this->getDateDebut())) {
+            $this->setStatut(PassageManager::STATUT_PLANIFIE);
         }
-//        if (boolval($this->dateEffectue)) {
-//            $this->setStatut(PassageManager::STATUT_REALISE);
-//        }
+        if ($this->getDescription()) {
+            $this->setStatut(PassageManager::STATUT_REALISE);
+        }
     }
 
     public function getIntitule() {

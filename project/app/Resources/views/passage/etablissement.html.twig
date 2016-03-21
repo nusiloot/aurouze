@@ -72,13 +72,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-2 text-right">
-                                            <a href="{{ path('passage_edition', { id: pe.id })}}">Modifier</a>
-                                        </div>
-                                        <div class="col-xs-2 text-right">
-                                            {% if(pe.realise) %} <span class="label label-success">Réalisé</span>
-                                            {% elseif(pe.planifie)  %} <span class="label label-success">Réalisé</span>
-                                            {% elseif(pe.nonplanifie)  %} <a class="btn btn-sm btn-warning" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : pe.technicienInfos.identite})}}">Planifier le passage</a>
+                                        <div class="col-xs-4 text-right">
+                                            {% if pe.realise %} <span class="label label-success">Réalisé</span>
+                                            {% elseif pe.planifie  %}<a class="btn btn-sm btn-primary" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
+                                            {% elseif pe.nonPlanifie %} <a class="btn btn-sm btn-warning" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : pe.technicienInfos.identite})}}">Planifier le passage</a>
                                             {% endif %}
                                         </div>
                                     </div>

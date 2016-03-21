@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\EtablissementChoiceType;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Passage;
+use AppBundle\Type\PassageType;
 
 class PassageController extends Controller {
 
@@ -76,8 +77,25 @@ class PassageController extends Controller {
      * @ParamConverter("passage", class="AppBundle:Passage")
      */
     public function editionAction(Request $request, Passage $passage) {
+		$dm = $this->get('doctrine_mongodb')->getManager();
 
-		return $this->render('passage/edition.html.twig', array('passage' => $passage));
+		$form = $this->createForm(new PassageType(), $passage, array(
+            'action' => $this->generateUrl('passage_edition', array('id' => $passage->getId())),
+            'method' => 'POST',
+        ));
+
+		$form->handleRequest($request);
+
+		if (!$form->isSubmitted() || !$form->isValid()) {
+
+			return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+		}
+
+        $dm->flush();
+
+
+
+		return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissementId()));
     }
 
     /**

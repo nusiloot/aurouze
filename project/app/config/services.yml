@@ -49,10 +49,6 @@ services:
         class: AppBundle\Import\ContratCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, @passage.manager, @etablissement.manager, @user.manager]
 
-    technicien.choix:
-        class: AppBundle\Type\TechnicienChoiceType
-        arguments: [@doctrine_mongodb.odm.default_document_manager]
-
     contrat.manager:
         class: AppBundle\Manager\ContratManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
