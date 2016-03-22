@@ -1,8 +1,6 @@
 {% set _menu_active = 'passage' %}
 {% extends 'base.html.twig' %}
 {% block body %}
-
-
     <div class="row">
         <div class="col-xs-12">
             <h3>Liste des passages à planifier</h3>
@@ -27,7 +25,7 @@
                                     {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
 	                                <div class="col-sm-12">
                                         <i class="mdi mdi-call mdi-lg"></i>
-                                        <small>{{ passage.etablissementInfos.telephoneFixe }}</small> 
+                                        <small>{{ passage.etablissementInfos.telephoneFixe }}</small>
                                         {% if passage.etablissementInfos.telephoneFixe and passage.etablissementInfos.telephonePortable %}
                                         /
                                     	{% endif %}

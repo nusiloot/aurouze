@@ -1,0 +1,15 @@
+{% set _menu_active = 'configuration' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div id="wrapper">
+    	<h1>Configuration</h1>
+
+    	
+
+        <div class="row">
+
+    		<a href="{{ path('configuration_modification') }}" class="pull-left btn btn-warning">Modifier</a>
+
+        </div>
+    </div>
+{% endblock %}
