@@ -26,7 +26,8 @@
         "mervick/material-design-icons": "^1.1",
         "knplabs/knp-snappy-bundle": "dev-master",
         "h4cc/wkhtmltopdf-amd64" : "0.12.x",
-        "h4cc/wkhtmltoimage-amd64":"0.12.x"
+        "h4cc/wkhtmltoimage-amd64":"0.12.x",
+        "behat/transliterator": "^1.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",

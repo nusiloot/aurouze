@@ -1,0 +1,29 @@
+{% set _menu_active = '' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div id="wrapper">
+        <h1>Modification Configuration</h1>
+        {{ form_start(form) }}
+        <div class="panel panel-default" style="margin-bottom: 0;">
+            <div class="panel-heading">Type de prestations <a href="javascript:void(0);" id="add_prestation_link" class="pull-right" style="font-size: 18px;"><span class="glyphicon glyphicon-plus-sign"></span></a></div>
+        </div>
+        <ul class="list-group" id="prestations" data-prototype="{% filter escape %}{{ include('configuration/prestation_admin_prototype.html.twig', { 'form': form.prestationsAdmin.vars.prototype }) }}{% endfilter %}">
+            {% for prestationAdmin in form.prestationsAdmin %}
+                <li class="list-group-item row">
+                    <div class="form-group col-xs-10">
+                        {{ form_row(prestationAdmin.prestationNom) }}
+                    </div>                    
+                </li>
+            {% endfor %}
+        </ul>
+
+        {{ form_widget(form.save) }}
+        {{ form_end(form) }}
+    </div>
+
+
+
+    {{ form_end(form) }}
+</div>
+
+{% endblock %}
