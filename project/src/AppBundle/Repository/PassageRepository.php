@@ -70,19 +70,19 @@ class PassageRepository extends DocumentRepository {
     public function findPassagesForEtablissement($etablissementIdentifiant) {
     	$query = $this->createQueryBuilder('Passage')
     	->field('etablissementIdentifiant')->equals($etablissementIdentifiant)
-    	->sort('dateCreation', 'desc')
+    	->sort('datePrevision', 'desc')
     	->getQuery();
     	return$query->execute();
     }
-    
+
     public function findPassagesForEtablissementSortedByContrat($etablissementIdentifiant) {
     	$query = $this->createQueryBuilder('Passage')
     	->field('etablissementIdentifiant')->equals($etablissementIdentifiant)
     	->sort('contratId', 'desc')->sort('dateCreation', 'desc')
     	->getQuery();
-    	return$query->execute();
+    	return $query->execute();
     }
-    
+
     public function findTechniciens() {
     	$techniciens = array();
     	$date = new \DateTime();
@@ -104,17 +104,17 @@ class PassageRepository extends DocumentRepository {
     	}
 
         ksort($techniciens);
-        
+
     	return $techniciens;
     }
 
     public function findToPlan() {
         $query = $this->createQueryBuilder('Passage')
                       ->field('dateDebut')->exists(false)
-                      ->sort('dateCreation', 'asc')
+                      ->sort('datePrevision', 'asc')
                       ->getQuery();
 
         return $query->execute();
-    } 
+    }
 
 }

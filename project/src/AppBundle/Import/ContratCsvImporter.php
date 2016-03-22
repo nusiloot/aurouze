@@ -85,7 +85,6 @@ class ContratCsvImporter {
             $contrat->setIdentifiant($this->cm->getNextNumero($etablissement, $contrat->getDateCreation()));
             $contrat->generateId();
 
-
             if ($data[self::CSV_DATE_DEBUT]) {
                 $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
             }
@@ -94,15 +93,6 @@ class ContratCsvImporter {
             $contrat->setDureeGarantie($data[self::CSV_GARANTIE]);
             $contrat->setNomenclature(str_replace('\n', "\n", $data[self::CSV_NOMENCLATURE]));
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
-            $this->dm->persist($contrat);
-
-            $passages = $this->pm->getRepository()->findByContratId($data[self::CSV_ID_CONTRAT], array('id' => 'DESC'));
-
-            foreach ($passages as $passage) {
-                $contrat->addPassage($passage);
-                $passage->setContratId($contrat->getId());
-                $this->dm->persist($passage);
-            }
 
             $this->dm->persist($contrat);
             $i++;

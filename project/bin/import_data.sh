@@ -10,7 +10,7 @@ DATA_DIR=$TMP/AUROUZE_DATAS
 if test "$REMOTE_DATA"; then
     echo "Récupération de l'archive"
     scp $REMOTE_DATA:AUROUZE_DATAS.tar.gz $TMP/AUROUZE_DATAS.tar.gz
-    
+
     echo "Désarchivage"
     cd $TMP
     tar zxvf $TMP/AUROUZE_DATAS.tar.gz
@@ -20,25 +20,23 @@ if test "$REMOTE_DATA"; then
     cd $SYMFODIR
 fi
 
-#####IMPORT des Users ##### 
+##### Récupération des Users #####
 
 echo "Récupération des users"
 
-php app/console importer:csv user.importer $DATA_DIR/tblUser.csv 
+cat $DATA_DIR/tblUser.csv > $DATA_DIR/users.csv
 
-#####IMPORT des Etablissements ##### 
+##### Récupération des Etablissements #####
 
 echo "Récupération des établissements"
 
-# Gère les retours charriots dans les champs 
+# Gère les retours charriots dans les champs
 cat  $DATA_DIR/tblAdresse.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 2,2 > $DATA_DIR/adresse.csv.temp
 
-
 #Adresses Application
-
 cat $DATA_DIR/adresse.csv.temp | grep -e "^[0-9]*;[0-9]*;3" > $DATA_DIR/adresse_application.csv
 
-# gère les retours charriots dans les champs 
+# gère les retours charriots dans les champs
 cat  $DATA_DIR/tblEntite.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/entite.csv.temp
 
 join -t ';' -1 2 -2 1 $DATA_DIR/adresse_application.csv $DATA_DIR/entite.csv.temp > $DATA_DIR/etablissements.csv.tmp
@@ -46,35 +44,29 @@ join -t ';' -1 2 -2 1 $DATA_DIR/adresse_application.csv $DATA_DIR/entite.csv.tem
 rm $DATA_DIR/etablissements.csv;
 touch $DATA_DIR/etablissements.csv;
 
-while read line  
-do   
+while read line
+do
    IDENTIFIANT=`echo $line | cut -d ';' -f 2`;
    COORDONNEES=`grep "\"$IDENTIFIANT\";" $DATA_DIR/etablissementsCoordonees.csv | cut -d ";" -f 2,3`;
    echo $line";"$COORDONNEES >> $DATA_DIR/etablissements.csv;
-   
+
 done < $DATA_DIR/etablissements.csv.tmp
 
-php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv
+#### Récupération des Societe ####
 
-#### IMPORT des Societe ####
 echo "Récupération des sociétés"
 
 cat $DATA_DIR/adresse.csv.temp | grep -e "^[0-9]*;[0-9]*;1" > $DATA_DIR/adresse_facturation.csv
 
 join -t ';' -1 2 -2 1 $DATA_DIR/adresse_facturation.csv $DATA_DIR/entite.csv.temp > $DATA_DIR/societes.csv
 
-php app/console importer:csv societe.importer $DATA_DIR/societes.csv
-
-echo "Récupération des contrats"
+echo "Récupération des passages"
 
 cat  $DATA_DIR/tblPrestation.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/tblPrestation.cleaned.csv
 
-#### CREATION PASSAGES.CSV ####
-echo "Récupération des passages"
-
 cat $DATA_DIR/tblPassageAdresse.csv | tr -d '\r' | sort -t ";" -k 2,2 > $DATA_DIR/passageAdresse.sorted.csv
 
-# Gère les retours chariots dans les champs 
+# Gère les retours chariots dans les champs
 cat  $DATA_DIR/tblPassage.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/^.*RefPassage;/RefPassage;/' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/passages.cleaned.sorted.csv
 
 join -t ';' -1 1 -2 2 $DATA_DIR/passages.cleaned.sorted.csv $DATA_DIR/passageAdresse.sorted.csv | sort -t ";" -k 4,4 > $DATA_DIR/passagesadresses.csv
@@ -98,7 +90,7 @@ cat $DATA_DIR/passagesadressestechniciens.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+
 
     #if(!date_passage_debut && $6) { "date --date=\"$6\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; }
     #if(!date_passage_debut && $19) { "date --date=\"$19\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; }
-        
+
     effectue=$13;
     planifie=$18;
     facture=$12;
@@ -124,10 +116,10 @@ cat $DATA_DIR/passagesadressestechniciens.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+
     }
 
     if(!date_creation) {
-        date_creation="2016-01-01 00:00:00";        
+        date_creation="2016-01-01 00:00:00";
     }
 
-    libelle=$4; 
+    libelle=$4;
     type_passage="";
 
     if($5 == "1") { type_passage="Sous contrat";}
@@ -147,11 +139,10 @@ cat $DATA_DIR/passagesadressestechniciens.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+
 
 }' > $DATA_DIR/passages.csv
 
-php app/console importer:csv passage.importer $DATA_DIR/passages.csv
+#### Récupération des contrats ####
 
-
-#### IMPORT des contrats ####
 echo "Récupération des contrats"
+
 cat $DATA_DIR/tblPrestationAdresse.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationAdresse.sorted.csv
 
 join -t ';' -1 2 -2 1 $DATA_DIR/prestationAdresse.sorted.csv $DATA_DIR/tblPrestation.cleaned.csv > $DATA_DIR/prestation.tmp.csv
@@ -195,6 +186,24 @@ cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)
     garantie=$33;
     prixht=$29;
     print contrat_id";"etablissement_id";"societe_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";";
-}' > $DATA_DIR/prestations.csv;
+}' > $DATA_DIR/contrats.csv;
 
-php app/console importer:csv contrat.importer $DATA_DIR/prestations.csv
+echo "Import des users"
+
+php app/console importer:csv user.importer $DATA_DIR/users.csv
+
+echo "Import des etablissements"
+
+php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv
+
+echo "Import des sociétés"
+
+php app/console importer:csv societe.importer $DATA_DIR/societes.csv
+
+echo "Import des contrats"
+
+php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv
+
+echo "Import des passages"
+
+php app/console importer:csv passage.importer $DATA_DIR/passages.csv

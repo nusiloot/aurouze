@@ -91,10 +91,10 @@ class PassageController extends Controller {
 
             return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
         }
-        
+
         $contratManager = new ContratManager($dm);
-        $contrat = $contratManager->getRepository()->findOneById($passage->getContratId());
-        
+        $contrat = $passage->getContrat();
+
         $nextPassage = $contratManager->getNextPassageForContrat($contrat);
 
         if ($nextPassage) {
