@@ -55,6 +55,7 @@ class ConfigurationPrestation
     public function setPrestationNom($prestationNom)
     {
         $this->prestationNom = $prestationNom;
+        $this->setPrestationKey(Transliterator::urlize($prestationNom));
         return $this;
     }
 

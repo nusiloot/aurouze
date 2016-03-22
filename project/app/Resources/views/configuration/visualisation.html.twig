@@ -4,8 +4,10 @@
     <div id="wrapper">
     	<h1>Configuration</h1>
 
-    	
-
+    	{% for prestation in configuration.prestations %}
+            {{ prestation.prestationNom }}
+            {% endfor %}
+            
         <div class="row">
 
     		<a href="{{ path('configuration_modification') }}" class="pull-left btn btn-warning">Modifier</a>
