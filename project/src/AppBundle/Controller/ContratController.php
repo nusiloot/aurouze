@@ -11,7 +11,7 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\UserInfos;
 use AppBundle\Type\ContratType;
-use AppBundle\Type\ContratInterventionsType;
+use AppBundle\Type\ContratAcceptationType;
 use AppBundle\Manager\ContratManager;
 use Knp\Snappy\Pdf;
 
@@ -44,10 +44,30 @@ class ContratController extends Controller {
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $contrat = $form->getData();           
+            $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);            
+            
+            $dm->persist($contrat);
+            $dm->flush();
+            return $this->redirectToRoute('contrat_acceptation', array('id' => $contrat->getId()));
+        }
+        return $this->render('contrat/modification.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
+    }
+    
+    /**
+     * @Route("/contrat/{id}/acceptation", name="contrat_acceptation")
+     */
+    public function acceptationAction(Request $request, $id) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
+        
+        $form = $this->createForm(new ContratAcceptationType($dm), $contrat, array(
+            'action' => $this->generateUrl('contrat_modification', array('id' => $id)),
+            'method' => 'POST',
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
-            if (!$contrat->getInterventions()) {
-            	$contrat->generateInterventions();
-            }
            
             $nextPassage = $contrat->getNextPassage();
             $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
@@ -56,49 +76,13 @@ class ContratController extends Controller {
                 $contrat->addPassage($nextPassage);
                 $dm->persist($nextPassage);
             }
-            
-            $dm->persist($contrat);
-            $dm->flush();
-            return $this->redirectToRoute('contrat_interventions', array('id' => $contrat->getId()));
-        }
-        return $this->render('contrat/modification.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
-    }
-
-    /**
-     * @Route("/contrat/{id}/interventions", name="contrat_interventions")
-     */
-    public function interventionssAction(Request $request, $id) {
-
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
-      
-        $form = $this->createForm(new ContratInterventionsType($this->container, $dm), $contrat, array(
-            'action' => $this->generateUrl('contrat_interventions', array('id' => $id)),
-            'method' => 'POST',
-        ));
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $contrat = $form->getData();
-            $dm->persist($contrat);
-            $dm->flush();
-            return $this->redirectToRoute('contrat_validation', array('id' => $contrat->getId()));
-        }
-        return $this->render('contrat/interventions.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
-    }
-
-    /**
-     * @Route("/contrat/{id}/validation", name="contrat_validation")
-     */
-    public function validationAction(Request $request, $id) {
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
-        if ($request->get('valide')) {
             $contrat->setStatut(Contrat::STATUT_VALIDE);
             $dm->persist($contrat);
             $dm->flush();
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
-        return $this->render('contrat/validation.html.twig', array('contrat' => $contrat));
+        return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat,'form' => $form->createView()));
+       
     }
 
     /**
