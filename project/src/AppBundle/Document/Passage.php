@@ -40,11 +40,6 @@ class Passage {
      */
     protected $societeIdentifiant;
 
-    /**
-     * @MongoDB\Date
-     */
-    protected $dateCreation;
-    
      /**
      * @MongoDB\Date
      */
@@ -105,9 +100,21 @@ class Passage {
      */
     protected $technicienInfos;
 
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $mouvement_declenchable;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $mouvement_declenche;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->technicienInfos = new UserInfos();
+        $this->mouvement_declenchable = false;
+        $this->mouvement_declenche = false;
     }
 
     public function generateId($fromImport = false) {
@@ -276,26 +283,6 @@ class Passage {
      */
     public function getSocieteIdentifiant() {
         return $this->societeIdentifiant;
-    }
-
-    /**
-     * Set dateCreation
-     *
-     * @param date $dateCreation
-     * @return self
-     */
-    public function setDateCreation($dateCreation) {
-        $this->dateCreation = $dateCreation;
-        return $this;
-    }
-
-    /**
-     * Get dateCreation
-     *
-     * @return date $dateCreation
-     */
-    public function getDateCreation() {
-        return $this->dateCreation;
     }
 
     /**
@@ -539,5 +526,49 @@ class Passage {
     public function getDatePrevision()
     {
         return $this->datePrevision;
+    }
+
+    /**
+     * Set mouvementDeclenchable
+     *
+     * @param boolean $mouvementDeclenchable
+     * @return self
+     */
+    public function setMouvementDeclenchable($mouvementDeclenchable)
+    {
+        $this->mouvement_declenchable = $mouvementDeclenchable;
+        return $this;
+    }
+
+    /**
+     * Get mouvementDeclenchable
+     *
+     * @return boolean $mouvementDeclenchable
+     */
+    public function getMouvementDeclenchable()
+    {
+        return $this->mouvement_declenchable;
+    }
+
+    /**
+     * Set mouvementDeclenche
+     *
+     * @param boolean $mouvementDeclenche
+     * @return self
+     */
+    public function setMouvementDeclenche($mouvementDeclenche)
+    {
+        $this->mouvement_declenche = $mouvementDeclenche;
+        return $this;
+    }
+
+    /**
+     * Get mouvementDeclenche
+     *
+     * @return boolean $mouvementDeclenche
+     */
+    public function getMouvementDeclenche()
+    {
+        return $this->mouvement_declenche;
     }
 }
