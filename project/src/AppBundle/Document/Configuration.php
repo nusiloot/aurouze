@@ -29,14 +29,14 @@ class Configuration {
     protected $id;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="PrestationAdmin")
+     * @MongoDB\EmbedMany(targetDocument="ConfigurationPrestation")
      */
-    protected $prestationsAdmin;
+    protected $prestations;
     
     /**
-     * @MongoDB\EmbedMany(targetDocument="ProduitAdmin")
+     * @MongoDB\EmbedMany(targetDocument="ConfigurationProduit")
      */
-    protected $produitsAdmin;
+    protected $produits;
 
     public function __construct()
     {
@@ -44,6 +44,8 @@ class Configuration {
         $this->produitsAdmin = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
+
+
     /**
      * Set id
      *
@@ -67,62 +69,62 @@ class Configuration {
     }
 
     /**
-     * Add prestationsAdmin
+     * Add prestation
      *
-     * @param AppBundle\Document\PrestationAdmin $prestationsAdmin
+     * @param AppBundle\Document\ConfigurationPrestation $prestation
      */
-    public function addPrestationsAdmin(\AppBundle\Document\PrestationAdmin $prestationsAdmin)
+    public function addPrestation(\AppBundle\Document\ConfigurationPrestation $prestation)
     {
-        $this->prestationsAdmin[] = $prestationsAdmin;
+        $this->prestations[] = $prestation;
     }
 
     /**
-     * Remove prestationsAdmin
+     * Remove prestation
      *
-     * @param AppBundle\Document\PrestationAdmin $prestationsAdmin
+     * @param AppBundle\Document\ConfigurationPrestation $prestation
      */
-    public function removePrestationsAdmin(\AppBundle\Document\PrestationAdmin $prestationsAdmin)
+    public function removePrestation(\AppBundle\Document\ConfigurationPrestation $prestation)
     {
-        $this->prestationsAdmin->removeElement($prestationsAdmin);
+        $this->prestations->removeElement($prestation);
     }
 
     /**
-     * Get prestationsAdmin
+     * Get prestations
      *
-     * @return \Doctrine\Common\Collections\Collection $prestationsAdmin
+     * @return \Doctrine\Common\Collections\Collection $prestations
      */
-    public function getPrestationsAdmin()
+    public function getPrestations()
     {
-        return $this->prestationsAdmin;
+        return $this->prestations;
     }
 
     /**
-     * Add produitsAdmin
+     * Add produit
      *
-     * @param AppBundle\Document\ProduitAdmin $produitsAdmin
+     * @param AppBundle\Document\ConfigurationProduit $produit
      */
-    public function addProduitsAdmin(\AppBundle\Document\ProduitAdmin $produitsAdmin)
+    public function addProduit(\AppBundle\Document\ConfigurationProduit $produit)
     {
-        $this->produitsAdmin[] = $produitsAdmin;
+        $this->produits[] = $produit;
     }
 
     /**
-     * Remove produitsAdmin
+     * Remove produit
      *
-     * @param AppBundle\Document\ProduitAdmin $produitsAdmin
+     * @param AppBundle\Document\ConfigurationProduit $produit
      */
-    public function removeProduitsAdmin(\AppBundle\Document\ProduitAdmin $produitsAdmin)
+    public function removeProduit(\AppBundle\Document\ConfigurationProduit $produit)
     {
-        $this->produitsAdmin->removeElement($produitsAdmin);
+        $this->produits->removeElement($produit);
     }
 
     /**
-     * Get produitsAdmin
+     * Get produits
      *
-     * @return \Doctrine\Common\Collections\Collection $produitsAdmin
+     * @return \Doctrine\Common\Collections\Collection $produits
      */
-    public function getProduitsAdmin()
+    public function getProduits()
     {
-        return $this->produitsAdmin;
+        return $this->produits;
     }
 }

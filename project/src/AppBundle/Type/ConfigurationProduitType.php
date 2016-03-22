@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-class ProduitAdminType extends AbstractType {
+class ConfigurationProduitType extends AbstractType {
 	
 	protected $container;
 	protected $dm;
@@ -35,7 +35,7 @@ class ProduitAdminType extends AbstractType {
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'AppBundle\Document\ProduitAdmin',
+				'data_class' => 'AppBundle\Document\ConfigurationProduit',
 		));
 	}
 	
@@ -44,6 +44,6 @@ class ProduitAdminType extends AbstractType {
 	 */
 	public function getName() 
 	{
-		return 'produitAdmin';
+		return 'produit';
 	}
 }

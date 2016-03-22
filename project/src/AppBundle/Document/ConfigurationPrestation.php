@@ -8,7 +8,7 @@ use Behat\Transliterator\Transliterator;
 /**
  * @MongoDB\EmbeddedDocument
  */
-class PrestationAdmin
+class ConfigurationPrestation
 {
 
     /**
@@ -22,6 +22,7 @@ class PrestationAdmin
     protected $prestationNom;
 
     
+
 
     /**
      * Set prestationKey
@@ -54,7 +55,6 @@ class PrestationAdmin
     public function setPrestationNom($prestationNom)
     {
         $this->prestationNom = $prestationNom;
-        $this->setPrestationKey(strtoupper(Transliterator::urlize($prestationNom,'_')));
         return $this;
     }
 

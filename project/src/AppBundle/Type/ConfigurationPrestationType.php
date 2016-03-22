@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-class PrestationAdminType extends AbstractType {
+class ConfigurationPrestationType extends AbstractType {
 
     protected $container;
     protected $dm;
@@ -32,7 +32,7 @@ class PrestationAdminType extends AbstractType {
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Document\PrestationAdmin',
+            'data_class' => 'AppBundle\Document\ConfigurationPrestation',
         ));
     }
 
@@ -40,7 +40,7 @@ class PrestationAdminType extends AbstractType {
      * @return string
      */
     public function getName() {
-        return 'prestationAdmin';
+        return 'prestation';
     }
 
 }

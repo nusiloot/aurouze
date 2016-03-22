@@ -25,14 +25,14 @@ class ConfigurationType extends AbstractType {
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('prestationsAdmin', CollectionType::class, array(
-            'entry_type' => new PrestationAdminType($this->container, $this->dm),
+        $builder->add('prestations', CollectionType::class, array(
+            'entry_type' => new ConfigurationPrestationType($this->container, $this->dm),
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
             'label' => ' ',
-        ))->add('produitsAdmin', CollectionType::class, array(
-            'entry_type' => new ProduitAdminType($this->container, $this->dm),
+        ))->add('produits', CollectionType::class, array(
+            'entry_type' => new ConfigurationProduitType($this->container, $this->dm),
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
