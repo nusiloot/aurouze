@@ -9,7 +9,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 class Intervention {
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Prestation")
+     * @MongoDB\Hash
      */
     protected $prestations;
 
@@ -21,37 +21,28 @@ class Intervention {
     
     public function __construct()
     {
-        $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
-    /**
-     * Add prestation
-     *
-     * @param AppBundle\Document\Prestation $prestation
-     */
-    public function addPrestation(\AppBundle\Document\Prestation $prestation)
-    {
-        $this->prestations[] = $prestation;
-    }
-
-    /**
-     * Remove prestation
-     *
-     * @param AppBundle\Document\Prestation $prestation
-     */
-    public function removePrestation(\AppBundle\Document\Prestation $prestation)
-    {
-        $this->prestations->removeElement($prestation);
+        $this->prestations = array();
     }
 
     /**
      * Get prestations
      *
-     * @return \Doctrine\Common\Collections\Collection $prestations
+     * @return collection $prestations
      */
-    public function getPrestations()
-    {
+    public function getPrestations() {
         return $this->prestations;
+    }
+
+    /**
+     * Set prestations
+     *
+     * @param collection $prestations
+     * @return self
+     */
+    public function setPrestations($prestations)
+    {
+        $this->prestations = $prestations;
+        return $this;
     }
 
     /**

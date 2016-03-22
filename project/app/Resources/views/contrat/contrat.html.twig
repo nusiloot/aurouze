@@ -6,7 +6,7 @@
 	  		{% if contrat.getCommercial() %}
 	  		Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
 	  		{% endif %}
-	  		<strong>{{ contrat.getDateDebut()|date("m/d/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />
+	  		<strong>{{ contrat.getDateDebut()|date("d/m/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />
 	  		Garantie : <strong>{{ contrat.getDureeGarantie() }}</strong> mois
 	  		</div>
 	  		<div class="col-xs-6">
@@ -21,7 +21,6 @@
 
 <h1 class="text-center">
 	{{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT</small>&nbsp;
-	<small>(payé en {{ contrat.getFrequenceFacturation() }} facture{% if contrat.getFrequenceFacturation() > 1 %}s{% endif %})</small>
      
 </h1>
 <div class="panel panel-default">
@@ -32,19 +31,22 @@
 </div>
 
 <div class="panel panel-default">
-	<div class="panel-heading">Prestations</div>
+	<div class="panel-heading">Interventions</div>
   	<div class="panel-body">
-	  	<div class="rows">
-	  	{% for prestation in contrat.prestations %}
-	  		<div class="panel panel-default col-xs-4">
-				<div class="panel-body">
-					<strong>{{ prestation.getPrestationType() }} >> {{ prestation.getAnimal() }}</strong><br />
-					
-					{{ prestation.getCommentaire() }}
-			  	</div>
+	  	{% for intervention in contrat.interventions %}
+	  	<div class="row">
+	  		<div class="col-xs-1">
+				<span class="badge">{{ loop.index }}</span>
 			</div>
-		{% endfor %}
+	  		<div class="col-xs-10">
+				{{ intervention.prestations|join(', ') }}
+			</div>
+	  		<div class="col-xs-1">{% if intervention.facturable %}<span class="glyphicon glyphicon-usd"></span>{% endif  %}</div>
 		</div>
+		{% if not loop.last %}
+	  	<hr />
+	  	{% endif %}
+		{% endfor %}
   	</div>
 </div>
 

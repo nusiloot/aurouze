@@ -64,11 +64,7 @@ class Contrat {
      */
     protected $prestations;
 
-    /**
-     * @MongoDB\EmbedMany(targetDocument="Intervention")
-     */
-    protected $interventions;
-
+  
     /**
      * @MongoDB\Date
      */
@@ -78,7 +74,12 @@ class Contrat {
      * @MongoDB\Date
      */
     protected $dateDebut;
-
+    
+    /**
+     * @MongoDB\Date
+     */
+    protected $dateAcceptation;
+    
     /**
      * @MongoDB\Int
      */
@@ -102,13 +103,9 @@ class Contrat {
     /**
      * @MongoDB\Int
      */
-    protected $frequenceFacturation;
+    protected $nbFactures;
 
-    /**
-     * @MongoDB\String
-     */
-    protected $typeFacturation;
-
+   
     /**
      * @MongoDB\Float
      */
@@ -120,30 +117,10 @@ class Contrat {
     protected $statut;
 
     public function __construct() {
-        $this->prestations = new ArrayCollection();
         $this->passages = new ArrayCollection();
-        $this->interventions = new ArrayCollection();
+        $this->prestations = new ArrayCollection();
     }
 
-    /**
-     * Set id
-     *
-     * @param string $id
-     * @return self
-     */
-    public function setId($id) {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get id
-     *
-     * @return string $id
-     */
-    public function getId() {
-        return $this->id;
-    }
 
     /**
      * Generate id
@@ -154,13 +131,37 @@ class Contrat {
         return $this->setId(self::PREFIX . '-' . $this->identifiant);
     }
 
+
+    /**
+     * Set id
+     *
+     * @param string $id
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
     /**
      * Set etablissement
      *
-     * @param Etablissement $etablissement
+     * @param AppBundle\Document\Etablissement $etablissement
      * @return self
      */
-    public function setEtablissement(Etablissement $etablissement) {
+    public function setEtablissement(\AppBundle\Document\Etablissement $etablissement)
+    {
         $this->etablissement = $etablissement;
         return $this;
     }
@@ -168,19 +169,21 @@ class Contrat {
     /**
      * Get etablissement
      *
-     * @return Etablissement $etablissement
+     * @return AppBundle\Document\Etablissement $etablissement
      */
-    public function getEtablissement() {
+    public function getEtablissement()
+    {
         return $this->etablissement;
     }
 
     /**
      * Set commercial
      *
-     * @param User $commercial
+     * @param AppBundle\Document\User $commercial
      * @return self
      */
-    public function setCommercial(User $commercial) {
+    public function setCommercial(\AppBundle\Document\User $commercial)
+    {
         $this->commercial = $commercial;
         return $this;
     }
@@ -188,19 +191,21 @@ class Contrat {
     /**
      * Get commercial
      *
-     * @return User $commercial
+     * @return AppBundle\Document\User $commercial
      */
-    public function getCommercial() {
+    public function getCommercial()
+    {
         return $this->commercial;
     }
 
     /**
      * Set technicien
      *
-     * @param User $technicien
+     * @param AppBundle\Document\User $technicien
      * @return self
      */
-    public function setTechnicien(User $technicien) {
+    public function setTechnicien(\AppBundle\Document\User $technicien)
+    {
         $this->technicien = $technicien;
         return $this;
     }
@@ -208,10 +213,41 @@ class Contrat {
     /**
      * Get technicien
      *
-     * @return User $technicien
+     * @return AppBundle\Document\User $technicien
      */
-    public function getTechnicien() {
+    public function getTechnicien()
+    {
         return $this->technicien;
+    }
+
+    /**
+     * Add passage
+     *
+     * @param AppBundle\Document\Passage $passage
+     */
+    public function addPassage(\AppBundle\Document\Passage $passage)
+    {
+        $this->passages[] = $passage;
+    }
+
+    /**
+     * Remove passage
+     *
+     * @param AppBundle\Document\Passage $passage
+     */
+    public function removePassage(\AppBundle\Document\Passage $passage)
+    {
+        $this->passages->removeElement($passage);
+    }
+
+    /**
+     * Get passages
+     *
+     * @return \Doctrine\Common\Collections\Collection $passages
+     */
+    public function getPassages()
+    {
+        return $this->passages;
     }
 
     /**
@@ -220,7 +256,8 @@ class Contrat {
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant) {
+    public function setIdentifiant($identifiant)
+    {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -230,7 +267,8 @@ class Contrat {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant() {
+    public function getIdentifiant()
+    {
         return $this->identifiant;
     }
 
@@ -240,7 +278,8 @@ class Contrat {
      * @param string $typeContrat
      * @return self
      */
-    public function setTypeContrat($typeContrat) {
+    public function setTypeContrat($typeContrat)
+    {
         $this->typeContrat = $typeContrat;
         return $this;
     }
@@ -250,25 +289,50 @@ class Contrat {
      *
      * @return string $typeContrat
      */
-    public function getTypeContrat() {
+    public function getTypeContrat()
+    {
         return $this->typeContrat;
+    }
+
+    /**
+     * Set nomenclature
+     *
+     * @param string $nomenclature
+     * @return self
+     */
+    public function setNomenclature($nomenclature)
+    {
+        $this->nomenclature = $nomenclature;
+        return $this;
+    }
+
+    /**
+     * Get nomenclature
+     *
+     * @return string $nomenclature
+     */
+    public function getNomenclature()
+    {
+        return $this->nomenclature;
     }
 
     /**
      * Add prestation
      *
-     * @param Prestation $prestation
+     * @param AppBundle\Document\Prestation $prestation
      */
-    public function addPrestation(Prestation $prestation) {
+    public function addPrestation(\AppBundle\Document\Prestation $prestation)
+    {
         $this->prestations[] = $prestation;
     }
 
     /**
      * Remove prestation
      *
-     * @param Prestation $prestation
+     * @param AppBundle\Document\Prestation $prestation
      */
-    public function removePrestation(Prestation $prestation) {
+    public function removePrestation(\AppBundle\Document\Prestation $prestation)
+    {
         $this->prestations->removeElement($prestation);
     }
 
@@ -277,35 +341,9 @@ class Contrat {
      *
      * @return \Doctrine\Common\Collections\Collection $prestations
      */
-    public function getPrestations() {
+    public function getPrestations()
+    {
         return $this->prestations;
-    }
-    
-    /**
-     * Add intervention
-     *
-     * @param Intervention $intervention
-     */
-    public function addIntervention(Intervention $intervention) {
-    	$this->interventions[] = $intervention;
-    }
-    
-    /**
-     * Remove intervention
-     *
-     * @param Intervention $intervention
-     */
-    public function removeIntervention(Intervention $intervention) {
-    	$this->interventions->removeElement($intervention);
-    }
-    
-    /**
-     * Get interventions
-     *
-     * @return \Doctrine\Common\Collections\Collection $interventions
-     */
-    public function getInterventions() {
-    	return $this->interventions;
     }
 
     /**
@@ -314,7 +352,8 @@ class Contrat {
      * @param date $dateCreation
      * @return self
      */
-    public function setDateCreation($dateCreation) {
+    public function setDateCreation($dateCreation)
+    {
         $this->dateCreation = $dateCreation;
         return $this;
     }
@@ -324,7 +363,8 @@ class Contrat {
      *
      * @return date $dateCreation
      */
-    public function getDateCreation() {
+    public function getDateCreation()
+    {
         return $this->dateCreation;
     }
 
@@ -334,7 +374,8 @@ class Contrat {
      * @param date $dateDebut
      * @return self
      */
-    public function setDateDebut($dateDebut) {
+    public function setDateDebut($dateDebut)
+    {
         $this->dateDebut = $dateDebut;
         return $this;
     }
@@ -344,8 +385,31 @@ class Contrat {
      *
      * @return date $dateDebut
      */
-    public function getDateDebut() {
+    public function getDateDebut()
+    {
         return $this->dateDebut;
+    }
+
+    /**
+     * Set dateAcceptation
+     *
+     * @param date $dateAcceptation
+     * @return self
+     */
+    public function setDateAcceptation($dateAcceptation)
+    {
+        $this->dateAcceptation = $dateAcceptation;
+        return $this;
+    }
+
+    /**
+     * Get dateAcceptation
+     *
+     * @return date $dateAcceptation
+     */
+    public function getDateAcceptation()
+    {
+        return $this->dateAcceptation;
     }
 
     /**
@@ -354,7 +418,8 @@ class Contrat {
      * @param int $duree
      * @return self
      */
-    public function setDuree($duree) {
+    public function setDuree($duree)
+    {
         $this->duree = $duree;
         return $this;
     }
@@ -364,7 +429,8 @@ class Contrat {
      *
      * @return int $duree
      */
-    public function getDuree() {
+    public function getDuree()
+    {
         return $this->duree;
     }
 
@@ -374,7 +440,8 @@ class Contrat {
      * @param int $dureeGarantie
      * @return self
      */
-    public function setDureeGarantie($dureeGarantie) {
+    public function setDureeGarantie($dureeGarantie)
+    {
         $this->dureeGarantie = $dureeGarantie;
         return $this;
     }
@@ -384,7 +451,8 @@ class Contrat {
      *
      * @return int $dureeGarantie
      */
-    public function getDureeGarantie() {
+    public function getDureeGarantie()
+    {
         return $this->dureeGarantie;
     }
 
@@ -394,7 +462,8 @@ class Contrat {
      * @param int $nbPassage
      * @return self
      */
-    public function setNbPassage($nbPassage) {
+    public function setNbPassage($nbPassage)
+    {
         $this->nbPassage = $nbPassage;
         return $this;
     }
@@ -404,7 +473,8 @@ class Contrat {
      *
      * @return int $nbPassage
      */
-    public function getNbPassage() {
+    public function getNbPassage()
+    {
         return $this->nbPassage;
     }
 
@@ -414,7 +484,8 @@ class Contrat {
      * @param int $dureePassage
      * @return self
      */
-    public function setDureePassage($dureePassage) {
+    public function setDureePassage($dureePassage)
+    {
         $this->dureePassage = $dureePassage;
         return $this;
     }
@@ -424,48 +495,31 @@ class Contrat {
      *
      * @return int $dureePassage
      */
-    public function getDureePassage() {
+    public function getDureePassage()
+    {
         return $this->dureePassage;
     }
 
     /**
-     * Set frequenceFacturation
+     * Set nbFactures
      *
-     * @param int $frequenceFacturation
+     * @param int $nbFactures
      * @return self
      */
-    public function setFrequenceFacturation($frequenceFacturation) {
-        $this->frequenceFacturation = $frequenceFacturation;
+    public function setNbFactures($nbFactures)
+    {
+        $this->nbFactures = $nbFactures;
         return $this;
     }
 
     /**
-     * Get frequenceFacturation
+     * Get nbFactures
      *
-     * @return int $frequenceFacturation
+     * @return int $nbFactures
      */
-    public function getFrequenceFacturation() {
-        return $this->frequenceFacturation;
-    }
-
-    /**
-     * Set typeFacturation
-     *
-     * @param string $typeFacturation
-     * @return self
-     */
-    public function setTypeFacturation($typeFacturation) {
-        $this->typeFacturation = $typeFacturation;
-        return $this;
-    }
-
-    /**
-     * Get typeFacturation
-     *
-     * @return string $typeFacturation
-     */
-    public function getTypeFacturation() {
-        return $this->typeFacturation;
+    public function getNbFactures()
+    {
+        return $this->nbFactures;
     }
 
     /**
@@ -474,7 +528,8 @@ class Contrat {
      * @param float $prixHt
      * @return self
      */
-    public function setPrixHt($prixHt) {
+    public function setPrixHt($prixHt)
+    {
         $this->prixHt = $prixHt;
         return $this;
     }
@@ -484,7 +539,8 @@ class Contrat {
      *
      * @return float $prixHt
      */
-    public function getPrixHt() {
+    public function getPrixHt()
+    {
         return $this->prixHt;
     }
 
@@ -494,49 +550,23 @@ class Contrat {
      * @param string $statut
      * @return self
      */
-    public function setStatut($statut) {
+    public function setStatut($statut)
+    {
         $this->statut = $statut;
         return $this;
     }
-
-    /**
-     * Add passage
-     *
-     * @param AppBundle\Document\Passage $passage
-     */
-    public function addPassage(\AppBundle\Document\Passage $passage) {
-        $this->passages[] = $passage;
-    }
-
-    /**
-     * Remove passage
-     *
-     * @param AppBundle\Document\Passage $passage
-     */
-    public function removePassage(\AppBundle\Document\Passage $passage) {
-        $this->passages->removeElement($passage);
-    }
-
-    /**
-     * Get passages
-     *
-     * @return \Doctrine\Common\Collections\Collection $passages
-     */
-    public function getPassages() {
-        return $this->passages;
-    }
-
-    
 
     /**
      * Get statut
      *
      * @return string $statut
      */
-    public function getStatut() {
+    public function getStatut()
+    {
         return $this->statut;
     }
-
+    
+    
     public function getDateFin() {
 
         $dateFin = clone $this->getDateDebut();
@@ -625,41 +655,4 @@ class Contrat {
         return $passagesSorted;
     }
 
-
-    /**
-     * Set nomenclature
-     *
-     * @param string $nomenclature
-     * @return self
-     */
-    public function setNomenclature($nomenclature)
-    {
-        $this->nomenclature = $nomenclature;
-        return $this;
-    }
-
-    /**
-     * Get nomenclature
-     *
-     * @return string $nomenclature
-     */
-    public function getNomenclature()
-    {
-        return $this->nomenclature;
-    }
-    
-    public function generateInterventions()
-    {
-        $this->interventions = new ArrayCollection();
-    	if ($nbPassage = $this->getNbPassage()) {
-    		for ($i=0; $i<$nbPassage; $i++) {
-    			$intervention = new Intervention();
-    			$intervention->setFacturable(false);
-    			foreach ($this->getPrestations() as $prestation) {
-    				$intervention->addPrestation($prestation);
-    			}
-    			$this->addIntervention($intervention);
-    		}
-    	}
-    }
 }

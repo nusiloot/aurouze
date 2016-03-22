@@ -44,6 +44,11 @@ class Passage {
      * @MongoDB\Date
      */
     protected $dateCreation;
+    
+     /**
+     * @MongoDB\Date
+     */
+    protected $datePrevision;
 
     /**
      * @MongoDB\Date
@@ -513,4 +518,26 @@ class Passage {
         return $this->contratId;
     }
 
+
+    /**
+     * Set datePrevision
+     *
+     * @param date $datePrevision
+     * @return self
+     */
+    public function setDatePrevision($datePrevision)
+    {
+        $this->datePrevision = $datePrevision;
+        return $this;
+    }
+
+    /**
+     * Get datePrevision
+     *
+     * @return date $datePrevision
+     */
+    public function getDatePrevision()
+    {
+        return $this->datePrevision;
+    }
 }

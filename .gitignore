@@ -5,3 +5,4 @@
 .views/
 /nbproject/private/
 /nbproject
+project/composer.lock

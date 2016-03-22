@@ -17,6 +17,7 @@ class ConfigurationController extends Controller {
     public function configurationAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $configuration = $dm->getRepository('AppBundle:Configuration')->findConfiguration();
+        
         return $this->render('configuration/visualisation.html.twig', array('configuration' => $configuration));
     }
     

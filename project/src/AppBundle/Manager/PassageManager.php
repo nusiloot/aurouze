@@ -7,7 +7,9 @@ use AppBundle\Document\Etablissement as Etablissement;
 use AppBundle\Document\Passage as Passage;
 
 class PassageManager {
-const STATUT_NON_PLANIFIE = "NON_PLANIFIE";
+    
+const STATUT_EN_ATTENTE = "EN_ATTENTE";
+const STATUT_A_PLANIFIER = "A_PLANIFIER";
 const STATUT_PLANIFIE = "PLANIFIE";
 const STATUT_REALISE = "REALISE";
 

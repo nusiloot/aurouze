@@ -14,12 +14,12 @@ class ConfigurationPrestation
     /**
      * @MongoDB\String
      */
-    protected $prestationKey;
+    protected $id;
     
     /**
      * @MongoDB\String
      */
-    protected $prestationNom;
+    protected $nom;
 
     
 
@@ -55,6 +55,7 @@ class ConfigurationPrestation
     public function setPrestationNom($prestationNom)
     {
         $this->prestationNom = $prestationNom;
+        $this->setPrestationKey(Transliterator::urlize($prestationNom));
         return $this;
     }
 
@@ -66,5 +67,49 @@ class ConfigurationPrestation
     public function getPrestationNom()
     {
         return $this->prestationNom;
+    }
+
+    /**
+     * Set id
+     *
+     * @param string $id
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set nom
+     *
+     * @param string $nom
+     * @return self
+     */
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+        return $this;
+    }
+
+    /**
+     * Get nom
+     *
+     * @return string $nom
+     */
+    public function getNom()
+    {
+        return $this->nom;
     }
 }

@@ -32,19 +32,16 @@ class Configuration {
      * @MongoDB\EmbedMany(targetDocument="ConfigurationPrestation")
      */
     protected $prestations;
-    
+
     /**
      * @MongoDB\EmbedMany(targetDocument="ConfigurationProduit")
      */
     protected $produits;
 
-    public function __construct()
-    {
-        $this->prestationsAdmin = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->produitsAdmin = new \Doctrine\Common\Collections\ArrayCollection();
+    public function __construct() {
+        $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->produits = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
-
 
     /**
      * Set id
@@ -52,8 +49,7 @@ class Configuration {
      * @param string $id
      * @return self
      */
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
         return $this;
     }
@@ -63,8 +59,7 @@ class Configuration {
      *
      * @return string $id
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -73,8 +68,7 @@ class Configuration {
      *
      * @param AppBundle\Document\ConfigurationPrestation $prestation
      */
-    public function addPrestation(\AppBundle\Document\ConfigurationPrestation $prestation)
-    {
+    public function addPrestation(\AppBundle\Document\ConfigurationPrestation $prestation) {
         $this->prestations[] = $prestation;
     }
 
@@ -83,8 +77,7 @@ class Configuration {
      *
      * @param AppBundle\Document\ConfigurationPrestation $prestation
      */
-    public function removePrestation(\AppBundle\Document\ConfigurationPrestation $prestation)
-    {
+    public function removePrestation(\AppBundle\Document\ConfigurationPrestation $prestation) {
         $this->prestations->removeElement($prestation);
     }
 
@@ -93,8 +86,7 @@ class Configuration {
      *
      * @return \Doctrine\Common\Collections\Collection $prestations
      */
-    public function getPrestations()
-    {
+    public function getPrestations() {
         return $this->prestations;
     }
 
@@ -103,8 +95,7 @@ class Configuration {
      *
      * @param AppBundle\Document\ConfigurationProduit $produit
      */
-    public function addProduit(\AppBundle\Document\ConfigurationProduit $produit)
-    {
+    public function addProduit(\AppBundle\Document\ConfigurationProduit $produit) {
         $this->produits[] = $produit;
     }
 
@@ -113,8 +104,7 @@ class Configuration {
      *
      * @param AppBundle\Document\ConfigurationProduit $produit
      */
-    public function removeProduit(\AppBundle\Document\ConfigurationProduit $produit)
-    {
+    public function removeProduit(\AppBundle\Document\ConfigurationProduit $produit) {
         $this->produits->removeElement($produit);
     }
 
@@ -123,8 +113,8 @@ class Configuration {
      *
      * @return \Doctrine\Common\Collections\Collection $produits
      */
-    public function getProduits()
-    {
+    public function getProduits() {
         return $this->produits;
     }
+
 }

@@ -45,7 +45,9 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
-            $contrat->generateInterventions();
+            if (!$contrat->getInterventions()) {
+            	$contrat->generateInterventions();
+            }
            
             $nextPassage = $contrat->getNextPassage();
             $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
