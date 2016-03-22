@@ -9,46 +9,8 @@
         $.initTooltips();
         $.initQueryHash();
         $.initDynamicCollection();
-        $.initDynamicCollectionPrestation();
         $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "bottom right", daysOfWeekDisabled: "0"});
     });
-
-    $.initDynamicCollectionPrestation = function () {
-
-    	var collectionHolder = $('#prestations');
-        var addPrestationLink = $('#add_prestation_link');
-        collectionHolder.data('index', collectionHolder.find(':input').length);
-
-        collectionHolder.find('li.list-group-item').each(function() {
-        	var removeFormA = $('<span class="badge"><a href="javascript:void(0)"><span class="glyphicon glyphicon-remove-sign text-danger"></span></a></span>');
-        	var formLi = $(this);
-        	formLi.prepend(removeFormA);
-
-            removeFormA.on('click', function(e) {
-                e.preventDefault();
-                formLi.remove();
-            });
-        });
-
-        addPrestationLink.on('click', function(e) {
-            e.preventDefault();
-            var prototype = collectionHolder.data('prototype');
-            var index = collectionHolder.data('index');
-            var newForm = prototype.replace(/__name__/g, index);
-            collectionHolder.data('index', index + 1);
-            var newFormLi = $('<li class="list-group-item row"></li>').append(newForm);
-            var removeFormA = $('<span class="badge"><a href="javascript:void(0)"><span class="glyphicon glyphicon-remove-sign text-danger"></span></a></span>');
-            newFormLi.prepend(removeFormA);
-            removeFormA.on('click', function(e) {
-                e.preventDefault();
-                newFormLi.remove();
-            });
-            collectionHolder.append(newFormLi);
-
-            $.initSelect2();
-
-        });
-    }
 
     $.initDynamicCollection = function () {
 
