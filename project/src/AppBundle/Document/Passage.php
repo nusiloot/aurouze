@@ -61,9 +61,9 @@ class Passage {
     protected $etablissementIdentifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="passages")
      */
-    protected $etablissementId;
+    protected $etablissement;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="AppBundle\Document\EtablissementInfos")
@@ -91,9 +91,9 @@ class Passage {
     protected $statut;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\ReferenceOne(targetDocument="Contrat", inversedBy="passages")
      */
-    protected $contratId;
+    protected $contrat;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="UserInfos")
@@ -118,8 +118,8 @@ class Passage {
     }
 
     public function generateId($fromImport = false) {
-        if (!$this->getDateCreation()) {
-            $this->setDateCreation(new \DateTime());
+        if (!$this->getDatePrevision()) {
+            $this->setDatePrevision(new \DateTime());
         }
         $this->identifiant = $this->dateDebut->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
         $this->setId(self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->identifiant);
@@ -346,26 +346,6 @@ class Passage {
     }
 
     /**
-     * Set etablissementId
-     *
-     * @param string $etablissementId
-     * @return self
-     */
-    public function setEtablissementId($etablissementId) {
-        $this->etablissementId = $etablissementId;
-        return $this;
-    }
-
-    /**
-     * Get etablissementId
-     *
-     * @return string $etablissementId
-     */
-    public function getEtablissementId() {
-        return $this->etablissementId;
-    }
-
-    /**
      * Set etablissementInfos
      *
      * @param EtablissementInfos $etablissementInfos
@@ -486,27 +466,6 @@ class Passage {
     }
 
     /**
-     * Set contratId
-     *
-     * @param string $contratId
-     * @return self
-     */
-    public function setContratId($contratId) {
-        $this->contratId = $contratId;
-        return $this;
-    }
-
-    /**
-     * Get contratId
-     *
-     * @return string $contratId
-     */
-    public function getContratId() {
-        return $this->contratId;
-    }
-
-
-    /**
      * Set datePrevision
      *
      * @param date $datePrevision
@@ -570,5 +529,55 @@ class Passage {
     public function getMouvementDeclenche()
     {
         return $this->mouvement_declenche;
+    }
+
+    /**
+     * Set contrat
+     *
+     * @param AppBundle\Document\Contrat $contrat
+     * @return self
+     */
+    public function setContrat(\AppBundle\Document\Contrat $contrat)
+    {
+        $this->contrat = $contrat;
+        return $this;
+    }
+
+    /**
+     * Get contrat
+     *
+     * @return AppBundle\Document\Contrat $contrat
+     */
+    public function getContrat()
+    {
+        return $this->contrat;
+    }
+
+    public function pullEtablissementInfos() {
+        $this->getEtablissementInfos()->pull($this->getEtablissement());
+    }
+
+    /**
+     * Set etablissement
+     *
+     * @param AppBundle\Document\Etablissement $etablissement
+     * @return self
+     */
+    public function setEtablissement(\AppBundle\Document\Etablissement $etablissement)
+    {
+        $this->etablissement = $etablissement;
+        $this->setEtablissementIdentifiant($etablissement->getIdentifiant());
+        $this->pullEtablissementInfos();
+        return $this;
+    }
+
+    /**
+     * Get etablissement
+     *
+     * @return AppBundle\Document\Etablissement $etablissement
+     */
+    public function getEtablissement()
+    {
+        return $this->etablissement;
     }
 }

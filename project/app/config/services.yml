@@ -39,7 +39,7 @@ services:
 
     passage.importer:
         class: AppBundle\Import\PassageCsvImporter
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @passage.manager, @etablissement.manager, @user.manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @passage.manager, @etablissement.manager, @user.manager, @contrat.manager]
 
     societe.importer:
         class: AppBundle\Import\SocieteCsvImporter

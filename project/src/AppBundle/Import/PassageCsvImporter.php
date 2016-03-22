@@ -19,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Manager\UserManager;
+use AppBundle\Manager\ContratManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Import\CsvFile;
 
@@ -28,6 +29,7 @@ class PassageCsvImporter {
     protected $pm;
     protected $em;
     protected $um;
+    protected $cm;
 
     const CSV_DATE_CREATION = 0;
     const CSV_ETABLISSEMENT_ID = 1;
@@ -39,11 +41,12 @@ class PassageCsvImporter {
     const CSV_DESCRIPTION = 7;
     const CSV_CONTRAT_ID = 8;
 
-    public function __construct(DocumentManager $dm, PassageManager $pm, EtablissementManager $em, UserManager $um) {
+    public function __construct(DocumentManager $dm, PassageManager $pm, EtablissementManager $em, UserManager $um, ContratManager $cm) {
         $this->dm = $dm;
         $this->pm = $pm;
         $this->em = $em;
         $this->um = $um;
+        $this->cm = $cm;
     }
 
     public function import($file, OutputInterface $output) {
@@ -65,11 +68,9 @@ class PassageCsvImporter {
                 continue;
             }
             $passage = new Passage();
-            $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
-            $passage->setEtablissementId($etablissement->getId());
-            $passage->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
+            $passage->setEtablissement($etablissement);
+            $passage->setDatePrevision(new \DateTime($data[self::CSV_DATE_CREATION]));
             $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_CREATION]));
-            $passage->getEtablissementInfos()->pull($etablissement);
             $passage->setNumeroPassageIdentifiant("001");
             $passage->generateId();
 
@@ -87,7 +88,25 @@ class PassageCsvImporter {
             }
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
-            $passage->setContratId($data[self::CSV_CONTRAT_ID]);
+
+            $contrats = $this->cm->getRepository()->createQueryBuilder('Contrat')
+        	->field('dateDebut')->lte($passage->getDatePrevision())
+        	->field('etablissement.id')->equals($etablissement->getId())
+        	->getQuery()->execute();
+
+            $contrat = null;
+            foreach($contrats as $c) {
+                $contrat = $c;
+                break;
+            }
+
+            if(!$contrat) {
+                $output->writeln(sprintf("<error>Aucun contrat trouvé pour l'établissement %s</error>", $data[self::CSV_ETABLISSEMENT_ID]));
+                continue;
+            }
+
+            $passage->setContrat($contrat);
+            $contrat->addPassage($passage);
 
             $userInfos = new UserInfos();
             $user = $this->um->getRepository()->findOneByIdentite($data[self::CSV_TECHNICIEN]);
@@ -100,12 +119,14 @@ class PassageCsvImporter {
             $passage->setTechnicienInfos($userInfos);
 
             $this->dm->persist($passage);
+            $this->dm->persist($contrat);
+
             $i++;
             $cptTotal++;
-            if ($cptTotal % 10000 == 0) {
+            if ($cptTotal % 1000 == 0) {
                 $output->writeln(sprintf("<info> %01.02f", ($cptTotal / (float) count($csv)) * 100) . "%  </info>");
             }
-            if ($i >= 10000) {
+            if ($i >= 1000) {
                 $this->dm->flush();
                 $i = 0;
             }
