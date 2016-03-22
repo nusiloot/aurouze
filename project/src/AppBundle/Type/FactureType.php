@@ -23,7 +23,8 @@ class FactureType extends AbstractType
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'label' => '',
-            ));
+            ))
+            ->add('save', SubmitType::class, array('label' => 'Valider'));
         ;
     }
 

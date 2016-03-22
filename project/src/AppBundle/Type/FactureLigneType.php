@@ -17,7 +17,8 @@ class FactureLigneType extends AbstractType {
 		$builder
 		    ->add('libelle', TextType::class, array('attr' => array('placeholder' => "Libellé")))
 		    ->add('quantite', TextType::class, array('attr' => array('placeholder' => "Quantité")))
-		    ->add('prixUnitaire', TextType::class, array('attr' => array('placeholder' => "Prix unitaire HT")));
+		    ->add('prixUnitaire', TextType::class, array('attr' => array('placeholder' => "Prix unitaire HT")))
+		    ->add('tvaTaux', TextType::class, array('attr' => array('placeholder' => "Taux de TVA")));
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

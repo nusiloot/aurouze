@@ -21,6 +21,11 @@ class FactureLigne {
     /**
      * @MongoDB\Float
      */
+    protected $tvaTaux;
+
+    /**
+     * @MongoDB\Float
+     */
     protected $quantite;
 
 
@@ -88,5 +93,27 @@ class FactureLigne {
     public function getQuantite()
     {
         return $this->quantite;
+    }
+
+    /**
+     * Set tvaTaux
+     *
+     * @param float $tvaTaux
+     * @return self
+     */
+    public function setTvaTaux($tvaTaux)
+    {
+        $this->tvaTaux = $tvaTaux;
+        return $this;
+    }
+
+    /**
+     * Get tvaTaux
+     *
+     * @return float $tvaTaux
+     */
+    public function getTvaTaux()
+    {
+        return $this->tvaTaux;
     }
 }
