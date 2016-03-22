@@ -8,115 +8,88 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 */
 class Prestation {
 
-    /**
-     * @MongoDB\String
-     */
-    protected $prestationType;
 
     /**
      * @MongoDB\String
      */
-    protected $animalType;
-
-    /**
-     * @MongoDB\String
-     */
-    protected $animal;
-
-
-
-     /** 
-     * @MongoDB\String
-     */
-    protected $commentaire;
-
+    protected $id;
     
+    /**
+     * @MongoDB\String
+     */
+    protected $nom;
+
 
     /**
-     * Set prestationType
+     * @MongoDB\String
+     */
+    protected $nbPassages;
+
+
+
+    /**
+     * Set id
      *
-     * @param string $prestationType
+     * @param string $id
      * @return self
      */
-    public function setPrestationType($prestationType)
+    public function setId($id)
     {
-        $this->prestationType = $prestationType;
+        $this->id = $id;
         return $this;
     }
 
     /**
-     * Get prestationType
+     * Get id
      *
-     * @return string $prestationType
+     * @return string $id
      */
-    public function getPrestationType()
+    public function getId()
     {
-        return $this->prestationType;
+        return $this->id;
     }
 
     /**
-     * Set animalType
+     * Set nom
      *
-     * @param string $animalType
+     * @param string $nom
      * @return self
      */
-    public function setAnimalType($animalType)
+    public function setNom($nom)
     {
-        $this->animalType = $animalType;
+        $this->nom = $nom;
         return $this;
     }
 
     /**
-     * Get animalType
+     * Get nom
      *
-     * @return string $animalType
+     * @return string $nom
      */
-    public function getAnimalType()
+    public function getNom()
     {
-        return $this->animalType;
+        return $this->nom;
     }
 
     /**
-     * Set animal
+     * Set nbPassages
      *
-     * @param string $animal
+     * @param string $nbPassages
      * @return self
      */
-    public function setAnimal($animal)
+    public function setNbPassages($nbPassages)
     {
-        $this->animal = $animal;
+        $this->nbPassages = $nbPassages;
         return $this;
     }
 
     /**
-     * Get animal
+     * Get nbPassages
      *
-     * @return string $animal
+     * @return string $nbPassages
      */
-    public function getAnimal()
+    public function getNbPassages()
     {
-        return $this->animal;
-    }
-
-    /**
-     * Set commentaire
-     *
-     * @param string $commentaire
-     * @return self
-     */
-    public function setCommentaire($commentaire)
-    {
-        $this->commentaire = $commentaire;
-        return $this;
-    }
-
-    /**
-     * Get commentaire
-     *
-     * @return string $commentaire
-     */
-    public function getCommentaire()
-    {
-        return $this->commentaire;
+        return $this->nbPassages;
     }
 }
