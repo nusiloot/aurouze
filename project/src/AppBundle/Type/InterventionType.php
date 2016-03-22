@@ -5,12 +5,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use AppBundle\Type\PrestationType;
 
 class InterventionType extends AbstractType {
 	
@@ -30,16 +28,8 @@ class InterventionType extends AbstractType {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
 	{
 		$builder
-		->add('facturable', CheckboxType::class)
-		;
-		
-		$builder->add('prestations', CollectionType::class, array(
-				'entry_type' => new PrestationType($this->container, $this->dm),
-				'allow_add' => true,
-				'allow_delete' => true,
-				'delete_empty' => true,
-				'label' => ' ',
-		));
+		->add('facturable', CheckboxType::class, array('required' => false, 'empty_data'  => null))
+		->add('prestations', ChoiceType::class, array('label' => ' ', 'expanded' => false, 'multiple' => true, 'choices' => $this->container->getParameter('prestations'), "attr" => array("class" => "select2 select2-simple", "multiple" => true)));
 	}
 	
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

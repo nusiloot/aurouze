@@ -60,7 +60,7 @@ class Contrat {
     protected $nomenclature;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Prestation")
+     * @MongoDB\Hash
      */
     protected $prestations;
 
@@ -120,7 +120,7 @@ class Contrat {
     protected $statut;
 
     public function __construct() {
-        $this->prestations = new ArrayCollection();
+        $this->prestations = array();
         $this->passages = new ArrayCollection();
         $this->interventions = new ArrayCollection();
     }
@@ -255,27 +255,9 @@ class Contrat {
     }
 
     /**
-     * Add prestation
-     *
-     * @param Prestation $prestation
-     */
-    public function addPrestation(Prestation $prestation) {
-        $this->prestations[] = $prestation;
-    }
-
-    /**
-     * Remove prestation
-     *
-     * @param Prestation $prestation
-     */
-    public function removePrestation(Prestation $prestation) {
-        $this->prestations->removeElement($prestation);
-    }
-
-    /**
      * Get prestations
      *
-     * @return \Doctrine\Common\Collections\Collection $prestations
+     * @return collection $prestations
      */
     public function getPrestations() {
         return $this->prestations;
@@ -655,11 +637,21 @@ class Contrat {
     		for ($i=0; $i<$nbPassage; $i++) {
     			$intervention = new Intervention();
     			$intervention->setFacturable(false);
-    			foreach ($this->getPrestations() as $prestation) {
-    				$intervention->addPrestation($prestation);
-    			}
+    			$intervention->setPrestations($this->getPrestations());
     			$this->addIntervention($intervention);
     		}
     	}
+    }
+
+    /**
+     * Set prestations
+     *
+     * @param collection $prestations
+     * @return self
+     */
+    public function setPrestations($prestations)
+    {
+        $this->prestations = $prestations;
+        return $this;
     }
 }

@@ -7,6 +7,14 @@ parameters:
       "PONCTUEL": "Ponctuel"
       "TACITE": "Reconduction tacite"
       "DEMANDE": "Renouvelable sur proposition"
+    prestations:
+      "DERATISATION_RAT": "Dératisation Rat"
+      "DERATISATION_SOURIS": "Dératisation Souris"
+      "DEPIGEONNAGE_PIGEON": "Dépigeonnage Pigeon"
+      "DESINSECTISATION_CAFARD": "Désinsectisation Cafard"
+      "DESINSECTISATION_PUNAISE": "Désinsectisation Punaise"
+      "DESINSECTISATION_BLATTE": "Désinsectisation Blatte"
+      "TRAITEMENT_BOIS_TERMITE": "Traitement des bois Termite"
     prestations_type:
       "ASSAINISSEMENT": "Assainissement"
       "DEPIGEONNAGE": "Dépigeonnage"
@@ -31,7 +39,6 @@ parameters:
         "LEROT": "Lerot"
         "SOURIS": "Souris"
         "TAUPE": "Taupe"
-        "FOUINE": "Fouine"
         "FOUINE": "Fouine"
         "LAPIN": "Lapin"
         "RAGONDIN": "Ragondin"

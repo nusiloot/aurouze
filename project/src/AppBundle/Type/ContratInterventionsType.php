@@ -34,7 +34,7 @@ class ContratInterventionsType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
     	$builder
-    	->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")));
+    	->add('save', SubmitType::class, array('label' => 'Suivant', "attr" => array("class" => "btn btn-success pull-right")));
     	
     	$builder->add('interventions', CollectionType::class, array(
     			'entry_type' => new InterventionType($this->container, $this->dm),
