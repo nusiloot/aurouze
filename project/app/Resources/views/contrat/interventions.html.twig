@@ -8,19 +8,7 @@
 		<div class="panel panel-default">
             <div class="panel-heading"><strong>Interventions</strong></div>
 			<div class="panel-body">
-				{% for intervention in form.interventions %}
-                <div class="row">
-			  		<div class="col-xs-1" style="padding-top: 26px;">
-						<span class="badge">{{ loop.index }}</span>
-					</div>
-                	<div class="col-xs-9">
-                    	{{ form_row(intervention.prestations) }}
-                   	</div>
-                   	<div class="col-xs-2" style="padding-top: 15px;">
-                     	{{ form_row(intervention.facturable) }}
-                   	</div>
-                </div>
-                {% endfor %}
+
 			</div>
         </div>
         <a href="{{ path('contrat_modification', {'id': contrat.id }) }}" class="btn btn-default pull-left">Retour</a>
