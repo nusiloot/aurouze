@@ -6,12 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use AppBundle\Document\User;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
 class ContratAcceptationType extends AbstractType {
