@@ -3,17 +3,17 @@
         <p class="text-right">
             {% if(passage.realise) %} <span class="label label-success">Réalisé</span>
             {% elseif(passage.planifie)  %} <span class="label label-default">Planifié non réalisé</span>
-            {% elseif(passage.nonplanifie)  %} <span class="label label-warning">Non Planifié</span>
-            {% endif %}  
+            {% elseif(passage.aPlanifie)  %} <span class="label label-warning">Non Planifié</span>
+            {% endif %}
         </p>
  	</div>
  </div>
  <div class="row" style="margin-top: 20px;">
  	<div class="col-xs-6">
-        <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ passage.dateDebut | localizeddate('full', 'none') }} <strong>{{ passage.dateDebut | localizeddate('none', 'short') }}</strong></span> 
+        <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ passage.dateDebut | localizeddate('full', 'none') }} <strong>{{ passage.dateDebut | localizeddate('none', 'short') }}</strong></span>
     </div>
     <div class="col-xs-6 text-right">
-        <span>{{ passage.libelle }}</span> 
+        <span>{{ passage.libelle }}</span>
     </div>
  </div>
   <div class="row">
@@ -31,10 +31,10 @@
 	</p>
 	</div>
 </div>
-{% if not light %}                        
-<hr />   
-<div class="row"> 
-	<div class="col-xs-4">      
+{% if not light %}
+<hr />
+<div class="row">
+	<div class="col-xs-4">
 		<a class="btn btn-danger" href="{{path('calendarDelete', {'passage': passage.passageIdentifiant, 'technicien': technicien})}}">Déplannifier</a>
     </div>
     <div class="col-xs-4 text-right">

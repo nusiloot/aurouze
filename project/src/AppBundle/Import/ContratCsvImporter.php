@@ -89,8 +89,17 @@ class ContratCsvImporter {
                 $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
             }
 
+            if (!preg_match("/^[0-9+]+$/", $data[self::CSV_DUREE])) {
+                $output->writeln(sprintf("<error>La durée du contrat %s n'est pas correct : %s</error>", $data[self::CSV_ID_CONTRAT], $data[self::CSV_DUREE]));
+                continue;
+            }
+
             $contrat->setDuree($data[self::CSV_DUREE]);
             $contrat->setDureeGarantie($data[self::CSV_GARANTIE]);
+            $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
+            $dateFin = clone $contrat->getDateDebut();
+            $dateFin->modify("+ " . $contrat->getDuree() . " month");
+            $contrat->setDateFin($dateFin);
             $contrat->setNomenclature(str_replace('\n', "\n", $data[self::CSV_NOMENCLATURE]));
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
 
@@ -101,7 +110,7 @@ class ContratCsvImporter {
                 $progress->advance();
             }
 
-            if ($i >= 1000) {
+            if ($i >= 10000) {
                 $this->dm->flush();
                 $i = 0;
             }

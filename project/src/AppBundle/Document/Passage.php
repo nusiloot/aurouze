@@ -121,6 +121,7 @@ class Passage {
         if (!$this->getDatePrevision()) {
             $this->setDatePrevision(new \DateTime());
         }
+
         $this->identifiant = $this->getDatePrevision()->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
         $this->setId(self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->identifiant);
     }
@@ -148,7 +149,7 @@ class Passage {
     public function isAPlanifie() {
         return $this->statut == PassageManager::STATUT_A_PLANIFIER;
     }
-    
+
     public function isEnAttente() {
         return $this->statut == PassageManager::STATUT_EN_ATTENTE;
     }
@@ -166,11 +167,13 @@ class Passage {
     public function updateStatut() {
         if ($this->getDatePrevision() && (!boolval($this->getDateFin()) || !boolval($this->getDateDebut()))) {
             $this->setStatut(PassageManager::STATUT_EN_ATTENTE);
+
             return;
         }
         if(boolval($this->getDateDebut())) {
             $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
-            return; 
+
+            return;
         }
         if (boolval($this->getDateFin()) && boolval($this->getDateDebut())) {
             $this->setStatut(PassageManager::STATUT_PLANIFIE);

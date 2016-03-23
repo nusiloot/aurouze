@@ -13,7 +13,7 @@ use AppBundle\Document\Intervention;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
- * 
+ *
  */
 class Contrat {
 
@@ -64,7 +64,7 @@ class Contrat {
      */
     protected $prestations;
 
-  
+
     /**
      * @MongoDB\Date
      */
@@ -74,12 +74,17 @@ class Contrat {
      * @MongoDB\Date
      */
     protected $dateDebut;
-    
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $dateFin;
+
     /**
      * @MongoDB\Date
      */
     protected $dateAcceptation;
-    
+
     /**
      * @MongoDB\Int
      */
@@ -105,7 +110,7 @@ class Contrat {
      */
     protected $nbFactures;
 
-   
+
     /**
      * @MongoDB\Float
      */
@@ -565,15 +570,6 @@ class Contrat {
     {
         return $this->statut;
     }
-    
-    
-    public function getDateFin() {
-
-        $dateFin = clone $this->getDateDebut();
-        $dateFin->modify("+ " . $this->getDuree() . " month");
-
-        return $dateFin;
-    }
 
     public function isTerminee() {
 
@@ -601,34 +597,37 @@ class Contrat {
         if ($nbPassages >= 1 && !count($this->getPassages())) {
             return $this->getDateDebut();
         }
-        
+
         if (!count($this->getLastPassageCreated()) || !$this->getLastPassageCreated()) {
             return null;
-        }        
-        
+        }
+
         $dateDebutDernierPassage = clone $this->getLastPassageCreated()->getDatePrevision();
         
         $monthInterval = (floatval($this->getDuree()) / floatval($nbPassages));
+
         $nb_month = intval($monthInterval);
-        
+
         $monthDate = clone $this->getLastPassageCreated()->getDatePrevision();
+
         $nextMonth = $monthDate->modify("+" . $nb_month . " month");
-        $nb_days = intval(($monthInterval - $nb_month) * cal_days_in_month(CAL_GREGORIAN,$nextMonth->format('m'),$nextMonth->format('Y')));       
-        $dateDebutDernierPassage->modify("+" . $nb_month . " month")->modify("+" . $nb_days . " day");        
+        $nb_days = intval(($monthInterval - $nb_month) * cal_days_in_month(CAL_GREGORIAN,$nextMonth->format('m'),$nextMonth->format('Y')));
+        $dateDebutDernierPassage->modify("+" . $nb_month . " month")->modify("+" . $nb_days . " day");
         return $dateDebutDernierPassage;
     }
+
 
     public function hasAllPassagesCreated() {        
         return $this->getNbPassages() > count($this->getPassages());
     }
-    
+
     public function getLastPassageCreated() {
         $passages = array();
         foreach ($this->getPassages() as $passage) {
             if ($passage->getDatePrevision()) {
                 $passages[$passage->getDatePrevision()->format('Ymd')] = $passage;
             }
-        } 
+        }
         return end($passages);
     }
 
@@ -676,4 +675,26 @@ class Contrat {
     	return sprintf('%02d',$heure).'h'.sprintf('%02d',((($duree / 60) - $heure) * 60));
     }
 
+
+    /**
+     * Set dateFin
+     *
+     * @param date $dateFin
+     * @return self
+     */
+    public function setDateFin($dateFin)
+    {
+        $this->dateFin = $dateFin;
+        return $this;
+    }
+
+    /**
+     * Get dateFin
+     *
+     * @return date $dateFin
+     */
+    public function getDateFin()
+    {
+        return $this->dateFin;
+    }
 }

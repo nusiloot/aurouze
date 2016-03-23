@@ -75,7 +75,7 @@
                                         <div class="col-xs-4 text-right">
                                             {% if pe.realise %} <span class="label label-success">Réalisé</span>
                                             {% elseif pe.planifie  %}<a class="btn btn-sm btn-primary" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
-                                            {% elseif pe.nonPlanifie %} <a class="btn btn-sm btn-warning" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : pe.technicienInfos.identite, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier le passage</a>
+                                            {% elseif pe.aPlanifie %} <a class="btn btn-sm btn-warning" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : pe.technicienInfos.identite, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier le passage</a>
                                             {% endif %}
                                         </div>
                                     </div>

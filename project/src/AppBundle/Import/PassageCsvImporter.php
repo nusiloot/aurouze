@@ -70,7 +70,6 @@ class PassageCsvImporter {
             $passage = new Passage();
             $passage->setEtablissement($etablissement);
             $passage->setDatePrevision(new \DateTime($data[self::CSV_DATE_CREATION]));
-            $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_CREATION]));
             $passage->setNumeroPassageIdentifiant("001");
             $passage->generateId();
 
@@ -91,6 +90,7 @@ class PassageCsvImporter {
 
             $contrats = $this->cm->getRepository()->createQueryBuilder('Contrat')
         	->field('dateDebut')->lte($passage->getDatePrevision())
+        	->field('dateFin')->gte($passage->getDatePrevision())
         	->field('etablissement.id')->equals($etablissement->getId())
         	->getQuery()->execute();
 
@@ -126,7 +126,7 @@ class PassageCsvImporter {
             if ($cptTotal % 1000 == 0) {
                 $output->writeln(sprintf("<info> %01.02f", ($cptTotal / (float) count($csv)) * 100) . "%  </info>");
             }
-            if ($i >= 1000) {
+            if ($i >= 10000) {
                 $this->dm->flush();
                 $i = 0;
             }
