@@ -10,6 +10,7 @@
         $.initQueryHash();
         $.initDynamicCollection();
         $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "bottom right", daysOfWeekDisabled: "0"});
+        $('.input-timepicker').timepicker({showMeridian: false, defaultTime: '01:00'});
     });
 
     $.initDynamicCollection = function () {
@@ -86,7 +87,8 @@
     $.initSelect2 = function () {
         $('.select2-simple').each(function () {
             $(this).select2({
-                theme: 'bootstrap'
+                theme: 'bootstrap',
+                allowClear: true
             });
         });
     }

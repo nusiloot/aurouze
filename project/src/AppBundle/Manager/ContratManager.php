@@ -7,6 +7,7 @@ use AppBundle\Document\Contrat;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Passage;
 use AppBundle\Document\UserInfos;
+use AppBundle\Document\Prestation;
 
 class ContratManager {
 
@@ -30,6 +31,7 @@ class ContratManager {
         $contrat->setIdentifiant($this->getNextNumero($etablissement, $dateCreation));
         $contrat->generateId();
         $contrat->setStatut(self::STATUT_BROUILLON);
+        $contrat->addPrestation(new Prestation());
         return $contrat;
     }
 

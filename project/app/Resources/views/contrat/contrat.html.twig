@@ -3,17 +3,15 @@
   	<div class="panel-body">
 	  	<div class="rows">
 	  		<div class="col-xs-6">
-	  		{% if contrat.getCommercial() %}
 	  		Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
-	  		{% endif %}
 	  		<strong>{{ contrat.getDateDebut()|date("d/m/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />
-	  		Garantie : <strong>{{ contrat.getDureeGarantie() }}</strong> mois
+	  		{% if contrat.getDureeGarantie() %}Garantie : <strong>{{ contrat.getDureeGarantie() }}</strong> mois{% endif %}
 	  		</div>
 	  		<div class="col-xs-6">
 	  		{% if contrat.getTechnicien() %}
 	  		Technicien : <strong>{{ contrat.getTechnicien().getIdentite() }}</strong><br />
 	  		{% endif %}
-	  		<strong>{{ contrat.getNbPassage() }}</strong> passage{% if contrat.getNbPassage() > 1 %}s{% endif %} de <strong>{{ contrat.getDureePassage() }}</strong> min.
+	  		<strong>{{ contrat.getNbPassages() }}</strong> passage{% if contrat.getNbPassages() > 1 %}s{% endif %} de <strong>{{ contrat.getHumanDureePassage() }}</strong>
 	  		</div>
 		</div>
   	</div>
@@ -33,7 +31,28 @@
 <div class="panel panel-default">
 	<div class="panel-heading">Interventions prévues</div>
   	<div class="panel-body">
-	  	
+	  	<ul class="list-group">
+	  		{% for i in 0..(contrat.nbPassages - 1) %}
+	  		{% set counter = loop.index %}
+	  		<li class="list-group-item">
+	  			<span class="badge pull-left">{{ counter }}</span>
+	  			<div style="padding-left: 30px;">
+	  			{% for prestation in contrat.prestations %}
+	  				{% set intervalle = (contrat.nbPassages / prestation.nbPassages)  %}
+	  				{% if intervalle matches '/^\\d+$/' %}
+		  				{% if counter is divisible by(intervalle) %}
+		  					{{ prestation.id }}
+		  				{% endif %}
+		  			{% else %}
+		  				{% if (prestation.nbPassages >= counter) %}
+		  					{{ prestation.id }}
+		  				{% endif %}
+		  			{% endif %}
+	  			{% endfor %}
+	  			</div>
+	  		</li>
+	  		{% endfor %}
+	  	</ul>
   	</div>
 </div>
 

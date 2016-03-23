@@ -93,7 +93,7 @@ class Contrat {
     /**
      * @MongoDB\Int
      */
-    protected $nbPassage;
+    protected $nbPassages;
 
     /**
      * @MongoDB\Int
@@ -457,25 +457,25 @@ class Contrat {
     }
 
     /**
-     * Set nbPassage
+     * Set nbPassages
      *
-     * @param int $nbPassage
+     * @param int $nbPassages
      * @return self
      */
-    public function setNbPassage($nbPassage)
+    public function setNbPassages($nbPassages)
     {
-        $this->nbPassage = $nbPassage;
+        $this->nbPassages = $nbPassages;
         return $this;
     }
 
     /**
-     * Get nbPassage
+     * Get nbPassages
      *
-     * @return int $nbPassage
+     * @return int $nbPassages
      */
-    public function getNbPassage()
+    public function getNbPassages()
     {
-        return $this->nbPassage;
+        return $this->nbPassages;
     }
 
     /**
@@ -581,7 +581,7 @@ class Contrat {
     }
 
     public function getNextPassage() {
-        if ((count($this->getPassages()) < $this->nbPassage) && $this->getDateNextPassage()) {
+        if ((count($this->getPassages()) < $this->nbPassages) && $this->getDateNextPassage()) {
             $passage = new Passage();
             $passage->setEtablissementIdentifiant($this->getEtablissement()->getIdentifiant());
             $passage->setEtablissementId($this->getEtablissement()->getId());
@@ -597,8 +597,8 @@ class Contrat {
 
     public function getDateNextPassage() {
 
-        $nbPassage = $this->getNbPassage();
-        if ($nbPassage >= 1 && !count($this->getPassages())) {
+        $nbPassages = $this->getNbPassages();
+        if ($nbPassages >= 1 && !count($this->getPassages())) {
             return $this->getDateDebut();
         }
         
@@ -608,7 +608,7 @@ class Contrat {
         
         $dateDebutDernierPassage = clone $this->getLastPassageCreated()->getDatePrevision();
         
-        $monthInterval = (floatval($this->getDuree()) / floatval($nbPassage));
+        $monthInterval = (floatval($this->getDuree()) / floatval($nbPassages));
         $nb_month = intval($monthInterval);
         
         $monthDate = clone $this->getLastPassageCreated()->getDatePrevision();
@@ -619,7 +619,7 @@ class Contrat {
     }
 
     public function hasAllPassagesCreated() {        
-        return $this->getNbPassage() > count($this->getPassages());
+        return $this->getNbPassages() > count($this->getPassages());
     }
     
     public function getLastPassageCreated() {
@@ -633,8 +633,8 @@ class Contrat {
     }
 
     public function getNbPassagePrevu() {
-        if($this->getNbPassage()){
-            return $this->getNbPassage();
+        if($this->getNbPassages()){
+            return $this->getNbPassages();
         }
         foreach ($this->getPassages() as $passage) {
             if (preg_match("/Passage[n° ]*[0-9]+ sur ([0-9]+)/i", $passage->getLibelle(), $matches)) {
@@ -656,6 +656,24 @@ class Contrat {
         krsort($passagesSorted);
 
         return $passagesSorted;
+    }
+    
+    public function updateObject() {
+    	if (!$this->getNbPassages()) {
+    		$max = 0;
+    		foreach ($this->getPrestations() as $prestation) {
+    			if ($prestation->getNbPassages() > $max) {
+    				$max = $prestation->getNbPassages();
+    			}
+    		}
+    		$this->setNbPassages($max);
+    	}
+    }
+    
+    public function getHumanDureePassage() {
+    	$duree = $this->getDureePassage();
+    	$heure = floor($duree / 60);
+    	return sprintf('%02d',$heure).'h'.sprintf('%02d',((($duree / 60) - $heure) * 60));
     }
 
 }

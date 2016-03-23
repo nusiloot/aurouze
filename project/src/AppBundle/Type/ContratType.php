@@ -6,9 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -18,6 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use AppBundle\Type\PrestationType;
 use AppBundle\Document\User;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Symfony\Component\Form\CallbackTransformer;
 
 class ContratType extends AbstractType {
 
@@ -38,11 +37,19 @@ class ContratType extends AbstractType {
                 ->add('typeContrat', ChoiceType::class, array('label' => 'Type de contrat :', 'choices' => array_merge(array('' => ''), $this->container->getParameter('contrat_type')), "attr" => array("class" => "select2 select2-simple")))
                 ->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature :', "attr" => array("class" => "form-control", "rows" => 6)))
                 ->add('duree', TextType::class, array('label' => 'Durée du contrat :'))
-                ->add('duree_garantie', TextType::class, array('label' => 'Durée de la garantie :'))
-                ->add('nbPassage', TextType::class, array('label' => 'Nombre total de passage :'))
-                ->add('dureePassage', TextType::class, array('label' => 'Durée estimative d\'un passage :'))
+                ->add('duree_garantie', TextType::class, array('required' => false, 'label' => 'Durée de la garantie :'))
+                ->add('nbFactures', TextType::class, array('label' => 'Nombre de factures :'))
+                ->add('dureePassage', TextType::class, array('label' => 'Durée estimative d\'un passage :', 'attr' => array('class' => 'input-timepicker')))
                 ->add('prixHt', NumberType::class, array('label' => 'Prix HT :','scale' => 2))
                 ->add('save', SubmitType::class, array('label' => 'Suivant', "attr" => array("class" => "btn btn-success pull-right")));
+        
+        $builder->add('prestations', CollectionType::class, array(
+                'entry_type' => new PrestationType($this->container, $this->dm),
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'label' => '',
+            ));
 
         $builder->add('commercial', DocumentType::class, array(
             "choices" => array_merge(array('' => ''), $this->getUsers(User::USER_TYPE_COMMERCIAL)),
@@ -59,6 +66,17 @@ class ContratType extends AbstractType {
             'expanded' => false,
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple")));
+        
+        $builder->get('dureePassage')
+        ->addModelTransformer(new CallbackTransformer(
+        		function ($originalDescription) {
+        			$heure = floor($originalDescription / 60);
+        			return $heure . ':' . ((($originalDescription / 60) - $heure) * 60);
+        		},
+        		function ($submittedDescription) {
+        			$duration = explode(':', $submittedDescription);
+        			return $duration[0] * 60 + $duration[1];
+        		}));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
