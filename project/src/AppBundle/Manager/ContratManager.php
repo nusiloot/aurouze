@@ -10,11 +10,10 @@ use AppBundle\Document\UserInfos;
 
 class ContratManager {
 
-
     const STATUT_BROUILLON = "BROUILLON";
     const STATUT_EN_ATTENTE_ACCEPTATION = "EN_ATTENTE_ACCEPTATION";
-    const STATUT_VALIDE = "VALIDE";    
-    
+    const STATUT_VALIDE = "VALIDE";
+
     protected $dm;
 
     function __construct(DocumentManager $dm) {
@@ -52,10 +51,28 @@ class ContratManager {
             if ($user) {
                 $userInfos->copyFromUser($user);
             }
-            $nextPassage->setTechnicienInfos($userInfos);          
+            $nextPassage->setTechnicienInfos($userInfos);
         }
         return $nextPassage;
     }
 
-   
+    public function generateAllPassagesForContrat($contrat) {
+        $date_debut = $contrat->getDateDebut();
+        if (!$date_debut) {
+            return false;
+        }
+        
+        while ($this->getRepository()->find($contrat->getId())->hasAllPassagesCreated()) {
+            
+            $nextPassage = $contrat->getNextPassage();
+
+            if ($nextPassage) {
+                $contrat->addPassage($nextPassage);
+                $this->dm->persist($nextPassage);
+                $this->dm->persist($contrat);
+            }
+            $this->dm->flush();
+        }
+    }
+
 }

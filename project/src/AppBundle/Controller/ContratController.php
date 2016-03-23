@@ -35,7 +35,7 @@ class ContratController extends Controller {
     public function modificationAction(Request $request, $id) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $contratManager = new ContratManager($dm);
+        
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
 
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
@@ -59,24 +59,18 @@ class ContratController extends Controller {
      */
     public function acceptationAction(Request $request, $id) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
-        
+        $contratManager = new ContratManager($dm);
+        $contrat = $contratManager->getRepository()->findOneById($id);
         $form = $this->createForm(new ContratAcceptationType($dm), $contrat, array(
-            'action' => $this->generateUrl('contrat_modification', array('id' => $id)),
+            'action' => $this->generateUrl('contrat_acceptation', array('id' => $id)),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
-           
-            $nextPassage = $contrat->getNextPassage();
-            $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
-            $nextPassage = $contratManager->getNextPassageForContrat($contrat);
-            if ($nextPassage) {
-                $contrat->addPassage($nextPassage);
-                $dm->persist($nextPassage);
-            }
-            $contrat->setStatut(Contrat::STATUT_VALIDE);
+            $contratManager->generateAllPassagesForContrat($contrat);
+            
+            $contrat->setStatut(ContratManager::STATUT_VALIDE);
             $dm->persist($contrat);
             $dm->flush();
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));

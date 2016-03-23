@@ -121,7 +121,8 @@ class Passage {
         if (!$this->getDatePrevision()) {
             $this->setDatePrevision(new \DateTime());
         }
-        $this->identifiant = $this->datePrevision->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
+
+        $this->identifiant = $this->getDatePrevision()->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
         $this->setId(self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->identifiant);
     }
 
@@ -145,8 +146,12 @@ class Passage {
         return $this->statut == PassageManager::STATUT_PLANIFIE;
     }
 
-    public function isNonPlanifie() {
+    public function isAPlanifie() {
         return $this->statut == PassageManager::STATUT_A_PLANIFIER;
+    }
+
+    public function isEnAttente() {
+        return $this->statut == PassageManager::STATUT_EN_ATTENTE;
     }
 
     /** @MongoDB\PreUpdate */
@@ -160,8 +165,15 @@ class Passage {
     }
 
     public function updateStatut() {
-        if (!boolval($this->getDateFin()) || !boolval($this->getDateDebut())) {
+        if ($this->getDatePrevision() && (!boolval($this->getDateFin()) || !boolval($this->getDateDebut()))) {
+            $this->setStatut(PassageManager::STATUT_EN_ATTENTE);
+
+            return;
+        }
+        if(boolval($this->getDateDebut())) {
             $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
+
+            return;
         }
         if (boolval($this->getDateFin()) && boolval($this->getDateDebut())) {
             $this->setStatut(PassageManager::STATUT_PLANIFIE);

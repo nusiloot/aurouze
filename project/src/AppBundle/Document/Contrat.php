@@ -581,8 +581,7 @@ class Contrat {
             $passage = new Passage();
             $passage->setEtablissementIdentifiant($this->getEtablissement()->getIdentifiant());
             $passage->setEtablissementId($this->getEtablissement()->getId());
-            $passage->setDateCreation(new \DateTime());
-            $passage->setDateDebut($this->getDateNextPassage());
+            $passage->setDatePrevision($this->getDateNextPassage());
             $passage->getEtablissementInfos()->pull($this->getEtablissement());
             $passage->setNumeroPassageIdentifiant("001");
             $passage->generateId();
@@ -599,27 +598,32 @@ class Contrat {
             return $this->getDateDebut();
         }
 
-        if (!count($this->getLastPassageTermine()) && $this->getLastPassageTermine()) {
+        if (!count($this->getLastPassageCreated()) || !$this->getLastPassageCreated()) {
             return null;
         }
 
-        $dateDebutDernierPassage = clone $this->getLastPassageTermine()->getDateDebut();
+        $dateDebutDernierPassage = clone $this->getLastPassageCreated()->getDatePrevision();
 
         $monthInterval = (floatval($this->getDuree()) / floatval($nbPassage));
         $nb_month = intval($monthInterval);
 
-        $monthDate = clone $this->getLastPassageTermine()->getDateDebut();
+        $monthDate = clone $this->getLastPassageCreated()->getDatePrevision();
+
         $nextMonth = $monthDate->modify("+" . $nb_month . " month");
         $nb_days = intval(($monthInterval - $nb_month) * cal_days_in_month(CAL_GREGORIAN,$nextMonth->format('m'),$nextMonth->format('Y')));
         $dateDebutDernierPassage->modify("+" . $nb_month . " month")->modify("+" . $nb_days . " day");
         return $dateDebutDernierPassage;
     }
 
-    public function getLastPassageTermine() {
+    public function hasAllPassagesCreated() {
+        return $this->getNbPassage() > count($this->getPassages());
+    }
+
+    public function getLastPassageCreated() {
         $passages = array();
         foreach ($this->getPassages() as $passage) {
-            if ($passage->getDateFin()) {
-                $passages[$passage->getDateFin()->format('Ymd')] = $passage;
+            if ($passage->getDatePrevision()) {
+                $passages[$passage->getDatePrevision()->format('Ymd')] = $passage;
             }
         }
         return end($passages);
