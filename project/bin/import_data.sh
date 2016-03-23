@@ -178,7 +178,7 @@ cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)
         close(cmd);
     }
 
-    if(date_debut_contrat < "2013-01-01 00:00:00") {
+    if(date_debut_contrat < "2012-01-01 00:00:00") {
         next;
     }
 

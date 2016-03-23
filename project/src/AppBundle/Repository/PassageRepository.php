@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
+use AppBundle\Manager\PassageManager;
 
 /**
  * EtablissementRepository
@@ -110,7 +111,7 @@ class PassageRepository extends DocumentRepository {
 
     public function findToPlan() {
         $query = $this->createQueryBuilder('Passage')
-                      ->field('dateDebut')->exists(false)
+                      ->field('statut')->equals(PassageManager::STATUT_A_PLANIFIER)
                       ->sort('datePrevision', 'asc')
                       ->getQuery();
 
