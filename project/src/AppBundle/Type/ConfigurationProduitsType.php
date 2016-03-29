@@ -5,11 +5,12 @@ namespace AppBundle\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-class ConfigurationPrestationType extends AbstractType {
+class ConfigurationProduitsType extends AbstractType {
 
     protected $container;
     protected $dm;
@@ -24,15 +25,18 @@ class ConfigurationPrestationType extends AbstractType {
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder
-		->add('nom', TextType::class)
-		;
-       
+        $builder->add('produits', CollectionType::class, array(
+            'entry_type' => new ConfigurationProduitType($this->container, $this->dm),
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'label' => ' ',
+        ))->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Document\ConfigurationPrestation',
+            'data_class' => 'AppBundle\Document\Configuration',
         ));
     }
 
@@ -40,7 +44,7 @@ class ConfigurationPrestationType extends AbstractType {
      * @return string
      */
     public function getName() {
-        return 'prestation';
+        return 'configuration';
     }
 
 }

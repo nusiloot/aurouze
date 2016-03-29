@@ -21,53 +21,6 @@ class ConfigurationPrestation
      */
     protected $nom;
 
-    
-
-
-    /**
-     * Set prestationKey
-     *
-     * @param string $prestationKey
-     * @return self
-     */
-    public function setPrestationKey($prestationKey)
-    {
-        $this->prestationKey = $prestationKey;
-        return $this;
-    }
-
-    /**
-     * Get prestationKey
-     *
-     * @return string $prestationKey
-     */
-    public function getPrestationKey()
-    {
-        return $this->prestationKey;
-    }
-
-    /**
-     * Set prestationNom
-     *
-     * @param string $prestationNom
-     * @return self
-     */
-    public function setPrestationNom($prestationNom)
-    {
-        $this->prestationNom = $prestationNom;
-        $this->setPrestationKey(Transliterator::urlize($prestationNom));
-        return $this;
-    }
-
-    /**
-     * Get prestationNom
-     *
-     * @return string $prestationNom
-     */
-    public function getPrestationNom()
-    {
-        return $this->prestationNom;
-    }
 
     /**
      * Set id
@@ -100,6 +53,7 @@ class ConfigurationPrestation
     public function setNom($nom)
     {
         $this->nom = $nom;
+        $this->setId(strtoupper(Transliterator::urlize($nom)));
         return $this;
     }
 

@@ -7,7 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Configuration;
-use AppBundle\Type\ConfigurationType;
+use AppBundle\Type\ConfigurationPrestationsType;
+use AppBundle\Type\ConfigurationProduitsType;
 
 class ConfigurationController extends Controller {
 
@@ -17,14 +18,16 @@ class ConfigurationController extends Controller {
     public function configurationAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $configuration = $dm->getRepository('AppBundle:Configuration')->findConfiguration();
-        
+        if(!$configuration){
+           $configuration = new Configuration();
+        }
         return $this->render('configuration/visualisation.html.twig', array('configuration' => $configuration));
     }
     
     /**
-     * @Route("/configuration-modification", name="configuration_modification")
+     * @Route("/configuration-modification-produits", name="configuration_modification_produits")
      */
-    public function modificationAction(Request $request) {
+    public function modificationProduitsAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         
         $configuration = $dm->getRepository('AppBundle:Configuration')->findConfiguration();
@@ -34,9 +37,10 @@ class ConfigurationController extends Controller {
             $dm->persist($configuration);
             $dm->flush();
         }
+             
         
-        $form = $this->createForm(new ConfigurationType($this->container, $dm), $configuration, array(
-            'action' => $this->generateUrl('configuration_modification'),
+        $form = $this->createForm(new ConfigurationProduitsType($this->container, $dm), $configuration, array(
+            'action' => $this->generateUrl('configuration_modification_produits'),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
@@ -46,7 +50,37 @@ class ConfigurationController extends Controller {
             $dm->flush();
             return $this->redirectToRoute('configuration');
         }
-        return $this->render('configuration/modification.html.twig', array('configuration' => $configuration, 'form' => $form->createView()));
+        return $this->render('configuration/modificationProduits.html.twig', array('configuration' => $configuration,'form' => $form->createView()));
+    }
+    
+    
+    /**
+     * @Route("/configuration-modification-prestations", name="configuration_modification_prestations")
+     */
+    public function modificationPrestationsAction(Request $request) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        $configuration = $dm->getRepository('AppBundle:Configuration')->findConfiguration();
+        if(!$configuration){
+            $configuration = new Configuration();
+            $configuration->setId("CONFIGURATION"); 
+            $dm->persist($configuration);
+            $dm->flush();
+        }
+        $form = $this->createForm(new ConfigurationPrestationsType($this->container, $dm), $configuration, array(
+            'action' => $this->generateUrl('configuration_modification_prestations'),
+            'method' => 'POST',
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $configuration = $form->getData();
+            $dm->persist($configuration);
+            $dm->flush();
+            return $this->redirectToRoute('configuration');
+        }
+        
+      
+        return $this->render('configuration/modificationPrestations.html.twig', array('configuration' => $configuration,'form' => $form->createView()));
     }
 
 }

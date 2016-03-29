@@ -28,7 +28,7 @@ class PrestationType extends AbstractType {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
 	{
 		$builder
-		->add('id', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->container->getParameter('prestations')), "attr" => array("class" => "form-control select2 select2-simple")))
+		->add('id', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getPrestations()), "attr" => array("class" => "form-control select2 select2-simple")))
 		->add('nbPassages', TextType::class, array('label' => ' ', "attr" => array("class" => "text-right")))
 		;
 	}
@@ -39,6 +39,16 @@ class PrestationType extends AbstractType {
 				'data_class' => 'AppBundle\Document\Prestation',
 		));
 	}
+        
+        public function getPrestations() {
+            $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
+            $prestationsType = array();
+            foreach ($configuration->getPrestations() as $prestation) {
+                $prestationsType[$prestation->getId()] = $prestation->getNom();
+            } 
+            return $prestationsType;    
+        }
+        
 	
 	/**
 	 * @return string
