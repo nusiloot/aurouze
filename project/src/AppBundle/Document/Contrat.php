@@ -9,7 +9,6 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\User;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Passage;
-use AppBundle\Document\Intervention;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
@@ -532,50 +531,6 @@ class Contrat {
         return ($this->getDateFin() < new \DateTime());
     }
 
-    public function getNextPassage() {
-        if ((count($this->getPassages()) < $this->nbPassages) && $this->getDateNextPassage()) {
-            $passage = new Passage();
-            $passage->setEtablissementIdentifiant($this->getEtablissement()->getIdentifiant());
-            $passage->setEtablissementId($this->getEtablissement()->getId());
-            $passage->setDatePrevision($this->getDateNextPassage());
-            $passage->getEtablissementInfos()->pull($this->getEtablissement());
-            $passage->setNumeroPassageIdentifiant("001");
-            $passage->generateId();
-            $passage->setContratId($this->id);
-            return $passage;
-        }
-        return null;
-    }
-
-    public function getDateNextPassage() {
-
-        $nbPassages = $this->getNbPassages();
-        if ($nbPassages >= 1 && !count($this->getPassages())) {
-            return $this->getDateDebut();
-        }
-
-        if (!count($this->getLastPassageCreated()) || !$this->getLastPassageCreated()) {
-            return null;
-        }
-
-        $dateDebutDernierPassage = clone $this->getLastPassageCreated()->getDatePrevision();
-
-        $monthInterval = (floatval($this->getDuree()) / floatval($nbPassages));
-
-        $nb_month = intval($monthInterval);
-
-        $monthDate = clone $this->getLastPassageCreated()->getDatePrevision();
-
-        $nextMonth = $monthDate->modify("+" . $nb_month . " month");
-        $nb_days = intval(($monthInterval - $nb_month) * cal_days_in_month(CAL_GREGORIAN, $nextMonth->format('m'), $nextMonth->format('Y')));
-        $dateDebutDernierPassage->modify("+" . $nb_month . " month")->modify("+" . $nb_days . " day");
-        return $dateDebutDernierPassage;
-    }
-
-    public function hasAllPassagesCreated() {
-        return $this->getNbPassages() > count($this->getPassages());
-    }
-
     public function getLastPassageCreated() {
         $passages = array();
         foreach ($this->getPassages() as $passage) {
@@ -677,7 +632,7 @@ class Contrat {
             if ($prestation->getNbPassages() > 0) {
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations = array();
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $prestation->getId();
-                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->facturant = 1;
+                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->mouvement_declenchable = 1;
             }
         }
 
@@ -723,10 +678,10 @@ class Contrat {
                 continue;
             }
             if ($cpt >= $compteurFacturation) {
-                $passagesDatesArray[$date]->facturant = 1;
+                $passagesDatesArray[$date]->mouvement_declenchable = 1;
                 $compteurFacturation+=$facturationInterval;
             }else{
-                 $passagesDatesArray[$date]->facturant = 0;
+                 $passagesDatesArray[$date]->mouvement_declenchable = 0;
             }
             $cpt++;
         }
