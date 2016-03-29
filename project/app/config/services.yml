@@ -53,6 +53,14 @@ services:
         class: AppBundle\Manager\ContratManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
 
+    mouvement.manager:
+        class: AppBundle\Manager\MouvementManager
+        arguments: [[@contrat.manager]]
+
+    facture.manager:
+        class: AppBundle\Manager\FactureManager
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @mouvement.manager]
+
     tool.osm:
         class: AppBundle\Tool\OSMAdresses
         arguments: [%osm.url_search%,%osm.return_format%]

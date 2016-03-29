@@ -1,0 +1,23 @@
+{% set _menu_active = 'facture' %}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+
+    <h3>Mouvements à facturer</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Prix</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for mouvement in mouvements %}
+            <tr>
+                <td>{{ mouvement.prix }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
