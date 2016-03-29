@@ -9,6 +9,7 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\User;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Passage;
+use AppBundle\Document\Mouvement;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
@@ -114,6 +115,11 @@ class Contrat {
     protected $prixHt;
 
     /**
+     * @MongoDB\EmbedMany(targetDocument="Mouvement")
+     */
+    protected $mouvements;
+
+    /**
      * @MongoDB\String
      */
     protected $statut;
@@ -121,6 +127,7 @@ class Contrat {
     public function __construct() {
         $this->passages = new ArrayCollection();
         $this->prestations = new ArrayCollection();
+        $this->mouvements = new ArrayCollection();
     }
 
     /**
@@ -367,6 +374,26 @@ class Contrat {
     }
 
     /**
+     * Set dateFin
+     *
+     * @param date $dateFin
+     * @return self
+     */
+    public function setDateFin($dateFin) {
+        $this->dateFin = $dateFin;
+        return $this;
+    }
+
+    /**
+     * Get dateFin
+     *
+     * @return date $dateFin
+     */
+    public function getDateFin() {
+        return $this->dateFin;
+    }
+
+    /**
      * Set dateAcceptation
      *
      * @param date $dateAcceptation
@@ -526,6 +553,37 @@ class Contrat {
         return $this->statut;
     }
 
+
+    /**
+     * Add mouvement
+     *
+     * @param AppBundle\Document\Mouvement $mouvement
+     */
+    public function addMouvement(\AppBundle\Document\Mouvement $mouvement)
+    {
+        $this->mouvements[] = $mouvement;
+    }
+
+    /**
+     * Remove mouvement
+     *
+     * @param AppBundle\Document\Mouvement $mouvement
+     */
+    public function removeMouvement(\AppBundle\Document\Mouvement $mouvement)
+    {
+        $this->mouvements->removeElement($mouvement);
+    }
+
+    /**
+     * Get mouvements
+     *
+     * @return \Doctrine\Common\Collections\Collection $mouvements
+     */
+    public function getMouvements()
+    {
+        return $this->mouvements;
+    }
+
     public function isTerminee() {
 
         return ($this->getDateFin() < new \DateTime());
@@ -568,41 +626,53 @@ class Contrat {
     }
 
     public function updateObject() {
-        if (!$this->getNbPassages()) {
-            $max = 0;
-            foreach ($this->getPrestations() as $prestation) {
-                if ($prestation->getNbPassages() > $max) {
-                    $max = $prestation->getNbPassages();
-                }
-            }
-            $this->setNbPassages($max);
-        }
+    	if (!$this->getNbPassages()) {
+    		$max = 0;
+    		foreach ($this->getPrestations() as $prestation) {
+    			if ($prestation->getNbPassages() > $max) {
+    				$max = $prestation->getNbPassages();
+    			}
+    		}
+    		$this->setNbPassages($max);
+    	}
     }
 
     public function getHumanDureePassage() {
-        $duree = $this->getDureePassage();
-        $heure = floor($duree / 60);
-        return sprintf('%02d', $heure) . 'h' . sprintf('%02d', ((($duree / 60) - $heure) * 60));
+    	$duree = $this->getDureePassage();
+    	$heure = floor($duree / 60);
+    	return sprintf('%02d',$heure).'h'.sprintf('%02d',((($duree / 60) - $heure) * 60));
+
     }
 
-    /**
-     * Set dateFin
-     *
-     * @param date $dateFin
-     * @return self
-     */
-    public function setDateFin($dateFin) {
-        $this->dateFin = $dateFin;
-        return $this;
+    public function getPrixMouvements() {
+        $prix = 0;
+        foreach($this->getMouvements() as $mouvement) {
+            $prix = $prix + $mouvement->getPrix();
+        }
+
+        return $prix;
     }
 
-    /**
-     * Get dateFin
-     *
-     * @return date $dateFin
-     */
-    public function getDateFin() {
-        return $this->dateFin;
+    public function getPrixRestant() {
+        $prixMouvement = $this->getPrixMouvements();
+
+        return $this->getPrixHt() - $this->getPrixMouvements();
+    }
+
+    public function getNbFacturesRestantes() {
+
+        return 1;
+    }
+
+    public function generateMouvement() {
+        if($this->getPrixRestant() <= 0 || $this->getNbFacturesRestantes() <= 0) {
+            return;
+        }
+        $mouvement = new Mouvement();
+        $mouvement->setPrix(round($this->getPrixRestant() / $this->getNbFacturesRestantes(), 2));
+        $mouvement->setFacturable(true);
+        $mouvement->setFacture(false);
+        $this->addMouvement($mouvement);
     }
 
     public function getPrevisionnel($dateDebut = null) {
@@ -667,7 +737,7 @@ class Contrat {
                 }
             }
         }
-        
+
         $facturationInterval = (floatval($maxNbPrestations) / floatval($this->getNbFactures()));
         $compteurFacturation = $facturationInterval;
         $cpt = 0;
