@@ -4,6 +4,7 @@ namespace AppBundle\Manager;
 
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use AppBundle\Document\Facture;
+use AppBundle\Document\FactureLigne;
 use AppBundle\Document\Etablissement;
 use AppBundle\Manager\MouvementManager;
 
@@ -20,6 +21,29 @@ class FactureManager {
     public function getRepository() {
 
         return $this->dm->getRepository('AppBundle:Facture');
+    }
+
+    public function findByEtablissement(Etablissement $etablissement) {
+
+        return $this->getRepository()->findBy(array('etablissement.id' => $etablissement->getId()));
+    }
+
+    public function create(Etablissement $etablissement, $mouvements) {
+        $facture = new Facture();
+        $facture->setEtablissement($etablissement);
+        $facture->setDate(new \DateTime());
+        $facture->generateId();
+
+        foreach($mouvements as $mouvement) {
+            $ligne = new FactureLigne();
+            $ligne->setLibelle("");
+            $ligne->setQuantite(1);
+            $ligne->setPrixUnitaire($mouvement->getPrix());
+            $ligne->setTvaTaux(0.20);
+            $facture->addLigne($ligne);
+        }
+
+        return $facture;
     }
 
     public function getMouvementsByEtablissement(Etablissement $etablissement) {

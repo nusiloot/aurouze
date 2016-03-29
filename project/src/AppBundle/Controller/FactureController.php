@@ -68,8 +68,27 @@ class FactureController extends Controller {
             'action' => $this->generateUrl('facture_etablissement_choice'),
             'method' => 'POST',
         ));
+        $factures = $fm->findByEtablissement($etablissement);
+        $mouvements = $fm->getMouvementsByEtablissement($etablissement);
+
+        return $this->render('facture/etablissement.html.twig', array('etablissement' => $etablissement, 'mouvements' => $mouvements, 'formEtablissement' => $formEtablissement->createView(), 'factures' => $factures));
+    }
+
+    /**
+     * @Route("/etablissement/{id}/generation", name="facture_etablissement_generation")
+     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
+     */
+    public function etablissementGenerationAction(Request $request, Etablissement $etablissement) {
+        $fm = $this->get('facture.manager');
+        $dm = $this->get('doctrine_mongodb')->getManager();
 
         $mouvements = $fm->getMouvementsByEtablissement($etablissement);
-        return $this->render('facture/etablissement.html.twig', array('etablissement' => $etablissement, 'mouvements' => $mouvements, 'formEtablissement' => $formEtablissement->createView()));
+
+        $facture = $fm->create($etablissement, $mouvements);
+        $dm->persist($facture);
+        $dm->flush();
+
+        return $this->redirectToRoute('facture_etablissement', array('id' => $etablissement->getId()));
     }
+
 }
