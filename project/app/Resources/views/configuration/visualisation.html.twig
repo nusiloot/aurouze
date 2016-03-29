@@ -9,9 +9,12 @@
             {% endfor %}
             
         <div class="row">
-
-    		<a href="{{ path('configuration_modification') }}" class="pull-left btn btn-warning">Modifier</a>
-
+            <div class="cols-xs-6 text-left">
+    		<a href="{{ path('configuration_modification_produits') }}" class="pull-left btn btn-warning">Modifier les produits</a>
+            </div>
+            <div class="cols-xs-6 text-right">
+                <a href="{{ path('configuration_modification_prestations') }}" class="pull-left btn btn-warning">Modifier les prestation</a>
+            </div>
         </div>
     </div>
 {% endblock %}

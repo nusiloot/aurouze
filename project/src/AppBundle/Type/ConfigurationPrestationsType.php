@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-class ConfigurationType extends AbstractType {
+class ConfigurationPrestationsType extends AbstractType {
 
     protected $container;
     protected $dm;
@@ -27,12 +27,6 @@ class ConfigurationType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('prestations', CollectionType::class, array(
             'entry_type' => new ConfigurationPrestationType($this->container, $this->dm),
-            'allow_add' => true,
-            'allow_delete' => true,
-            'delete_empty' => true,
-            'label' => ' ',
-        ))->add('produits', CollectionType::class, array(
-            'entry_type' => new ConfigurationProduitType($this->container, $this->dm),
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
