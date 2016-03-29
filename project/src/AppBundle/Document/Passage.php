@@ -170,12 +170,12 @@ class Passage {
 
             return;
         }
-        if(boolval($this->getDateDebut())) {
+        if(boolval($this->getDateDebut()) && !boolval($this->getDateFin())) {
             $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
 
             return;
         }
-        if (boolval($this->getDateFin()) && boolval($this->getDateDebut())) {
+        if (boolval($this->getDateDebut()) && boolval($this->getDateFin())) {
             $this->setStatut(PassageManager::STATUT_PLANIFIE);
         }
         if ($this->getDescription()) {
