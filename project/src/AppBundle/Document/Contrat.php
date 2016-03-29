@@ -10,6 +10,7 @@ use AppBundle\Document\User;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Passage;
 use AppBundle\Document\Intervention;
+use AppBundle\Document\Mouvement;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
@@ -64,7 +65,6 @@ class Contrat {
      */
     protected $prestations;
 
-
     /**
      * @MongoDB\Date
      */
@@ -110,11 +110,15 @@ class Contrat {
      */
     protected $nbFactures;
 
-
     /**
      * @MongoDB\Float
      */
     protected $prixHt;
+
+    /**
+     * @MongoDB\EmbedMany(targetDocument="Mouvement")
+     */
+    protected $mouvements;
 
     /**
      * @MongoDB\String
@@ -124,8 +128,8 @@ class Contrat {
     public function __construct() {
         $this->passages = new ArrayCollection();
         $this->prestations = new ArrayCollection();
+        $this->mouvements = new ArrayCollection();
     }
-
 
     /**
      * Generate id
@@ -603,7 +607,7 @@ class Contrat {
         }
 
         $dateDebutDernierPassage = clone $this->getLastPassageCreated()->getDatePrevision();
-        
+
         $monthInterval = (floatval($this->getDuree()) / floatval($nbPassages));
 
         $nb_month = intval($monthInterval);
@@ -617,7 +621,7 @@ class Contrat {
     }
 
 
-    public function hasAllPassagesCreated() {        
+    public function hasAllPassagesCreated() {
         return $this->getNbPassages() > count($this->getPassages());
     }
 
@@ -656,7 +660,7 @@ class Contrat {
 
         return $passagesSorted;
     }
-    
+
     public function updateObject() {
     	if (!$this->getNbPassages()) {
     		$max = 0;
@@ -668,7 +672,7 @@ class Contrat {
     		$this->setNbPassages($max);
     	}
     }
-    
+
     public function getHumanDureePassage() {
     	$duree = $this->getDureePassage();
     	$heure = floor($duree / 60);
@@ -696,5 +700,66 @@ class Contrat {
     public function getDateFin()
     {
         return $this->dateFin;
+    }
+
+    public function getPrixMouvements() {
+        $prix = 0;
+        foreach($this->getMouvements() as $mouvement) {
+            $prix = $prix + $mouvement->getPrix();
+        }
+
+        return $prix;
+    }
+
+    public function getPrixRestant() {
+        $prixMouvement = $this->getPrixMouvements();
+
+        return $this->getPrixHt() - $this->getPrixMouvements();
+    }
+
+    public function getNbFacturesRestantes() {
+
+        return 1;
+    }
+
+    public function generateMouvement() {
+        if($this->getPrixRestant() <= 0 || $this->getNbFacturesRestantes() <= 0) {
+            return;
+        }
+        $mouvement = new Mouvement();
+        $mouvement->setPrix(round($this->getPrixRestant() / $this->getNbFacturesRestantes(), 2));
+        $mouvement->setFacturable(true);
+        $mouvement->setFacture(false);
+        $this->addMouvement($mouvement);
+    }
+
+    /**
+     * Add mouvement
+     *
+     * @param AppBundle\Document\Mouvement $mouvement
+     */
+    public function addMouvement(\AppBundle\Document\Mouvement $mouvement)
+    {
+        $this->mouvements[] = $mouvement;
+    }
+
+    /**
+     * Remove mouvement
+     *
+     * @param AppBundle\Document\Mouvement $mouvement
+     */
+    public function removeMouvement(\AppBundle\Document\Mouvement $mouvement)
+    {
+        $this->mouvements->removeElement($mouvement);
+    }
+
+    /**
+     * Get mouvements
+     *
+     * @return \Doctrine\Common\Collections\Collection $mouvements
+     */
+    public function getMouvements()
+    {
+        return $this->mouvements;
     }
 }

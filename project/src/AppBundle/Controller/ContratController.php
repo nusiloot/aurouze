@@ -35,7 +35,7 @@ class ContratController extends Controller {
     public function modificationAction(Request $request, $id) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
 
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
@@ -44,8 +44,8 @@ class ContratController extends Controller {
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $contrat = $form->getData();           
-            $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);            
+            $contrat = $form->getData();
+            $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
             $contrat->updateObject();
             $dm->persist($contrat);
             $dm->flush();
@@ -53,7 +53,7 @@ class ContratController extends Controller {
         }
         return $this->render('contrat/modification.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
     }
-    
+
     /**
      * @Route("/contrat/{id}/acceptation", name="contrat_acceptation")
      */
@@ -69,14 +69,14 @@ class ContratController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
             $contratManager->generateAllPassagesForContrat($contrat);
-            
+
             $contrat->setStatut(ContratManager::STATUT_VALIDE);
             $dm->persist($contrat);
             $dm->flush();
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
         return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat,'form' => $form->createView()));
-       
+
     }
 
     /**
@@ -102,6 +102,19 @@ class ContratController extends Controller {
     }
 
     /**
+     * @Route("/contrat/{id}/generation-mouvement", name="contrat_generation_mouvement")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function generationMouvementAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrat->generateMouvement();
+        $dm->persist($contrat);
+        $dm->flush();
+
+        return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
+    }
+
+    /**
      * @Route("/contrat/{id}/pdf", name="contrat_pdf")
      */
     public function pdfAction(Request $request, $id) {
@@ -110,9 +123,9 @@ class ContratController extends Controller {
 
         $contratVisuUrl =  $this->generateUrl('contrat_visualisation', array('id' => $contrat->getId()), true);
 //        $html = $this->renderView('contrat/validation.html.twig', array('contrat' => $contrat));
-        
+
 //        return $this->render('contrat/validation.html.twig', array('contrat' => $contrat));
-        
+
         $fileName = "AUROUZE_" . $contrat->getId() . ".pdf";
         return new Response(
                 $this->container->get('knp_snappy.pdf')->getOutput($contratVisuUrl), 200, array(
