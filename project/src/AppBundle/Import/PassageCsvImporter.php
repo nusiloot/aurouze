@@ -75,13 +75,15 @@ class PassageCsvImporter {
 
             if ($data[self::CSV_DATE_DEBUT]) {
                 $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
+            } else {
+                $passage->setDateDebut(clone $passage->getDatePrevision());
             }
 
             if (!$data[self::CSV_DUREE]) {
                 $output->writeln(sprintf("<error>La durée du passage n'a pas été renseigné : %s</error>", $passage->getId()));
                 continue;
             }
-            if ($passage->getDateDebut()) {
+            if ($data[self::CSV_DATE_DEBUT]) {
                 $passage->setDateFin(clone $passage->getDateDebut());
                 $passage->getDateFin()->modify(sprintf("+%s minutes", $data[self::CSV_DUREE]));
             }
