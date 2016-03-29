@@ -10,7 +10,14 @@
         $.initQueryHash();
         $.initDynamicCollection();
         $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "bottom right", daysOfWeekDisabled: "0"});
-        $('.input-timepicker').timepicker({showMeridian: false, defaultTime: '01:00'});
+        $('.input-timepicker').timepicker({
+                format: 'HH:ii p',
+                autoclose: true,
+                // todayHighlight: true,
+                showMeridian: false,
+                startView: 1,
+                maxView: 1,defaultTime: '01:00'
+            });
     });
 
     $.initDynamicCollection = function () {
