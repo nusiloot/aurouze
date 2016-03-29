@@ -65,12 +65,16 @@ class ContratManager {
         }
 
         $passagesArray = $contrat->getPrevisionnel($date_debut);
+        $cpt = 0;
         foreach ($passagesArray as $datePassage => $passageInfos) {
-            
+            $datePrevision = new \DateTime($datePassage);
             $passage = new Passage();
             $passage->setEtablissementIdentifiant($contrat->getEtablissement()->getIdentifiant());
-//            $passage->setEtablissementInfos($contrat->getEtablissement()->getId());
-            $passage->setDatePrevision(new \DateTime($datePassage));
+
+            $passage->setDatePrevision($datePrevision);
+            if(!$cpt){
+                $passage->setDateDebut($datePrevision);
+            }
             $passage->getEtablissementInfos()->pull($contrat->getEtablissement());
             $passage->setNumeroPassageIdentifiant("001");
             $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
@@ -88,6 +92,7 @@ class ContratManager {
                 $this->dm->persist($passage);
                 $this->dm->persist($contrat);
             }
+            $cpt++;
             $this->dm->flush();
         }
     }
