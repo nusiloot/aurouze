@@ -2,19 +2,71 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <div id="wrapper">
-    	<h1>Configuration</h1>
+        <h1>Configuration</h1>
+        <div class="panel panel-default" style="margin-bottom: 0;">
+            <div class="panel-heading">Type de prestations </div>
 
-    	{% for prestation in configuration.prestations %}
-            {{ prestation.prestationNom }}
-            {% endfor %}
-            
+            <div class="panel-body">
+                 <div class="row form-group">
+                        <div class="col-xs-6 text-left">
+                            Nom de la préstation
+                        </div>
+                        <div class="col-xs-6 text-left">
+                              Id de la préstation
+                        </div>
+                    </div>
+                {% for prestation in configuration.prestations %}
+                    <div class="row form-group">
+                        <div class="col-xs-6 text-left">
+                            {{ prestation.nom }}
+                        </div>
+                        <div class="col-xs-6 text-left">
+                            {{ prestation.id }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>     
+        </div>
+        <br/>
+
         <div class="row">
-            <div class="cols-xs-6 text-left">
-    		<a href="{{ path('configuration_modification_produits') }}" class="pull-left btn btn-warning">Modifier les produits</a>
-            </div>
-            <div class="cols-xs-6 text-right">
-                <a href="{{ path('configuration_modification_prestations') }}" class="pull-left btn btn-warning">Modifier les prestation</a>
+            <div class="col-xs-12">
+                <a href="{{ path('configuration_modification_prestations') }}" class="pull-right btn btn-warning">Modifier les prestation</a>
             </div>
         </div>
+        <br/>  <br/>
+        <div class="panel panel-default" style="margin-bottom: 0;">
+            <div class="panel-heading">Liste des Produits </div>
+
+            <div class="panel-body">
+                <div class="row form-group">
+                        <div class="col-xs-6 text-left">
+                            Nom de la préstation
+                        </div>
+                        <div class="col-xs-6 text-left">
+                              Id de la préstation
+                        </div>
+                    </div>
+                {% for produit in configuration.produits %}
+                    <div class="row form-group">
+                        <div class="col-xs-6 text-left">
+                            {{ produit.nom }}
+                        </div>
+                        <div class="col-xs-6 text-left">
+                            {{ produit.id }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>     
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="{{ path('configuration_modification_produits') }}" class="pull-right btn btn-warning">Modifier les produits</a>
+            </div>
+        </div>
+        <br/>  <br/>
     </div>
 {% endblock %}

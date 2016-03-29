@@ -25,7 +25,7 @@ class ConfigurationPrestationType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
-		->add('prestationNom', TextType::class)
+		->add('nom', TextType::class)
 		;
        
     }
