@@ -62,8 +62,6 @@ class PassageController extends Controller {
 
         $contrats = $this->get('contrat.manager')->getRepository()->findByEtablissement($etablissement);
 
-        krsort($contrats);
-
         $geojson = $this->buildGeoJson(array($etablissement));
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, array('etablissements' => $etablissement->getIdentifiant(), 'etablissement' => $etablissement), array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
