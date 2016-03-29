@@ -165,14 +165,12 @@ class Passage {
     }
 
     public function updateStatut() {
-        if ($this->getDatePrevision() && (!boolval($this->getDateFin()) || !boolval($this->getDateDebut()))) {
+        if ($this->getDatePrevision() && !boolval($this->getDateFin()) && !boolval($this->getDateDebut())) {
             $this->setStatut(PassageManager::STATUT_EN_ATTENTE);
-
             return;
         }
         if(boolval($this->getDateDebut()) && !boolval($this->getDateFin())) {
             $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
-
             return;
         }
         if (boolval($this->getDateDebut()) && boolval($this->getDateFin())) {
