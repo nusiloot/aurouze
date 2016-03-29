@@ -12,12 +12,10 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 
 class PrestationType extends AbstractType {
 	
-	protected $container;
 	protected $dm;
 	
-	public function __construct(ContainerInterface $container, DocumentManager $documentManager)
+	public function __construct(DocumentManager $documentManager)
 	{
-		$this->container = $container;
 		$this->dm = $documentManager;
 	}
 	
@@ -41,12 +39,8 @@ class PrestationType extends AbstractType {
 	}
         
         public function getPrestations() {
-            $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
-            $prestationsType = array();
-            foreach ($configuration->getPrestations() as $prestation) {
-                $prestationsType[$prestation->getId()] = $prestation->getNom();
-            } 
-            return $prestationsType;    
+            return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
+            
         }
         
 	

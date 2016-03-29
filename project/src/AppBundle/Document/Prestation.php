@@ -2,6 +2,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Behat\Transliterator\Transliterator;
 
 /** 
  * @MongoDB\EmbeddedDocument
@@ -58,6 +59,7 @@ class Prestation {
     public function setNom($nom)
     {
         $this->nom = $nom;
+        $this->setId(strtoupper(Transliterator::urlize($nom)));
         return $this;
     }
 
