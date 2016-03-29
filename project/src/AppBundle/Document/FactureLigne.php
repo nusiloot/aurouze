@@ -116,4 +116,9 @@ class FactureLigne {
     {
         return $this->tvaTaux;
     }
+
+    public function getMontantHT() {
+
+        return $this->getPrixUnitaire() * $this->getQuantite();
+    }
 }

@@ -10,12 +10,14 @@
         <thead>
             <tr>
                 <th>Date</th>
+                <th>Montant HT</th>
             </tr>
         </thead>
         <tbody>
         {% for facture in factures %}
             <tr>
                 <td>{{ facture.id }}</td>
+                <td>{{ facture.montantHT }} €</td>
             </tr>
         {% endfor %}
         </tbody>

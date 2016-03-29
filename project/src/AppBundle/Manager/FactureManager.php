@@ -43,6 +43,8 @@ class FactureManager {
             $facture->addLigne($ligne);
         }
 
+        $facture->update();
+
         return $facture;
     }
 

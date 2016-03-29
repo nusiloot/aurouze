@@ -32,6 +32,21 @@ class Facture {
     protected $date;
 
     /**
+     * @MongoDB\Float
+     */
+    protected $montantHT;
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $montantTTC;
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $montantTVA;
+
+    /**
      * @MongoDB\EmbedMany(targetDocument="FactureLigne")
      */
     protected $lignes;
@@ -44,6 +59,13 @@ class Facture {
     public function generateId() {
 
         $this->setId(self::PREFIX . '-' . $this->getEtablissementIdentifiant() .'-' . $this->getDate()->format('Ymd'));
+    }
+
+    public function update() {
+
+        foreach($this->getLignes() as $ligne) {
+            $this->setMontantHT($this->getMontantHT() + $ligne->getMontantHT());
+        }
     }
 
     /**
@@ -164,5 +186,71 @@ class Facture {
     public function getEtablissementIdentifiant()
     {
         return $this->etablissementIdentifiant;
+    }
+
+    /**
+     * Set montantHT
+     *
+     * @param float $montantHT
+     * @return self
+     */
+    public function setMontantHT($montantHT)
+    {
+        $this->montantHT = $montantHT;
+        return $this;
+    }
+
+    /**
+     * Get montantHT
+     *
+     * @return float $montantHT
+     */
+    public function getMontantHT()
+    {
+        return $this->montantHT;
+    }
+
+    /**
+     * Set montantTTC
+     *
+     * @param float $montantTTC
+     * @return self
+     */
+    public function setMontantTTC($montantTTC)
+    {
+        $this->montantTTC = $montantTTC;
+        return $this;
+    }
+
+    /**
+     * Get montantTTC
+     *
+     * @return float $montantTTC
+     */
+    public function getMontantTTC()
+    {
+        return $this->montantTTC;
+    }
+
+    /**
+     * Set montantTVA
+     *
+     * @param float $montantTVA
+     * @return self
+     */
+    public function setMontantTVA($montantTVA)
+    {
+        $this->montantTVA = $montantTVA;
+        return $this;
+    }
+
+    /**
+     * Get montantTVA
+     *
+     * @return float $montantTVA
+     */
+    public function getMontantTVA()
+    {
+        return $this->montantTVA;
     }
 }
