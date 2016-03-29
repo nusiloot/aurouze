@@ -7,6 +7,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Document\EtablissementInfos;
+use AppBundle\Document\Prestation;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
@@ -26,9 +27,9 @@ class Passage {
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\EmbedMany(targetDocument="Prestation")
      */
-    protected $prestationIdentifiant;
+    protected $prestations;
 
     /**
      * @MongoDB\String
@@ -235,25 +236,7 @@ class Passage {
         return $this->identifiant;
     }
 
-    /**
-     * Set prestationIdentifiant
-     *
-     * @param string $prestationIdentifiant
-     * @return self
-     */
-    public function setPrestationIdentifiant($prestationIdentifiant) {
-        $this->prestationIdentifiant = $prestationIdentifiant;
-        return $this;
-    }
-
-    /**
-     * Get prestationIdentifiant
-     *
-     * @return string $prestationIdentifiant
-     */
-    public function getPrestationIdentifiant() {
-        return $this->prestationIdentifiant;
-    }
+    
 
     /**
      * Set numeroPassageIdentifiant
@@ -589,5 +572,35 @@ class Passage {
     public function getEtablissement()
     {
         return $this->etablissement;
+    }
+
+    /**
+     * Add prestation
+     *
+     * @param AppBundle\Document\Prestation $prestation
+     */
+    public function addPrestation(\AppBundle\Document\Prestation $prestation)
+    {
+        $this->prestations[] = $prestation;
+    }
+
+    /**
+     * Remove prestation
+     *
+     * @param AppBundle\Document\Prestation $prestation
+     */
+    public function removePrestation(\AppBundle\Document\Prestation $prestation)
+    {
+        $this->prestations->removeElement($prestation);
+    }
+
+    /**
+     * Get prestations
+     *
+     * @return \Doctrine\Common\Collections\Collection $prestations
+     */
+    public function getPrestations()
+    {
+        return $this->prestations;
     }
 }

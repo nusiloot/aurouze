@@ -63,14 +63,29 @@ class ContratManager {
         if (!$date_debut) {
             return false;
         }
-        
-        while ($this->getRepository()->find($contrat->getId())->hasAllPassagesCreated()) {
-            
-            $nextPassage = $contrat->getNextPassage();
 
-            if ($nextPassage) {
-                $contrat->addPassage($nextPassage);
-                $this->dm->persist($nextPassage);
+        $passagesArray = $contrat->getPrevisionnel($date_debut);
+        foreach ($passagesArray as $datePassage => $passageInfos) {
+            
+            $passage = new Passage();
+            $passage->setEtablissementIdentifiant($contrat->getEtablissement()->getIdentifiant());
+//            $passage->setEtablissementInfos($contrat->getEtablissement()->getId());
+            $passage->setDatePrevision(new \DateTime($datePassage));
+            $passage->getEtablissementInfos()->pull($contrat->getEtablissement());
+            $passage->setNumeroPassageIdentifiant("001");
+            $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
+            
+            $passage->generateId();
+            $passage->setContrat($contrat);
+            foreach ($passageInfos->prestations as $prestationNom) {
+                $prestationObj = new Prestation();
+                $prestationObj->setNom($prestationNom);
+                $passage->addPrestation($prestationObj);    
+            }
+            
+            if ($passage) {
+                $contrat->addPassage($passage);
+                $this->dm->persist($passage);
                 $this->dm->persist($contrat);
             }
             $this->dm->flush();

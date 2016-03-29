@@ -9,7 +9,6 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\User;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Passage;
-use AppBundle\Document\Intervention;
 use AppBundle\Document\Mouvement;
 
 /**
@@ -140,15 +139,13 @@ class Contrat {
         return $this->setId(self::PREFIX . '-' . $this->identifiant);
     }
 
-
     /**
      * Set id
      *
      * @param string $id
      * @return self
      */
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
         return $this;
     }
@@ -158,8 +155,7 @@ class Contrat {
      *
      * @return string $id
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -169,8 +165,7 @@ class Contrat {
      * @param AppBundle\Document\Etablissement $etablissement
      * @return self
      */
-    public function setEtablissement(\AppBundle\Document\Etablissement $etablissement)
-    {
+    public function setEtablissement(\AppBundle\Document\Etablissement $etablissement) {
         $this->etablissement = $etablissement;
         return $this;
     }
@@ -180,8 +175,7 @@ class Contrat {
      *
      * @return AppBundle\Document\Etablissement $etablissement
      */
-    public function getEtablissement()
-    {
+    public function getEtablissement() {
         return $this->etablissement;
     }
 
@@ -191,8 +185,7 @@ class Contrat {
      * @param AppBundle\Document\User $commercial
      * @return self
      */
-    public function setCommercial(\AppBundle\Document\User $commercial)
-    {
+    public function setCommercial(\AppBundle\Document\User $commercial) {
         $this->commercial = $commercial;
         return $this;
     }
@@ -202,8 +195,7 @@ class Contrat {
      *
      * @return AppBundle\Document\User $commercial
      */
-    public function getCommercial()
-    {
+    public function getCommercial() {
         return $this->commercial;
     }
 
@@ -213,8 +205,7 @@ class Contrat {
      * @param AppBundle\Document\User $technicien
      * @return self
      */
-    public function setTechnicien(\AppBundle\Document\User $technicien)
-    {
+    public function setTechnicien(\AppBundle\Document\User $technicien) {
         $this->technicien = $technicien;
         return $this;
     }
@@ -224,8 +215,7 @@ class Contrat {
      *
      * @return AppBundle\Document\User $technicien
      */
-    public function getTechnicien()
-    {
+    public function getTechnicien() {
         return $this->technicien;
     }
 
@@ -234,8 +224,7 @@ class Contrat {
      *
      * @param AppBundle\Document\Passage $passage
      */
-    public function addPassage(\AppBundle\Document\Passage $passage)
-    {
+    public function addPassage(\AppBundle\Document\Passage $passage) {
         $this->passages[] = $passage;
     }
 
@@ -244,8 +233,7 @@ class Contrat {
      *
      * @param AppBundle\Document\Passage $passage
      */
-    public function removePassage(\AppBundle\Document\Passage $passage)
-    {
+    public function removePassage(\AppBundle\Document\Passage $passage) {
         $this->passages->removeElement($passage);
     }
 
@@ -254,8 +242,7 @@ class Contrat {
      *
      * @return \Doctrine\Common\Collections\Collection $passages
      */
-    public function getPassages()
-    {
+    public function getPassages() {
         return $this->passages;
     }
 
@@ -265,8 +252,7 @@ class Contrat {
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant)
-    {
+    public function setIdentifiant($identifiant) {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -276,8 +262,7 @@ class Contrat {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant()
-    {
+    public function getIdentifiant() {
         return $this->identifiant;
     }
 
@@ -287,8 +272,7 @@ class Contrat {
      * @param string $typeContrat
      * @return self
      */
-    public function setTypeContrat($typeContrat)
-    {
+    public function setTypeContrat($typeContrat) {
         $this->typeContrat = $typeContrat;
         return $this;
     }
@@ -298,8 +282,7 @@ class Contrat {
      *
      * @return string $typeContrat
      */
-    public function getTypeContrat()
-    {
+    public function getTypeContrat() {
         return $this->typeContrat;
     }
 
@@ -309,8 +292,7 @@ class Contrat {
      * @param string $nomenclature
      * @return self
      */
-    public function setNomenclature($nomenclature)
-    {
+    public function setNomenclature($nomenclature) {
         $this->nomenclature = $nomenclature;
         return $this;
     }
@@ -320,8 +302,7 @@ class Contrat {
      *
      * @return string $nomenclature
      */
-    public function getNomenclature()
-    {
+    public function getNomenclature() {
         return $this->nomenclature;
     }
 
@@ -330,8 +311,7 @@ class Contrat {
      *
      * @param AppBundle\Document\Prestation $prestation
      */
-    public function addPrestation(\AppBundle\Document\Prestation $prestation)
-    {
+    public function addPrestation(\AppBundle\Document\Prestation $prestation) {
         $this->prestations[] = $prestation;
     }
 
@@ -340,8 +320,7 @@ class Contrat {
      *
      * @param AppBundle\Document\Prestation $prestation
      */
-    public function removePrestation(\AppBundle\Document\Prestation $prestation)
-    {
+    public function removePrestation(\AppBundle\Document\Prestation $prestation) {
         $this->prestations->removeElement($prestation);
     }
 
@@ -350,8 +329,7 @@ class Contrat {
      *
      * @return \Doctrine\Common\Collections\Collection $prestations
      */
-    public function getPrestations()
-    {
+    public function getPrestations() {
         return $this->prestations;
     }
 
@@ -361,8 +339,7 @@ class Contrat {
      * @param date $dateCreation
      * @return self
      */
-    public function setDateCreation($dateCreation)
-    {
+    public function setDateCreation($dateCreation) {
         $this->dateCreation = $dateCreation;
         return $this;
     }
@@ -372,8 +349,7 @@ class Contrat {
      *
      * @return date $dateCreation
      */
-    public function getDateCreation()
-    {
+    public function getDateCreation() {
         return $this->dateCreation;
     }
 
@@ -383,8 +359,7 @@ class Contrat {
      * @param date $dateDebut
      * @return self
      */
-    public function setDateDebut($dateDebut)
-    {
+    public function setDateDebut($dateDebut) {
         $this->dateDebut = $dateDebut;
         return $this;
     }
@@ -394,9 +369,28 @@ class Contrat {
      *
      * @return date $dateDebut
      */
-    public function getDateDebut()
-    {
+    public function getDateDebut() {
         return $this->dateDebut;
+    }
+
+    /**
+     * Set dateFin
+     *
+     * @param date $dateFin
+     * @return self
+     */
+    public function setDateFin($dateFin) {
+        $this->dateFin = $dateFin;
+        return $this;
+    }
+
+    /**
+     * Get dateFin
+     *
+     * @return date $dateFin
+     */
+    public function getDateFin() {
+        return $this->dateFin;
     }
 
     /**
@@ -405,8 +399,7 @@ class Contrat {
      * @param date $dateAcceptation
      * @return self
      */
-    public function setDateAcceptation($dateAcceptation)
-    {
+    public function setDateAcceptation($dateAcceptation) {
         $this->dateAcceptation = $dateAcceptation;
         return $this;
     }
@@ -416,8 +409,7 @@ class Contrat {
      *
      * @return date $dateAcceptation
      */
-    public function getDateAcceptation()
-    {
+    public function getDateAcceptation() {
         return $this->dateAcceptation;
     }
 
@@ -427,8 +419,7 @@ class Contrat {
      * @param int $duree
      * @return self
      */
-    public function setDuree($duree)
-    {
+    public function setDuree($duree) {
         $this->duree = $duree;
         return $this;
     }
@@ -438,8 +429,7 @@ class Contrat {
      *
      * @return int $duree
      */
-    public function getDuree()
-    {
+    public function getDuree() {
         return $this->duree;
     }
 
@@ -449,8 +439,7 @@ class Contrat {
      * @param int $dureeGarantie
      * @return self
      */
-    public function setDureeGarantie($dureeGarantie)
-    {
+    public function setDureeGarantie($dureeGarantie) {
         $this->dureeGarantie = $dureeGarantie;
         return $this;
     }
@@ -460,8 +449,7 @@ class Contrat {
      *
      * @return int $dureeGarantie
      */
-    public function getDureeGarantie()
-    {
+    public function getDureeGarantie() {
         return $this->dureeGarantie;
     }
 
@@ -471,8 +459,7 @@ class Contrat {
      * @param int $nbPassages
      * @return self
      */
-    public function setNbPassages($nbPassages)
-    {
+    public function setNbPassages($nbPassages) {
         $this->nbPassages = $nbPassages;
         return $this;
     }
@@ -482,8 +469,7 @@ class Contrat {
      *
      * @return int $nbPassages
      */
-    public function getNbPassages()
-    {
+    public function getNbPassages() {
         return $this->nbPassages;
     }
 
@@ -493,8 +479,7 @@ class Contrat {
      * @param int $dureePassage
      * @return self
      */
-    public function setDureePassage($dureePassage)
-    {
+    public function setDureePassage($dureePassage) {
         $this->dureePassage = $dureePassage;
         return $this;
     }
@@ -504,8 +489,7 @@ class Contrat {
      *
      * @return int $dureePassage
      */
-    public function getDureePassage()
-    {
+    public function getDureePassage() {
         return $this->dureePassage;
     }
 
@@ -515,8 +499,7 @@ class Contrat {
      * @param int $nbFactures
      * @return self
      */
-    public function setNbFactures($nbFactures)
-    {
+    public function setNbFactures($nbFactures) {
         $this->nbFactures = $nbFactures;
         return $this;
     }
@@ -526,8 +509,7 @@ class Contrat {
      *
      * @return int $nbFactures
      */
-    public function getNbFactures()
-    {
+    public function getNbFactures() {
         return $this->nbFactures;
     }
 
@@ -537,8 +519,7 @@ class Contrat {
      * @param float $prixHt
      * @return self
      */
-    public function setPrixHt($prixHt)
-    {
+    public function setPrixHt($prixHt) {
         $this->prixHt = $prixHt;
         return $this;
     }
@@ -548,8 +529,7 @@ class Contrat {
      *
      * @return float $prixHt
      */
-    public function getPrixHt()
-    {
+    public function getPrixHt() {
         return $this->prixHt;
     }
 
@@ -559,8 +539,7 @@ class Contrat {
      * @param string $statut
      * @return self
      */
-    public function setStatut($statut)
-    {
+    public function setStatut($statut) {
         $this->statut = $statut;
         return $this;
     }
@@ -570,59 +549,44 @@ class Contrat {
      *
      * @return string $statut
      */
-    public function getStatut()
-    {
+    public function getStatut() {
         return $this->statut;
+    }
+
+
+    /**
+     * Add mouvement
+     *
+     * @param AppBundle\Document\Mouvement $mouvement
+     */
+    public function addMouvement(\AppBundle\Document\Mouvement $mouvement)
+    {
+        $this->mouvements[] = $mouvement;
+    }
+
+    /**
+     * Remove mouvement
+     *
+     * @param AppBundle\Document\Mouvement $mouvement
+     */
+    public function removeMouvement(\AppBundle\Document\Mouvement $mouvement)
+    {
+        $this->mouvements->removeElement($mouvement);
+    }
+
+    /**
+     * Get mouvements
+     *
+     * @return \Doctrine\Common\Collections\Collection $mouvements
+     */
+    public function getMouvements()
+    {
+        return $this->mouvements;
     }
 
     public function isTerminee() {
 
         return ($this->getDateFin() < new \DateTime());
-    }
-
-    public function getNextPassage() {
-        if ((count($this->getPassages()) < $this->nbPassages) && $this->getDateNextPassage()) {
-            $passage = new Passage();
-            $passage->setEtablissementIdentifiant($this->getEtablissement()->getIdentifiant());
-            $passage->setEtablissementId($this->getEtablissement()->getId());
-            $passage->setDatePrevision($this->getDateNextPassage());
-            $passage->getEtablissementInfos()->pull($this->getEtablissement());
-            $passage->setNumeroPassageIdentifiant("001");
-            $passage->generateId();
-            $passage->setContratId($this->id);
-            return $passage;
-        }
-        return null;
-    }
-
-    public function getDateNextPassage() {
-
-        $nbPassages = $this->getNbPassages();
-        if ($nbPassages >= 1 && !count($this->getPassages())) {
-            return $this->getDateDebut();
-        }
-
-        if (!count($this->getLastPassageCreated()) || !$this->getLastPassageCreated()) {
-            return null;
-        }
-
-        $dateDebutDernierPassage = clone $this->getLastPassageCreated()->getDatePrevision();
-
-        $monthInterval = (floatval($this->getDuree()) / floatval($nbPassages));
-
-        $nb_month = intval($monthInterval);
-
-        $monthDate = clone $this->getLastPassageCreated()->getDatePrevision();
-
-        $nextMonth = $monthDate->modify("+" . $nb_month . " month");
-        $nb_days = intval(($monthInterval - $nb_month) * cal_days_in_month(CAL_GREGORIAN,$nextMonth->format('m'),$nextMonth->format('Y')));
-        $dateDebutDernierPassage->modify("+" . $nb_month . " month")->modify("+" . $nb_days . " day");
-        return $dateDebutDernierPassage;
-    }
-
-
-    public function hasAllPassagesCreated() {
-        return $this->getNbPassages() > count($this->getPassages());
     }
 
     public function getLastPassageCreated() {
@@ -636,7 +600,7 @@ class Contrat {
     }
 
     public function getNbPassagePrevu() {
-        if($this->getNbPassages()){
+        if ($this->getNbPassages()) {
             return $this->getNbPassages();
         }
         foreach ($this->getPassages() as $passage) {
@@ -677,29 +641,7 @@ class Contrat {
     	$duree = $this->getDureePassage();
     	$heure = floor($duree / 60);
     	return sprintf('%02d',$heure).'h'.sprintf('%02d',((($duree / 60) - $heure) * 60));
-    }
 
-
-    /**
-     * Set dateFin
-     *
-     * @param date $dateFin
-     * @return self
-     */
-    public function setDateFin($dateFin)
-    {
-        $this->dateFin = $dateFin;
-        return $this;
-    }
-
-    /**
-     * Get dateFin
-     *
-     * @return date $dateFin
-     */
-    public function getDateFin()
-    {
-        return $this->dateFin;
     }
 
     public function getPrixMouvements() {
@@ -733,33 +675,87 @@ class Contrat {
         $this->addMouvement($mouvement);
     }
 
-    /**
-     * Add mouvement
-     *
-     * @param AppBundle\Document\Mouvement $mouvement
-     */
-    public function addMouvement(\AppBundle\Document\Mouvement $mouvement)
-    {
-        $this->mouvements[] = $mouvement;
+    public function getPrevisionnel($dateDebut = null) {
+
+        if (!$dateDebut) {
+            $dateDebut = new \DateTime();
+        }
+
+        $dureeContratMois = $this->getDuree();
+
+        $maxNbPrestations = 0;
+        $typePrestationPrincipal = "";
+        foreach ($this->getPrestations() as $prestation) {
+            if ($prestation->getNbPassages() > $maxNbPrestations) {
+                $maxNbPrestations = $prestation->getNbPassages();
+                $typePrestationPrincipal = $prestation->getId();
+            }
+        }
+
+        $passagesDatesArray = array();
+        $monthInterval = (floatval($dureeContratMois) / floatval($maxNbPrestations));
+        $nb_month = intval($monthInterval);
+        $dateLastPassage = $dateDebut;
+        $passagesDatesArray[$dateLastPassage->format('Y-m-d')] = new \stdClass();
+
+        foreach ($this->getPrestations() as $prestation) {
+            if ($prestation->getNbPassages() > 0) {
+                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations = array();
+                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $prestation->getId();
+                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->mouvement_declenchable = 1;
+            }
+        }
+
+        for ($index = 1; $index < $maxNbPrestations; $index++) {
+            $monthDate = clone $dateLastPassage;
+            $nextMonth = $monthDate->modify("+" . $nb_month . " month");
+            $nb_days = intval(($monthInterval - $nb_month) * cal_days_in_month(CAL_GREGORIAN, $nextMonth->format('m'), $nextMonth->format('Y')));
+
+            $dateLastPassage = $dateLastPassage->modify("+" . $nb_month . " month")->modify("+" . $nb_days . " day");
+            $passagesDatesArray[$dateLastPassage->format('Y-m-d')] = new \stdClass();
+            $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations = array();
+            $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $typePrestationPrincipal;
+        }
+
+        foreach ($this->getPrestations() as $prestation) {
+            if ($prestation->getId() != $typePrestationPrincipal && $prestation->getNbPassages() > 1) {
+                $nbPassagesPrestationRestant = $prestation->getNbPassages();
+                $nbPassagesRestant = count($passagesDatesArray);
+                $occurPassage = (floatval($nbPassagesRestant) / floatval($nbPassagesPrestationRestant));
+                $compteurPassage = $occurPassage;
+                $cpt = 0;
+                foreach ($passagesDatesArray as $date => $passage) {
+                    if ($cpt < 1) {
+                        $cpt++;
+                        continue;
+                    }
+                    if ($cpt >= $compteurPassage) {
+                        $passagesDatesArray[$date]->prestations[] = $prestation->getId();
+                        $compteurPassage+=$occurPassage;
+                    }
+                    $cpt++;
+                }
+            }
+        }
+
+        $facturationInterval = (floatval($maxNbPrestations) / floatval($this->getNbFactures()));
+        $compteurFacturation = $facturationInterval;
+        $cpt = 0;
+
+        foreach ($passagesDatesArray as $date => $passage) {
+            if ($cpt < 1) {
+                $cpt++;
+                continue;
+            }
+            if ($cpt >= $compteurFacturation) {
+                $passagesDatesArray[$date]->mouvement_declenchable = 1;
+                $compteurFacturation+=$facturationInterval;
+            }else{
+                 $passagesDatesArray[$date]->mouvement_declenchable = 0;
+            }
+            $cpt++;
+        }
+        return $passagesDatesArray;
     }
 
-    /**
-     * Remove mouvement
-     *
-     * @param AppBundle\Document\Mouvement $mouvement
-     */
-    public function removeMouvement(\AppBundle\Document\Mouvement $mouvement)
-    {
-        $this->mouvements->removeElement($mouvement);
-    }
-
-    /**
-     * Get mouvements
-     *
-     * @return \Doctrine\Common\Collections\Collection $mouvements
-     */
-    public function getMouvements()
-    {
-        return $this->mouvements;
-    }
 }

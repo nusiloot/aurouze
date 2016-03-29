@@ -1,58 +1,52 @@
 <div class="panel panel-default">
-	<div class="panel-heading">Contrat de type <strong>{{ contrat.getTypeContrat() }}</strong></div>
-  	<div class="panel-body">
-	  	<div class="rows">
-	  		<div class="col-xs-6">
-	  		Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
-	  		<strong>{{ contrat.getDateDebut()|date("d/m/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />
-	  		{% if contrat.getDureeGarantie() %}Garantie : <strong>{{ contrat.getDureeGarantie() }}</strong> mois{% endif %}
-	  		</div>
-	  		<div class="col-xs-6">
-	  		{% if contrat.getTechnicien() %}
-	  		Technicien : <strong>{{ contrat.getTechnicien().getIdentite() }}</strong><br />
-	  		{% endif %}
-	  		<strong>{{ contrat.getNbPassages() }}</strong> passage{% if contrat.getNbPassages() > 1 %}s{% endif %} de <strong>{{ contrat.getHumanDureePassage() }}</strong>
-	  		</div>
-		</div>
-  	</div>
+    <div class="panel-heading">Contrat de type <strong>{{ contrat.getTypeContrat() }}</strong></div>
+    <div class="panel-body">
+        <div class="rows">
+            <div class="col-xs-6">
+                Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
+                <strong>{{ contrat.getDateDebut()|date("d/m/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />
+                {% if contrat.getDureeGarantie() %}Garantie : <strong>{{ contrat.getDureeGarantie() }}</strong> mois{% endif %}
+            </div>
+            <div class="col-xs-6">
+                {% if contrat.getTechnicien() %}
+                    Technicien : <strong>{{ contrat.getTechnicien().getIdentite() }}</strong><br />
+                {% endif %}
+                <strong>{{ contrat.getNbPassages() }}</strong> passage{% if contrat.getNbPassages() > 1 %}s{% endif %} de <strong>{{ contrat.getHumanDureePassage() }}</strong>
+            </div>
+        </div>
+    </div>
 </div>
 
 <h1 class="text-center">
-	{{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT</small>&nbsp;
-     
+    {{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT</small>&nbsp;
+
 </h1>
 <div class="panel panel-default">
-	<div class="panel-heading">Nomenclature</div>
-  	<div class="panel-body">
-            {{ contrat.getNomenclature() }}
-        </div>
+    <div class="panel-heading">Nomenclature</div>
+    <div class="panel-body">
+        {{ contrat.getNomenclature() }}
+    </div>
 </div>
 
 <div class="panel panel-default">
-	<div class="panel-heading">Interventions prévues</div>
-  	<div class="panel-body">
-	  	<ul class="list-group">
-	  		{% for i in 0..(contrat.nbPassages - 1) %}
-	  		{% set counter = loop.index %}
-	  		<li class="list-group-item">
-	  			<span class="badge pull-left">{{ counter }}</span>
-	  			<div style="padding-left: 30px;">
-	  			{% for prestation in contrat.prestations %}
-	  				{% set intervalle = (contrat.nbPassages / prestation.nbPassages)  %}
-	  				{% if intervalle matches '/^\\d+$/' %}
-		  				{% if counter is divisible by(intervalle) %}
-		  					{{ prestation.id }}
-		  				{% endif %}
-		  			{% else %}
-		  				{% if (prestation.nbPassages >= counter) %}
-		  					{{ prestation.id }}
-		  				{% endif %}
-		  			{% endif %}
-	  			{% endfor %}
-	  			</div>
-	  		</li>
-	  		{% endfor %}
-	  	</ul>
-  	</div>
+    <div class="panel-heading">Interventions prévues</div>
+    <div class="panel-body">
+        <ul class="list-group">
+            {% for date,passage in contrat.previsionnel %}
+                {% set counter = loop.index %}
+                <li class="list-group-item">
+                    <span class="badge pull-left">{{ counter }}</span>
+                    
+                    {% for prestation in passage.prestations %}
+                        <div style="padding-left: 30px;">
+                            {{ prestation }}      
+                        </div>
+                    {% endfor %}
+                    {{ date|date("d/m/Y") }}
+                    {{ passage.mouvement_declenchable }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
