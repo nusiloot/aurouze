@@ -10,7 +10,7 @@ class ContratRepository extends DocumentRepository {
     public function findByEtablissement($etablissement) {
         return $this->findBy(
                         array('etablissement.id' => $etablissement->getId()),
-                        array('dateDebut' => 'DESC'));
+                        array('dateFin' => 'DESC'));
     }
 
     public function findByEtablissementAndDateCreation($etablissement, $dateCreation) {
