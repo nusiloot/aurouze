@@ -32,4 +32,15 @@ class ContratRepository extends DocumentRepository {
         return (count($identifiants) > 0) ? (substr(max($identifiants), -3) + 1) : 1;
     }
 
+    public function findContratMouvements($etablissement, $isFacturable, $isFacture) {
+
+        return $this->createQueryBuilder()
+             ->select('mouvements')
+             ->field('etablissement.id')->equals($etablissement->getId())
+             ->field('mouvements.facturable')->equals($isFacturable)
+             ->field('mouvements.facture')->equals($isFacture)
+             ->getQuery()
+             ->execute();
+    }
+
 }

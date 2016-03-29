@@ -3,13 +3,14 @@
 namespace AppBundle\Manager;
 
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
+use AppBundle\Model\MouvementManagerInterface;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Passage;
 use AppBundle\Document\UserInfos;
 use AppBundle\Document\Prestation;
 
-class ContratManager {
+class ContratManager implements MouvementManagerInterface {
 
     const STATUT_BROUILLON = "BROUILLON";
     const STATUT_EN_ATTENTE_ACCEPTATION = "EN_ATTENTE_ACCEPTATION";
@@ -78,15 +79,15 @@ class ContratManager {
             $passage->getEtablissementInfos()->pull($contrat->getEtablissement());
             $passage->setNumeroPassageIdentifiant("001");
             $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
-            
+
             $passage->generateId();
             $passage->setContrat($contrat);
             foreach ($passageInfos->prestations as $prestationNom) {
                 $prestationObj = new Prestation();
                 $prestationObj->setNom($prestationNom);
-                $passage->addPrestation($prestationObj);    
+                $passage->addPrestation($prestationObj);
             }
-            
+
             if ($passage) {
                 $contrat->addPassage($passage);
                 $this->dm->persist($passage);
@@ -95,6 +96,22 @@ class ContratManager {
             $cpt++;
             $this->dm->flush();
         }
+    }
+
+    public function getMouvementsByEtablissement(Etablissement $etablissement, $isFaturable, $isFacture) {
+        $contrats = $this->getRepository()->findContratMouvements($etablissement, $isFaturable,  $isFacture);
+        $mouvements = array();
+        foreach($contrats as $contrat) {
+            $mouvements = array_merge($mouvements, $contrat->getMouvements()->toArray());
+        }
+
+        return $mouvements;
+    }
+
+    public function getMouvements($isFaturable, $isFacture) {
+        $mouvements = array();
+
+        return $mouvements;
     }
 
 }
