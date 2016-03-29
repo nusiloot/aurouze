@@ -21,7 +21,7 @@ class PassageController extends Controller {
     public function choiceAction(Request $request) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $formEtablissement = $this->createForm(new EtablissementChoiceType(), null, array(
+        $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
             'method' => 'POST',
         ));
@@ -33,7 +33,7 @@ class PassageController extends Controller {
      * @Route("/passage", name="passage")
      */
     public function indexAction(Request $request) {
-        $formEtablissement = $this->createForm(new EtablissementChoiceType(), null, array(
+        $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
             'method' => 'POST',
         ));
@@ -62,10 +62,8 @@ class PassageController extends Controller {
 
         $contrats = $this->get('contrat.manager')->getRepository()->findByEtablissement($etablissement);
 
-        krsort($contrats);
-
         $geojson = $this->buildGeoJson(array($etablissement));
-        $formEtablissement = $this->createForm(new EtablissementChoiceType(), array('etablissements' => $etablissement->getIdentifiant(), 'etablissement' => $etablissement), array(
+        $formEtablissement = $this->createForm(EtablissementChoiceType::class, array('etablissements' => $etablissement->getIdentifiant(), 'etablissement' => $etablissement), array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
             'method' => 'POST',
         ));
