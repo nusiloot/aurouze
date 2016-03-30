@@ -91,4 +91,29 @@ class FactureController extends Controller {
         return $this->redirectToRoute('facture_etablissement', array('id' => $etablissement->getId()));
     }
 
+    /**
+     * @Route("/pdf/{id}", name="facture_pdf")
+     * @ParamConverter("etablissement", class="AppBundle:Facture")
+     */
+    public function pdfAction(Request $request, Facture $facture) {
+
+        $html = $this->renderView('facture/pdf.html.twig', array(
+                'facture' => $facture
+            ));
+
+        if($request->get('output') == 'html') {
+
+            return new Response($html, 200);
+        }
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+                200,
+                array(
+                    'Content-Type'          => 'application/pdf',
+                    'Content-Disposition'   => 'attachment; filename="file.pdf"'
+                )
+        );
+    }
+
 }
