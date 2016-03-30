@@ -553,14 +553,12 @@ class Contrat {
         return $this->statut;
     }
 
-
     /**
      * Add mouvement
      *
      * @param AppBundle\Document\Mouvement $mouvement
      */
-    public function addMouvement(\AppBundle\Document\Mouvement $mouvement)
-    {
+    public function addMouvement(\AppBundle\Document\Mouvement $mouvement) {
         $this->mouvements[] = $mouvement;
     }
 
@@ -569,8 +567,7 @@ class Contrat {
      *
      * @param AppBundle\Document\Mouvement $mouvement
      */
-    public function removeMouvement(\AppBundle\Document\Mouvement $mouvement)
-    {
+    public function removeMouvement(\AppBundle\Document\Mouvement $mouvement) {
         $this->mouvements->removeElement($mouvement);
     }
 
@@ -579,8 +576,7 @@ class Contrat {
      *
      * @return \Doctrine\Common\Collections\Collection $mouvements
      */
-    public function getMouvements()
-    {
+    public function getMouvements() {
         return $this->mouvements;
     }
 
@@ -600,17 +596,27 @@ class Contrat {
     }
 
     public function getNbPassagePrevu() {
-        if ($this->getNbPassages()) {
-            return $this->getNbPassages();
-        }
+        return count($this->getPassages());
+        /* if ($this->getNbPassages()) {
+          return $this->getNbPassages();
+          }
+          foreach ($this->getPassages() as $passage) {
+          if (preg_match("/Passage[n° ]*[0-9]+ sur ([0-9]+)/i", $passage->getLibelle(), $matches)) {
+
+          return $matches[1];
+          }
+          }
+
+          return 1;
+         */
+    }
+
+    public function getNbPassagesRealises() {
+        $realises = 0;
         foreach ($this->getPassages() as $passage) {
-            if (preg_match("/Passage[n° ]*[0-9]+ sur ([0-9]+)/i", $passage->getLibelle(), $matches)) {
-
-                return $matches[1];
-            }
+            $realises+=($passage->isRealise());
         }
-
-        return 1;
+        return $realises;
     }
 
     public function getPassagesSorted() {
@@ -626,27 +632,26 @@ class Contrat {
     }
 
     public function updateObject() {
-    	if (!$this->getNbPassages()) {
-    		$max = 0;
-    		foreach ($this->getPrestations() as $prestation) {
-    			if ($prestation->getNbPassages() > $max) {
-    				$max = $prestation->getNbPassages();
-    			}
-    		}
-    		$this->setNbPassages($max);
-    	}
+        if (!$this->getNbPassages()) {
+            $max = 0;
+            foreach ($this->getPrestations() as $prestation) {
+                if ($prestation->getNbPassages() > $max) {
+                    $max = $prestation->getNbPassages();
+                }
+            }
+            $this->setNbPassages($max);
+        }
     }
 
     public function getHumanDureePassage() {
-    	$duree = $this->getDureePassage();
-    	$heure = floor($duree / 60);
-    	return sprintf('%02d',$heure).'h'.sprintf('%02d',((($duree / 60) - $heure) * 60));
-
+        $duree = $this->getDureePassage();
+        $heure = floor($duree / 60);
+        return sprintf('%02d', $heure) . 'h' . sprintf('%02d', ((($duree / 60) - $heure) * 60));
     }
 
     public function getPrixMouvements() {
         $prix = 0;
-        foreach($this->getMouvements() as $mouvement) {
+        foreach ($this->getMouvements() as $mouvement) {
             $prix = $prix + $mouvement->getPrix();
         }
 
@@ -665,7 +670,7 @@ class Contrat {
     }
 
     public function generateMouvement() {
-        if($this->getPrixRestant() <= 0 || $this->getNbFacturesRestantes() <= 0) {
+        if ($this->getPrixRestant() <= 0 || $this->getNbFacturesRestantes() <= 0) {
             return;
         }
         $mouvement = new Mouvement();
@@ -750,8 +755,8 @@ class Contrat {
             if ($cpt >= $compteurFacturation) {
                 $passagesDatesArray[$date]->mouvement_declenchable = 1;
                 $compteurFacturation+=$facturationInterval;
-            }else{
-                 $passagesDatesArray[$date]->mouvement_declenchable = 0;
+            } else {
+                $passagesDatesArray[$date]->mouvement_declenchable = 0;
             }
             $cpt++;
         }

@@ -1,0 +1,74 @@
+{
+  "checksum": {
+    "previous": "e42f7aa83c019a4564ccc830b59370e8004711ebccc82f69e326b4c390d2895c",
+    "current": "e42f7aa83c019a4564ccc830b59370e8004711ebccc82f69e326b4c390d2895c"
+  },
+  "fonts": [
+    "./aurouze.ttf",
+    "./aurouze.svg",
+    "./aurouze.woff",
+    "./aurouze.eot"
+  ],
+  "glyphs": {
+    "cafard": {
+      "codepoint": 61696,
+      "source": "svg/cafard.svg"
+    },
+    "chenille": {
+      "codepoint": 61697,
+      "source": "svg/chenille.svg"
+    },
+    "marker": {
+      "codepoint": 61698,
+      "source": "svg/marker.svg"
+    },
+    "moustique": {
+      "codepoint": 61699,
+      "source": "svg/moustique.svg"
+    },
+    "pigeon": {
+      "codepoint": 61700,
+      "source": "svg/pigeon.svg"
+    },
+    "puce": {
+      "codepoint": 61701,
+      "source": "svg/puce.svg"
+    },
+    "rongeur": {
+      "codepoint": 61702,
+      "source": "svg/rongeur.svg"
+    }
+  },
+  "options": {
+    "autowidth": false,
+    "config": "fontcustom.yml",
+    "css_selector": ".icon-{{glyph}}",
+    "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
+    "font_name": "aurouze",
+    "force": false,
+    "input": {
+      "templates": "svg",
+      "vectors": "svg"
+    },
+    "no_hash": true,
+    "output": {
+      "css": ".",
+      "fonts": ".",
+      "preview": "."
+    },
+    "preprocessor_path": null,
+    "quiet": false,
+    "templates": [
+      "css",
+      "preview"
+    ]
+  },
+  "templates": [
+    "./aurouze.css",
+    "./aurouze-preview.html"
+  ]
+}
