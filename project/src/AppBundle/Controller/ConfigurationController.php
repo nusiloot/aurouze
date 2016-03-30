@@ -20,6 +20,7 @@ class ConfigurationController extends Controller {
         $configuration = $dm->getRepository('AppBundle:Configuration')->findConfiguration();
         if(!$configuration){
            $configuration = new Configuration();
+           $configuration->setId(Configuration::PREFIX); 
         }
         return $this->render('configuration/visualisation.html.twig', array('configuration' => $configuration));
     }
@@ -33,7 +34,7 @@ class ConfigurationController extends Controller {
         $configuration = $dm->getRepository('AppBundle:Configuration')->findConfiguration();
         if(!$configuration){
             $configuration = new Configuration();
-            $configuration->setId("CONFIGURATION"); 
+            $configuration->setId(Configuration::PREFIX); 
             $dm->persist($configuration);
             $dm->flush();
         }

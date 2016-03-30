@@ -117,4 +117,12 @@ class Configuration {
         return $this->produits;
     }
 
+    public function getPrestationsArray() {
+        $prestationsType = array();
+        foreach ($this->getPrestations() as $prestation) {
+            $prestationsType[$prestation->getId()] = $prestation->getNom();
+        }
+        return $prestationsType;
+    }
+
 }

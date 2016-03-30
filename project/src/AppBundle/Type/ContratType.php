@@ -44,7 +44,7 @@ class ContratType extends AbstractType {
                 ->add('save', SubmitType::class, array('label' => 'Suivant', "attr" => array("class" => "btn btn-success pull-right")));
         
         $builder->add('prestations', CollectionType::class, array(
-                'entry_type' => new PrestationType($this->container, $this->dm),
+                'entry_type' => new PrestationType($this->dm),
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,

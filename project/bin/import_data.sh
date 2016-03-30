@@ -26,6 +26,28 @@ echo "Récupération des users"
 
 cat $DATA_DIR/tblUser.csv > $DATA_DIR/users.csv
 
+
+##### Récupération des types de prestations #####
+
+echo "Récupération des types de prestations"
+
+cat $DATA_DIR/vuePrestationType.csv | tr -d "\r" | grep -v "RefPrestationType;" | awk -F ';'  '{
+id=$1;
+nom=$2;
+if($3 != ""){
+    nom=nom " - " $3;
+}
+if($4 != ""){
+    nom=nom " - " $4;
+}
+if($5 != ""){
+    nom=nom " - " $5;
+}
+
+print $1 ";" $2 ";" $3 ";" $4 ";" $5 ";" nom;
+ 
+}' > $DATA_DIR/prestationType.csv
+
 ##### Récupération des Etablissements #####
 
 echo "Récupération des établissements"
@@ -75,8 +97,27 @@ cat $DATA_DIR/tblUtilisateur.csv | tr -d '\r' | cut -d ";" -f 1,2 | sed 's/^.*Re
 
 join -t ";" -1 4 -2 1 $DATA_DIR/passagesadresses.csv $DATA_DIR/techniciens.csv | sort -r > $DATA_DIR/passagesadressestechniciens.csv
 
-#head -n 1 $DATA_DIR/passagesadressestechniciens.csv | tr ";" "\n" | awk -F ";" 'BEGIN { nb=0 } { nb = nb + 1; print nb ";" $0 }'
-cat $DATA_DIR/passagesadressestechniciens.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
+cat $DATA_DIR/tblPassagePrestationType.csv | tr -d '\r' | grep -v "RefPassagePrestationType;" > $DATA_DIR/tblPassagePrestationType.csv.tmp
+
+rm $DATA_DIR/passagesadressestechniciensprestation.csv;
+touch $DATA_DIR/passagesadressestechniciensprestation.csv;
+
+while read line
+do
+   IDENTIFIANT=`echo $line | cut -d ';' -f 1`;
+   PRESTATIONROWS=`grep -E "^[0-9]+;$IDENTIFIANT;" $DATA_DIR/tblPassagePrestationType.csv.tmp | cut -d ";" -f 3`;
+   
+   PRESTATIONSVAR="";
+   for i in ${PRESTATIONROWS[@]};
+   do 
+      PRESTATION=`grep -E "^$i;" $DATA_DIR/prestationType.csv | cut -d ";" -f 6`;     
+      PRESTATIONSVAR=$PRESTATION","$PRESTATIONSVAR;
+   done
+   echo $line";"$PRESTATIONSVAR >> $DATA_DIR/passagesadressestechniciensprestation.csv;
+   
+done < $DATA_DIR/passagesadressestechniciens.csv
+
+cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
     etablissement_id=sprintf("%06d", $25);
     d=$7;
     d_creation=$19;
@@ -130,12 +171,13 @@ cat $DATA_DIR/passagesadressestechniciens.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+
     description=$17;
     technicien=$26;
     contrat_id=$3;
+    prestations=$27;
 
     if(date_passage_debut && date_passage_debut < "2013-01-01 00:00:00") {
         next;
     }
 
-    print date_creation ";" etablissement_id ";" date_passage_debut ";;" duree ";" technicien ";" libelle ";" description ";" contrat_id
+    print date_creation ";" etablissement_id ";" date_passage_debut ";;" duree ";" technicien ";" libelle ";" description ";" contrat_id ";" prestations
 
 }' > $DATA_DIR/passages.csv
 
@@ -191,6 +233,9 @@ cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)
 echo "Import des users"
 
 php app/console importer:csv user.importer $DATA_DIR/users.csv
+
+echo "Import des types de prestations"
+php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestationType.csv
 
 echo "Import des etablissements"
 

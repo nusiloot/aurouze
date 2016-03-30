@@ -15,6 +15,7 @@ namespace AppBundle\Import;
  */
 use AppBundle\Document\Passage;
 use AppBundle\Document\UserInfos;
+use AppBundle\Document\Prestation;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Manager\EtablissementManager;
@@ -40,6 +41,7 @@ class PassageCsvImporter {
     const CSV_LIBELLE = 6;
     const CSV_DESCRIPTION = 7;
     const CSV_CONTRAT_ID = 8;
+    const CSV_PRESTATIONS = 9;
 
     public function __construct(DocumentManager $dm, PassageManager $pm, EtablissementManager $em, UserManager $um, ContratManager $cm) {
         $this->dm = $dm;
@@ -56,6 +58,9 @@ class PassageCsvImporter {
 
         $i = 0;
         $cptTotal = 0;
+
+        $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
+      
         foreach ($csv as $data) {
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
@@ -89,20 +94,33 @@ class PassageCsvImporter {
             }
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
+            if ($data[self::CSV_PRESTATIONS]) {
+                $prestations = explode(',',$data[self::CSV_PRESTATIONS]);
+                foreach ($prestations as $prestationNom) {
+                    if(trim($prestationNom)!= ""){
+                        if(!in_array($prestationNom, $prestationsType)){
+                            $output->writeln(sprintf("<error>La prestation : %s n'existe pas dans la configuration </error>", $prestationNom));
+                        }
+                        $prestation = new Prestation();
+                        $prestation->setNom($prestationNom);
+                        $passage->addPrestation($prestation);
+                    }
+                }
+            }
 
             $contrats = $this->cm->getRepository()->createQueryBuilder('Contrat')
-        	->field('dateDebut')->lte($passage->getDatePrevision())
-        	->field('dateFin')->gte($passage->getDatePrevision())
-        	->field('etablissement.id')->equals($etablissement->getId())
-        	->getQuery()->execute();
+                            ->field('dateDebut')->lte($passage->getDatePrevision())
+                            ->field('dateFin')->gte($passage->getDatePrevision())
+                            ->field('etablissement.id')->equals($etablissement->getId())
+                            ->getQuery()->execute();
 
             $contrat = null;
-            foreach($contrats as $c) {
+            foreach ($contrats as $c) {
                 $contrat = $c;
                 break;
             }
 
-            if(!$contrat) {
+            if (!$contrat) {
                 $output->writeln(sprintf("<error>Aucun contrat trouvé pour l'établissement %s</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
             }
@@ -119,6 +137,7 @@ class PassageCsvImporter {
                 $userInfos->setIdentite($data[self::CSV_TECHNICIEN]);
             }
             $passage->setTechnicienInfos($userInfos);
+
 
             $this->dm->persist($passage);
             $this->dm->persist($contrat);
