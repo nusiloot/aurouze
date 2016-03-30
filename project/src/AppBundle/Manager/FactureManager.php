@@ -39,7 +39,7 @@ class FactureManager {
             $ligne->setLibelle("");
             $ligne->setQuantite(1);
             $ligne->setPrixUnitaire($mouvement->getPrix());
-            $ligne->setTvaTaux(0.20);
+            $ligne->setTauxTaxe(0.20);
             $facture->addLigne($ligne);
         }
 

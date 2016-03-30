@@ -1,0 +1,57 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+<div class="row">
+    <div class="col-xs-6">
+        <p>
+            <span class="lead">Ets AUROUZE Julien</span><br />
+            8, rue des Halles<br />
+            75001, PARIS<br />
+            Tél: 01 40 41 16 20<br />
+            Fax: 01 40 41 16 21
+        </p>
+    </div>
+    <div class="col-xs-6">
+        <h2>FACTURE n°20148363</h2>
+    </div>
+</div>
+<table class="table table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th class="col-xs-6">Libellé</th>
+            <th class="text-center col-xs-1">Quantité</th>
+            <th class="text-right col-xs-2">Prix Unitaire <span class="text-muted">HT</span></th>
+            <th class="text-right col-xs-1">Taux&nbsp;TVA</th>
+            <th class="text-right col-xs-2">Sous-total <span class="text-muted">HT</span></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for ligne in facture.lignes %}
+        <tr>
+            <td>{{ ligne.libelle }}</td>
+            <td class="text-center">{{ ligne.quantite }}</td>
+            <td class="text-right">{{ ligne.prixUnitaire }}</td>
+            <td class="text-right">{{ ligne.tauxTaxe }}</td>
+            <td class="text-right">{{ ligne.montantHT }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    <head>
+        <tr>
+            <th></th>
+            <th colspan="2">Total HT</th>
+            <th colspan="2" class="text-right">{{ facture.montantHT }}</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th colspan="2">TVA</th>
+            <th colspan="2" class="text-right">{{ facture.montantTaxe }}</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th colspan="2">Total TTC</th>
+            <th colspan="2" class="text-right">{{ facture.montantTTC }}</th>
+        </tr>
+    </thead>
+</table>
+{% endblock %}

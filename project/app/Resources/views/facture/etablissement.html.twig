@@ -16,7 +16,7 @@
         <tbody>
         {% for facture in factures %}
             <tr>
-                <td>{{ facture.id }}</td>
+                <td><a href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.id }}</a></td>
                 <td>{{ facture.montantHT }} €</td>
             </tr>
         {% endfor %}

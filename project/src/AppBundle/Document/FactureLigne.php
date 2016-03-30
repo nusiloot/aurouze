@@ -21,13 +21,22 @@ class FactureLigne {
     /**
      * @MongoDB\Float
      */
-    protected $tvaTaux;
+    protected $tauxTaxe;
 
     /**
      * @MongoDB\Float
      */
     protected $quantite;
 
+    /**
+     * @MongoDB\Float
+     */
+    protected $montantHT;
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $montantTaxe;
 
     /**
      * Set libelle
@@ -95,30 +104,74 @@ class FactureLigne {
         return $this->quantite;
     }
 
+    public function update() {
+        $this->montantHT = round($this->getQuantite() * $this->getPrixUnitaire(), 2);
+        $this->montantTaxe = round($this->getQuantite() * $this->getTauxTaxe(), 2);
+    }
+
     /**
-     * Set tvaTaux
+     * Set tauxTaxe
      *
-     * @param float $tvaTaux
+     * @param float $tauxTaxe
      * @return self
      */
-    public function setTvaTaux($tvaTaux)
+    public function setTauxTaxe($tauxTaxe)
     {
-        $this->tvaTaux = $tvaTaux;
+        $this->tauxTaxe = $tauxTaxe;
         return $this;
     }
 
     /**
-     * Get tvaTaux
+     * Get tauxTaxe
      *
-     * @return float $tvaTaux
+     * @return float $tauxTaxe
      */
-    public function getTvaTaux()
+    public function getTauxTaxe()
     {
-        return $this->tvaTaux;
+        return $this->tauxTaxe;
     }
 
-    public function getMontantHT() {
+    /**
+     * Set montantHT
+     *
+     * @param float $montantHT
+     * @return self
+     */
+    public function setMontantHT($montantHT)
+    {
+        $this->montantHT = $montantHT;
+        return $this;
+    }
 
-        return $this->getPrixUnitaire() * $this->getQuantite();
+    /**
+     * Get montantHT
+     *
+     * @return float $montantHT
+     */
+    public function getMontantHT()
+    {
+        return $this->montantHT;
+    }
+
+    /**
+     * Set montantTaxe
+     *
+     * @param float $montantTaxe
+     * @return self
+     */
+    public function setMontantTaxe($montantTaxe)
+    {
+        $this->montantTaxe = $montantTaxe;
+        return $this;
+    }
+
+    /**
+     * Get montantTaxe
+     *
+     * @return float $montantTaxe
+     */
+    public function getMontantTaxe()
+    {
+        return $this->montantTaxe;
     }
 }

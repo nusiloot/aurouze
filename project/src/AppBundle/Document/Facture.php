@@ -44,7 +44,7 @@ class Facture {
     /**
      * @MongoDB\Float
      */
-    protected $montantTVA;
+    protected $montantTaxe;
 
     /**
      * @MongoDB\EmbedMany(targetDocument="FactureLigne")
@@ -62,10 +62,13 @@ class Facture {
     }
 
     public function update() {
-
         foreach($this->getLignes() as $ligne) {
+            $ligne->update();
             $this->setMontantHT($this->getMontantHT() + $ligne->getMontantHT());
+            $this->setMontantTaxe($this->getMontantTaxe() + $ligne->getMontantTaxe());
         }
+        $this->setMontantHT(round($this->getMontantHT(), 2));
+        $this->setMontantTTC(round($this->getMontantHT() + $this->getMontantTaxe()));
     }
 
     /**
@@ -232,25 +235,26 @@ class Facture {
         return $this->montantTTC;
     }
 
+
     /**
-     * Set montantTVA
+     * Set montantTaxe
      *
-     * @param float $montantTVA
+     * @param float $montantTaxe
      * @return self
      */
-    public function setMontantTVA($montantTVA)
+    public function setMontantTaxe($montantTaxe)
     {
-        $this->montantTVA = $montantTVA;
+        $this->montantTaxe = $montantTaxe;
         return $this;
     }
 
     /**
-     * Get montantTVA
+     * Get montantTaxe
      *
-     * @return float $montantTVA
+     * @return float $montantTaxe
      */
-    public function getMontantTVA()
+    public function getMontantTaxe()
     {
-        return $this->montantTVA;
+        return $this->montantTaxe;
     }
 }
