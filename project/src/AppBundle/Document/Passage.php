@@ -65,6 +65,11 @@ class Passage {
      * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="passages")
      */
     protected $etablissement;
+   
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="User", inversedBy="passages")
+     */
+    protected $techniciens;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="AppBundle\Document\EtablissementInfos")
@@ -396,26 +401,6 @@ class Passage {
     }
 
     /**
-     * Set technicien
-     *
-     * @param string $technicien
-     * @return self
-     */
-    public function setTechnicien($technicien) {
-        $this->technicien = $technicien;
-        return $this;
-    }
-
-    /**
-     * Get technicien
-     *
-     * @return string $technicien
-     */
-    public function getTechnicien() {
-        return $this->technicien;
-    }
-
-    /**
      * Set statut
      *
      * @param string $statut
@@ -590,6 +575,36 @@ class Passage {
         return $this->numeroContratArchive;
     }
 
+
+    /**
+     * Add technicien
+     *
+     * @param AppBundle\Document\User $technicien
+     */
+    public function addTechnicien(\AppBundle\Document\User $technicien)
+    {
+        $this->techniciens[] = $technicien;
+    }
+
+    /**
+     * Remove technicien
+     *
+     * @param AppBundle\Document\User $technicien
+     */
+    public function removeTechnicien(\AppBundle\Document\User $technicien)
+    {
+        $this->techniciens->removeElement($technicien);
+    }
+
+    /**
+     * Get techniciens
+     *
+     * @return \Doctrine\Common\Collections\Collection $techniciens
+     */
+    public function getTechniciens()
+    {
+        return $this->techniciens;
+    }
 
     /**
      * Add technicien
