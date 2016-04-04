@@ -55,6 +55,11 @@ class Contrat {
      */
     protected $identifiant;
     
+    /**
+     * @MongoDB\String
+     */
+    protected $numeroArchive;
+    
      /**
      * @MongoDB\Boolean
      */
