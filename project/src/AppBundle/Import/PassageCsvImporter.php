@@ -132,11 +132,7 @@ class PassageCsvImporter {
             $passage->setContrat($contrat);
             $passage->setNumeroContratArchive($contrat->getNumeroArchive());
             $contrat->addPassage($etablissement,$passage);
-//            if(!count($contrat->getContratPassages())){
-//                $contratPassages = new ContratPassages();
-//            }else{
-//               $contratPassages = $contrat->getContratPassage 
-//            }
+            
             $this->dm->persist($contrat);
             $this->dm->persist($passage);
 

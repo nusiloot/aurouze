@@ -67,11 +67,6 @@ class Passage {
     protected $etablissement;
    
     /**
-     * @MongoDB\ReferenceMany(targetDocument="User", inversedBy="passages")
-     */
-    protected $techniciens;
-
-    /**
      * @MongoDB\EmbedOne(targetDocument="AppBundle\Document\EtablissementInfos")
      */
     protected $etablissementInfos;
