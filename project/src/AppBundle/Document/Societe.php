@@ -55,6 +55,12 @@ class Societe {
      * @MongoDB\EmbedOne(targetDocument="Adresse")
      */
     protected $adresse;
+    
+     /***
+     *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe") 
+     */
+    protected $etablissements = array();
+    
 
 
     public function generateId() {
