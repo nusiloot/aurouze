@@ -14,6 +14,7 @@ namespace AppBundle\Import;
  * @author mathurin
  */
 use AppBundle\Document\Passage;
+use AppBundle\Document\Contrat;
 use AppBundle\Document\UserInfos;
 use AppBundle\Document\Prestation;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,6 +24,8 @@ use AppBundle\Manager\UserManager;
 use AppBundle\Manager\ContratManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Import\CsvFile;
+use Behat\Transliterator\Transliterator;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class PassageCsvImporter {
 
@@ -58,9 +61,12 @@ class PassageCsvImporter {
 
         $i = 0;
         $cptTotal = 0;
+        
+        $progress = new ProgressBar($output, 100);
+        $progress->start();
 
         $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
-      
+
         foreach ($csv as $data) {
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
@@ -95,10 +101,10 @@ class PassageCsvImporter {
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
             if ($data[self::CSV_PRESTATIONS]) {
-                $prestations = explode(',',$data[self::CSV_PRESTATIONS]);
+                $prestations = explode(',', $data[self::CSV_PRESTATIONS]);
                 foreach ($prestations as $prestationNom) {
-                    if(trim($prestationNom)!= ""){
-                        if(!in_array($prestationNom, $prestationsType)){
+                    if (trim($prestationNom) != "") {
+                        if (!in_array($prestationNom, $prestationsType)) {
                             $output->writeln(sprintf("<error>La prestation : %s n'existe pas dans la configuration </error>", $prestationNom));
                         }
                         $prestation = new Prestation();
@@ -107,34 +113,26 @@ class PassageCsvImporter {
                     }
                 }
             }
-
-            $contrats = $this->cm->getRepository()->createQueryBuilder('Contrat')
-                            ->field('dateDebut')->lte($passage->getDatePrevision())
-                            ->field('dateFin')->gte($passage->getDatePrevision())
-                            ->field('etablissement.id')->equals($etablissement->getId())
-                            ->getQuery()->execute();
-
-            $contrat = null;
-            foreach ($contrats as $c) {
-                $contrat = $c;
-                break;
-            }
-
-            if (!$contrat) {
-                $output->writeln(sprintf("<error>Aucun contrat trouvé pour l'établissement %s</error>", $data[self::CSV_ETABLISSEMENT_ID]));
-                continue;
-            }
+            
+            $contrat = new Contrat();
+            $contrat->setId(Contrat::PREFIX.'-'.  sprintf("%06d",$data[self::CSV_CONTRAT_ID]));
 
             $passage->setContrat($contrat);
             $contrat->addPassage($passage);
 
             $userInfos = new UserInfos();
-            $user = $this->um->getRepository()->findOneByIdentite($data[self::CSV_TECHNICIEN]);
+            $prenomNomTechnicien = trim($data[self::CSV_TECHNICIEN]);
+            
+            $nomTechnicien = substr(strrchr($prenomNomTechnicien, " "), 1);
+            $prenomTechnicien = trim(str_replace($nomTechnicien, '', $prenomNomTechnicien));
+            $identifiantTechnicien = strtoupper(Transliterator::urlize($prenomTechnicien . ' ' . $nomTechnicien));
+            
+            $user = $this->um->getRepository()->findOneByIdentite($identifiantTechnicien);
             if ($user) {
                 $userInfos->copyFromUser($user);
             } else {
                 $userInfos->setCouleur("#ffffff");
-                $userInfos->setIdentite($data[self::CSV_TECHNICIEN]);
+                $userInfos->setIdentite($identifiantTechnicien);
             }
             $passage->setTechnicienInfos($userInfos);
 
@@ -144,8 +142,8 @@ class PassageCsvImporter {
 
             $i++;
             $cptTotal++;
-            if ($cptTotal % 1000 == 0) {
-                $output->writeln(sprintf("<info> %01.02f", ($cptTotal / (float) count($csv)) * 100) . "%  </info>");
+            if ($cptTotal % (count($csv) / 100) == 0) {
+                $progress->advance();
             }
             if ($i >= 10000) {
                 $this->dm->flush();
@@ -154,6 +152,7 @@ class PassageCsvImporter {
         }
 
         $this->dm->flush();
+        $progress->finish();
     }
 
 }

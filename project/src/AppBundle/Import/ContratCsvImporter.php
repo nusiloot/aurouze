@@ -79,6 +79,13 @@ class ContratCsvImporter {
                 $output->writeln(sprintf("<error>Le contrat %s avec l'établissement %s n'a pas la même société que dans la base : %s</error>", $data[self::CSV_ID_CONTRAT], $data[self::CSV_ID_ETABLISSEMENT], $data[self::CSV_ID_SOCIETE]));
                 continue;
             }
+            
+            $oldContrat = $this->cm->getRepository()->findOneById(Contrat::PREFIX . '-' . sprintf("%06d", $data[self::CSV_ID_CONTRAT]));
+            if (!$oldContrat) {
+                $output->writeln(sprintf("<error>Aucun ancien contrat dans la base ! (%s)</error>", sprintf("%06d", $data[self::CSV_ID_CONTRAT])));
+                continue;
+            }
+            
             $contrat = new Contrat();
             $contrat->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
             $contrat->setEtablissement($etablissement);
@@ -103,6 +110,12 @@ class ContratCsvImporter {
             $contrat->setNomenclature(str_replace('\n', "\n", $data[self::CSV_NOMENCLATURE]));
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
 
+            foreach ($oldContrat->getPassages() as $passage) {
+                $contrat->addPassage($passage);
+                $passage->setContrat($contrat);
+                $this->dm->persist($passage);
+            }
+            $this->dm->remove($oldContrat);
             $this->dm->persist($contrat);
             $i++;
             $cptTotal++;

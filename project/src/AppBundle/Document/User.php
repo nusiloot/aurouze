@@ -47,6 +47,11 @@ class User {
      * @MongoDB\String
      */
     protected $type;
+    
+    /***
+     *  @MongoDB\ReferenceMany(targetDocument="Passage", mappedBy="etablissement") 
+     */
+    protected $passages = array();
 
     public function generateId() {
         $this->setId(self::PREFIX . '-' . $this->identifiant);

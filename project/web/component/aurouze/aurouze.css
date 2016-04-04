@@ -1,0 +1,73 @@
+/*
+  Icon Font: aurouze
+*/
+
+@font-face {
+    font-family: "aurouze";
+    src: url("./aurouze.eot");
+    src: url("./aurouze.eot?#iefix") format("embedded-opentype"),
+        url("./aurouze.woff") format("woff"),
+        url("./aurouze.ttf") format("truetype"),
+        url("./aurouze.svg#aurouze") format("svg");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    @font-face {
+        font-family: "aurouze";
+        src: url("./aurouze.svg#aurouze") format("svg");
+    }
+}
+
+[data-icon]:before { content: attr(data-icon); }
+
+[data-icon]:before,
+.icon-cafard:before,
+.icon-chenille:before,
+.icon-marker:before,
+.icon-moustique:before,
+.icon-pigeon:before,
+.icon-puce:before,
+.icon-rongeur:before {
+    display: inline-block;
+    font-family: "aurouze";
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    line-height: 1;
+    text-decoration: inherit;
+    text-rendering: optimizeLegibility;
+    text-transform: none;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+}
+
+.icon-cafard:before { content: "\f100"; }
+.icon-chenille:before { content: "\f101"; }
+.icon-marker:before { content: "\f102"; }
+.icon-moustique:before { content: "\f103"; }
+.icon-pigeon:before { content: "\f104"; }
+.icon-puce:before { content: "\f105"; }
+.icon-rongeur:before { content: "\f106"; }
+
+.size-12 { font-size: 12px; }
+
+.size-14 { font-size: 14px; }
+
+.size-16 { font-size: 16px; }
+
+.size-18 { font-size: 18px; }
+
+.size-21 { font-size: 21px; }
+
+.size-24 { font-size: 24px; }
+
+.size-36 { font-size: 36px; }
+
+.size-48 { font-size: 48px; }
+
+.size-60 { font-size: 60px; }
+
+.size-72 { font-size: 72px; }

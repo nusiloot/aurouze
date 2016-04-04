@@ -60,7 +60,7 @@ class Passage {
      * @MongoDB\String
      */
     protected $etablissementIdentifiant;
-
+   
     /**
      * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="passages")
      */
@@ -81,10 +81,10 @@ class Passage {
      */
     protected $description;
 
-    /**
-     * @MongoDB\String
+   /**
+     * @MongoDB\ReferenceMany(targetDocument="User", inversedBy="techniciens")
      */
-    protected $technicien;
+    protected $passages;
 
     /**
      * @MongoDB\String
@@ -92,14 +92,9 @@ class Passage {
     protected $statut;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Contrat", inversedBy="passages")
+     * @MongoDB\ReferenceOne(targetDocument="Contrat")
      */
     protected $contrat;
-
-    /**
-     * @MongoDB\EmbedOne(targetDocument="UserInfos")
-     */
-    protected $technicienInfos;
 
     /**
      * @MongoDB\Boolean
@@ -113,7 +108,6 @@ class Passage {
 
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
-        $this->technicienInfos = new UserInfos();
         $this->mouvement_declenchable = false;
         $this->mouvement_declenche = false;
     }
@@ -439,26 +433,6 @@ class Passage {
     }
 
     /**
-     * Set technicienInfos
-     *
-     * @param AppBundle\Document\UserInfos $technicienInfos
-     * @return self
-     */
-    public function setTechnicienInfos(\AppBundle\Document\UserInfos $technicienInfos) {
-        $this->technicienInfos = $technicienInfos;
-        return $this;
-    }
-
-    /**
-     * Get technicienInfos
-     *
-     * @return AppBundle\Document\UserInfos $technicienInfos
-     */
-    public function getTechnicienInfos() {
-        return $this->technicienInfos;
-    }
-
-    /**
      * Set datePrevision
      *
      * @param date $datePrevision
@@ -602,5 +576,35 @@ class Passage {
     public function getPrestations()
     {
         return $this->prestations;
+    }
+
+    /**
+     * Add passage
+     *
+     * @param AppBundle\Document\User $passage
+     */
+    public function addPassage(\AppBundle\Document\User $passage)
+    {
+        $this->passages[] = $passage;
+    }
+
+    /**
+     * Remove passage
+     *
+     * @param AppBundle\Document\User $passage
+     */
+    public function removePassage(\AppBundle\Document\User $passage)
+    {
+        $this->passages->removeElement($passage);
+    }
+
+    /**
+     * Get passages
+     *
+     * @return \Doctrine\Common\Collections\Collection $passages
+     */
+    public function getPassages()
+    {
+        return $this->passages;
     }
 }

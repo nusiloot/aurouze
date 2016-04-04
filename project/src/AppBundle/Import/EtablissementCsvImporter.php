@@ -19,6 +19,7 @@ use AppBundle\Document\Coordonnees;
 use AppBundle\Manager\EtablissementManager as EtablissementManager;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class EtablissementCsvImporter extends CsvFile {
 
@@ -55,10 +56,18 @@ class EtablissementCsvImporter extends CsvFile {
         $csvFile = new CsvFile($file);
 
         $csv = $csvFile->getCsv();
+        $progress = new ProgressBar($output, 100);
+        $progress->start();
+        
         $cpt = 0;
+        $cptTotal = 0;
         foreach ($csv as $data) {
             $etablissement = $this->createFromImport($data);
             $this->dm->persist($etablissement);
+            $cptTotal++;
+            if ($cptTotal % (count($csv) / 100) == 0) {
+                $progress->advance();
+            }
             if ($cpt > 1000) {
                 $this->dm->flush();
                 $cpt = 0;
@@ -66,6 +75,7 @@ class EtablissementCsvImporter extends CsvFile {
             $cpt++;
         }
         $this->dm->flush();
+        $progress->finish();
     }
 
     public function createFromImport($ligne) {
