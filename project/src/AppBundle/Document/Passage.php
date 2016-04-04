@@ -587,16 +587,6 @@ class Passage {
     }
 
     /**
-     * Remove technicien
-     *
-     * @param AppBundle\Document\User $technicien
-     */
-    public function removeTechnicien(\AppBundle\Document\User $technicien)
-    {
-        $this->techniciens->removeElement($technicien);
-    }
-
-    /**
      * Get techniciens
      *
      * @return \Doctrine\Common\Collections\Collection $techniciens
@@ -607,16 +597,6 @@ class Passage {
     }
 
     /**
-     * Add technicien
-     *
-     * @param AppBundle\Document\User $technicien
-     */
-    public function addTechnicien(\AppBundle\Document\User $technicien)
-    {
-        $this->techniciens[] = $technicien;
-    }
-
-    /**
      * Remove technicien
      *
      * @param AppBundle\Document\User $technicien
@@ -624,15 +604,5 @@ class Passage {
     public function removeTechnicien(\AppBundle\Document\User $technicien)
     {
         $this->techniciens->removeElement($technicien);
-    }
-
-    /**
-     * Get techniciens
-     *
-     * @return \Doctrine\Common\Collections\Collection $techniciens
-     */
-    public function getTechniciens()
-    {
-        return $this->techniciens;
     }
 }
