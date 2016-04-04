@@ -24,8 +24,28 @@ fi
 
 echo "Récupération des users"
 
-cat $DATA_DIR/tblUser.csv > $DATA_DIR/users.csv
+cat $DATA_DIR/tblUtilisateur.csv | tr -d "\r" | sort -t ";" -k 1,1 > $DATA_DIR/tblUtilisateur.csv.sorted
 
+##### Récupération des Techniciens #####
+
+echo "Récupération des techniciens"
+
+cat $DATA_DIR/tbzTechnicien.csv | tr -d "\r" | sed -r 's/([0-9]+);([0-9]+)/\2;\1/g' | sort -t ";" -k 1,1 > $DATA_DIR/tbzTechnicien.csv.sorted
+
+join -t ';' -1 1 -2 1 $DATA_DIR/tblUtilisateur.csv.sorted $DATA_DIR/tbzTechnicien.csv.sorted > $DATA_DIR/techniciens.csv.tmp
+
+cat $DATA_DIR/techniciens.csv.tmp | sed -r 's/(.*)/\1;TECHNICIEN/g' > $DATA_DIR/techniciens.csv
+
+
+##### Récupération des Commerciaux #####
+
+echo "Récupération des commerciaux"
+
+cat $DATA_DIR/tbzCommercial.csv | tr -d "\r" | sed -r 's/([0-9]+);([0-9]+)/\2;\1/g' | sort -t ";" -k 1,1 > $DATA_DIR/tbzCommercial.csv.sorted
+
+join -t ';' -1 1 -2 1 $DATA_DIR/tblUtilisateur.csv.sorted $DATA_DIR/tbzCommercial.csv.sorted > $DATA_DIR/commerciaux.csv.tmp
+
+cat $DATA_DIR/commerciaux.csv.tmp | sed -r 's/(.*)/\1;COMMERCIAL/g' > $DATA_DIR/commerciaux.csv
 
 ##### Récupération des types de prestations #####
 
@@ -92,8 +112,6 @@ cat $DATA_DIR/tblPassageAdresse.csv | tr -d '\r' | sort -t ";" -k 2,2 > $DATA_DI
 cat  $DATA_DIR/tblPassage.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/^.*RefPassage;/RefPassage;/' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/passages.cleaned.sorted.csv
 
 join -t ';' -1 1 -2 2 $DATA_DIR/passages.cleaned.sorted.csv $DATA_DIR/passageAdresse.sorted.csv | sort -t ";" -k 4,4 > $DATA_DIR/passagesadresses.csv
-
-cat $DATA_DIR/tblUtilisateur.csv | tr -d '\r' | cut -d ";" -f 1,2 | sed 's/^.*RefUtilisateur;/RefTechnicien;/' | sort -t ";" -k 1,1 > $DATA_DIR/techniciens.csv
 
 join -t ";" -1 4 -2 1 $DATA_DIR/passagesadresses.csv $DATA_DIR/techniciens.csv | sort -r > $DATA_DIR/passagesadressestechniciens.csv
 
@@ -171,7 +189,7 @@ cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[
     description=$17;
     technicien=$26;
     contrat_id=$3;
-    prestations=$27;
+    prestations=$47;
 
     if(date_passage_debut && date_passage_debut < "2013-01-01 00:00:00") {
         next;
@@ -230,9 +248,14 @@ cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)
     print contrat_id";"etablissement_id";"societe_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";";
 }' > $DATA_DIR/contrats.csv;
 
-echo "Import des users"
 
-php app/console importer:csv user.importer $DATA_DIR/users.csv
+echo "Import des commerciaux"
+
+php app/console importer:csv user.importer $DATA_DIR/commerciaux.csv
+
+echo "Import des techniciens"
+
+php app/console importer:csv user.importer $DATA_DIR/techniciens.csv
 
 echo "Import des types de prestations"
 php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestationType.csv
@@ -245,10 +268,11 @@ echo "Import des sociétés"
 
 php app/console importer:csv societe.importer $DATA_DIR/societes.csv
 
+echo "Import des passages"
+
+php app/console importer:csv passage.importer $DATA_DIR/passages.csv
+
 echo "Import des contrats"
 
 php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv
 
-echo "Import des passages"
-
-php app/console importer:csv passage.importer $DATA_DIR/passages.csv

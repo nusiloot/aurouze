@@ -8,7 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\User;
 use AppBundle\Document\Prestation;
-use AppBundle\Document\Passage;
+use AppBundle\Document\Societe;
+use AppBundle\Document\ContratPassages;
 use AppBundle\Document\Mouvement;
 
 /**
@@ -25,9 +26,9 @@ class Contrat {
     protected $id;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="contrats")
+     * @MongoDB\ReferenceMany(targetDocument="Etablissement", inversedBy="contrats")
      */
-    protected $etablissement;
+    protected $etablissements;
 
     /**
      * @MongoDB\ReferenceOne(targetDocument="User")
@@ -40,14 +41,24 @@ class Contrat {
     protected $technicien;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Passage")
+     * @MongoDB\EmbedMany(targetDocument="ContratPassages", strategy="set")
      */
-    protected $passages;
+    protected $contratPassages;
+
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="Societe")
+     */
+    protected $societe;
 
     /**
      * @MongoDB\String
      */
     protected $identifiant;
+    
+     /**
+     * @MongoDB\Boolean
+     */
+    protected $multiTechnicien;
 
     /**
      * @MongoDB\String
@@ -125,7 +136,6 @@ class Contrat {
     protected $statut;
 
     public function __construct() {
-        $this->passages = new ArrayCollection();
         $this->prestations = new ArrayCollection();
         $this->mouvements = new ArrayCollection();
     }
@@ -160,26 +170,6 @@ class Contrat {
     }
 
     /**
-     * Set etablissement
-     *
-     * @param AppBundle\Document\Etablissement $etablissement
-     * @return self
-     */
-    public function setEtablissement(\AppBundle\Document\Etablissement $etablissement) {
-        $this->etablissement = $etablissement;
-        return $this;
-    }
-
-    /**
-     * Get etablissement
-     *
-     * @return AppBundle\Document\Etablissement $etablissement
-     */
-    public function getEtablissement() {
-        return $this->etablissement;
-    }
-
-    /**
      * Set commercial
      *
      * @param AppBundle\Document\User $commercial
@@ -197,53 +187,6 @@ class Contrat {
      */
     public function getCommercial() {
         return $this->commercial;
-    }
-
-    /**
-     * Set technicien
-     *
-     * @param AppBundle\Document\User $technicien
-     * @return self
-     */
-    public function setTechnicien(\AppBundle\Document\User $technicien) {
-        $this->technicien = $technicien;
-        return $this;
-    }
-
-    /**
-     * Get technicien
-     *
-     * @return AppBundle\Document\User $technicien
-     */
-    public function getTechnicien() {
-        return $this->technicien;
-    }
-
-    /**
-     * Add passage
-     *
-     * @param AppBundle\Document\Passage $passage
-     */
-    public function addPassage(\AppBundle\Document\Passage $passage) {
-        $this->passages[] = $passage;
-    }
-
-    /**
-     * Remove passage
-     *
-     * @param AppBundle\Document\Passage $passage
-     */
-    public function removePassage(\AppBundle\Document\Passage $passage) {
-        $this->passages->removeElement($passage);
-    }
-
-    /**
-     * Get passages
-     *
-     * @return \Doctrine\Common\Collections\Collection $passages
-     */
-    public function getPassages() {
-        return $this->passages;
     }
 
     /**
@@ -585,30 +528,8 @@ class Contrat {
         return ($this->getDateFin() < new \DateTime());
     }
 
-    public function getLastPassageCreated() {
-        $passages = array();
-        foreach ($this->getPassages() as $passage) {
-            if ($passage->getDatePrevision()) {
-                $passages[$passage->getDatePrevision()->format('Ymd')] = $passage;
-            }
-        }
-        return end($passages);
-    }
-
     public function getNbPassagePrevu() {
         return count($this->getPassages());
-        /* if ($this->getNbPassages()) {
-          return $this->getNbPassages();
-          }
-          foreach ($this->getPassages() as $passage) {
-          if (preg_match("/Passage[n° ]*[0-9]+ sur ([0-9]+)/i", $passage->getLibelle(), $matches)) {
-
-          return $matches[1];
-          }
-          }
-
-          return 1;
-         */
     }
 
     public function getNbPassagesRealises() {
@@ -763,4 +684,130 @@ class Contrat {
         return $passagesDatesArray;
     }
 
+
+    /**
+     * Add etablissement
+     *
+     * @param AppBundle\Document\Etablissement $etablissement
+     */
+    public function addEtablissement(\AppBundle\Document\Etablissement $etablissement)
+    {
+        $this->etablissements[] = $etablissement;
+    }
+
+    /**
+     * Remove etablissement
+     *
+     * @param AppBundle\Document\Etablissement $etablissement
+     */
+    public function removeEtablissement(\AppBundle\Document\Etablissement $etablissement)
+    {
+        $this->etablissements->removeElement($etablissement);
+    }
+
+    /**
+     * Get etablissements
+     *
+     * @return \Doctrine\Common\Collections\Collection $etablissements
+     */
+    public function getEtablissements()
+    {
+        return $this->etablissements;
+    }
+
+    /**
+     * Set technicien
+     *
+     * @param AppBundle\Document\User $technicien
+     * @return self
+     */
+    public function setTechnicien(\AppBundle\Document\User $technicien)
+    {
+        $this->technicien = $technicien;
+        return $this;
+    }
+
+    /**
+     * Get technicien
+     *
+     * @return AppBundle\Document\User $technicien
+     */
+    public function getTechnicien()
+    {
+        return $this->technicien;
+    }
+
+    /**
+     * Add contratPassage
+     *
+     * @param AppBundle\Document\ContratPassages $contratPassage
+     */
+    public function addContratPassage(\AppBundle\Document\ContratPassages $contratPassage)
+    {
+        $this->contratPassages[] = $contratPassage;
+    }
+
+    /**
+     * Remove contratPassage
+     *
+     * @param AppBundle\Document\ContratPassages $contratPassage
+     */
+    public function removeContratPassage(\AppBundle\Document\ContratPassages $contratPassage)
+    {
+        $this->contratPassages->removeElement($contratPassage);
+    }
+
+    /**
+     * Get contratPassages
+     *
+     * @return \Doctrine\Common\Collections\Collection $contratPassages
+     */
+    public function getContratPassages()
+    {
+        return $this->contratPassages;
+    }
+
+    /**
+     * Set societe
+     *
+     * @param AppBundle\Document\Societe $societe
+     * @return self
+     */
+    public function setSociete(\AppBundle\Document\Societe $societe)
+    {
+        $this->societe = $societe;
+        return $this;
+    }
+
+    /**
+     * Get societe
+     *
+     * @return AppBundle\Document\Societe $societe
+     */
+    public function getSociete()
+    {
+        return $this->societe;
+    }
+
+    /**
+     * Set multiTechnicien
+     *
+     * @param boolean $multiTechnicien
+     * @return self
+     */
+    public function setMultiTechnicien($multiTechnicien)
+    {
+        $this->multiTechnicien = $multiTechnicien;
+        return $this;
+    }
+
+    /**
+     * Get multiTechnicien
+     *
+     * @return boolean $multiTechnicien
+     */
+    public function getMultiTechnicien()
+    {
+        return $this->multiTechnicien;
+    }
 }
