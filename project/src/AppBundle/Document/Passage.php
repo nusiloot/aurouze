@@ -41,7 +41,7 @@ class Passage {
      */
     protected $societeIdentifiant;
 
-     /**
+    /**
      * @MongoDB\Date
      */
     protected $datePrevision;
@@ -60,7 +60,7 @@ class Passage {
      * @MongoDB\String
      */
     protected $etablissementIdentifiant;
-   
+
     /**
      * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="passages")
      */
@@ -86,10 +86,10 @@ class Passage {
      */
     protected $description;
 
-   /**
+    /**
      * @MongoDB\ReferenceMany(targetDocument="User", inversedBy="techniciens")
      */
-    protected $passages;
+    protected $techniciens;
 
     /**
      * @MongoDB\String
@@ -100,6 +100,11 @@ class Passage {
      * @MongoDB\ReferenceOne(targetDocument="Contrat")
      */
     protected $contrat;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $numeroContratArchive;
 
     /**
      * @MongoDB\Boolean
@@ -169,7 +174,7 @@ class Passage {
             $this->setStatut(PassageManager::STATUT_EN_ATTENTE);
             return;
         }
-        if(boolval($this->getDateDebut()) && !boolval($this->getDateFin())) {
+        if (boolval($this->getDateDebut()) && !boolval($this->getDateFin())) {
             $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
             return;
         }
@@ -234,8 +239,6 @@ class Passage {
     public function getIdentifiant() {
         return $this->identifiant;
     }
-
-    
 
     /**
      * Set numeroPassageIdentifiant
@@ -423,8 +426,7 @@ class Passage {
      * @param date $datePrevision
      * @return self
      */
-    public function setDatePrevision($datePrevision)
-    {
+    public function setDatePrevision($datePrevision) {
         $this->datePrevision = $datePrevision;
         return $this;
     }
@@ -434,8 +436,7 @@ class Passage {
      *
      * @return date $datePrevision
      */
-    public function getDatePrevision()
-    {
+    public function getDatePrevision() {
         return $this->datePrevision;
     }
 
@@ -445,8 +446,7 @@ class Passage {
      * @param boolean $mouvementDeclenchable
      * @return self
      */
-    public function setMouvementDeclenchable($mouvementDeclenchable)
-    {
+    public function setMouvementDeclenchable($mouvementDeclenchable) {
         $this->mouvement_declenchable = $mouvementDeclenchable;
         return $this;
     }
@@ -456,8 +456,7 @@ class Passage {
      *
      * @return boolean $mouvementDeclenchable
      */
-    public function getMouvementDeclenchable()
-    {
+    public function getMouvementDeclenchable() {
         return $this->mouvement_declenchable;
     }
 
@@ -467,8 +466,7 @@ class Passage {
      * @param boolean $mouvementDeclenche
      * @return self
      */
-    public function setMouvementDeclenche($mouvementDeclenche)
-    {
+    public function setMouvementDeclenche($mouvementDeclenche) {
         $this->mouvement_declenche = $mouvementDeclenche;
         return $this;
     }
@@ -478,8 +476,7 @@ class Passage {
      *
      * @return boolean $mouvementDeclenche
      */
-    public function getMouvementDeclenche()
-    {
+    public function getMouvementDeclenche() {
         return $this->mouvement_declenche;
     }
 
@@ -489,8 +486,7 @@ class Passage {
      * @param AppBundle\Document\Contrat $contrat
      * @return self
      */
-    public function setContrat(\AppBundle\Document\Contrat $contrat)
-    {
+    public function setContrat(\AppBundle\Document\Contrat $contrat) {
         $this->contrat = $contrat;
         return $this;
     }
@@ -500,8 +496,7 @@ class Passage {
      *
      * @return AppBundle\Document\Contrat $contrat
      */
-    public function getContrat()
-    {
+    public function getContrat() {
         return $this->contrat;
     }
 
@@ -515,8 +510,7 @@ class Passage {
      * @param AppBundle\Document\Etablissement $etablissement
      * @return self
      */
-    public function setEtablissement(\AppBundle\Document\Etablissement $etablissement)
-    {
+    public function setEtablissement(\AppBundle\Document\Etablissement $etablissement) {
         $this->etablissement = $etablissement;
         $this->setEtablissementIdentifiant($etablissement->getIdentifiant());
         $this->pullEtablissementInfos();
@@ -528,8 +522,7 @@ class Passage {
      *
      * @return AppBundle\Document\Etablissement $etablissement
      */
-    public function getEtablissement()
-    {
+    public function getEtablissement() {
         return $this->etablissement;
     }
 
@@ -538,8 +531,7 @@ class Passage {
      *
      * @param AppBundle\Document\Prestation $prestation
      */
-    public function addPrestation(\AppBundle\Document\Prestation $prestation)
-    {
+    public function addPrestation(\AppBundle\Document\Prestation $prestation) {
         $this->prestations[] = $prestation;
     }
 
@@ -548,8 +540,7 @@ class Passage {
      *
      * @param AppBundle\Document\Prestation $prestation
      */
-    public function removePrestation(\AppBundle\Document\Prestation $prestation)
-    {
+    public function removePrestation(\AppBundle\Document\Prestation $prestation) {
         $this->prestations->removeElement($prestation);
     }
 
@@ -558,39 +549,61 @@ class Passage {
      *
      * @return \Doctrine\Common\Collections\Collection $prestations
      */
-    public function getPrestations()
-    {
+    public function getPrestations() {
         return $this->prestations;
     }
 
+   
+
     /**
-     * Add passage
+     * Set numeroContratArchive
      *
-     * @param AppBundle\Document\User $passage
+     * @param string $numeroContratArchive
+     * @return self
      */
-    public function addPassage(\AppBundle\Document\User $passage)
-    {
-        $this->passages[] = $passage;
+    public function setNumeroContratArchive($numeroContratArchive) {
+        $this->numeroContratArchive = $numeroContratArchive;
+        return $this;
     }
 
     /**
-     * Remove passage
+     * Get numeroContratArchive
      *
-     * @param AppBundle\Document\User $passage
+     * @return string $numeroContratArchive
      */
-    public function removePassage(\AppBundle\Document\User $passage)
+    public function getNumeroContratArchive() {
+        return $this->numeroContratArchive;
+    }
+
+
+    /**
+     * Add technicien
+     *
+     * @param AppBundle\Document\User $technicien
+     */
+    public function addTechnicien(\AppBundle\Document\User $technicien)
     {
-        $this->passages->removeElement($passage);
+        $this->techniciens[] = $technicien;
     }
 
     /**
-     * Get passages
+     * Remove technicien
      *
-     * @return \Doctrine\Common\Collections\Collection $passages
+     * @param AppBundle\Document\User $technicien
      */
-    public function getPassages()
+    public function removeTechnicien(\AppBundle\Document\User $technicien)
     {
-        return $this->passages;
+        $this->techniciens->removeElement($technicien);
+    }
+
+    /**
+     * Get techniciens
+     *
+     * @return \Doctrine\Common\Collections\Collection $techniciens
+     */
+    public function getTechniciens()
+    {
+        return $this->techniciens;
     }
 
     /**

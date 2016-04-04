@@ -55,6 +55,11 @@ class Contrat {
      */
     protected $identifiant;
     
+    /**
+     * @MongoDB\String
+     */
+    protected $numeroArchive;
+    
      /**
      * @MongoDB\Boolean
      */
@@ -809,5 +814,27 @@ class Contrat {
     public function getMultiTechnicien()
     {
         return $this->multiTechnicien;
+    }
+
+    /**
+     * Set numeroArchive
+     *
+     * @param string $numeroArchive
+     * @return self
+     */
+    public function setNumeroArchive($numeroArchive)
+    {
+        $this->numeroArchive = $numeroArchive;
+        return $this;
+    }
+
+    /**
+     * Get numeroArchive
+     *
+     * @return string $numeroArchive
+     */
+    public function getNumeroArchive()
+    {
+        return $this->numeroArchive;
     }
 }

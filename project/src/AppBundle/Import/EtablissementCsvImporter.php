@@ -13,17 +13,19 @@ namespace AppBundle\Import;
  *
  * @author mathurin
  */
-use AppBundle\Document\Etablissement as Etablissement;
-use AppBundle\Document\Adresse as Adresse;
+use AppBundle\Document\Etablissement;
+use AppBundle\Document\Adresse;
 use AppBundle\Document\Coordonnees;
-use AppBundle\Manager\EtablissementManager as EtablissementManager;
-use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
+use AppBundle\Manager\SocieteManager;
+use AppBundle\Manager\EtablissementManager;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class EtablissementCsvImporter extends CsvFile {
 
     protected $dm;
+    protected $sm;
     protected $em;
 
     const CSV_ID_SOCIETE = 0;
@@ -47,8 +49,9 @@ class EtablissementCsvImporter extends CsvFile {
     const CSV_COORD_LAT = 37;
     const CSV_COORD_LON = 38;
 
-    public function __construct(DocumentManager $dm, EtablissementManager $em) {
+    public function __construct(DocumentManager $dm, SocieteManager $sm, EtablissementManager $em) {
         $this->dm = $dm;
+        $this->sm = $sm;
         $this->em = $em;
     }
 
@@ -58,12 +61,14 @@ class EtablissementCsvImporter extends CsvFile {
         $csv = $csvFile->getCsv();
         $progress = new ProgressBar($output, 100);
         $progress->start();
-        
+
         $cpt = 0;
         $cptTotal = 0;
         foreach ($csv as $data) {
-            $etablissement = $this->createFromImport($data);
-            $this->dm->persist($etablissement);
+            $etablissement = $this->createFromImport($data, $output);
+            if($etablissement) {
+                $this->dm->persist($etablissement);
+            }
             $cptTotal++;
             if ($cptTotal % (count($csv) / 100) == 0) {
                 $progress->advance();
@@ -78,14 +83,28 @@ class EtablissementCsvImporter extends CsvFile {
         $progress->finish();
     }
 
-    public function createFromImport($ligne) {
+    public function createFromImport($ligne, $output) {
+        $societe = $this->sm->getRepository()->findOneBy(array('identifiant' => sprintf("%06d", $ligne[self::CSV_ID_SOCIETE])));
+
+        if(!$societe) {
+
+            $output->writeln(sprintf("<error>La société %s n'existe pas</error>", $ligne[self::CSV_ID_SOCIETE]));
+            return;
+        }
+
+        $etablissement = $this->em->getRepository()->findOneBy(array('identifiantReprise', $ligne[self::CSV_ID_ADRESSE]));
+
+        if($etablissement) {
+            $identifiant = $etablissement->getIdentifiant();
+        } else {
+            $identifiant = $societe->getIdentifiant().$this->em->getNextNumeroEtablissement($societe);
+        }
 
         $etablissement = new Etablissement();
 
-        $identifiant = sprintf("%06d", $ligne[self::CSV_ID_ADRESSE]);
-
-        $etablissement->setSocieteId(sprintf("SOCIETE-%06d", $ligne[self::CSV_ID_SOCIETE]));
-        $etablissement->setIdentifiant($identifiant);
+        $etablissement->setSociete($societe);
+        $etablissement->setIdentifiant($societe->getIdentifiant()."001");
+        $etablissement->setIdentifiantReprise($ligne[self::CSV_ID_ADRESSE]);
         $etablissement->generateId();
 
         $etablissement->setNom($ligne[self::CSV_NOM_ETB]);
@@ -103,7 +122,7 @@ class EtablissementCsvImporter extends CsvFile {
         //$adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
         //$adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
         //$adresse->setFax($ligne[self::CSV_FAX]);
-       
+
         $adresse->setCoordonnees(new Coordonnees());
         if ($ligne[self::CSV_COORD_LAT] && $ligne[self::CSV_COORD_LON]) {
             $lat = $ligne[self::CSV_COORD_LAT];

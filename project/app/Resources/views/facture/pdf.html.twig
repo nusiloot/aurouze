@@ -12,6 +12,15 @@
         </p>
     </div>
     <div class="col-xs-6">
+        <p>
+            <span class="lead">Ets AUROUZE Julien</span><br />
+            8, rue des Halles<br />
+            75001, PARIS<br />
+            Tél: 01 40 41 16 20<br />
+            Fax: 01 40 41 16 21
+        </p>
+    </div>
+    <div class="col-xs-6">
         <h2>FACTURE n°20148363</h2>
     </div>
 </div>
@@ -28,7 +37,7 @@
     <tbody>
     {% for ligne in facture.lignes %}
         <tr>
-            <td>{{ ligne.libelle }}</td>
+            <td>Proposition n°000000000 de décembre 2014 à novembre 2015 (Dératisation souris, Désinsectisation){{ ligne.libelle }}</td>
             <td class="text-center">{{ ligne.quantite }}</td>
             <td class="text-right">{{ ligne.prixUnitaire }}</td>
             <td class="text-right">{{ ligne.tauxTaxe }}</td>

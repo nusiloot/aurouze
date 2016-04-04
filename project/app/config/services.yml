@@ -27,7 +27,7 @@ services:
 
     etablissement.importer:
         class: AppBundle\Import\EtablissementCsvImporter
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @etablissement.manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @societe.manager, @etablissement.manager]
 
     passage.manager:
         class: AppBundle\Manager\PassageManager
@@ -43,6 +43,10 @@ services:
 
     societe.importer:
         class: AppBundle\Import\SocieteCsvImporter
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @societe.manager]
+
+    societe.manager:
+        class: AppBundle\Manager\SocieteManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
 
     contrat.importer:
@@ -68,7 +72,7 @@ services:
     user.importer:
         class: AppBundle\Import\UserCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager]
-        
+
     configurationPrestation.importer:
         class: AppBundle\Import\ConfigurationPrestationCsvImporter
-        arguments: [@doctrine_mongodb.odm.default_document_manager]    
+        arguments: [@doctrine_mongodb.odm.default_document_manager]

@@ -38,9 +38,9 @@ class Etablissement implements EtablissementInfosInterface {
     protected $identifiant;
 
     /**
-     * @MongoDB\string
+     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="etablissements")
      */
-    protected $societeId;
+    protected $societe;
 
     /**
      * @MongoDB\String
@@ -66,6 +66,11 @@ class Etablissement implements EtablissementInfosInterface {
      * @MongoDB\String
      */
     protected $type;
+    
+     /**
+     * @MongoDB\String
+     */
+    protected $identifiantReprise;
     
     /***
      *  @MongoDB\ReferenceMany(targetDocument="Contrat", mappedBy="etablissement") 
@@ -132,27 +137,7 @@ class Etablissement implements EtablissementInfosInterface {
         return $this->identifiant;
     }
 
-    /**
-     * Set societeId
-     *
-     * @param string $societeId
-     * @return self
-     */
-    public function setSocieteId($societeId)
-    {
-        $this->societeId = $societeId;
-        return $this;
-    }
-
-    /**
-     * Get societeId
-     *
-     * @return string $societeId
-     */
-    public function getSocieteId()
-    {
-        return $this->societeId;
-    }
+  
 
     /**
      * Set contrats
@@ -337,5 +322,49 @@ class Etablissement implements EtablissementInfosInterface {
     public function getIntitule() {
 
         return $this->getNom() . ' ' . $this->getAdresse()->getIntitule();
+    }
+
+    /**
+     * Set societe
+     *
+     * @param AppBundle\Document\Societe $societe
+     * @return self
+     */
+    public function setSociete(\AppBundle\Document\Societe $societe)
+    {
+        $this->societe = $societe;
+        return $this;
+    }
+
+    /**
+     * Get societe
+     *
+     * @return AppBundle\Document\Societe $societe
+     */
+    public function getSociete()
+    {
+        return $this->societe;
+    }
+
+    /**
+     * Set identifiantReprise
+     *
+     * @param string $identifiantReprise
+     * @return self
+     */
+    public function setIdentifiantReprise($identifiantReprise)
+    {
+        $this->identifiantReprise = $identifiantReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantReprise
+     *
+     * @return string $identifiantReprise
+     */
+    public function getIdentifiantReprise()
+    {
+        return $this->identifiantReprise;
     }
 }
