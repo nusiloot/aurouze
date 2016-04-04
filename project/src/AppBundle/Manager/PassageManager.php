@@ -22,12 +22,11 @@ const STATUT_REALISE = "REALISE";
     function create(Etablissement $etablissement) {
         $passage = new Passage();
 
-        $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
+        $passage->setEtablissement($etablissement);
 
-        $numeroPassageIdentifiant = $this->getNextNumeroPassage($etablissement->getIdentifiant());
+        $numeroPassageIdentifiant = $this->getNextNumeroPassage($etablissement->getIdentifiant(), new \DateTime());
         $passage->setNumeroPassageIdentifiant($numeroPassageIdentifiant);
-        $passage->setId();
-        $passage->updateEtablissementInfos($etablissement);
+        $passage->generateId();
         return $passage;
     }
 

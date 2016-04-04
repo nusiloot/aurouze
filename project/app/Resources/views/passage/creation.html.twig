@@ -1,0 +1,106 @@
+{% set _menu_active = 'etablissement' %}
+{% extends 'base.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block _passage_techniciens_entry_row %}
+    <div class="row form-group dynamic-collection-item">
+        <div class="col-xs-11">
+            {{ form_widget(form.technicien) }}
+        </div>
+        <div class="col-xs-1 text-right">
+            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _passage_prestations_entry_row %}
+    <div class="row form-group dynamic-collection-item">
+        <div class="col-xs-11">
+            {{ form_widget(form.id) }}
+        </div>
+        <div class="col-xs-1 text-right">
+            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Création du passage <small class="text-muted">{{ passage.identifiant }}</small></h3>
+            <p>Etablissement : {{ passage.intitule }}</p>
+            <p>Contrat : </p>
+            
+            {{ form_start(form) }}
+                
+            	<div class="row">
+		            <div class="form-group col-xs-8">
+		                {{ form_label(form.dateDebut) }}
+		                {{ form_errors(form.dateDebut) }}
+		                <div class="input-group">
+		                    {{ form_widget(form.dateDebut) }}
+		                    <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+		                </div>
+		            </div>
+		            <div class="col-xs-4 bootstrap-timepicker timepicker">
+		                {{ form_label(form.timeDebut) }}
+                        {{ form_errors(form.timeDebut) }}
+                        <div class="input-group">
+                            {{ form_widget(form.timeDebut) }}
+                            <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+                        </div>
+                    </div>
+	            </div>
+	            <div class="row">
+		            <div class="form-group col-xs-8">
+		                {{ form_label(form.dateFin) }}
+		                {{ form_errors(form.dateFin) }}
+		                <div class="input-group">
+		                    {{ form_widget(form.dateFin) }}
+		                    <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+		                </div>
+		            </div>
+		            <div class="col-xs-4 bootstrap-timepicker timepicker">
+		                {{ form_label(form.timeFin) }}
+                        {{ form_errors(form.timeFin) }}
+                        <div class="input-group">
+                            {{ form_widget(form.timeFin) }}
+                            <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+                        </div>
+                    </div>
+	        	</div>
+	            
+                <div class="panel panel-default">
+            		<div class="panel-heading"><strong>Techniciens</strong></div>
+            		<div class="panel-body">
+                		{{ form_widget(form.techniciens, { 'attr': {'class': 'dynamic-collection'} }) }}
+					</div>
+					<div class="panel-footer">
+					    <div class="row">
+					        <div class="col-xs-12 text-right">
+					            <a href="javascript:void(0);" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+					        </div>
+					    </div>
+					</div>
+				</div>
+	            
+                <div class="panel panel-default">
+            		<div class="panel-heading"><strong>Prestations</strong></div>
+            		<div class="panel-body">
+                		{{ form_widget(form.prestations, { 'attr': {'class': 'dynamic-collection'} }) }}
+					</div>
+					<div class="panel-footer">
+					    <div class="row">
+					        <div class="col-xs-12 text-right">
+					            <a href="javascript:void(0);" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+					        </div>
+					    </div>
+					</div>
+				</div>
+            
+            {{ form_widget(form.save) }}
+        	{{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

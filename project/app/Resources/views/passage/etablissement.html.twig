@@ -45,6 +45,7 @@
     <div class="row">
         <div class="col-xs-12">
             <a href="{{ path('contrat_creation', {'id': etablissement.getId()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
+            <a href="{{ path('passage_creation', {'id': etablissement.getId()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un passage</strong></a>
             <hr />
             {% for contrat in contrats %}
 

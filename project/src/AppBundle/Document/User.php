@@ -49,7 +49,7 @@ class User {
     protected $type;
     
     /***
-     *  @MongoDB\ReferenceMany(targetDocument="Passage", mappedBy="etablissement") 
+     *  @MongoDB\ReferenceMany(targetDocument="Passage", mappedBy="techniciens") 
      */
     protected $passages = array();
 
