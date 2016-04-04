@@ -20,6 +20,7 @@ use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Manager\UserManager;
+use AppBundle\Manager\SocieteManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Import\CsvFile;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -30,6 +31,7 @@ class ContratCsvImporter {
     protected $cm;
     protected $pm;
     protected $em;
+    protected $sm;
     protected $um;
 
     const CSV_ID_CONTRAT = 0;
@@ -45,12 +47,14 @@ class ContratCsvImporter {
     const CSV_DUREE = 10;
     const CSV_GARANTIE = 11;
     const CSV_PRIXHT = 12;
+    const CSV_ARCHIVAGE = 13;
 
-    public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, UserManager $um) {
+    public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, SocieteManager $sm, UserManager $um) {
         $this->dm = $dm;
         $this->cm = $cm;
         $this->pm = $pm;
         $this->em = $em;
+        $this->sm = $sm;
         $this->um = $um;
     }
 
@@ -69,27 +73,20 @@ class ContratCsvImporter {
             if ($data[self::CSV_ID_ETABLISSEMENT] == "000000") {
                 continue;
             }
-            $etablissement = $this->em->getRepository()->findOneByIdentifiant($data[self::CSV_ID_ETABLISSEMENT]);
-
-            if (!$etablissement) {
-                $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ID_ETABLISSEMENT]));
-                continue;
-            }
-            if ($etablissement->getSocieteId() != 'SOCIETE-' . $data[self::CSV_ID_SOCIETE]) {
-                $output->writeln(sprintf("<error>Le contrat %s avec l'établissement %s n'a pas la même société que dans la base : %s</error>", $data[self::CSV_ID_CONTRAT], $data[self::CSV_ID_ETABLISSEMENT], $data[self::CSV_ID_SOCIETE]));
-                continue;
-            }
+            $identifiantSociete = sprintf('%06d',$data[self::CSV_ID_SOCIETE]);
+            $societe = $this->sm->getRepository()->findOneByIdentifiant($identifiantSociete);
             
-            $oldContrat = $this->cm->getRepository()->findOneById(Contrat::PREFIX . '-' . sprintf("%06d", $data[self::CSV_ID_CONTRAT]));
-            if (!$oldContrat) {
-                $output->writeln(sprintf("<error>Aucun ancien contrat dans la base ! (%s)</error>", sprintf("%06d", $data[self::CSV_ID_CONTRAT])));
+            if (!$societe) {
+                $output->writeln(sprintf("<error>La societe %s n'existe pas</error>", $identifiantSociete));
                 continue;
             }
             
             $contrat = new Contrat();
             $contrat->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
-            $contrat->setEtablissement($etablissement);
-            $contrat->setIdentifiant($this->cm->getNextNumero($etablissement, $contrat->getDateCreation()));
+
+
+            $contrat->setSociete($societe);
+            $contrat->setIdentifiant($this->cm->getNextNumero($societe, $contrat->getDateCreation()));
             $contrat->generateId();
 
             if ($data[self::CSV_DATE_DEBUT]) {
@@ -109,13 +106,9 @@ class ContratCsvImporter {
             $contrat->setDateFin($dateFin);
             $contrat->setNomenclature(str_replace('\n', "\n", $data[self::CSV_NOMENCLATURE]));
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
-
-            foreach ($oldContrat->getPassages() as $passage) {
-                $contrat->addPassage($passage);
-                $passage->setContrat($contrat);
-                $this->dm->persist($passage);
-            }
-            $this->dm->remove($oldContrat);
+            $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
+            $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
+         
             $this->dm->persist($contrat);
             $i++;
             $cptTotal++;

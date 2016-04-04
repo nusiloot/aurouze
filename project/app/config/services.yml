@@ -51,7 +51,7 @@ services:
 
     contrat.importer:
         class: AppBundle\Import\ContratCsvImporter
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, @passage.manager, @etablissement.manager, @user.manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, @passage.manager, @etablissement.manager, @societe.manager, @user.manager]
 
     contrat.manager:
         class: AppBundle\Manager\ContratManager
