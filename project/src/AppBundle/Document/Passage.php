@@ -97,6 +97,11 @@ class Passage {
     protected $contrat;
 
     /**
+     * @MongoDB\String
+     */
+    protected $numeroContratArchive;
+    
+    /**
      * @MongoDB\Boolean
      */
     protected $mouvement_declenchable;
@@ -606,5 +611,27 @@ class Passage {
     public function getPassages()
     {
         return $this->passages;
+    }
+
+    /**
+     * Set numeroContratArchive
+     *
+     * @param string $numeroContratArchive
+     * @return self
+     */
+    public function setNumeroContratArchive($numeroContratArchive)
+    {
+        $this->numeroContratArchive = $numeroContratArchive;
+        return $this;
+    }
+
+    /**
+     * Get numeroContratArchive
+     *
+     * @return string $numeroContratArchive
+     */
+    public function getNumeroContratArchive()
+    {
+        return $this->numeroContratArchive;
     }
 }

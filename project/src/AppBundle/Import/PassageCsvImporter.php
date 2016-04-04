@@ -73,7 +73,7 @@ class PassageCsvImporter {
             }
 
             $etablissement = $this->em->getRepository()->findOneByIdentifiant($data[self::CSV_ETABLISSEMENT_ID]);
-
+            var_dump($etablissement); exit;
             if (!$etablissement) {
                 $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
