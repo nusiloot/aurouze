@@ -56,6 +56,12 @@ class Societe {
      */
     protected $adresse;
     
+    
+     /**
+     * @MongoDB\String
+     */
+    protected $identifiantReprise;
+    
      /***
      *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe") 
      */
@@ -243,5 +249,27 @@ class Societe {
     public function getAdresse()
     {
         return $this->adresse;
+    }
+
+    /**
+     * Set identifiantReprise
+     *
+     * @param string $identifiantReprise
+     * @return self
+     */
+    public function setIdentifiantReprise($identifiantReprise)
+    {
+        $this->identifiantReprise = $identifiantReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantReprise
+     *
+     * @return string $identifiantReprise
+     */
+    public function getIdentifiantReprise()
+    {
+        return $this->identifiantReprise;
     }
 }

@@ -67,6 +67,11 @@ class Etablissement implements EtablissementInfosInterface {
      */
     protected $type;
     
+     /**
+     * @MongoDB\String
+     */
+    protected $identifiantReprise;
+    
     /***
      *  @MongoDB\ReferenceMany(targetDocument="Contrat", mappedBy="etablissement") 
      */
@@ -339,5 +344,27 @@ class Etablissement implements EtablissementInfosInterface {
     public function getSociete()
     {
         return $this->societe;
+    }
+
+    /**
+     * Set identifiantReprise
+     *
+     * @param string $identifiantReprise
+     * @return self
+     */
+    public function setIdentifiantReprise($identifiantReprise)
+    {
+        $this->identifiantReprise = $identifiantReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantReprise
+     *
+     * @return string $identifiantReprise
+     */
+    public function getIdentifiantReprise()
+    {
+        return $this->identifiantReprise;
     }
 }
