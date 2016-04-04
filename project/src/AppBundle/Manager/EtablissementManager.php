@@ -16,6 +16,7 @@ namespace AppBundle\Manager;
 
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use AppBundle\Document\Etablissement as Etablissement;
+use AppBundle\Document\Societe as Societe;
 use AppBundle\Import\EtablissementCsvImport as EtablissementCSVImport;
 use AppBundle\Tool\OSMAdresses;
 
@@ -72,34 +73,20 @@ class EtablissementManager {
         $this->osmAdresse = $osmAdresse;
     }
 
-    function create() {
-        $etablissement = new Etablissement();
-        $identifiant = $this->getNextIdentifiant();
-
-        $etablissement->setIdentifiant($identifiant);
-        $etablissement->setId();
-        $etablissement->setNom("Test " . $etablissement->getIdentifiant());
-        return $etablissement;
-    }
-
     public function getRepository() {
 
         return $this->dm->getRepository('AppBundle:Etablissement');
     }
 
-    public function getNextIdentifiant() {
-        $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllEtablissementsIdentifiants();
-    }
-
-    public function getNextNumeroEtablissement($societeIdentifiant) {
-        $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllPostfixByIdentifiantSociete($societeIdentifiant);
+    public function getNextNumeroEtablissement(Societe $societe) {
+        $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllPostfixByIdentifiantSociete($societe->getIdentifiant());
 
         if (!count($allEtablissementsIdentifiants)) {
-            return sprintf("%02d", 1);
+            return sprintf("%03d", 1);
         }
-        return sprintf("%02d", max($allEtablissementsIdentifiants) + 1);
+        return sprintf("%03d", max($allEtablissementsIdentifiants) + 1);
     }
-    
+
     public function getOSMAdresse() {
         return $this->osmAdresse;
     }
