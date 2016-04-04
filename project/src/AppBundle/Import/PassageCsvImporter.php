@@ -72,8 +72,8 @@ class PassageCsvImporter {
                 continue;
             }
 
-            $etablissement = $this->em->getRepository()->findOneByIdentifiant($data[self::CSV_ETABLISSEMENT_ID]);
-            var_dump($etablissement); exit;
+            $etablissement = $this->em->getRepository()->findOneByIdentifiantReprise($data[self::CSV_ETABLISSEMENT_ID]);
+           
             if (!$etablissement) {
                 $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
@@ -82,6 +82,7 @@ class PassageCsvImporter {
             $passage->setEtablissement($etablissement);
             $passage->setDatePrevision(new \DateTime($data[self::CSV_DATE_CREATION]));
             $passage->setNumeroPassageIdentifiant("001");
+            $passage->setNumeroContratArchive($data[self::CSV_CONTRAT_ID]);
             $passage->generateId();
 
             if ($data[self::CSV_DATE_DEBUT]) {
@@ -114,12 +115,6 @@ class PassageCsvImporter {
                 }
             }
             
-            $contrat = new Contrat();
-            $contrat->setId(Contrat::PREFIX.'-'.  sprintf("%06d",$data[self::CSV_CONTRAT_ID]));
-
-            $passage->setContrat($contrat);
-            $contrat->addPassage($passage);
-
             $userInfos = new UserInfos();
             $prenomNomTechnicien = trim($data[self::CSV_TECHNICIEN]);
             
@@ -127,18 +122,11 @@ class PassageCsvImporter {
             $prenomTechnicien = trim(str_replace($nomTechnicien, '', $prenomNomTechnicien));
             $identifiantTechnicien = strtoupper(Transliterator::urlize($prenomTechnicien . ' ' . $nomTechnicien));
             
-            $user = $this->um->getRepository()->findOneByIdentite($identifiantTechnicien);
-            if ($user) {
-                $userInfos->copyFromUser($user);
-            } else {
-                $userInfos->setCouleur("#ffffff");
-                $userInfos->setIdentite($identifiantTechnicien);
-            }
-            $passage->setTechnicienInfos($userInfos);
-
+            $technicien = $this->um->getRepository()->findOneByIdentite($identifiantTechnicien);
+           
+            $passage->
 
             $this->dm->persist($passage);
-            $this->dm->persist($contrat);
 
             $i++;
             $cptTotal++;
