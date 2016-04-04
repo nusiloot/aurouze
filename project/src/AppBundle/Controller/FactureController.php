@@ -84,7 +84,7 @@ class FactureController extends Controller {
 
         $mouvements = $fm->getMouvementsByEtablissement($etablissement);
 
-        $facture = $fm->create($etablissement, $mouvements);
+        $facture = $fm->create($etablissement, $mouvements, new \DateTime());
         $dm->persist($facture);
         $dm->flush();
 

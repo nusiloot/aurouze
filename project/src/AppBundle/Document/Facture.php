@@ -29,7 +29,17 @@ class Facture {
     /**
      * @MongoDB\Date
      */
-    protected $date;
+    protected $dateEmission;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $dateFacturation;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $datePaiement;
 
     /**
      * @MongoDB\Float
@@ -58,7 +68,7 @@ class Facture {
 
     public function generateId() {
 
-        $this->setId(self::PREFIX . '-' . $this->getEtablissementIdentifiant() .'-' . $this->getDate()->format('Ymd'));
+        $this->setId(self::PREFIX . '-' . $this->getEtablissementIdentifiant() .'-' . $this->getDateEmission()->format('Ymd'));
     }
 
     public function update() {
@@ -148,28 +158,6 @@ class Facture {
     }
 
     /**
-     * Set date
-     *
-     * @param date $date
-     * @return self
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-        return $this;
-    }
-
-    /**
-     * Get date
-     *
-     * @return date $date
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    /**
      * Set etablissementIdentifiant
      *
      * @param string $etablissementIdentifiant
@@ -256,5 +244,71 @@ class Facture {
     public function getMontantTaxe()
     {
         return $this->montantTaxe;
+    }
+
+    /**
+     * Set dateEmission
+     *
+     * @param date $dateEmission
+     * @return self
+     */
+    public function setDateEmission($dateEmission)
+    {
+        $this->dateEmission = $dateEmission;
+        return $this;
+    }
+
+    /**
+     * Get dateEmission
+     *
+     * @return date $dateEmission
+     */
+    public function getDateEmission()
+    {
+        return $this->dateEmission;
+    }
+
+    /**
+     * Set dateFacturation
+     *
+     * @param date $dateFacturation
+     * @return self
+     */
+    public function setDateFacturation($dateFacturation)
+    {
+        $this->dateFacturation = $dateFacturation;
+        return $this;
+    }
+
+    /**
+     * Get dateFacturation
+     *
+     * @return date $dateFacturation
+     */
+    public function getDateFacturation()
+    {
+        return $this->dateFacturation;
+    }
+
+    /**
+     * Set datePaiement
+     *
+     * @param date $datePaiement
+     * @return self
+     */
+    public function setDatePaiement($datePaiement)
+    {
+        $this->datePaiement = $datePaiement;
+        return $this;
+    }
+
+    /**
+     * Get datePaiement
+     *
+     * @return date $datePaiement
+     */
+    public function getDatePaiement()
+    {
+        return $this->datePaiement;
     }
 }

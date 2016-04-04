@@ -28,10 +28,11 @@ class FactureManager {
         return $this->getRepository()->findBy(array('etablissement.id' => $etablissement->getId()));
     }
 
-    public function create(Etablissement $etablissement, $mouvements) {
+    public function create(Etablissement $etablissement, $mouvements, $dateFacturation) {
         $facture = new Facture();
         $facture->setEtablissement($etablissement);
-        $facture->setDate(new \DateTime());
+        $facture->setDateEmission(new \DateTime());
+        $facture->setDateFacturation($dateFacturation);
         $facture->generateId();
 
         foreach($mouvements as $mouvement) {
