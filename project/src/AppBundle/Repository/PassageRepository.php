@@ -15,13 +15,13 @@ use MongoDate as MongoDate;
 
 class PassageRepository extends DocumentRepository {
 
-    public function findAllByPeriodeAndIdentifiantTechnicien($startDate, $endDate, $identifiantTech) {
+    public function findAllByPeriodeAndIdentifiantTechnicien($startDate, $endDate, $technicien) {
         $mongoStartDate = new MongoDate(strtotime($startDate));
         $mongoEndDate = new MongoDate(strtotime($endDate));
         $query = $this->createQueryBuilder('Passage')
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
-                ->field('technicienInfos.identite')->equals($identifiantTech)
+                ->field('techniciens')->includesReferenceTo($technicien)
                 ->getQuery();
         return $query->execute();
     }

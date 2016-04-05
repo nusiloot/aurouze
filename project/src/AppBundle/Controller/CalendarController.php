@@ -57,38 +57,40 @@ class CalendarController extends Controller {
         $passagesCalendar = array();
         $index = 0;
         foreach ($passagesTech as $passageTech) {
-            if (!$passageTech->getDateFin()) {
-                continue;
-            }
-
-            if (!isset($passagesCalendar[$passageTech->getTechnicienInfos()->getIdentite()])) {
-                $passagesCalendar[$passageTech->getTechnicienInfos()->getIdentite()] = array();
-                $index = 0;
-            }
-
-            if (isset($passagesCalendar[$passageTech->getTechnicienInfos()->getIdentite()]) && isset($passagesCalendar[$passageTech->getTechnicienInfos()->getIdentite()][($index - 1)]) && $passagesCalendar[$passageTech->getTechnicienInfos()->getIdentite()][($index - 1)]['end'] >= $passageTech->getDateDebut()->format('Y-m-d\TH:i:s')) {
-                $passagesCalendar[$passageTech->getTechnicienInfos()->getIdentite()][($index - 1)]['end'] = $passageTech->getDateFin()->format('Y-m-d\TH:i:s');
-                $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-                $passagesCalendar[$passageTech->getTechnicienInfos()->getIdentite()][($index - 1)]['coefEnd'] = round($diffFin / 30, 2);
-                continue;
-            }
-
-
-            $dateDebut = new \DateTime($passageTech->getDateDebut()->format('Y-m-d') . 'T06:00:00');
-            $diffDebut = (strtotime($passageTech->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-            $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-            $tech = $dm->getRepository('AppBundle:User')->findByIdentite($passageTech->getTechnicienInfos()->getIdentite());
-            $passageArr = array(
-                'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
-                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
-                'backgroundColor' => ($tech) ? $tech->getCouleur() : User::COULEUR_DEFAUT,
-                'textColor' => "black",
-                'coefStart' => round($diffDebut / 30, 1),
-                'coefEnd' => round($diffFin / 30, 2),
-            );
-            $index++;
-
-            $passagesCalendar[$passageTech->getTechnicienInfos()->getIdentite()][] = $passageArr;
+        	foreach ($passageTech->getTechniciens() as $technicien) {
+	            if (!$passageTech->getDateFin()) {
+	                continue;
+	            }
+	
+	            if (!isset($passagesCalendar[$technicien->getIdentite()])) {
+	                $passagesCalendar[$technicien->getIdentite()] = array();
+	                $index = 0;
+	            }
+	
+	            if (isset($passagesCalendar[$technicien->getIdentite()]) && isset($passagesCalendar[$technicien->getIdentite()][($index - 1)]) && $passagesCalendar[$technicien->getIdentite()][($index - 1)]['end'] >= $passageTech->getDateDebut()->format('Y-m-d\TH:i:s')) {
+	                $passagesCalendar[$technicien->getIdentite()][($index - 1)]['end'] = $passageTech->getDateFin()->format('Y-m-d\TH:i:s');
+	                $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
+	                $passagesCalendar[$technicien->getIdentite()][($index - 1)]['coefEnd'] = round($diffFin / 30, 2);
+	                continue;
+	            }
+	
+	
+	            $dateDebut = new \DateTime($passageTech->getDateDebut()->format('Y-m-d') . 'T06:00:00');
+	            $diffDebut = (strtotime($passageTech->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
+	            $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
+	            $tech = $dm->getRepository('AppBundle:User')->findByIdentite($technicien->getIdentite());
+	            $passageArr = array(
+	                'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
+	                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
+	                'backgroundColor' => ($tech) ? $tech->getCouleur() : User::COULEUR_DEFAUT,
+	                'textColor' => "black",
+	                'coefStart' => round($diffDebut / 30, 1),
+	                'coefEnd' => round($diffFin / 30, 2),
+	            );
+	            $index++;
+	
+	            $passagesCalendar[$technicien->getIdentite()][] = $passageArr;
+        	}
         }
 
         foreach ($eventsDates as $date => $value) {
@@ -162,11 +164,10 @@ class CalendarController extends Controller {
             throw $this->createNotFoundException();
         }
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $technicien = $dm->getRepository('AppBundle:User')->findByIdentite($request->get('technicien'));
         $periodeStart = $request->get('start');
         $periodeEnd = $request->get('end');
-        $passagesTech = ($request->get('technicien')) ?
-                $dm->getRepository('AppBundle:Passage')->findAllByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $request->get('technicien')) :
-                $dm->getRepository('AppBundle:Passage')->findAllByPeriode($periodeStart, $periodeEnd);
+        $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $technicien);
 
         $passagesCalendar = array();
 
@@ -178,7 +179,7 @@ class CalendarController extends Controller {
                 'title' => ($request->get('title')) ? $passageTech->getEtablissementInfos()->getIntitule() : "",
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
-                'backgroundColor' => ($passageTech->getTechnicienInfos()) ? $passageTech->getTechnicienInfos()->getCouleur() : User::COULEUR_DEFAUT,
+                'backgroundColor' => $technicien->getCouleur(),
                 'textColor' => "black");
             $passagesCalendar[] = $passageArr;
         }
