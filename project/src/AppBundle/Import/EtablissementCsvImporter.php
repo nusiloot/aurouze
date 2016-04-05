@@ -70,7 +70,6 @@ class EtablissementCsvImporter extends CsvFile {
                 continue;
             }
             $this->dm->persist($etablissement);
-            $this->dm->flush();
             $cptTotal++;
             if ($cptTotal % (count($csv) / 100) == 0) {
                 $progress->advance();
@@ -96,18 +95,17 @@ class EtablissementCsvImporter extends CsvFile {
 
         $etablissement = $this->em->getRepository()->findOneBy(array('identifiantReprise', $ligne[self::CSV_ID_ADRESSE]));
 
-        if($etablissement) {
+        /*if($etablissement) {
             $identifiant = $etablissement->getIdentifiant();
         } else {
             $identifiant = $societe->getIdentifiant().$this->em->getNextNumeroEtablissement($societe);
-        }
+        }*/
 
         $etablissement = new Etablissement();
 
         $etablissement->setSociete($societe);
-        $etablissement->setIdentifiant($identifiant);
+        $etablissement->setIdentifiant($societe->getIdentifiant());
         $etablissement->setIdentifiantReprise($ligne[self::CSV_ID_ADRESSE]);
-        $etablissement->generateId();
 
         $etablissement->setNom($ligne[self::CSV_NOM_ETB]);
         $adresse_str = $ligne[self::CSV_ADRESS_1];

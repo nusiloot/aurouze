@@ -28,7 +28,7 @@ class Etablissement implements EtablissementInfosInterface {
     const PREFIX = "ETABLISSEMENT";
 
     /**
-     * @MongoDB\Id(strategy="NONE", type="string")
+     * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\EtablissementIncrementGenerator"})
      */
     protected $id;
 
@@ -85,34 +85,6 @@ class Etablissement implements EtablissementInfosInterface {
 
     public function __construct() {
         $this->adresse = new Adresse();
-    }
-
-    public function generateId() {
-
-        $this->setId(self::PREFIX . '-' . $this->identifiant);
-    }
-
-    /**
-     * Set id
-     *
-     * @param string $id
-     * @return self
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-
-    /**
-     * Get id
-     *
-     * @return string $id
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
@@ -366,5 +338,15 @@ class Etablissement implements EtablissementInfosInterface {
     public function getIdentifiantReprise()
     {
         return $this->identifiantReprise;
+    }
+
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }
