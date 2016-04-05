@@ -91,7 +91,7 @@ cat $DATA_DIR/adresse.csv.temp | grep -e "^[0-9]*;[0-9]*;3" > $DATA_DIR/adresse_
 
 join -t ';' -1 2 -2 1 $DATA_DIR/adresse_application.csv $DATA_DIR/entite.csv.temp > $DATA_DIR/etablissements.csv.tmp
 
-rm $DATA_DIR/etablissements.csv;
+rm $DATA_DIR/etablissements.csv > /dev/null;
 touch $DATA_DIR/etablissements.csv;
 
 while read line
@@ -117,7 +117,7 @@ join -t ";" -1 4 -2 1 $DATA_DIR/passagesadresses.csv $DATA_DIR/techniciens.csv |
 
 cat $DATA_DIR/tblPassagePrestationType.csv | tr -d '\r' | grep -v "RefPassagePrestationType;" > $DATA_DIR/tblPassagePrestationType.csv.tmp
 
-rm $DATA_DIR/passagesadressestechniciensprestation.csv;
+rm $DATA_DIR/passagesadressestechniciensprestation.csv > /dev/null;
 touch $DATA_DIR/passagesadressestechniciensprestation.csv;
 
 while read line
@@ -252,28 +252,28 @@ cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)
 
 echo "Import des commerciaux"
 
-php app/console importer:csv user.importer $DATA_DIR/commerciaux.csv
+php app/console importer:csv user.importer $DATA_DIR/commerciaux.csv -vvv
 
 echo "Import des techniciens"
 
-php app/console importer:csv user.importer $DATA_DIR/techniciens.csv
+php app/console importer:csv user.importer $DATA_DIR/techniciens.csv -vvv
 
 echo "Import des types de prestations"
-php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestationType.csv
+php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestationType.csv -vvv
 
 echo "Import des sociétés"
 
-php app/console importer:csv societe.importer $DATA_DIR/societes.csv
+php app/console importer:csv societe.importer $DATA_DIR/societes.csv -vvv
 
 echo "Import des etablissements"
 
-php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv
+php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv -vvv
 
 echo "Import des contrats"
 
-php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv
+php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv -vvv
 
 echo "Import des passages"
 
-php app/console importer:csv passage.importer $DATA_DIR/passages.csv
+php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv
 

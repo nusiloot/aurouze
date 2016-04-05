@@ -152,10 +152,16 @@ class PassageController extends Controller {
             $etbInfos = $document;
             $coordinates = null;
             if (!($document instanceof Etablissement)) {
+                $allTechniciens = $document->getTechniciens();
+                $firstTechnicien = null;
+                foreach ($allTechniciens as $technicien) {
+                    $firstTechnicien = $technicien;
+                    break;
+                }
                 $etbInfos = $document->getEtablissementInfos();
                 $coordinates = $document->getEtablissementInfos()->getAdresse()->getCoordonnees();
-                $feature->properties->color = $document->getTechnicienInfos()->getCouleur();
-                $feature->properties->colorText = $document->getTechnicienInfos()->getCouleurText();
+                $feature->properties->color = $firstTechnicien->getCouleur();
+                $feature->properties->colorText = $firstTechnicien->getCouleurText();
             } else {
                 $coordinates = $document->getAdresse()->getCoordonnees();
                 $feature->properties->color = "#fff";

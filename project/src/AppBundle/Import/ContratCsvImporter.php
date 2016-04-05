@@ -116,7 +116,7 @@ class ContratCsvImporter {
                 $progress->advance();
             }
 
-            if ($i >= 10000) {
+            if ($i >= 1000) {
                 $this->dm->flush();
                 $i = 0;
             }

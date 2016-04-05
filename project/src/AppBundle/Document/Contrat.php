@@ -538,29 +538,7 @@ class Contrat {
         return ($this->getDateFin() < new \DateTime());
     }
 
-    public function getNbPassagePrevu() {
-        return count($this->getPassages());
-    }
-
-    public function getNbPassagesRealises() {
-        $realises = 0;
-        foreach ($this->getPassages() as $passage) {
-            $realises+=($passage->isRealise());
-        }
-        return $realises;
-    }
-
-    public function getPassagesSorted() {
-        $passagesSorted = array();
-
-        foreach ($this->getPassages() as $passage) {
-            $passagesSorted[$passage->getId()] = $passage;
-        }
-
-        krsort($passagesSorted);
-
-        return $passagesSorted;
-    }
+   
 
     public function updateObject() {
         if (!$this->getNbPassages()) {
