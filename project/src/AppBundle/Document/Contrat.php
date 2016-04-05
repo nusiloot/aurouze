@@ -602,7 +602,7 @@ class Contrat {
         foreach ($this->getPrestations() as $prestation) {
             if ($prestation->getNbPassages() > $maxNbPrestations) {
                 $maxNbPrestations = $prestation->getNbPassages();
-                $typePrestationPrincipal = $prestation->getIdentifiant();
+                $typePrestationPrincipal = $prestation;
             }
         }
 
@@ -615,7 +615,7 @@ class Contrat {
         foreach ($this->getPrestations() as $prestation) {
             if ($prestation->getNbPassages() > 0) {
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations = array();
-                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $prestation->getIdentifiant();
+                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $prestation;
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->mouvement_declenchable = 1;
             }
         }
@@ -644,7 +644,7 @@ class Contrat {
                         continue;
                     }
                     if ($cpt >= $compteurPassage) {
-                        $passagesDatesArray[$date]->prestations[] = $prestation->getIdentifiant();
+                        $passagesDatesArray[$date]->prestations[] = $prestation;
                         $compteurPassage+=$occurPassage;
                     }
                     $cpt++;

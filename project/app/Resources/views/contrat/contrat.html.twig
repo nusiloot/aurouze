@@ -36,14 +36,19 @@
                 {% set counter = loop.index %}
                 <li class="list-group-item">
                     <span class="badge pull-left">{{ counter }}</span>
-                    
+
                     {% for prestation in passage.prestations %}
-                        <div style="padding-left: 30px;">
-                            {{ prestation }}      
-                        </div>
+                        {% if(prestation.wordToPicto) %}
+                            <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
+                                <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}">&nbsp;</i></span>                                                          
+                            {%else%}
+                            <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
+                        {%endif%}
                     {% endfor %}
                     {{ date|date("d/m/Y") }}
-                    {{ passage.mouvement_declenchable }}
+                    {% if(passage.mouvement_declenchable) %}
+                        <span class="label label-xs label-default">Passage facturant</span>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
