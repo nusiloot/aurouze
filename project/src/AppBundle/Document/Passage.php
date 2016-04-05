@@ -5,6 +5,7 @@ namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
+use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Document\EtablissementInfos;
 use AppBundle\Document\Prestation;
@@ -113,6 +114,7 @@ class Passage {
 
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
+        $this->prestations = new ArrayCollection();
         $this->mouvement_declenchable = false;
         $this->mouvement_declenche = false;
     }
@@ -585,7 +587,7 @@ class Passage {
         $this->prestations->removeElement($prestation);
     }
 
-    /**
+   /**
      * Get prestations
      *
      * @return \Doctrine\Common\Collections\Collection $prestations

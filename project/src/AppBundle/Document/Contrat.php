@@ -602,7 +602,7 @@ class Contrat {
         foreach ($this->getPrestations() as $prestation) {
             if ($prestation->getNbPassages() > $maxNbPrestations) {
                 $maxNbPrestations = $prestation->getNbPassages();
-                $typePrestationPrincipal = $prestation->getId();
+                $typePrestationPrincipal = $prestation->getIdentifiant();
             }
         }
 
@@ -615,7 +615,7 @@ class Contrat {
         foreach ($this->getPrestations() as $prestation) {
             if ($prestation->getNbPassages() > 0) {
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations = array();
-                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $prestation->getId();
+                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $prestation->getIdentifiant();
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->mouvement_declenchable = 1;
             }
         }
@@ -632,7 +632,7 @@ class Contrat {
         }
 
         foreach ($this->getPrestations() as $prestation) {
-            if ($prestation->getId() != $typePrestationPrincipal && $prestation->getNbPassages() > 1) {
+            if ($prestation->getIdentifiant() != $typePrestationPrincipal && $prestation->getNbPassages() > 1) {
                 $nbPassagesPrestationRestant = $prestation->getNbPassages();
                 $nbPassagesRestant = count($passagesDatesArray);
                 $occurPassage = (floatval($nbPassagesRestant) / floatval($nbPassagesPrestationRestant));
@@ -644,7 +644,7 @@ class Contrat {
                         continue;
                     }
                     if ($cpt >= $compteurPassage) {
-                        $passagesDatesArray[$date]->prestations[] = $prestation->getId();
+                        $passagesDatesArray[$date]->prestations[] = $prestation->getIdentifiant();
                         $compteurPassage+=$occurPassage;
                     }
                     $cpt++;
@@ -670,6 +670,16 @@ class Contrat {
             $cpt++;
         }
         return $passagesDatesArray;
+    }
+    
+    public function getPassagesEtablissementNode(Etablissement $etablissement)
+    {
+          $contratPassages = $this->getContratPassages();
+        if(!isset($contratPassages[$etablissement->getId()])){
+            return null;
+        }
+        
+        return $contratPassages[$etablissement->getId()];
     }
     
     public function getPassages(Etablissement $etablissement)

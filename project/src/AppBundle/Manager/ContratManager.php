@@ -28,9 +28,10 @@ class ContratManager implements MouvementManagerInterface {
             $dateCreation = new \DateTime();
         }
         $contrat = new Contrat();
-        $contrat->setEtablissement($etablissement);
+        $societe = $etablissement->getSociete();
+        $contrat->setSociete($societe);
         $contrat->setDateCreation($dateCreation);
-        $contrat->setIdentifiant($this->getNextNumero($etablissement, $dateCreation));
+        $contrat->setIdentifiant($this->getNextNumero($societe, $dateCreation));
         $contrat->generateId();
         $contrat->setStatut(self::STATUT_BROUILLON);
         $contrat->addPrestation(new Prestation());
