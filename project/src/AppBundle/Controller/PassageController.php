@@ -70,6 +70,28 @@ class PassageController extends Controller {
     }
 
     /**
+     * @Route("/passage/{id}/modifier", name="passage_modification")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function modificationAction(Request $request, Passage $passage) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+		
+		$form = $this->createForm(new PassageCreationType($dm), $passage, array(
+				'action' => $this->generateUrl('passage_modification', array('id' => $passage->getId())),
+				'method' => 'POST',
+		));
+		$form->handleRequest($request);
+		if ($form->isSubmitted() && $form->isValid()) {
+			$passage = $form->getData();
+			$dm->persist($passage);
+			$dm->flush();
+			return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
+		}
+		
+        return $this->render('passage/modification.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+    }
+
+    /**
      * @Route("/passage/etablissement-choix", name="passage_etablissement_choice")
      */
     public function etablissementChoiceAction(Request $request) {

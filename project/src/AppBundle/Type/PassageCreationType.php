@@ -13,6 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Document\User;
+use AppBundle\Document\Prestation;
+use Symfony\Component\Form\CallbackTransformer;
+use AppBundle\Transformer\PrestationTransformer;
 
 class PassageCreationType extends AbstractType
 {
@@ -46,8 +49,8 @@ class PassageCreationType extends AbstractType
 				'widget' => 'single_text',
 				'format' => 'dd/MM/yyyy'
 			))
-			->add('timeDebut', TextType::class, array('label' => 'Heure debut', 'attr' => array('class' => 'input-timepicker'), "mapped" => false))
-			->add('timeFin', TextType::class, array('label' => 'Heure fin', 'attr' => array('class' => 'input-timepicker'), "mapped" => false))
+			->add('timeDebut', TextType::class, array('label' => 'Heure debut', 'attr' => array('class' => 'input-timepicker')))
+			->add('timeFin', TextType::class, array('label' => 'Heure fin', 'attr' => array('class' => 'input-timepicker')))
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success"), ));
         ;
         
@@ -60,11 +63,12 @@ class PassageCreationType extends AbstractType
         ));
         
         $builder->add('prestations', ChoiceType::class, array(
-        		'choices' => $this->getPrestations(),
-        		'expanded' => false,
-        		'multiple' => true,
-        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple")
+            		'choices' => $this->getPrestations(),
+	        		'expanded' => false, 
+	        		'multiple' => true,
+        			'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
         ));
+        $builder->get('prestations')->addModelTransformer(new PrestationTransformer($this->dm));
     }
 
     /**
@@ -92,6 +96,6 @@ class PassageCreationType extends AbstractType
     
     public function getPrestations() 
     {
-    	return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
+    	return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestations()->toArray();
     }
 }

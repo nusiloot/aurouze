@@ -15,6 +15,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Document\Prestation;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ConfigurationRepository")
@@ -29,7 +30,7 @@ class Configuration {
     protected $id;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="ConfigurationPrestation")
+     * @MongoDB\EmbedMany(targetDocument="Prestation")
      */
     protected $prestations;
 
@@ -66,18 +67,18 @@ class Configuration {
     /**
      * Add prestation
      *
-     * @param AppBundle\Document\ConfigurationPrestation $prestation
+     * @param AppBundle\Document\Prestation $prestation
      */
-    public function addPrestation(\AppBundle\Document\ConfigurationPrestation $prestation) {
+    public function addPrestation(\AppBundle\Document\Prestation $prestation) {
         $this->prestations[] = $prestation;
     }
 
     /**
      * Remove prestation
      *
-     * @param AppBundle\Document\ConfigurationPrestation $prestation
+     * @param AppBundle\Document\Prestation $prestation
      */
-    public function removePrestation(\AppBundle\Document\ConfigurationPrestation $prestation) {
+    public function removePrestation(\AppBundle\Document\Prestation $prestation) {
         $this->prestations->removeElement($prestation);
     }
 
@@ -120,7 +121,7 @@ class Configuration {
     public function getPrestationsArray() {
         $prestationsType = array();
         foreach ($this->getPrestations() as $prestation) {
-            $prestationsType[$prestation->getId()] = $prestation->getNom();
+            $prestationsType[$prestation->getIdentifiant()] = $prestation->getNom();
         }
         return $prestationsType;
     }

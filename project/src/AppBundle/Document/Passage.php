@@ -7,7 +7,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Document\EtablissementInfos;
-use AppBundle\Document\ConfigurationPrestation;
+use AppBundle\Document\Prestation;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
@@ -603,5 +603,25 @@ class Passage {
     public function removeTechnicien(\AppBundle\Document\User $technicien)
     {
         $this->techniciens->removeElement($technicien);
+    }
+    
+    public function setTimeDebut($time) {
+    	$dateTime = $this->getDateDebut();
+    	$this->setDateDebut(new \DateTime($dateTime->format('Y-m-d').'T'.$time.':00'));
+    }
+    
+    public function setTimeFin($time) {
+    	$dateTime = $this->getDateFin();
+    	$this->setDateFin(new \DateTime($dateTime->format('Y-m-d').'T'.$time.':00'));
+    }
+    
+    public function getTimeDebut() {
+    	$dateTime = $this->getDateDebut();
+    	return $dateTime->format('H:i');
+    }
+    
+    public function getTimeFin() {
+    	$dateTime = $this->getDateFin();
+    	return $dateTime->format('H:i');
     }
 }

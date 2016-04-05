@@ -141,4 +141,11 @@ class Prestation {
     {
         return $this->identifiant;
     }
+    
+
+
+    public function __toString()
+    {
+    	return $this->getNom();
+    }
 }
