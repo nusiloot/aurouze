@@ -66,4 +66,9 @@ class ConfigurationPrestation
     {
         return $this->nom;
     }
+    
+    public function __toString()
+    {
+    	return $this->getNom();
+    }
 }

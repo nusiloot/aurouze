@@ -7,7 +7,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Document\EtablissementInfos;
-use AppBundle\Document\Prestation;
+use AppBundle\Document\ConfigurationPrestation;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
@@ -27,7 +27,7 @@ class Passage {
     protected $identifiant;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Prestation")
+     * @MongoDB\Collection
      */
     protected $prestations;
 
@@ -520,34 +520,6 @@ class Passage {
     public function getEtablissement() {
         return $this->etablissement;
     }
-
-    /**
-     * Add prestation
-     *
-     * @param AppBundle\Document\Prestation $prestation
-     */
-    public function addPrestation(\AppBundle\Document\Prestation $prestation) {
-        $this->prestations[] = $prestation;
-    }
-
-    /**
-     * Remove prestation
-     *
-     * @param AppBundle\Document\Prestation $prestation
-     */
-    public function removePrestation(\AppBundle\Document\Prestation $prestation) {
-        $this->prestations->removeElement($prestation);
-    }
-
-    /**
-     * Get prestations
-     *
-     * @return \Doctrine\Common\Collections\Collection $prestations
-     */
-    public function getPrestations() {
-        return $this->prestations;
-    }
-
    
 
     /**
@@ -599,5 +571,27 @@ class Passage {
     public function removeTechnicien(\AppBundle\Document\User $technicien)
     {
         $this->techniciens->removeElement($technicien);
+    }
+
+    /**
+     * Set prestations
+     *
+     * @param collection $prestations
+     * @return self
+     */
+    public function setPrestations($prestations)
+    {
+        $this->prestations = $prestations;
+        return $this;
+    }
+
+    /**
+     * Get prestations
+     *
+     * @return collection $prestations
+     */
+    public function getPrestations()
+    {
+        return $this->prestations;
     }
 }

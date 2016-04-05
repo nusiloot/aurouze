@@ -61,7 +61,7 @@ class PassageController extends Controller {
 		$form->handleRequest($request);
 		if ($form->isSubmitted() && $form->isValid()) {
 			$passage = $form->getData();
-			$dm->persist($contrat);
+			$dm->persist($passage);
 			$dm->flush();
 			return $this->redirectToRoute('passage_etablissement', array('id' => $etablissement->getId()));
 		}
