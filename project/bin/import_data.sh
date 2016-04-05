@@ -80,7 +80,7 @@ cat  $DATA_DIR/tblAdresse.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;
 
 cat $DATA_DIR/adresse.csv.temp | grep -e "^[0-9]*;[0-9]*;1" > $DATA_DIR/adresse_facturation.csv
 
-join -a 2 -t ';' -1 2 -2 1 -o auto $DATA_DIR/adresse_facturation.csv $DATA_DIR/entite.csv.temp > $DATA_DIR/societes.csv
+join -a 2 -t ';' -1 2 -2 1 -o auto $DATA_DIR/adresse_facturation.csv $DATA_DIR/entite.csv.temp | sort -n -k 1,1 > $DATA_DIR/societes.csv
 
 ##### Récupération des Etablissements #####
 
@@ -275,5 +275,5 @@ php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv -vvv
 
 echo "Import des passages"
 
-php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv
 
+php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv
