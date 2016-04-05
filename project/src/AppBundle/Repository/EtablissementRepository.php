@@ -12,8 +12,9 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
  */
 class EtablissementRepository extends DocumentRepository {
 
-    public function findAllOrderedByIdentifiantSociete($societeIdentifiant) {
-        return $this->findBy(array('identifiant_societe' => $societeIdentifiant));
+    public function findAllOrderedByIdentifiantSociete($societe) {
+
+        return $this->findBy(array('societe.id' => $societe->getId()));
     }
 
     public function findByTerm($term,$criteria) {
@@ -25,8 +26,8 @@ class EtablissementRepository extends DocumentRepository {
         return $request;
     }
 
-    public function findAllPostfixByIdentifiantSociete($societeIdentifiant) {
-        $etablissements = $this->findAllOrderedByIdentifiantSociete($societeIdentifiant);
+    public function findAllPostfixByIdentifiantSociete($societe) {
+        $etablissements = $this->findAllOrderedByIdentifiantSociete($societe);
         $allPostfixByIdentifiantSociete = array();
         if (count($etablissements)) {
             foreach ($etablissements as $etablissement) {
@@ -34,6 +35,7 @@ class EtablissementRepository extends DocumentRepository {
                 $allPostfixByIdentifiantSociete[$postfix] = $postfix;
             }
         }
+
         return $allPostfixByIdentifiantSociete;
     }
 

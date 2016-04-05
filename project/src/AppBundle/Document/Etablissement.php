@@ -66,14 +66,14 @@ class Etablissement implements EtablissementInfosInterface {
      * @MongoDB\String
      */
     protected $type;
-    
+
      /**
      * @MongoDB\String
      */
     protected $identifiantReprise;
-    
+
     /***
-     *  @MongoDB\ReferenceMany(targetDocument="Contrat", mappedBy="etablissement") 
+     *  @MongoDB\ReferenceMany(targetDocument="Contrat", mappedBy="etablissement")
      */
     protected $contrats = array();
 
@@ -103,7 +103,7 @@ class Etablissement implements EtablissementInfosInterface {
         $this->id = $id;
         return $this;
     }
-    
+
 
     /**
      * Get id
@@ -137,7 +137,7 @@ class Etablissement implements EtablissementInfosInterface {
         return $this->identifiant;
     }
 
-  
+
 
     /**
      * Set contrats
@@ -307,18 +307,18 @@ class Etablissement implements EtablissementInfosInterface {
     }
 
     public function getTelephonePortable() {
-        
+
     }
 
     public function getFax() {
-        
+
     }
 
     public function getIcon() {
 
         return EtablissementManager::$type_icon[$this->getType()];
     }
-    
+
     public function getIntitule() {
 
         return $this->getNom() . ' ' . $this->getAdresse()->getIntitule();
