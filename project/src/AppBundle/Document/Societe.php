@@ -59,7 +59,12 @@ class Societe {
     /**
     * @MongoDB\Increment
     */
-   protected $etablissementIncrement;
+    protected $etablissementIncrement;
+
+    /**
+    * @MongoDB\Increment
+    */
+    protected $contratIncrement;
 
      /***
      *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe")
