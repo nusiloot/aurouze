@@ -27,7 +27,7 @@ class Passage {
     protected $identifiant;
 
     /**
-     * @MongoDB\Collection
+     * @MongoDB\EmbedMany(targetDocument="Prestation")
      */
     protected $prestations;
 
@@ -563,6 +563,38 @@ class Passage {
         return $this->techniciens;
     }
 
+  
+
+    /**
+     * Add prestation
+     *
+     * @param AppBundle\Document\Prestation $prestation
+     */
+    public function addPrestation(\AppBundle\Document\Prestation $prestation)
+    {
+        $this->prestations[] = $prestation;
+    }
+
+    /**
+     * Remove prestation
+     *
+     * @param AppBundle\Document\Prestation $prestation
+     */
+    public function removePrestation(\AppBundle\Document\Prestation $prestation)
+    {
+        $this->prestations->removeElement($prestation);
+    }
+
+    /**
+     * Get prestations
+     *
+     * @return \Doctrine\Common\Collections\Collection $prestations
+     */
+    public function getPrestations()
+    {
+        return $this->prestations;
+    }
+
     /**
      * Remove technicien
      *
@@ -571,27 +603,5 @@ class Passage {
     public function removeTechnicien(\AppBundle\Document\User $technicien)
     {
         $this->techniciens->removeElement($technicien);
-    }
-
-    /**
-     * Set prestations
-     *
-     * @param collection $prestations
-     * @return self
-     */
-    public function setPrestations($prestations)
-    {
-        $this->prestations = $prestations;
-        return $this;
-    }
-
-    /**
-     * Get prestations
-     *
-     * @return collection $prestations
-     */
-    public function getPrestations()
-    {
-        return $this->prestations;
     }
 }

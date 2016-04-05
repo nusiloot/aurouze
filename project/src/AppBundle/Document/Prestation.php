@@ -13,7 +13,7 @@ class Prestation {
     /**
      * @MongoDB\String
      */
-    protected $id;
+    protected $identifiant;
 
     /**
      * @MongoDB\String
@@ -25,26 +25,7 @@ class Prestation {
      */
     protected $nbPassages;
 
-    /**
-     * Set id
-     *
-     * @param string $id
-     * @return self
-     */
-    public function setId($id) {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get id
-     *
-     * @return string $id
-     */
-    public function getId() {
-        return $this->id;
-    }
-
+  
     /**
      * Set nom
      *
@@ -53,7 +34,7 @@ class Prestation {
      */
     public function setNom($nom) {
         $this->nom = $nom;
-        $this->setId(strtoupper(Transliterator::urlize($nom)));
+        $this->setIdentifiant(strtoupper(Transliterator::urlize($nom)));
         return $this;
     }
 
@@ -93,7 +74,7 @@ class Prestation {
     }
 
     public function getWordToPicto() {
-        $nom_libelles = explode('-', $this->getId());
+        $nom_libelles = explode('-', $this->getIdentifiant());
         
         $mot_rongeur = array('DERATISATION', 'RONGEURS');
         $mot_puce = array('PUCES', 'ACARIENS');
@@ -112,8 +93,8 @@ class Prestation {
             return 'cafard';
         }elseif($this->isPictoForLibelles($nom_libelles, $mot_chenille)){
             return 'chenille';
-        }elseif($this->isPictoForLibelles($nom_libelles, $mot_chenille)){
-            return 'chenille';
+        }elseif($this->isPictoForLibelles($nom_libelles, $mot_pigeon)){
+            return 'pigeon';
         }
         return false;
     }
@@ -138,4 +119,26 @@ class Prestation {
         return false;
     }
 
+
+    /**
+     * Set identifiant
+     *
+     * @param string $identifiant
+     * @return self
+     */
+    public function setIdentifiant($identifiant)
+    {
+        $this->identifiant = $identifiant;
+        return $this;
+    }
+
+    /**
+     * Get identifiant
+     *
+     * @return string $identifiant
+     */
+    public function getIdentifiant()
+    {
+        return $this->identifiant;
+    }
 }

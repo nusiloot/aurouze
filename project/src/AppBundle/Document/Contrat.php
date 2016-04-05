@@ -671,6 +671,15 @@ class Contrat {
         }
         return $passagesDatesArray;
     }
+    
+    public function getPassages(Etablissement $etablissement)
+    {
+        if(!isset($this->contratPassages[$etablissement->getId()])){
+            return array();
+        }
+        
+        return $this->contratPassages[$etablissement->getId()]->getPassagesSorted();
+    }
 
 
     /**
@@ -860,5 +869,5 @@ class Contrat {
     public function getIdentifiantReprise()
     {
         return $this->identifiantReprise;
-    }
+    }  
 }
