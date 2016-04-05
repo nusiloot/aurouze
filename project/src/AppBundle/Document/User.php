@@ -163,7 +163,7 @@ class User {
      */
     public function getIdentite()
     {
-        return $this->identite;
+        return $this->prenom.' '.$this->nom;
     }
 
     /**

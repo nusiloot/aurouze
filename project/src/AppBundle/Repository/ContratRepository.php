@@ -7,9 +7,15 @@ use MongoDate as MongoDate;
 
 class ContratRepository extends DocumentRepository {
 
+    public function findBySociete($societe) {
+        return $this->findBy(
+                        array('societe.id' => $societe->getId()),
+                        array('dateFin' => 'DESC'));
+    }
+    
     public function findByEtablissement($etablissement) {
         return $this->findBy(
-                        array('etablissement.id' => $etablissement->getId()),
+                        array('societe.id' => $etablissement->getSociete()->getId()),
                         array('dateFin' => 'DESC'));
     }
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace AppBundle\Document;
+namespace AppBundle\Document\Id;
 
 use Doctrine\ODM\MongoDB\Id\AbstractIdGenerator;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-class EtablissementIncrementGenerator extends AbstractIdGenerator
+class EtablissementGenerator extends AbstractIdGenerator
 {
 
     public function generate(DocumentManager $dm, $document)
@@ -24,6 +24,8 @@ class EtablissementIncrementGenerator extends AbstractIdGenerator
         $command['new'] = true;
         $result = $db->command($command);
 
-        return sprintf("%s-%s-%03d", "ETABLISSEMENT", $document->getSociete()->getIdentifiant(), $result['value']['etablissementIncrement']);
+        $document->setIdentifiant(sprintf("%s%03d", $document->getSociete()->getIdentifiant(), $result['value']['etablissementIncrement']));
+
+        return sprintf("%s-%s", "ETABLISSEMENT", $document->getIdentifiant());
     }
 }

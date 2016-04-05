@@ -85,7 +85,7 @@ class EtablissementCsvImporter extends CsvFile {
     }
 
     public function createFromImport($ligne, $output) {
-        $societe = $this->sm->getRepository()->findOneBy(array('identifiant' => sprintf("%06d", $ligne[self::CSV_ID_SOCIETE])));
+        $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $ligne[self::CSV_ID_SOCIETE]));
 
         if(!$societe) {
 
@@ -94,15 +94,9 @@ class EtablissementCsvImporter extends CsvFile {
         }
 
         $etablissement = $this->em->getRepository()->findOneBy(array('identifiantReprise', $ligne[self::CSV_ID_ADRESSE]));
-
-        /*if($etablissement) {
-            $identifiant = $etablissement->getIdentifiant();
-        } else {
-            $identifiant = $societe->getIdentifiant().$this->em->getNextNumeroEtablissement($societe);
-        }*/
-
-        $etablissement = new Etablissement();
-
+        if(!$etablissement) {
+            $etablissement = new Etablissement();
+        }
         $etablissement->setSociete($societe);
         $etablissement->setIdentifiant($societe->getIdentifiant());
         $etablissement->setIdentifiantReprise($ligne[self::CSV_ID_ADRESSE]);

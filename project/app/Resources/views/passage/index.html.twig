@@ -15,7 +15,7 @@
                 <div class="col-xs-6">
                     <div id="liste_passage" class="list-group well" style="height: 650px; overflow: auto; position: relative;">
                         {% for passage in passages %}
-                            <a data-words='{{ [passage.technicienInfos.identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate('full', 'none'), passage.etablissementInfos.nom]|json_encode() }}' href="{{path('passage_etablissement', {'id': passage.etablissement.id })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
+                            <a data-words='{{ [passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate('full', 'none'), passage.etablissementInfos.nom]|json_encode() }}' href="{{path('passage_etablissement', {'id': passage.etablissement.id })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="row">
@@ -50,7 +50,7 @@
                                 <div class="row" style="margin-top:10px;">
                                     <div class="col-sm-5 text-left">
                                         <i class="mdi mdi-person mdi-lg"></i>
-                                        <span class="label" style="background-color: {{ passage.technicienInfos.couleur }};color: {{ passage.technicienInfos.couleurText }};"><small>{{ passage.technicienInfos.identite }}</small></span>
+                                        <span class="label" style="background-color: {{ passage.techniciens[0].couleur }};color: {{ passage.techniciens[0].couleurText }};"><small>{{ passage.techniciens[0].prenom }} {{ passage.techniciens[0].nom }}</small></span>
                                     </div>
                                     <div class="col-sm-2 text-center">
                                         <i class="mdi mdi-schedule mdi-lg"></i>

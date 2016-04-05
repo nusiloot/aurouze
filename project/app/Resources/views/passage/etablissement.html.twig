@@ -48,63 +48,78 @@
             <a href="{{ path('passage_creation', {'id': etablissement.getId()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un passage</strong></a>
             <hr />
             {% for contrat in contrats %}
+                {% set etablissementId = etablissement.id %}
+                {% if contrat.contratPassages[etablissementId] is defined %}
+                    {% set contratPassages = contrat.contratPassages[etablissementId] %}
+                    <h3><span class="pull-right">{{ contratPassages.getNbPassagesRealises }} réalisés / {{ contratPassages.getNbPassagePrevu}} prévus</span>Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }} <small>sur {{ contrat.duree }} mois</small> <a class="btn btn-default" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a></h3>
 
-                <h3><span class="pull-right">{{ contrat.getNbPassagesRealises }} réalisés / {{ contrat.getNbPassagePrevu}} prévus</span>Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }} <small>sur {{ contrat.duree }} mois</small> <a class="btn btn-default" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a></h3>
-
-                <div style="padding-left: 20px;" class="panel-group {% if(contrat.isTerminee) %}collapse{% endif %}" id="passages-{{ contrat.id }}" role="tablist" aria-multiselectable="true">
-                    <blockquote class="text-muted" style="max-height: 120px; overflow: auto; font-size: 10px;">{{ contrat.nomenclature | nl2br }}</blockquote>
-                    {% for pe in contrat.getPassagesSorted %}
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="heading-{{ pe.identifiant }}">
-                                <h4 class="panel-title">
-                                    <div class="row">
-                                        <div class="col-xs-8">
-                                            <div class="row">
-                                                <div class="col-xs-4">
-                                                    <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ pe.dateDebut | localizeddate('full', 'none') }} à {{ pe.dateDebut | localizeddate('none', 'short') }}</span>
-                                                </div>
-                                                <div class="col-xs-2">
-                                                    {% for prestation in pe.prestations %}
-                                                        {% if(prestation.wordToPicto) %}
-                                                            <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                                                                <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}">&nbsp;</i></span>                                                          
-                                                            {%else%}
-                                                            <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
-                                                        {%endif%}
-                                                    {% endfor %}    
-                                                </div>
-                                                <div class="col-xs-2">
-                                                    {% if(pe.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ pe.duree }}</span>{% endif %}
-                                                </div>
-                                                <div class="col-xs-4">
-                                                    <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ pe.technicienInfos.identite }}
+                    <div style="padding-left: 20px;" class="panel-group {% if(contrat.isTerminee) %}collapse{% endif %}" id="passages-{{ contrat.id }}" role="tablist" aria-multiselectable="true">
+                        <blockquote class="text-muted" style="max-height: 120px; overflow: auto; font-size: 10px;">{{ contrat.nomenclature | nl2br }}</blockquote>
+                        {% for pe in contratPassages.getPassagesSorted %}
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="heading-{{ pe.identifiant }}">
+                                    <h4 class="panel-title">
+                                        <div class="row">
+                                            <div class="col-xs-8">
+                                                <div class="row">
+                                                    <div class="col-xs-4">
+                                                        <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ pe.dateDebut | localizeddate('full', 'none') }} à {{ pe.dateDebut | localizeddate('none', 'short') }}</span>
+                                                    </div>
+                                                    <div class="col-xs-2">
+                                                        {% for prestation in pe.prestations %}
+                                                            {% if(prestation.wordToPicto) %}
+                                                                <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
+                                                                    <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}">&nbsp;</i></span>                                                          
+                                                                {%else%}
+                                                                <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
+                                                            {%endif%}
+                                                        {% endfor %}    
+                                                    </div>
+                                                    <div class="col-xs-2">
+                                                        {% if(pe.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ pe.duree }}</span>{% endif %}
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <ul class="list-inline">
+                                                            {% for technicien in pe.techniciens %}
+                                                                <li>
+                                                                    <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ technicien.identite }}
+                                                                </li>
+                                                            {% endfor %}   
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <div class="col-xs-4 text-right">
+                                                {% if pe.realise %} <span class="label label-success">Réalisé</span>
+                                                {% elseif pe.planifie  %}<a class="btn btn-sm btn-primary" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
+                                                {% elseif pe.aPlanifie %} 
+                                                    {% for technicien in pe.techniciens %}
+                                                        <li>
+                                                            <a class="btn btn-sm btn-warning" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : technicien.identite, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier pour {{ technicien.identite}}</a>
+                                                        </li>
+                                                    {% endfor %}   
+
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                        <div class="col-xs-4 text-right">
-                                            {% if pe.realise %} <span class="label label-success">Réalisé</span>
-                                            {% elseif pe.planifie  %}<a class="btn btn-sm btn-primary" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
-                                            {% elseif pe.aPlanifie %} <a class="btn btn-sm btn-warning" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : pe.technicienInfos.identite, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier le passage</a>
-                                            {% endif %}
-                                        </div>
+                                        <h5><a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ pe.identifiant }}" aria-expanded="false" aria-controls="collapseOne">{{ pe.libelle }}</a>
+                                        </h5>
+                                    </h4>
+                                </div>
+                                <div id="collapse-{{ pe.identifiant }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ pe.identifiant }}">
+                                    <div class="panel-body">
+                                        {% if pe.descriptionTransformed %}
+                                            {{ pe.descriptionTransformed | nl2br }}
+                                        {% else %}
+                                            <span class="text-muted">Aucun rapport de passage</span>
+                                        {% endif %}
                                     </div>
-                                    <h5><a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ pe.identifiant }}" aria-expanded="false" aria-controls="collapseOne">{{ pe.libelle }}</a>
-                                    </h5>
-                                </h4>
-                            </div>
-                            <div id="collapse-{{ pe.identifiant }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ pe.identifiant }}">
-                                <div class="panel-body">
-                                    {% if pe.descriptionTransformed %}
-                                        {{ pe.descriptionTransformed | nl2br }}
-                                    {% else %}
-                                        <span class="text-muted">Aucun rapport de passage</span>
-                                    {% endif %}
                                 </div>
                             </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <hr />
+                        {% endfor %}
+                    </div>
+                    <hr />
+                {% endif %}
             {% endfor %}
         </div>
     </div>

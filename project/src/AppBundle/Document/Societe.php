@@ -10,10 +10,8 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
  */
 class Societe {
 
-    const PREFIX = "SOCIETE";
-
     /**
-     * @MongoDB\Id(strategy="NONE", type="string")
+     * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\SocieteGenerator"})
      */
     protected $id;
 
@@ -67,34 +65,6 @@ class Societe {
      *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe")
      */
     protected $etablissements = array();
-
-    public function generateId() {
-
-        return $this->setId(self::PREFIX . '-' . $this->identifiant);
-    }
-
-
-    /**
-     * Set id
-     *
-     * @param string $id
-     * @return self
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get id
-     *
-     * @return string $id
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set identifiant
@@ -293,5 +263,15 @@ class Societe {
     public function getEtablissementIncrement()
     {
         return $this->etablissementIncrement;
+    }
+
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }
