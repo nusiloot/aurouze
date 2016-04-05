@@ -66,9 +66,7 @@ class SocieteCsvImporter extends CsvFile {
 
         $societe = new Societe();
 
-        $societe->setIdentifiant(sprintf("%06d", $ligne[self::CSV_ID_SOCIETE]));
-
-        $societe->generateId();
+        $societe->setIdentifiantReprise($ligne[self::CSV_ID_SOCIETE]);
 
         $societe->setRaisonSociale($ligne[self::CSV_RAISON_SOCIALE]);
         $societe->setCodeComptable($ligne[self::CSV_CODE_COMPTABLE]);

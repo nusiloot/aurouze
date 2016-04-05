@@ -28,7 +28,7 @@ class Etablissement implements EtablissementInfosInterface {
     const PREFIX = "ETABLISSEMENT";
 
     /**
-     * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\EtablissementIncrementGenerator"})
+     * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\EtablissementGenerator"})
      */
     protected $id;
 
