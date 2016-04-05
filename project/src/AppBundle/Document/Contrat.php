@@ -139,6 +139,11 @@ class Contrat {
      * @MongoDB\String
      */
     protected $statut;
+    
+    /**
+     * @MongoDB\String
+     */
+    protected $identifiantReprise;
 
     public function __construct() {
         $this->prestations = new ArrayCollection();
@@ -745,11 +750,30 @@ class Contrat {
     /**
      * Add contratPassage
      *
+     * @param AppBundle\Document\Passage $passage
+     */
+    public function addPassage(\AppBundle\Document\Etablissement $etablissement, Passage $passage)
+    {
+        $contratPassagesToSet = new ContratPassages();
+        foreach ($this->getContratPassages() as $contratPassages) {
+            if($etablissement->getId() == $contratPassages->getEtablissement()->getId()){
+                $contratPassagesToSet = $contratPassages;
+            }
+        }
+        $contratPassagesToSet->addPassage($passage);
+        $contratPassagesToSet->setEtablissement($etablissement);
+        
+        $this->addContratPassage($etablissement,$contratPassagesToSet);
+    }
+    
+    /**
+     * Add contratPassage
+     *
      * @param AppBundle\Document\ContratPassages $contratPassage
      */
-    public function addContratPassage(\AppBundle\Document\ContratPassages $contratPassage)
+    public function addContratPassage($etablissement, \AppBundle\Document\ContratPassages $contratPassage)
     {
-        $this->contratPassages[] = $contratPassage;
+        $this->contratPassages[$etablissement->getId()] = $contratPassage;
     }
 
     /**
@@ -836,5 +860,27 @@ class Contrat {
     public function getNumeroArchive()
     {
         return $this->numeroArchive;
+    }
+
+    /**
+     * Set identifiantReprise
+     *
+     * @param string $identifiantReprise
+     * @return self
+     */
+    public function setIdentifiantReprise($identifiantReprise)
+    {
+        $this->identifiantReprise = $identifiantReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantReprise
+     *
+     * @return string $identifiantReprise
+     */
+    public function getIdentifiantReprise()
+    {
+        return $this->identifiantReprise;
     }
 }

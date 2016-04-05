@@ -136,7 +136,7 @@ do
 done < $DATA_DIR/passagesadressestechniciens.csv
 
 cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
-    etablissement_id=sprintf("%06d", $25);
+    etablissement_id=$25;
     d=$7;
     d_creation=$19;
     date_passage_debut="";
@@ -209,7 +209,8 @@ join -t ';' -1 2 -2 1 $DATA_DIR/prestationAdresse.sorted.csv $DATA_DIR/tblPresta
 
 cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
     contrat_id=$1;
-    societe_id=sprintf("%06d", $5);
+    societe_old_id=$5;
+    contrat_archivage=$11;
     etablissement_id=sprintf("%06d", $3);
     commercial_id=sprintf("%06d", $8);
     technicien_id=sprintf("%06d", $9);
@@ -245,7 +246,7 @@ cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)
     duree=$21;
     garantie=$33;
     prixht=$29;
-    print contrat_id";"etablissement_id";"societe_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";";
+    print contrat_id";"etablissement_id";"societe_old_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";"contrat_archivage";";
 }' > $DATA_DIR/contrats.csv;
 
 
@@ -268,10 +269,11 @@ echo "Import des etablissements"
 
 php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv
 
+echo "Import des contrats"
+
+php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv
+
 echo "Import des passages"
 
 php app/console importer:csv passage.importer $DATA_DIR/passages.csv
 
-echo "Import des contrats"
-
-php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv

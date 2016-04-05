@@ -15,7 +15,7 @@ namespace AppBundle\Import;
  */
 use AppBundle\Document\Passage;
 use AppBundle\Document\Contrat;
-use AppBundle\Document\UserInfos;
+use AppBundle\Document\ContratPassages;
 use AppBundle\Document\Prestation;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\PassageManager;
@@ -73,7 +73,7 @@ class PassageCsvImporter {
             }
 
             $etablissement = $this->em->getRepository()->findOneByIdentifiantReprise($data[self::CSV_ETABLISSEMENT_ID]);
-           
+            
             if (!$etablissement) {
                 $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
@@ -81,8 +81,7 @@ class PassageCsvImporter {
             $passage = new Passage();
             $passage->setEtablissement($etablissement);
             $passage->setDatePrevision(new \DateTime($data[self::CSV_DATE_CREATION]));
-            $passage->setNumeroPassageIdentifiant("001");
-            $passage->setNumeroContratArchive($data[self::CSV_CONTRAT_ID]);
+            $passage->setNumeroPassageIdentifiant("001");            
             $passage->generateId();
 
             if ($data[self::CSV_DATE_DEBUT]) {
@@ -115,17 +114,26 @@ class PassageCsvImporter {
                 }
             }
             
-            $userInfos = new UserInfos();
             $prenomNomTechnicien = trim($data[self::CSV_TECHNICIEN]);
             
             $nomTechnicien = substr(strrchr($prenomNomTechnicien, " "), 1);
             $prenomTechnicien = trim(str_replace($nomTechnicien, '', $prenomNomTechnicien));
             $identifiantTechnicien = strtoupper(Transliterator::urlize($prenomTechnicien . ' ' . $nomTechnicien));
             
-            $technicien = $this->um->getRepository()->findOneByIdentite($identifiantTechnicien);
-           
-            $passage->
-
+            $user = $this->um->getRepository()->findOneByIdentifiant($identifiantTechnicien);
+            //LISTE DE TECHNICIEN A PREVOIR
+            $passage->addTechnicien($user);
+            
+            $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_CONTRAT_ID]);
+            if(!$contrat){
+                 $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $data[self::CSV_CONTRAT_ID]));
+                continue;
+            }
+            $passage->setContrat($contrat);
+            $passage->setNumeroContratArchive($contrat->getNumeroArchive());
+            $contrat->addPassage($etablissement,$passage);
+            
+            $this->dm->persist($contrat);
             $this->dm->persist($passage);
 
             $i++;
@@ -133,7 +141,7 @@ class PassageCsvImporter {
             if ($cptTotal % (count($csv) / 100) == 0) {
                 $progress->advance();
             }
-            if ($i >= 10000) {
+            if ($i >= 1000) {
                 $this->dm->flush();
                 $i = 0;
             }

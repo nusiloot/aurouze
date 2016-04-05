@@ -65,7 +65,7 @@ class Passage {
      * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="passages")
      */
     protected $etablissement;
-
+   
     /**
      * @MongoDB\EmbedOne(targetDocument="AppBundle\Document\EtablissementInfos")
      */
@@ -396,26 +396,6 @@ class Passage {
     }
 
     /**
-     * Set technicien
-     *
-     * @param string $technicien
-     * @return self
-     */
-    public function setTechnicien($technicien) {
-        $this->technicien = $technicien;
-        return $this;
-    }
-
-    /**
-     * Get technicien
-     *
-     * @return string $technicien
-     */
-    public function getTechnicien() {
-        return $this->technicien;
-    }
-
-    /**
      * Set statut
      *
      * @param string $statut
@@ -602,16 +582,6 @@ class Passage {
     }
 
     /**
-     * Remove technicien
-     *
-     * @param AppBundle\Document\User $technicien
-     */
-    public function removeTechnicien(\AppBundle\Document\User $technicien)
-    {
-        $this->techniciens->removeElement($technicien);
-    }
-
-    /**
      * Get techniciens
      *
      * @return \Doctrine\Common\Collections\Collection $techniciens
@@ -619,5 +589,15 @@ class Passage {
     public function getTechniciens()
     {
         return $this->techniciens;
+    }
+
+    /**
+     * Remove technicien
+     *
+     * @param AppBundle\Document\User $technicien
+     */
+    public function removeTechnicien(\AppBundle\Document\User $technicien)
+    {
+        $this->techniciens->removeElement($technicien);
     }
 }

@@ -11,6 +11,7 @@ use AppBundle\Type\EtablissementChoiceType;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
+use AppBundle\Type\PassageCreationType;
 use AppBundle\Manager\ContratManager;
 
 class PassageController extends Controller {
@@ -43,6 +44,29 @@ class PassageController extends Controller {
         $geojson = $this->buildGeoJson($passages);
 
         return $this->render('passage/index.html.twig', array('passages' => $passages, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson));
+    }
+
+    /**
+     * @Route("/passage/{id}/creer", name="passage_creation")
+     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
+     */
+    public function creationAction(Request $request, Etablissement $etablissement) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+		$passage = $this->get('passage.manager')->create($etablissement);
+		
+		$form = $this->createForm(new PassageCreationType($dm), $passage, array(
+				'action' => $this->generateUrl('passage_creation', array('id' => $etablissement->getId())),
+				'method' => 'POST',
+		));
+		$form->handleRequest($request);
+		if ($form->isSubmitted() && $form->isValid()) {
+			$passage = $form->getData();
+			$dm->persist($contrat);
+			$dm->flush();
+			return $this->redirectToRoute('passage_etablissement', array('id' => $etablissement->getId()));
+		}
+		
+        return $this->render('passage/creation.html.twig', array('passage' => $passage, 'form' => $form->createView()));
     }
 
     /**

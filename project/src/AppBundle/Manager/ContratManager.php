@@ -9,6 +9,7 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\Passage;
 use AppBundle\Document\UserInfos;
 use AppBundle\Document\Prestation;
+use AppBundle\Document\Societe;
 
 class ContratManager implements MouvementManagerInterface {
 
@@ -41,9 +42,9 @@ class ContratManager implements MouvementManagerInterface {
         return $this->dm->getRepository('AppBundle:Contrat');
     }
 
-    public function getNextNumero(Etablissement $etablissement, \DateTime $dateCreation) {
-        $next = $this->getRepository()->findNextNumero($etablissement, $dateCreation);
-        return $etablissement->getIdentifiant() . '-' . $dateCreation->format('Ymd') . '-' . sprintf("%03d", $next);
+    public function getNextNumero(Societe $societe, \DateTime $dateCreation) {
+        $next = $this->getRepository()->findNextNumero($societe, $dateCreation);
+        return $societe->getIdentifiant() . '-' . $dateCreation->format('Ymd') . '-' . sprintf("%03d", $next);
     }
 
     public function getNextPassageForContrat($contrat) {
