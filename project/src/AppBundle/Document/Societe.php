@@ -2,11 +2,7 @@
 
 namespace AppBundle\Document;
 
-/**
- * Description of Societe
- *
- * @author mathurin
- */
+
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
 /**
@@ -55,19 +51,22 @@ class Societe {
      * @MongoDB\EmbedOne(targetDocument="Adresse")
      */
     protected $adresse;
-    
-    
+
+
      /**
      * @MongoDB\String
      */
     protected $identifiantReprise;
-    
+
+    /**
+    * @MongoDB\Increment
+    */
+   protected $etablissementIncrement;
+
      /***
-     *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe") 
+     *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe")
      */
     protected $etablissements = array();
-    
-
 
     public function generateId() {
 
@@ -271,5 +270,28 @@ class Societe {
     public function getIdentifiantReprise()
     {
         return $this->identifiantReprise;
+    }
+
+
+    /**
+     * Set etablissementIncrement
+     *
+     * @param increment $etablissementIncrement
+     * @return self
+     */
+    public function setEtablissementIncrement($etablissementIncrement)
+    {
+        $this->etablissementIncrement = $etablissementIncrement;
+        return $this;
+    }
+
+    /**
+     * Get etablissementIncrement
+     *
+     * @return increment $etablissementIncrement
+     */
+    public function getEtablissementIncrement()
+    {
+        return $this->etablissementIncrement;
     }
 }

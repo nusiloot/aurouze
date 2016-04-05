@@ -28,7 +28,7 @@ class Etablissement implements EtablissementInfosInterface {
     const PREFIX = "ETABLISSEMENT";
 
     /**
-     * @MongoDB\Id(strategy="NONE", type="string")
+     * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\EtablissementIncrementGenerator"})
      */
     protected $id;
 
@@ -66,14 +66,14 @@ class Etablissement implements EtablissementInfosInterface {
      * @MongoDB\String
      */
     protected $type;
-    
+
      /**
      * @MongoDB\String
      */
     protected $identifiantReprise;
-    
+
     /***
-     *  @MongoDB\ReferenceMany(targetDocument="Contrat", mappedBy="etablissement") 
+     *  @MongoDB\ReferenceMany(targetDocument="Contrat", mappedBy="etablissement")
      */
     protected $contrats = array();
 
@@ -85,34 +85,6 @@ class Etablissement implements EtablissementInfosInterface {
 
     public function __construct() {
         $this->adresse = new Adresse();
-    }
-
-    public function generateId() {
-
-        $this->setId(self::PREFIX . '-' . $this->identifiant);
-    }
-
-    /**
-     * Set id
-     *
-     * @param string $id
-     * @return self
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-    
-
-    /**
-     * Get id
-     *
-     * @return string $id
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
@@ -137,7 +109,7 @@ class Etablissement implements EtablissementInfosInterface {
         return $this->identifiant;
     }
 
-  
+
 
     /**
      * Set contrats
@@ -307,18 +279,18 @@ class Etablissement implements EtablissementInfosInterface {
     }
 
     public function getTelephonePortable() {
-        
+
     }
 
     public function getFax() {
-        
+
     }
 
     public function getIcon() {
 
         return EtablissementManager::$type_icon[$this->getType()];
     }
-    
+
     public function getIntitule() {
 
         return $this->getNom() . ' ' . $this->getAdresse()->getIntitule();
@@ -366,5 +338,15 @@ class Etablissement implements EtablissementInfosInterface {
     public function getIdentifiantReprise()
     {
         return $this->identifiantReprise;
+    }
+
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }

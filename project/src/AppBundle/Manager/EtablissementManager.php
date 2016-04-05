@@ -79,11 +79,12 @@ class EtablissementManager {
     }
 
     public function getNextNumeroEtablissement(Societe $societe) {
-        $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllPostfixByIdentifiantSociete($societe->getIdentifiant());
+        $allEtablissementsIdentifiants = $this->dm->getRepository('AppBundle:Etablissement')->findAllPostfixByIdentifiantSociete($societe);
 
         if (!count($allEtablissementsIdentifiants)) {
             return sprintf("%03d", 1);
         }
+
         return sprintf("%03d", max($allEtablissementsIdentifiants) + 1);
     }
 
