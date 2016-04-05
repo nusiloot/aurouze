@@ -21,7 +21,9 @@
         {% if(passage.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ passage.duree }}</span>{% endif %}
     </div>
     <div class="col-xs-6 text-right">
-        <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ passage.technicien }}
+    	{% for tech in passage.techniciens %}
+        <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ tech.identite }}
+        {% endfor %}
     </div>
   </div>
 <div class="row">

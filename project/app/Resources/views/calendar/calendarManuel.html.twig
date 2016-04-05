@@ -123,8 +123,9 @@
 																				top: {{ event.coefStart * 22}}px; 
 																				bottom: -{{ event.coefEnd * 22}}px; 
 																				left: {{ ((100 / nbTechniciens) * index)|round(0, 'floor') }}%; 
-																				width: {{ ((100 / nbTechniciens))|round(0, 'floor') }}%;" 
-																				class="fc-time-grid-event fc-v-event fc-event fc-start fc-end">
+																				width: {{ ((100 / nbTechniciens))|round(0, 'floor') -1 }}%;" 
+																				class="fc-time-grid-event fc-v-event fc-event fc-start fc-end"
+																				nb="{{ eventDate|keys|length }}">
 																			</a>
 																			{% endfor %}
 																			{% set index = index + 1 %}
