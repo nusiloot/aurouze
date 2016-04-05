@@ -100,13 +100,20 @@ class PassageCsvImporter {
             }
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
-
-            $prestations = array();
-            if ($data[self::CSV_PRESTATIONS]) {
+          
+             if ($data[self::CSV_PRESTATIONS]) {
                 $prestations = explode(',', $data[self::CSV_PRESTATIONS]);
+                foreach ($prestations as $prestationNom) {
+                    if (trim($prestationNom) != "") {
+                        if (!in_array($prestationNom, $prestationsType)) {
+                            $output->writeln(sprintf("<error>La prestation : %s n'existe pas dans la configuration </error>", $prestationNom));
+                        }
+                        $prestation = new Prestation();
+                        $prestation->setNom($prestationNom);
+                        $passage->addPrestation($prestation);
+                    }
+                }
             }
-            
-            $passage->setPrestations($prestations);
 
             $prenomNomTechnicien = trim($data[self::CSV_TECHNICIEN]);
 
@@ -119,13 +126,13 @@ class PassageCsvImporter {
             $passage->addTechnicien($user);
 
             $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_CONTRAT_ID]);
-            if(!$contrat){
-                 $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $data[self::CSV_CONTRAT_ID]));
+            if (!$contrat) {
+                $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $data[self::CSV_CONTRAT_ID]));
                 continue;
             }
             $passage->setContrat($contrat);
             $passage->setNumeroContratArchive($contrat->getNumeroArchive());
-            $contrat->addPassage($etablissement,$passage);
+            $contrat->addPassage($etablissement, $passage);
 
             $this->dm->persist($contrat);
             $this->dm->persist($passage);

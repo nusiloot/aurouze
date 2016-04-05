@@ -5,9 +5,10 @@ namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
+use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Document\EtablissementInfos;
-use AppBundle\Document\ConfigurationPrestation;
+use AppBundle\Document\Prestation;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
@@ -27,7 +28,7 @@ class Passage {
     protected $identifiant;
 
     /**
-     * @MongoDB\Collection
+     * @MongoDB\EmbedMany(targetDocument="Prestation")
      */
     protected $prestations;
 
@@ -113,6 +114,7 @@ class Passage {
 
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
+        $this->prestations = new ArrayCollection();
         $this->mouvement_declenchable = false;
         $this->mouvement_declenche = false;
     }
@@ -563,6 +565,38 @@ class Passage {
         return $this->techniciens;
     }
 
+  
+
+    /**
+     * Add prestation
+     *
+     * @param AppBundle\Document\Prestation $prestation
+     */
+    public function addPrestation(\AppBundle\Document\Prestation $prestation)
+    {
+        $this->prestations[] = $prestation;
+    }
+
+    /**
+     * Remove prestation
+     *
+     * @param AppBundle\Document\Prestation $prestation
+     */
+    public function removePrestation(\AppBundle\Document\Prestation $prestation)
+    {
+        $this->prestations->removeElement($prestation);
+    }
+
+   /**
+     * Get prestations
+     *
+     * @return \Doctrine\Common\Collections\Collection $prestations
+     */
+    public function getPrestations()
+    {
+        return $this->prestations;
+    }
+
     /**
      * Remove technicien
      *
@@ -572,26 +606,24 @@ class Passage {
     {
         $this->techniciens->removeElement($technicien);
     }
-
-    /**
-     * Set prestations
-     *
-     * @param collection $prestations
-     * @return self
-     */
-    public function setPrestations($prestations)
-    {
-        $this->prestations = $prestations;
-        return $this;
+    
+    public function setTimeDebut($time) {
+    	$dateTime = $this->getDateDebut();
+    	$this->setDateDebut(new \DateTime($dateTime->format('Y-m-d').'T'.$time.':00'));
     }
-
-    /**
-     * Get prestations
-     *
-     * @return collection $prestations
-     */
-    public function getPrestations()
-    {
-        return $this->prestations;
+    
+    public function setTimeFin($time) {
+    	$dateTime = $this->getDateFin();
+    	$this->setDateFin(new \DateTime($dateTime->format('Y-m-d').'T'.$time.':00'));
+    }
+    
+    public function getTimeDebut() {
+    	$dateTime = $this->getDateDebut();
+    	return $dateTime->format('H:i');
+    }
+    
+    public function getTimeFin() {
+    	$dateTime = $this->getDateFin();
+    	return $dateTime->format('H:i');
     }
 }

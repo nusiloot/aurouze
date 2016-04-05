@@ -3,7 +3,7 @@
 namespace AppBundle\Import;
 
 use AppBundle\Document\Configuration;
-use AppBundle\Document\ConfigurationPrestation;
+use AppBundle\Document\Prestation;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -33,7 +33,7 @@ class ConfigurationPrestationCsvImporter extends CsvFile {
             $configuration->setId(Configuration::PREFIX); 
         }
         foreach ($csv as $data) {
-            $prestation = new ConfigurationPrestation();
+            $prestation = new Prestation();
             $prestation->setNom($data[self::CSV_NOM]);
             $configuration->addPrestation($prestation);
             $this->dm->persist($configuration);
