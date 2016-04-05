@@ -7,9 +7,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Document\User;
 
@@ -50,22 +51,18 @@ class PassageCreationType extends AbstractType
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success"), ));
         ;
         
-        /*$builder->add('techniciens', CollectionType::class, array(
+        $builder->add('techniciens', DocumentType::class, array(
             	'choices' => $this->getUsers(User::USER_TYPE_TECHNICIEN),
-        		'allow_add' => true,
-        		'allow_delete' => true,
-        		'delete_empty' => true,
-        		'label' => '',
-        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple")
-        ));*/
-        
-        $builder->add('techniciens', ChoiceType::class, array(
-            	'choices' => $this->getUsers(User::USER_TYPE_TECHNICIEN),
+                'class' => 'AppBundle\Document\User',
+        		'expanded' => false, 
+        		'multiple' => true,
         		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple")
         ));
         
         $builder->add('prestations', ChoiceType::class, array(
-            	'choices' => $this->getPrestations(),
+        		'choices' => $this->getPrestations(),
+        		'expanded' => false,
+        		'multiple' => true,
         		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple")
         ));
     }
@@ -90,7 +87,7 @@ class PassageCreationType extends AbstractType
     
     public function getUsers($type) 
     {
-        return $this->dm->getRepository('AppBundle:User')->findAllByType($type);
+    	return $this->dm->getRepository('AppBundle:User')->findAllByType($type);
     }
     
     public function getPrestations() 
