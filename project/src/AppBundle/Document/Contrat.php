@@ -672,6 +672,16 @@ class Contrat {
         return $passagesDatesArray;
     }
     
+    public function getPassagesEtablissementNode(Etablissement $etablissement)
+    {
+          $contratPassages = $this->getContratPassages();
+        if(!isset($contratPassages[$etablissement->getId()])){
+            return null;
+        }
+        
+        return $contratPassages[$etablissement->getId()];
+    }
+    
     public function getPassages(Etablissement $etablissement)
     {
         if(!isset($this->contratPassages[$etablissement->getId()])){

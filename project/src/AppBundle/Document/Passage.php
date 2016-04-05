@@ -5,6 +5,7 @@ namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
+use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Document\EtablissementInfos;
 use AppBundle\Document\ConfigurationPrestation;
