@@ -52,6 +52,10 @@ class SocieteCsvImporter extends CsvFile {
         $cpt = 0;
         foreach ($csv as $data) {
             $societe = $this->createFromImport($data);
+            if(!$societe) {
+
+                continue;
+            }
             $this->dm->persist($societe);
             if ($cpt > 1000) {
                 $this->dm->flush();
@@ -63,6 +67,11 @@ class SocieteCsvImporter extends CsvFile {
     }
 
     public function createFromImport($ligne) {
+
+        if(!is_numeric($ligne[self::CSV_ID_SOCIETE])) {
+
+            return;
+        }
 
         $societe = new Societe();
 
