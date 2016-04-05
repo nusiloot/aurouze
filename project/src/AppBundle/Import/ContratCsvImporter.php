@@ -73,14 +73,13 @@ class ContratCsvImporter {
             if ($data[self::CSV_ID_ETABLISSEMENT] == "000000") {
                 continue;
             }
-            $identifiantSociete = sprintf('%06d',$data[self::CSV_ID_SOCIETE]);
-            $societe = $this->sm->getRepository()->findOneByIdentifiant($identifiantSociete);
-            
+            $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $data[self::CSV_ID_SOCIETE]));
+
             if (!$societe) {
-                $output->writeln(sprintf("<error>La societe %s n'existe pas</error>", $identifiantSociete));
+                $output->writeln(sprintf("<error>La societe %s n'existe pas</error>", $data[self::CSV_ID_SOCIETE]));
                 continue;
             }
-            
+
             $contrat = new Contrat();
             $contrat->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
 
@@ -108,7 +107,7 @@ class ContratCsvImporter {
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
             $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
-         
+
             $this->dm->persist($contrat);
             $i++;
             $cptTotal++;

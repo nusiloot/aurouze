@@ -239,7 +239,7 @@ cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)
         close(cmd);
     }
 
-    if(date_debut_contrat < "2012-01-01 00:00:00") {
+    if(date_debut_contrat < "2010-01-01 00:00:00") {
         next;
     }
 
@@ -259,6 +259,7 @@ echo "Import des techniciens"
 php app/console importer:csv user.importer $DATA_DIR/techniciens.csv -vvv
 
 echo "Import des types de prestations"
+
 php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestationType.csv -vvv
 
 echo "Import des sociétés"
@@ -274,6 +275,5 @@ echo "Import des contrats"
 php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv -vvv
 
 echo "Import des passages"
-
 
 php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv

@@ -61,7 +61,7 @@ class PassageCsvImporter {
 
         $i = 0;
         $cptTotal = 0;
-        
+
         $progress = new ProgressBar($output, 100);
         $progress->start();
 
@@ -73,7 +73,7 @@ class PassageCsvImporter {
             }
 
             $etablissement = $this->em->getRepository()->findOneByIdentifiantReprise($data[self::CSV_ETABLISSEMENT_ID]);
-            
+
             if (!$etablissement) {
                 $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
@@ -81,7 +81,7 @@ class PassageCsvImporter {
             $passage = new Passage();
             $passage->setEtablissement($etablissement);
             $passage->setDatePrevision(new \DateTime($data[self::CSV_DATE_CREATION]));
-            $passage->setNumeroPassageIdentifiant("001");            
+            $passage->setNumeroPassageIdentifiant("001");
             $passage->generateId();
 
             if ($data[self::CSV_DATE_DEBUT]) {
@@ -100,30 +100,24 @@ class PassageCsvImporter {
             }
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
+
+            $prestations = array();
             if ($data[self::CSV_PRESTATIONS]) {
                 $prestations = explode(',', $data[self::CSV_PRESTATIONS]);
-                foreach ($prestations as $prestationNom) {
-                    if (trim($prestationNom) != "") {
-                        if (!in_array($prestationNom, $prestationsType)) {
-                            $output->writeln(sprintf("<error>La prestation : %s n'existe pas dans la configuration </error>", $prestationNom));
-                        }
-                        $prestation = new Prestation();
-                        $prestation->setNom($prestationNom);
-                        $passage->addPrestation($prestation);
-                    }
-                }
             }
             
+            $passage->setPrestations($prestations);
+
             $prenomNomTechnicien = trim($data[self::CSV_TECHNICIEN]);
-            
+
             $nomTechnicien = substr(strrchr($prenomNomTechnicien, " "), 1);
             $prenomTechnicien = trim(str_replace($nomTechnicien, '', $prenomNomTechnicien));
             $identifiantTechnicien = strtoupper(Transliterator::urlize($prenomTechnicien . ' ' . $nomTechnicien));
-            
+
             $user = $this->um->getRepository()->findOneByIdentifiant($identifiantTechnicien);
             //LISTE DE TECHNICIEN A PREVOIR
             $passage->addTechnicien($user);
-            
+
             $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_CONTRAT_ID]);
             if(!$contrat){
                  $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $data[self::CSV_CONTRAT_ID]));
@@ -132,7 +126,7 @@ class PassageCsvImporter {
             $passage->setContrat($contrat);
             $passage->setNumeroContratArchive($contrat->getNumeroArchive());
             $contrat->addPassage($etablissement,$passage);
-            
+
             $this->dm->persist($contrat);
             $this->dm->persist($passage);
 
