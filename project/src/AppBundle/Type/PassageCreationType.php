@@ -9,7 +9,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use AppBundle\Document\User;
 
 class PassageCreationType extends AbstractType
 {
@@ -48,20 +50,23 @@ class PassageCreationType extends AbstractType
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success"), ));
         ;
         
-        $builder->add('techniciens', CollectionType::class, array(
-        		'entry_type' => new TechnicienType($this->dm),
+        /*$builder->add('techniciens', CollectionType::class, array(
+            	'choices' => $this->getUsers(User::USER_TYPE_TECHNICIEN),
         		'allow_add' => true,
         		'allow_delete' => true,
         		'delete_empty' => true,
         		'label' => '',
+        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple")
+        ));*/
+        
+        $builder->add('techniciens', ChoiceType::class, array(
+            	'choices' => $this->getUsers(User::USER_TYPE_TECHNICIEN),
+        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple")
         ));
         
-        $builder->add('prestations', CollectionType::class, array(
-        		'entry_type' => new PrestationType($this->dm),
-        		'allow_add' => true,
-        		'allow_delete' => true,
-        		'delete_empty' => true,
-        		'label' => '',
+        $builder->add('prestations', ChoiceType::class, array(
+            	'choices' => $this->getPrestations(),
+        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple")
         ));
     }
 
@@ -81,5 +86,15 @@ class PassageCreationType extends AbstractType
     public function getName()
     {
         return 'passage';
+    }
+    
+    public function getUsers($type) 
+    {
+        return $this->dm->getRepository('AppBundle:User')->findAllByType($type);
+    }
+    
+    public function getPrestations() 
+    {
+    	return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
     }
 }

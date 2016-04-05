@@ -1,30 +1,6 @@
 {% set _menu_active = 'etablissement' %}
 {% extends 'base.html.twig' %}
 
-{% form_theme form _self %}
-
-{% block _passage_techniciens_entry_row %}
-    <div class="row form-group dynamic-collection-item">
-        <div class="col-xs-11">
-            {{ form_widget(form.technicien) }}
-        </div>
-        <div class="col-xs-1 text-right">
-            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
-        </div>
-    </div>
-{% endblock %}
-
-{% block _passage_prestations_entry_row %}
-    <div class="row form-group dynamic-collection-item">
-        <div class="col-xs-11">
-            {{ form_widget(form.id) }}
-        </div>
-        <div class="col-xs-1 text-right">
-            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
-        </div>
-    </div>
-{% endblock %}
-
 {% block body %}
     <div class="row">
         <div class="col-xs-12">
@@ -74,28 +50,14 @@
                 <div class="panel panel-default">
             		<div class="panel-heading"><strong>Techniciens</strong></div>
             		<div class="panel-body">
-                		{{ form_widget(form.techniciens, { 'attr': {'class': 'dynamic-collection'} }) }}
-					</div>
-					<div class="panel-footer">
-					    <div class="row">
-					        <div class="col-xs-12 text-right">
-					            <a href="javascript:void(0);" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
-					        </div>
-					    </div>
+                		{{ form_widget(form.techniciens) }}
 					</div>
 				</div>
 	            
                 <div class="panel panel-default">
             		<div class="panel-heading"><strong>Prestations</strong></div>
             		<div class="panel-body">
-                		{{ form_widget(form.prestations, { 'attr': {'class': 'dynamic-collection'} }) }}
-					</div>
-					<div class="panel-footer">
-					    <div class="row">
-					        <div class="col-xs-12 text-right">
-					            <a href="javascript:void(0);" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
-					        </div>
-					    </div>
+                		{{ form_widget(form.prestations) }}
 					</div>
 				</div>
             
