@@ -647,7 +647,7 @@ class Contrat {
         if(!isset($contratPassages[$etablissement->getId()])){
             return null;
         }
-
+        
         return $contratPassages[$etablissement->getId()];
     }
 
