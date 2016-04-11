@@ -6,9 +6,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Manager\PassageManager as PassageManager;
-use AppBundle\Manager\EtablissementManager as EtablissementManager;
-use AppBundle\Type\EtablissementChoiceType as EtablissementChoiceType;
+use AppBundle\Manager\PassageManager;
+use AppBundle\Manager\EtablissementManager;
+use AppBundle\Type\EtablissementChoiceType;
+use AppBundle\Type\EtablissementType;
+use AppBundle\Document\Etablissement;
 
 class EtablissementController extends Controller {
 
@@ -59,6 +61,32 @@ class EtablissementController extends Controller {
             $newResult->term = $etablissement->getIntitule();
             $etablissementsResult[] = $newResult;
         }
+    }
+    
+    /**
+     * @Route("/etablissement/{societe}/modification/{id}", defaults={"id" = null}, name="etablissement_modification")
+     */
+    public function modificationAction(Request $request, $societe, $id) {
+    	
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+    	$societe = $this->get('societe.manager')->getRepository()->find($societe);
+    	$etablissement = ($id)? $this->get('etablissement.manager')->getRepository()->find($id) : new Etablissement();
+    	
+    	$etablissement->setSociete($societe);
+    	
+    	$form = $this->createForm(new EtablissementType($this->container, $dm), $etablissement, array(
+    			'action' => $this->generateUrl('etablissement_modification', array('societe' => $societe->getId(), 'id' => $id)),
+    			'method' => 'POST',
+    	));
+    	$form->handleRequest($request);
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		$etablissement = $form->getData();
+    		$dm->persist($etablissement); 	
+    		$dm->flush();
+    		return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
+    	}
+
+    	return $this->render('etablissement/modification.html.twig', array('societe' => $societe, 'form' => $form->createView()));
     }
 
 }

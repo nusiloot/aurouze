@@ -276,7 +276,7 @@ class Contrat {
      * @param AppBundle\Document\Produit $produit
      */
     public function removeProduit(\AppBundle\Document\Produit $produit) {
-        $this->produits->removeElement($prestation);
+        $this->produits->removeElement($produit);
     }
 
     /**
