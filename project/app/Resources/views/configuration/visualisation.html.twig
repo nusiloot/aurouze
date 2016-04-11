@@ -7,21 +7,10 @@
             <div class="panel-heading">Type de prestations </div>
 
             <div class="panel-body">
-                 <div class="row form-group">
-                        <div class="col-xs-6 text-left">
-                            Nom de la préstation
-                        </div>
-                        <div class="col-xs-6 text-left">
-                              Id de la préstation
-                        </div>
-                    </div>
                 {% for prestation in configuration.prestations %}
                     <div class="row form-group">
-                        <div class="col-xs-6 text-left">
+                        <div class="col-xs-12 text-left">
                             {{ prestation.nom }}
-                        </div>
-                        <div class="col-xs-6 text-left">
-                            {{ prestation.id }}
                         </div>
                     </div>
                 {% endfor %}
@@ -40,21 +29,10 @@
             <div class="panel-heading">Liste des Produits </div>
 
             <div class="panel-body">
-                <div class="row form-group">
-                        <div class="col-xs-6 text-left">
-                            Nom de la préstation
-                        </div>
-                        <div class="col-xs-6 text-left">
-                              Id de la préstation
-                        </div>
-                    </div>
                 {% for produit in configuration.produits %}
                     <div class="row form-group">
-                        <div class="col-xs-6 text-left">
-                            {{ produit.nom }}
-                        </div>
-                        <div class="col-xs-6 text-left">
-                            {{ produit.id }}
+                        <div class="col-xs-12 text-left">
+                            {{ produit.nom }} <small class="text-muted">{{ produit.prixHt }}&nbsp;€&nbsp;HT</small>
                         </div>
                     </div>
                 {% endfor %}

@@ -30,7 +30,7 @@ class Configuration {
     protected $id;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Prestation")
+     * @MongoDB\EmbedMany(targetDocument="ConfigurationPrestation")
      */
     protected $prestations;
 
@@ -67,18 +67,18 @@ class Configuration {
     /**
      * Add prestation
      *
-     * @param AppBundle\Document\Prestation $prestation
+     * @param AppBundle\Document\ConfigurationPrestation $prestation
      */
-    public function addPrestation(\AppBundle\Document\Prestation $prestation) {
+    public function addPrestation(\AppBundle\Document\ConfigurationPrestation $prestation) {
         $this->prestations[] = $prestation;
     }
 
     /**
      * Remove prestation
      *
-     * @param AppBundle\Document\Prestation $prestation
+     * @param AppBundle\Document\ConfigurationPrestation $prestation
      */
-    public function removePrestation(\AppBundle\Document\Prestation $prestation) {
+    public function removePrestation(\AppBundle\Document\ConfigurationPrestation $prestation) {
         $this->prestations->removeElement($prestation);
     }
 

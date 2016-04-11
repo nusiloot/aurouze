@@ -18,10 +18,8 @@ use AppBundle\Document\Mouvement;
  */
 class Contrat {
 
-    const PREFIX = "CONTRAT";
-
     /**
-     * @MongoDB\Id(strategy="NONE", type="string")
+     * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\ContratGenerator"})
      */
     protected $id;
 
@@ -54,12 +52,12 @@ class Contrat {
      * @MongoDB\String
      */
     protected $identifiant;
-    
+
     /**
      * @MongoDB\String
      */
     protected $numeroArchive;
-    
+
      /**
      * @MongoDB\Boolean
      */
@@ -139,7 +137,7 @@ class Contrat {
      * @MongoDB\String
      */
     protected $statut;
-    
+
     /**
      * @MongoDB\String
      */
@@ -148,35 +146,6 @@ class Contrat {
     public function __construct() {
         //$this->prestations = new ArrayCollection();
         $this->mouvements = new ArrayCollection();
-    }
-
-    /**
-     * Generate id
-     *
-     * @return self
-     */
-    public function generateId() {
-        return $this->setId(self::PREFIX . '-' . $this->identifiant);
-    }
-
-    /**
-     * Set id
-     *
-     * @param string $id
-     * @return self
-     */
-    public function setId($id) {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get id
-     *
-     * @return string $id
-     */
-    public function getId() {
-        return $this->id;
     }
 
     /**
@@ -538,7 +507,7 @@ class Contrat {
         return ($this->getDateFin() < new \DateTime());
     }
 
-   
+
 
     public function updateObject() {
         if (!$this->getNbPassages()) {
@@ -671,23 +640,23 @@ class Contrat {
         }
         return $passagesDatesArray;
     }
-    
+
     public function getPassagesEtablissementNode(Etablissement $etablissement)
     {
           $contratPassages = $this->getContratPassages();
         if(!isset($contratPassages[$etablissement->getId()])){
             return null;
         }
-        
+
         return $contratPassages[$etablissement->getId()];
     }
-    
+
     public function getPassages(Etablissement $etablissement)
     {
         if(!isset($this->contratPassages[$etablissement->getId()])){
             return array();
         }
-        
+
         return $this->contratPassages[$etablissement->getId()]->getPassagesSorted();
     }
 
@@ -759,10 +728,10 @@ class Contrat {
         }
         $contratPassagesToSet->addPassage($passage);
         $contratPassagesToSet->setEtablissement($etablissement);
-        
+
         $this->addContratPassage($etablissement,$contratPassagesToSet);
     }
-    
+
     /**
      * Add contratPassage
      *
@@ -879,5 +848,16 @@ class Contrat {
     public function getIdentifiantReprise()
     {
         return $this->identifiantReprise;
-    }  
+    }
+
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
 }

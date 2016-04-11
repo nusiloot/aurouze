@@ -6,6 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
@@ -28,7 +29,7 @@ class ConfigurationProduitType extends AbstractType {
 	{
 		 $builder
                 ->add('nom', TextType::class)
-                ->add('prixHt', TextType::class)
+                ->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2))
         ;
 	}
 	

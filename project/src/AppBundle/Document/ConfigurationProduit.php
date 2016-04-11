@@ -3,12 +3,19 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Behat\Transliterator\Transliterator;
 
 /**
  * @MongoDB\EmbeddedDocument
  */
 class ConfigurationProduit {
 
+
+	/**
+	 * @MongoDB\String
+	 */
+	protected $identifiant;
+	
     /**
      * @MongoDB\String
      */
@@ -18,12 +25,6 @@ class ConfigurationProduit {
      * @MongoDB\Float
      */
     protected $prixHt;
-
-    public function __construct() {
-        $this->prestationsTypes = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->produits = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
     
 
     /**
@@ -35,6 +36,7 @@ class ConfigurationProduit {
     public function setNom($nom)
     {
         $this->nom = $nom;
+        $this->setIdentifiant(strtoupper(Transliterator::urlize($nom)));
         return $this;
     }
 
@@ -46,6 +48,29 @@ class ConfigurationProduit {
     public function getNom()
     {
         return $this->nom;
+    }
+
+
+    /**
+     * Set identifiant
+     *
+     * @param string $identifiant
+     * @return self
+     */
+    public function setIdentifiant($identifiant)
+    {
+        $this->identifiant = $identifiant;
+        return $this;
+    }
+
+    /**
+     * Get identifiant
+     *
+     * @return string $identifiant
+     */
+    public function getIdentifiant()
+    {
+        return $this->identifiant;
     }
 
     /**
@@ -68,5 +93,10 @@ class ConfigurationProduit {
     public function getPrixHt()
     {
         return $this->prixHt;
+    }
+    
+    public function __toString()
+    {
+    	return $this->getNom();
     }
 }

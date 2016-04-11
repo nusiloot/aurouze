@@ -80,13 +80,14 @@ class ContratCsvImporter {
                 continue;
             }
 
-            $contrat = new Contrat();
+            $contrat = $this->cm->getRepository()->findOneBy(array('identifiantReprise', $data[self::CSV_ID_CONTRAT]));
+
+            if(!$contrat) {
+                $contrat = new Contrat();
+            }
+
             $contrat->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
-
-
             $contrat->setSociete($societe);
-            $contrat->setIdentifiant($this->cm->getNextNumero($societe, $contrat->getDateCreation()));
-            $contrat->generateId();
 
             if ($data[self::CSV_DATE_DEBUT]) {
                 $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));

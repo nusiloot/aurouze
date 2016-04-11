@@ -31,8 +31,6 @@ class ContratManager implements MouvementManagerInterface {
         $societe = $etablissement->getSociete();
         $contrat->setSociete($societe);
         $contrat->setDateCreation($dateCreation);
-        $contrat->setIdentifiant($this->getNextNumero($societe, $dateCreation));
-        $contrat->generateId();
         $contrat->setStatut(self::STATUT_BROUILLON);
         $contrat->addPrestation(new Prestation());
         return $contrat;
@@ -41,11 +39,6 @@ class ContratManager implements MouvementManagerInterface {
     public function getRepository() {
 
         return $this->dm->getRepository('AppBundle:Contrat');
-    }
-
-    public function getNextNumero(Societe $societe, \DateTime $dateCreation) {
-        $next = $this->getRepository()->findNextNumero($societe, $dateCreation);
-        return $societe->getIdentifiant() . '-' . $dateCreation->format('Ymd') . '-' . sprintf("%03d", $next);
     }
 
     public function getNextPassageForContrat($contrat) {
