@@ -79,6 +79,11 @@ class Contrat {
     protected $prestations;
 
     /**
+     * @MongoDB\EmbedMany(targetDocument="Produit")
+     */
+    protected $produits;
+
+    /**
      * @MongoDB\Date
      */
     protected $dateCreation;
@@ -144,7 +149,8 @@ class Contrat {
     protected $identifiantReprise;
 
     public function __construct() {
-        //$this->prestations = new ArrayCollection();
+        $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->produits = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mouvements = new ArrayCollection();
     }
 
@@ -253,6 +259,33 @@ class Contrat {
      */
     public function getPrestations() {
         return $this->prestations;
+    }
+
+    /**
+     * Add produit
+     *
+     * @param AppBundle\Document\Produit $prestation
+     */
+    public function addProduit(\AppBundle\Document\Produit $produit) {
+        $this->produits[] = $produit;
+    }
+
+    /**
+     * Remove produit
+     *
+     * @param AppBundle\Document\Produit $produit
+     */
+    public function removeProduit(\AppBundle\Document\Produit $produit) {
+        $this->produits->removeElement($prestation);
+    }
+
+    /**
+     * Get produits
+     *
+     * @return \Doctrine\Common\Collections\Produit $produits
+     */
+    public function getProduits() {
+        return $this->produits;
     }
 
     /**
@@ -601,7 +634,7 @@ class Contrat {
         }
 
         foreach ($this->getPrestations() as $prestation) {
-            if ($prestation->getIdentifiant() != $typePrestationPrincipal && $prestation->getNbPassages() > 1) {
+            if ($prestation->getIdentifiant() != $typePrestationPrincipal->getIdentifiant() && $prestation->getNbPassages() > 1) {
                 $nbPassagesPrestationRestant = $prestation->getNbPassages();
                 $nbPassagesRestant = count($passagesDatesArray);
                 $occurPassage = (floatval($nbPassagesRestant) / floatval($nbPassagesPrestationRestant));

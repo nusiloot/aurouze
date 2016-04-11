@@ -17,6 +17,7 @@ use AppBundle\Type\PrestationType;
 use AppBundle\Document\User;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Form\CallbackTransformer;
+use AppBundle\Transformer\ProduitTransformer;
 
 class ContratType extends AbstractType {
 
@@ -50,6 +51,14 @@ class ContratType extends AbstractType {
             'delete_empty' => true,
             'label' => '',
         ));
+
+        $builder->add('produits', ChoiceType::class, array(
+        		'choices' => $this->getProduits(),
+        		'expanded' => false,
+        		'multiple' => true,
+        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
+        ));
+        $builder->get('produits')->addModelTransformer(new ProduitTransformer($this->dm));
         
         $builder->add('commercial', DocumentType::class, array(
             "choices" => array_merge(array('' => ''), $this->getUsers(User::USER_TYPE_COMMERCIAL)),
@@ -93,6 +102,11 @@ class ContratType extends AbstractType {
 
     public function getUsers($type) {
         return $this->dm->getRepository('AppBundle:User')->findAllByType($type);
+    }
+
+    public function getProduits()
+    {
+    	return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getProduits()->toArray();
     }
 
 }

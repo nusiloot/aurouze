@@ -55,3 +55,16 @@
     </div>
 </div>
 
+<div class="panel panel-default">
+    <div class="panel-heading">Produits</div>
+    <div class="panel-body">
+        <ul class="list-group">
+			{% for produit in contrat.produits %}
+            <li class="list-group-item">
+				{{ produit.nom }} <small class="text-muted">{{ produit.prixHt }}&nbsp;€&nbsp;HT</small>
+			</li>
+			{% endfor %}
+        </ul>
+    </div>
+</div>
+
