@@ -84,7 +84,21 @@ class Prestation {
         $mot_pigeon = array('DEPIGEONNAGE');
         
         if($this->isPictoForLibelles($nom_libelles, $mot_rongeur)){
-            return 'rongeur';
+            $type_rongeur = "";
+            if($this->isPictoForLibelles($nom_libelles,array('RATS'))){
+                $type_rongeur = "rats-color";
+            }
+            if($this->isPictoForLibelles($nom_libelles,array('SOURIS'))){
+                $type_rongeur = "souris-color";
+            }
+            if($this->isPictoForLibelles($nom_libelles,array('LOIRS'))){
+                    $type_rongeur = "loirs-color";
+            }
+            if($this->isPictoForLibelles($nom_libelles,array('SURMULOTS'))){
+                    $type_rongeur = "surmulots-color";
+            }
+            
+            return 'rongeur '.$type_rongeur;
         }elseif($this->isPictoForLibelles($nom_libelles, $mot_puce)){
             return 'puce';
         }elseif($this->isPictoForLibelles($nom_libelles, $mot_moustique)){
