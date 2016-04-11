@@ -14,7 +14,7 @@ class ConfigurationPrestation
     /**
      * @MongoDB\String
      */
-    protected $id;
+    protected $identifiant;
     
     /**
      * @MongoDB\String
@@ -23,25 +23,25 @@ class ConfigurationPrestation
 
 
     /**
-     * Set id
+     * Set identifiant
      *
-     * @param string $id
+     * @param string $identifiant
      * @return self
      */
-    public function setId($id)
+    public function setIdentifiant($identifiant)
     {
-        $this->id = $id;
+        $this->identifiant = $identifiant;
         return $this;
     }
 
     /**
-     * Get id
+     * Get identifiant
      *
-     * @return string $id
+     * @return string $identifiant
      */
-    public function getId()
+    public function getIdentifiant()
     {
-        return $this->id;
+        return $this->identifiant;
     }
 
     /**
@@ -53,7 +53,7 @@ class ConfigurationPrestation
     public function setNom($nom)
     {
         $this->nom = $nom;
-        $this->setId(strtoupper(Transliterator::urlize($nom)));
+        $this->setIdentifiant(strtoupper(Transliterator::urlize($nom)));
         return $this;
     }
 

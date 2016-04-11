@@ -12,7 +12,11 @@
             {{ form_widget(form.nom) }}
         </div>
         <div class="col-xs-4">
-            {{ form_widget(form.prixHt) }}
+			{{ form_errors(form.prixHt) }}
+			<div class="input-group">
+				{{ form_widget(form.prixHt) }}
+				<div class="input-group-addon">€ HT</div>
+			</div>
         </div>
         <div class="col-xs-2 text-right">
             <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
