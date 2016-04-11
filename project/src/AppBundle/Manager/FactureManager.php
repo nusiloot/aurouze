@@ -5,7 +5,7 @@ namespace AppBundle\Manager;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use AppBundle\Document\Facture;
 use AppBundle\Document\FactureLigne;
-use AppBundle\Document\Etablissement;
+use AppBundle\Document\Societe;
 use AppBundle\Manager\MouvementManager;
 
 class FactureManager {
@@ -23,14 +23,14 @@ class FactureManager {
         return $this->dm->getRepository('AppBundle:Facture');
     }
 
-    public function findByEtablissement(Etablissement $etablissement) {
+    public function findBySociete(Societe $societe) {
 
-        return $this->getRepository()->findBy(array('etablissement.id' => $etablissement->getId()));
+        return $this->getRepository()->findBy(array('societe.id' => $societe->getId()));
     }
 
-    public function create(Etablissement $etablissement, $mouvements, $dateFacturation) {
+    public function create(Societe $societe, $mouvements, $dateFacturation) {
         $facture = new Facture();
-        $facture->setEtablissement($etablissement);
+        $facture->setSociete($societe);
         $facture->setDateEmission(new \DateTime());
         $facture->setDateFacturation($dateFacturation);
         $facture->generateId();
@@ -49,9 +49,9 @@ class FactureManager {
         return $facture;
     }
 
-    public function getMouvementsByEtablissement(Etablissement $etablissement) {
+    public function getMouvementsBySociete(Societe $societe) {
 
-        return $this->mm->getMouvementsByEtablissement($etablissement, true, false);
+        return $this->mm->getMouvementsBySociete($societe, true, false);
     }
 
     public function getMouvements() {

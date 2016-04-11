@@ -71,6 +71,11 @@ class Societe {
      */
     protected $etablissements = array();
 
+    public function getIntitule() {
+
+        return $this->getRaisonSociale() . ' ' . $this->getAdresse()->getIntitule();
+    }
+
     /**
      * Set identifiant
      *
@@ -278,5 +283,27 @@ class Societe {
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set contratIncrement
+     *
+     * @param increment $contratIncrement
+     * @return self
+     */
+    public function setContratIncrement($contratIncrement)
+    {
+        $this->contratIncrement = $contratIncrement;
+        return $this;
+    }
+
+    /**
+     * Get contratIncrement
+     *
+     * @return increment $contratIncrement
+     */
+    public function getContratIncrement()
+    {
+        return $this->contratIncrement;
     }
 }

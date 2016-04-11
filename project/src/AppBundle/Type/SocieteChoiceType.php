@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
-class EtablissementChoiceType extends AbstractType {
+class SocieteChoiceType extends AbstractType {
 
     /**
      * @param FormBuilderInterface $builder
@@ -16,11 +16,11 @@ class EtablissementChoiceType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
         $defaultChoice = array();
-        if(isset($options['data']) && isset($options['data']['etablissement'])) {
-            $defaultChoice = array($options['data']['etablissement']->getIdentifiant() => $options['data']['etablissement']->getIntitule());
+        if(isset($options['data']) && isset($options['data']['societe'])) {
+            $defaultChoice = array($options['data']['societe']->getIdentifiant() => $options['data']['societe']->getIntitule());
         }
 
-        $builder->add('etablissements', ChoiceType::class, array("choices" => $defaultChoice,
+        $builder->add('societes', ChoiceType::class, array("choices" => $defaultChoice,
             'label' => 'Chercher',
             'expanded' => false,
             'multiple' => false,
@@ -34,7 +34,7 @@ class EtablissementChoiceType extends AbstractType {
      * @return string
      */
     public function getBlockPrefix() {
-        return 'etablissement_choice';
+        return 'societe_choice';
     }
 
 }

@@ -2,9 +2,9 @@
 
 namespace AppBundle\Model;
 
-use AppBundle\Document\Etablissement;
+use AppBundle\Document\Societe;
 
 interface MouvementManagerInterface {
-    public function getMouvementsByEtablissement(Etablissement $etablissement, $isFaturable, $isFacture);
+    public function getMouvementsBySociete(Societe $societe, $isFaturable, $isFacture);
     public function getMouvements($isFaturable, $isFacture);
 }

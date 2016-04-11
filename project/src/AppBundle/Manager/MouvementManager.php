@@ -5,7 +5,7 @@ namespace AppBundle\Manager;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use AppBundle\Model\MouvementManagerInterface;
 use AppBundle\Document\Facture;
-use AppBundle\Document\Etablissement;
+use AppBundle\Document\Societe;
 
 class MouvementManager implements MouvementManagerInterface {
 
@@ -15,10 +15,10 @@ class MouvementManager implements MouvementManagerInterface {
         $this->mms = $mms;
     }
 
-    public function getMouvementsByEtablissement(Etablissement $etablissement, $isFaturable, $isFacture) {
+    public function getMouvementsBySociete(Societe $societe, $isFaturable, $isFacture) {
         $mouvements = array();
         foreach($this->mms as $mm) {
-            $mouvements = array_merge($mouvements, $mm->getMouvementsByEtablissement($etablissement, $isFaturable, $isFacture));
+            $mouvements = array_merge($mouvements, $mm->getMouvementsBySociete($societe, $isFaturable, $isFacture));
         }
 
         return $mouvements;

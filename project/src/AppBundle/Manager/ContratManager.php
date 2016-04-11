@@ -93,8 +93,8 @@ class ContratManager implements MouvementManagerInterface {
         }
     }
 
-    public function getMouvementsByEtablissement(Etablissement $etablissement, $isFaturable, $isFacture) {
-        $contrats = $this->getRepository()->findContratMouvements($etablissement, $isFaturable,  $isFacture);
+    public function getMouvementsBySociete(Societe $societe, $isFaturable, $isFacture) {
+        $contrats = $this->getRepository()->findContratMouvements($societe, $isFaturable,  $isFacture);
         $mouvements = array();
         foreach($contrats as $contrat) {
             $mouvements = array_merge($mouvements, $contrat->getMouvements()->toArray());

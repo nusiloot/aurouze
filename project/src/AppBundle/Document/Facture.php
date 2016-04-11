@@ -17,14 +17,14 @@ class Facture {
     protected $id;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="contrats")
+     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="factures")
      */
-    protected $etablissement;
+    protected $societe;
 
     /**
      * @MongoDB\String
      */
-    protected $etablissementIdentifiant;
+    protected $societeIdentifiant;
 
     /**
      * @MongoDB\Date
@@ -131,52 +131,6 @@ class Facture {
     public function getLignes()
     {
         return $this->lignes;
-    }
-
-    /**
-     * Set etablissement
-     *
-     * @param AppBundle\Document\Etablissement $etablissement
-     * @return self
-     */
-    public function setEtablissement(\AppBundle\Document\Etablissement $etablissement)
-    {
-        $this->etablissement = $etablissement;
-        $this->setEtablissementIdentifiant($etablissement->getIdentifiant());
-
-        return $this;
-    }
-
-    /**
-     * Get etablissement
-     *
-     * @return AppBundle\Document\Etablissement $etablissement
-     */
-    public function getEtablissement()
-    {
-        return $this->etablissement;
-    }
-
-    /**
-     * Set etablissementIdentifiant
-     *
-     * @param string $etablissementIdentifiant
-     * @return self
-     */
-    public function setEtablissementIdentifiant($etablissementIdentifiant)
-    {
-        $this->etablissementIdentifiant = $etablissementIdentifiant;
-        return $this;
-    }
-
-    /**
-     * Get etablissementIdentifiant
-     *
-     * @return string $etablissementIdentifiant
-     */
-    public function getEtablissementIdentifiant()
-    {
-        return $this->etablissementIdentifiant;
     }
 
     /**
