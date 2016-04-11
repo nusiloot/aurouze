@@ -8,7 +8,7 @@ use Behat\Transliterator\Transliterator;
 /**
  * @MongoDB\EmbeddedDocument
  */
-class ConfigurationProduit {
+class Produit {
 
 
 	/**

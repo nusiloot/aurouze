@@ -32,7 +32,7 @@ class ConfigurationPrestationType extends AbstractType {
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Document\ConfigurationPrestation',
+            'data_class' => 'AppBundle\Document\Prestation',
         ));
     }
 

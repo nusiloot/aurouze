@@ -30,12 +30,12 @@ class Configuration {
     protected $id;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="ConfigurationPrestation")
+     * @MongoDB\EmbedMany(targetDocument="Prestation")
      */
     protected $prestations;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="ConfigurationProduit")
+     * @MongoDB\EmbedMany(targetDocument="Produit")
      */
     protected $produits;
 
@@ -67,18 +67,18 @@ class Configuration {
     /**
      * Add prestation
      *
-     * @param AppBundle\Document\ConfigurationPrestation $prestation
+     * @param AppBundle\Document\Prestation $prestation
      */
-    public function addPrestation(\AppBundle\Document\ConfigurationPrestation $prestation) {
+    public function addPrestation(\AppBundle\Document\Prestation $prestation) {
         $this->prestations[] = $prestation;
     }
 
     /**
      * Remove prestation
      *
-     * @param AppBundle\Document\ConfigurationPrestation $prestation
+     * @param AppBundle\Document\Prestation $prestation
      */
-    public function removePrestation(\AppBundle\Document\ConfigurationPrestation $prestation) {
+    public function removePrestation(\AppBundle\Document\Prestation $prestation) {
         $this->prestations->removeElement($prestation);
     }
 
@@ -94,9 +94,9 @@ class Configuration {
     /**
      * Add produit
      *
-     * @param AppBundle\Document\ConfigurationProduit $produit
+     * @param AppBundle\Document\Produit $produit
      */
-    public function addProduit(\AppBundle\Document\ConfigurationProduit $produit) {
+    public function addProduit(\AppBundle\Document\Produit $produit) {
         $this->produits[] = $produit;
     }
 
@@ -105,7 +105,7 @@ class Configuration {
      *
      * @param AppBundle\Document\ConfigurationProduit $produit
      */
-    public function removeProduit(\AppBundle\Document\ConfigurationProduit $produit) {
+    public function removeProduit(\AppBundle\Document\Produit $produit) {
         $this->produits->removeElement($produit);
     }
 

@@ -36,7 +36,7 @@ class ConfigurationProduitType extends AbstractType {
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-				'data_class' => 'AppBundle\Document\ConfigurationProduit',
+				'data_class' => 'AppBundle\Document\Produit',
 		));
 	}
 	
