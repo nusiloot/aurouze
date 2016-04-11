@@ -66,7 +66,7 @@ class Prestation {
     public function getNbPassages() {
         return $this->nbPassages;
     }
-
+    
     public function getNomToString() {
         $mot_inutiles = array('DERATISATION', 'RONGEURS', 'DESINSECTISATION', 'INSECTES', 'RAMPANTS');
         $nom_libelles = explode('-', $this->nom);

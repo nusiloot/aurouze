@@ -601,7 +601,7 @@ class Contrat {
         }
 
         foreach ($this->getPrestations() as $prestation) {
-            if ($prestation->getIdentifiant() != $typePrestationPrincipal && $prestation->getNbPassages() > 1) {
+            if (($prestation->getIdentifiant() != $typePrestationPrincipal->getIdentifiant()) && $prestation->getNbPassages() > 1) {
                 $nbPassagesPrestationRestant = $prestation->getNbPassages();
                 $nbPassagesRestant = count($passagesDatesArray);
                 $occurPassage = (floatval($nbPassagesRestant) / floatval($nbPassagesPrestationRestant));
