@@ -26,7 +26,7 @@ class PrestationType extends AbstractType {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
 	{
 		$builder
-		->add('identifiant', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getPrestations()), "attr" => array("class" => "form-control select2 select2-simple")))
+		->add('identifiant', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getPrestations()), "attr" => array("class" => "form-control select2 select2-simple","placeholder" => 'Choisir un type de prestation')))
 		->add('nbPassages', TextType::class, array('label' => ' ', "attr" => array("class" => "text-right")))
 		;
 	}

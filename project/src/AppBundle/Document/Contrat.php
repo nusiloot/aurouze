@@ -144,7 +144,7 @@ class Contrat {
     protected $identifiantReprise;
 
     public function __construct() {
-        $this->prestations = new ArrayCollection();
+        //$this->prestations = new ArrayCollection();
         $this->mouvements = new ArrayCollection();
     }
 
