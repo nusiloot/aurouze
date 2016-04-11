@@ -1,0 +1,20 @@
+{% set _menu_active = 'societe' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Sociétés</h3>
+            <div class="row">
+        		<div class="col-xs-12">
+            		{{ include('societe/selection.html.twig', {'form': form}) }}
+            	</div>
+            </div>
+            <div class="row">
+        		<div class="col-xs-12">
+            		<a class="btn btn-sm btn-warning" href="{{ path('societe_modification') }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Créer une nouvelle société</strong></a>
+            	</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

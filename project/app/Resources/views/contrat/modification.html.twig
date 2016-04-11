@@ -58,7 +58,13 @@
 			            <a href="javascript:void(0);" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
 			        </div>
 			    </div>
-                            <hr style="margin-top: 20px;" />
+                <hr style="margin-top: 20px;" />
+                <div class="row">
+                    <div class="col-xs-12">
+                           {{ form_widget(form.produits) }}
+                    </div>
+                </div>
+                <hr style="margin-top: 20px;" />
                 <div class="row">
                     <div class="col-xs-12">
                         {{ form_row(form.nomenclature) }}

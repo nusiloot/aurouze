@@ -4,6 +4,7 @@ namespace AppBundle\Document;
 
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Manager\EtablissementManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\SocieteRepository")
@@ -69,7 +70,7 @@ class Societe {
      /***
      *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe")
      */
-    protected $etablissements = array();
+    protected $etablissements;
 
     /**
      * Set identifiant
@@ -91,6 +92,16 @@ class Societe {
     public function getIdentifiant()
     {
         return $this->identifiant;
+    }
+
+    /**
+     * Get etablissements
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection $etablissements
+     */
+    public function getEtablissements()
+    {
+        return $this->etablissements;
     }
 
     /**
@@ -278,5 +289,38 @@ class Societe {
     public function getId()
     {
         return $this->id;
+    }
+    
+    
+    public function getIcon() 
+    {
+    	return EtablissementManager::$type_icon[$this->getType()];
+    }
+
+    public function getTypeLibelle() 
+    {
+    	return EtablissementManager::$type_libelles[$this->getType()];
+    }
+
+    /**
+     * Set contratIncrement
+     *
+     * @param increment $contratIncrement
+     * @return self
+     */
+    public function setContratIncrement($contratIncrement)
+    {
+        $this->contratIncrement = $contratIncrement;
+        return $this;
+    }
+
+    /**
+     * Get contratIncrement
+     *
+     * @return increment $contratIncrement
+     */
+    public function getContratIncrement()
+    {
+        return $this->contratIncrement;
     }
 }
