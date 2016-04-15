@@ -11,12 +11,13 @@ use AppBundle\Document\Prestation;
 use AppBundle\Document\Societe;
 use AppBundle\Document\ContratPassages;
 use AppBundle\Document\Mouvement;
+use AppBundle\Model\DocumentFacturableInterface;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
  *
  */
-class Contrat {
+class Contrat implements DocumentFacturableInterface {
 
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\ContratGenerator"})
@@ -540,8 +541,6 @@ class Contrat {
         return ($this->getDateFin() < new \DateTime());
     }
 
-
-
     public function updateObject() {
         if (!$this->getNbPassages()) {
             $max = 0;
@@ -588,6 +587,8 @@ class Contrat {
         $mouvement->setPrix(round($this->getPrixRestant() / $this->getNbFacturesRestantes(), 2));
         $mouvement->setFacturable(true);
         $mouvement->setFacture(false);
+        $mouvement->setLibelle(sprintf("Facture %s/%s - Proposition n° %s du %s au %s", 1, 2, "0000000000", $this->getDateDebut()->format('m/Y'), $this->getDateFin()->format('m/Y')));
+
         $this->addMouvement($mouvement);
     }
 
@@ -680,7 +681,7 @@ class Contrat {
         if(!isset($contratPassages[$etablissement->getId()])){
             return null;
         }
-        
+
         return $contratPassages[$etablissement->getId()];
     }
 

@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use AppBundle\Document\Facture;
 use AppBundle\Document\FactureLigne;
 use AppBundle\Document\Societe;
+use AppBundle\Document\Adresse;
 use AppBundle\Manager\MouvementManager;
 
 class FactureManager {
@@ -33,14 +34,19 @@ class FactureManager {
         $facture->setSociete($societe);
         $facture->setDateEmission(new \DateTime());
         $facture->setDateFacturation($dateFacturation);
-        $facture->generateId();
+
+        $facture->getEmetteur()->setNom("Nom émetteur");
+        $adresse = new Adresse();
+        $adresse->setAdresse("Adresse émetteur");
+        $facture->getEmetteur()->setAdresse($adresse);
 
         foreach($mouvements as $mouvement) {
             $ligne = new FactureLigne();
-            $ligne->setLibelle("");
+            $ligne->setLibelle($mouvement->getLibelle());
             $ligne->setQuantite(1);
             $ligne->setPrixUnitaire($mouvement->getPrix());
             $ligne->setTauxTaxe(0.20);
+            $ligne->setOrigineDocument($mouvement->getOrigineDocument());
             $facture->addLigne($ligne);
         }
 

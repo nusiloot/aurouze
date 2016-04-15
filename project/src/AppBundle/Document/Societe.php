@@ -51,7 +51,6 @@ class Societe {
      */
     protected $adresse;
 
-
      /**
      * @MongoDB\String
      */
@@ -66,6 +65,11 @@ class Societe {
     * @MongoDB\Increment
     */
     protected $contratIncrement;
+
+    /**
+    * @MongoDB\Increment
+    */
+    protected $factureIncrement;
 
      /***
      *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe")
@@ -290,14 +294,14 @@ class Societe {
     {
         return $this->id;
     }
-    
-    
-    public function getIcon() 
+
+
+    public function getIcon()
     {
     	return EtablissementManager::$type_icon[$this->getType()];
     }
 
-    public function getTypeLibelle() 
+    public function getTypeLibelle()
     {
     	return EtablissementManager::$type_libelles[$this->getType()];
     }
@@ -322,5 +326,27 @@ class Societe {
     public function getContratIncrement()
     {
         return $this->contratIncrement;
+    }
+
+    /**
+     * Set factureIncrement
+     *
+     * @param increment $factureIncrement
+     * @return self
+     */
+    public function setFactureIncrement($factureIncrement)
+    {
+        $this->factureIncrement = $factureIncrement;
+        return $this;
+    }
+
+    /**
+     * Get factureIncrement
+     *
+     * @return increment $factureIncrement
+     */
+    public function getFactureIncrement()
+    {
+        return $this->factureIncrement;
     }
 }

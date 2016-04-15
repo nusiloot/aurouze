@@ -89,7 +89,7 @@ class FactureController extends Controller {
      * @Route("/societe/{id}/generation", name="facture_societe_generation")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function societeGenerationAction(Request $request, Etablissement $societe) {
+    public function societeGenerationAction(Request $request, Societe $societe) {
         $fm = $this->get('facture.manager');
         $dm = $this->get('doctrine_mongodb')->getManager();
 

@@ -10,6 +10,7 @@ use AppBundle\Document\Passage;
 use AppBundle\Document\UserInfos;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Societe;
+use AppBundle\Model\DocumentFacturableInterface;
 
 class ContratManager implements MouvementManagerInterface {
 
@@ -97,7 +98,10 @@ class ContratManager implements MouvementManagerInterface {
         $contrats = $this->getRepository()->findContratMouvements($societe, $isFaturable,  $isFacture);
         $mouvements = array();
         foreach($contrats as $contrat) {
-            $mouvements = array_merge($mouvements, $contrat->getMouvements()->toArray());
+            foreach($contrat->getMouvements() as $mouvement) {
+                $mouvement->setOrigineDocument($contrat);
+                $mouvements[] = $mouvement;
+            }
         }
 
         return $mouvements;
