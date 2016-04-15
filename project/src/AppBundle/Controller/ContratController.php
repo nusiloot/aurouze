@@ -23,7 +23,7 @@ class ContratController extends Controller {
     public function creationAction(Request $request, $id) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneById($id);
-        $contrat = $this->get('contrat.manager')->create($etablissement);
+        $contrat = $this->get('contrat.manager')->create($etablissement);        
         $dm->persist($contrat);
         $dm->flush();
         return $this->redirectToRoute('contrat_modification', array('id' => $contrat->getId()));

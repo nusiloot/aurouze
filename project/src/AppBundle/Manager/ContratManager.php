@@ -33,6 +33,7 @@ class ContratManager implements MouvementManagerInterface {
         $contrat->setDateCreation($dateCreation);
         $contrat->setStatut(self::STATUT_BROUILLON);
         $contrat->addPrestation(new Prestation());
+        $contrat->addEtablissement($etablissement);
         return $contrat;
     }
 

@@ -76,3 +76,7 @@ services:
     configurationPrestation.importer:
         class: AppBundle\Import\ConfigurationPrestationCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager]
+
+    configurationProduit.importer:
+        class: AppBundle\Import\ConfigurationProduitCsvImporter
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
