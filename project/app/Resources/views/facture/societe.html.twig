@@ -3,7 +3,7 @@
 
 {% block body %}
 
-    {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+    {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
 
     <h3>Factures</h3>
     <table class="table">
@@ -23,7 +23,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path('facture_etablissement_generation', { 'id': etablissement.id })}}">Générer la facture</a>
+    <a href="{{ path('facture_societe_generation', { 'id': societe.id })}}">Générer la facture</a>
 
     <h3>Mouvements à facturer</h3>
     <table class="table">

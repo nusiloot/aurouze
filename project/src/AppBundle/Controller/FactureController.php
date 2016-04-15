@@ -10,8 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Facture;
 use AppBundle\Document\FactureLigne;
 use AppBundle\Type\FactureType;
-use AppBundle\Document\Etablissement;
-use AppBundle\Type\EtablissementChoiceType as EtablissementChoiceType;
+use AppBundle\Document\Societe;
+use AppBundle\Type\SocieteChoiceType;
 
 /**
  * Facture controller.
@@ -24,6 +24,17 @@ class FactureController extends Controller {
      * @Route("/", name="facture")
      */
     public function indexAction(Request $request) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
+            'action' => $this->generateUrl('facture_societe_choice'),
+            'method' => 'POST',
+        ));
+
+        return $this->render('facture/index.html.twig', array('formSociete' => $formSociete->createView()));
+    }
+
+    public function editionAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $facture = new Facture();
@@ -49,46 +60,46 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/etablissement-choix", name="facture_etablissement_choice")
+     * @Route("/etablissement-choix", name="facture_societe_choice")
      */
-    public function etablissementChoiceAction(Request $request) {
-        $formData = $request->get('etablissement_choice');
+    public function societeChoiceAction(Request $request) {
+        $formData = $request->get('societe_choice');
 
-        return $this->redirectToRoute('facture_etablissement', array('id' => $formData['etablissements']));
+        return $this->redirectToRoute('facture_societe', array('id' => $formData['societes']));
     }
 
     /**
-     * @Route("/etablissement/{id}", name="facture_etablissement")
-     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
+     * @Route("/societe/{id}", name="facture_societe")
+     * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function etablissementAction(Request $request, Etablissement $etablissement) {
+    public function societeAction(Request $request, Societe $societe) {
         $fm = $this->get('facture.manager');
 
-        $formEtablissement = $this->createForm(EtablissementChoiceType::class, array('etablissements' => $etablissement->getIdentifiant(), 'etablissement' => $etablissement), array(
-            'action' => $this->generateUrl('facture_etablissement_choice'),
+        $formSociete = $this->createForm(SocieteChoiceType::class, array('societes' => $societe->getIdentifiant(), 'societe' => $societe), array(
+            'action' => $this->generateUrl('facture_societe_choice'),
             'method' => 'POST',
         ));
-        $factures = $fm->findByEtablissement($etablissement);
-        $mouvements = $fm->getMouvementsByEtablissement($etablissement);
+        $factures = $fm->findBySociete($societe);
+        $mouvements = $fm->getMouvementsBySociete($societe);
 
-        return $this->render('facture/etablissement.html.twig', array('etablissement' => $etablissement, 'mouvements' => $mouvements, 'formEtablissement' => $formEtablissement->createView(), 'factures' => $factures));
+        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements, 'formSociete' => $formSociete->createView(), 'factures' => $factures));
     }
 
     /**
-     * @Route("/etablissement/{id}/generation", name="facture_etablissement_generation")
-     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
+     * @Route("/societe/{id}/generation", name="facture_societe_generation")
+     * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function etablissementGenerationAction(Request $request, Etablissement $etablissement) {
+    public function societeGenerationAction(Request $request, Etablissement $societe) {
         $fm = $this->get('facture.manager');
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $mouvements = $fm->getMouvementsByEtablissement($etablissement);
+        $mouvements = $fm->getMouvementsBySociete($societe);
 
-        $facture = $fm->create($etablissement, $mouvements, new \DateTime());
+        $facture = $fm->create($societe, $mouvements, new \DateTime());
         $dm->persist($facture);
         $dm->flush();
 
-        return $this->redirectToRoute('facture_etablissement', array('id' => $etablissement->getId()));
+        return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
     }
 
     /**

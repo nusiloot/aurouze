@@ -31,7 +31,7 @@ class EtablissementController extends Controller {
     /**
      * @Route("/etablissement-search", name="etablissement_search")
      */
-    public function etablissementSearchAction(Request $request) {
+    public function searchAction(Request $request) {
 
         $term = $request->get('term');
         $response = new Response();
@@ -51,6 +51,40 @@ class EtablissementController extends Controller {
         $response->headers->set('Content-Type', 'application/json');
         $response->setContent($data);
         return $response;
+    }
+
+    /**
+     * @Route("/societe-search", name="societe_search")
+     */
+    public function societeSearchAction(Request $request) {
+        $term = $request->get('term');
+        $response = new Response();
+        $societesResult = array();
+        if (strlen($term) >= 3) {
+            $dm = $this->get('doctrine_mongodb')->getManager();
+            $societesByNom = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'nom');
+            $societesByAdresse = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'adresse.adresse');
+            $societesByCp = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'adresse.code_postal');
+            $societesByCommune = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'adresse.commune');
+            $this->societeContructSearchResult($societesByNom, $societesResult);
+            $this->societeContructSearchResult($societesByAdresse, $societesResult);
+            $this->societeContructSearchResult($societesByCp, $societesResult);
+            $this->societeContructSearchResult($societesByCommune, $societesResult);
+        }
+        $data = json_encode($societesResult);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setContent($data);
+        return $response;
+    }
+
+    public function societeContructSearchResult($societesByCriteria, &$societesResult) {
+
+        foreach ($societesByCriteria as $societe) {
+            $newResult = new \stdClass();
+            $newResult->id = $societe->getId();
+            $newResult->term = $societe->getIntitule();
+            $societesResult[] = $newResult;
+        }
     }
 
     public function contructSearchResult($etablissementsByCriteria, &$etablissementsResult) {
