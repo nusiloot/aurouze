@@ -12,6 +12,7 @@ use AppBundle\Document\Societe;
 use AppBundle\Document\ContratPassages;
 use AppBundle\Document\Mouvement;
 use AppBundle\Model\DocumentFacturableInterface;
+use AppBundle\Manager\ConfigurationManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
@@ -551,7 +552,30 @@ class Contrat implements DocumentFacturableInterface {
             }
             $this->setNbPassages($max);
         }
+
     }
+
+    public function updatePrestations($dm){
+        $cm = new ConfigurationManager($dm);
+        $configuration = $cm->getRepository()->findOneById(Configuration::PREFIX);
+        $prestationArray = $configuration->getPrestationsArray();
+         foreach ($this->getPrestations() as $prestation) {
+            $prestationNom =  $prestationArray[$prestation->getIdentifiant()];
+            $prestation->setNom($prestationNom);
+        }
+    }
+    public function updateProduits($dm){
+        $cm = new ConfigurationManager($dm);
+        $configuration = $cm->getRepository()->findOneById(Configuration::PREFIX);
+        $produitsArray = $configuration->getProduitsArray();
+         foreach ($this->getProduits() as $produit) {
+            $produitConf =  $produitsArray[$produit->getIdentifiant()];
+            $produit->setNom($produitConf->getNom());
+            $produit->setPrixHt($produitConf->getPrixHt());
+            $produit->setPrixPrestation($produitConf->getPrixPrestation());
+        }
+    }
+
 
     public function getHumanDureePassage() {
         $duree = $this->getDureePassage();
@@ -608,7 +632,6 @@ class Contrat implements DocumentFacturableInterface {
                 $typePrestationPrincipal = $prestation;
             }
         }
-       // var_dump($typePrestationPrincipal); exit;
         $passagesDatesArray = array();
         $monthInterval = (floatval($dureeContratMois) / floatval($maxNbPrestations));
         $nb_month = intval($monthInterval);

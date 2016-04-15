@@ -10,12 +10,14 @@ use Behat\Transliterator\Transliterator;
  */
 class Produit {
 
+    const PRODUIT_ACTIF = "ACTIF";
+    const PRODUIT_INACTIF = "INACTIF";
 
-	/**
-	 * @MongoDB\String
-	 */
-	protected $identifiant;
-	
+    /**
+     * @MongoDB\String
+     */
+    protected $identifiant;
+
     /**
      * @MongoDB\String
      */
@@ -25,7 +27,36 @@ class Produit {
      * @MongoDB\Float
      */
     protected $prixHt;
-    
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $prixPrestation;
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $prixVente;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $conditionnement;
+
+    /**
+     * @MongoDB\Int
+     */
+    protected $nbTotalContrat;
+
+    /**
+     * @MongoDB\Int
+     */
+    protected $nbUtilisePassage;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $statut;
 
     /**
      * Set nom
@@ -33,8 +64,7 @@ class Produit {
      * @param string $nom
      * @return self
      */
-    public function setNom($nom)
-    {
+    public function setNom($nom) {
         $this->nom = $nom;
         $this->setIdentifiant(strtoupper(Transliterator::urlize($nom)));
         return $this;
@@ -45,11 +75,9 @@ class Produit {
      *
      * @return string $nom
      */
-    public function getNom()
-    {
+    public function getNom() {
         return $this->nom;
     }
-
 
     /**
      * Set identifiant
@@ -57,8 +85,7 @@ class Produit {
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant)
-    {
+    public function setIdentifiant($identifiant) {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -68,8 +95,7 @@ class Produit {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant()
-    {
+    public function getIdentifiant() {
         return $this->identifiant;
     }
 
@@ -79,8 +105,7 @@ class Produit {
      * @param float $prixHt
      * @return self
      */
-    public function setPrixHt($prixHt)
-    {
+    public function setPrixHt($prixHt) {
         $this->prixHt = $prixHt;
         return $this;
     }
@@ -90,13 +115,132 @@ class Produit {
      *
      * @return float $prixHt
      */
-    public function getPrixHt()
-    {
+    public function getPrixHt() {
         return $this->prixHt;
     }
-    
-    public function __toString()
-    {
-    	return $this->getNom();
+
+    public function __toString() {
+        return $this->getNom();
     }
+
+    /**
+     * Set prixPrestation
+     *
+     * @param float $prixPrestation
+     * @return self
+     */
+    public function setPrixPrestation($prixPrestation) {
+        $this->prixPrestation = $prixPrestation;
+        return $this;
+    }
+
+    /**
+     * Get prixPrestation
+     *
+     * @return float $prixPrestation
+     */
+    public function getPrixPrestation() {
+        return $this->prixPrestation;
+    }
+
+    /**
+     * Set prixVente
+     *
+     * @param float $prixVente
+     * @return self
+     */
+    public function setPrixVente($prixVente) {
+        $this->prixVente = $prixVente;
+        return $this;
+    }
+
+    /**
+     * Get prixVente
+     *
+     * @return float $prixVente
+     */
+    public function getPrixVente() {
+        return $this->prixVente;
+    }
+
+    /**
+     * Set conditionnement
+     *
+     * @param string $conditionnement
+     * @return self
+     */
+    public function setConditionnement($conditionnement) {
+        $this->conditionnement = $conditionnement;
+        return $this;
+    }
+
+    /**
+     * Get conditionnement
+     *
+     * @return string $conditionnement
+     */
+    public function getConditionnement() {
+        return $this->conditionnement;
+    }
+
+    /**
+     * Set nbTotalContrat
+     *
+     * @param int $nbTotalContrat
+     * @return self
+     */
+    public function setNbTotalContrat($nbTotalContrat) {
+        $this->nbTotalContrat = $nbTotalContrat;
+        return $this;
+    }
+
+    /**
+     * Get nbTotalContrat
+     *
+     * @return int $nbTotalContrat
+     */
+    public function getNbTotalContrat() {
+        return $this->nbTotalContrat;
+    }
+
+    /**
+     * Set nbUtilisePassage
+     *
+     * @param int $nbUtilisePassage
+     * @return self
+     */
+    public function setNbUtilisePassage($nbUtilisePassage) {
+        $this->nbUtilisePassage = $nbUtilisePassage;
+        return $this;
+    }
+
+    /**
+     * Get nbUtilisePassage
+     *
+     * @return int $nbUtilisePassage
+     */
+    public function getNbUtilisePassage() {
+        return $this->nbUtilisePassage;
+    }
+
+    /**
+     * Set statut
+     *
+     * @param string $statut
+     * @return self
+     */
+    public function setStatut($statut) {
+        $this->statut = $statut;
+        return $this;
+    }
+
+    /**
+     * Get statut
+     *
+     * @return string $statut
+     */
+    public function getStatut() {
+        return $this->statut;
+    }
+
 }

@@ -261,7 +261,6 @@ class Facture {
     public function setSociete(\AppBundle\Document\Societe $societe)
     {
         $this->societe = $societe;
-
         $this->storeDestinataire();
 
         return $this;

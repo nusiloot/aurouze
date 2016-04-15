@@ -15,6 +15,7 @@ namespace AppBundle\Import;
  */
 use AppBundle\Document\Contrat;
 use AppBundle\Document\UserInfos;
+use AppBundle\Document\Produit;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
@@ -22,6 +23,7 @@ use AppBundle\Manager\EtablissementManager;
 use AppBundle\Manager\UserManager;
 use AppBundle\Manager\SocieteManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Behat\Transliterator\Transliterator;
 use AppBundle\Import\CsvFile;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -48,6 +50,7 @@ class ContratCsvImporter {
     const CSV_GARANTIE = 11;
     const CSV_PRIXHT = 12;
     const CSV_ARCHIVAGE = 13;
+    const CSV_PRODUITS = 14;
 
     public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, SocieteManager $sm, UserManager $um) {
         $this->dm = $dm;
@@ -66,7 +69,8 @@ class ContratCsvImporter {
         $progress->start();
 
         $csv = $csvFile->getCsv();
-
+        $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
+        $produitsArray = $configuration->getProduitsArray();
         $i = 0;
         $cptTotal = 0;
         foreach ($csv as $data) {
@@ -82,7 +86,7 @@ class ContratCsvImporter {
 
             $contrat = $this->cm->getRepository()->findOneBy(array('identifiantReprise', $data[self::CSV_ID_CONTRAT]));
 
-            if(!$contrat) {
+            if (!$contrat) {
                 $contrat = new Contrat();
             }
 
@@ -108,7 +112,21 @@ class ContratCsvImporter {
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
             $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
+            $produits = explode('~', $data[self::CSV_PRODUITS]);
 
+            foreach ($produits as $produitStr) {
+                if ($produitStr) {
+                    $produitdetail = explode('|', $produitStr);
+                    $produitLib = $produitdetail[0];
+                    $produitQte = $produitdetail[1];
+                    if ($produitLib && $produitQte) {
+                        $produitObj = new Produit();
+                        $produitToAdd = $produitsArray[strtoupper(Transliterator::urlize($produitLib))];
+                        $produitToAdd->setNbTotalContrat($produitQte);
+                        $contrat->addProduit($produitToAdd);
+                    }
+                }
+            }
             $this->dm->persist($contrat);
             $i++;
             $cptTotal++;

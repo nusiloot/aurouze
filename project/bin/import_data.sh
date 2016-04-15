@@ -68,6 +68,15 @@ print $1 ";" $2 ";" $3 ";" $4 ";" $5 ";" nom;
 
 }' > $DATA_DIR/prestationType.csv
 
+##### Récupération des types de produits #####
+
+echo "Récupération des types de produits"
+
+cat $DATA_DIR/tblProduit.csv | tr -d "\r" | grep -v "RefProduit;" | awk -F ';'  '{
+print $1 ";" $2 ";" $5 ";" $6 ";" $7 ";" $8";"$10
+}' > $DATA_DIR/produits.csv
+
+
 #### Récupération des Societe ####
 
 echo "Récupération des sociétés"
@@ -246,9 +255,30 @@ cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)
     duree=$21;
     garantie=$33;
     prixht=$29;
-    print contrat_id";"etablissement_id";"societe_old_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";"contrat_archivage";";
-}' > $DATA_DIR/contrats.csv;
+    print contrat_id";"etablissement_id";"societe_old_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";"contrat_archivage;
+}' > $DATA_DIR/contrats.csv.tmp;
 
+cat $DATA_DIR/tblPrestationProduit.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationProduit.sorted.csv
+
+rm $DATA_DIR/contrats.csv > /dev/null;
+touch $DATA_DIR/contrats.csv;
+
+while read line
+do
+   IDENTIFIANT=`echo $line | cut -d ';' -f 1`;
+   PRODUITSLINES=`grep ";$IDENTIFIANT;" $DATA_DIR/prestationProduit.sorted.csv`;
+   
+   PRODUITSVAR="";
+     for i in ${PRODUITSLINES[@]};
+     do
+        IDPRODUIT=`echo $i | cut -d ';' -f 1`;
+        QTEPRODUIT=`echo $i | cut -d ';' -f 5`;
+        PRODUITSLIBELLE=`grep -E "^$IDPRODUIT;" $DATA_DIR/produits.csv | cut -d ";" -f 2`;
+        PRODUITSVAR=""$PRODUITSLIBELLE"|"$QTEPRODUIT"~"$PRODUITSVAR;
+     done
+   echo $line";"$PRODUITSVAR >> $DATA_DIR/contrats.csv;
+
+done < $DATA_DIR/contrats.csv.tmp
 
 echo "Import des commerciaux"
 
@@ -261,6 +291,10 @@ php app/console importer:csv user.importer $DATA_DIR/techniciens.csv -vvv
 echo "Import des types de prestations"
 
 php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestationType.csv -vvv
+
+echo "Import des types de produits"
+
+php app/console importer:csv configurationProduit.importer $DATA_DIR/produits.csv -vvv
 
 echo "Import des sociétés"
 
