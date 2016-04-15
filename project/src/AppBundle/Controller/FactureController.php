@@ -26,6 +26,17 @@ class FactureController extends Controller {
     public function indexAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
+        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
+            'action' => $this->generateUrl('facture_societe_choice'),
+            'method' => 'POST',
+        ));
+
+        return $this->render('facture/index.html.twig', array('formSociete' => $formSociete->createView()));
+    }
+
+    public function editionAction(Request $request) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
         $facture = new Facture();
         $facture->setId('FACTURE');
         $facture->addLigne(new FactureLigne());

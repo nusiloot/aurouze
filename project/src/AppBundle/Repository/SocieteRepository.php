@@ -12,7 +12,6 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
  */
 class SocieteRepository extends DocumentRepository
 {
-
     public function findByTerm($term,$criteria) {
         $request = $this->createQueryBuilder()
                 ->find()

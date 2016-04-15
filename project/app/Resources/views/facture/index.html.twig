@@ -1,41 +1,6 @@
 {% set _menu_active = 'facture' %}
 {% extends 'base.html.twig' %}
 
-{% form_theme form _self %}
-
-{% block _facture_lignes_entry_row %}
-    <div class="row form-group dynamic-collection-item">
-        <div class="col-xs-5">
-            {{ form_widget(form.libelle) }}
-        </div>
-        <div class="col-xs-2">
-            {{ form_widget(form.quantite) }}
-        </div>
-        <div class="col-xs-2">
-            {{ form_widget(form.prixUnitaire) }}
-        </div>
-        <div class="col-xs-2">
-            {{ form_widget(form.tvaTaux) }}
-        </div>
-        <div class="col-xs-1 text-right">
-            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
-        </div>
-    </div>
-{% endblock %}
-
 {% block body %}
-    {{ form_start(form) }}
-    <h2>Création d'une facture</h2>
-    {{ form_widget(form.lignes, { 'attr': {'class': 'dynamic-collection'} }) }}
-    <div class="row form-group">
-        <div class="col-xs-12 text-right">
-            <a href="javascript:void(0);" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
-        </div>
-    </div>
-    <div class="row form-group">
-        <div class="col-xs-12 text-right">
-            {{ form_widget(form.save, { 'attr': {'class': 'btn btn-success' }}) }}
-        </div>
-    </div>
-    {{ form_end(form) }}
+{{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
 {% endblock %}
