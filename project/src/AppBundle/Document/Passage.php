@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Document\EtablissementInfos;
 use AppBundle\Document\Prestation;
+use AppBundle\Document\Produit;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
@@ -31,6 +32,11 @@ class Passage {
      * @MongoDB\EmbedMany(targetDocument="Prestation")
      */
     protected $prestations;
+    
+    /**
+     * @MongoDB\EmbedMany(targetDocument="Produit")
+     */
+    protected $produits;
 
     /**
      * @MongoDB\String
@@ -625,5 +631,35 @@ class Passage {
     public function getTimeFin() {
     	$dateTime = $this->getDateFin();
     	return $dateTime->format('H:i');
+    }
+
+    /**
+     * Add produit
+     *
+     * @param AppBundle\Document\Produit $produit
+     */
+    public function addProduit(\AppBundle\Document\Produit $produit)
+    {
+        $this->produits[] = $produit;
+    }
+
+    /**
+     * Remove produit
+     *
+     * @param AppBundle\Document\Produit $produit
+     */
+    public function removeProduit(\AppBundle\Document\Produit $produit)
+    {
+        $this->produits->removeElement($produit);
+    }
+
+    /**
+     * Get produits
+     *
+     * @return \Doctrine\Common\Collections\Collection $produits
+     */
+    public function getProduits()
+    {
+        return $this->produits;
     }
 }

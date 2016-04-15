@@ -265,4 +265,48 @@ class Facture {
     {
         return $this->datePaiement;
     }
+
+    /**
+     * Set societe
+     *
+     * @param AppBundle\Document\Societe $societe
+     * @return self
+     */
+    public function setSociete(\AppBundle\Document\Societe $societe)
+    {
+        $this->societe = $societe;
+        return $this;
+    }
+
+    /**
+     * Get societe
+     *
+     * @return AppBundle\Document\Societe $societe
+     */
+    public function getSociete()
+    {
+        return $this->societe;
+    }
+
+    /**
+     * Set societeIdentifiant
+     *
+     * @param string $societeIdentifiant
+     * @return self
+     */
+    public function setSocieteIdentifiant($societeIdentifiant)
+    {
+        $this->societeIdentifiant = $societeIdentifiant;
+        return $this;
+    }
+
+    /**
+     * Get societeIdentifiant
+     *
+     * @return string $societeIdentifiant
+     */
+    public function getSocieteIdentifiant()
+    {
+        return $this->societeIdentifiant;
+    }
 }

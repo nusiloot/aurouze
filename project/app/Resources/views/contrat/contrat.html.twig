@@ -29,7 +29,7 @@
         <ul class="list-unstyled">
             {% for etablissement in contrat.getEtablissements %}
                 <li><span>{{ etablissement.intitule }}</span></li>
-                {% endfor %} 
+                    {% endfor %} 
         </ul>
     </div>
 </div>
@@ -80,12 +80,26 @@
 <div class="panel panel-default">
     <div class="panel-heading">Produits</div>
     <div class="panel-body">
-        <ul class="list-group">
-			{% for produit in contrat.produits %}
-            <li class="list-group-item">
-				{{ produit.nom }} <small class="text-muted">{{ produit.prixHt }}&nbsp;€&nbsp;HT</small>
-			</li>
-			{% endfor %}
+        <table class="table-stripped">
+            <thead>
+                <tr>
+                    <th class="col-xs-6">Nom produit</th>
+                    <th class="col-xs-2">  <small class="text-muted">Prix d'achat</th>
+                    <th class="col-xs-2">  <small class="text-muted">Prix de vente prestation</small></th>
+                    <th class="col-xs-2 text-center">  <strong>Nombre prévu</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for produit in contrat.produits %}
+                    <tr>
+                        <td class="col-xs-6">{{ produit.nom }}</td>
+                        <td class="col-xs-2">  <small class="text-muted">{{ produit.prixHt }}&nbsp;€&nbsp;HT</small></td>
+                        <td class="col-xs-2">  <small class="text-muted">{{ produit.prixPrestation }}&nbsp;€&nbsp;HT</small></td>
+                        <td class="col-xs-2 text-center">  <strong>{{ produit.nbTotalContrat }}</strong></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         </ul>
     </div>
 </div>
