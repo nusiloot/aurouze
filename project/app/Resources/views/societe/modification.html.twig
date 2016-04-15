@@ -1,0 +1,55 @@
+{% set _menu_active = 'societe' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+
+	<style>
+	label {
+		font-weight: normal;
+	}
+	</style>
+    <div id="wrapper">
+        <h1>Création Société</h1>
+        {{ form_start(form) }}
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Société</strong></div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-6">
+                        {{ form_row(form.raisonSociale) }}
+                    </div>
+                    <div class="col-xs-3">
+                        {{ form_row(form.type) }}
+                    </div>
+                    <div class="col-xs-3">
+                        {{ form_row(form.codeComptable) }}
+                    </div>
+                </div>
+                <hr style="margin-top: 5px;" />
+                <div class="row">
+                    <div class="col-xs-6">
+                        {{ form_row(form.adresse.adresse) }}
+                    </div>
+                    <div class="col-xs-3">
+                        {{ form_row(form.adresse.codePostal) }}
+                    </div>
+                    <div class="col-xs-3">
+                        {{ form_row(form.adresse.commune) }}
+                    </div>
+                </div>
+                <hr style="margin-top: 5px;" />
+                <div class="row">
+                    <div class="col-xs-12">
+                        {{ form_row(form.commentaire) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            <div class="row">
+        		<div class="col-xs-12">
+            		{{ form_widget(form.save) }}
+            	</div>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

@@ -276,7 +276,7 @@ class Contrat {
      * @param AppBundle\Document\Produit $produit
      */
     public function removeProduit(\AppBundle\Document\Produit $produit) {
-        $this->produits->removeElement($prestation);
+        $this->produits->removeElement($produit);
     }
 
     /**
@@ -607,16 +607,16 @@ class Contrat {
                 $typePrestationPrincipal = $prestation;
             }
         }
-
+       // var_dump($typePrestationPrincipal); exit;
         $passagesDatesArray = array();
         $monthInterval = (floatval($dureeContratMois) / floatval($maxNbPrestations));
         $nb_month = intval($monthInterval);
         $dateLastPassage = $dateDebut;
         $passagesDatesArray[$dateLastPassage->format('Y-m-d')] = new \stdClass();
+        $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations = array();
 
         foreach ($this->getPrestations() as $prestation) {
             if ($prestation->getNbPassages() > 0) {
-                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations = array();
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $prestation;
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->mouvement_declenchable = 1;
             }
@@ -680,7 +680,7 @@ class Contrat {
         if(!isset($contratPassages[$etablissement->getId()])){
             return null;
         }
-
+        
         return $contratPassages[$etablissement->getId()];
     }
 

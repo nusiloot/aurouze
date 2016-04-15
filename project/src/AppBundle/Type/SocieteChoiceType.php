@@ -17,7 +17,7 @@ class SocieteChoiceType extends AbstractType {
 
         $defaultChoice = array();
         if(isset($options['data']) && isset($options['data']['societe'])) {
-            $defaultChoice = array($options['data']['societe']->getIdentifiant() => $options['data']['societe']->getIntitule());
+            $defaultChoice = array($options['data']['societe']->getIdentifiant() => $options['data']['societe']->getRaisonSociale());
         }
 
         $builder->add('societes', ChoiceType::class, array("choices" => $defaultChoice,

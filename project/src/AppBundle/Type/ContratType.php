@@ -17,6 +17,7 @@ use AppBundle\Type\PrestationType;
 use AppBundle\Document\User;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Form\CallbackTransformer;
+use AppBundle\Transformer\EtablissementsTransformer;
 use AppBundle\Transformer\ProduitTransformer;
 
 class ContratType extends AbstractType {
@@ -44,6 +45,17 @@ class ContratType extends AbstractType {
                 ->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2))
                 ->add('save', SubmitType::class, array('label' => 'Suivant', "attr" => array("class" => "btn btn-success pull-right")));
 
+       
+
+        $builder->add('etablissements', ChoiceType::class, array('label' => 'Lieux de passage : ',
+            		'choices' => $this->getEtablissements($builder),
+	        		'expanded' => false, 
+	        		'multiple' => true,
+        			'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
+        ));
+
+         $builder->get('etablissements')->addModelTransformer(new EtablissementsTransformer($this->dm,$builder->getData()->getSociete()));
+        
         $builder->add('prestations', CollectionType::class, array(
             'entry_type' => new PrestationType($this->dm),
             'allow_add' => true,
@@ -60,6 +72,7 @@ class ContratType extends AbstractType {
         ));
         $builder->get('produits')->addModelTransformer(new ProduitTransformer($this->dm));
         
+
         $builder->add('commercial', DocumentType::class, array(
             "choices" => array_merge(array('' => ''), $this->getUsers(User::USER_TYPE_COMMERCIAL)),
             'label' => 'Commercial :',
@@ -91,6 +104,15 @@ class ContratType extends AbstractType {
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Document\Contrat',
         ));
+    }
+
+    public function getEtablissements($builder) {
+        $etablissements = $this->dm->getRepository('AppBundle:Etablissement')->findAllOrderedByIdentifiantSociete($builder->getData()->getSociete());
+        $etablissementsArray = array();
+        foreach ($etablissements as $etablissement) {
+            $etablissementsArray[$etablissement->getId()] = $etablissement->getIntitule();
+        }
+        return $etablissementsArray;
     }
 
     /**

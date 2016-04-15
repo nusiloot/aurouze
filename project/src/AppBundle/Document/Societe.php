@@ -4,6 +4,7 @@ namespace AppBundle\Document;
 
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Manager\EtablissementManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\SocieteRepository")
@@ -69,12 +70,7 @@ class Societe {
      /***
      *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe")
      */
-    protected $etablissements = array();
-
-    public function getIntitule() {
-
-        return $this->getRaisonSociale() . ' ' . $this->getAdresse()->getIntitule();
-    }
+    protected $etablissements;
 
     /**
      * Set identifiant
@@ -96,6 +92,16 @@ class Societe {
     public function getIdentifiant()
     {
         return $this->identifiant;
+    }
+
+    /**
+     * Get etablissements
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection $etablissements
+     */
+    public function getEtablissements()
+    {
+        return $this->etablissements;
     }
 
     /**
@@ -283,6 +289,17 @@ class Societe {
     public function getId()
     {
         return $this->id;
+    }
+    
+    
+    public function getIcon() 
+    {
+    	return EtablissementManager::$type_icon[$this->getType()];
+    }
+
+    public function getTypeLibelle() 
+    {
+    	return EtablissementManager::$type_libelles[$this->getType()];
     }
 
     /**
