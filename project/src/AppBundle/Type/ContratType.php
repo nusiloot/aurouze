@@ -63,6 +63,7 @@ class ContratType extends AbstractType {
             'delete_empty' => true,
             'label' => '',
         ));
+        
 
         $builder->add('produits', ChoiceType::class, array(
         		'choices' => $this->getProduits(),

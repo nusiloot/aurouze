@@ -47,6 +47,7 @@ class ContratController extends Controller {
             $contrat = $form->getData();
             $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
             $contrat->updateObject();
+            $contrat->updatePrestations($dm);
             $dm->persist($contrat);
             $dm->flush();
             return $this->redirectToRoute('contrat_acceptation', array('id' => $contrat->getId()));

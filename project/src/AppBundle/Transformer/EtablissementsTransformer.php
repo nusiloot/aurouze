@@ -19,13 +19,13 @@ class EtablissementsTransformer implements DataTransformerInterface {
 
     public function transform($values) {
         $result = array();
-        $etablissements = $this->dm->getRepository('AppBundle:Etablissement')->findAllOrderedByIdentifiantSociete($this->societe);
+        $etablissements = $this->dm->getRepository('AppBundle:Etablissement')->findAllOrderedByIdentifiantSocieteArray($this->societe);
         $etablissementsArray = array();
         foreach ($values as $value) {
             $etablissementsArray[] = $value->getId();
         }
         foreach ($etablissements as $index => $etablissement) {
-            if (in_array($etablissement->getId(), $etablissements)) {
+            if (in_array($etablissement->getId(), $etablissementsArray)) {
                 $result[] = $index;
             }
         }
@@ -34,13 +34,11 @@ class EtablissementsTransformer implements DataTransformerInterface {
 
     public function reverseTransform($values) {
         $result = array();
-        $etablissements = $this->dm->getRepository('AppBundle:Etablissement')->findAllOrderedByIdentifiantSociete($this->societe);
-        $etablissementsArray = array();
-        foreach ($etablissements as $etablissement) {
-            $etablissementsArray[$etablissement->getId()] = $etablissement;
-        }
+        $etablissements = $this->dm->getRepository('AppBundle:Etablissement')->findAllOrderedByIdentifiantSocieteArray($this->societe);
+       
+        
         foreach ($values as $value) {
-            $result[] = $etablissementsArray[$value];
+            $result[] = $etablissements[$value];
         }
         return $result;
     }

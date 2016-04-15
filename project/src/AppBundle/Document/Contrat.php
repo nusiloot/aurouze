@@ -11,6 +11,7 @@ use AppBundle\Document\Prestation;
 use AppBundle\Document\Societe;
 use AppBundle\Document\ContratPassages;
 use AppBundle\Document\Mouvement;
+use AppBundle\Manager\ConfigurationManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
@@ -551,6 +552,17 @@ class Contrat {
                 }
             }
             $this->setNbPassages($max);
+        }
+       
+    }
+    
+    public function updatePrestations($dm){
+        $cm = new ConfigurationManager($dm);
+        $configuration = $cm->getRepository()->findOneById(Configuration::PREFIX);
+        $prestationArray = $configuration->getPrestationsArray();
+         foreach ($this->getPrestations() as $prestation) {
+            $prestationNom =  $prestationArray[$prestation->getIdentifiant()];
+            $prestation->setNom($prestationNom);
         }
     }
 
