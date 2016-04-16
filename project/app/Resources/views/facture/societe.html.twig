@@ -10,32 +10,38 @@
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Montant HT</th>
+                <th>Numéro</th>
+                <th></th>
+                <th class="text-right">Montant TTC</th>
             </tr>
         </thead>
         <tbody>
         {% for facture in factures %}
             <tr>
+                <td>{{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY") }}</td>
+                <td></td>
                 <td><a href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.id }}</a></td>
-                <td>{{ facture.montantHT }} €</td>
+                <td class="text-right">{{ facture.montantTTC }} €</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('facture_societe_generation', { 'id': societe.id })}}">Générer la facture</a>
+    <a class="pull-right btn btn-primary" href="{{ path('facture_societe_generation', { 'id': societe.id })}}">Facturer</a>
 
     <h3>Mouvements à facturer</h3>
     <table class="table">
         <thead>
             <tr>
-                <th>Prix</th>
+                <th>Intitulé</th>
+                <th class="text-right">Montant HT</th>
             </tr>
         </thead>
         <tbody>
         {% for mouvement in mouvements %}
             <tr>
-                <td>{{ mouvement.prix }}</td>
+                <td>{{ mouvement.libelle }}</td>
+                <td class="text-right">{{ mouvement.prix }} €</td>
             </tr>
         {% endfor %}
         </tbody>
