@@ -107,9 +107,11 @@ class FactureController extends Controller {
      * @ParamConverter("etablissement", class="AppBundle:Facture")
      */
     public function pdfAction(Request $request, Facture $facture) {
+        $fm = $this->get('facture.manager');
 
         $html = $this->renderView('facture/pdf.html.twig', array(
-                'facture' => $facture
+                'facture' => $facture,
+                'parameters' => $fm->getParameters(),
             ));
 
         if($request->get('output') == 'html') {

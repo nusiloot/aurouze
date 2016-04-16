@@ -72,7 +72,7 @@ class ContratManager implements MouvementManagerInterface {
                 $passage = new Passage();
                 $passage->setEtablissement($etablissement);
                 $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
-                
+
 
                 $passage->setDatePrevision($datePrevision);
                 if (!$cpt) {
@@ -107,18 +107,14 @@ class ContratManager implements MouvementManagerInterface {
     public function getMouvementsBySociete(Societe $societe, $isFaturable, $isFacture) {
         $contrats = $this->getRepository()->findContratMouvements($societe, $isFaturable, $isFacture);
         $mouvements = array();
-<<<<<<< HEAD
+
         foreach($contrats as $contrat) {
             foreach($contrat->getMouvements() as $mouvement) {
                 $mouvement->setOrigineDocument($contrat);
                 $mouvements[] = $mouvement;
             }
-=======
-        foreach ($contrats as $contrat) {
-            $mouvements = array_merge($mouvements, $contrat->getMouvements()->toArray());
->>>>>>> 898c210f9087cd9e7fa2d6b25e8c4a4d0dd0b3d3
         }
-
+        
         return $mouvements;
     }
 

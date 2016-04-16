@@ -63,7 +63,7 @@ services:
 
     facture.manager:
         class: AppBundle\Manager\FactureManager
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @mouvement.manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @mouvement.manager, "%facture%"]
 
     tool.osm:
         class: AppBundle\Tool\OSMAdresses

@@ -13,10 +13,17 @@ class FactureManager {
 
     protected $dm;
     protected $mm;
+    protected $parameters;
 
-    function __construct(DocumentManager $dm, MouvementManager $mm) {
+    function __construct(DocumentManager $dm, MouvementManager $mm, $parameters) {
         $this->dm = $dm;
         $this->mm = $mm;
+        $this->parameters = $parameters;
+    }
+
+    public function getParameters() {
+
+        return $this->parameters;
     }
 
     public function getRepository() {
@@ -35,10 +42,14 @@ class FactureManager {
         $facture->setDateEmission(new \DateTime());
         $facture->setDateFacturation($dateFacturation);
 
-        $facture->getEmetteur()->setNom("Nom émetteur");
+        $facture->getEmetteur()->setNom($this->parameters['emetteur']['nom']);
         $adresse = new Adresse();
-        $adresse->setAdresse("Adresse émetteur");
+        $adresse->setAdresse($this->parameters['emetteur']['adresse']);
+        $adresse->setCodePostal($this->parameters['emetteur']['code_postal']);
+        $adresse->setCommune($this->parameters['emetteur']['commune']);
         $facture->getEmetteur()->setAdresse($adresse);
+        $facture->getEmetteur()->setTelephone($this->parameters['emetteur']['telephone']);
+        $facture->getEmetteur()->setFax($this->parameters['emetteur']['fax']);
 
         foreach($mouvements as $mouvement) {
             $ligne = new FactureLigne();
