@@ -30,7 +30,7 @@
 </div>
 <br />
 <br />
-<table class="table table-bordered table-condensed" style="border-bottom: 0; border-right: 0; border-left: 0;">
+<table class="table table-bordered table-condensed" style="border-bottom: 0 !important; border-right: 0 !important;  border-left: 0 !important;">
     <thead>
         <tr>
             <th class="col-xs-7">Libellé</th>
@@ -72,28 +72,30 @@
     {% endfor %}
     </tbody>
     <tfoot class="lead">
-        <tr><td colspan="5" style="border: none; height: 25px;"></td></tr>
         <tr>
-            <td style="border: none;"></td>
+            <td style="height: 25px; border: 0 !important;"></td>
+            <td colspan="4" style="height: 20px; border-left: 0 !important; border-right: 0 !important;"></td>
+        </tr>
+        <tr>
+            <td style="border: 0 !important;"></td>
             <td colspan="2">Total HT</td>
             <td colspan="2" class="text-right">{{ facture.montantHT }} €</td>
         </tr>
         <tr>
-            <td style="border: none;"></td>
+            <td style="border: 0 !important;"></td>
             <td colspan="2">TVA</td>
             <td colspan="2" class="text-right">{{ facture.montantTaxe }} €</td>
         </tr>
         <tr>
-            <td style="border: none;"></td>
+            <td style="border: 0 !important;"></td>
             <td colspan="2">Total TTC</td>
             <td colspan="2" class="text-right">{{ facture.montantTTC }} €</td>
         </tr>
     </tfoot>
 </table>
 
-<hr />
 <small>
-<p class="well" style="padding: 5px;">
+<p class="well" style="padding: 5px; margin-bottom: 0;">
 <small>
 La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l’obligation de vous indiquer :<br />
 Date de règlement : voir mention sur facture<br />
@@ -114,22 +116,23 @@ Sanction en cas de non respect des modalités ci-dessus :<br />
     </small>
 </p>
 </small>
-<hr style="margin-bottom: 5px;" />
 
-<div class="row">
-    <div class="col-xs-12 text-center">
-        <small><small><small>Coupon à joindre avec votre règlement</small></small></small>
-    </div>
-    <div class="col-xs-6">
-        <p>
-        Facture n° du {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY") }} <br />
-        Client : {{ facture.destinataire.nom }} ({{ facture.destinataire.codeComptable }})
-        </p>
-    </div>
-    <div class="col-xs-6 text-right">
-        <p class="lead">
-        Montant dû : {{ facture.montantTTC }} €
-        </p>
+<div style="border-top: 1px dashed #ccc; margin-top: 20px;">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <small><small><small>Coupon à joindre avec votre règlement</small></small></small>
+        </div>
+        <div class="col-xs-6">
+            <p>
+            Facture n° du {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY") }} <br />
+            Client : {{ facture.destinataire.nom }} ({{ facture.destinataire.codeComptable }})
+            </p>
+        </div>
+        <div class="col-xs-6 text-right">
+            <p class="lead">
+            Montant dû : {{ facture.montantTTC }} €
+            </p>
+        </div>
     </div>
 </div>
 {% endblock %}
