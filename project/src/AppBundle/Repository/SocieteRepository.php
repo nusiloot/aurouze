@@ -21,4 +21,14 @@ class SocieteRepository extends DocumentRepository
                 ->execute();
         return $request;
     }
+    
+    public function findAllTags() 
+    {
+        $request = $this->createQueryBuilder()
+                ->distinct('tags')
+        		->hydrate(false)
+                ->getQuery()
+                ->execute();
+        return $request->toArray();
+    }
 }

@@ -4,23 +4,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <h3><i class="mdi mdi-{{ societe.icon }} mdi-lg" title="{{ societe.typeLibelle }}"></i> {{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small> <a class="btn btn-sm btn-warning pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a></h3>
-            <div class="panel panel-default">
-			    <div class="panel-heading">Informations</div>
-			    <div class="panel-body">
-			        <div class="rows">
-			            <div class="col-xs-6">
-			            <strong>Adresse: </strong><br /><br />
-						{{ societe.adresse.adresse }} <br />
-						{{ societe.adresse.codePostal }} {{ societe.adresse.commune }} 
-			            </div>
-			            <div class="col-xs-6">
-			            <strong>Commentaire: </strong><br /><br />
-			            {{ societe.commentaire }} 
-			            </div>
-			        </div>
-			    </div>
-			</div>
+            <h3>{{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small> <a class="btn btn-sm btn-warning pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a></h3>
         </div>
     </div>
 	<h3>Création d'un etablissement</h3>
@@ -50,6 +34,38 @@
                     </div>
                     <div class="col-xs-3">
                         {{ form_row(form.adresse.commune) }}
+                    </div>
+                </div>
+                <hr style="margin-top: 5px;" />
+                <div class="row">
+                    <div class="col-xs-6">
+                        {{ form_row(form.adresse.adresse) }}
+                    </div>
+                    <div class="col-xs-3">
+                        {{ form_row(form.adresse.codePostal) }}
+                    </div>
+                    <div class="col-xs-3">
+                        {{ form_row(form.adresse.commune) }}
+                    </div>
+                </div>
+                <hr style="margin-top: 5px;" />
+                <div class="row">
+                    <div class="col-xs-4">
+                        {{ form_row(form.contactCoordonnee.telephoneFixe) }}
+                    </div>
+                    <div class="col-xs-4">
+                        {{ form_row(form.contactCoordonnee.telephoneMobile) }}
+                    </div>
+                    <div class="col-xs-4">
+                        {{ form_row(form.contactCoordonnee.fax) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        {{ form_row(form.contactCoordonnee.email) }}
+                    </div>
+                    <div class="col-xs-6">
+                        {{ form_row(form.contactCoordonnee.siteInternet) }}
                     </div>
                 </div>
             </div>
