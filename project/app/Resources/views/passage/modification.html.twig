@@ -1,4 +1,4 @@
-{% set _menu_active = 'etablissement' %}
+{% set _menu_active = 'passage' %}
 {% extends 'base.html.twig' %}
 
 {% block body %}
@@ -7,9 +7,9 @@
             <h3>Modification du passage <small class="text-muted">{{ passage.identifiant }}</small></h3>
             <p>Etablissement : {{ passage.intitule }}</p>
             <p>Contrat : </p>
-            
+
             {{ form_start(form) }}
-                
+
             	<div class="row">
 		            <div class="form-group col-xs-8">
 		                {{ form_label(form.dateDebut) }}
@@ -46,21 +46,21 @@
                         </div>
                     </div>
 	        	</div>
-	            
+
                 <div class="panel panel-default">
             		<div class="panel-heading"><strong>Techniciens</strong></div>
             		<div class="panel-body">
                 		{{ form_widget(form.techniciens) }}
 					</div>
 				</div>
-	            
+
                 <div class="panel panel-default">
             		<div class="panel-heading"><strong>Prestations</strong></div>
             		<div class="panel-body">
                 		{{ form_widget(form.prestations) }}
 					</div>
 				</div>
-            
+
             {{ form_widget(form.save) }}
         	{{ form_end(form) }}
         </div>
