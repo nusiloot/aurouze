@@ -39,6 +39,11 @@ class FactureLigne {
     protected $montantTaxe;
 
     /**
+     * @MongoDB\ReferenceOne(targetDocument="AppBundle\Document\Contrat")
+     */
+    protected $origineDocument;
+
+    /**
      * Set libelle
      *
      * @param string $libelle
@@ -106,7 +111,12 @@ class FactureLigne {
 
     public function update() {
         $this->montantHT = round($this->getQuantite() * $this->getPrixUnitaire(), 2);
-        $this->montantTaxe = round($this->getQuantite() * $this->getTauxTaxe(), 2);
+        $this->montantTaxe = round($this->getMontantHT() * $this->getTauxTaxe(), 2);
+    }
+
+    public function isOrigineContrat() {
+
+        return $this->getOrigineDocument() && $this->getOrigineDocument() instanceof \AppBundle\Document\Contrat;
     }
 
     /**
@@ -173,5 +183,28 @@ class FactureLigne {
     public function getMontantTaxe()
     {
         return $this->montantTaxe;
+    }
+
+
+    /**
+     * Set origineDocument
+     *
+     * @param AppBundle\Model\DocumentFacturableInterface $origineDocument
+     * @return self
+     */
+    public function setOrigineDocument(\AppBundle\Model\DocumentFacturableInterface $origineDocument)
+    {
+        $this->origineDocument = $origineDocument;
+        return $this;
+    }
+
+    /**
+     * Get origineDocument
+     *
+     * @return AppBundle\Model\DocumentFacturableInterface $origineDocument
+     */
+    public function getOrigineDocument()
+    {
+        return $this->origineDocument;
     }
 }

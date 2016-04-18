@@ -77,7 +77,7 @@ class Prestation {
         $nom_libelles = explode('-', $this->getIdentifiant());
         
         $mot_rongeur = array('DERATISATION', 'RONGEURS');
-        $mot_puce = array('PUCES', 'ACARIENS');
+        $mot_puce = array('RAMPANTS');
         $mot_moustique = array('VOLANTS');
         $mot_cafard = array('BLATTES', 'PUNAISES');
         $mot_chenille = array('CHENILLES');

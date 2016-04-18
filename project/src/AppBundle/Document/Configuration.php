@@ -126,5 +126,13 @@ class Configuration {
         }
         return $prestationsType;
     }
+    
+    public function getProduitsArray() {
+        $produitsType = array();
+        foreach ($this->getProduits() as $produit) {
+            $produitsType[$produit->getIdentifiant()] = $produit;
+        }
+        return $produitsType;
+    }
 
 }

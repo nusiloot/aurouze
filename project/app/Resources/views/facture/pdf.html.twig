@@ -2,65 +2,134 @@
 
 {% block body %}
 <div class="row">
-    <div class="col-xs-6">
+    <div class="col-xs-7">
+        <br />
         <p>
-            <span class="lead">Ets AUROUZE Julien</span><br />
-            8, rue des Halles<br />
-            75001, PARIS<br />
-            Tél: 01 40 41 16 20<br />
-            Fax: 01 40 41 16 21
+            <span class="lead">{{ facture.emetteur.nom }}</span><br />
+            {{ facture.emetteur.adresse.adresse }}<br />
+            {{ facture.emetteur.adresse.codePostal }}, {{ facture.emetteur.adresse.commune }}<br />
+            Tél : {{ facture.emetteur.telephone }}<br />
+            Fax: {{ facture.emetteur.fax }}
         </p>
     </div>
-    <div class="col-xs-6">
+    <div class="col-xs-5">
+        <div class="text-right">
+        <h2>FACTURE N° </h2>
+        <span>Du {{ facture.dateEmission  | localizeddate("medium", "none", null, null, "d/MM/YYYY") }}</span>
+        </div>
+        <br />
+        <br />
+        <br />
+        <br />
         <p>
-            <span class="lead">Ets AUROUZE Julien</span><br />
-            8, rue des Halles<br />
-            75001, PARIS<br />
-            Tél: 01 40 41 16 20<br />
-            Fax: 01 40 41 16 21
+            {{ facture.destinataire.nom }}<br />
+            {{ facture.destinataire.adresse.adresse }}<br />
+            {{ facture.destinataire.adresse.codePostal }} {{ facture.destinataire.adresse.commune }}<br />
         </p>
-    </div>
-    <div class="col-xs-6">
-        <h2>FACTURE n°20148363</h2>
     </div>
 </div>
-<table class="table table-bordered table-condensed">
+<br />
+<br />
+<table class="table table-bordered table-condensed" style="border-bottom: 0; border-right: 0; border-left: 0;">
     <thead>
         <tr>
-            <th class="col-xs-6">Libellé</th>
-            <th class="text-center col-xs-1">Quantité</th>
-            <th class="text-right col-xs-2">Prix Unitaire <span class="text-muted">HT</span></th>
-            <th class="text-right col-xs-1">Taux&nbsp;TVA</th>
-            <th class="text-right col-xs-2">Sous-total <span class="text-muted">HT</span></th>
+            <th class="col-xs-7">Libellé</th>
+            <th class="text-center col-xs-1">Qté</th>
+            <th class="text-right col-xs-1">Prix&nbsp;unit.&nbsp;HT</th>
+            <th class="text-right col-xs-2">Sous-total&nbsp;HT</th>
         </tr>
     </thead>
     <tbody>
     {% for ligne in facture.lignes %}
         <tr>
-            <td>Proposition n°000000000 de décembre 2014 à novembre 2015 (Dératisation souris, Désinsectisation){{ ligne.libelle }}</td>
+            <td>
+                {{ ligne.libelle }}<br />
+                {% if ligne.origineContrat %}
+                <small>
+                    <small>Votre Réf CDE 00000000000</small><br />
+                    <small>
+                    Prestations :
+                    <ul class="list-unstyled" style="padding-left: 10px; margin-bottom: 0">
+                        <li>- Dératisation de rats</li>
+                        <li>- Dératisation de surmulots</li>
+                        <li>- Dératisation de souris</li>
+                        <li>- Désinsectisation de blattes germaniques</li>
+                    </ul>
+                    Lieu{% if(ligne.origineDocument.contratPassages | length > 1) %}x{% endif %} d'application{% if(ligne.origineDocument.contratPassages | length > 1) %}s{% endif %} :
+                        <ul class="list-unstyled" style="padding-left: 10px;">
+                            {% for p in ligne.origineDocument.contratPassages %}
+                            <li>- {{ p.etablissement.adresse.adresse }}, {{ p.etablissement.adresse.codePostal }} {{ p.etablissement.adresse.commune }}</li>
+                            {% endfor %}
+                        </ul>
+                    </small>
+                </small>
+                {% endif %}
+            </td>
             <td class="text-center">{{ ligne.quantite }}</td>
-            <td class="text-right">{{ ligne.prixUnitaire }}</td>
-            <td class="text-right">{{ ligne.tauxTaxe }}</td>
-            <td class="text-right">{{ ligne.montantHT }}</td>
+            <td class="text-right">{{ ligne.prixUnitaire }} €</td>
+            <td class="text-right">{{ ligne.montantHT }} €</td>
         </tr>
     {% endfor %}
     </tbody>
-    <head>
+    <tfoot class="lead">
+        <tr><td colspan="5" style="border: none; height: 25px;"></td></tr>
         <tr>
-            <th></th>
-            <th colspan="2">Total HT</th>
-            <th colspan="2" class="text-right">{{ facture.montantHT }}</th>
+            <td style="border: none;"></td>
+            <td colspan="2">Total HT</td>
+            <td colspan="2" class="text-right">{{ facture.montantHT }} €</td>
         </tr>
         <tr>
-            <th></th>
-            <th colspan="2">TVA</th>
-            <th colspan="2" class="text-right">{{ facture.montantTaxe }}</th>
+            <td style="border: none;"></td>
+            <td colspan="2">TVA</td>
+            <td colspan="2" class="text-right">{{ facture.montantTaxe }} €</td>
         </tr>
         <tr>
-            <th></th>
-            <th colspan="2">Total TTC</th>
-            <th colspan="2" class="text-right">{{ facture.montantTTC }}</th>
+            <td style="border: none;"></td>
+            <td colspan="2">Total TTC</td>
+            <td colspan="2" class="text-right">{{ facture.montantTTC }} €</td>
         </tr>
-    </thead>
+    </tfoot>
 </table>
+
+<hr />
+<small>
+<p class="well" style="padding: 5px;">
+<small>
+La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l’obligation de vous indiquer :<br />
+Date de règlement : voir mention sur facture<br />
+Mode de règlement : par chèque ou virement<br />
+Application du taux minimum de pénalités de retard : trois fois le taux d’intérêt légal en vigueur (art. L. 441-6 du C.Cce)<br />
+Indemnité forfaitaire pour frais de recouvrement : 40 euros (art. D. 441-5 du C.Cce)<br />
+Sanction en cas de non respect des modalités ci-dessus :<br />
+ - amende de 75 000 euros pour les personnes physiques / 375 000 euros pour les personnes morales.
+</small>
+</p>
+<p class="text-center">
+    <small>
+    <br />
+    {{ parameters.emetteur.infos }}<br />
+    {{ parameters.emetteur.banque }}<br />
+    {{ parameters.emetteur.virement }}<br />
+    Agrément du Ministère de l'Agriculture A. I. F. 00131<br />
+    </small>
+</p>
+</small>
+<hr style="margin-bottom: 5px;" />
+
+<div class="row">
+    <div class="col-xs-12 text-center">
+        <small><small><small>Coupon à joindre avec votre règlement</small></small></small>
+    </div>
+    <div class="col-xs-6">
+        <p>
+        Facture n° du {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY") }} <br />
+        Client : {{ facture.destinataire.nom }} ({{ facture.destinataire.codeComptable }})
+        </p>
+    </div>
+    <div class="col-xs-6 text-right">
+        <p class="lead">
+        Montant dû : {{ facture.montantTTC }} €
+        </p>
+    </div>
+</div>
 {% endblock %}

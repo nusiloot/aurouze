@@ -9,7 +9,9 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\Passage;
 use AppBundle\Document\UserInfos;
 use AppBundle\Document\Prestation;
+use AppBundle\Document\Produit;
 use AppBundle\Document\Societe;
+use AppBundle\Model\DocumentFacturableInterface;
 
 class ContratManager implements MouvementManagerInterface {
 
@@ -33,6 +35,8 @@ class ContratManager implements MouvementManagerInterface {
         $contrat->setDateCreation($dateCreation);
         $contrat->setStatut(self::STATUT_BROUILLON);
         $contrat->addPrestation(new Prestation());
+        $contrat->addProduit(new Produit());
+        $contrat->addEtablissement($etablissement);
         return $contrat;
     }
 
@@ -61,45 +65,56 @@ class ContratManager implements MouvementManagerInterface {
         }
 
         $passagesArray = $contrat->getPrevisionnel($date_debut);
+        foreach ($contrat->getEtablissements() as $etablissement) {
         $cpt = 0;
-        foreach ($passagesArray as $datePassage => $passageInfos) {
-            $datePrevision = new \DateTime($datePassage);
-            $passage = new Passage();
-            $passage->setEtablissementIdentifiant($contrat->getEtablissement()->getIdentifiant());
+            foreach ($passagesArray as $datePassage => $passageInfos) {
+                $datePrevision = new \DateTime($datePassage);
+                $passage = new Passage();
+                $passage->setEtablissement($etablissement);
+                $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
 
-            $passage->setDatePrevision($datePrevision);
-            if(!$cpt){
-                $passage->setDateDebut($datePrevision);
-            }
-            $passage->getEtablissementInfos()->pull($contrat->getEtablissement());
-            $passage->setNumeroPassageIdentifiant("001");
-            $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
 
-            $passage->generateId();
-            $passage->setContrat($contrat);
-            foreach ($passageInfos->prestations as $prestationNom) {
-                $prestationObj = new Prestation();
-                $prestationObj->setNom($prestationNom);
-                $passage->addPrestation($prestationObj);
-            }
+                $passage->setDatePrevision($datePrevision);
+                if (!$cpt) {
+                    $passage->setDateDebut($datePrevision);
+                }
+                $passage->setNumeroPassageIdentifiant("001");
+                $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
 
-            if ($passage) {
-                $contrat->addPassage($passage);
-                $this->dm->persist($passage);
-                $this->dm->persist($contrat);
+                $passage->generateId();
+                $passage->setContrat($contrat);
+                foreach ($passageInfos->prestations as $prestationNom) {
+                    $prestationObj = new Prestation();
+                    $prestationObj->setNom($prestationNom);
+                    $passage->addPrestation($prestationObj);
+                }
+                foreach ($contrat->getProduits() as $produit) {
+                    $produitNode = clone $produit;
+                    $passage->addProduit($produitNode);
+                }
+
+                if ($passage) {
+                    $contrat->addPassage($etablissement,$passage);
+                    $this->dm->persist($passage);
+                    $this->dm->persist($contrat);
+                }
+                $cpt++;
+                $this->dm->flush();
             }
-            $cpt++;
-            $this->dm->flush();
         }
     }
 
     public function getMouvementsBySociete(Societe $societe, $isFaturable, $isFacture) {
-        $contrats = $this->getRepository()->findContratMouvements($societe, $isFaturable,  $isFacture);
+        $contrats = $this->getRepository()->findContratMouvements($societe, $isFaturable, $isFacture);
         $mouvements = array();
-        foreach($contrats as $contrat) {
-            $mouvements = array_merge($mouvements, $contrat->getMouvements()->toArray());
-        }
 
+        foreach($contrats as $contrat) {
+            foreach($contrat->getMouvements() as $mouvement) {
+                $mouvement->setOrigineDocument($contrat);
+                $mouvements[] = $mouvement;
+            }
+        }
+        
         return $mouvements;
     }
 

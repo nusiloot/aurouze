@@ -63,14 +63,23 @@ class ContratType extends AbstractType {
             'delete_empty' => true,
             'label' => '',
         ));
+        
 
-        $builder->add('produits', ChoiceType::class, array(
-        		'choices' => $this->getProduits(),
-        		'expanded' => false,
-        		'multiple' => true,
-        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
+        $builder->add('produits', CollectionType::class, array(
+            'entry_type' => new ProduitType($this->dm),
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'label' => '',
         ));
-        $builder->get('produits')->addModelTransformer(new ProduitTransformer($this->dm));
+        
+//        $builder->add('produits', ChoiceType::class, array(
+//        		'choices' => $this->getProduits(),
+//        		'expanded' => false,
+//        		'multiple' => true,
+//        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
+//        ));
+//        $builder->get('produits')->addModelTransformer(new ProduitTransformer($this->dm));
         
 
         $builder->add('commercial', DocumentType::class, array(

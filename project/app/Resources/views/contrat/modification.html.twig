@@ -17,6 +17,20 @@
     </div>
 {% endblock %}
 
+{% block _contrat_produits_entry_row %}
+    <div class="row form-group dynamic-collection-item">
+        <div class="col-xs-9">
+            {{ form_widget(form.identifiant) }}
+        </div>
+        <div class="col-xs-2 text-right">
+            {{ form_widget(form.nbTotalContrat) }}
+        </div>
+        <div class="col-xs-1 text-right">
+            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
+    </div>
+{% endblock %}
+
 {% block body %}
 	<style>
 	label {
@@ -60,10 +74,19 @@
 			    </div>
                 <hr style="margin-top: 20px;" />
                 <div class="row">
-                    <div class="col-xs-12">
-                           {{ form_widget(form.produits) }}
+                    <div class="col-xs-9">
+                        Produits :
+                    </div>
+                    <div class="col-xs-2 text-center">
+                        Nombre prévu :
                     </div>
                 </div>
+                {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
+			    <div class="row">
+			        <div class="col-xs-12 text-right">
+			            <a href="javascript:void(0);" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+			        </div>
+			    </div>
                 <hr style="margin-top: 20px;" />
                 <div class="row">
                     <div class="col-xs-12">

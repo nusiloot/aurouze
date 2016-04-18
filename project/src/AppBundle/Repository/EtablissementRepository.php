@@ -16,6 +16,15 @@ class EtablissementRepository extends DocumentRepository {
 
         return $this->findBy(array('societe.id' => $societe->getId()));
     }
+    public function findAllOrderedByIdentifiantSocieteArray($societe) {
+
+        $etbs =  $this->findBy(array('societe.id' => $societe->getId()));
+        $result = array();
+        foreach ($etbs as $etb) {
+            $result[$etb->getId()] = $etb;
+        }
+        return $result;
+    }
 
     public function findByTerm($term,$criteria) {
         $request = $this->createQueryBuilder()
