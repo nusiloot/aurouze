@@ -67,7 +67,7 @@
                                 <div class="list-group-item">
                                     <div class="row">
                                         <div class="col-xs-4">
-                                            {{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% if(not pe.isPlanifie or pe.isRealise) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}
+                                            {% if(pe.isAPlanifie) %}{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}{% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}
                                         </div>
                                         <div class="col-xs-2">
                                             {% for prestation in pe.prestations %}
