@@ -68,10 +68,14 @@ class PassageCsvImporter {
         $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
 
         foreach ($csv as $data) {
+          
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
             }
-
+            if(!preg_match('/^[0-9]+$/', $data[self::CSV_ETABLISSEMENT_ID])){
+                $output->writeln(sprintf("<error>établissement dont le numéro %s n'est pas correct</error>", $data[self::CSV_ETABLISSEMENT_ID]));
+                continue;
+            }
             $etablissement = $this->em->getRepository()->findOneByIdentifiantReprise($data[self::CSV_ETABLISSEMENT_ID]);
 
             if (!$etablissement) {
@@ -100,16 +104,24 @@ class PassageCsvImporter {
             }
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
-          
-             if ($data[self::CSV_PRESTATIONS]) {
-                $prestations = explode(',', $data[self::CSV_PRESTATIONS]);
+            if(!preg_match('/^[0-9]+$/', $data[self::CSV_CONTRAT_ID])){
+                $output->writeln(sprintf("<error>Passage dont le numéro %s n'est pas correct</error>", $data[self::CSV_CONTRAT_ID]));
+                continue;
+            }
+            $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_CONTRAT_ID]);
+            if (!$contrat) {
+                $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $data[self::CSV_CONTRAT_ID]));
+                continue;
+            }
+            if ($data[self::CSV_PRESTATIONS]) {
+                $prestations = explode('#', $data[self::CSV_PRESTATIONS]);
                 foreach ($prestations as $prestationNom) {
                     if (trim($prestationNom) != "") {
-                        if (!in_array($prestationNom, $prestationsType)) {
-                            $output->writeln(sprintf("<error>La prestation : %s n'existe pas dans la configuration </error>", $prestationNom));
+                        $prestationIdentifiant = strtoupper(Transliterator::urlize($prestationNom));
+                        if (!array_key_exists($prestationIdentifiant, $prestationsType)) {
+                            $output->writeln(sprintf("<error>La prestation : %s n'existe pas dans la configuration </error>", $prestationIdentifiant));
                         }
-                        $prestation = new Prestation();
-                        $prestation->setNom($prestationNom);
+                        $prestation = clone $prestationsType[$prestationIdentifiant];
                         $passage->addPrestation($prestation);
                     }
                 }
@@ -125,11 +137,7 @@ class PassageCsvImporter {
             //LISTE DE TECHNICIEN A PREVOIR
             $passage->addTechnicien($user);
 
-            $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_CONTRAT_ID]);
-            if (!$contrat) {
-                $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $data[self::CSV_CONTRAT_ID]));
-                continue;
-            }
+
             $passage->setContrat($contrat);
             $passage->setNumeroContratArchive($contrat->getNumeroArchive());
             $contrat->addPassage($etablissement, $passage);
@@ -142,13 +150,56 @@ class PassageCsvImporter {
             if ($cptTotal % (count($csv) / 100) == 0) {
                 $progress->advance();
             }
-            if ($i >= 1000) {
+            if ($i >= 2000) {
                 $this->dm->flush();
                 $i = 0;
             }
         }
 
         $this->dm->flush();
+        $progress->finish();
+        $this->updateContrats($output);
+    }
+
+    public function updateContrats($output) {
+        echo "\nMis à jour des contrats...\n";
+        $allContrat = $this->cm->getRepository()->findAll();
+
+        $cptTotal = 0;
+        $i = 0;
+        $progress = new ProgressBar($output, 100);
+        $progress->start();
+        foreach ($allContrat as $contrat) {
+
+            $prestationsArr = array();
+            foreach ($contrat->getContratPassages() as $contratPassages) {
+                foreach ($contratPassages->getPassages() as $passage) {
+                    foreach ($passage->getPrestations() as $prestation) {
+                        if (array_key_exists($prestation->getIdentifiant(), $prestationsArr)) {
+                            $prestationsArr[$prestation->getIdentifiant()]->setNbPassages($prestationsArr[$prestation->getIdentifiant()]->getNbPassages());
+                        } else {
+                            $prestation->setNbPassages(1);
+                            $prestationsArr[$prestation->getIdentifiant()] = $prestation;
+                        }
+                    }
+                }
+                break;
+            }
+            foreach ($prestationsArr as $prestation) {
+                $contrat->addPrestation($prestation);
+            }
+
+            $this->dm->persist($contrat);
+            $cptTotal++;
+            if ($cptTotal % (count($allContrat) / 100) == 0) {
+                $progress->advance();
+            }
+            if ($i >= 2000) {
+                $this->dm->flush();
+                $i = 0;
+            }
+            $i++;
+        }
         $progress->finish();
     }
 

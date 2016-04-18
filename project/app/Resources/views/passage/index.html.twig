@@ -38,33 +38,33 @@
                                                 {% endfor %}
                                             </div>
                                         </div>
-                                    </div>
-                                    {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
-                                        <div class="col-sm-12">
-                                            <i class="mdi mdi-call mdi-lg"></i>
-                                            <small>{{ passage.etablissementInfos.telephoneFixe }}</small>
-                                            {% if passage.etablissementInfos.telephoneFixe and passage.etablissementInfos.telephonePortable %}
-                                                /
-                                            {% endif %}
-                                            <small>{{ passage.etablissementInfos.telephonePortable }}</small>
                                         </div>
-                                    {% endif %}
-                                </div>
-                                <div class="row" style="margin-top:10px;">
-                                    <div class="col-sm-5 text-left">
-                                        <i class="mdi mdi-person mdi-lg"></i>
-                                        <span class="label" style="background-color: {{ passage.techniciens[0].couleur }};color: {{ passage.techniciens[0].couleurText }};"><small>{{ passage.techniciens[0].prenom }} {{ passage.techniciens[0].nom }}</small></span>
+                                        {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
+                                            <div class="col-sm-12">
+                                                <i class="mdi mdi-call mdi-lg"></i>
+                                                <small>{{ passage.etablissementInfos.telephoneFixe }}</small>
+                                                {% if passage.etablissementInfos.telephoneFixe and passage.etablissementInfos.telephonePortable %}
+                                                    /
+                                                {% endif %}
+                                                <small>{{ passage.etablissementInfos.telephonePortable }}</small>
+                                            </div>
+                                        {% endif %}
                                     </div>
-                                    <div class="col-sm-2 text-center">
-                                        <i class="mdi mdi-schedule mdi-lg"></i>
-                                        <small>01h</small>
+                                    <div class="row" style="margin-top:10px;">
+                                        <div class="col-sm-5 text-left">
+                                            <i class="mdi mdi-person mdi-lg"></i>
+                                            <span class="label" style="background-color: {{ passage.techniciens[0].couleur }};color: {{ passage.techniciens[0].couleurText }};"><small>{{ passage.techniciens[0].prenom }} {{ passage.techniciens[0].nom }}</small></span>
+                                        </div>
+                                        <div class="col-sm-2 text-center">
+                                            <i class="mdi mdi-schedule mdi-lg"></i>
+                                            <small>01h</small>
+                                        </div>
+                                        <div class="col-sm-5 text-right">
+                                            <i class="mdi mdi-date-range mdi-lg"></i>
+                                            <small>{{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</small>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-5 text-right">
-                                        <i class="mdi mdi-date-range mdi-lg"></i>
-                                        <small>{{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</small>
-                                    </div>
-                                </div>
-                            </a>
+                                </a>
                         {% endfor %}
                     </div>
 

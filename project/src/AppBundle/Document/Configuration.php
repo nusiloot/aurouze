@@ -122,7 +122,7 @@ class Configuration {
     public function getPrestationsArray() {
         $prestationsType = array();
         foreach ($this->getPrestations() as $prestation) {
-            $prestationsType[$prestation->getIdentifiant()] = $prestation->getNom();
+            $prestationsType[$prestation->getIdentifiant()] = $prestation;
         }
         return $prestationsType;
     }
