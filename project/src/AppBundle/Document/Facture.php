@@ -3,11 +3,12 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Model\DocumentSocieteInterface;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\FactureRepository")
  */
-class Facture {
+class Facture implements DocumentSocieteInterface {
 
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\FactureGenerator"})

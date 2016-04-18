@@ -8,8 +8,8 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
-    param_converter.doctrine.mongodb:
-        class: Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter
+    app.param_converter:
+        class: AppBundle\Request\AppParamConverter
         arguments: [@doctrine_mongodb]
         tags:
             - { name: request.param_converter }

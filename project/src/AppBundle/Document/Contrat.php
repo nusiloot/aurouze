@@ -12,13 +12,14 @@ use AppBundle\Document\Societe;
 use AppBundle\Document\ContratPassages;
 use AppBundle\Document\Mouvement;
 use AppBundle\Model\DocumentFacturableInterface;
+use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Manager\ConfigurationManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
  *
  */
-class Contrat implements DocumentFacturableInterface {
+class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface {
 
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\ContratGenerator"})

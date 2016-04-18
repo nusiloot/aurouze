@@ -4,6 +4,7 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Model\EtablissementInfosInterface;
+use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Document\Adresse;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Document\Contrat;
@@ -11,7 +12,7 @@ use AppBundle\Document\Contrat;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository")
  */
-class Etablissement implements EtablissementInfosInterface {
+class Etablissement implements DocumentSocieteInterface, EtablissementInfosInterface {
 
     const PREFIX = "ETABLISSEMENT";
 

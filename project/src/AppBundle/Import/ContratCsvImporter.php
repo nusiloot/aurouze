@@ -112,15 +112,16 @@ class ContratCsvImporter {
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
             $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
-            $produits = explode('~', $data[self::CSV_PRODUITS]);
-
+            $produits = explode('#', $data[self::CSV_PRODUITS]);
             foreach ($produits as $produitStr) {
                 if ($produitStr) {
-                    $produitdetail = explode('|', $produitStr);
+                    $produitdetail = explode('~', $produitStr);
+                    $produitQte = 0;
                     $produitLib = $produitdetail[0];
-                    $produitQte = $produitdetail[1];
-                    if ($produitLib && $produitQte) {
-                        $produitObj = new Produit();
+                    if (count($produitdetail) > 1) {
+                        $produitQte = $produitdetail[1];
+                    }
+                    if ($produitLib) {
                         $produitToAdd = $produitsArray[strtoupper(Transliterator::urlize($produitLib))];
                         $produitToAdd->setNbTotalContrat($produitQte);
                         $contrat->addProduit($produitToAdd);

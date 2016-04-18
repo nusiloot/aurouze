@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\UserInfos;
+use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\ContratType;
 use AppBundle\Type\ContratAcceptationType;
 use AppBundle\Manager\ContratManager;
@@ -18,12 +19,26 @@ use Knp\Snappy\Pdf;
 class ContratController extends Controller {
 
     /**
-     * @Route("/contrat/{id}/creation", name="contrat_creation")
+     * @Route("/contrat", name="contrat")
      */
-    public function creationAction(Request $request, $id) {
+    public function indexAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneById($id);
-        $contrat = $this->get('contrat.manager')->create($etablissement);        
+
+        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
+            'action' => '',
+            'method' => 'POST',
+        ));
+
+        return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView()));
+    }
+
+    /**
+     * @Route("/contrat/{id}/creation", name="contrat_creation")
+     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
+     */
+    public function creationAction(Request $request, Etablissement $etablissement) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrat = $this->get('contrat.manager')->create($etablissement);
         $dm->persist($contrat);
         $dm->flush();
         return $this->redirectToRoute('contrat_modification', array('id' => $contrat->getId()));
@@ -31,15 +46,13 @@ class ContratController extends Controller {
 
     /**
      * @Route("/contrat/{id}/modification", name="contrat_modification")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
-    public function modificationAction(Request $request, $id) {
-
+    public function modificationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
-
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
-            'action' => $this->generateUrl('contrat_modification', array('id' => $id)),
+            'action' => $this->generateUrl('contrat_modification', array('id' => $contrat->getId())),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
@@ -58,11 +71,11 @@ class ContratController extends Controller {
 
     /**
      * @Route("/contrat/{id}/acceptation", name="contrat_acceptation")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
-    public function acceptationAction(Request $request, $id) {
+    public function acceptationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $contratManager = new ContratManager($dm);
-        $contrat = $contratManager->getRepository()->findOneById($id);
         $form = $this->createForm(new ContratAcceptationType($dm), $contrat, array(
             'action' => $this->generateUrl('contrat_acceptation', array('id' => $id)),
             'method' => 'POST',
@@ -85,7 +98,7 @@ class ContratController extends Controller {
      * @Route("/contrat/{id}/visualisation", name="contrat_visualisation")
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
-    public function visualisationAction(Request $request, $contrat) {
+    public function visualisationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat));
@@ -93,10 +106,10 @@ class ContratController extends Controller {
 
     /**
      * @Route("/contrat/{id}/suppression", name="contrat_suppression")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
-    public function suppressionAction(Request $request, $id) {
+    public function suppressionAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
         $etablissementId = $contrat->getEtablissement()->getId();
         $dm->remove($contrat);
         $dm->flush();
@@ -118,10 +131,10 @@ class ContratController extends Controller {
 
     /**
      * @Route("/contrat/{id}/pdf", name="contrat_pdf")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
-    public function pdfAction(Request $request, $id) {
+    public function pdfAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($id);
 
         $contratVisuUrl =  $this->generateUrl('contrat_visualisation', array('id' => $contrat->getId()), true);
 //        $html = $this->renderView('contrat/validation.html.twig', array('contrat' => $contrat));
