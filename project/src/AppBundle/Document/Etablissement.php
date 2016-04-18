@@ -60,7 +60,7 @@ class Etablissement implements EtablissementInfosInterface {
      */
     protected $identifiantReprise;
 
-    /***
+    /**
      *  @MongoDB\ReferenceMany(targetDocument="Contrat", mappedBy="etablissement")
      */
     protected $contrats = array();
@@ -336,5 +336,15 @@ class Etablissement implements EtablissementInfosInterface {
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Remove contrat
+     *
+     * @param AppBundle\Document\Contrat $contrat
+     */
+    public function removeContrat(\AppBundle\Document\Contrat $contrat)
+    {
+        $this->contrats->removeElement($contrat);
     }
 }
