@@ -21,9 +21,16 @@ class Mouvement {
     protected $facturable;
 
     /**
+     * @MongoDB\String
+     */
+    protected $libelle;
+
+    /**
      * @MongoDB\Boolean
      */
     protected $facture;
+
+    protected $origineDocument;
 
     /**
      * Set prix
@@ -89,5 +96,38 @@ class Mouvement {
     public function getFacture()
     {
         return $this->facture;
+    }
+
+    public function setOrigineDocument($origineDocument) {
+        $this->origineDocument = $origineDocument;
+
+        return $this->origineDocument;
+    }
+
+    public function getOrigineDocument() {
+
+        return $this->origineDocument;
+    }
+
+    /**
+     * Set libelle
+     *
+     * @param string $libelle
+     * @return self
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+        return $this;
+    }
+
+    /**
+     * Get libelle
+     *
+     * @return string $libelle
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
     }
 }

@@ -4,6 +4,7 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Model\EtablissementInfosInterface;
+use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Document\Adresse;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Document\Contrat;
@@ -11,7 +12,7 @@ use AppBundle\Document\Contrat;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository")
  */
-class Etablissement implements EtablissementInfosInterface {
+class Etablissement implements DocumentSocieteInterface, EtablissementInfosInterface {
 
     const PREFIX = "ETABLISSEMENT";
 
@@ -60,7 +61,7 @@ class Etablissement implements EtablissementInfosInterface {
      */
     protected $identifiantReprise;
 
-    /***
+    /**
      *  @MongoDB\ReferenceMany(targetDocument="Contrat", mappedBy="etablissement")
      */
     protected $contrats = array();
@@ -336,5 +337,15 @@ class Etablissement implements EtablissementInfosInterface {
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Remove contrat
+     *
+     * @param AppBundle\Document\Contrat $contrat
+     */
+    public function removeContrat(\AppBundle\Document\Contrat $contrat)
+    {
+        $this->contrats->removeElement($contrat);
     }
 }

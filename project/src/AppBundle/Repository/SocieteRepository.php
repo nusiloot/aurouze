@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
+use AppBundle\Document\Societe;
 
 /**
  * SocieteRepository

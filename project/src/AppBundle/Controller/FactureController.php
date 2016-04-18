@@ -89,7 +89,7 @@ class FactureController extends Controller {
      * @Route("/societe/{id}/generation", name="facture_societe_generation")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function societeGenerationAction(Request $request, Etablissement $societe) {
+    public function societeGenerationAction(Request $request, Societe $societe) {
         $fm = $this->get('facture.manager');
         $dm = $this->get('doctrine_mongodb')->getManager();
 
@@ -107,9 +107,11 @@ class FactureController extends Controller {
      * @ParamConverter("etablissement", class="AppBundle:Facture")
      */
     public function pdfAction(Request $request, Facture $facture) {
+        $fm = $this->get('facture.manager');
 
         $html = $this->renderView('facture/pdf.html.twig', array(
-                'facture' => $facture
+                'facture' => $facture,
+                'parameters' => $fm->getParameters(),
             ));
 
         if($request->get('output') == 'html') {

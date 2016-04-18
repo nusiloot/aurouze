@@ -11,6 +11,7 @@ use AppBundle\Document\UserInfos;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
 use AppBundle\Document\Societe;
+use AppBundle\Model\DocumentFacturableInterface;
 
 class ContratManager implements MouvementManagerInterface {
 
@@ -71,7 +72,7 @@ class ContratManager implements MouvementManagerInterface {
                 $passage = new Passage();
                 $passage->setEtablissement($etablissement);
                 $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
-                
+
 
                 $passage->setDatePrevision($datePrevision);
                 if (!$cpt) {
@@ -106,10 +107,14 @@ class ContratManager implements MouvementManagerInterface {
     public function getMouvementsBySociete(Societe $societe, $isFaturable, $isFacture) {
         $contrats = $this->getRepository()->findContratMouvements($societe, $isFaturable, $isFacture);
         $mouvements = array();
-        foreach ($contrats as $contrat) {
-            $mouvements = array_merge($mouvements, $contrat->getMouvements()->toArray());
-        }
 
+        foreach($contrats as $contrat) {
+            foreach($contrat->getMouvements() as $mouvement) {
+                $mouvement->setOrigineDocument($contrat);
+                $mouvements[] = $mouvement;
+            }
+        }
+        
         return $mouvements;
     }
 

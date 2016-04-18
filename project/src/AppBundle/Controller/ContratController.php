@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\UserInfos;
+use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\ContratType;
 use AppBundle\Type\ContratAcceptationType;
 use AppBundle\Manager\ContratManager;
@@ -18,12 +19,26 @@ use Knp\Snappy\Pdf;
 class ContratController extends Controller {
 
     /**
+     * @Route("/contrat", name="contrat")
+     */
+    public function indexAction(Request $request) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
+            'action' => '',
+            'method' => 'POST',
+        ));
+
+        return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView()));
+    }
+
+    /**
      * @Route("/contrat/{id}/creation", name="contrat_creation")
      */
     public function creationAction(Request $request, $id) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $etablissement = $dm->getRepository('AppBundle:Etablissement')->findOneById($id);
-        $contrat = $this->get('contrat.manager')->create($etablissement);        
+        $contrat = $this->get('contrat.manager')->create($etablissement);
         $dm->persist($contrat);
         $dm->flush();
         return $this->redirectToRoute('contrat_modification', array('id' => $contrat->getId()));

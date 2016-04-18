@@ -3,16 +3,15 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Model\DocumentSocieteInterface;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\FactureRepository")
  */
-class Facture {
-
-    const PREFIX = "FACTURE";
+class Facture implements DocumentSocieteInterface {
 
     /**
-     * @MongoDB\Id(strategy="NONE", type="string")
+     * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\FactureGenerator"})
      */
     protected $id;
 
@@ -22,9 +21,14 @@ class Facture {
     protected $societe;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\EmbedOne(targetDocument="FactureSoussigne")
      */
-    protected $societeIdentifiant;
+    protected $emetteur;
+
+    /**
+     * @MongoDB\EmbedOne(targetDocument="FactureSoussigne")
+     */
+    protected $destinataire;
 
     /**
      * @MongoDB\Date
@@ -64,11 +68,8 @@ class Facture {
     public function __construct()
     {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    public function generateId() {
-
-        $this->setId(self::PREFIX . '-' . $this->getEtablissementIdentifiant() .'-' . $this->getDateEmission()->format('Ymd'));
+        $this->emetteur = new FactureSoussigne();
+        $this->destinataire = new FactureSoussigne();
     }
 
     public function update() {
@@ -81,26 +82,12 @@ class Facture {
         $this->setMontantTTC(round($this->getMontantHT() + $this->getMontantTaxe()));
     }
 
-    /**
-     * Set id
-     *
-     * @param string $id
-     * @return self
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
+    public function storeDestinataire() {
+        $societe = $this->getSociete();
+        $destinataire = $this->getDestinataire();
 
-    /**
-     * Get id
-     *
-     * @return string $id
-     */
-    public function getId()
-    {
-        return $this->id;
+        $destinataire->setNom($societe->getRaisonSociale());
+        $destinataire->setAdresse(clone $societe->getAdresse());
     }
 
     /**
@@ -275,6 +262,8 @@ class Facture {
     public function setSociete(\AppBundle\Document\Societe $societe)
     {
         $this->societe = $societe;
+        $this->storeDestinataire();
+
         return $this;
     }
 
@@ -289,24 +278,79 @@ class Facture {
     }
 
     /**
-     * Set societeIdentifiant
+     * Get id
      *
-     * @param string $societeIdentifiant
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set identifiant
+     *
+     * @param string $identifiant
      * @return self
      */
-    public function setSocieteIdentifiant($societeIdentifiant)
+    public function setIdentifiant($identifiant)
     {
-        $this->societeIdentifiant = $societeIdentifiant;
+        $this->identifiant = $identifiant;
         return $this;
     }
 
     /**
-     * Get societeIdentifiant
+     * Get identifiant
      *
-     * @return string $societeIdentifiant
+     * @return string $identifiant
      */
-    public function getSocieteIdentifiant()
+    public function getIdentifiant()
     {
-        return $this->societeIdentifiant;
+        return $this->identifiant;
+    }
+
+
+    /**
+     * Set emetteur
+     *
+     * @param AppBundle\Document\FactureSoussigne $emetteur
+     * @return self
+     */
+    public function setEmetteur(\AppBundle\Document\FactureSoussigne $emetteur)
+    {
+        $this->emetteur = $emetteur;
+        return $this;
+    }
+
+    /**
+     * Get emetteur
+     *
+     * @return AppBundle\Document\FactureSoussigne $emetteur
+     */
+    public function getEmetteur()
+    {
+        return $this->emetteur;
+    }
+
+    /**
+     * Set destinataire
+     *
+     * @param AppBundle\Document\FactureSoussigne $destinataire
+     * @return self
+     */
+    public function setDestinataire(\AppBundle\Document\FactureSoussigne $destinataire)
+    {
+        $this->destinataire = $destinataire;
+        return $this;
+    }
+
+    /**
+     * Get destinataire
+     *
+     * @return AppBundle\Document\FactureSoussigne $destinataire
+     */
+    public function getDestinataire()
+    {
+        return $this->destinataire;
     }
 }

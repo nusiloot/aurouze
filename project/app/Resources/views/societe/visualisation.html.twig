@@ -23,14 +23,16 @@
 			</div>
         </div>
     </div>
-	<h3>Etablissements <a class="btn btn-sm btn-warning pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter</strong></a></h3>
+	<h3>Etablissements ({{ societe.etablissements|length }}) <a class="btn btn-sm btn-warning pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter</strong></a></h3>
     <div class="row">
     	{% for etablissement in societe.etablissements %}
         <div class="col-xs-3">
             <div class="panel panel-default">
-			    <div class="panel-heading">Informations</div>
+			    <div class="panel-heading"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.raisonSociale }} <small>{{ etablissement.nom }}</small> <a class="btn btn-xs btn-warning pull-right" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span></strong></a></div>
 			    <div class="panel-body">
 			        <div class="rows">
+						{{ etablissement.adresse.adresse }} <br />
+						{{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }} 
 			        </div>
 			    </div>
 			</div>

@@ -1,0 +1,6 @@
+{% set _menu_active = 'contrat' %}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
+{% endblock %}
