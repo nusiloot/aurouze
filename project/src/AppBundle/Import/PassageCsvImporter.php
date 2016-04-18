@@ -45,6 +45,7 @@ class PassageCsvImporter {
     const CSV_DESCRIPTION = 7;
     const CSV_CONTRAT_ID = 8;
     const CSV_PRESTATIONS = 9;
+    const CSV_PRODUITS = 10;
 
     public function __construct(DocumentManager $dm, PassageManager $pm, EtablissementManager $em, UserManager $um, ContratManager $cm) {
         $this->dm = $dm;
@@ -64,7 +65,10 @@ class PassageCsvImporter {
 
         $progress = new ProgressBar($output, 100);
         $progress->start();
-
+        
+        $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
+        $produitsArray = $configuration->getProduitsArray();
+        
         $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
 
         foreach ($csv as $data) {
@@ -134,12 +138,33 @@ class PassageCsvImporter {
             $identifiantTechnicien = strtoupper(Transliterator::urlize($prenomTechnicien . ' ' . $nomTechnicien));
 
             $user = $this->um->getRepository()->findOneByIdentifiant($identifiantTechnicien);
-            //LISTE DE TECHNICIEN A PREVOIR
+            
             $passage->addTechnicien($user);
 
 
             $passage->setContrat($contrat);
             $passage->setNumeroContratArchive($contrat->getNumeroArchive());
+            
+            $produits = explode('#', $data[self::CSV_PRODUITS]);
+            
+            foreach ($produits as $produitStr) {
+                if ($produitStr) {
+                    $produitdetail = explode('~', $produitStr);
+                    $produitQte = 0;
+                    $produitLib = $produitdetail[0];
+                    if (count($produitdetail) > 1) {
+                        $produitQte = $produitdetail[1];
+                    }
+                    if ($produitLib) {
+                        $produitToAdd = clone $produitsArray[strtoupper(Transliterator::urlize($produitLib))];
+                        $produitToAdd->setNbUtilisePassage(0);
+                        $produitToAdd->setNbTotalContrat(null);
+                        $produitToAdd->setNbUtilisePassage($produitQte);                        
+                        $passage->addProduit($produitToAdd);
+                    }
+                }
+            }
+            
             $contrat->addPassage($etablissement, $passage);
 
             $this->dm->persist($contrat);

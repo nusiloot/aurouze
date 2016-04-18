@@ -130,6 +130,8 @@ join -t ";" -1 4 -2 1 $DATA_DIR/passagesadresses.csv $DATA_DIR/techniciens.csv |
 
 cat $DATA_DIR/tblPassagePrestationType.csv | tr -d '\r' | grep -v "RefPassagePrestationType;" > $DATA_DIR/tblPassagePrestationType.csv.tmp
 
+cat $DATA_DIR/tblPassageProduit.csv | tr -d '\r' | sort -t ";" -k 2,2 > $DATA_DIR/passageProduit.sorted.csv
+
 rm $DATA_DIR/passagesadressestechniciensprestation.csv > /dev/null;
 touch $DATA_DIR/passagesadressestechniciensprestation.csv;
 
@@ -140,7 +142,13 @@ do
    cat $DATA_DIR/prestationTypes.tmp.csv | sort -t ";" -k 1,1  > $DATA_DIR/prestationTypes.tmp.sorted.csv
    PRESTATIONSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/prestationTypes.tmp.sorted.csv $DATA_DIR/prestationType.sorted.csv | cut -d ';' -f 6 | tr "\n" "#")
    
-   echo $line";"$PRESTATIONSVAR >> $DATA_DIR/passagesadressestechniciensprestation.csv;
+   
+   grep -E "[0-9]+;$IDENTIFIANT;" $DATA_DIR/passageProduit.sorted.csv | cut -d ';' -f 3,5 > $DATA_DIR/passageProduit.tmp.csv
+   cat $DATA_DIR/passageProduit.tmp.csv | sort -t ";" -k 1,1  > $DATA_DIR/passageProduit.tmp.sorted.csv
+   
+   PRODUITSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/passageProduit.tmp.sorted.csv $DATA_DIR/produits.sorted.csv | cut -d ';' -f 2,3 | sed -r 's/(.+);(.+)/\2~\1/g' | tr "\n" "#")
+  
+   echo $line";"$PRESTATIONSVAR";"$PRODUITSVAR >> $DATA_DIR/passagesadressestechniciensprestation.csv;
 
 done < $DATA_DIR/passagesadressestechniciens.csv
 
@@ -199,12 +207,13 @@ cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[
     technicien=$26;
     contrat_id=$3;
     prestations=$47;
+    produits=$48;
 
     if(date_passage_debut && date_passage_debut < "2013-01-01 00:00:00") {
         next;
     }
 
-    print date_creation ";" etablissement_id ";" date_passage_debut ";;" duree ";" technicien ";" libelle ";" description ";" contrat_id ";" prestations
+    print date_creation ";" etablissement_id ";" date_passage_debut ";;" duree ";" technicien ";" libelle ";" description ";" contrat_id ";" prestations ";" produits
 
 }' > $DATA_DIR/passages.csv
 
@@ -221,8 +230,11 @@ cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)
     societe_old_id=$5;
     contrat_archivage=$11;
     etablissement_id=sprintf("%06d", $3);
-    commercial_id=sprintf("%06d", $8);
-    technicien_id=sprintf("%06d", $9);
+    commercial_id=$8;
+    technicien_id=$10;
+    if(!technicien_id){
+        technicien_id=$9;
+    }
     contrat_type=$14;
     prestation_type=$16;
     localisation=$17;
@@ -265,13 +277,19 @@ touch $DATA_DIR/contrats.csv;
 
 while read line
 do
-   IDENTIFIANT=`echo $line | cut -d ';' -f 1`;
-   grep -E "[0-9]+;$IDENTIFIANT;" $DATA_DIR/prestationProduit.sorted.csv | cut -d ';' -f 4,5 > $DATA_DIR/produitContrat.tmp.csv
+   IDENTIFIANTPRODUIT=`echo $line | cut -d ';' -f 1`;
+   grep -E "[0-9]+;$IDENTIFIANTPRODUIT;" $DATA_DIR/prestationProduit.sorted.csv | cut -d ';' -f 4,5 > $DATA_DIR/produitContrat.tmp.csv
    cat $DATA_DIR/produitContrat.tmp.csv | sort -t ";" -k 1,1  > $DATA_DIR/produitContrat.tmp.sorted.csv
    
    PRODUITSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/produitContrat.tmp.sorted.csv $DATA_DIR/produits.sorted.csv | cut -d ';' -f 2,3 | sed -r 's/(.+);(.+)/\2~\1/g' | tr "\n" "#")
    
-   echo $line";"$PRODUITSVAR >> $DATA_DIR/contrats.csv;
+   IDENTIFIANTTECHNICIEN=`echo $line | cut -d ';' -f 5`;
+   NOMTECHNICIEN=$(cat $DATA_DIR/techniciens.csv | grep -E "^$IDENTIFIANTTECHNICIEN;" | cut -d ';' -f 2);
+
+   IDENTIFIANTCOMMERCIAL=`echo $line | cut -d ';' -f 4`;
+   NOMCOMMERCIAL=$(cat $DATA_DIR/techniciens.csv | grep -E "^$IDENTIFIANTCOMMERCIAL;" | cut -d ';' -f 2);
+   
+   echo $line";"$PRODUITSVAR";"$NOMCOMMERCIAL";"$NOMTECHNICIEN >> $DATA_DIR/contrats.csv;
 
 done < $DATA_DIR/contrats.csv.tmp
 

@@ -16,6 +16,7 @@ namespace AppBundle\Import;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\UserInfos;
 use AppBundle\Document\Produit;
+use AppBundle\Document\User;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
@@ -51,6 +52,8 @@ class ContratCsvImporter {
     const CSV_PRIXHT = 12;
     const CSV_ARCHIVAGE = 13;
     const CSV_PRODUITS = 14;
+    const CSV_NOM_COMMERCIAL = 15;
+    const CSV_NOM_TECHNICIEN = 16;
 
     public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, SocieteManager $sm, UserManager $um) {
         $this->dm = $dm;
@@ -71,6 +74,10 @@ class ContratCsvImporter {
         $csv = $csvFile->getCsv();
         $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
         $produitsArray = $configuration->getProduitsArray();
+        
+        $techniciens = $this->um->getRepository()->findAllByTypeArray(User::USER_TYPE_TECHNICIEN);
+        $commerciaux = $this->um->getRepository()->findAllByTypeArray(User::USER_TYPE_COMMERCIAL);
+        
         $i = 0;
         $cptTotal = 0;
         foreach ($csv as $data) {
@@ -112,6 +119,23 @@ class ContratCsvImporter {
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
             $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
+            
+            if($data[self::CSV_NOM_COMMERCIAL]){
+               $identifiantCommercial = strtoupper(Transliterator::urlize($data[self::CSV_NOM_COMMERCIAL]));
+               if(array_key_exists($identifiantCommercial, $commerciaux)){
+                   $commercial = $commerciaux[$identifiantCommercial];
+                   $contrat->setCommercial($commercial);
+               }
+            }
+            
+            if($data[self::CSV_NOM_TECHNICIEN]){
+               $identifiantTechnicien = strtoupper(Transliterator::urlize($data[self::CSV_NOM_TECHNICIEN]));
+               if(array_key_exists($identifiantTechnicien, $techniciens)){
+                   $technicien = $techniciens[$identifiantTechnicien];
+                   $contrat->setTechnicien($technicien);
+               }
+            }
+            
             $produits = explode('#', $data[self::CSV_PRODUITS]);
             foreach ($produits as $produitStr) {
                 if ($produitStr) {
@@ -122,7 +146,8 @@ class ContratCsvImporter {
                         $produitQte = $produitdetail[1];
                     }
                     if ($produitLib) {
-                        $produitToAdd = $produitsArray[strtoupper(Transliterator::urlize($produitLib))];
+                        $produitToAdd = clone $produitsArray[strtoupper(Transliterator::urlize($produitLib))];
+                        $produitToAdd->setNbTotalContrat(0);
                         $produitToAdd->setNbTotalContrat($produitQte);
                         $contrat->addProduit($produitToAdd);
                     }
