@@ -71,10 +71,25 @@ class Societe {
     */
     protected $factureIncrement;
 
-     /***
+     /**
      *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe")
      */
     protected $etablissements;
+    
+    public function __construct()
+    {
+        $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set identifiant
@@ -96,16 +111,6 @@ class Societe {
     public function getIdentifiant()
     {
         return $this->identifiant;
-    }
-
-    /**
-     * Get etablissements
-     *
-     * @return \Doctrine\Common\Collections\ArrayCollection $etablissements
-     */
-    public function getEtablissements()
-    {
-        return $this->etablissements;
     }
 
     /**
@@ -221,10 +226,10 @@ class Societe {
     /**
      * Set adresse
      *
-     * @param $adresse
+     * @param AppBundle\Document\Adresse $adresse
      * @return self
      */
-    public function setAdresse(Adresse $adresse)
+    public function setAdresse(\AppBundle\Document\Adresse $adresse)
     {
         $this->adresse = $adresse;
         return $this;
@@ -262,7 +267,6 @@ class Societe {
         return $this->identifiantReprise;
     }
 
-
     /**
      * Set etablissementIncrement
      *
@@ -283,27 +287,6 @@ class Societe {
     public function getEtablissementIncrement()
     {
         return $this->etablissementIncrement;
-    }
-
-    /**
-     * Get id
-     *
-     * @return string $id
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-
-    public function getIcon()
-    {
-    	return EtablissementManager::$type_icon[$this->getType()];
-    }
-
-    public function getTypeLibelle()
-    {
-    	return EtablissementManager::$type_libelles[$this->getType()];
     }
 
     /**
@@ -348,5 +331,46 @@ class Societe {
     public function getFactureIncrement()
     {
         return $this->factureIncrement;
+    }
+
+    /**
+     * Add etablissement
+     *
+     * @param AppBundle\Document\Etablissement $etablissement
+     */
+    public function addEtablissement(\AppBundle\Document\Etablissement $etablissement)
+    {
+        $this->etablissements[] = $etablissement;
+    }
+
+    /**
+     * Remove etablissement
+     *
+     * @param AppBundle\Document\Etablissement $etablissement
+     */
+    public function removeEtablissement(\AppBundle\Document\Etablissement $etablissement)
+    {
+        $this->etablissements->removeElement($etablissement);
+    }
+
+    /**
+     * Get etablissements
+     *
+     * @return \Doctrine\Common\Collections\Collection $etablissements
+     */
+    public function getEtablissements()
+    {
+        return $this->etablissements;
+    }
+
+
+    public function getIcon()
+    {
+    	return EtablissementManager::$type_icon[$this->getType()];
+    }
+
+    public function getTypeLibelle()
+    {
+    	return EtablissementManager::$type_libelles[$this->getType()];
     }
 }

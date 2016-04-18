@@ -28,9 +28,11 @@
     	{% for etablissement in societe.etablissements %}
         <div class="col-xs-3">
             <div class="panel panel-default">
-			    <div class="panel-heading">Informations</div>
+			    <div class="panel-heading"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i>{{ etablissement.raisonSociale }} <small>{{ etablissement.nom }}</small></div>
 			    <div class="panel-body">
 			        <div class="rows">
+						{{ etablissement.adresse.adresse }} <br />
+						{{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }} 
 			        </div>
 			    </div>
 			</div>
