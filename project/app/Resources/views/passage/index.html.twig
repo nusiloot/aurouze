@@ -15,53 +15,53 @@
                 <div class="col-xs-6">
                     <div id="liste_passage" class="list-group well" style="height: 650px; overflow: auto; position: relative;">
                         {% for passage in passages %}
-                            <a data-words='{{ [passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate('full', 'none'), passage.etablissementInfos.nom]|json_encode() }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="row">
-                                            <div class="col-sm-9">
-                                                <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
-                                                <strong>{{ passage.etablissementInfos.nom|capitalize }}</strong>
-                                                <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
-                                            </div>
-                                            <div class="col-sm-3 text-right">
-                                                {% for prestation in passage.prestations %}
-                                                    {% if(prestation.wordToPicto) %}
-                                                        <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                                                            <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}">&nbsp;</i></span>                                                          
-                                                    {%else%}
-                                                        <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
-                                                    {%endif%}
-                                                {% endfor %}     
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
+                                <a data-words='{{ [passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate('full', 'none'), passage.etablissementInfos.nom]|json_encode() }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
+                                    <div class="row">
                                         <div class="col-sm-12">
-                                            <i class="mdi mdi-call mdi-lg"></i>
-                                            <small>{{ passage.etablissementInfos.telephoneFixe }}</small>
-                                            {% if passage.etablissementInfos.telephoneFixe and passage.etablissementInfos.telephonePortable %}
-                                                /
-                                            {% endif %}
-                                            <small>{{ passage.etablissementInfos.telephonePortable }}</small>
+                                            <div class="row">
+                                                <div class="col-sm-9">
+                                                    <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
+                                                    <strong>{{ passage.etablissementInfos.nom|capitalize }}</strong>
+                                                    <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
+                                                </div>
+                                                <div class="col-sm-3 text-right">
+                                                    {% for prestation in passage.prestations %}
+                                                        {% if(prestation.wordToPicto) %}
+                                                            <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
+                                                                <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}">&nbsp;</i></span>                                                          
+                                                            {%else%}
+                                                            <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
+                                                        {%endif%}
+                                                    {% endfor %}     
+                                                </div>
+                                            </div>
                                         </div>
-                                    {% endif %}
-                                </div>
-                                <div class="row" style="margin-top:10px;">
-                                    <div class="col-sm-5 text-left">
-                                        <i class="mdi mdi-person mdi-lg"></i>
-                                        <span class="label" style="background-color: {{ passage.techniciens[0].couleur }};color: {{ passage.techniciens[0].couleurText }};"><small>{{ passage.techniciens[0].prenom }} {{ passage.techniciens[0].nom }}</small></span>
+                                        {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
+                                            <div class="col-sm-12">
+                                                <i class="mdi mdi-call mdi-lg"></i>
+                                                <small>{{ passage.etablissementInfos.telephoneFixe }}</small>
+                                                {% if passage.etablissementInfos.telephoneFixe and passage.etablissementInfos.telephonePortable %}
+                                                    /
+                                                {% endif %}
+                                                <small>{{ passage.etablissementInfos.telephonePortable }}</small>
+                                            </div>
+                                        {% endif %}
                                     </div>
-                                    <div class="col-sm-2 text-center">
-                                        <i class="mdi mdi-schedule mdi-lg"></i>
-                                        <small>01h</small>
+                                    <div class="row" style="margin-top:10px;">
+                                        <div class="col-sm-5 text-left">
+                                            <i class="mdi mdi-person mdi-lg"></i>
+                                            <span class="label" style="background-color: {{ passage.techniciens[0].couleur }};color: {{ passage.techniciens[0].couleurText }};"><small>{{ passage.techniciens[0].prenom }} {{ passage.techniciens[0].nom }}</small></span>
+                                        </div>
+                                        <div class="col-sm-2 text-center">
+                                            <i class="mdi mdi-schedule mdi-lg"></i>
+                                            <small>01h</small>
+                                        </div>
+                                        <div class="col-sm-5 text-right">
+                                            <i class="mdi mdi-date-range mdi-lg"></i>
+                                            <small>{{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</small>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-5 text-right">
-                                        <i class="mdi mdi-date-range mdi-lg"></i>
-                                        <small>{{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</small>
-                                    </div>
-                                </div>
-                            </a>
+                                </a>
                         {% endfor %}
                     </div>
 

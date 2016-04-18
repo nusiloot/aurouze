@@ -3,6 +3,7 @@
 . bin/config.inc
 
 REMOTE_DATA=$1
+IMPORT_TOTAL=$2
 
 SYMFODIR=$(pwd);
 DATA_DIR=$TMP/AUROUZE_DATAS
@@ -68,6 +69,8 @@ print $1 ";" $2 ";" $3 ";" $4 ";" $5 ";" nom;
 
 }' > $DATA_DIR/prestationType.csv
 
+cat $DATA_DIR/prestationType.csv | sort -t ";" -k 1,1 > $DATA_DIR/prestationType.sorted.csv
+
 ##### Récupération des types de produits #####
 
 echo "Récupération des types de produits"
@@ -76,6 +79,7 @@ cat $DATA_DIR/tblProduit.csv | tr -d "\r" | grep -v "RefProduit;" | awk -F ';'  
 print $1 ";" $2 ";" $5 ";" $6 ";" $7 ";" $8";"$10
 }' > $DATA_DIR/produits.csv
 
+cat $DATA_DIR/produits.csv | sort -t ";" -k 1,1 > $DATA_DIR/produits.sorted.csv
 
 #### Récupération des Societe ####
 
@@ -131,15 +135,11 @@ touch $DATA_DIR/passagesadressestechniciensprestation.csv;
 
 while read line
 do
-   IDENTIFIANT=`echo $line | cut -d ';' -f 1`;
-   PRESTATIONROWS=`grep -E "^[0-9]+;$IDENTIFIANT;" $DATA_DIR/tblPassagePrestationType.csv.tmp | cut -d ";" -f 3`;
-
-   PRESTATIONSVAR="";
-   for i in ${PRESTATIONROWS[@]};
-   do
-      PRESTATION=`grep -E "^$i;" $DATA_DIR/prestationType.csv | cut -d ";" -f 6`;
-      PRESTATIONSVAR=$PRESTATION","$PRESTATIONSVAR;
-   done
+   IDENTIFIANT=`echo $line | cut -d ';' -f 2`;
+   grep -E "^[0-9]+;$IDENTIFIANT;" $DATA_DIR/tblPassagePrestationType.csv.tmp | cut -d ";" -f 3 > $DATA_DIR/prestationTypes.tmp.csv;
+   cat $DATA_DIR/prestationTypes.tmp.csv | sort -t ";" -k 1,1  > $DATA_DIR/prestationTypes.tmp.sorted.csv
+   PRESTATIONSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/prestationTypes.tmp.sorted.csv $DATA_DIR/prestationType.sorted.csv | cut -d ';' -f 6 | tr "\n" "#")
+   
    echo $line";"$PRESTATIONSVAR >> $DATA_DIR/passagesadressestechniciensprestation.csv;
 
 done < $DATA_DIR/passagesadressestechniciens.csv
@@ -156,8 +156,8 @@ cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[
     }
     date_creation=$19;
 
-    #if(!date_passage_debut && $6) { "date --date=\"$6\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; }
-    #if(!date_passage_debut && $19) { "date --date=\"$19\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; }
+    if(!date_passage_debut && $6) { "date --date=\"$6\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; }
+    if(!date_passage_debut && $19) { "date --date=\"$19\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; }
 
     effectue=$13;
     planifie=$18;
@@ -266,16 +266,11 @@ touch $DATA_DIR/contrats.csv;
 while read line
 do
    IDENTIFIANT=`echo $line | cut -d ';' -f 1`;
-   PRODUITSLINES=`grep ";$IDENTIFIANT;" $DATA_DIR/prestationProduit.sorted.csv`;
+   grep -E "[0-9]+;$IDENTIFIANT;" $DATA_DIR/prestationProduit.sorted.csv | cut -d ';' -f 4,5 > $DATA_DIR/produitContrat.tmp.csv
+   cat $DATA_DIR/produitContrat.tmp.csv | sort -t ";" -k 1,1  > $DATA_DIR/produitContrat.tmp.sorted.csv
    
-   PRODUITSVAR="";
-     for i in ${PRODUITSLINES[@]};
-     do
-        IDPRODUIT=`echo $i | cut -d ';' -f 1`;
-        QTEPRODUIT=`echo $i | cut -d ';' -f 5`;
-        PRODUITSLIBELLE=`grep -E "^$IDPRODUIT;" $DATA_DIR/produits.csv | cut -d ";" -f 2`;
-        PRODUITSVAR=""$PRODUITSLIBELLE"|"$QTEPRODUIT"~"$PRODUITSVAR;
-     done
+   PRODUITSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/produitContrat.tmp.sorted.csv $DATA_DIR/produits.sorted.csv | cut -d ';' -f 2,3 | sed -r 's/(.+);(.+)/\2~\1/g' | tr "\n" "#")
+   
    echo $line";"$PRODUITSVAR >> $DATA_DIR/contrats.csv;
 
 done < $DATA_DIR/contrats.csv.tmp
@@ -311,3 +306,5 @@ php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv -vvv
 echo "Import des passages"
 
 php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv
+
+
