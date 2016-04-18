@@ -52,6 +52,11 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $adresse;
 
     /**
+     * @MongoDB\EmbedOne(targetDocument="ContactCoordonnee")
+     */
+    protected $contactCoordonnee;
+
+    /**
      * @MongoDB\String
      */
     protected $type;
@@ -347,5 +352,27 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function removeContrat(\AppBundle\Document\Contrat $contrat)
     {
         $this->contrats->removeElement($contrat);
+    }
+
+    /**
+     * Set contactCoordonnee
+     *
+     * @param AppBundle\Document\ContactCoordonnee $contactCoordonnee
+     * @return self
+     */
+    public function setContactCoordonnee(\AppBundle\Document\ContactCoordonnee $contactCoordonnee)
+    {
+        $this->contactCoordonnee = $contactCoordonnee;
+        return $this;
+    }
+
+    /**
+     * Get contactCoordonnee
+     *
+     * @return AppBundle\Document\ContactCoordonnee $contactCoordonnee
+     */
+    public function getContactCoordonnee()
+    {
+        return $this->contactCoordonnee;
     }
 }

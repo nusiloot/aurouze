@@ -1,4 +1,4 @@
-{% set _menu_active = '' %}
+{% set _menu_active = 'contrat' %}
 {% extends 'base.html.twig' %}
 
 {% form_theme form _self %}
@@ -115,7 +115,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">                     
+                <div class="row">
                     <div class="col-xs-4">
                         {{ form_row(form.nbFactures) }}
                     </div>
@@ -137,14 +137,14 @@
                     </div>
                 </div>
 
-                <div class="row"> 
+                <div class="row">
                     <div class="col-xs-12">
                         {{ form_row(form.nomenclature) }}
                     </div>
                 </div>
             </div>
         </div>
-        
+
         {{ form_widget(form.save) }}
         {{ form_end(form) }}
     </div>

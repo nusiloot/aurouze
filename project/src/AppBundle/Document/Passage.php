@@ -8,13 +8,15 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
 use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Document\EtablissementInfos;
+use AppBundle\Model\DocumentEtablissementInterface;
+use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
  */
-class Passage {
+class Passage implements DocumentEtablissementInterface, DocumentSocieteInterface {
 
     const PREFIX = "PASSAGE";
 
@@ -32,7 +34,7 @@ class Passage {
      * @MongoDB\EmbedMany(targetDocument="Prestation")
      */
     protected $prestations;
-    
+
     /**
      * @MongoDB\EmbedMany(targetDocument="Produit")
      */
@@ -72,7 +74,7 @@ class Passage {
      * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="passages")
      */
     protected $etablissement;
-   
+
     /**
      * @MongoDB\EmbedOne(targetDocument="AppBundle\Document\EtablissementInfos")
      */
@@ -201,6 +203,11 @@ class Passage {
 
     public function getPassageIdentifiant() {
         return $this->etablissementIdentifiant . '-' . $this->identifiant;
+    }
+
+    public function getSociete() {
+
+        return $this->getEtablissement()->getSociete();
     }
 
     /**
@@ -528,7 +535,7 @@ class Passage {
     public function getEtablissement() {
         return $this->etablissement;
     }
-   
+
 
     /**
      * Set numeroContratArchive
@@ -571,7 +578,7 @@ class Passage {
         return $this->techniciens;
     }
 
-  
+
 
     /**
      * Add prestation
@@ -612,22 +619,22 @@ class Passage {
     {
         $this->techniciens->removeElement($technicien);
     }
-    
+
     public function setTimeDebut($time) {
     	$dateTime = $this->getDateDebut();
     	$this->setDateDebut(new \DateTime($dateTime->format('Y-m-d').'T'.$time.':00'));
     }
-    
+
     public function setTimeFin($time) {
     	$dateTime = $this->getDateFin();
     	$this->setDateFin(new \DateTime($dateTime->format('Y-m-d').'T'.$time.':00'));
     }
-    
+
     public function getTimeDebut() {
     	$dateTime = $this->getDateDebut();
     	return $dateTime->format('H:i');
     }
-    
+
     public function getTimeFin() {
     	$dateTime = $this->getDateFin();
     	return $dateTime->format('H:i');

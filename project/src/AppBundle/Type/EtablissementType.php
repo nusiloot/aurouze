@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Type\Adresse;
+use AppBundle\Type\ContactCoordonneeType;
 use AppBundle\Manager\EtablissementManager;
 
 class EtablissementType extends AbstractType {
@@ -34,7 +35,8 @@ class EtablissementType extends AbstractType {
                 ->add('nom', TextType::class, array('label' => 'Nom :'))
                 ->add('type', ChoiceType::class, array('label' => 'Type :', 'choices' => array_merge(array('' => ''), $this->getTypes()), "attr" => array("class" => "select2 select2-simple")))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")))
-        		->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'));
+        		->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
+        		->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'));
        
     }
 
