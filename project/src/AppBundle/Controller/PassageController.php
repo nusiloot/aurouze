@@ -17,20 +17,6 @@ use AppBundle\Manager\ContratManager;
 class PassageController extends Controller {
 
     /**
-     * @Route("/passage/etablissements", name="passage_etablissements")
-     */
-    public function choiceAction(Request $request) {
-
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
-            'action' => $this->generateUrl('passage_etablissement_choice'),
-            'method' => 'POST',
-        ));
-
-        return $this->render('passage/etablissements.html.twig', array('formEtablissement' => $formEtablissement->createView()));
-    }
-
-    /**
      * @Route("/passage", name="passage")
      */
     public function indexAction(Request $request) {
@@ -53,7 +39,7 @@ class PassageController extends Controller {
     public function creationAction(Request $request, Etablissement $etablissement) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 		$passage = $this->get('passage.manager')->create($etablissement);
-		
+
 		$form = $this->createForm(new PassageCreationType($dm), $passage, array(
 				'action' => $this->generateUrl('passage_creation', array('id' => $etablissement->getId())),
 				'method' => 'POST',
@@ -65,7 +51,7 @@ class PassageController extends Controller {
 			$dm->flush();
 			return $this->redirectToRoute('passage_etablissement', array('id' => $etablissement->getId()));
 		}
-		
+
         return $this->render('passage/creation.html.twig', array('passage' => $passage, 'form' => $form->createView()));
     }
 
@@ -75,7 +61,7 @@ class PassageController extends Controller {
      */
     public function modificationAction(Request $request, Passage $passage) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-		
+
 		$form = $this->createForm(new PassageCreationType($dm), $passage, array(
 				'action' => $this->generateUrl('passage_modification', array('id' => $passage->getId())),
 				'method' => 'POST',
@@ -87,7 +73,7 @@ class PassageController extends Controller {
 			$dm->flush();
 			return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
 		}
-		
+
         return $this->render('passage/modification.html.twig', array('passage' => $passage, 'form' => $form->createView()));
     }
 

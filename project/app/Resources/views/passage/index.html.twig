@@ -1,6 +1,9 @@
 {% set _menu_active = 'passage' %}
 {% extends 'base.html.twig' %}
 {% block body %}
+
+    {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+
     <div class="row">
         <div class="col-xs-12">
             <h3>Liste des passages à planifier</h3>
@@ -28,11 +31,11 @@
                                                 {% for prestation in passage.prestations %}
                                                     {% if(prestation.wordToPicto) %}
                                                         <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                                                            <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}">&nbsp;</i></span>                                                          
+                                                            <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}">&nbsp;</i></span>
                                                     {%else%}
                                                         <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
                                                     {%endif%}
-                                                {% endfor %}     
+                                                {% endfor %}
                                             </div>
                                         </div>
                                     </div>
