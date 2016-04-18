@@ -51,21 +51,20 @@
                 {% set passagesEtablissement = contrat.getPassagesEtablissementNode(etablissement) %}
 
                 {% if(passagesEtablissement is not null) %}
-                    <div class="panel {% if(not contrat.isTerminee) %}panel-default{% else %}panel-success{% endif %}">
-                        <div class="panel-heading">
+                    <div id="contrat-{{ contrat.id }}" class="panel {% if(not contrat.isTerminee) %}panel-default{% else %}panel-success{% endif %}">
+                        <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" class="panel-heading">
                             <h3 class="panel-title">
                                 <a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
                                 </span>
-                                Contrat {% if(not contrat.isTerminee) %}en cours jusqu'au{% else %}terminé le{% endif %}
-                                {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
-                                n° {{ contrat.numeroArchive }}
-                                <small>sur {{ contrat.duree }} mois</small>
+                                {% if(not contrat.isTerminee) %}Jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% else %}{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% endif %}
+
+                                <small>Contrat  n° {{ contrat.numeroArchive }}
+                                sur {{ contrat.duree }} mois</small>
                             </h3>
                         </div>
-
-                        <div class="list-group">
+                        <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(contrat.isTerminee) %}out{% else%}in{% endif %} list-group ">
                             {% for pe in passagesEtablissement.getPassagesSorted %}
-                                <div class="list-group-item {% if pe.realise %}list-group-item-success{% endif %} {% if pe.planifie %}list-group-item-warning{% endif %}">
+                                <div class="list-group-item">
                                     <div class="row">
                                         <div class="col-xs-4">
                                             {{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% if(not pe.isPlanifie or pe.isRealise) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}
@@ -93,7 +92,7 @@
                                             </ul>
                                         </div>
                                         <div class="col-xs-2 text-right">
-                                            {% if pe.realise %} <span class="btn btn-block btn-sm btn-default">Modifier</span>
+                                            {% if pe.realise %} <span class="text-success">Réalisé</span>
                                             {% elseif pe.planifie  %}<a class="btn btn-block btn-sm btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
                                             {% elseif pe.aPlanifie %}
                                                     {% for technicien in pe.techniciens %}
