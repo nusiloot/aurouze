@@ -18,7 +18,7 @@
                         {{ form_row(form.raisonSociale) }}
                     </div>
                     <div class="col-xs-3">
-                        {{ form_row(form.type) }}
+                        {{ form_row(form.provenance) }}
                     </div>
                     <div class="col-xs-3">
                         {{ form_row(form.codeComptable) }}
@@ -38,8 +38,34 @@
                 </div>
                 <hr style="margin-top: 5px;" />
                 <div class="row">
+                    <div class="col-xs-4">
+                        {{ form_row(form.contactCoordonnee.telephoneFixe) }}
+                    </div>
+                    <div class="col-xs-4">
+                        {{ form_row(form.contactCoordonnee.telephoneMobile) }}
+                    </div>
+                    <div class="col-xs-4">
+                        {{ form_row(form.contactCoordonnee.fax) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        {{ form_row(form.contactCoordonnee.email) }}
+                    </div>
+                    <div class="col-xs-6">
+                        {{ form_row(form.contactCoordonnee.siteInternet) }}
+                    </div>
+                </div>
+                <hr style="margin-top: 5px;" />
+                <div class="row">
                     <div class="col-xs-12">
                         {{ form_row(form.commentaire) }}
+                    </div>
+                </div>
+                <hr style="margin-top: 5px;" />
+                <div class="row">
+                    <div class="col-xs-12">
+                        {{ form_row(form.tags) }}
                     </div>
                 </div>
             </div>

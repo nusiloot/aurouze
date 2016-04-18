@@ -17,6 +17,7 @@ namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
+use AppBundle\Document\Provenance;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ConfigurationRepository")
@@ -40,9 +41,15 @@ class Configuration {
      */
     protected $produits;
 
+    /**
+     * @MongoDB\EmbedMany(targetDocument="Provenance")
+     */
+    protected $provenances;
+
     public function __construct() {
         $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->produits = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->provenances = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -135,4 +142,34 @@ class Configuration {
         return $produitsType;
     }
 
+
+    /**
+     * Add provenance
+     *
+     * @param AppBundle\Document\Provenance $provenance
+     */
+    public function addProvenance(\AppBundle\Document\Provenance $provenance)
+    {
+        $this->provenances[] = $provenance;
+    }
+
+    /**
+     * Remove provenance
+     *
+     * @param AppBundle\Document\Provenance $provenance
+     */
+    public function removeProvenance(\AppBundle\Document\Provenance $provenance)
+    {
+        $this->provenances->removeElement($provenance);
+    }
+
+    /**
+     * Get provenances
+     *
+     * @return \Doctrine\Common\Collections\Collection $provenances
+     */
+    public function getProvenances()
+    {
+        return $this->provenances;
+    }
 }

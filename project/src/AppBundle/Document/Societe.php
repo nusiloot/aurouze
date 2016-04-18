@@ -51,6 +51,11 @@ class Societe {
      */
     protected $adresse;
 
+    /**
+     * @MongoDB\EmbedOne(targetDocument="ContactCoordonnee")
+     */
+    protected $contactCoordonnee;
+
      /**
      * @MongoDB\String
      */
@@ -75,6 +80,16 @@ class Societe {
      *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe")
      */
     protected $etablissements;
+
+    /**
+     * @MongoDB\EmbedOne(targetDocument="Provenance")
+     */
+    protected $provenance;
+
+    /**
+     * @MongoDB\Collection
+     */
+    protected $tags;
     
     public function __construct()
     {
@@ -372,5 +387,71 @@ class Societe {
     public function getTypeLibelle()
     {
     	return EtablissementManager::$type_libelles[$this->getType()];
+    }
+
+    /**
+     * Set provenance
+     *
+     * @param AppBundle\Document\Provenance $provenance
+     * @return self
+     */
+    public function setProvenance(\AppBundle\Document\Provenance $provenance)
+    {
+        $this->provenance = $provenance;
+        return $this;
+    }
+
+    /**
+     * Get provenance
+     *
+     * @return AppBundle\Document\Provenance $provenance
+     */
+    public function getProvenance()
+    {
+        return $this->provenance;
+    }
+
+    /**
+     * Set tags
+     *
+     * @param collection $tags
+     * @return self
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+        return $this;
+    }
+
+    /**
+     * Get tags
+     *
+     * @return collection $tags
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Set contactCoordonnee
+     *
+     * @param AppBundle\Document\ContactCoordonnee $contactCoordonnee
+     * @return self
+     */
+    public function setContactCoordonnee(\AppBundle\Document\ContactCoordonnee $contactCoordonnee)
+    {
+        $this->contactCoordonnee = $contactCoordonnee;
+        return $this;
+    }
+
+    /**
+     * Get contactCoordonnee
+     *
+     * @return AppBundle\Document\ContactCoordonnee $contactCoordonnee
+     */
+    public function getContactCoordonnee()
+    {
+        return $this->contactCoordonnee;
     }
 }
