@@ -65,18 +65,18 @@ class PassageCsvImporter {
 
         $progress = new ProgressBar($output, 100);
         $progress->start();
-        
+
         $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
         $produitsArray = $configuration->getProduitsArray();
-        
-        $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
 
+        $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
+        
         foreach ($csv as $data) {
           
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
             }
-            if(!preg_match('/^[0-9]+$/', $data[self::CSV_ETABLISSEMENT_ID])){
+            if (!preg_match('/^[0-9]+$/', $data[self::CSV_ETABLISSEMENT_ID])) {
                 $output->writeln(sprintf("<error>établissement dont le numéro %s n'est pas correct</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
             }
@@ -108,7 +108,7 @@ class PassageCsvImporter {
             }
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
-            if(!preg_match('/^[0-9]+$/', $data[self::CSV_CONTRAT_ID])){
+            if (!preg_match('/^[0-9]+$/', $data[self::CSV_CONTRAT_ID])) {
                 $output->writeln(sprintf("<error>Passage dont le numéro %s n'est pas correct</error>", $data[self::CSV_CONTRAT_ID]));
                 continue;
             }
@@ -138,15 +138,15 @@ class PassageCsvImporter {
             $identifiantTechnicien = strtoupper(Transliterator::urlize($prenomTechnicien . ' ' . $nomTechnicien));
 
             $user = $this->um->getRepository()->findOneByIdentifiant($identifiantTechnicien);
-            
+
             $passage->addTechnicien($user);
 
 
             $passage->setContrat($contrat);
             $passage->setNumeroContratArchive($contrat->getNumeroArchive());
-            
+
             $produits = explode('#', $data[self::CSV_PRODUITS]);
-            
+
             foreach ($produits as $produitStr) {
                 if ($produitStr) {
                     $produitdetail = explode('~', $produitStr);
@@ -159,12 +159,12 @@ class PassageCsvImporter {
                         $produitToAdd = clone $produitsArray[strtoupper(Transliterator::urlize($produitLib))];
                         $produitToAdd->setNbUtilisePassage(0);
                         $produitToAdd->setNbTotalContrat(null);
-                        $produitToAdd->setNbUtilisePassage($produitQte);                        
+                        $produitToAdd->setNbUtilisePassage($produitQte);
                         $passage->addProduit($produitToAdd);
                     }
                 }
             }
-            
+
             $contrat->addPassage($etablissement, $passage);
 
             $this->dm->persist($contrat);
@@ -195,8 +195,10 @@ class PassageCsvImporter {
         $progress = new ProgressBar($output, 100);
         $progress->start();
         foreach ($allContrat as $contrat) {
-
+            $hasTechnicien = count($contrat->getTechnicien());
             $prestationsArr = array();
+            $technicienArr = array();
+            $technicienForContrat = null;
             foreach ($contrat->getContratPassages() as $contratPassages) {
                 foreach ($contratPassages->getPassages() as $passage) {
                     foreach ($passage->getPrestations() as $prestation) {
@@ -207,13 +209,28 @@ class PassageCsvImporter {
                             $prestationsArr[$prestation->getIdentifiant()] = $prestation;
                         }
                     }
+                    if (count($passage->getTechniciens())) {
+                        foreach ($passage->getTechniciens() as $technicien) {
+                            if (array_key_exists($technicien->getIdentifiant(), $technicienArr)) {
+                                $technicienArr[$technicien->getIdentifiant()]++;
+                                if (max($technicienArr) == $technicienArr[$technicien->getIdentifiant()]) {
+                                    $technicienForContrat = $technicien;
+                                }
+                            } else {
+                                $technicienArr[$technicien->getIdentifiant()] = 0;
+                            }
+                        }
+                    }
                 }
                 break;
             }
             foreach ($prestationsArr as $prestation) {
                 $contrat->addPrestation($prestation);
             }
-
+            $this->dm->persist($contrat);
+            if (!$hasTechnicien && $technicienForContrat) {
+                $contrat->setTechnicien($technicienForContrat);
+            }
             $this->dm->persist($contrat);
             $cptTotal++;
             if ($cptTotal % (count($allContrat) / 100) == 0) {
