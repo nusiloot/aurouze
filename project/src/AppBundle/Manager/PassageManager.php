@@ -7,12 +7,20 @@ use AppBundle\Document\Etablissement as Etablissement;
 use AppBundle\Document\Passage as Passage;
 
 class PassageManager {
-    
-const STATUT_EN_ATTENTE = "EN_ATTENTE";
-const STATUT_A_PLANIFIER = "A_PLANIFIER";
-const STATUT_PLANIFIE = "PLANIFIE";
-const STATUT_REALISE = "REALISE";
 
+    const STATUT_EN_ATTENTE = "EN_ATTENTE";
+    const STATUT_A_PLANIFIER = "A_PLANIFIER";
+    const STATUT_PLANIFIE = "PLANIFIE";
+    const STATUT_REALISE = "REALISE";
+
+    public static $statutsLibellesActions = array(self::STATUT_A_PLANIFIER => 'A planifier',
+        self::STATUT_EN_ATTENTE => 'Prévu',
+        self::STATUT_PLANIFIE => 'Planifié',
+        self::STATUT_REALISE => 'Réalisé');
+    public static $statutsLibelles = array(self::STATUT_A_PLANIFIER => 'À planifier',
+        self::STATUT_EN_ATTENTE => 'En attente de planification',
+        self::STATUT_PLANIFIE => 'Planifié',
+        self::STATUT_REALISE => 'Réalisé');
     protected $dm;
 
     function __construct(DocumentManager $dm) {
@@ -36,9 +44,9 @@ const STATUT_REALISE = "REALISE";
     }
 
     public function getNextNumeroPassage($etablissementIdentifiant, \DateTime $date) {
-       $allPassagesForEtablissementsInDay = $this->getRepository()->findPassagesForEtablissementsAndDay($etablissementIdentifiant, $date);
+        $allPassagesForEtablissementsInDay = $this->getRepository()->findPassagesForEtablissementsAndDay($etablissementIdentifiant, $date);
 
-        if(!count($allPassagesForEtablissementsInDay)){
+        if (!count($allPassagesForEtablissementsInDay)) {
             return sprintf("%03d", 1);
         }
         return sprintf("%03d", max($allPassagesForEtablissementsInDay) + 1);

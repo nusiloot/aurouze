@@ -25,17 +25,35 @@ class ContratManager implements MouvementManagerInterface {
         $this->dm = $dm;
     }
 
-    function create(Etablissement $etablissement, \DateTime $dateCreation = null) {
+    function createBySocieteWithFirstEtablissement(Societe $societe, \DateTime $dateCreation = null) {
+        $contrat = $this->createBySociete($societe);
+        if (count($societe->getEtablissements())) {
+            $etablissement = null;
+            foreach ($societe->getEtablissements() as $etb) {
+                $etablissement = $etb;
+                break;
+            }
+
+            $contrat->addEtablissement($etablissement);
+        }
+        return $contrat;
+    }
+
+    function createBySociete(Societe $societe, \DateTime $dateCreation = null) {
         if (!$dateCreation) {
             $dateCreation = new \DateTime();
         }
         $contrat = new Contrat();
-        $societe = $etablissement->getSociete();
         $contrat->setSociete($societe);
         $contrat->setDateCreation($dateCreation);
         $contrat->setStatut(self::STATUT_BROUILLON);
         $contrat->addPrestation(new Prestation());
         $contrat->addProduit(new Produit());
+        return $contrat;
+    }
+
+    function create(Etablissement $etablissement, \DateTime $dateCreation = null) {
+        $contrat = $this->createBySociete($etablissement->getSociete());
         $contrat->addEtablissement($etablissement);
         return $contrat;
     }
@@ -63,10 +81,10 @@ class ContratManager implements MouvementManagerInterface {
         if (!$date_debut) {
             return false;
         }
-
+        $date_debut = clone $contrat->getDateDebut();
         $passagesArray = $contrat->getPrevisionnel($date_debut);
         foreach ($contrat->getEtablissements() as $etablissement) {
-        $cpt = 0;
+            $cpt = 0;
             foreach ($passagesArray as $datePassage => $passageInfos) {
                 $datePrevision = new \DateTime($datePassage);
                 $passage = new Passage();
@@ -94,7 +112,7 @@ class ContratManager implements MouvementManagerInterface {
                 }
 
                 if ($passage) {
-                    $contrat->addPassage($etablissement,$passage);
+                    $contrat->addPassage($etablissement, $passage);
                     $this->dm->persist($passage);
                     $this->dm->persist($contrat);
                 }
@@ -108,13 +126,13 @@ class ContratManager implements MouvementManagerInterface {
         $contrats = $this->getRepository()->findContratMouvements($societe, $isFaturable, $isFacture);
         $mouvements = array();
 
-        foreach($contrats as $contrat) {
-            foreach($contrat->getMouvements() as $mouvement) {
+        foreach ($contrats as $contrat) {
+            foreach ($contrat->getMouvements() as $mouvement) {
                 $mouvement->setOrigineDocument($contrat);
                 $mouvements[] = $mouvement;
             }
         }
-        
+
         return $mouvements;
     }
 

@@ -669,4 +669,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     {
         return $this->produits;
     }
+    
+    public function getStatutLibelle() {
+        return PassageManager::$statutsLibelles[$this->getStatut()];
+    }
+    public function getStatutLibelleActions() {
+        return PassageManager::$statutsLibellesActions[$this->getStatut()];
+    }
 }

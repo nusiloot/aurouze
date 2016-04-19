@@ -1,15 +1,15 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <strong>Interventions prévues</strong> (Acceptation du contrat le {{ contrat.dateAcceptation | date("d/m/y")}})  <span class='pull-right'>Date de début : <strong>{{ contrat.dateDebut | date("d/m/Y")}}</strong></span></div>
+        <strong>Interventions</strong> (Acceptation du contrat le {{ contrat.dateAcceptation | date("d/m/y")}})  <span class='pull-right'>Date de début : <strong>{{ contrat.dateDebut | date("d/m/Y")}}</strong></span></div>
     <div class="panel-body">
         <ul class="list-inline list-group">
-            {% if(contrat.etablissements | length) %}
-                {% set firstEtbPassages = contrat.passagesEtablissementNode(contrat.etablissements | first) %}
+            {% if(contrat.contratPassages | length) %}
+                {% set firstEtbPassages = contrat.contratPassages | first %}
                 {% for passage in firstEtbPassages.passages %}
                     {% set counter = loop.index %}
                     <li class="col-xs-4">
                         <div class="panel panel-default">
-                            <div class="panel-heading"><span class="badge pull-left">{{ counter }}</span>&nbsp;<span class="pull-right">prévu le <strong>{{ passage.datePrevision|date("d/m/Y") }}</strong></span></div>
+                            <div class="panel-heading"><span class="badge pull-left">{{ counter }}</span>&nbsp;<span class="pull-right"><span class="label label-xs {% if(passage.aPlanifie) %}btn-primary{% elseif(passage.planifie) %}btn-warning{% elseif(passage.realise) %}btn-success{% elseif(passage.enAttente) %}btn-info{% endif %}">{{ passage.getStatutLibelleActions() }}</span>&nbsp;le&nbsp;<strong>{{ passage.datePrevision|date("d/m/Y") }}</strong></span></div>
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-8">

@@ -72,11 +72,11 @@
                                     <div class="row">
                                         <div class="col-xs-1">
                                             {% if(pe.aPlanifie) %}
-                                                <btn class="btn btn-xs btn-block btn-primary">À planifier</label>
+                                                <btn class="btn btn-xs btn-block btn-primary">{{ pe.getStatutLibelle() }}</label>
                                             {% elseif(pe.planifie) %}
-                                                <label class="btn btn-xs btn-block btn-warning">Planifié</label>
+                                                <label class="btn btn-xs btn-block btn-warning">{{ pe.getStatutLibelle() }}</label>
                                             {% elseif(pe.realise) %}
-                                                <label class="btn btn-xs btn-block btn-success">Réalisé</label>
+                                                <label class="btn btn-xs btn-block btn-success">{{ pe.getStatutLibelle() }}</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-xs-3">

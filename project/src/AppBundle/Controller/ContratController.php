@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Etablissement;
+use AppBundle\Document\Societe;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\UserInfos;
 use AppBundle\Type\SocieteChoiceType;
@@ -25,20 +26,46 @@ class ContratController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
-            'action' => '',
+            'action' => $this->generateUrl('contrat_societe_choice'),
+            'method' => 'POST',
+        ));
+        $formSociete->handleRequest($request);
+        if ($formSociete->isSubmitted() && $formSociete->isValid()) {
+            var_dump($formSociete->get('societes')); exit;
+        }
+        return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView()));
+    }
+    
+    /**
+     * @Route("/contrat/societe-choix", name="contrat_societe_choice")
+     */
+    public function societeChoiceAction(Request $request) {
+        $formData = $request->get('societe_choice');
+        return $this->redirectToRoute('contrats_societe', array('id' => $formData['societes']));
+    }
+
+    /**
+     * @Route("/contrat/{id}/societe", name="contrats_societe")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+    public function societeAction(Request $request, Societe $societe) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
+            'action' => $this->generateUrl('contrat_societe_choice'),
             'method' => 'POST',
         ));
 
-        return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView()));
+        return $this->render('contrat/societe.html.twig', array('formSociete' => $formSociete->createView(),'societe' => $societe));
     }
 
     /**
      * @Route("/contrat/{id}/creation", name="contrat_creation")
-     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
+     * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function creationAction(Request $request, Etablissement $etablissement) {
+    public function creationAction(Request $request, Societe $societe) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $contrat = $this->get('contrat.manager')->create($etablissement);
+        $contrat = $this->get('contrat.manager')->createBySocieteWithFirstEtablissement($societe);        
         $dm->persist($contrat);
         $dm->flush();
         return $this->redirectToRoute('contrat_modification', array('id' => $contrat->getId()));
@@ -90,8 +117,7 @@ class ContratController extends Controller {
             $dm->flush();
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
-        return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat,'form' => $form->createView()));
-
+        return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
     }
 
     /**
@@ -136,9 +162,8 @@ class ContratController extends Controller {
     public function pdfAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contratVisuUrl =  $this->generateUrl('contrat_visualisation', array('id' => $contrat->getId()), true);
+        $contratVisuUrl = $this->generateUrl('contrat_visualisation', array('id' => $contrat->getId()), true);
 //        $html = $this->renderView('contrat/validation.html.twig', array('contrat' => $contrat));
-
 //        return $this->render('contrat/validation.html.twig', array('contrat' => $contrat));
 
         $fileName = "AUROUZE_" . $contrat->getId() . ".pdf";
