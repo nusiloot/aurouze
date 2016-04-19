@@ -40,42 +40,12 @@
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <strong>Interventions prévues</strong> <span class='pull-right'>Avec une date d'acceptation de contrat au <strong>{{ "now" | date("d/m/y")}}</strong></span></div>
-    <div class="panel-body">
-        <ul class="list-inline list-group">
-            {% for date,passage in contrat.previsionnel %}
-                {% set counter = loop.index %}
+{%  if(contrat.dateDebut is null) %}
+    {{ include('contrat/contrat_previsionnel.html.twig', { 'contrat': contrat }) }}
+{%  else %}
+    {{ include('contrat/contrat_passages.html.twig', { 'contrat': contrat }) }}
+{% endif %}
 
-                <li class="col-xs-4">
-                    <div class="panel panel-default">
-                        <div class="panel-heading"><span class="badge pull-left">{{ counter }}</span>&nbsp;<span class="pull-right">prévu le <strong>{{ date|date("d/m/Y") }}</strong></span></div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-xs-8">
-                                    {% for prestation in passage.prestations %}
-                                        {% if(prestation.wordToPicto) %}
-                                            <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                                                <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}">&nbsp;</i></span>                                                          
-                                            {%else%}
-                                            <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
-                                        {%endif%}
-                                    {% endfor %}
-                                </div>
-                                <div class="col-xs-4 text-right">
-                                    {% if(passage.mouvement_declenchable) %}
-                                        <span class="label label-xs label-default">facture</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
 
 <div class="panel panel-default">
     <div class="panel-heading">Produits</div>

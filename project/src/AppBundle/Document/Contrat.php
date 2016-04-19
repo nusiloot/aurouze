@@ -634,6 +634,9 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
             }
         }
         $passagesDatesArray = array();
+        if(!count($this->getPrestations())){
+            return $passagesDatesArray;
+        }
         $monthInterval = (floatval($dureeContratMois) / floatval($maxNbPrestations));
         $nb_month = intval($monthInterval);
         $dateLastPassage = $dateDebut;

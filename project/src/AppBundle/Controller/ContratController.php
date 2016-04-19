@@ -77,7 +77,7 @@ class ContratController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $contratManager = new ContratManager($dm);
         $form = $this->createForm(new ContratAcceptationType($dm), $contrat, array(
-            'action' => $this->generateUrl('contrat_acceptation', array('id' => $id)),
+            'action' => $this->generateUrl('contrat_acceptation', array('id' => $contrat->getId())),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
