@@ -54,20 +54,33 @@
                     <div id="contrat-{{ contrat.id }}" class="panel {% if(not contrat.isTerminee) %}panel-default{% else %}panel-success{% endif %}">
                         <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" class="panel-heading">
                             <h3 class="panel-title">
-                                <a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
                                 </span>
-                                {% if(not contrat.isTerminee) %}Jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% else %}{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% endif %}
+                                {% if(not contrat.isTerminee) %}Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% else %}Contrat terminée en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% endif %}
 
                                 <small>Contrat  n° {{ contrat.numeroArchive }}
                                 sur {{ contrat.duree }} mois</small>
+                                <span class="pull-right">{{ passagesEtablissement.nbPassagePrevu}} passages prévus</span>
                             </h3>
                         </div>
+
                         <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(contrat.isTerminee) %}out{% else%}in{% endif %} list-group ">
+                            <div class="panel-body">
+                                <a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
+                            </div>
                             {% for pe in passagesEtablissement.getPassagesSorted %}
                                 <div class="list-group-item">
                                     <div class="row">
-                                        <div class="col-xs-4">
-                                            {% if(pe.isAPlanifie) %}{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}{% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}
+                                        <div class="col-xs-1">
+                                            {% if(pe.aPlanifie) %}
+                                                <btn class="btn btn-xs btn-block btn-primary">À planifier</label>
+                                            {% elseif(pe.planifie) %}
+                                                <label class="btn btn-xs btn-block btn-warning">Planifié</label>
+                                            {% elseif(pe.realise) %}
+                                                <label class="btn btn-xs btn-block btn-success">Réalisé</label>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-xs-3">
+                                            {% if(pe.isAPlanifie) %}{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }} {% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}{% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}
                                         </div>
                                         <div class="col-xs-2">
                                             {% for prestation in pe.prestations %}
@@ -92,8 +105,7 @@
                                             </ul>
                                         </div>
                                         <div class="col-xs-2 text-right">
-                                            {% if pe.realise %} <span class="text-success">Réalisé</span>
-                                            {% elseif pe.planifie  %}<a class="btn btn-block btn-sm btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
+                                            {% if pe.planifie  %}<a class="btn btn-block btn-sm btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
                                             {% elseif pe.aPlanifie %}
                                                     {% for technicien in pe.techniciens %}
                                                             <a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : technicien.identite, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier</a>
