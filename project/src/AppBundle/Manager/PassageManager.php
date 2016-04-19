@@ -51,5 +51,23 @@ class PassageManager {
         }
         return sprintf("%03d", max($allPassagesForEtablissementsInDay) + 1);
     }
+    
+     public function getNextPassageFromPassage($passage) {
+        $contrat = $passage->getContrat();
+        $etablissement = $passage->getEtablissement();
+        $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
+        $nextPassage = null;
+        $founded = false;
+        foreach($passagesEtablissement->getPassagesSorted() as $key => $passageEtb){
+            $nextPassage = $passageEtb;
+            if($founded){
+                break;
+            }
+            if($key == $passage->getId()){
+                $founded = true;
+            }           
+        }
+        return $nextPassage;
+    }
 
 }

@@ -63,18 +63,7 @@ class ContratManager implements MouvementManagerInterface {
         return $this->dm->getRepository('AppBundle:Contrat');
     }
 
-    public function getNextPassageForContrat($contrat) {
-        $nextPassage = $contrat->getNextPassage();
-        if ($nextPassage) {
-            $userInfos = new UserInfos();
-            $user = $this->dm->getRepository('AppBundle:User')->findOneById($contrat->getTechnicien()->getId());
-            if ($user) {
-                $userInfos->copyFromUser($user);
-            }
-            $nextPassage->setTechnicienInfos($userInfos);
-        }
-        return $nextPassage;
-    }
+   
 
     public function generateAllPassagesForContrat($contrat) {
         if(count($contrat->getContratPassages())){
