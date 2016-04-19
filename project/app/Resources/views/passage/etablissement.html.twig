@@ -71,8 +71,10 @@
                                 <div class="list-group-item">
                                     <div class="row">
                                         <div class="col-xs-1">
-                                            {% if(pe.aPlanifie) %}
-                                                <btn class="btn btn-xs btn-block btn-primary">{{ pe.getStatutLibelle() }}</label>
+                                            {% if(pe.enAttente) %}
+                                                <label class="btn btn-xs btn-block btn-default">{{ pe.getStatutLibelle() }}</label>
+                                            {% elseif(pe.aPlanifie) %}
+                                                <label class="btn btn-xs btn-block btn-primary">{{ pe.getStatutLibelle() }}</label>
                                             {% elseif(pe.planifie) %}
                                                 <label class="btn btn-xs btn-block btn-warning">{{ pe.getStatutLibelle() }}</label>
                                             {% elseif(pe.realise) %}
@@ -80,7 +82,12 @@
                                             {% endif %}
                                         </div>
                                         <div class="col-xs-3">
-                                            {% if(pe.isAPlanifie) %}{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }} {% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}{% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}
+                                             {% if(pe.enAttente) %}
+                                                 {{ pe.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                                            {% elseif(pe.APlanifie) %}
+                                                {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }} 
+                                            {% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}
+{#                                            {% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}#}
                                         </div>
                                         <div class="col-xs-2">
                                             {% for prestation in pe.prestations %}

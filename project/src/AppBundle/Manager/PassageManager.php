@@ -18,7 +18,7 @@ class PassageManager {
         self::STATUT_PLANIFIE => 'Planifié',
         self::STATUT_REALISE => 'Réalisé');
     public static $statutsLibelles = array(self::STATUT_A_PLANIFIER => 'À planifier',
-        self::STATUT_EN_ATTENTE => 'En attente de planification',
+        self::STATUT_EN_ATTENTE => 'En attente',
         self::STATUT_PLANIFIE => 'Planifié',
         self::STATUT_REALISE => 'Réalisé');
     protected $dm;
