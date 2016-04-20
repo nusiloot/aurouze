@@ -64,6 +64,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @MongoDB\Date
      */
     protected $dateFin;
+    
+    /**
+     * @MongoDB\Date
+     */
+    protected $dateRealise;
 
     /**
      * @MongoDB\String
@@ -183,10 +188,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
             $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
             return;
         }
-        if (boolval($this->getDateDebut()) && boolval($this->getDateFin())) {
+        if (boolval($this->getDateDebut()) && boolval($this->getDateFin()) && !boolval($this->getDateRealise())) {
             $this->setStatut(PassageManager::STATUT_PLANIFIE);
+            return;
         }
-        if ($this->getDescription()) {
+        if (boolval($this->getDateRealise())) {
             $this->setStatut(PassageManager::STATUT_REALISE);
         }
     }
@@ -675,5 +681,27 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
     public function getStatutLibelleActions() {
         return PassageManager::$statutsLibellesActions[$this->getStatut()];
+    }
+
+    /**
+     * Set dateRealise
+     *
+     * @param date $dateRealise
+     * @return self
+     */
+    public function setDateRealise($dateRealise)
+    {
+        $this->dateRealise = $dateRealise;
+        return $this;
+    }
+
+    /**
+     * Get dateRealise
+     *
+     * @return date $dateRealise
+     */
+    public function getDateRealise()
+    {
+        return $this->dateRealise;
     }
 }
