@@ -106,8 +106,6 @@ class PassageCsvImporter {
                     $dateDebut = $passage->getDatePrevision()->format('Y-m-d');
                     $passage->setDateDebut(\DateTime::createFromFormat('Y-m-d H:i', $dateDebut . ' ' . $heures . ':' . $minutes));
                 }
-            } else {
-                $passage->setDateDebut(clone $passage->getDatePrevision());
             }
 
             if (!$data[self::CSV_DUREE]) {
