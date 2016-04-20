@@ -94,17 +94,17 @@ class PassageCsvImporter {
             $passage->setNumeroPassageIdentifiant("001");
             $passage->generateId();
 
-            if($data[self::CSV_DATE_PREVISION]){
+            if ($data[self::CSV_DATE_PREVISION]) {
                 $passage->setDatePrevision(new \DateTime($data[self::CSV_DATE_PREVISION]));
             }
-            
+
             if ($data[self::CSV_DATE_DEBUT]) {
                 $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
-                if($passage->getDateDebut() < $dateMin){
+                if ($passage->getDateDebut() < $dateMin) {
                     $minutes = $passage->getDateDebut()->format('i');
                     $heures = $passage->getDateDebut()->format('H');
                     $dateDebut = $passage->getDatePrevision()->format('Y-m-d');
-                    $passage->setDateDebut(\DateTime::createFromFormat('Y-m-d H:i', $dateDebut.' '.$heures.':'.$minutes));
+                    $passage->setDateDebut(\DateTime::createFromFormat('Y-m-d H:i', $dateDebut . ' ' . $heures . ':' . $minutes));
                 }
             } else {
                 $passage->setDateDebut(clone $passage->getDatePrevision());
@@ -115,17 +115,17 @@ class PassageCsvImporter {
                 continue;
             }
             if ($data[self::CSV_DATE_FIN]) {
-                
+
                 $passage->setDateFin(new \DateTime($data[self::CSV_DATE_FIN]));
-                
-                if($passage->getDateFin() < $dateMin){
+
+                if ($passage->getDateFin() < $dateMin) {
                     $minutes = $passage->getDateFin()->format('i');
                     $heures = $passage->getDateFin()->format('H');
                     $dateFin = $passage->getDatePrevision()->format('Y-m-d');
-                    $passage->setDateFin(\DateTime::createFromFormat('Y-m-d H:i', $dateFin.' '.$heures.':'.$minutes));
+                    $passage->setDateFin(\DateTime::createFromFormat('Y-m-d H:i', $dateFin . ' ' . $heures . ':' . $minutes));
                 }
             }
-            
+
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
             if (!preg_match('/^[0-9]+$/', $data[self::CSV_CONTRAT_ID])) {
@@ -207,6 +207,7 @@ class PassageCsvImporter {
         $this->dm->flush();
         $progress->finish();
         $this->updateContrats($output);
+        $this->updatePassagesAttentes($output);
     }
 
     public function updateContrats($output) {
@@ -281,6 +282,36 @@ class PassageCsvImporter {
             }
             $i++;
         }
+        $this->dm->flush();
+        $progress->finish();
+    }
+
+    public function updatePassagesAttentes($output) {
+        echo "\nMis à jour des passages en attente...\n";
+        $allPassagesAttente = $this->pm->getRepository()->findAllByStatut(PassageManager::STATUT_EN_ATTENTE);
+        $i++;
+        $cptTotal = 0;
+        $i = 0;
+        $progress = new ProgressBar($output, 100);
+        $progress->start();
+        foreach ($allPassagesAttente as $passage) {
+            
+            
+            if($this->pm->isFirstPassageNonRealise($passage)){
+                $passage->setDateDebut($passage->getDatePrevision());
+            }
+
+            $this->dm->persist($passage);
+            $cptTotal++;
+            if ($cptTotal % (count($allPassagesAttente) / 100) == 0) {
+                $progress->advance();
+            }
+            if ($i >= 2000) {
+                $this->dm->flush();
+                $i = 0;
+            }
+        }
+        $this->dm->flush();
         $progress->finish();
     }
 

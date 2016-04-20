@@ -70,4 +70,16 @@ class PassageManager {
         return $nextPassage;
     }
 
+    public function isFirstPassageNonRealise($passage) {
+        $contrat = $passage->getContrat();
+        $etablissement = $passage->getEtablissement();
+        $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
+        foreach($passagesEtablissement->getPassagesSorted() as $key => $passageEtb){
+            if(($passage != $passageEtb) && ($passageEtb->isRealise() || $passageEtb->isPlanifie())){
+                return false;
+            }        
+        }
+        return true;
+    }
+    
 }

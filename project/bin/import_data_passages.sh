@@ -52,10 +52,7 @@ cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[
     facture=$12;
     imprime=$14;
     duree=$8;
-
-    if(!effectue && !date_prevision && !d){
-        next;
-    }
+    
     date_passage_prevision="";
     date_passage_debut=date_arrivee;
     date_passage_fin=date_depart;
@@ -76,11 +73,10 @@ cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[
     if(!date_passage_prevision || (date_passage_prevision < "2013-01-01 00:00:00")) {
         next;
     }
-
-    if(!date_passage_debut && date_passage_prevision && (effectue || planifie)) { date_passage_debut=date_passage_prevision; }
-
-    if(!date_passage_fin && date_passage_prevision && (effectue || planifie)) { date_passage_fin=date_passage_prevision; }
-
+    if(effectue){
+        if(!date_passage_debut && date_passage_prevision) { date_passage_debut=date_passage_prevision; }
+        if(!date_passage_fin && date_passage_prevision) { date_passage_fin=date_passage_prevision; }
+    }
     
 
     if(!duree) { duree=60; }

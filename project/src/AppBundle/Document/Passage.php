@@ -704,4 +704,8 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     {
         return $this->dateRealise;
     }
+    
+    public function isFirstPassageNonRealise() {
+        
+    }
 }
