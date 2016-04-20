@@ -59,7 +59,7 @@ class PassageCsvImporter {
 
     public function import($file, OutputInterface $output) {
         $csvFile = new CsvFile($file);
-
+        $dateMin = \DateTime::createFromFormat('Y-m-d', '2012-01-01');
         $csv = $csvFile->getCsv();
 
         $i = 0;
@@ -100,6 +100,12 @@ class PassageCsvImporter {
             
             if ($data[self::CSV_DATE_DEBUT]) {
                 $passage->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
+                if($passage->getDateDebut() < $dateMin){
+                    $minutes = $passage->getDateDebut()->format('i');
+                    $heures = $passage->getDateDebut()->format('H');
+                    $dateDebut = $passage->getDatePrevision()->format('Y-m-d');
+                    $passage->setDateDebut(\DateTime::createFromFormat('Y-m-d H:i', $dateDebut.' '.$heures.':'.$minutes));
+                }
             } else {
                 $passage->setDateDebut(clone $passage->getDatePrevision());
             }
@@ -109,12 +115,17 @@ class PassageCsvImporter {
                 continue;
             }
             if ($data[self::CSV_DATE_FIN]) {
+                
                 $passage->setDateFin(new \DateTime($data[self::CSV_DATE_FIN]));
-                if ($passage->getDateDebut()->format("YmdHis") == $passage->getDateFin()->format("YmdHis")) {
-                    $passage->setDateFin(clone $passage->getDateDebut());
-                    $passage->getDateFin()->modify(sprintf("+%s minutes", $data[self::CSV_DUREE]));
+                
+                if($passage->getDateFin() < $dateMin){
+                    $minutes = $passage->getDateFin()->format('i');
+                    $heures = $passage->getDateFin()->format('H');
+                    $dateFin = $passage->getDatePrevision()->format('Y-m-d');
+                    $passage->setDateFin(\DateTime::createFromFormat('Y-m-d H:i', $dateFin.' '.$heures.':'.$minutes));
                 }
             }
+            
             $passage->setLibelle($data[self::CSV_LIBELLE]);
             $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
             if (!preg_match('/^[0-9]+$/', $data[self::CSV_CONTRAT_ID])) {
@@ -176,7 +187,7 @@ class PassageCsvImporter {
                     }
                 }
             }
-
+            $contrat->addEtablissement($etablissement);
             $contrat->addPassage($etablissement, $passage);
 
             $this->dm->persist($contrat);

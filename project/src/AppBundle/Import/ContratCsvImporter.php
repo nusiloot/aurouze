@@ -38,19 +38,19 @@ class ContratCsvImporter {
     protected $um;
 
     const CSV_ID_CONTRAT = 0;
-    const CSV_ID_ETABLISSEMENT = 1;
-    const CSV_ID_SOCIETE = 2;
-    const CSV_ID_COMMERCIAL = 3;
-    const CSV_ID_TECHNICIEN = 4;
-    const CSV_TYPE_CONTRAT = 5;
-    const CSV_TYPE_PRESTATION = 6;
-    const CSV_NOMENCLATURE = 7;
-    const CSV_DATE_CREATION = 8;
-    const CSV_DATE_DEBUT = 9;
-    const CSV_DUREE = 10;
-    const CSV_GARANTIE = 11;
-    const CSV_PRIXHT = 12;
-    const CSV_ARCHIVAGE = 13;
+    const CSV_ID_SOCIETE = 1;
+    const CSV_ID_COMMERCIAL = 2;
+    const CSV_ID_TECHNICIEN = 3;
+    const CSV_TYPE_CONTRAT = 4;
+    const CSV_TYPE_PRESTATION = 5;
+    const CSV_NOMENCLATURE = 6;
+    const CSV_DATE_CREATION = 7;
+    const CSV_DATE_DEBUT = 8;
+    const CSV_DUREE = 9;
+    const CSV_GARANTIE = 10;
+    const CSV_PRIXHT = 11;
+    const CSV_ARCHIVAGE = 12;
+    const CSV_TVA_REDUITE = 13;
     const CSV_PRODUITS = 14;
     const CSV_NOM_COMMERCIAL = 15;
     const CSV_NOM_TECHNICIEN = 16;
@@ -81,9 +81,7 @@ class ContratCsvImporter {
         $i = 0;
         $cptTotal = 0;
         foreach ($csv as $data) {
-            if ($data[self::CSV_ID_ETABLISSEMENT] == "000000") {
-                continue;
-            }
+            
             $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $data[self::CSV_ID_SOCIETE]));
 
             if (!$societe) {

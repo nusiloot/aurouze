@@ -729,6 +729,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     public function addEtablissement(\AppBundle\Document\Etablissement $etablissement)
     {
+        foreach ($this->getEtablissements() as $etb){
+            if($etb->getId() == $etablissement->getId()){
+                return;
+            }
+        }
         $this->etablissements[] = $etablissement;
     }
 

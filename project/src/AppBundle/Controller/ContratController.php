@@ -50,13 +50,13 @@ class ContratController extends Controller {
      */
     public function societeAction(Request $request, Societe $societe) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-
+        $contrats = $this->get('contrat.manager')->getRepository()->findBySociete($societe); 
         $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
             'action' => $this->generateUrl('contrat_societe_choice'),
             'method' => 'POST',
         ));
 
-        return $this->render('contrat/societe.html.twig', array('formSociete' => $formSociete->createView(),'societe' => $societe));
+        return $this->render('contrat/societe.html.twig', array('formSociete' => $formSociete->createView(),'societe' => $societe, 'contrats' => $contrats));
     }
 
     /**
