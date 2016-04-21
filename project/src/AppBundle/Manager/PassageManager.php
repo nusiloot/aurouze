@@ -74,12 +74,14 @@ class PassageManager {
         $contrat = $passage->getContrat();
         $etablissement = $passage->getEtablissement();
         $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
+        $passagePrecedent = null;
         foreach($passagesEtablissement->getPassagesSorted() as $key => $passageEtb){
-            if(($passage != $passageEtb) && ($passageEtb->isRealise() || $passageEtb->isPlanifie())){
-                return false;
-            }        
+            if(($passage->getId() == $passageEtb->getId()) && (is_null($passagePrecedent) || $passagePrecedent->isPlanifie() || $passagePrecedent->isRealise())){
+                return true;
+            }  
+            $passagePrecedent = $passageEtb;
         }
-        return true;
+        return false;
     }
     
 }

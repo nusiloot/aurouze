@@ -51,9 +51,10 @@ class ContratCsvImporter {
     const CSV_PRIXHT = 11;
     const CSV_ARCHIVAGE = 12;
     const CSV_TVA_REDUITE = 13;
-    const CSV_PRODUITS = 14;
-    const CSV_NOM_COMMERCIAL = 15;
-    const CSV_NOM_TECHNICIEN = 16;
+    const CSV_DATE_RESILIATION = 14;
+    const CSV_PRODUITS = 15;
+    const CSV_NOM_COMMERCIAL = 16;
+    const CSV_NOM_TECHNICIEN = 17;
 
     public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, SocieteManager $sm, UserManager $um) {
         $this->dm = $dm;
@@ -93,6 +94,8 @@ class ContratCsvImporter {
 
             if (!$contrat) {
                 $contrat = new Contrat();
+            }else{
+               $output->writeln(sprintf("<error>Le contrat : %s existe déjà en base?</error>", $data[self::CSV_ID_CONTRAT]));
             }
 
             $contrat->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
@@ -132,6 +135,11 @@ class ContratCsvImporter {
                    $technicien = $techniciens[$identifiantTechnicien];
                    $contrat->setTechnicien($technicien);
                }
+            }
+            
+            if($data[self::CSV_DATE_RESILIATION]){
+               $contrat->setDateResiliation(new \DateTime($data[self::CSV_DATE_RESILIATION]));
+               $contrat->setStatut(ContratManager::STATUT_RESILIE);
             }
             
             $produits = explode('#', $data[self::CSV_PRODUITS]);

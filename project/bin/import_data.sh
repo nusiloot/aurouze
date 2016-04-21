@@ -27,6 +27,8 @@ echo "Récupération des users"
 
 cat $DATA_DIR/tblUtilisateur.csv | tr -d "\r" | sort -t ";" -k 1,1 > $DATA_DIR/tblUtilisateur.csv.sorted
 
+cat $DATA_DIR/tblUtilisateur.csv.sorted | sed -r 's/(.*)/\1;;AUTRE/g' > $DATA_DIR/utilisateurAutre.csv
+
 ##### Récupération des Techniciens #####
 
 echo "Récupération des techniciens"
@@ -128,6 +130,10 @@ php app/console importer:csv user.importer $DATA_DIR/commerciaux.csv -vvv
 echo "Import des techniciens"
 
 php app/console importer:csv user.importer $DATA_DIR/techniciens.csv -vvv
+
+echo "Import Utilisateurs Autres"
+
+php app/console importer:csv user.importer $DATA_DIR/utilisateurAutre.csv -vvv
 
 echo "Import des types de prestations"
 

@@ -125,9 +125,16 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $mouvement_declenche;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $identifiantReprise;
+    
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
+        $this->techniciens = new ArrayCollection();
+        $this->produits = new ArrayCollection();
         $this->mouvement_declenchable = false;
         $this->mouvement_declenche = false;
     }
@@ -571,6 +578,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function addTechnicien(\AppBundle\Document\User $technicien)
     {
+        foreach ($this->getTechniciens() as $tech) {
+            if($tech == $technicien){
+                return;
+            }
+        }
         $this->techniciens[] = $technicien;
     }
 
@@ -593,6 +605,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function addPrestation(\AppBundle\Document\Prestation $prestation)
     {
+        foreach ($this->getPrestations() as $prest) {
+            if($prest == $prestation){
+                return;
+            }
+        }
         $this->prestations[] = $prestation;
     }
 
@@ -653,6 +670,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function addProduit(\AppBundle\Document\Produit $produit)
     {
+        foreach ($this->getProduits() as $prod) {
+            if($prod == $produit){
+                return;
+            }
+        }
         $this->produits[] = $produit;
     }
 
@@ -707,5 +729,27 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     
     public function isFirstPassageNonRealise() {
         
+    }
+
+    /**
+     * Set identifiantReprise
+     *
+     * @param string $identifiantReprise
+     * @return self
+     */
+    public function setIdentifiantReprise($identifiantReprise)
+    {
+        $this->identifiantReprise = $identifiantReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantReprise
+     *
+     * @return string $identifiantReprise
+     */
+    public function getIdentifiantReprise()
+    {
+        return $this->identifiantReprise;
     }
 }

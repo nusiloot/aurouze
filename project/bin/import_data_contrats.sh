@@ -39,6 +39,12 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
         cmd | getline date_creation_contrat;
         close(cmd);
     }
+    if(!date_creation_contrat){
+        next;
+    }
+    if(date_creation_contrat < "2014-01-01"){
+        next;
+    }
 
     date_debut=$17;
     date_debut_contrat="";
@@ -48,11 +54,19 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
         close(cmd);
     }
 
+    date_resiliation=$20;
+    date_resiliation_contrat="";
+    if(date_debut) {
+        cmd="date --date=\""date_resiliation"\" \"+%Y-%m-%d %H:%M:%S\"";
+        cmd | getline date_resiliation_contrat;
+        close(cmd);
+    }
+
     duree=$18;
     garantie=$30;
     prixht=$26;
     tva_reduite=$27;
-    print contrat_id";"societe_old_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";"contrat_archivage";"tva_reduite;
+    print contrat_id";"societe_old_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";"contrat_archivage";"tva_reduite";"date_resiliation_contrat;
 }' > $DATA_DIR/contrats.csv.tmp;
 
 cat $DATA_DIR/tblPrestationProduit.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationProduit.sorted.csv
@@ -79,7 +93,6 @@ do
    echo $line";"$PRODUITSVAR";"$NOMCOMMERCIAL";"$NOMTECHNICIEN >> $DATA_DIR/contrats.csv;
 
 done < $DATA_DIR/contrats.csv.tmp
-
 
 echo "Import des contrats"
 

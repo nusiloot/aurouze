@@ -11,6 +11,8 @@ class User {
     const PREFIX = "USER";
     const USER_TYPE_TECHNICIEN = "TECHNICIEN";
     const USER_TYPE_COMMERCIAL = "COMMERCIAL";
+    const USER_TYPE_AUTRE = "AUTRE";
+    const USER_INCONNU = "INCONNU";
     const COULEUR_DEFAUT = 'yellow';
 
     /**

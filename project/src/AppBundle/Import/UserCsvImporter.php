@@ -26,12 +26,26 @@ class UserCsvImporter extends CsvFile {
         $cpt = 0;
         foreach ($csv as $data) {
             $user = $this->createFromImport($data);
-            $this->dm->persist($user);
+            if ($user) {
+                $this->dm->persist($user);
+            }
             if ($cpt > 1000) {
                 $this->dm->flush();
                 $cpt = 0;
             }
             $cpt++;
+        }
+
+        $userInconnu = $this->dm->getRepository('AppBundle:User')->findByIdentifiant(User::USER_INCONNU);
+        if (!$userInconnu) {
+            $userInconnu = new User();
+            $userInconnu->setIdentifiant(User::USER_INCONNU);
+            $userInconnu->generateId();
+            $userInconnu->setNom(User::USER_INCONNU);
+            $userInconnu->setPrenom("");
+            $userInconnu->setCouleur('#000000');
+            $userInconnu->setType(User::USER_TYPE_TECHNICIEN);
+            $this->dm->persist($userInconnu);
         }
         $this->dm->flush();
     }
@@ -43,17 +57,19 @@ class UserCsvImporter extends CsvFile {
 
         $identifiant = strtoupper(Transliterator::urlize($prenom . ' ' . $nom));
         $user = $this->dm->getRepository('AppBundle:User')->findByIdentifiant($identifiant);
-        
-        if (!$user) {
-            $user = new User();
-            $user->setIdentifiant($identifiant);
-            $user->generateId();
-            $user->setNom($nom);
-            $user->setPrenom($prenom);
-            $user->setCouleur($this->random_color());
-            $user->setType($ligne[self::CSV_TYPE]);
+        if (isset($ligne[self::CSV_TYPE])) {
+            if (!$user) {
+                $user = new User();
+                $user->setIdentifiant($identifiant);
+                $user->generateId();
+                $user->setNom($nom);
+                $user->setPrenom($prenom);
+                $user->setCouleur($this->random_color());
+                $user->setType($ligne[self::CSV_TYPE]);
+                return $user;
+            }
         }
-        return $user;
+        return false;
     }
 
     public function random_color_part() {
@@ -61,7 +77,7 @@ class UserCsvImporter extends CsvFile {
     }
 
     public function random_color() {
-        return '#'.$this->random_color_part() . $this->random_color_part() . $this->random_color_part();
+        return '#' . $this->random_color_part() . $this->random_color_part() . $this->random_color_part();
     }
 
 }
