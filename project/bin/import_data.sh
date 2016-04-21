@@ -27,7 +27,7 @@ echo "Récupération des users"
 
 cat $DATA_DIR/tblUtilisateur.csv | tr -d "\r" | sort -t ";" -k 1,1 > $DATA_DIR/tblUtilisateur.csv.sorted
 
-cat $DATA_DIR/tblUtilisateur.csv.sorted | sed -r 's/(.*)/\1;;AUTRE/g' > $DATA_DIR/utilisateurAutre.csv
+cat $DATA_DIR/tblUtilisateur.csv.sorted | sed -r 's/(.*)/\1;;AUTRE/g' | grep -Ev "RefUtilisateur;Nom;" > $DATA_DIR/utilisateurAutre.csv
 
 ##### Récupération des Techniciens #####
 
@@ -160,6 +160,7 @@ php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv
 #### Récupération et import des passages ####
 
 . bin/import_data_passages.sh
+
 
 
 

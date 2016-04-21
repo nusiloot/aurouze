@@ -5,14 +5,10 @@
 SYMFODIR=$(pwd);
 DATA_DIR=$TMP/AUROUZE_DATAS
 
-
-
-
 echo "Récupération des contrats"
 
 cat $DATA_DIR/tblPrestationAdresse.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationAdresse.sorted.csv
 
-#join -t ';' -1 2 -2 1 $DATA_DIR/prestationAdresse.sorted.csv $DATA_DIR/tblPrestation.cleaned.csv > $DATA_DIR/prestation.tmp.csv
 
 cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
     contrat_id=$1;
@@ -56,7 +52,7 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
 
     date_resiliation=$20;
     date_resiliation_contrat="";
-    if(date_debut) {
+    if(date_resiliation) {
         cmd="date --date=\""date_resiliation"\" \"+%Y-%m-%d %H:%M:%S\"";
         cmd | getline date_resiliation_contrat;
         close(cmd);
@@ -85,10 +81,10 @@ do
    PRODUITSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/produitContrat.tmp.sorted.csv $DATA_DIR/produits.sorted.csv | cut -d ';' -f 2,3 | sed -r 's/(.+);(.+)/\2~\1/g' | tr "\n" "#")
    
    IDENTIFIANTTECHNICIEN=`echo $line | cut -d ';' -f 4`;
-   NOMTECHNICIEN=$(cat $DATA_DIR/techniciens.csv | grep -E "^$IDENTIFIANTTECHNICIEN;" | cut -d ';' -f 2);
+   NOMTECHNICIEN=$(cat $DATA_DIR/utilisateurAutre.csv | grep -E "^$IDENTIFIANTTECHNICIEN;" | cut -d ';' -f 2);
 
    IDENTIFIANTCOMMERCIAL=`echo $line | cut -d ';' -f 3`;
-   NOMCOMMERCIAL=$(cat $DATA_DIR/techniciens.csv | grep -E "^$IDENTIFIANTCOMMERCIAL;" | cut -d ';' -f 2);
+   NOMCOMMERCIAL=$(cat $DATA_DIR/utilisateurAutre.csv | grep -E "^$IDENTIFIANTCOMMERCIAL;" | cut -d ';' -f 2);
    
    echo $line";"$PRODUITSVAR";"$NOMCOMMERCIAL";"$NOMTECHNICIEN >> $DATA_DIR/contrats.csv;
 

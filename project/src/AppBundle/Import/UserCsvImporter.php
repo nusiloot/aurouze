@@ -36,17 +36,7 @@ class UserCsvImporter extends CsvFile {
             $cpt++;
         }
 
-        $userInconnu = $this->dm->getRepository('AppBundle:User')->findByIdentifiant(User::USER_INCONNU);
-        if (!$userInconnu) {
-            $userInconnu = new User();
-            $userInconnu->setIdentifiant(User::USER_INCONNU);
-            $userInconnu->generateId();
-            $userInconnu->setNom(User::USER_INCONNU);
-            $userInconnu->setPrenom("");
-            $userInconnu->setCouleur('#000000');
-            $userInconnu->setType(User::USER_TYPE_TECHNICIEN);
-            $this->dm->persist($userInconnu);
-        }
+        
         $this->dm->flush();
     }
 

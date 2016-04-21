@@ -76,8 +76,7 @@ class ContratCsvImporter {
         $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
         $produitsArray = $configuration->getProduitsArray();
         
-        $techniciens = $this->um->getRepository()->findAllByTypeArray(User::USER_TYPE_TECHNICIEN);
-        $commerciaux = $this->um->getRepository()->findAllByTypeArray(User::USER_TYPE_COMMERCIAL);
+        $usersArray = $this->um->getRepository()->findAllInArray();
         
         $i = 0;
         $cptTotal = 0;
@@ -123,16 +122,16 @@ class ContratCsvImporter {
             
             if($data[self::CSV_NOM_COMMERCIAL]){
                $identifiantCommercial = strtoupper(Transliterator::urlize($data[self::CSV_NOM_COMMERCIAL]));
-               if(array_key_exists($identifiantCommercial, $commerciaux)){
-                   $commercial = $commerciaux[$identifiantCommercial];
+               if(array_key_exists($identifiantCommercial, $usersArray)){
+                   $commercial = $usersArray[$identifiantCommercial];
                    $contrat->setCommercial($commercial);
                }
             }
             
             if($data[self::CSV_NOM_TECHNICIEN]){
                $identifiantTechnicien = strtoupper(Transliterator::urlize($data[self::CSV_NOM_TECHNICIEN]));
-               if(array_key_exists($identifiantTechnicien, $techniciens)){
-                   $technicien = $techniciens[$identifiantTechnicien];
+               if(array_key_exists($identifiantTechnicien, $usersArray)){
+                   $technicien = $usersArray[$identifiantTechnicien];
                    $contrat->setTechnicien($technicien);
                }
             }

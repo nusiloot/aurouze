@@ -76,10 +76,13 @@ class PassageCsvImporter {
         $produitsArray = $configuration->getProduitsArray();
 
         $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
-        $userInconnu = $this->um->getRepository()->findOneByIdentifiant(User::USER_INCONNU);
 
+        $this->updateContratsAndPassages($output);        
+        $this->updatePassagesAttentes($output);
+        exit;
+        
         foreach ($csv as $data) {
-            
+
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
             }
@@ -108,10 +111,12 @@ class PassageCsvImporter {
 
             $doublonPassage = $this->pm->getRepository()->findOneById($passage->getId());
             if ($doublonPassage) {
-                $output->writeln(sprintf("<error>Le passage d'id %s existe déjà en base (%s)!</error>", $passage->getId(), $data[self::CSV_OLD_ID]));
-                continue;
+                $passage->setNumeroPassageIdentifiant(sprintf("%03d",intval($passage->getNumeroPassageIdentifiant()+1)));
+                $passage->generateId();
+                $output->writeln(sprintf("<warning>Le passage d'id %s existe déjà en base (%s)!</warning>", $passage->getId(), $data[self::CSV_OLD_ID]));
+               
             }
-            $resultStatut = $this->generateStatut($data, $passage,$output);
+            $resultStatut = $this->generateStatut($data, $passage, $output);
             if (!$resultStatut) {
                 $output->writeln(sprintf("<error>Aucun statut déterminable pour le passage d'id %s (%s)!</error>", $passage->getId(), $data[self::CSV_OLD_ID]));
                 continue;
@@ -137,7 +142,7 @@ class PassageCsvImporter {
                         if (!array_key_exists($prestationIdentifiant, $prestationsType)) {
                             $output->writeln(sprintf("<error>La prestation : %s n'existe pas dans la configuration </error>", $prestationIdentifiant));
                         }
-                        $prestation = $prestationsType[$prestationIdentifiant];                        
+                        $prestation = $prestationsType[$prestationIdentifiant];
                         $passage->addPrestation($prestation);
                         $this->dm->persist($passage);
                     }
@@ -145,8 +150,7 @@ class PassageCsvImporter {
             }
 
             $prenomNomTechnicien = trim($data[self::CSV_TECHNICIEN]);
-            if ($prenomNomTechnicien) 
-                {
+            if ($prenomNomTechnicien) {
                 $nomTechnicien = substr(strrchr($prenomNomTechnicien, " "), 1);
                 $prenomTechnicien = trim(str_replace($nomTechnicien, '', $prenomNomTechnicien));
                 $identifiantTechnicien = strtoupper(Transliterator::urlize($prenomTechnicien . ' ' . $nomTechnicien));
@@ -155,14 +159,7 @@ class PassageCsvImporter {
                 if ($user) {
                     $passage->addTechnicien($user);
                     $this->dm->persist($passage);
-                } else {
-                    $passage->addTechnicien($userInconnu);
-                    $this->dm->persist($passage);
                 }
-            }
-            else {
-                $passage->addTechnicien($userInconnu);
-                $this->dm->persist($passage);
             }
 
             $passage->setContrat($contrat);
@@ -208,29 +205,46 @@ class PassageCsvImporter {
 
         $this->dm->flush();
         $progress->finish();
-        $this->updateContrats($output);
+
+        echo "\n**************************\n";
+        echo "\nMis en cohérence des contrats et passages...\n";
+        echo "\n**************************\n";
+
+        $this->updateContratsAndPassages($output);        
         $this->updatePassagesAttentes($output);
     }
 
-    public function updateContrats($output) {
-        echo "\nMis à jour des contrats...\n";
+    public function updateContratsAndPassages($output) {
+        echo "\n\nMis à jour des contrats...\n";
         $allContrat = $this->cm->getRepository()->findAll();
 
         $cptTotal = 0;
         $i = 0;
         $progress = new ProgressBar($output, 100);
         $progress->start();
+
         foreach ($allContrat as $contrat) {
-            $hasTechnicien = count($contrat->getTechnicien());
+
+            $nomenclature = $contrat->getNomenclature();
+            $nomenclature = preg_replace('/( n[\.A-Z0-9_-]+)|([\.A-Z0-9_-]+n )|([\.A-Z0-9_-]+n[\.A-Z0-9_-]+)/', '\n', $nomenclature);
+            $nomenclature = preg_replace("/( nn[\.A-Z0-9_-]+)|([\.A-Z0-9_-]+nn )|([\.A-Z0-9_-]+nn[\.A-Z0-9_-]+)/", '\n\n', $nomenclature);
+
+            
+            $contrat->setNomenclature($nomenclature);
+
+
             $prestationsArr = array();
             $technicienArr = array();
             $technicienForContrat = null;
             foreach ($contrat->getContratPassages() as $contratPassages) {
                 foreach ($contratPassages->getPassages() as $passage) {
 
+                    $this->cleanPassage($passage);
+
+
                     foreach ($passage->getPrestations() as $prestation) {
                         if (array_key_exists($prestation->getIdentifiant(), $prestationsArr)) {
-                            $prestationsArr[$prestation->getIdentifiant()]->setNbPassages($prestationsArr[$prestation->getIdentifiant()]->getNbPassages());
+                            $prestationsArr[$prestation->getIdentifiant()]->setNbPassages($prestationsArr[$prestation->getIdentifiant()]->getNbPassages() + 1);
                         } else {
                             $prestation->setNbPassages(1);
                             $prestationsArr[$prestation->getIdentifiant()] = $prestation;
@@ -244,13 +258,45 @@ class PassageCsvImporter {
                                     $technicienForContrat = $technicien;
                                 }
                             } else {
-                                $technicienArr[$technicien->getIdentifiant()] = 0;
+                                $technicienArr[$technicien->getIdentifiant()] = 1;
                             }
                         }
                     }
                 }
-                break;
             }
+
+            if (!$contrat->getTechnicien() && $technicienForContrat) {
+                $contrat->setTechnicien($technicienForContrat);
+            }
+            
+            foreach ($prestationsArr as $prestation) {
+                $contrat->addPrestation($prestation);
+                $this->dm->persist($contrat);
+            }
+
+            $contratResilie = ($contrat->getStatut() == ContratManager::STATUT_RESILIE);
+            $technicienContrat = $contrat->getTechnicien();
+            if ($contratResilie || $technicienContrat) {
+                foreach ($contrat->getContratPassages() as $contratPassages) {
+                    foreach ($contratPassages->getPassages() as $passage) {
+                        if(!count($passage->getTechniciens()) && $technicienContrat){
+                            $passage->addTechnicien($technicienContrat);
+                            $this->dm->persist($passage);
+                        }
+                        if($contratResilie){
+                            if($passage->getDatePrevision()->format('YmdHi') > $contrat->getDateResiliation()->format('YmdHi')){
+                                $passage->setStatut(PassageManager::STATUT_ANNULE);
+                                $this->dm->persist($passage);
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            
+
+
+
             $contratFini = true;
             foreach ($contrat->getContratPassages() as $contratPassages) {
                 foreach ($contratPassages->getPassages() as $passage) {
@@ -262,18 +308,12 @@ class PassageCsvImporter {
             }
             if ($contratFini && count($contrat->getContratPassages())) {
                 $contrat->setStatut(ContratManager::STATUT_FINI);
-            } else {
+            } if ($contrat->getStatut() != ContratManager::STATUT_RESILIE) {
                 $contrat->setStatut(ContratManager::STATUT_VALIDE);
             }
 
-            foreach ($prestationsArr as $prestation) {
-                $contrat->addPrestation($prestation);
-                $this->dm->persist($contrat);
-            }
-            $this->dm->persist($contrat);
-            if (!$hasTechnicien && $technicienForContrat) {
-                $contrat->setTechnicien($technicienForContrat);
-            }
+
+
             $this->dm->persist($contrat);
             $cptTotal++;
             if ($cptTotal % (count($allContrat) / 100) == 0) {
@@ -287,13 +327,14 @@ class PassageCsvImporter {
         }
         $this->dm->flush();
         $progress->finish();
+        
     }
 
     public function updatePassagesAttentes($output) {
         echo "\nMis à jour des passages en attente...\n";
         $allPassagesAttente = $this->pm->getRepository()->findByStatut(PassageManager::STATUT_EN_ATTENTE);
-       
-        
+
+
         $cptTotal = 0;
         $i = 0;
         $progress = new ProgressBar($output, 100);
@@ -318,19 +359,19 @@ class PassageCsvImporter {
         $progress->finish();
     }
 
-    public function generateStatut($data, &$passage,$output) {
+    public function generateStatut($data, &$passage, $output) {
 
         switch ($data[self::CSV_STATUT]) {
             case PassageManager::STATUT_REALISE: {
-                    return $this->updateStatutRealise($data, $passage,$output);
+                    return $this->updateStatutRealise($data, $passage, $output);
                     break;
                 }
             case PassageManager::STATUT_PLANIFIE: {
-                    return $this->updateStatutPlanifie($data, $passage,$output);
+                    return $this->updateStatutPlanifie($data, $passage, $output);
                     break;
                 }
             case PassageManager::STATUT_EN_ATTENTE: {
-                    return $this->updateStatutEnAttente($data, $passage,$output);
+                    return $this->updateStatutEnAttente($data, $passage, $output);
                     break;
                 }
             default:
@@ -339,23 +380,23 @@ class PassageCsvImporter {
         }
     }
 
-    public function updateStatutPlanifie($data, &$passage,$output) {
-        $passage = $this->updateDateDebutDateFin($data, $passage,$output);
+    public function updateStatutPlanifie($data, &$passage, $output) {
+        $passage = $this->updateDateDebutDateFin($data, $passage, $output);
         return $passage;
     }
 
-    public function updateStatutEnAttente($data, &$passage,$output) {
+    public function updateStatutEnAttente($data, &$passage, $output) {
         // DO NOTHING;
         return $passage;
     }
 
-    public function updateStatutRealise($data, &$passage,$output) {
-        $passage = $this->updateDateDebutDateFin($data, $passage,$output);
+    public function updateStatutRealise($data, &$passage, $output) {
+        $passage = $this->updateDateDebutDateFin($data, $passage, $output);
         $passage->setDateRealise($passage->getDateDebut());
         return $passage;
     }
 
-    public function updateDateDebutDateFin($data, &$passage,$output) {
+    public function updateDateDebutDateFin($data, &$passage, $output) {
         if (!$data[self::CSV_DUREE]) {
             $output->writeln(sprintf("<error>La durée du passage n'a pas été renseigné : %s</error>", $passage->getId()));
         }
@@ -372,7 +413,7 @@ class PassageCsvImporter {
                 $passage->setDateDebut(\DateTime::createFromFormat('Y-m-d H:i', $dateDebut . ' ' . $heures . ':' . $minutes));
             }
         } else {
-            $output->writeln(sprintf("<error>Le passage d'id %s n'a pas de date de début et est %s (%s)!</error>", $passage->getId(), $data[self::CSV_STATUT], $data[self::CSV_OLD_ID]));
+            $output->writeln(sprintf("<warning>Le passage d'id %s n'a pas de date de début et est %s (%s)!</warning>", $passage->getId(), $data[self::CSV_STATUT], $data[self::CSV_OLD_ID]));
             $passage->setDateDebut($passage->getDatePrevision());
             $minutes = $passage->getDateDebut()->format('i');
             $heures = $passage->getDateDebut()->format('H');
@@ -386,6 +427,34 @@ class PassageCsvImporter {
             $passage->getDateFin()->modify("+ " . $data[self::CSV_DUREE] . " minutes");
         }
         return $passage;
+    }
+
+    public function cleanPassage($passage) {
+        /*
+         * Clean prestation Passage ! 
+         */
+        $prestationsPassageArr = array();
+        foreach ($passage->getPrestations() as $prestation) {
+            $prestationsPassageArr[$prestation->getIdentifiant()] = $prestation;
+        }
+        $passage->removeAllPrestations();
+        foreach ($prestationsPassageArr as $passagePrestation) {
+            $passage->addPrestation($passagePrestation);
+        }
+        $this->dm->persist($passage);
+
+        /**
+         * Clean Technicien Passage ! 
+         */
+        $techniciensPassageArr = array();
+        foreach ($passage->getTechniciens() as $technicien) {
+            $techniciensPassageArr[$technicien->getIdentifiant()] = $technicien;
+        }
+        $passage->removeAllTechniciens();
+        foreach ($techniciensPassageArr as $passageTechnicien) {
+            $passage->addTechnicien($passageTechnicien);
+        }
+        $this->dm->persist($passage);
     }
 
 }

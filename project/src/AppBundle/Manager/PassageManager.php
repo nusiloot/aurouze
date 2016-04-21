@@ -12,6 +12,7 @@ class PassageManager {
     const STATUT_A_PLANIFIER = "A_PLANIFIER";
     const STATUT_PLANIFIE = "PLANIFIE";
     const STATUT_REALISE = "REALISE";
+    const STATUT_ANNULE = "ANNULE";
 
     public static $statutsLibellesActions = array(self::STATUT_A_PLANIFIER => 'A planifier',
         self::STATUT_EN_ATTENTE => 'Prévu',
@@ -76,7 +77,7 @@ class PassageManager {
         $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
         $passagePrecedent = null;
         foreach($passagesEtablissement->getPassagesSorted() as $key => $passageEtb){
-            if(($passage->getId() == $passageEtb->getId()) && (is_null($passagePrecedent) || $passagePrecedent->isPlanifie() || $passagePrecedent->isRealise())){
+            if(($passage->getId() == $passageEtb->getId()) && (is_null($passagePrecedent) || $passagePrecedent->isRealise())){
                 return true;
             }  
             $passagePrecedent = $passageEtb;
