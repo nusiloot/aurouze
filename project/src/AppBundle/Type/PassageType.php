@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class PassageType extends AbstractType
 {
@@ -17,7 +18,8 @@ class PassageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('description', TextareaType::class)
+            ->add('description', TextareaType::class, array('label' => 'Observations :'))
+            ->add('duree', TextType::class, array('label' => 'Durée effective du passage :', 'attr' => array('class' => 'input-timepicker')))
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success")));
         ;
     }

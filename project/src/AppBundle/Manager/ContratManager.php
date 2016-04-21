@@ -26,21 +26,7 @@ class ContratManager implements MouvementManagerInterface {
         $this->dm = $dm;
     }
 
-    function createBySocieteWithFirstEtablissement(Societe $societe, \DateTime $dateCreation = null) {
-        $contrat = $this->createBySociete($societe);
-        if (count($societe->getEtablissements())) {
-            $etablissement = null;
-            foreach ($societe->getEtablissements() as $etb) {
-                $etablissement = $etb;
-                break;
-            }
-
-            $contrat->addEtablissement($etablissement);
-        }
-        return $contrat;
-    }
-
-    function createBySociete(Societe $societe, \DateTime $dateCreation = null) {
+    function createBySociete(Societe $societe, \DateTime $dateCreation = null, Etablissement $etablissement = null) {
         if (!$dateCreation) {
             $dateCreation = new \DateTime();
         }
@@ -50,6 +36,13 @@ class ContratManager implements MouvementManagerInterface {
         $contrat->setStatut(self::STATUT_BROUILLON);
         $contrat->addPrestation(new Prestation());
         $contrat->addProduit(new Produit());
+
+        if($etablissement) {
+            $contrat->addEtablissement($etablissement);
+        } else {
+            $contrat->addEtablissement($societe->getEtablissements()->first());
+        }
+
         return $contrat;
     }
 
@@ -64,7 +57,7 @@ class ContratManager implements MouvementManagerInterface {
         return $this->dm->getRepository('AppBundle:Contrat');
     }
 
-   
+
 
     public function generateAllPassagesForContrat($contrat) {
         if(count($contrat->getContratPassages())){
