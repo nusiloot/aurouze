@@ -1,0 +1,7 @@
+---
+- hosts: aurouzeservers
+  roles:
+  - { role: install }
+  vars:
+    aurouze_dbname: aurouze
+
