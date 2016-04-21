@@ -44,7 +44,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <a href="{{ path('contrat_creation', {'id': etablissement.getId()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
+            <a href="{{ path('contrat_creation_etablissement', {'id': etablissement.getId()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
             <a href="{{ path('passage_creation', {'id': etablissement.getId()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un passage</strong></a>
             <hr />
             {% for contrat in contrats %}
@@ -55,7 +55,7 @@
                         <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" class="panel-heading">
                             <h3 class="panel-title">
                                 </span>
-                                {% if(not contrat.isTerminee) %}Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% else %}Contrat terminée en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% endif %}
+                                {% if(not contrat.isTerminee) %}Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% else %}Contrat terminé en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% endif %}
 
                                 <small>Contrat  n° {{ contrat.numeroArchive }}
                                 sur {{ contrat.duree }} mois</small>
@@ -85,7 +85,7 @@
                                              {% if(pe.enAttente) %}
                                                  {{ pe.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                                             {% elseif(pe.APlanifie) %}
-                                                {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }} 
+                                                {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                                             {% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}
 {#                                            {% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}#}
                                         </div>
@@ -112,7 +112,11 @@
                                             </ul>
                                         </div>
                                         <div class="col-xs-2 text-right">
-                                            {% if pe.planifie  %}<a class="btn btn-block btn-sm btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
+                                            {% if pe.planifie  %}<div class="btn-group">
+                                                <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_bon', { id: pe.id })}}"><span class="glyphicon glyphicon-print"></span></a>
+                                                <a class="btn btn-sm btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
+                                                </div>
+                                            {% elseif pe.realise %}<a class="btn btn-block btn-sm btn-default" href="{{ path('passage_edition', { id: pe.id })}}">Modifier le rapport</a>
                                             {% elseif pe.aPlanifie %}
                                                     {% for technicien in pe.techniciens %}
                                                             <a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : technicien.identite, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier</a>

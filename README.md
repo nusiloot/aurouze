@@ -12,3 +12,8 @@ Aperçu de l'application
 -----------------------
 
 [Voir toutes les captures d'écran de l'application](doc/Interfaces.md)
+
+Installation
+------------
+
+[Via ansible](https://github.com/24eme/aurouze/tree/master/ansible)

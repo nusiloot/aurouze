@@ -157,6 +157,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     protected $identifiantReprise;
 
     public function __construct() {
+        $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->produits = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mouvements = new ArrayCollection();

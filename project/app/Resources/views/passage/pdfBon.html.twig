@@ -1,0 +1,35 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+<div class="row">
+    <div class="col-xs-7">
+        <br />
+        <p>
+            <span class="lead"></span><br />
+            <br />
+            , <br />
+            Tél : <br />
+            Fax:
+        </p>
+    </div>
+    <div class="col-xs-5 text-left form-horizontal">
+        <h2>Bon de passage n°</h2>
+        <div class="row">
+        <div class="form-group">
+            <label class="col-sm-6 control-label">Heure d'arrivée</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control input-sm">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-6 control-label">Heure de départ</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control input-sm">
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <h3>Passage prévu le {{ passage.dateDebut | localizeddate("medium", "none", null, null, "d/MM/YYYY à HH:mm") }}</h3>  
+</div>
+{% endblock %}

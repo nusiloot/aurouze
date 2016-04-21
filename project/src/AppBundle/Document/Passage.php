@@ -64,7 +64,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @MongoDB\Date
      */
     protected $dateFin;
-    
+
     /**
      * @MongoDB\Date
      */
@@ -158,6 +158,10 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         }
         $interval = $this->dateFin->diff($this->dateDebut);
         return $interval->format('%Hh%I');
+    }
+
+    public function setDuree($duree) {
+        
     }
 
     public function isRealise() {
@@ -697,7 +701,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     {
         return $this->produits;
     }
-    
+
     public function getStatutLibelle() {
         return PassageManager::$statutsLibelles[$this->getStatut()];
     }
@@ -726,9 +730,9 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     {
         return $this->dateRealise;
     }
-    
+
     public function isFirstPassageNonRealise() {
-        
+
     }
 
     /**

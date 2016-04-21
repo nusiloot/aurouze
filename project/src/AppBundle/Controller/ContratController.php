@@ -35,7 +35,7 @@ class ContratController extends Controller {
         }
         return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView()));
     }
-    
+
     /**
      * @Route("/contrat/societe-choix", name="contrat_societe_choice")
      */
@@ -50,7 +50,7 @@ class ContratController extends Controller {
      */
     public function societeAction(Request $request, Societe $societe) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $contrats = $this->get('contrat.manager')->getRepository()->findBySociete($societe); 
+        $contrats = $this->get('contrat.manager')->getRepository()->findBySociete($societe);
         $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
             'action' => $this->generateUrl('contrat_societe_choice'),
             'method' => 'POST',
@@ -65,7 +65,19 @@ class ContratController extends Controller {
      */
     public function creationAction(Request $request, Societe $societe) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $contrat = $this->get('contrat.manager')->createBySocieteWithFirstEtablissement($societe);        
+        $contrat = $this->get('contrat.manager')->createBySociete($societe);
+        $dm->persist($contrat);
+        $dm->flush();
+        return $this->redirectToRoute('contrat_modification', array('id' => $contrat->getId()));
+    }
+
+    /**
+     * @Route("/contrat/{id}/creation/etablissement", name="contrat_creation_etablissement")
+     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
+     */
+    public function creationFromEtablissementAction(Request $request, Etablissement $etablissement) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrat = $this->get('contrat.manager')->createBySociete($etablissement->getSociete(), null, $etablissement);
         $dm->persist($contrat);
         $dm->flush();
         return $this->redirectToRoute('contrat_modification', array('id' => $contrat->getId()));
@@ -111,7 +123,7 @@ class ContratController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
             $contratManager->generateAllPassagesForContrat($contrat);
-
+            $contrat->setDateFin($contrat->getDateDebut()->modify("+ ".$contrat->getDuree()));
             $contrat->setStatut(ContratManager::STATUT_VALIDE);
             $dm->persist($contrat);
             $dm->flush();
