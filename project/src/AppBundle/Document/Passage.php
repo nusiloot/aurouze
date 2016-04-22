@@ -125,9 +125,16 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $mouvement_declenche;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $identifiantReprise;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
+        $this->techniciens = new ArrayCollection();
+        $this->produits = new ArrayCollection();
         $this->mouvement_declenchable = false;
         $this->mouvement_declenche = false;
     }
@@ -173,6 +180,10 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->statut == PassageManager::STATUT_EN_ATTENTE;
     }
 
+    public function isAnnule() {
+        return $this->statut == PassageManager::STATUT_ANNULE;
+    }
+
     /** @MongoDB\PreUpdate */
     public function preUpdate() {
         $this->updateStatut();
@@ -184,20 +195,22 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function updateStatut() {
-        if ($this->getDatePrevision() && !boolval($this->getDateFin()) && !boolval($this->getDateDebut())) {
-            $this->setStatut(PassageManager::STATUT_EN_ATTENTE);
-            return;
-        }
-        if (boolval($this->getDateDebut()) && !boolval($this->getDateFin())) {
-            $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
-            return;
-        }
-        if (boolval($this->getDateDebut()) && boolval($this->getDateFin()) && !boolval($this->getDateRealise())) {
-            $this->setStatut(PassageManager::STATUT_PLANIFIE);
-            return;
-        }
-        if (boolval($this->getDateRealise())) {
-            $this->setStatut(PassageManager::STATUT_REALISE);
+        if (!$this->isAnnule()) {
+            if ($this->getDatePrevision() && !boolval($this->getDateFin()) && !boolval($this->getDateDebut())) {
+                $this->setStatut(PassageManager::STATUT_EN_ATTENTE);
+                return;
+            }
+            if (boolval($this->getDateDebut()) && !boolval($this->getDateFin())) {
+                $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
+                return;
+            }
+            if (boolval($this->getDateDebut()) && boolval($this->getDateFin()) && !boolval($this->getDateRealise())) {
+                $this->setStatut(PassageManager::STATUT_PLANIFIE);
+                return;
+            }
+            if (boolval($this->getDateRealise())) {
+                $this->setStatut(PassageManager::STATUT_REALISE);
+            }
         }
     }
 
@@ -546,7 +559,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->etablissement;
     }
 
-
     /**
      * Set numeroContratArchive
      *
@@ -567,14 +579,17 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->numeroContratArchive;
     }
 
-
     /**
      * Add technicien
      *
      * @param AppBundle\Document\User $technicien
      */
-    public function addTechnicien(\AppBundle\Document\User $technicien)
-    {
+    public function addTechnicien(\AppBundle\Document\User $technicien) {
+        foreach ($this->getTechniciens() as $tech) {
+            if ($tech == $technicien) {
+                return;
+            }
+        }
         $this->techniciens[] = $technicien;
     }
 
@@ -583,20 +598,34 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      *
      * @return \Doctrine\Common\Collections\Collection $techniciens
      */
-    public function getTechniciens()
-    {
+    public function getTechniciens() {
         return $this->techniciens;
     }
 
+    /**
+     * Remove technicien
+     *
+     * @param AppBundle\Document\User $technicien
+     */
+    public function removeTechnicien(\AppBundle\Document\User $technicien) {
+        $this->techniciens->removeElement($technicien);
+    }
 
+    public function removeAllTechniciens() {
+        $this->techniciens = new ArrayCollection();
+    }
 
     /**
      * Add prestation
      *
      * @param AppBundle\Document\Prestation $prestation
      */
-    public function addPrestation(\AppBundle\Document\Prestation $prestation)
-    {
+    public function addPrestation(\AppBundle\Document\Prestation $prestation) {
+        foreach ($this->getPrestations() as $prest) {
+            if ($prest == $prestation) {
+                return;
+            }
+        }
         $this->prestations[] = $prestation;
     }
 
@@ -605,49 +634,41 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      *
      * @param AppBundle\Document\Prestation $prestation
      */
-    public function removePrestation(\AppBundle\Document\Prestation $prestation)
-    {
+    public function removePrestation(\AppBundle\Document\Prestation $prestation) {
         $this->prestations->removeElement($prestation);
     }
 
-   /**
+    public function removeAllPrestations() {
+        $this->prestations = new ArrayCollection();
+    }
+
+    /**
      * Get prestations
      *
      * @return \Doctrine\Common\Collections\Collection $prestations
      */
-    public function getPrestations()
-    {
+    public function getPrestations() {
         return $this->prestations;
     }
 
-    /**
-     * Remove technicien
-     *
-     * @param AppBundle\Document\User $technicien
-     */
-    public function removeTechnicien(\AppBundle\Document\User $technicien)
-    {
-        $this->techniciens->removeElement($technicien);
-    }
-
     public function setTimeDebut($time) {
-    	$dateTime = $this->getDateDebut();
-    	$this->setDateDebut(new \DateTime($dateTime->format('Y-m-d').'T'.$time.':00'));
+        $dateTime = $this->getDateDebut();
+        $this->setDateDebut(new \DateTime($dateTime->format('Y-m-d') . 'T' . $time . ':00'));
     }
 
     public function setTimeFin($time) {
-    	$dateTime = $this->getDateFin();
-    	$this->setDateFin(new \DateTime($dateTime->format('Y-m-d').'T'.$time.':00'));
+        $dateTime = $this->getDateFin();
+        $this->setDateFin(new \DateTime($dateTime->format('Y-m-d') . 'T' . $time . ':00'));
     }
 
     public function getTimeDebut() {
-    	$dateTime = $this->getDateDebut();
-    	return $dateTime->format('H:i');
+        $dateTime = $this->getDateDebut();
+        return $dateTime->format('H:i');
     }
 
     public function getTimeFin() {
-    	$dateTime = $this->getDateFin();
-    	return $dateTime->format('H:i');
+        $dateTime = $this->getDateFin();
+        return $dateTime->format('H:i');
     }
 
     /**
@@ -655,8 +676,12 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      *
      * @param AppBundle\Document\Produit $produit
      */
-    public function addProduit(\AppBundle\Document\Produit $produit)
-    {
+    public function addProduit(\AppBundle\Document\Produit $produit) {
+        foreach ($this->getProduits() as $prod) {
+            if ($prod == $produit) {
+                return;
+            }
+        }
         $this->produits[] = $produit;
     }
 
@@ -665,8 +690,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      *
      * @param AppBundle\Document\Produit $produit
      */
-    public function removeProduit(\AppBundle\Document\Produit $produit)
-    {
+    public function removeProduit(\AppBundle\Document\Produit $produit) {
         $this->produits->removeElement($produit);
     }
 
@@ -675,14 +699,14 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      *
      * @return \Doctrine\Common\Collections\Collection $produits
      */
-    public function getProduits()
-    {
+    public function getProduits() {
         return $this->produits;
     }
 
     public function getStatutLibelle() {
         return PassageManager::$statutsLibelles[$this->getStatut()];
     }
+
     public function getStatutLibelleActions() {
         return PassageManager::$statutsLibellesActions[$this->getStatut()];
     }
@@ -693,8 +717,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @param date $dateRealise
      * @return self
      */
-    public function setDateRealise($dateRealise)
-    {
+    public function setDateRealise($dateRealise) {
         $this->dateRealise = $dateRealise;
         return $this;
     }
@@ -704,12 +727,32 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      *
      * @return date $dateRealise
      */
-    public function getDateRealise()
-    {
+    public function getDateRealise() {
         return $this->dateRealise;
     }
 
     public function isFirstPassageNonRealise() {
-
+        
     }
+
+    /**
+     * Set identifiantReprise
+     *
+     * @param string $identifiantReprise
+     * @return self
+     */
+    public function setIdentifiantReprise($identifiantReprise) {
+        $this->identifiantReprise = $identifiantReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantReprise
+     *
+     * @return string $identifiantReprise
+     */
+    public function getIdentifiantReprise() {
+        return $this->identifiantReprise;
+    }
+
 }

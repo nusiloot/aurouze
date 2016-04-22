@@ -6,15 +6,52 @@ SYMFODIR=$(pwd);
 DATA_DIR=$TMP/AUROUZE_DATAS
 
 
-echo "Récupération des passages"
+echo -e "\n\nRécupération des passages"
 
 # Gère les retours chariots dans les champs
 
-cat  $DATA_DIR/tblPassage.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/^.*RefPassage;/RefPassage;/' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/passages.cleaned.sorted.csv
+cat  $DATA_DIR/tblPassage.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/^.*RefPassage;/RefPassage;/' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | tr '"' ' ' | sort -t ";" -k 1,1 > $DATA_DIR/passages.cleaned.sorted.csv
 
 join -t ';' -1 1 -2 2 $DATA_DIR/passages.cleaned.sorted.csv $DATA_DIR/passageAdresse.sorted.csv | sort -t ";" -k 4,4 > $DATA_DIR/passagesadresses.csv
 
-join -t ";" -1 4 -2 1 -a 1 -o auto $DATA_DIR/passagesadresses.csv $DATA_DIR/techniciens.csv | sort -r > $DATA_DIR/passagesadressestechniciens.csv
+join -t ";" -1 4 -2 1 -a 1 -o auto $DATA_DIR/passagesadresses.csv $DATA_DIR/utilisateurAutre.csv | sort -r > $DATA_DIR/passagesadressestechniciens.tmp.csv
+
+cat $DATA_DIR/passagesadressestechniciens.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
+    date_prevision=$6;
+    d=$7;
+    date_creation=$19;
+    date_passage_prevision="";
+
+    if(date_prevision) {
+        cmd="date --date=\""date_prevision"\" \"+%Y-%m-%d %H:%M:%S\"";
+        cmd | getline date_passage_prevision;
+        close(cmd);
+    }else{    
+        if(d) {
+            cmd="date --date=\""d"\" \"+%Y-%m-%d %H:%M:%S\"";
+            cmd | getline date_passage_prevision;
+            close(cmd);
+        }else{
+            if(date_creation) {
+                cmd="date --date=\""date_creation"\" \"+%Y-%m-%d %H:%M:%S\"";
+                cmd | getline date_passage_prevision;
+                close(cmd);
+            }
+        }
+    }
+
+    if(!date_passage_prevision || (date_passage_prevision < "2015-01-01")) {
+        next;
+    }
+    print $0;
+
+}' > $DATA_DIR/passagesadressestechniciens.csv
+
+# A ENLEVER plus tard, pour debug
+echo 'DEBUG MODE'
+cat $DATA_DIR/passagesadressestechniciens.csv | head -n 10000 > $DATA_DIR/passagesadressestechniciens.csv.tmp
+cat $DATA_DIR/passagesadressestechniciens.csv.tmp > $DATA_DIR/passagesadressestechniciens.csv
+# 
 
 cat $DATA_DIR/tblPassagePrestationType.csv | tr -d '\r' | grep -v "RefPassagePrestationType;" > $DATA_DIR/tblPassagePrestationType.csv.tmp
 
@@ -52,11 +89,24 @@ cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[
     facture=$12;
     imprime=$14;
     duree=$8;
+    old_id=$2;
     
-    date_passage_prevision="";
-    date_passage_debut=date_arrivee;
-    date_passage_fin=date_depart;
+    
+    date_passage_debut="";
+    if(d) {
+        cmd="date --date=\""d"\" \"+%Y-%m-%d %H:%M:%S\"";
+        cmd | getline date_passage_debut;
+        close(cmd);
+    }
 
+    date_passage_fin="";
+    if(date_depart) {
+        cmd="date --date=\""date_depart"\" \"+%Y-%m-%d %H:%M:%S\"";
+        cmd | getline date_passage_fin;
+        close(cmd);
+    }
+
+    date_passage_prevision="";
     if(date_prevision) {
         cmd="date --date=\""date_prevision"\" \"+%Y-%m-%d %H:%M:%S\"";
         cmd | getline date_passage_prevision;
@@ -67,16 +117,19 @@ cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[
             cmd | getline date_passage_prevision;
             close(cmd);
         }else{
-        date_passage_prevision=date_creation;
+            cmd="date --date=\""date_creation"\" \"+%Y-%m-%d %H:%M:%S\"";
+            cmd | getline date_passage_prevision;
+            close(cmd);
         }
     }
-    if(!date_passage_prevision || (date_passage_prevision < "2013-01-01 00:00:00")) {
-        next;
-    }
-    if(effectue){
-        if(!date_passage_debut && date_passage_prevision) { date_passage_debut=date_passage_prevision; }
-        if(!date_passage_fin && date_passage_prevision) { date_passage_fin=date_passage_prevision; }
-    }
+    
+    date_passage_creation=date_creation;
+#    if(date_creation) {
+#        cmd="date --date=\""date_creation"\" \"+%Y-%m-%d %H:%M:%S\"";
+#        cmd | getline date_passage_creation;
+#        close(cmd);
+#    }
+   
     
 
     if(!duree) { duree=60; }
@@ -96,12 +149,25 @@ cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[
     prestations=$47;
     produits=$48;
 
-
-    print date_creation ";" etablissement_id ";" date_passage_prevision ";" date_passage_debut ";" date_passage_fin ";" duree ";" technicien ";" libelle ";" description ";" contrat_id ";" effectue ";" prestations ";" produits
+     if(effectue){
+        if(!date_passage_debut && date_passage_prevision) { date_passage_debut=date_passage_prevision; }
+        if(!date_passage_fin && date_passage_prevision) { date_passage_fin=date_passage_prevision; }
+        print date_passage_creation ";" etablissement_id ";" date_passage_prevision ";" date_passage_debut ";" date_passage_fin ";" duree ";" technicien ";" libelle ";" description ";" contrat_id ";" effectue ";" prestations ";" produits ";REALISE;"old_id;
+    }else{
+        if(planifie){
+            date_passage_debut=d;
+            date_passage_fin="";
+            print date_passage_creation ";" etablissement_id ";" date_passage_prevision ";" date_passage_debut ";" date_passage_fin ";" duree ";" technicien ";" libelle ";" description ";" contrat_id ";0;" prestations ";" produits ";PLANIFIE;"old_id ;
+        }else{
+            date_passage_debut="";
+            date_passage_fin="";
+            print date_passage_creation ";" etablissement_id ";" date_passage_prevision ";" date_passage_debut ";" date_passage_fin ";" duree ";" technicien ";" libelle ";" description ";" contrat_id ";0;" prestations ";" produits ";EN_ATTENTE;"old_id ;      
+        }
+    }
 
 }' > $DATA_DIR/passages.csv
 
 
-echo "Import des passages"
+echo -e "\nImport des passages"
 
 php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv

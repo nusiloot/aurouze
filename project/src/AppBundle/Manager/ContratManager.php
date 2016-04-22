@@ -19,6 +19,7 @@ class ContratManager implements MouvementManagerInterface {
     const STATUT_EN_ATTENTE_ACCEPTATION = "EN_ATTENTE_ACCEPTATION";
     const STATUT_VALIDE = "VALIDE";
     const STATUT_FINI = "FINI";
+    const STATUT_RESILIE = "RESILIE";
 
     protected $dm;
 

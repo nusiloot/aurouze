@@ -26,5 +26,15 @@ class UserRepository extends DocumentRepository {
         }
         return $result;
     }
+    
+    public function findAllInArray() {
+        $users = $this->findAll();
+        $result = array();
+        foreach ($users as $user) {
+            $result[$user->getIdentifiant()] = $user;
+        }
+        return $result;
+    }
+    
 
 }

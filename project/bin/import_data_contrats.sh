@@ -5,14 +5,10 @@
 SYMFODIR=$(pwd);
 DATA_DIR=$TMP/AUROUZE_DATAS
 
-
-
-
-echo "Récupération des contrats"
+echo -e "\n\nRécupération des contrats"
 
 cat $DATA_DIR/tblPrestationAdresse.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationAdresse.sorted.csv
 
-#join -t ';' -1 2 -2 1 $DATA_DIR/prestationAdresse.sorted.csv $DATA_DIR/tblPrestation.cleaned.csv > $DATA_DIR/prestation.tmp.csv
 
 cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
     contrat_id=$1;
@@ -39,6 +35,12 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
         cmd | getline date_creation_contrat;
         close(cmd);
     }
+    if(!date_creation_contrat){
+        next;
+    }
+    if(date_creation_contrat < "2013-01-01"){
+        next;
+    }
 
     date_debut=$17;
     date_debut_contrat="";
@@ -48,11 +50,19 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
         close(cmd);
     }
 
+    date_resiliation=$20;
+    date_resiliation_contrat="";
+    if(date_resiliation) {
+        cmd="date --date=\""date_resiliation"\" \"+%Y-%m-%d %H:%M:%S\"";
+        cmd | getline date_resiliation_contrat;
+        close(cmd);
+    }
+
     duree=$18;
     garantie=$30;
     prixht=$26;
     tva_reduite=$27;
-    print contrat_id";"societe_old_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";"contrat_archivage";"tva_reduite;
+    print contrat_id";"societe_old_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";"contrat_archivage";"tva_reduite";"date_resiliation_contrat;
 }' > $DATA_DIR/contrats.csv.tmp;
 
 cat $DATA_DIR/tblPrestationProduit.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationProduit.sorted.csv
@@ -71,17 +81,16 @@ do
    PRODUITSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/produitContrat.tmp.sorted.csv $DATA_DIR/produits.sorted.csv | cut -d ';' -f 2,3 | sed -r 's/(.+);(.+)/\2~\1/g' | tr "\n" "#")
    
    IDENTIFIANTTECHNICIEN=`echo $line | cut -d ';' -f 4`;
-   NOMTECHNICIEN=$(cat $DATA_DIR/techniciens.csv | grep -E "^$IDENTIFIANTTECHNICIEN;" | cut -d ';' -f 2);
+   NOMTECHNICIEN=$(cat $DATA_DIR/utilisateurAutre.csv | grep -E "^$IDENTIFIANTTECHNICIEN;" | cut -d ';' -f 2);
 
    IDENTIFIANTCOMMERCIAL=`echo $line | cut -d ';' -f 3`;
-   NOMCOMMERCIAL=$(cat $DATA_DIR/techniciens.csv | grep -E "^$IDENTIFIANTCOMMERCIAL;" | cut -d ';' -f 2);
+   NOMCOMMERCIAL=$(cat $DATA_DIR/utilisateurAutre.csv | grep -E "^$IDENTIFIANTCOMMERCIAL;" | cut -d ';' -f 2);
    
    echo $line";"$PRODUITSVAR";"$NOMCOMMERCIAL";"$NOMTECHNICIEN >> $DATA_DIR/contrats.csv;
 
 done < $DATA_DIR/contrats.csv.tmp
 
-
-echo "Import des contrats"
+echo -e "\nImport des contrats"
 
 php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv -vvv
 

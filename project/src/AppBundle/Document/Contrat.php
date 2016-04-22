@@ -107,6 +107,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     protected $dateAcceptation;
 
     /**
+     * @MongoDB\Date
+     */
+    protected $dateResiliation;
+    
+    /**
      * @MongoDB\Int
      */
     protected $duree;
@@ -244,6 +249,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param AppBundle\Document\Prestation $prestation
      */
     public function addPrestation(\AppBundle\Document\Prestation $prestation) {
+        foreach ($this->getPrestations() as $prest) {
+            if($prest == $prestation){
+                return;
+            }
+        }
         $this->prestations[] = $prestation;
     }
 
@@ -271,6 +281,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param AppBundle\Document\Produit $prestation
      */
     public function addProduit(\AppBundle\Document\Produit $produit) {
+        foreach ($this->getProduits() as $prod) {
+            if($prod == $produit){
+                return;
+            }
+        }
         $this->produits[] = $produit;
     }
 
@@ -927,4 +942,26 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         return $this->id;
     }
 
+
+    /**
+     * Set dateResiliation
+     *
+     * @param date $dateResiliation
+     * @return self
+     */
+    public function setDateResiliation($dateResiliation)
+    {
+        $this->dateResiliation = $dateResiliation;
+        return $this;
+    }
+
+    /**
+     * Get dateResiliation
+     *
+     * @return date $dateResiliation
+     */
+    public function getDateResiliation()
+    {
+        return $this->dateResiliation;
+    }
 }

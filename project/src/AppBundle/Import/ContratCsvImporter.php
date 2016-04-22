@@ -51,9 +51,10 @@ class ContratCsvImporter {
     const CSV_PRIXHT = 11;
     const CSV_ARCHIVAGE = 12;
     const CSV_TVA_REDUITE = 13;
-    const CSV_PRODUITS = 14;
-    const CSV_NOM_COMMERCIAL = 15;
-    const CSV_NOM_TECHNICIEN = 16;
+    const CSV_DATE_RESILIATION = 14;
+    const CSV_PRODUITS = 15;
+    const CSV_NOM_COMMERCIAL = 16;
+    const CSV_NOM_TECHNICIEN = 17;
 
     public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, SocieteManager $sm, UserManager $um) {
         $this->dm = $dm;
@@ -75,8 +76,7 @@ class ContratCsvImporter {
         $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
         $produitsArray = $configuration->getProduitsArray();
         
-        $techniciens = $this->um->getRepository()->findAllByTypeArray(User::USER_TYPE_TECHNICIEN);
-        $commerciaux = $this->um->getRepository()->findAllByTypeArray(User::USER_TYPE_COMMERCIAL);
+        $usersArray = $this->um->getRepository()->findAllInArray();
         
         $i = 0;
         $cptTotal = 0;
@@ -93,6 +93,8 @@ class ContratCsvImporter {
 
             if (!$contrat) {
                 $contrat = new Contrat();
+            }else{
+               $output->writeln(sprintf("<error>Le contrat : %s existe déjà en base?</error>", $data[self::CSV_ID_CONTRAT]));
             }
 
             $contrat->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
@@ -120,18 +122,23 @@ class ContratCsvImporter {
             
             if($data[self::CSV_NOM_COMMERCIAL]){
                $identifiantCommercial = strtoupper(Transliterator::urlize($data[self::CSV_NOM_COMMERCIAL]));
-               if(array_key_exists($identifiantCommercial, $commerciaux)){
-                   $commercial = $commerciaux[$identifiantCommercial];
+               if(array_key_exists($identifiantCommercial, $usersArray)){
+                   $commercial = $usersArray[$identifiantCommercial];
                    $contrat->setCommercial($commercial);
                }
             }
             
             if($data[self::CSV_NOM_TECHNICIEN]){
                $identifiantTechnicien = strtoupper(Transliterator::urlize($data[self::CSV_NOM_TECHNICIEN]));
-               if(array_key_exists($identifiantTechnicien, $techniciens)){
-                   $technicien = $techniciens[$identifiantTechnicien];
+               if(array_key_exists($identifiantTechnicien, $usersArray)){
+                   $technicien = $usersArray[$identifiantTechnicien];
                    $contrat->setTechnicien($technicien);
                }
+            }
+            
+            if($data[self::CSV_DATE_RESILIATION]){
+               $contrat->setDateResiliation(new \DateTime($data[self::CSV_DATE_RESILIATION]));
+               $contrat->setStatut(ContratManager::STATUT_RESILIE);
             }
             
             $produits = explode('#', $data[self::CSV_PRODUITS]);

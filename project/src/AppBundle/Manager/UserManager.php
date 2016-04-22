@@ -17,7 +17,8 @@ namespace AppBundle\Manager;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 
 class UserManager {
-
+    
+    const USER_INCONNU = 'INCONNU';
     protected $dm;
     
     public function __construct(DocumentManager $dm) {
