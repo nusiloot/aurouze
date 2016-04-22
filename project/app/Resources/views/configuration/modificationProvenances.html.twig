@@ -1,0 +1,40 @@
+{% set _menu_active = 'configuration' %}
+{% extends 'base.html.twig' %}
+
+
+
+{% form_theme form _self %}
+
+
+{% block _configuration_provenances_entry_row %}
+    <div class="row form-group dynamic-collection-item">
+        <div class="col-xs-6">
+            {{ form_widget(form.nom) }}
+        </div>
+        <div class="col-xs-2 text-right">
+            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div id="wrapper">
+       
+        {{ form_start(form) }}
+        <div class="panel panel-default" style="margin-bottom: 0;">
+            <div class="panel-heading">Provenances </div>
+
+            <div class="panel-body">
+                {{ form_widget(form.provenances, { 'attr': {'class': 'dynamic-collection'} }) }}
+                <div class="row form-group">
+                    <div class="col-xs-12 text-right">
+                        <a href="javascript:void(0);" data-collection-target='#configuration_provenances' class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+                    </div>
+                </div>
+
+            </div>     
+        </div> <br/>
+        {{ form_end(form) }}
+        <br/> <br/>
+    </div>
+{% endblock %}
