@@ -91,7 +91,7 @@
                                              {% if(pe.enAttente) %}
                                                  {{ pe.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                                             {% elseif(pe.APlanifie) %}
-                                                {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                                                {{ pe.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                                             {% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}
 {#                                            {% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}#}
                                         </div>
