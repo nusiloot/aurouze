@@ -76,6 +76,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @MongoDB\String
      */
     protected $nomenclature;
+    
+    /**
+     * @MongoDB\String
+     */
+    protected $commentaire;
 
     /**
      * @MongoDB\EmbedMany(targetDocument="Prestation")
@@ -996,5 +1001,31 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     
      public function isResilie() {
         return ($this->statut == ContratManager::STATUT_RESILIE);
+    }
+    
+    public function isEnAttenteAcceptation() {
+        return ($this->statut == ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+    }
+
+    /**
+     * Set commentaire
+     *
+     * @param string $commentaire
+     * @return self
+     */
+    public function setCommentaire($commentaire)
+    {
+        $this->commentaire = $commentaire;
+        return $this;
+    }
+
+    /**
+     * Get commentaire
+     *
+     * @return string $commentaire
+     */
+    public function getCommentaire()
+    {
+        return $this->commentaire;
     }
 }

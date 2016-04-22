@@ -40,7 +40,7 @@
     </div>
 </div>
 
-{%  if(contrat.dateDebut is null) %}
+{%  if(contrat.isEnAttenteAcceptation()) %}
     {{ include('contrat/contrat_previsionnel.html.twig', { 'contrat': contrat }) }}
 {%  else %}
     {{ include('contrat/contrat_passages.html.twig', { 'contrat': contrat }) }}

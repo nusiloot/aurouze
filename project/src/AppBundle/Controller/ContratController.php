@@ -31,7 +31,8 @@ class ContratController extends Controller {
         ));
         $formSociete->handleRequest($request);
         if ($formSociete->isSubmitted() && $formSociete->isValid()) {
-            var_dump($formSociete->get('societes')); exit;
+            var_dump($formSociete->get('societes'));
+            exit;
         }
         return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView()));
     }
@@ -56,7 +57,7 @@ class ContratController extends Controller {
             'method' => 'POST',
         ));
 
-        return $this->render('contrat/societe.html.twig', array('formSociete' => $formSociete->createView(),'societe' => $societe, 'contrats' => $contrats));
+        return $this->render('contrat/societe.html.twig', array('formSociete' => $formSociete->createView(), 'societe' => $societe, 'contrats' => $contrats));
     }
 
     /**
@@ -115,19 +116,25 @@ class ContratController extends Controller {
     public function acceptationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $contratManager = new ContratManager($dm);
-        $form = $this->createForm(new ContratAcceptationType($dm), $contrat, array(
+        $form = $this->createForm(new ContratAcceptationType($dm, $contrat), $contrat, array(
             'action' => $this->generateUrl('contrat_acceptation', array('id' => $contrat->getId())),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
-            $contratManager->generateAllPassagesForContrat($contrat);
-            $contrat->setDateFin($contrat->getDateDebut()->modify("+".$contrat->getDuree()." month"));
-            $contrat->setStatut(ContratManager::STATUT_VALIDE);
-            $dm->persist($contrat);
-            $dm->flush();
-            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
+            if ($contrat->isEnAttenteAcceptation()) {
+                $contratManager->generateAllPassagesForContrat($contrat);
+                $contrat->setDateFin($contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month"));
+                $contrat->setStatut(ContratManager::STATUT_VALIDE);
+                $dm->persist($contrat);
+                $dm->flush();
+                return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
+            } else {
+                $dm->persist($contrat);
+                $dm->flush();
+                return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
+            }
         }
         return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
     }

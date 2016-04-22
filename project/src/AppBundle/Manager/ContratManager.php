@@ -62,7 +62,7 @@ class ContratManager implements MouvementManagerInterface {
 
     public function generateAllPassagesForContrat($contrat) {
         if(count($contrat->getContratPassages())){
-            throw new \Exception("Les passages de ce contrat ont déjà été généré");
+            return;
         }
         $date_debut = $contrat->getDateDebut();
         if (!$date_debut) {

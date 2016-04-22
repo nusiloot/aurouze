@@ -87,12 +87,23 @@
                             <div class="panel-body">
 
                                 <div class="row">
-                                    <div class="col-xs-11">
-                                        <div class="well well-sm"><small>{{ contrat.nomenclature | nl2br }}</small></div>
+                                    <div class="col-xs-8">
+                                        <div class="well well-sm"  style="height:250px; overflow: auto;" ><small>{{ contrat.nomenclature | nl2br }}</small></div>
                                     </div>
-                                    <div class="col-xs-1">
-                                        <a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
-                                        <a href="{{ path('passage_creation', {'id_etablissement': etablissement.id, 'id_contrat': contrat.id}) }}" class="btn btn-xs btn-warning pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un passage</a>
+                                    <div class="col-xs-4  text-right">
+                                        <ul class="list-unstyled">
+                                            <li>
+                                                <a href="{{ path('passage_creation', {'id_etablissement': etablissement.id, 'id_contrat': contrat.id}) }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un passage</a>&nbsp;&nbsp;
+                                                <a class="btn btn-default btn-xs" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
+                                            <li>
+                                                <br/>
+                                            <li>
+                                                <div class="well well-sm"  style="height:160px; overflow: auto;" ><small class="pull-left">{{ contrat.commentaire | nl2br }}</small></div>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('contrat_acceptation', {'id': contrat.id}) }}" class="btn btn-xs btn-warning">&nbsp;Modifier le commentaire</a>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
 
