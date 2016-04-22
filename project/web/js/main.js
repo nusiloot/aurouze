@@ -9,22 +9,28 @@
         $.initTooltips();
         $.initQueryHash();
         $.initDynamicCollection();
-        $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "bottom right", daysOfWeekDisabled: "0"});
+        $.initDatePicker();
+        $.initTimePicker();
+    });
+    
+    $.initDatePicker = function () {
+    	$('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "right"});
+    }
+    
+    $.initTimePicker = function () {
         $('.input-timepicker').timepicker({
                 format: 'HH:ii p',
                 autoclose: true,
-                // todayHighlight: true,
                 showMeridian: false,
                 startView: 1,
                 maxView: 1,defaultTime: '01:00'
             });
-    });
+    }
 
     $.initDynamicCollection = function () {
 
-    	var collectionHolder = $('.dynamic-collection');
+    	
         var addLink = $('.dynamic-collection-add');
-        collectionHolder.data('index', collectionHolder.find(':input').length);
 
         $('.dynamic-collection-item').on('click', '.dynamic-collection-remove', function(e) {
             e.preventDefault();
@@ -33,6 +39,11 @@
 
         addLink.on('click', function(e) {
             e.preventDefault();
+            
+            var collectionTarget = $(this).data('collection-target');
+            var collectionHolder = $(collectionTarget);
+            collectionHolder.data('index', collectionHolder.find(':input').length);
+            
             var prototype = collectionHolder.data('prototype');
             var index = collectionHolder.data('index');
             var item = $(prototype.replace(/__name__/g, index));
@@ -44,7 +55,15 @@
             });
 
             $(item).find('input, select').eq(0).focus();
+            
+            $.callbackDynamicCollection();
         });
+    }
+    
+    $.callbackDynamicCollection = function () {
+        $.initSelect2();
+        $.initSelect2Ajax();
+        $.initDatePicker();
     }
 
     $.initTooltips = function () {
