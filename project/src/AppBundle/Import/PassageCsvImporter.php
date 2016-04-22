@@ -333,8 +333,6 @@ class PassageCsvImporter {
             }
             if ($i >= 2000) {
                 $this->dm->flush();
-                $this->dm->clear();
-                gc_collect_cycles();
                 $i = 0;
             }
             $i++;
@@ -364,8 +362,6 @@ class PassageCsvImporter {
             }
             if ($i >= 2000) {
                 $this->dm->flush();
-                $this->dm->clear();
-                gc_collect_cycles();
                 $i = 0;
             }
             $i++;
