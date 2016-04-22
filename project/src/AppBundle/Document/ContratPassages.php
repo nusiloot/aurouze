@@ -84,15 +84,17 @@ class ContratPassages {
         return $realises;
     }
 
-    public function getPassagesSorted() {
+    public function getPassagesSorted($reverse = false) {
         $passagesSorted = array();
 
         foreach ($this->getPassages() as $passage) {
             $passagesSorted[$passage->getId()] = $passage;
         }
-
-        krsort($passagesSorted);
-
+        if ($reverse) {
+            krsort($passagesSorted);
+        } else {
+            ksort($passagesSorted);
+        }
         return $passagesSorted;
     }
 

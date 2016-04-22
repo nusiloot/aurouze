@@ -33,6 +33,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>Document d'origine</th>
                 <th>Intitulé</th>
                 <th class="text-right">Montant HT</th>
             </tr>
@@ -40,6 +41,7 @@
         <tbody>
         {% for mouvement in mouvements %}
             <tr>
+                <td>{{ mouvement.origineDocument.id }}</td>
                 <td>{{ mouvement.libelle }}</td>
                 <td class="text-right">{{ mouvement.prix }} €</td>
             </tr>

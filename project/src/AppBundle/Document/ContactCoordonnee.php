@@ -1,17 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of Adresse
- *
- * @author mathurin
- */
-
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
@@ -158,4 +146,5 @@ class ContactCoordonnee {
     {
         return $this->siteInternet;
     }
+
 }

@@ -16,6 +16,7 @@ namespace AppBundle\Import;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\UserInfos;
 use AppBundle\Document\Produit;
+use AppBundle\Document\User;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
@@ -37,20 +38,23 @@ class ContratCsvImporter {
     protected $um;
 
     const CSV_ID_CONTRAT = 0;
-    const CSV_ID_ETABLISSEMENT = 1;
-    const CSV_ID_SOCIETE = 2;
-    const CSV_ID_COMMERCIAL = 3;
-    const CSV_ID_TECHNICIEN = 4;
-    const CSV_TYPE_CONTRAT = 5;
-    const CSV_TYPE_PRESTATION = 6;
-    const CSV_NOMENCLATURE = 7;
-    const CSV_DATE_CREATION = 8;
-    const CSV_DATE_DEBUT = 9;
-    const CSV_DUREE = 10;
-    const CSV_GARANTIE = 11;
-    const CSV_PRIXHT = 12;
-    const CSV_ARCHIVAGE = 13;
-    const CSV_PRODUITS = 14;
+    const CSV_ID_SOCIETE = 1;
+    const CSV_ID_COMMERCIAL = 2;
+    const CSV_ID_TECHNICIEN = 3;
+    const CSV_TYPE_CONTRAT = 4;
+    const CSV_TYPE_PRESTATION = 5;
+    const CSV_NOMENCLATURE = 6;
+    const CSV_DATE_CREATION = 7;
+    const CSV_DATE_DEBUT = 8;
+    const CSV_DUREE = 9;
+    const CSV_GARANTIE = 10;
+    const CSV_PRIXHT = 11;
+    const CSV_ARCHIVAGE = 12;
+    const CSV_TVA_REDUITE = 13;
+    const CSV_DATE_RESILIATION = 14;
+    const CSV_PRODUITS = 15;
+    const CSV_NOM_COMMERCIAL = 16;
+    const CSV_NOM_TECHNICIEN = 17;
 
     public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, SocieteManager $sm, UserManager $um) {
         $this->dm = $dm;
@@ -71,12 +75,13 @@ class ContratCsvImporter {
         $csv = $csvFile->getCsv();
         $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
         $produitsArray = $configuration->getProduitsArray();
+        
+        $usersArray = $this->um->getRepository()->findAllInArray();
+        
         $i = 0;
         $cptTotal = 0;
         foreach ($csv as $data) {
-            if ($data[self::CSV_ID_ETABLISSEMENT] == "000000") {
-                continue;
-            }
+            
             $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $data[self::CSV_ID_SOCIETE]));
 
             if (!$societe) {
@@ -88,6 +93,8 @@ class ContratCsvImporter {
 
             if (!$contrat) {
                 $contrat = new Contrat();
+            }else{
+               $output->writeln(sprintf("<error>Le contrat : %s existe déjà en base?</error>", $data[self::CSV_ID_CONTRAT]));
             }
 
             $contrat->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
@@ -112,6 +119,28 @@ class ContratCsvImporter {
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
             $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
+            
+            if($data[self::CSV_NOM_COMMERCIAL]){
+               $identifiantCommercial = strtoupper(Transliterator::urlize($data[self::CSV_NOM_COMMERCIAL]));
+               if(array_key_exists($identifiantCommercial, $usersArray)){
+                   $commercial = $usersArray[$identifiantCommercial];
+                   $contrat->setCommercial($commercial);
+               }
+            }
+            
+            if($data[self::CSV_NOM_TECHNICIEN]){
+               $identifiantTechnicien = strtoupper(Transliterator::urlize($data[self::CSV_NOM_TECHNICIEN]));
+               if(array_key_exists($identifiantTechnicien, $usersArray)){
+                   $technicien = $usersArray[$identifiantTechnicien];
+                   $contrat->setTechnicien($technicien);
+               }
+            }
+            
+            if($data[self::CSV_DATE_RESILIATION]){
+               $contrat->setDateResiliation(new \DateTime($data[self::CSV_DATE_RESILIATION]));
+               $contrat->setStatut(ContratManager::STATUT_RESILIE);
+            }
+            
             $produits = explode('#', $data[self::CSV_PRODUITS]);
             foreach ($produits as $produitStr) {
                 if ($produitStr) {
@@ -122,7 +151,8 @@ class ContratCsvImporter {
                         $produitQte = $produitdetail[1];
                     }
                     if ($produitLib) {
-                        $produitToAdd = $produitsArray[strtoupper(Transliterator::urlize($produitLib))];
+                        $produitToAdd = clone $produitsArray[strtoupper(Transliterator::urlize($produitLib))];
+                        $produitToAdd->setNbTotalContrat(0);
                         $produitToAdd->setNbTotalContrat($produitQte);
                         $contrat->addProduit($produitToAdd);
                     }
@@ -135,7 +165,7 @@ class ContratCsvImporter {
                 $progress->advance();
             }
 
-            if ($i >= 1000) {
+            if ($i >= 10000) {
                 $this->dm->flush();
                 $i = 0;
             }

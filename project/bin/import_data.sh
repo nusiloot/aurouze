@@ -27,6 +27,8 @@ echo "Récupération des users"
 
 cat $DATA_DIR/tblUtilisateur.csv | tr -d "\r" | sort -t ";" -k 1,1 > $DATA_DIR/tblUtilisateur.csv.sorted
 
+cat $DATA_DIR/tblUtilisateur.csv.sorted | sed -r 's/(.*)/\1;;AUTRE/g' | grep -Ev "RefUtilisateur;Nom;" > $DATA_DIR/utilisateurAutre.csv
+
 ##### Récupération des Techniciens #####
 
 echo "Récupération des techniciens"
@@ -115,165 +117,11 @@ do
 
 done < $DATA_DIR/etablissements.csv.tmp
 
-echo "Récupération des passages"
 
 cat  $DATA_DIR/tblPrestation.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/tblPrestation.cleaned.csv
 
 cat $DATA_DIR/tblPassageAdresse.csv | tr -d '\r' | sort -t ";" -k 2,2 > $DATA_DIR/passageAdresse.sorted.csv
 
-# Gère les retours chariots dans les champs
-cat  $DATA_DIR/tblPassage.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/^.*RefPassage;/RefPassage;/' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/passages.cleaned.sorted.csv
-
-join -t ';' -1 1 -2 2 $DATA_DIR/passages.cleaned.sorted.csv $DATA_DIR/passageAdresse.sorted.csv | sort -t ";" -k 4,4 > $DATA_DIR/passagesadresses.csv
-
-join -t ";" -1 4 -2 1 $DATA_DIR/passagesadresses.csv $DATA_DIR/techniciens.csv | sort -r > $DATA_DIR/passagesadressestechniciens.csv
-
-cat $DATA_DIR/tblPassagePrestationType.csv | tr -d '\r' | grep -v "RefPassagePrestationType;" > $DATA_DIR/tblPassagePrestationType.csv.tmp
-
-rm $DATA_DIR/passagesadressestechniciensprestation.csv > /dev/null;
-touch $DATA_DIR/passagesadressestechniciensprestation.csv;
-
-while read line
-do
-   IDENTIFIANT=`echo $line | cut -d ';' -f 2`;
-   grep -E "^[0-9]+;$IDENTIFIANT;" $DATA_DIR/tblPassagePrestationType.csv.tmp | cut -d ";" -f 3 > $DATA_DIR/prestationTypes.tmp.csv;
-   cat $DATA_DIR/prestationTypes.tmp.csv | sort -t ";" -k 1,1  > $DATA_DIR/prestationTypes.tmp.sorted.csv
-   PRESTATIONSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/prestationTypes.tmp.sorted.csv $DATA_DIR/prestationType.sorted.csv | cut -d ';' -f 6 | tr "\n" "#")
-   
-   echo $line";"$PRESTATIONSVAR >> $DATA_DIR/passagesadressestechniciensprestation.csv;
-
-done < $DATA_DIR/passagesadressestechniciens.csv
-
-cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
-    etablissement_id=$25;
-    d=$7;
-    d_creation=$19;
-    date_passage_debut="";
-    if(d) {
-        cmd="date --date=\""d"\" \"+%Y-%m-%d %H:%M:%S\"";
-        cmd | getline date_passage_debut;
-        close(cmd);
-    }
-    date_creation=$19;
-
-    if(!date_passage_debut && $6) { "date --date=\"$6\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; }
-    if(!date_passage_debut && $19) { "date --date=\"$19\" \"+%Y-%m-%d %H:%M:%S\"" | getline date_passage_debut; }
-
-    effectue=$13;
-    planifie=$18;
-    facture=$12;
-    imprime=$14;
-    duree=$8;
-
-    if(!duree) { duree=60; }
-
-    if(!effectue && date_passage_debut < "2016-01-15 00:00:00") {
-        next;
-    }
-
-    if(!effectue && date_passage_debut > "2016-03-01 00:00:00") {
-        next;
-    }
-
-    date_creation=date_passage_debut;
-
-    if(!effectue) {
-        date_passage_debut="";
-    } else if(effectue && !date_passage_debut) {
-        next;
-    }
-
-    if(!date_creation) {
-        date_creation="2016-01-01 00:00:00";
-    }
-
-    libelle=$4;
-    type_passage="";
-
-    if($5 == "1") { type_passage="Sous contrat";}
-    if($5 == "2") { type_passage="Sous garantie";}
-    if($5 == "3") { type_passage="Contrôle"; }
-    libelle=libelle " (" type_passage ")";
-
-    description=$17;
-    technicien=$26;
-    contrat_id=$3;
-    prestations=$47;
-
-    if(date_passage_debut && date_passage_debut < "2013-01-01 00:00:00") {
-        next;
-    }
-
-    print date_creation ";" etablissement_id ";" date_passage_debut ";;" duree ";" technicien ";" libelle ";" description ";" contrat_id ";" prestations
-
-}' > $DATA_DIR/passages.csv
-
-#### Récupération des contrats ####
-
-echo "Récupération des contrats"
-
-cat $DATA_DIR/tblPrestationAdresse.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationAdresse.sorted.csv
-
-join -t ';' -1 2 -2 1 $DATA_DIR/prestationAdresse.sorted.csv $DATA_DIR/tblPrestation.cleaned.csv > $DATA_DIR/prestation.tmp.csv
-
-cat $DATA_DIR/prestation.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
-    contrat_id=$1;
-    societe_old_id=$5;
-    contrat_archivage=$11;
-    etablissement_id=sprintf("%06d", $3);
-    commercial_id=sprintf("%06d", $8);
-    technicien_id=sprintf("%06d", $9);
-    contrat_type=$14;
-    prestation_type=$16;
-    localisation=$17;
-    date_contrat=$13;
-    date_creation_contrat="";
-    if(date_contrat) {
-        cmd="date --date=\""date_contrat"\" \"+%Y-%m-%d %H:%M:%S\"";
-        cmd | getline date_creation_contrat;
-        close(cmd);
-    }
-    date_acceptation=$19;
-    if(!date_creation_contrat){
-        cmd="date --date=\""date_acceptation"\" \"+%Y-%m-%d %H:%M:%S\"";
-        cmd | getline date_creation_contrat;
-        close(cmd);
-    }
-
-    date_debut=$20;
-    date_debut_contrat="";
-    if(date_debut) {
-        cmd="date --date=\""date_debut"\" \"+%Y-%m-%d %H:%M:%S\"";
-        cmd | getline date_debut_contrat;
-        close(cmd);
-    }
-
-    if(date_debut_contrat < "2011-01-01 00:00:00") {
-        next;
-    }
-
-    duree=$21;
-    garantie=$33;
-    prixht=$29;
-    print contrat_id";"etablissement_id";"societe_old_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";"contrat_archivage;
-}' > $DATA_DIR/contrats.csv.tmp;
-
-cat $DATA_DIR/tblPrestationProduit.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationProduit.sorted.csv
-
-rm $DATA_DIR/contrats.csv > /dev/null;
-touch $DATA_DIR/contrats.csv;
-
-while read line
-do
-   IDENTIFIANT=`echo $line | cut -d ';' -f 1`;
-   grep -E "[0-9]+;$IDENTIFIANT;" $DATA_DIR/prestationProduit.sorted.csv | cut -d ';' -f 4,5 > $DATA_DIR/produitContrat.tmp.csv
-   cat $DATA_DIR/produitContrat.tmp.csv | sort -t ";" -k 1,1  > $DATA_DIR/produitContrat.tmp.sorted.csv
-   
-   PRODUITSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/produitContrat.tmp.sorted.csv $DATA_DIR/produits.sorted.csv | cut -d ';' -f 2,3 | sed -r 's/(.+);(.+)/\2~\1/g' | tr "\n" "#")
-   
-   echo $line";"$PRODUITSVAR >> $DATA_DIR/contrats.csv;
-
-done < $DATA_DIR/contrats.csv.tmp
 
 echo "Import des commerciaux"
 
@@ -282,6 +130,10 @@ php app/console importer:csv user.importer $DATA_DIR/commerciaux.csv -vvv
 echo "Import des techniciens"
 
 php app/console importer:csv user.importer $DATA_DIR/techniciens.csv -vvv
+
+echo "Import Utilisateurs Autres"
+
+php app/console importer:csv user.importer $DATA_DIR/utilisateurAutre.csv -vvv
 
 echo "Import des types de prestations"
 
@@ -299,12 +151,21 @@ echo "Import des etablissements"
 
 php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv -vvv
 
-echo "Import des contrats"
 
-php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv -vvv
+#### Récupération et import des contrats ####
 
-echo "Import des passages"
+. bin/import_data_contrats.sh
 
-php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv
+
+#### Récupération et import des passages ####
+
+. bin/import_data_passages.sh
+
+
+
+
+
+
+
 
 

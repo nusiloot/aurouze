@@ -17,5 +17,24 @@ class UserRepository extends DocumentRepository {
     public function findByIdentite($identite) {
     	return $this->findOneBy(array('identite' => $identite));
     }
+    
+    public function findAllByTypeArray($type) {
+        $users = $this->findAllByType($type);
+        $result = array();
+        foreach ($users as $user) {
+            $result[$user->getIdentifiant()] = $user;
+        }
+        return $result;
+    }
+    
+    public function findAllInArray() {
+        $users = $this->findAll();
+        $result = array();
+        foreach ($users as $user) {
+            $result[$user->getIdentifiant()] = $user;
+        }
+        return $result;
+    }
+    
 
 }

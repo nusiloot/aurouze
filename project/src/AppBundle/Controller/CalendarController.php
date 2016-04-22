@@ -79,7 +79,8 @@ class CalendarController extends Controller {
 	            $dateDebut = new \DateTime($passageTech->getDateDebut()->format('Y-m-d') . 'T06:00:00');
 	            $diffDebut = (strtotime($passageTech->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
 	            $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-	            $tech = $dm->getRepository('AppBundle:User')->findByIdentite($technicien->getIdentifiant());
+                    $tech = $dm->getRepository('AppBundle:User')->findOneById($technicien->getId());
+	            
 	            $passageArr = array(
 	                'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
 	                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),

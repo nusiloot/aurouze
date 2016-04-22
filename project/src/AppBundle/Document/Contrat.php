@@ -107,6 +107,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     protected $dateAcceptation;
 
     /**
+     * @MongoDB\Date
+     */
+    protected $dateResiliation;
+    
+    /**
      * @MongoDB\Int
      */
     protected $duree;
@@ -152,6 +157,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     protected $identifiantReprise;
 
     public function __construct() {
+        $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->produits = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mouvements = new ArrayCollection();
@@ -243,6 +249,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param AppBundle\Document\Prestation $prestation
      */
     public function addPrestation(\AppBundle\Document\Prestation $prestation) {
+        foreach ($this->getPrestations() as $prest) {
+            if($prest == $prestation){
+                return;
+            }
+        }
         $this->prestations[] = $prestation;
     }
 
@@ -270,6 +281,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param AppBundle\Document\Produit $prestation
      */
     public function addProduit(\AppBundle\Document\Produit $produit) {
+        foreach ($this->getProduits() as $prod) {
+            if($prod == $produit){
+                return;
+            }
+        }
         $this->produits[] = $produit;
     }
 
@@ -634,6 +650,9 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
             }
         }
         $passagesDatesArray = array();
+        if(!count($this->getPrestations())){
+            return $passagesDatesArray;
+        }
         $monthInterval = (floatval($dureeContratMois) / floatval($maxNbPrestations));
         $nb_month = intval($monthInterval);
         $dateLastPassage = $dateDebut;
@@ -726,6 +745,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     public function addEtablissement(\AppBundle\Document\Etablissement $etablissement)
     {
+        foreach ($this->getEtablissements() as $etb){
+            if($etb->getId() == $etablissement->getId()){
+                return;
+            }
+        }
         $this->etablissements[] = $etablissement;
     }
 
@@ -918,4 +942,26 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         return $this->id;
     }
 
+
+    /**
+     * Set dateResiliation
+     *
+     * @param date $dateResiliation
+     * @return self
+     */
+    public function setDateResiliation($dateResiliation)
+    {
+        $this->dateResiliation = $dateResiliation;
+        return $this;
+    }
+
+    /**
+     * Get dateResiliation
+     *
+     * @return date $dateResiliation
+     */
+    public function getDateResiliation()
+    {
+        return $this->dateResiliation;
+    }
 }

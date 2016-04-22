@@ -1,0 +1,137 @@
+---
+- name: "modules debian installés"
+  apt: name={{item}} state=latest update_cache=yes
+  become: yes
+  with_items:
+  - apache2
+  - libapache2-mod-php5
+  - php5-intl
+  - git
+  - mongodb
+
+- name: "bonne version git"
+  git: repo=https://github.com/24eme/aurouze.git
+    dest={{project_folder}}
+    update=yes clone=yes version=master remote=master
+
+- name: "cache and log created"
+  become: yes
+  file: path={{symfony_folder}}/{{item}} state=directory
+  with_items:
+  - var
+
+- name: Set cache folder permissions
+  become: yes
+  shell: >
+    setfacl -R -m u:www-data:rwX -m u:{{ user }}:rwX {{symfony_folder}}/var
+    setfacl -dR -m u:www-data:rwX -m u:{{ user }}:rwX {{symfony_folder}}/var
+
+- name: "Configuration php apache2 datetimezone"
+  become: yes
+  ini_file: dest=/etc/php5/apache2/php.ini section=Date option=date.timezone value=Europe/Paris backup=yes
+
+- name: "Configuration php cli datetimezone"
+  become: yes
+  ini_file: dest=/etc/php5/cli/php.ini section=Date option=date.timezone value=Europe/Paris backup=yes
+
+- name: install composer
+  become: yes
+  shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin creates=/usr/local/bin/composer
+
+- name: rename composer.phar to composer
+  become: yes
+  shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer creates=/usr/local/bin/composer
+
+- name: make composer executable
+  become: yes
+  file: path=/usr/local/bin/composer mode=a+x state=file
+
+- name: "installation du projet via composer"
+  composer: command=install no_scripts="yes" working_dir={{symfony_folder}}
+
+- name: "creation du fichier de configuration"
+  copy: src={{symfony_folder}}/app/config/parameters.yml.dist dest={{symfony_folder}}/app/config/parameters.yml remote_src=yes
+
+- name: "Prepare Virtual document root"
+  become: yes
+  file: path=/home/www state=directory owner={{ user }}
+
+- name: "Configuration apache"
+  become: yes
+  copy: src=files/apache.conf dest=/etc/apache2/sites-available/000-default.conf
+
+- name: "Apache modules"
+  become: yes
+  apache2_module: state=present name={{item}}
+  with_items:
+  - rewrite
+  - vhost_alias
+  notify: reload apache
+
+- name: "Create virtualhost"
+  become: yes
+  file: path=/home/www/{{ server_name }} state=link src={{symfony_folder}}/web
+
+#
+# - name: "Create virtualhost"
+#   become: yes
+#   file: path=/home/www/{{giilda_hostname}} state=link src=/home/actualys/{{giilda_branch}}_{{giilda_instance}}/project/web
+#
+# - name: "Has couchdb package"
+#   become: yes
+#   get_url: url=http://ftp.debian.org/debian/pool/main/c/couchdb/couchdb_1.4.0-3+b1_amd64.deb dest=/var/cache/apt/archives/
+#   register: couchdb
+#
+# - name: "Couchdb started"
+#   become: yes
+#   apt: deb=/var/cache/apt/archives/couchdb_1.4.0-3+b1_amd64.deb state=present
+#   when: couchdb|changed
+#
+# - name: "Elasticsearch present et started"
+#   become: yes
+#   apt: name={{item}} state=present
+#   with_items:
+#   - openjdk-7-jre
+#   - elasticsearch
+#
+# - name: "Plugin head present"
+#   become: yes
+#   shell: /usr/share/elasticsearch/bin/plugin install mobz/elasticsearch-head
+#   args:
+#     creates: /usr/share/elasticsearch/plugins/head
+#
+# - name: "Logstash and kibana"
+#   apt: name={{item}} state=present
+#   with_items:
+#   - logstash
+#   - kibana
+#
+# - name: "ELK started"
+#   service: name={{item}} state=started
+#   become: yes
+#   with_items:
+#   - elasticsearch
+#   - logstash
+#   - kibana
+#
+    # - name: "GIILDA Configuration"
+    #   template: src={{item.src}} dest=/home/actualys/{{giilda_branch}}_{{giilda_instance}}/project/{{item.dest}}
+    #   with_items:
+    #   - {src: symfony/declaration_dev.php.j2, dest: web/declaration_dev.php}
+    #   - {src: symfony/databases.yml.j2, dest: config/databases.yml}
+    #   - {src: symfony/app.yml.j2, dest: config/app.yml}
+    #   - {src: config.inc.j2, dest: bin/config.inc}
+#
+#
+# - name: "GIILDA xinetd"
+#   become: true
+#   template: src=xinetd.d/{{item}}.j2 dest=/etc/xinetd.d/{{item}}
+#   with_items:
+#   - elasticsearch
+#   - couchdb
+#   notify: reload xinetd
+#
+# - name: "Make viewes"
+#   shell: make
+#   args:
+#     chdir: /home/actualys/{{giilda_branch}}_{{giilda_instance}}/project

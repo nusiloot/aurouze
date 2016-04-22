@@ -12,7 +12,7 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
 use AppBundle\Type\PassageCreationType;
-use AppBundle\Manager\ContratManager;
+use AppBundle\Manager\PassageManager;
 
 class PassageController extends Controller {
 
@@ -124,21 +124,49 @@ class PassageController extends Controller {
             return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
         }
 
-        $contratManager = new ContratManager($dm);
-        $contrat = $passage->getContrat();
+        $passageManager = new PassageManager($dm);
 
-        $nextPassage = $contratManager->getNextPassageForContrat($contrat);
-
+        $nextPassage = $passageManager->getNextPassageFromPassage($passage);
         if ($nextPassage) {
-            $contrat->addPassage($nextPassage);
+            $nextPassage->setDateDebut($nextPassage->getDatePrevision());
             $dm->persist($nextPassage);
         }
+
+        $passage->setDateRealise($passage->getDateDebut());
+        $dm->persist($passage);
 
         $dm->flush();
 
 
 
-        return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissementId()));
+        return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
+    }
+
+    /**
+     * @Route("/passage/pdf-bon/{id}", name="passage_pdf_bon")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function pdfBonAction(Request $request, Passage $passage) {
+        $fm = $this->get('facture.manager');
+
+        $html = $this->renderView('passage/pdfBon.html.twig', array(
+                'passage' => $passage,
+                'parameters' => $fm->getParameters(),
+            ));
+
+        if($request->get('output') == 'html') {
+
+            return new Response($html, 200);
+        }
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+                200,
+                array(
+                    'Content-Type'          => 'application/pdf',
+                    'Content-Disposition'   => 'attachment; filename="bon.pdf"'
+                )
+        );
     }
 
     /**
