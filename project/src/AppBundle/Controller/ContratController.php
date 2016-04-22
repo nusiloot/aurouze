@@ -123,7 +123,7 @@ class ContratController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
             $contratManager->generateAllPassagesForContrat($contrat);
-            $contrat->setDateFin($contrat->getDateDebut()->modify("+ ".$contrat->getDuree()));
+            $contrat->setDateFin($contrat->getDateDebut()->modify("+".$contrat->getDuree()." month"));
             $contrat->setStatut(ContratManager::STATUT_VALIDE);
             $dm->persist($contrat);
             $dm->flush();
