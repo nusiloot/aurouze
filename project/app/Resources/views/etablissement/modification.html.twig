@@ -2,79 +2,107 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 
+
     <div class="row">
-        <div class="col-xs-12">
-            <h3>{{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small> <a class="btn btn-sm btn-warning pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a></h3>
-        </div>
-    </div>
-	<h3>Création d'un etablissement</h3>
-    <div class="row">
-        {{ form_start(form) }}
-        <div class="panel panel-default">
-            <div class="panel-heading"><strong>Société</strong></div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-xs-6">
-                        {{ form_row(form.raisonSociale) }}
-                    </div>
-                    <div class="col-xs-3">
-                        {{ form_row(form.nom) }}
-                    </div>
-                    <div class="col-xs-3">
-                        {{ form_row(form.type) }}
-                    </div>
-                </div>
-                <hr style="margin-top: 5px;" />
-                <div class="row">
-                    <div class="col-xs-6">
-                        {{ form_row(form.adresse.adresse) }}
-                    </div>
-                    <div class="col-xs-3">
-                        {{ form_row(form.adresse.codePostal) }}
-                    </div>
-                    <div class="col-xs-3">
-                        {{ form_row(form.adresse.commune) }}
-                    </div>
-                </div>
-                <hr style="margin-top: 5px;" />
-                <div class="row">
-                    <div class="col-xs-6">
-                        {{ form_row(form.adresse.adresse) }}
-                    </div>
-                    <div class="col-xs-3">
-                        {{ form_row(form.adresse.codePostal) }}
-                    </div>
-                    <div class="col-xs-3">
-                        {{ form_row(form.adresse.commune) }}
-                    </div>
-                </div>
-                <hr style="margin-top: 5px;" />
-                <div class="row">
-                    <div class="col-xs-4">
-                        {{ form_row(form.contactCoordonnee.telephoneFixe) }}
-                    </div>
-                    <div class="col-xs-4">
-                        {{ form_row(form.contactCoordonnee.telephoneMobile) }}
-                    </div>
-                    <div class="col-xs-4">
-                        {{ form_row(form.contactCoordonnee.fax) }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-6">
-                        {{ form_row(form.contactCoordonnee.email) }}
-                    </div>
-                    <div class="col-xs-6">
-                        {{ form_row(form.contactCoordonnee.siteInternet) }}
-                    </div>
-                </div>
-            </div>
-        </div>        
+		<div class="col-xs-12">
+			<div class="card">
+				<div class="card-header">
+					<div class="card-title">
+						<div class="title">{{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small></div>
+					</div>
+					<div class="pull-right card-action">
+						<a class="btn btn-sm btn-default" href="{{ path('societe_visualisation', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="fa fa-mail-reply"></span>&nbsp;Retour</strong></a>
+					</div>
+				</div>
+			</div>
+			
+	
+			<div class="page-title">
+				<span class="title">Nouvel établissement</span>
+				<div class="description">Données relatives aux éléments de passage.</div>
+			</div>
+		</div>
+	</div>
+	
+   {{ form_start(form) }}
+   <div class="row">
+		<div class="col-xs-12">
+			
+			<div class="card">
+				<div class="card-header">
+					<div class="card-title"><div class="title">Informations</div></div>
+				</div>
+				<div class="card-body">
+					<div class="form-group">
+	                        {{ form_row(form.raisonSociale) }}
+	                 </div>
+	                 <div class="form-group">
+	                        {{ form_row(form.nom) }}
+	                 </div>
+	                 <div class="form-group">
+	                        {{ form_row(form.type) }}
+	                 </div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-xs-12">
+		
+			<div class="card">
+				<div class="card-header">
+					<div class="card-title"><div class="title">Adresse</div></div>
+				</div>
+				<div class="card-body">
+					<div class="form-group">
+	                        {{ form_row(form.adresse.adresse) }}
+	                 </div>
+	                 <div class="form-group">
+	                        {{ form_row(form.adresse.codePostal) }}
+	                 </div>
+	                 <div class="form-group">
+	                        {{ form_row(form.adresse.commune) }}
+	                </div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12">
+		
+			<div class="card">
+				<div class="card-header">
+					<div class="card-title"><div class="title">Contact</div></div>
+				</div>
+				<div class="card-body">
+					<div class="form-group">
+	                        {{ form_row(form.contactCoordonnee.telephoneFixe) }}
+	                 </div>
+	                 <div class="form-group">
+	                        {{ form_row(form.contactCoordonnee.telephoneMobile) }}
+	                 </div>
+	                 <div class="form-group">
+	                        {{ form_row(form.contactCoordonnee.fax) }}
+	                 </div>
+	                 <div class="form-group">
+	                        {{ form_row(form.contactCoordonnee.email) }}
+	                 </div>
+	                 <div class="form-group">
+	                        {{ form_row(form.contactCoordonnee.siteInternet) }}
+	                </div>
+				</div>
+			</div>
+			
+		</div>
+	</div>    
             <div class="row">
         		<div class="col-xs-12">
             		{{ form_widget(form.save) }}
             	</div>
             </div>
         {{ form_end(form) }}
-    </div>
 {% endblock %}

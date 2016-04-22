@@ -1,46 +1,45 @@
 {% set _menu_active = 'societe' %}
 {% extends 'base.html.twig' %}
 {% block body %}
-
-    <div class="row">
-        <div class="col-xs-12">
-            <h3>{{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small> <a class="btn btn-sm btn-warning pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a></h3>
-            <div class="panel panel-default">
-			    <div class="panel-heading">Informations</div>
-			    <div class="panel-body">
-			        <div class="row">
-			        	<div class="col-xs-12">Provenance : {{ societe.provenance }}</div>
-			        </div>
-                	<hr />
-			        <div class="row">
-			            <div class="col-xs-12">
-							{{ societe.adresse.adresse }} <br />
-							{{ societe.adresse.codePostal }} {{ societe.adresse.commune }} 
-			            </div>
-			        </div>
-			        <div class="row">
-			            <div class="col-xs-12">
-							<i class="glyphicon glyphicon-earphone"></i> {{ societe.contactCoordonnee.telephoneFixe }} <i class="glyphicon glyphicon-phone"></i>&nbsp;{{ societe.contactCoordonnee.telephoneMobile }} <i class="glyphicon glyphicon-print"></i>&nbsp;{{ societe.contactCoordonnee.fax }} <i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ societe.contactCoordonnee.email }} <i class="glyphicon glyphicon-globe"></i>&nbsp;{{ societe.contactCoordonnee.siteInternet }}
-			            </div>
-			        </div>
-                	<hr />
-			        <div class="row">
-			            <div class="col-xs-12">
-			            {{ societe.commentaire }} 
-			            </div>
-			        </div>
-                	<hr />
-			        <div class="row">
-			            <div class="col-xs-12">
-			            {% for tag in societe.tags %}
-			            <span type="button" class="btn btn-info btn-xs">{{ tag }}</span>
-			            {% endfor %}
-			        	</div>
-			        </div>
-			    </div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="card">
+			<div class="card-header">
+				<div class="card-title">
+					<div class="title">{{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small></div>
+				</div>
+				<div class="pull-right card-action">
+					<a class="btn btn-sm btn-warning" href="{{ path('societe_modification', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a>
+				</div>
 			</div>
-        </div>
-    </div>
+			<div class="card-body">
+				<div class="row">
+		            <div class="col-xs-8">
+						{{ societe.adresse.adresse }} <br />
+						{{ societe.adresse.codePostal }} {{ societe.adresse.commune }}
+		            </div>
+		            <div class="col-xs-2">
+		            	<ul class="list-unstyled">
+							<li><i class="glyphicon glyphicon-earphone"></i> {{ societe.contactCoordonnee.telephoneFixe }}</li>
+							<li><i class="glyphicon glyphicon-phone"></i>&nbsp;{{ societe.contactCoordonnee.telephoneMobile }}</li>
+							<li><i class="glyphicon glyphicon-print"></i>&nbsp;{{ societe.contactCoordonnee.fax }}</li>
+						</ul>
+		            </div>
+		            <div class="2">
+		            	<ul class="list-unstyled">
+							<li><i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ societe.contactCoordonnee.email }}</li> 
+							<li><i class="glyphicon glyphicon-globe"></i>&nbsp;{{ societe.contactCoordonnee.siteInternet }}</li>
+						</ul>
+		            </div>
+	            </div>
+	            <div class="row"><div class="col-xs-12">{{ societe.commentaire }}</div></div>
+	            <div class="row"><div class="col-xs-12">{% for tag in societe.tags %}<span type="button" class="btn btn-info btn-xs">{{ tag }}</span>{% endfor %}</div></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 	<h3>Etablissements ({{ societe.etablissements|length }}) <a class="btn btn-sm btn-warning pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter</strong></a></h3>
     <div class="row">
     	{% for etablissement in societe.etablissements %}

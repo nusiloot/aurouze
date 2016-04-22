@@ -12,63 +12,84 @@
         <link rel="stylesheet" href="{{ asset('/component/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('/component/bootstrap-timepicker/css/bootstrap-timepicker.css') }}" />
         <link rel="stylesheet" href="{{ asset('/component/fullcalendar/css/fullcalendar.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/component/select2/css/select2.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/component/select2/css/select2-bootstrap.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('/component/mervick/material-design-icons/css/material-icons.css') }}">
         <link rel="stylesheet" href="{{ asset('/component/leaflet/leaflet.css') }}">
         <link rel="stylesheet" href="{{ asset('/component/aurouze/aurouze.css') }}">
         <link rel="stylesheet" href="{{ asset('/component/leaflet-extra-markers/css/leaflet.extra-markers.css') }}">
         <link rel="stylesheet" media="print" href="{{ asset('/component/fullcalendar/css/fullcalendar.print.css') }}" />
         <link rel="stylesheet" href="{{ asset('/css/main.css') }}" />
+        
+        <!-- Fonts -->
+	    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300,400' rel='stylesheet' type='text/css'>
+	    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+	    <!-- CSS Libs -->
+	    <link rel="stylesheet" type="text/css" href="{{ asset('/component/flat-admin-theme/lib/css/font-awesome.min.css') }}">
+	    <link rel="stylesheet" type="text/css" href="{{ asset('/component/flat-admin-theme/lib/css/animate.min.css') }}">
+	    <link rel="stylesheet" type="text/css" href="{{ asset('/component/flat-admin-theme/lib/css/bootstrap-switch.min.css') }}">
+	    <link rel="stylesheet" type="text/css" href="{{ asset('/component/flat-admin-theme/lib/css/checkbox3.min.css') }}">
+	    <link rel="stylesheet" type="text/css" href="{{ asset('/component/flat-admin-theme/lib/css/jquery.dataTables.min.css') }}">
+	    <link rel="stylesheet" type="text/css" href="{{ asset('/component/flat-admin-theme/lib/css/dataTables.bootstrap.css') }}">
+	    <link rel="stylesheet" type="text/css" href="{{ asset('/component/flat-admin-theme/lib/css/select2.min.css') }}">
+	    <!-- CSS App -->
+	    <link rel="stylesheet" type="text/css" href="{{ asset('/component/flat-admin-theme/css/style.css') }}">
+	    <link rel="stylesheet" type="text/css" href="{{ asset('/component/flat-admin-theme/css/themes/flat-green.css') }}">
 
     {% block stylesheets %}{% endblock %}
 </head>
 
-<body>
-    <div id="ajax_notifications">
-        <div id="ajax_form_progress_notification">
-            Traitement en cours...
-        </div>
-        <div id="ajax_form_error_notification">
-            Oops, une erreur est survenue ! </br>
-            Vous pouvez <a href="javascript:location.reload();">recharger la page</a><br />ou si le problème persiste contactez le 24eme.
-        </div>
-    </div>
-
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="" href="{{ path('passage') }}" style="margin: 5px 10px 5px 0;"><img src="{{ asset('/images/logo.jpg') }}" height="40" style="margin-top: 5px;"  /></a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="{%if (_menu_active == 'passage') %}active{% endif %}">
-                        <a href="{% if(app.request.get('etablissement') and _menu_active != 'passage') %}{{ path('passage_etablissement', { id: app.request.get('etablissement').id }) }}{% else %}{{ path('passage') }}{% endif %}">Passages / Planification</a>
-                    </li>
-                    <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}">Calendrier</a></li>
-                    <li class="{%if (_menu_active == 'contrat') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'contrat') %}{% else %}{{ path('contrat') }}{% endif %}">Contrats</a></li>
-                    <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}">Factures</a></li>
-                    <li class="{%if (_menu_active == 'societe') %}active{% endif %}"><a href="{{ path('societe') }}">Société</a></li>
-                </ul>
-                <ul class="nav navbar-nav pull-right">
-                    <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog"></span></a></li>
-                </ul>
-            </div>
-    </nav>
-
-    <div class="container">
-    {% block body %}{% endblock %}
-</div>
+<body class="flat-green">
+	<div class="app-container">
+		<div class="row content-container">
+		
+		
+		    <div id="ajax_notifications">
+		        <div id="ajax_form_progress_notification">
+		            Traitement en cours...
+		        </div>
+		        <div id="ajax_form_error_notification">
+		            Oops, une erreur est survenue ! </br>
+		            Vous pouvez <a href="javascript:location.reload();">recharger la page</a><br />ou si le problème persiste contactez le 24eme.
+		        </div>
+		    </div>
+		
+			<nav id="navbar" class="navbar navbar-fixed-top navbar-top navbar-default">
+				<div class="container-fluid">
+					<div class="navbar-header">
+                        <a class="" href="{{ path('passage') }}"><img src="{{ asset('/images/logo.jpg') }}" height="40" style="margin-top: 5px;"  /></a>
+                        <button type="button" class="navbar-toggle collapsed pull-right" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+		                    <span class="sr-only">Toggle navigation</span>
+		                    <span class="icon-bar"></span>
+		                    <span class="icon-bar"></span>
+		                    <span class="icon-bar"></span>
+		                </button>
+                    </div>
+                    <div id="navbar" class="navbar-collapse collapse">
+	                    <ul class="nav navbar-nav navbar-right">
+	                    	<li class="{%if (_menu_active == 'passage') %}active{% endif %}"><a href="{% if(app.request.get('etablissement') and _menu_active != 'passage') %}{{ path('passage_etablissement', { id: app.request.get('etablissement').id }) }}{% else %}{{ path('passage') }}{% endif %}">Passages / Planification</a></li>
+		                    <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}">Calendrier</a></li>
+		                    <li class="{%if (_menu_active == 'contrat') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'contrat') %}{% else %}{{ path('contrat') }}{% endif %}">Contrats</a></li>
+		                    <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}">Factures</a></li>
+		                    <li class="{%if (_menu_active == 'societe') %}active{% endif %}"><a href="{{ path('societe') }}">Société</a></li>
+		                    <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog"></span></a></li>
+	                    </ul>
+                    </div>
+				</div>
+			</nav>
+			
+			<div class="container" style="padding-top:70px;">
+				{% block body %}{% endblock %}
+			</div>
+		
+		</div>
+		<footer class="app-footer">
+			<div class="wrapper">
+				<p class="text-center">
+					Aurouze
+				</p>
+		</footer>
+	</div>
 
 {% block javascripts %}{% endblock %}
-
 <script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/component/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -86,6 +107,19 @@
 <script type="text/javascript" src="{{ asset('/js/calendar-settings.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/js/main.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/js/map.js') }}"></script>
+
+
+<!-- Javascript Libs -->
+ <script type="text/javascript" src="{{ asset('/component/flat-admin-theme/lib/js/Chart.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/component/flat-admin-theme/lib/js/bootstrap-switch.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/component/flat-admin-theme/lib/js/jquery.matchHeight-min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/component/flat-admin-theme/lib/js/jquery.dataTables.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/component/flat-admin-theme/lib/js/dataTables.bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/component/flat-admin-theme/lib/js/ace/ace.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/component/flat-admin-theme/lib/js/ace/mode-html.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/component/flat-admin-theme/lib/js/ace/theme-github.js') }}"></script>
+<!-- Javascript -->
+<script type="text/javascript" src="{{ asset('/component/flat-admin-theme/js/app.js') }}"></script>
 
 </body>
 </html>

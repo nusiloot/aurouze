@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +12,7 @@ use AppBundle\Manager\EtablissementManager;
 use AppBundle\Type\EtablissementChoiceType;
 use AppBundle\Type\EtablissementType;
 use AppBundle\Document\Etablissement;
+use AppBundle\Document\Societe;
 
 class EtablissementController extends Controller {
 
@@ -99,11 +101,11 @@ class EtablissementController extends Controller {
     
     /**
      * @Route("/etablissement/{societe}/modification/{id}", defaults={"id" = null}, name="etablissement_modification")
+     * @ParamConverter("societe", class="AppBundle:Societe", options={"id" = "societe"})
      */
-    public function modificationAction(Request $request, $societe, $id) {
+    public function modificationAction(Request $request, Societe $societe, $id) {
     	
     	$dm = $this->get('doctrine_mongodb')->getManager();
-    	$societe = $this->get('societe.manager')->getRepository()->find($societe);
     	$etablissement = ($id)? $this->get('etablissement.manager')->getRepository()->find($id) : new Etablissement();
     	
     	$etablissement->setSociete($societe);
