@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\EtablissementChoiceType;
 use AppBundle\Document\Etablissement;
+use AppBundle\Document\Contrat;
 use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
 use AppBundle\Type\PassageCreationType;
@@ -33,22 +34,25 @@ class PassageController extends Controller {
     }
 
     /**
-     * @Route("/passage/{id}/creer", name="passage_creation")
-     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
+     * @Route("/passage/{id_etablissement}/{id_contrat}/creer", name="passage_creation")
+     * @ParamConverter("etablissement", class="AppBundle:Etablissement", options={"id" = "id_etablissement"})
+     * @ParamConverter("contrat", class="AppBundle:Contrat", options={"id" = "id_contrat"})
      */
-    public function creationAction(Request $request, Etablissement $etablissement) {
+    public function creationAction(Request $request, Etablissement $etablissement, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-
-        $passage = $this->get('passage.manager')->create($etablissement);
-
+        
+        $passage = $this->get('passage.manager')->create($etablissement, $contrat);
+        
         $form = $this->createForm(new PassageCreationType($dm), $passage, array(
-            'action' => $this->generateUrl('passage_creation', array('id' => $etablissement->getId())),
+            'action' => $this->generateUrl('passage_creation', array('id_etablissement' => $etablissement->getId(), 'id_contrat' => $contrat->getId())),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $passage = $form->getData();
             $dm->persist($passage);
+            $contrat->addPassage($etablissement, $passage);
+            $dm->persist($contrat);
             $dm->flush();
             return $this->redirectToRoute('passage_etablissement', array('id' => $etablissement->getId()));
         }

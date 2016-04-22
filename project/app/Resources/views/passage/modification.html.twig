@@ -6,7 +6,7 @@
         <div class="col-xs-12">
             <h3>Modification du passage <small class="text-muted">{{ passage.identifiant }}</small></h3>
             <p>Etablissement : {{ passage.intitule }}</p>
-            <p>Contrat : </p>
+            <p>Contrat : {{ passage.getContrat().getId()) }}</p>
 
             {{ form_start(form) }}
 
