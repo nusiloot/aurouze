@@ -48,9 +48,9 @@ cat $DATA_DIR/passagesadressestechniciens.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0
 }' > $DATA_DIR/passagesadressestechniciens.csv
 
 # A ENLEVER plus tard, pour debug
-echo 'DEBUG MODE'
-cat $DATA_DIR/passagesadressestechniciens.csv | head -n 10000 > $DATA_DIR/passagesadressestechniciens.csv.tmp
-cat $DATA_DIR/passagesadressestechniciens.csv.tmp > $DATA_DIR/passagesadressestechniciens.csv
+echo 'NO DEBUG MODE => IMPORT TOTAL '
+#cat $DATA_DIR/passagesadressestechniciens.csv | head -n 10000 > $DATA_DIR/passagesadressestechniciens.csv.tmp
+#cat $DATA_DIR/passagesadressestechniciens.csv.tmp > $DATA_DIR/passagesadressestechniciens.csv
 #
 
 cat $DATA_DIR/tblPassagePrestationType.csv | tr -d '\r' | grep -v "RefPassagePrestationType;" > $DATA_DIR/tblPassagePrestationType.csv.tmp

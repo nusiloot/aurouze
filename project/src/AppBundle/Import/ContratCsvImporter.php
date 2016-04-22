@@ -115,7 +115,7 @@ class ContratCsvImporter {
             $dateFin = clone $contrat->getDateDebut();
             $dateFin->modify("+ " . $contrat->getDuree() . " month");
             $contrat->setDateFin($dateFin);
-            $contrat->setNomenclature(str_replace('\n', "\n", $data[self::CSV_NOMENCLATURE]));
+            $contrat->setNomenclature(str_replace('#', "\n", $data[self::CSV_NOMENCLATURE]));
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
             $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);

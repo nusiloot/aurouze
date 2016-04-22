@@ -106,6 +106,12 @@ cat $DATA_DIR/adresse.csv.temp | grep -e "^[0-9]*;[0-9]*;3" > $DATA_DIR/adresse_
 
 join -t ';' -1 2 -2 1 $DATA_DIR/adresse_application.csv $DATA_DIR/entite.csv.temp > $DATA_DIR/etablissements.csv.tmp
 
+cat $DATA_DIR/etablissements.csv.tmp | awk -F ';' '{
+cmt=$15
+gsub(/\\n/,"#",cmt);
+print $0 ";" cmt
+}' > $DATA_DIR/etablissementsCmt.csv.tmp
+
 rm $DATA_DIR/etablissements.csv > /dev/null;
 touch $DATA_DIR/etablissements.csv;
 
@@ -115,7 +121,7 @@ do
    COORDONNEES=`grep "\"$IDENTIFIANT\";" $DATA_DIR/etablissementsCoordonees.csv | cut -d ";" -f 2,3`;
    echo $line";"$COORDONNEES >> $DATA_DIR/etablissements.csv;
 
-done < $DATA_DIR/etablissements.csv.tmp
+done < $DATA_DIR/etablissementsCmt.csv.tmp
 
 
 cat  $DATA_DIR/tblPrestation.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/tblPrestation.cleaned.csv
