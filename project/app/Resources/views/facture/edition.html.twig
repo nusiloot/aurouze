@@ -4,7 +4,7 @@
 {% form_theme form _self %}
 
 {% block _facture_lignes_entry_row %}
-    <div class="row form-group dynamic-collection-item">
+    <div class="row form-group dynamic-collection-item" id="ligne_facture">
         <div class="col-xs-5">
             {{ form_widget(form.libelle) }}
         </div>
@@ -29,7 +29,7 @@
     {{ form_widget(form.lignes, { 'attr': {'class': 'dynamic-collection'} }) }}
     <div class="row form-group">
         <div class="col-xs-12 text-right">
-            <a href="javascript:void(0);" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+            <a href="javascript:void(0);" data-collection-target="#facture_lignes"  class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
         </div>
     </div>
     <div class="row form-group">

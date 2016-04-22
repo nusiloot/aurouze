@@ -69,7 +69,7 @@
 	            {{ form_widget(form.prestations, { 'attr': {'class': 'dynamic-collection'} }) }}
 			    <div class="row">
 			        <div class="col-xs-12 text-right">
-			            <a href="javascript:void(0);" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+			            <a href="javascript:void(0);" data-collection-target="#contrat_prestations" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
 			        </div>
 			    </div>
                 <hr style="margin-top: 20px;" />
@@ -78,13 +78,13 @@
                         Produits :
                     </div>
                     <div class="col-xs-2 text-center">
-                        Nombre prévu :
+                        Quantité prévue :
                     </div>
                 </div>
                 {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
 			    <div class="row">
 			        <div class="col-xs-12 text-right">
-			            <a href="javascript:void(0);" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+			            <a href="javascript:void(0);" data-collection-target="#contrat_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
 			        </div>
 			    </div>
                 <hr style="margin-top: 20px;" />
