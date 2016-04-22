@@ -6,7 +6,7 @@ SYMFODIR=$(pwd);
 DATA_DIR=$TMP/AUROUZE_DATAS
 
 
-echo "Récupération des passages"
+echo -e "\n\nRécupération des passages"
 
 # Gère les retours chariots dans les champs
 
@@ -168,6 +168,6 @@ cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[
 }' > $DATA_DIR/passages.csv
 
 
-echo "Import des passages"
+echo -e "\nImport des passages"
 
 php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv

@@ -5,7 +5,7 @@
 SYMFODIR=$(pwd);
 DATA_DIR=$TMP/AUROUZE_DATAS
 
-echo "Récupération des contrats"
+echo -e "\n\nRécupération des contrats"
 
 cat $DATA_DIR/tblPrestationAdresse.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationAdresse.sorted.csv
 
@@ -38,7 +38,7 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
     if(!date_creation_contrat){
         next;
     }
-    if(date_creation_contrat < "2014-01-01"){
+    if(date_creation_contrat < "2013-01-01"){
         next;
     }
 
@@ -90,7 +90,7 @@ do
 
 done < $DATA_DIR/contrats.csv.tmp
 
-echo "Import des contrats"
+echo -e "\nImport des contrats"
 
 php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv -vvv
 

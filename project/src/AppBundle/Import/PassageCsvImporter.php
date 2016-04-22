@@ -77,12 +77,8 @@ class PassageCsvImporter {
 
         $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
 
-        $this->updateContratsAndPassages($output);        
-        $this->updatePassagesAttentes($output);
-        exit;
-        
         foreach ($csv as $data) {
-
+            
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
             }
@@ -96,6 +92,7 @@ class PassageCsvImporter {
                 $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
             }
+            
             $passage = new Passage();
             $passage->setEtablissement($etablissement);
             if (!$data[self::CSV_DATE_PREVISION]) {
@@ -111,10 +108,9 @@ class PassageCsvImporter {
 
             $doublonPassage = $this->pm->getRepository()->findOneById($passage->getId());
             if ($doublonPassage) {
-                $passage->setNumeroPassageIdentifiant(sprintf("%03d",intval($passage->getNumeroPassageIdentifiant()+1)));
+                $passage->setNumeroPassageIdentifiant(sprintf("%03d", intval($passage->getNumeroPassageIdentifiant() + 1)));
                 $passage->generateId();
-                $output->writeln(sprintf("<warning>Le passage d'id %s existe déjà en base (%s)!</warning>", $passage->getId(), $data[self::CSV_OLD_ID]));
-               
+                $output->writeln(sprintf("<comment>Le passage d'id %s existe déjà en base (%s)!</comment>", $passage->getId(), $data[self::CSV_OLD_ID]));
             }
             $resultStatut = $this->generateStatut($data, $passage, $output);
             if (!$resultStatut) {
@@ -206,11 +202,11 @@ class PassageCsvImporter {
         $this->dm->flush();
         $progress->finish();
 
-        echo "\n**************************\n";
+        echo "\n\n**************************\n";
         echo "\nMis en cohérence des contrats et passages...\n";
-        echo "\n**************************\n";
+        echo "\n**************************\n\n";
 
-        $this->updateContratsAndPassages($output);        
+        $this->updateContratsAndPassages($output);
         $this->updatePassagesAttentes($output);
     }
 
@@ -229,7 +225,7 @@ class PassageCsvImporter {
             $nomenclature = preg_replace('/( n[\.A-Z0-9_-]+)|([\.A-Z0-9_-]+n )|([\.A-Z0-9_-]+n[\.A-Z0-9_-]+)/', '\n', $nomenclature);
             $nomenclature = preg_replace("/( nn[\.A-Z0-9_-]+)|([\.A-Z0-9_-]+nn )|([\.A-Z0-9_-]+nn[\.A-Z0-9_-]+)/", '\n\n', $nomenclature);
 
-            
+
             $contrat->setNomenclature($nomenclature);
 
 
@@ -238,6 +234,12 @@ class PassageCsvImporter {
             $technicienForContrat = null;
             foreach ($contrat->getContratPassages() as $contratPassages) {
                 foreach ($contratPassages->getPassages() as $passage) {
+
+                    if (!$this->pm->getRepository()->findById($passage->getId())) {
+                        $output->writeln('');
+                        $output->writeln(sprintf("<comment>Le passage d'id %s semble Introuvable dans la base pourtant référencé par le contrat  %s !</comment>", $passage->getId(), $contrat->getId()));
+                        continue;
+                    }
 
                     $this->cleanPassage($passage);
 
@@ -268,7 +270,7 @@ class PassageCsvImporter {
             if (!$contrat->getTechnicien() && $technicienForContrat) {
                 $contrat->setTechnicien($technicienForContrat);
             }
-            
+
             foreach ($prestationsArr as $prestation) {
                 $contrat->addPrestation($prestation);
                 $this->dm->persist($contrat);
@@ -279,27 +281,35 @@ class PassageCsvImporter {
             if ($contratResilie || $technicienContrat) {
                 foreach ($contrat->getContratPassages() as $contratPassages) {
                     foreach ($contratPassages->getPassages() as $passage) {
-                        if(!count($passage->getTechniciens()) && $technicienContrat){
+                        if (!$this->pm->getRepository()->findById($passage->getId())) {
+                            $output->writeln(sprintf("<comment>Le passage d'id %s semble Introuvable dans la base pourtant référencé par le contrat  %s !</comment>", $passage->getId(), $contrat->getId()));
+                            continue;
+                        }
+                        if (!count($passage->getTechniciens()) && $technicienContrat) {
                             $passage->addTechnicien($technicienContrat);
                             $this->dm->persist($passage);
                         }
-                        if($contratResilie){
-                            if($passage->getDatePrevision()->format('YmdHi') > $contrat->getDateResiliation()->format('YmdHi')){
+                        if ($contratResilie) {
+                            if ($passage->getDatePrevision()->format('YmdHi') > $contrat->getDateResiliation()->format('YmdHi')) {
                                 $passage->setStatut(PassageManager::STATUT_ANNULE);
                                 $this->dm->persist($passage);
                             }
                         }
-                        
                     }
                 }
             }
-            
+
 
 
 
             $contratFini = true;
             foreach ($contrat->getContratPassages() as $contratPassages) {
                 foreach ($contratPassages->getPassages() as $passage) {
+                    
+                    if(!$this->pm->getRepository()->findById($passage->getId())){
+                        $output->writeln(sprintf("<comment>Le passage d'id %s semble Introuvable dans la base pourtant référencé par le contrat  %s !</comment>", $passage->getId(), $contrat->getId()));
+                        continue;
+                    }
                     if (!$passage->isRealise()) {
                         $contratFini = false;
                         break;
@@ -327,7 +337,6 @@ class PassageCsvImporter {
         }
         $this->dm->flush();
         $progress->finish();
-        
     }
 
     public function updatePassagesAttentes($output) {
@@ -413,7 +422,7 @@ class PassageCsvImporter {
                 $passage->setDateDebut(\DateTime::createFromFormat('Y-m-d H:i', $dateDebut . ' ' . $heures . ':' . $minutes));
             }
         } else {
-            $output->writeln(sprintf("<warning>Le passage d'id %s n'a pas de date de début et est %s (%s)!</warning>", $passage->getId(), $data[self::CSV_STATUT], $data[self::CSV_OLD_ID]));
+            $output->writeln(sprintf("<comment>Le passage d'id %s n'a pas de date de début et est %s (%s)!</comment>", $passage->getId(), $data[self::CSV_STATUT], $data[self::CSV_OLD_ID]));
             $passage->setDateDebut($passage->getDatePrevision());
             $minutes = $passage->getDateDebut()->format('i');
             $heures = $passage->getDateDebut()->format('H');
