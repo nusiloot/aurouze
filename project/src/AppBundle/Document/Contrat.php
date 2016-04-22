@@ -157,6 +157,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     protected $identifiantReprise;
 
+     /**
+     * @MongoDB\Boolean
+     */
+    protected $tvaReduite;
+
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
@@ -964,6 +969,29 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     public function getDateResiliation()
     {
         return $this->dateResiliation;
+    }
+
+    /**
+     * Set tvaReduite
+     *
+     * @param boolean $tvaReduite
+     * @return self
+     */
+    public function setTvaReduite($tvaReduite)
+    {
+        $this->tvaReduite = $tvaReduite;
+        return $this;
+    }
+
+    /**
+     * Get tvaReduite
+     *
+     * @return boolean $tvaReduite
+     */
+    public function getTvaReduite()
+    {
+        return $this->tvaReduite;
+        
     }
     
      public function isResilie() {

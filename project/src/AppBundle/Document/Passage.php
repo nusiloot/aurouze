@@ -663,12 +663,12 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
     public function getTimeDebut() {
         $dateTime = $this->getDateDebut();
-        return $dateTime->format('H:i');
+        return ($dateTime)? $dateTime->format('H:i') : null;
     }
 
     public function getTimeFin() {
         $dateTime = $this->getDateFin();
-        return $dateTime->format('H:i');
+        return ($dateTime)? $dateTime->format('H:i') : null;
     }
 
     /**
