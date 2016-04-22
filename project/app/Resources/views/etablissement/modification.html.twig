@@ -7,7 +7,7 @@
             <h3>{{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small> <a class="btn btn-sm btn-warning pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a></h3>
         </div>
     </div>
-	<h3>Création d'un etablissement</h3>
+    <h3>Création d'un etablissement</h3>
     <div class="row">
         {{ form_start(form) }}
         <div class="panel panel-default">
@@ -68,13 +68,20 @@
                         {{ form_row(form.contactCoordonnee.siteInternet) }}
                     </div>
                 </div>
+                    <hr style="margin-top: 5px;" />
+                <div class="row">
+                    <div class="col-xs-12">
+                        {{ form_row(form.commentaire) }}
+                    </div>
+                </div>
+
             </div>
         </div>        
-            <div class="row">
-        		<div class="col-xs-12">
-            		{{ form_widget(form.save) }}
-            	</div>
+        <div class="row">
+            <div class="col-xs-12">
+                {{ form_widget(form.save) }}
             </div>
+        </div>
         {{ form_end(form) }}
     </div>
 {% endblock %}

@@ -42,12 +42,12 @@ class EtablissementCsvImporter extends CsvFile {
     const CSV_FAX = 11;
     const CSV_SITEWEB = 12;
     const CSV_EMAIL = 13;
-    const CSV_CMT = 14; # A contacter
     const CSV_ACTIF = 15;
     const CSV_RAISON_SOCIALE = 22;
     const CSV_TYPE_ETABLISSEMENT = 26;
-    const CSV_COORD_LAT = 37;
-    const CSV_COORD_LON = 38;
+    const CSV_CMT = 37;
+    const CSV_COORD_LAT = 38;
+    const CSV_COORD_LON = 39;
 
     public function __construct(DocumentManager $dm, SocieteManager $sm, EtablissementManager $em) {
         $this->dm = $dm;
@@ -108,7 +108,7 @@ class EtablissementCsvImporter extends CsvFile {
         if ($ligne[self::CSV_ADRESS_2]) {
             $adresse_str .= ', ' . $ligne[self::CSV_ADRESS_2];
         }
-        $etablissement->setContact($ligne[self::CSV_CMT]);
+        $etablissement->setCommentaire(str_replace('#', "\n", $ligne[self::CSV_CMT]));
         $etablissement->setRaisonSociale($ligne[self::CSV_RAISON_SOCIALE]);
 
         $adresse = new Adresse();
@@ -120,7 +120,7 @@ class EtablissementCsvImporter extends CsvFile {
         //$adresse->setFax($ligne[self::CSV_FAX]);
 
         $adresse->setCoordonnees(new Coordonnees());
-        if ($ligne[self::CSV_COORD_LAT] && $ligne[self::CSV_COORD_LON]) {
+        if (isset($ligne[self::CSV_COORD_LAT]) && isset($ligne[self::CSV_COORD_LON]) && $ligne[self::CSV_COORD_LAT] && $ligne[self::CSV_COORD_LON]) {
             $lat = $ligne[self::CSV_COORD_LAT];
             $lon = $ligne[self::CSV_COORD_LON];
             $adresse->getCoordonnees()->setLat($lat);

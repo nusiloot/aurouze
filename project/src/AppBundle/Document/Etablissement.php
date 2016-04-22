@@ -45,7 +45,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @MongoDB\String
      */
     protected $contact;
-
+   
     /**
      * @MongoDB\EmbedOne(targetDocument="Adresse")
      */
@@ -213,7 +213,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         $this->contact = $contact;
         return $this;
     }
-
+    
     /**
      * Get contact
      *
