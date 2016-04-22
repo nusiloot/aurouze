@@ -14,6 +14,7 @@ use AppBundle\Document\Mouvement;
 use AppBundle\Model\DocumentFacturableInterface;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Manager\ConfigurationManager;
+use AppBundle\Manager\ContratManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
@@ -155,6 +156,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @MongoDB\String
      */
     protected $identifiantReprise;
+
+     /**
+     * @MongoDB\Boolean
+     */
+    protected $tvaReduite;
 
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
@@ -963,5 +969,32 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     public function getDateResiliation()
     {
         return $this->dateResiliation;
+    }
+
+    /**
+     * Set tvaReduite
+     *
+     * @param boolean $tvaReduite
+     * @return self
+     */
+    public function setTvaReduite($tvaReduite)
+    {
+        $this->tvaReduite = $tvaReduite;
+        return $this;
+    }
+
+    /**
+     * Get tvaReduite
+     *
+     * @return boolean $tvaReduite
+     */
+    public function getTvaReduite()
+    {
+        return $this->tvaReduite;
+        
+    }
+    
+     public function isResilie() {
+        return ($this->statut == ContratManager::STATUT_RESILIE);
     }
 }

@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -43,6 +44,7 @@ class ContratType extends AbstractType {
                 ->add('nbFactures', TextType::class, array('label' => 'Nombre de factures :'))
                 ->add('dureePassage', TextType::class, array('label' => 'Durée estimative d\'un passage :', 'attr' => array('class' => 'input-timepicker')))
                 ->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2))
+                ->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false))
                 ->add('save', SubmitType::class, array('label' => 'Suivant', "attr" => array("class" => "btn btn-success pull-right")));
 
        

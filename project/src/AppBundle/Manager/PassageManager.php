@@ -17,11 +17,11 @@ class PassageManager {
     public static $statutsLibellesActions = array(self::STATUT_A_PLANIFIER => 'A planifier',
         self::STATUT_EN_ATTENTE => 'Prévu',
         self::STATUT_PLANIFIE => 'Planifié',
-        self::STATUT_REALISE => 'Réalisé');
+        self::STATUT_REALISE => 'Réalisé',self::STATUT_ANNULE => 'Annulé');
     public static $statutsLibelles = array(self::STATUT_A_PLANIFIER => 'À planifier',
         self::STATUT_EN_ATTENTE => 'En attente',
         self::STATUT_PLANIFIE => 'Planifié',
-        self::STATUT_REALISE => 'Réalisé');
+        self::STATUT_REALISE => 'Réalisé',self::STATUT_ANNULE => 'Annulé');
     protected $dm;
 
     function __construct(DocumentManager $dm) {
