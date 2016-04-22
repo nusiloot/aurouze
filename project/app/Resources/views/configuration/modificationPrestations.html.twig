@@ -5,7 +5,7 @@
 {% form_theme form _self %}
 
 {% block _configuration_prestations_entry_row %}
-    <div class="row form-group dynamic-collection-item">
+    <div class="row form-group dynamic-collection-item" id="configuration_prestations">
         <div class="col-xs-10">
             {{ form_widget(form.nom) }}
         </div>
@@ -27,7 +27,7 @@
                 {{ form_widget(form.prestations, { 'attr': {'class': 'dynamic-collection'} }) }}
                 <div class="row form-group">
                     <div class="col-xs-12 text-right">
-                        <a href="javascript:void(0);" data-collection-target='#configuration_prestations' class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+                        <a href="javascript:void(0);" data-collection-target="#configuration_prestations" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
                     </div>
                 </div>
 
