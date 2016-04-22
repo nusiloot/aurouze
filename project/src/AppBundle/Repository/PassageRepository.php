@@ -110,8 +110,19 @@ class PassageRepository extends DocumentRepository {
     }
 
     public function findToPlan() {
+        $date= \DateTime::createFromFormat('Y-m-d', '2016-01-01');//new \DateTime();
+        $twoMonth = clone $date;
+        $twoMonth->modify("+1 month");
+        $mongoStartDate = new MongoDate(strtotime($date->format('Y-m-d')));
+        
+        $mongoEndDate = new MongoDate(strtotime($twoMonth->format('Y-m-d')));
+        
         $query = $this->createQueryBuilder('Passage')
                       ->field('statut')->equals(PassageManager::STATUT_A_PLANIFIER)
+                // A enlever
+                       ->field('datePrevision')->gte($mongoStartDate)
+                
+                      ->field('datePrevision')->lte($mongoEndDate)
                       ->sort('datePrevision', 'asc')
                       ->getQuery();
 

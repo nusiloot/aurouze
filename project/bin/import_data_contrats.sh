@@ -73,25 +73,23 @@ touch $DATA_DIR/contrats.csv;
 while read line
 do
    IDENTIFIANTCONTRAT=`echo $line | cut -d ';' -f 1`;
-   
+
    grep -E "[0-9]+;$IDENTIFIANTCONTRAT;" $DATA_DIR/prestationProduit.sorted.csv | cut -d ';' -f 4,5 > $DATA_DIR/produitContrat.tmp.csv
-   
+
    cat $DATA_DIR/produitContrat.tmp.csv | sort -t ";" -k 1,1  > $DATA_DIR/produitContrat.tmp.sorted.csv
-   
+
    PRODUITSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/produitContrat.tmp.sorted.csv $DATA_DIR/produits.sorted.csv | cut -d ';' -f 2,3 | sed -r 's/(.+);(.+)/\2~\1/g' | tr "\n" "#")
-   
+
    IDENTIFIANTTECHNICIEN=`echo $line | cut -d ';' -f 4`;
    NOMTECHNICIEN=$(cat $DATA_DIR/utilisateurAutre.csv | grep -E "^$IDENTIFIANTTECHNICIEN;" | cut -d ';' -f 2);
 
    IDENTIFIANTCOMMERCIAL=`echo $line | cut -d ';' -f 3`;
    NOMCOMMERCIAL=$(cat $DATA_DIR/utilisateurAutre.csv | grep -E "^$IDENTIFIANTCOMMERCIAL;" | cut -d ';' -f 2);
-   
+
    echo $line";"$PRODUITSVAR";"$NOMCOMMERCIAL";"$NOMTECHNICIEN >> $DATA_DIR/contrats.csv;
 
 done < $DATA_DIR/contrats.csv.tmp
 
 echo -e "\nImport des contrats"
 
-php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv -vvv
-
-
+php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv -vvv --no-debug

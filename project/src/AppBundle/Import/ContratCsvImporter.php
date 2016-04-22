@@ -75,13 +75,13 @@ class ContratCsvImporter {
         $csv = $csvFile->getCsv();
         $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
         $produitsArray = $configuration->getProduitsArray();
-        
+
         $usersArray = $this->um->getRepository()->findAllInArray();
-        
+
         $i = 0;
         $cptTotal = 0;
         foreach ($csv as $data) {
-            
+
             $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $data[self::CSV_ID_SOCIETE]));
 
             if (!$societe) {
@@ -119,7 +119,7 @@ class ContratCsvImporter {
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
             $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
-            
+
             if($data[self::CSV_NOM_COMMERCIAL]){
                $identifiantCommercial = strtoupper(Transliterator::urlize($data[self::CSV_NOM_COMMERCIAL]));
                if(array_key_exists($identifiantCommercial, $usersArray)){
@@ -127,7 +127,7 @@ class ContratCsvImporter {
                    $contrat->setCommercial($commercial);
                }
             }
-            
+
             if($data[self::CSV_NOM_TECHNICIEN]){
                $identifiantTechnicien = strtoupper(Transliterator::urlize($data[self::CSV_NOM_TECHNICIEN]));
                if(array_key_exists($identifiantTechnicien, $usersArray)){
@@ -135,12 +135,12 @@ class ContratCsvImporter {
                    $contrat->setTechnicien($technicien);
                }
             }
-            
+
             if($data[self::CSV_DATE_RESILIATION]){
                $contrat->setDateResiliation(new \DateTime($data[self::CSV_DATE_RESILIATION]));
                $contrat->setStatut(ContratManager::STATUT_RESILIE);
             }
-            
+
             $produits = explode('#', $data[self::CSV_PRODUITS]);
             foreach ($produits as $produitStr) {
                 if ($produitStr) {
@@ -167,6 +167,8 @@ class ContratCsvImporter {
 
             if ($i >= 10000) {
                 $this->dm->flush();
+                $this->dm->clear();
+                gc_collect_cycles();
                 $i = 0;
             }
         }

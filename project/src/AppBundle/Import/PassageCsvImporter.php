@@ -78,7 +78,7 @@ class PassageCsvImporter {
         $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
 
         foreach ($csv as $data) {
-            
+
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
             }
@@ -92,7 +92,7 @@ class PassageCsvImporter {
                 $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
             }
-            
+
             $passage = new Passage();
             $passage->setEtablissement($etablissement);
             if (!$data[self::CSV_DATE_PREVISION]) {
@@ -195,6 +195,8 @@ class PassageCsvImporter {
             }
             if ($i >= 2000) {
                 $this->dm->flush();
+                $this->dm->clear();
+                gc_collect_cycles();
                 $i = 0;
             }
         }
@@ -305,7 +307,7 @@ class PassageCsvImporter {
             $contratFini = true;
             foreach ($contrat->getContratPassages() as $contratPassages) {
                 foreach ($contratPassages->getPassages() as $passage) {
-                    
+
                     if(!$this->pm->getRepository()->findById($passage->getId())){
                         $output->writeln(sprintf("<comment>Le passage d'id %s semble Introuvable dans la base pourtant référencé par le contrat  %s !</comment>", $passage->getId(), $contrat->getId()));
                         continue;
@@ -440,7 +442,7 @@ class PassageCsvImporter {
 
     public function cleanPassage($passage) {
         /*
-         * Clean prestation Passage ! 
+         * Clean prestation Passage !
          */
         $prestationsPassageArr = array();
         foreach ($passage->getPrestations() as $prestation) {
@@ -453,7 +455,7 @@ class PassageCsvImporter {
         $this->dm->persist($passage);
 
         /**
-         * Clean Technicien Passage ! 
+         * Clean Technicien Passage !
          */
         $techniciensPassageArr = array();
         foreach ($passage->getTechniciens() as $technicien) {
