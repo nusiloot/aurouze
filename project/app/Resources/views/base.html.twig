@@ -53,7 +53,7 @@
                         <a href="{% if(app.request.get('etablissement') and _menu_active != 'passage') %}{{ path('passage_etablissement', { id: app.request.get('etablissement').id }) }}{% else %}{{ path('passage') }}{% endif %}">Passages / Planification</a>
                     </li>
                     <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}">Calendrier</a></li>
-                    <li class="{%if (_menu_active == 'contrat') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'contrat') %}{% else %}{{ path('contrat') }}{% endif %}">Contrats</a></li>
+                    <li class="{%if (_menu_active == 'contrat') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'contrat') %}{{ path('contrats_societe', { id: app.request.get('societe') })}}{% else %}{{ path('contrat') }}{% endif %}">Contrats</a></li>
                     <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}">Factures</a></li>
                     <li class="{%if (_menu_active == 'societe') %}active{% endif %}"><a href="{{ path('societe') }}">Société</a></li>
                 </ul>
