@@ -8,6 +8,7 @@
   - php5-intl
   - git
   - mongodb
+  - recode
 
 - name: "bonne version git"
   git: repo=https://github.com/24eme/aurouze.git
@@ -28,11 +29,11 @@
 
 - name: "Configuration php apache2 datetimezone"
   become: yes
-  ini_file: dest=/etc/php5/apache2/php.ini section=Date option=date.timezone value=Europe/Paris backup=yes
+  ini_file: dest=/etc/php5/apache2/php.ini section=Date option=date.timezone value=Europe/Paris
 
 - name: "Configuration php cli datetimezone"
   become: yes
-  ini_file: dest=/etc/php5/cli/php.ini section=Date option=date.timezone value=Europe/Paris backup=yes
+  ini_file: dest=/etc/php5/cli/php.ini section=Date option=date.timezone value=Europe/Paris
 
 - name: install composer
   become: yes
@@ -47,10 +48,13 @@
   file: path=/usr/local/bin/composer mode=a+x state=file
 
 - name: "installation du projet via composer"
-  composer: command=install no_scripts="yes" working_dir={{symfony_folder}}
+  composer: command=install no_scripts="yes" no_dev="no"    working_dir={{symfony_folder}}
 
-- name: "creation du fichier de configuration"
+- name: "creation du fichier de paramters.yml"
   copy: src={{symfony_folder}}/app/config/parameters.yml.dist dest={{symfony_folder}}/app/config/parameters.yml remote_src=yes
+
+- name: "creation du fichier de config.inc"
+  copy: src={{symfony_folder}}/bin/config.inc.example dest={{symfony_folder}}/bin/config.inc remote_src=yes
 
 - name: "Prepare Virtual document root"
   become: yes
