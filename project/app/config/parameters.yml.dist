@@ -7,7 +7,7 @@ parameters:
     database_name: aurouze
     database_user: null
     database_password: null
-    
+
     # You should uncomment this if you want use pdo_sqlite
     # database_path: "%kernel.root_dir%/data.db3"
 
@@ -30,6 +30,7 @@ parameters:
             commune: ""
             telephone: ""
             fax: ""
+            email: ""
             infos: ""
             banque: ""
             virement: ""
