@@ -14,6 +14,7 @@ use AppBundle\Document\Mouvement;
 use AppBundle\Model\DocumentFacturableInterface;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Manager\ConfigurationManager;
+use AppBundle\Manager\ContratManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
@@ -990,5 +991,10 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     public function getTvaReduite()
     {
         return $this->tvaReduite;
+        
+    }
+    
+     public function isResilie() {
+        return ($this->statut == ContratManager::STATUT_RESILIE);
     }
 }

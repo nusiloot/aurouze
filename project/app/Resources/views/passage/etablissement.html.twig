@@ -51,32 +51,38 @@
                 {% set passagesEtablissement = contrat.getPassagesEtablissementNode(etablissement) %}
 
                 {% if(passagesEtablissement is not null) %}
-                    <div id="contrat-{{ contrat.id }}" class="panel {% if(not contrat.isTerminee) %}panel-default{% else %}panel-success{% endif %}">
+                    <div id="contrat-{{ contrat.id }}" class="panel {% if(not contrat.isResilie) %} {% if(not contrat.isTerminee) %}panel-default{% else %}panel-success{% endif %} {% else %}panel-danger{% endif %}">
                         <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" class="panel-heading">
                             <h3 class="panel-title">
-                                </span>
+                              
                                 {% if(not contrat.isTerminee) %}Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% else %}Contrat terminé en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% endif %}
 
                                 <small>Contrat  n° {{ contrat.numeroArchive }}
-                                sur {{ contrat.duree }} mois</small>
+                                sur {{ contrat.duree }} mois</small>&nbsp;
+                                    {% if(contrat.isResilie) %}
+                                <span>Résilié le {{ contrat.dateResiliation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</span>
+                                {% endif %}
                                 <span class="pull-right">{{ passagesEtablissement.nbPassagePrevu}} passages prévus</span>
                             </h3>
                         </div>
-
                         <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(contrat.isTerminee) %}out{% else%}in{% endif %} list-group ">
                             <div class="panel-body">
                                 <a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
                             </div>
-                            {% for pe in passagesEtablissement.getPassagesSorted %}
+                            {% for pe in passagesEtablissement.getPassagesSorted | reverse %}
                                 <div class="list-group-item">
                                     <div class="row">
                                         <div class="col-xs-1">
+                                            
                                             {% if(pe.enAttente) %}
                                                 <label class="btn btn-xs btn-block btn-default">{{ pe.getStatutLibelle() }}</label>
                                             {% elseif(pe.aPlanifie) %}
                                                 <label class="btn btn-xs btn-block btn-primary">{{ pe.getStatutLibelle() }}</label>
                                             {% elseif(pe.planifie) %}
                                                 <label class="btn btn-xs btn-block btn-warning">{{ pe.getStatutLibelle() }}</label>
+                                                {% elseif(pe.annule) %}
+                                                <label class="btn btn-xs btn-block btn-danger">{{ pe.getStatutLibelle() }}</label>
+                                            
                                             {% elseif(pe.realise) %}
                                                 <label class="btn btn-xs btn-block btn-success">{{ pe.getStatutLibelle() }}</label>
                                             {% endif %}
@@ -93,7 +99,7 @@
                                             {% for prestation in pe.prestations %}
                                                 {% if(prestation.wordToPicto) %}
                                                     <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                                                        <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}">&nbsp;</i></span>
+                                                        <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}" style="cursor: pointer;" >&nbsp;</i></span>
                                                     {%else%}
                                                     <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
                                                 {%endif%}
