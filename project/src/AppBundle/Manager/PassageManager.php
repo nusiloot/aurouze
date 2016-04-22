@@ -2,9 +2,10 @@
 
 namespace AppBundle\Manager;
 
-use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
-use AppBundle\Document\Etablissement as Etablissement;
-use AppBundle\Document\Passage as Passage;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use AppBundle\Document\Etablissement;
+use AppBundle\Document\Contrat;
+use AppBundle\Document\Passage;
 
 class PassageManager {
 
@@ -28,10 +29,11 @@ class PassageManager {
         $this->dm = $dm;
     }
 
-    function create(Etablissement $etablissement) {
+    function create(Etablissement $etablissement, Contrat $contrat) {
         $passage = new Passage();
 
         $passage->setEtablissement($etablissement);
+        $passage->setContrat($contrat);
 
         $numeroPassageIdentifiant = $this->getNextNumeroPassage($etablissement->getIdentifiant(), new \DateTime());
         $passage->setNumeroPassageIdentifiant($numeroPassageIdentifiant);
