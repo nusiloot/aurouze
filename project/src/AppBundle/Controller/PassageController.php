@@ -149,7 +149,7 @@ class PassageController extends Controller {
     public function pdfBonAction(Request $request, Passage $passage) {
         $fm = $this->get('facture.manager');
 
-        $html = $this->renderView('passage/pdfBon.html.twig', array(
+        $html = $this->renderView('passage/pdfBons.html.twig', array(
                 'passage' => $passage,
                 'parameters' => $fm->getParameters(),
             ));

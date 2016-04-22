@@ -1,35 +1,71 @@
-{% extends 'base_pdf.html.twig' %}
-
-{% block body %}
+<h4 class="text-center">Bon de passage n° {{ passage.identifiant }}</h4>
+<br />
 <div class="row">
-    <div class="col-xs-7">
-        <br />
+    <div class="col-xs-6">
         <p>
-            <span class="lead"></span><br />
-            <br />
-            , <br />
-            Tél : <br />
-            Fax:
+            <span class="lead" style="font-weight: 400; font-size: 19px">{{ parameters.emetteur.nom }}</span><br />
+            {{ parameters.emetteur.adresse }}<br />
+            {{ parameters.emetteur.code_postal }} {{ parameters.emetteur.commune }} <br />
+            Tél : {{ parameters.emetteur.telephone }}<br />
+            Email : julien.aurouze@aurouze.fr
         </p>
     </div>
-    <div class="col-xs-5 text-left form-horizontal">
-        <h2>Bon de passage n°</h2>
-        <div class="row">
-        <div class="form-group">
-            <label class="col-sm-6 control-label">Heure d'arrivée</label>
-            <div class="col-sm-6">
-              <input type="text" class="form-control input-sm">
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-6 control-label">Heure de départ</label>
-            <div class="col-sm-6">
-              <input type="text" class="form-control input-sm">
-            </div>
-        </div>
+    <div class="col-xs-6 text-left form-horizontal">
+        <p><span class="lead" style="font-weight: 400; font-size: 19px">{{ passage.etablissementInfos.nom }}</span><br />
+            {{ passage.etablissementInfos.adresse.adresse }}<br />
+            {{ passage.etablissementInfos.adresse.codePostal }}
+            {{ passage.etablissementInfos.adresse.Commune }}
+        </p>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-xs-12">
+        <h3>Passage du {{ passage.dateDebut | localizeddate("full", "none") }} à {{ passage.dateDebut | localizeddate('none', 'short') }} par Laurent TOUYA</h3>
+        <p class="lead">n° 1 / 6 pour le contrat n° {{ passage.contrat.numeroArchive }}</p>
+        <p>{% for prestation in passage.prestations %}
+            <span class="btn btn-xs btn-default">{{ prestation.nom }}</span>
+        {% endfor %}</p>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-xs-12">
+        <div class="well" style="background: #fff; padding: 10px;">
+            Observations :
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
         </div>
     </div>
-
-    <h3>Passage prévu le {{ passage.dateDebut | localizeddate("medium", "none", null, null, "d/MM/YYYY à HH:mm") }}</h3>  
+    <div class="col-xs-4">
+        <div class="well" style="background: #fff; padding: 10px;">
+            <p>Date :</p>
+            <p>Heure d'arrivée :</p>
+            <p>Heure de départ :</p>
+            <br />
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <div class="well" style="background: #fff; padding: 10px;">
+            <p>Signature du technicien :<br />
+            <br />
+            <br />
+            <br />
+            <br />
+            </p>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <div class="well" style="background: #fff; padding: 10px;">
+            <p>Signature du client :<br />
+            <br />
+            <br />
+            <br />
+            <br />
+            </p>
+        </div>
+    </div>
 </div>
-{% endblock %}
