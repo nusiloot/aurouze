@@ -145,11 +145,11 @@ php app/console importer:csv configurationProduit.importer $DATA_DIR/produits.cs
 
 echo "Import des sociétés"
 
-php app/console importer:csv societe.importer $DATA_DIR/societes.csv -vvv
+php app/console importer:csv societe.importer $DATA_DIR/societes.csv -vvv --no-debug
 
 echo "Import des etablissements"
 
-php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv -vvv
+php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv -vvv  --no-debug
 
 
 #### Récupération et import des contrats ####
@@ -160,12 +160,3 @@ php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv
 #### Récupération et import des passages ####
 
 . bin/import_data_passages.sh
-
-
-
-
-
-
-
-
-

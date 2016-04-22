@@ -76,6 +76,8 @@ class EtablissementCsvImporter extends CsvFile {
             }
             if ($cpt > 1000) {
                 $this->dm->flush();
+                $this->dm->clear();
+                gc_collect_cycles();
                 $cpt = 0;
             }
             $cpt++;

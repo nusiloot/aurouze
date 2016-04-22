@@ -59,6 +59,8 @@ class SocieteCsvImporter extends CsvFile {
             $this->dm->persist($societe);
             if ($cpt > 1000) {
                 $this->dm->flush();
+                $this->dm->clear();
+                gc_collect_cycles();
                 $cpt = 0;
             }
             $cpt++;
