@@ -95,7 +95,7 @@ class ContratManager implements MouvementManagerInterface {
                 if (!$cpt) {
                     $passage->setDateDebut($datePrevision);
                 }
-                $passage->setNumeroPassageIdentifiant("001");
+                
                 $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
 
                 $passage->generateId();

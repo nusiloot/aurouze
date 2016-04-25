@@ -71,6 +71,11 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      */
     protected $contrats = array();
 
+    
+    /**
+    * @MongoDB\Increment
+    */
+    protected $numeroPassageIncrement;
 
     /**
      * @MongoDB\String
@@ -374,5 +379,27 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function getContactCoordonnee()
     {
         return $this->contactCoordonnee;
+    }
+
+    /**
+     * Set numeroPassageIncrement
+     *
+     * @param increment $numeroPassageIncrement
+     * @return self
+     */
+    public function setNumeroPassageIncrement($numeroPassageIncrement)
+    {
+        $this->numeroPassageIncrement = $numeroPassageIncrement;
+        return $this;
+    }
+
+    /**
+     * Get numeroPassageIncrement
+     *
+     * @return increment $numeroPassageIncrement
+     */
+    public function getNumeroPassageIncrement()
+    {
+        return $this->numeroPassageIncrement;
     }
 }

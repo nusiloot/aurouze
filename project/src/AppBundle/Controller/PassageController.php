@@ -50,6 +50,7 @@ class PassageController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $passage = $form->getData();
+            $passage->setDatePrevision($passage->getDateDebut());
             $dm->persist($passage);
             $contrat->addPassage($etablissement, $passage);
             $dm->persist($contrat);

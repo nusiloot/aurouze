@@ -34,10 +34,7 @@ class PassageManager {
 
         $passage->setEtablissement($etablissement);
         $passage->setContrat($contrat);
-
-        $numeroPassageIdentifiant = $this->getNextNumeroPassage($etablissement->getIdentifiant(), new \DateTime());
-        $passage->setNumeroPassageIdentifiant($numeroPassageIdentifiant);
-        $passage->generateId();
+      
         return $passage;
     }
 
@@ -46,17 +43,11 @@ class PassageManager {
         return $this->dm->getRepository('AppBundle:Passage');
     }
 
-    public function getNextNumeroPassage($etablissementIdentifiant, \DateTime $date) {
-        $allPassagesForEtablissementsInDay = $this->getRepository()->findPassagesForEtablissementsAndDay($etablissementIdentifiant, $date);
 
-        if (!count($allPassagesForEtablissementsInDay)) {
-            return sprintf("%03d", 1);
-        }
-        return sprintf("%03d", max($allPassagesForEtablissementsInDay) + 1);
-    }
     
      public function getNextPassageFromPassage($passage) {
         $contrat = $passage->getContrat();
+        
         $etablissement = $passage->getEtablissement();
         $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
         $nextPassage = null;
@@ -75,6 +66,7 @@ class PassageManager {
 
     public function isFirstPassageNonRealise($passage) {
         $contrat = $passage->getContrat();
+        
         $etablissement = $passage->getEtablissement();
         $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
         $passagePrecedent = null;

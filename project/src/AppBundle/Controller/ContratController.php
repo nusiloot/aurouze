@@ -30,10 +30,7 @@ class ContratController extends Controller {
             'method' => 'POST',
         ));
         $formSociete->handleRequest($request);
-        if ($formSociete->isSubmitted() && $formSociete->isValid()) {
-            var_dump($formSociete->get('societes'));
-            exit;
-        }
+        
         return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView()));
     }
 
