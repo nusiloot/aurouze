@@ -78,7 +78,7 @@ class PassageCsvImporter {
         $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
 
         foreach ($csv as $data) {
-
+            
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
             }
@@ -103,6 +103,13 @@ class PassageCsvImporter {
             $passage->setDatePrevision(new \DateTime($data[self::CSV_DATE_PREVISION]));
 
             $passage->setIdentifiantReprise($data[self::CSV_OLD_ID]);
+            
+            $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_CONTRAT_ID]);
+            if (!$contrat) {
+                $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $data[self::CSV_CONTRAT_ID]));
+                continue;
+            }
+            
             $this->dm->persist($passage);
             $doublonPassage = $this->pm->getRepository()->findOneById($passage->getId());
             if ($doublonPassage) {
@@ -121,11 +128,7 @@ class PassageCsvImporter {
                 $output->writeln(sprintf("<error>Passage dont le numéro %s n'est pas correct</error>", $data[self::CSV_CONTRAT_ID]));
                 continue;
             }
-            $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_CONTRAT_ID]);
-            if (!$contrat) {
-                $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $data[self::CSV_CONTRAT_ID]));
-                continue;
-            }
+            
 
             if ($data[self::CSV_PRESTATIONS]) {
                 $prestations = explode('#', $data[self::CSV_PRESTATIONS]);
@@ -219,14 +222,6 @@ class PassageCsvImporter {
         $progress->start();
 
         foreach ($allContrat as $contrat) {
-
-//            $nomenclature = $contrat->getNomenclature();
-//            $nomenclature = preg_replace('/( n[\.A-Z0-9_-]+)|([\.A-Z0-9_-]+n )|([\.A-Z0-9_-]+n[\.A-Z0-9_-]+)/', '\n', $nomenclature);
-//            $nomenclature = preg_replace("/( nn[\.A-Z0-9_-]+)|([\.A-Z0-9_-]+nn )|([\.A-Z0-9_-]+nn[\.A-Z0-9_-]+)/", '\n\n', $nomenclature);
-//
-//
-//            $contrat->setNomenclature($nomenclature);
-
 
             $prestationsArr = array();
             $technicienArr = array();

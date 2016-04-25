@@ -47,10 +47,7 @@ class PassageManager {
     
      public function getNextPassageFromPassage($passage) {
         $contrat = $passage->getContrat();
-        if(!$contrat){
-            throw new Exception(sprintf("Le contrat du passage %s n'a pas été renseigné! ",$passage->getId()));
-            return null;
-        }
+        
         $etablissement = $passage->getEtablissement();
         $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
         $nextPassage = null;
@@ -69,10 +66,7 @@ class PassageManager {
 
     public function isFirstPassageNonRealise($passage) {
         $contrat = $passage->getContrat();
-        if(!$contrat){
-            throw new Exception(sprintf("Le contrat du passage %s n'a pas été renseigné! ",$passage->getId()));
-            return null;
-        }
+        
         $etablissement = $passage->getEtablissement();
         $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
         $passagePrecedent = null;
