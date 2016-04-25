@@ -21,7 +21,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     const PREFIX = "PASSAGE";
 
     /**
-     * @MongoDB\Id(strategy="NONE", type="string")
+     * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\PassageGenerator"})
      */
     protected $id;
 
@@ -40,11 +40,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $produits;
 
-    /**
-     * @MongoDB\String
-     */
-    protected $numeroPassageIdentifiant;
-
+   
     /**
      * @MongoDB\String
      */
@@ -139,15 +135,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         $this->mouvement_declenche = false;
     }
 
-    public function generateId($fromImport = false) {
-        if (!$this->getDatePrevision()) {
-            $this->setDatePrevision(new \DateTime());
-        }
-
-        $this->identifiant = $this->getDatePrevision()->format('Ymd') . '-' . $this->numeroPassageIdentifiant;
-        $this->setId(self::PREFIX . '-' . $this->etablissementIdentifiant . '-' . $this->identifiant);
-    }
-
+   
     public function getDescriptionTransformed() {
         return str_replace('\n', "\n", $this->description);
     }
@@ -273,25 +261,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->identifiant;
     }
 
-    /**
-     * Set numeroPassageIdentifiant
-     *
-     * @param string $numeroPassageIdentifiant
-     * @return self
-     */
-    public function setNumeroPassageIdentifiant($numeroPassageIdentifiant) {
-        $this->numeroPassageIdentifiant = $numeroPassageIdentifiant;
-        return $this;
-    }
-
-    /**
-     * Get numeroPassageIdentifiant
-     *
-     * @return string $numeroPassageIdentifiant
-     */
-    public function getNumeroPassageIdentifiant() {
-        return $this->numeroPassageIdentifiant;
-    }
+    
 
     /**
      * Set societeIdentifiant

@@ -23,7 +23,7 @@ class FactureGenerator extends AbstractIdGenerator
         $command['new'] = true;
         $result = $db->command($command);
 
-        $document->setIdentifiant(sprintf("%s-%s%04d", $document->getSociete()->getIdentifiant(), $document->getDateEmission()->format('Ymd'), $result['value']['factureIncrement']));
+        $document->setIdentifiant(sprintf("%s-%s-%04d", $document->getSociete()->getIdentifiant(), $document->getDateEmission()->format('Ymd'), $result['value']['factureIncrement']));
 
         return sprintf("%s-%s", "FACTURE", $document->getIdentifiant());
     }

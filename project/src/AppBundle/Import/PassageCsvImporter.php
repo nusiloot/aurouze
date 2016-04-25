@@ -102,14 +102,11 @@ class PassageCsvImporter {
 
             $passage->setDatePrevision(new \DateTime($data[self::CSV_DATE_PREVISION]));
 
-            $passage->setNumeroPassageIdentifiant("001");
-            $passage->generateId();
             $passage->setIdentifiantReprise($data[self::CSV_OLD_ID]);
-
+            $this->dm->persist($passage);
             $doublonPassage = $this->pm->getRepository()->findOneById($passage->getId());
             if ($doublonPassage) {
-                $passage->setNumeroPassageIdentifiant(sprintf("%03d", intval($passage->getNumeroPassageIdentifiant() + 1)));
-                $passage->generateId();
+                
                 $output->writeln(sprintf("<comment>Le passage d'id %s existe déjà en base (%s)!</comment>", $passage->getId(), $data[self::CSV_OLD_ID]));
             }
             $resultStatut = $this->generateStatut($data, $passage, $output);

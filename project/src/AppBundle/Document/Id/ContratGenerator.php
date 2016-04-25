@@ -23,7 +23,7 @@ class ContratGenerator extends AbstractIdGenerator
         $command['new'] = true;
         $result = $db->command($command);
 
-        $document->setIdentifiant(sprintf("%s-%s%04d", $document->getSociete()->getIdentifiant(), $document->getDateCreation()->format('Ymd'), $result['value']['contratIncrement']));
+        $document->setIdentifiant(sprintf("%s-%s-%04d", $document->getSociete()->getIdentifiant(), $document->getDateCreation()->format('Ymd'), $result['value']['contratIncrement']));
 
         return sprintf("%s-%s", "CONTRAT", $document->getIdentifiant());
     }

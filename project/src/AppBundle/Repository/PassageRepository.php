@@ -55,18 +55,7 @@ class PassageRepository extends DocumentRepository {
                         array('etablissementIdentifiant' => $etablissementIdentifiant, 'createAt' => $createAt));
     }
 
-    public function findPassagesForEtablissementsAndDay($etablissementIdentifiant, $date) {
 
-        $passagesByEtablissementAndCreationDate = $this->findByEtablissementAndCreateAt($etablissementIdentifiant, $date);
-
-        $allPassagesNumeros = array();
-        if (count($passagesByEtablissementAndCreationDate)) {
-            foreach ($passagesByEtablissementAndCreationDate as $passageByEtablissementAndCreationDate) {
-                $allPassagesNumeros[$passageByEtablissementAndCreationDate->getNumeroPassageIdentifiant()] = $passageByEtablissementAndCreationDate->getNumeroPassageIdentifiant();
-            }
-        }
-        return $allPassagesNumeros;
-    }
 
     public function findPassagesForEtablissement($etablissementIdentifiant) {
     	$query = $this->createQueryBuilder('Passage')
