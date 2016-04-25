@@ -71,15 +71,16 @@
                 {% if(passagesEtablissement is not null) %}
                     <div id="contrat-{{ contrat.id }}" class="panel {% if(not contrat.isResilie) %} {% if(not contrat.isTerminee) %}panel-default{% else %}panel-success{% endif %} {% else %}panel-danger{% endif %}">
                         <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" class="panel-heading">
-                            <h3 class="panel-title">
+                            <h3 class="panel-title" style="cursor: pointer;">
 
-                                {% if(not contrat.isTerminee) %}Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% else %}Contrat terminé en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% endif %}
+                               {% if(contrat.isResilie) %}Contrat résilié le {{ contrat.dateResiliation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
+                               {% elseif(not contrat.isTerminee) %}Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
+                               {% else %}Contrat terminé en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                               {% endif %}
 
                                 <small>Contrat  n° {{ contrat.numeroArchive }}
                                     sur {{ contrat.duree }} mois</small>&nbsp;
-                                    {% if(contrat.isResilie) %}
-                                    <span>Résilié le {{ contrat.dateResiliation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</span>
-                                {% endif %}
+                                    
                                 <span class="pull-right">{{ passagesEtablissement.nbPassagePrevu}} passages prévus</span>
                             </h3>
                         </div>
