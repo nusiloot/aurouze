@@ -47,16 +47,29 @@
             </div>
         </div>
         <div class="row">
+            {% if contrat.isEnAttenteAcceptation() %}
             <div class="col-xs-4 text-left">
-                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux contrats</a>
+                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour à l'édition du contrat</a>
             </div>
-            <div class="col-xs-4 text-center">
-                <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
-            </div>
-            <div class="col-xs-4 text-right">
+                <div class="col-xs-4 text-center">
+                    <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
+                </div>
+                <div class="col-xs-4 text-right">
                 {{ form_widget(form.save) }}
             </div>
+            {% else %} 
+                <div class="col-xs-4 text-left"></div>
+                <div class="col-xs-4 text-center">
+
+                </div> 
+                 <div class="col-xs-4 text-right">
+                {{ form_widget(form.save) }}
+            </div>
+            {% endif%}
+            
         </div>
+        <br/>
+        <br/>
     </div>
     {{ form_end(form) }}
 

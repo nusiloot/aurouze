@@ -61,7 +61,7 @@ class ContratAcceptationType extends AbstractType {
         $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "attr" => array("class" => "form-control", "rows" => 6)));
 
 
-        $builder->add('save', SubmitType::class, array('label' => 'Acceptation du contrat', "attr" => array("class" => "btn btn-success pull-right")));
+        $builder->add('save', SubmitType::class, array('label' => ($this->contrat->isEnAttenteAcceptation())? 'Acceptation du contrat' : 'Modification du contrat', "attr" => array("class" => "btn btn-success pull-right")));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
