@@ -9,11 +9,14 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-xs-6">
+                        <div class="col-xs-5">
                             <strong>{{ etablissement.nom }}</strong>
                         </div>
                         <div class="col-xs-6">
-                            Société {{ etablissement.raisonsociale }}
+                            Société {{ etablissement.raisonsociale }}&nbsp;
+                        </div>
+                        <div class="col-xs-1">
+                            <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" style="cursor: default;" data-original-title="{{ etablissement.commentaire }}"></span>
                         </div>
                     </div>
                 </div>
@@ -27,12 +30,28 @@
 
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-6">
-                            Tél fixe : {{ etablissement.telephonefixe }}
+                    {%if ((not etablissement.telephonefixe is null) and (not etablissement.telephoneportable is null)) %}
+                        <div class="row">
+                            <div class="col-xs-6">
+                                Tél fixe : {{ etablissement.telephonefixe }}
+                            </div>
+                            <div class="col-xs-6">
+                                Tél portable : {{ etablissement.telephoneportable }}
+                            </div>
                         </div>
-                        <div class="col-xs-6">
-                            Tél portable : {{ etablissement.telephoneportable }}
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="well well-sm">
+                                <div class="row">
+                                    <div class="col-xs-10">
+                                        <small>{{ etablissement.commentaire }}</small>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <a class="btn btn-xs btn-warning pull-right" href="{{ path('etablissement_modification', {'societe': etablissement.getSociete().getId(),'id': etablissement.getId()}) }}">Modifier</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -53,47 +72,67 @@
                     <div id="contrat-{{ contrat.id }}" class="panel {% if(not contrat.isResilie) %} {% if(not contrat.isTerminee) %}panel-default{% else %}panel-success{% endif %} {% else %}panel-danger{% endif %}">
                         <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" class="panel-heading">
                             <h3 class="panel-title">
-                              
+
                                 {% if(not contrat.isTerminee) %}Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% else %}Contrat terminé en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% endif %}
 
                                 <small>Contrat  n° {{ contrat.numeroArchive }}
-                                sur {{ contrat.duree }} mois</small>&nbsp;
+                                    sur {{ contrat.duree }} mois</small>&nbsp;
                                     {% if(contrat.isResilie) %}
-                                <span>Résilié le {{ contrat.dateResiliation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</span>
+                                    <span>Résilié le {{ contrat.dateResiliation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</span>
                                 {% endif %}
                                 <span class="pull-right">{{ passagesEtablissement.nbPassagePrevu}} passages prévus</span>
                             </h3>
                         </div>
                         <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(contrat.isTerminee) %}out{% else%}in{% endif %} list-group ">
                             <div class="panel-body">
-                                <a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
-                                <a href="{{ path('passage_creation', {'id_etablissement': etablissement.id, 'id_contrat': contrat.id}) }}" class="btn btn-xs btn-warning pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un passage</a>
+
+                                <div class="row">
+                                    <div class="col-xs-8">
+                                        <div class="well well-sm"  style="height:250px; overflow: auto;" ><small>{{ contrat.nomenclature | nl2br }}</small></div>
+                                    </div>
+                                    <div class="col-xs-4  text-right">
+                                        <ul class="list-unstyled">
+                                            <li>
+                                                <a href="{{ path('passage_creation', {'id_etablissement': etablissement.id, 'id_contrat': contrat.id}) }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un passage</a>&nbsp;&nbsp;
+                                                <a class="btn btn-default btn-xs" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
+                                            <li>
+                                                <br/>
+                                            <li>
+                                                <div class="well well-sm"  style="height:160px; overflow: auto;" ><small class="pull-left">{{ contrat.commentaire | nl2br }}</small></div>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('contrat_acceptation', {'id': contrat.id}) }}" class="btn btn-xs btn-warning">&nbsp;Modifier le commentaire</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
                             </div>
-                            {% for pe in passagesEtablissement.getPassagesSorted | reverse %}
-                                <div class="list-group-item">
+                            {% for pe in passagesEtablissement.getPassagesSorted %}
+                                <div class="list-group-item {% if(pe.annule or pe.realise) %}small{% endif %}">
                                     <div class="row">
                                         <div class="col-xs-1">
-                                            
+
                                             {% if(pe.enAttente) %}
                                                 <label class="btn btn-xs btn-block btn-default">{{ pe.getStatutLibelle() }}</label>
                                             {% elseif(pe.aPlanifie) %}
                                                 <label class="btn btn-xs btn-block btn-primary">{{ pe.getStatutLibelle() }}</label>
                                             {% elseif(pe.planifie) %}
                                                 <label class="btn btn-xs btn-block btn-warning">{{ pe.getStatutLibelle() }}</label>
-                                                {% elseif(pe.annule) %}
+                                            {% elseif(pe.annule) %}
                                                 <label class="btn btn-xs btn-block btn-danger">{{ pe.getStatutLibelle() }}</label>
-                                            
+
                                             {% elseif(pe.realise) %}
                                                 <label class="btn btn-xs btn-block btn-success">{{ pe.getStatutLibelle() }}</label>
                                             {% endif %}
                                         </div>
                                         <div class="col-xs-3">
-                                             {% if(pe.enAttente) %}
-                                                 {{ pe.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                                            {% if(pe.enAttente) %}
+                                                {{ pe.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                                             {% elseif(pe.APlanifie) %}
                                                 {{ pe.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                                             {% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}
-{#                                            {% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}#}
+                                            {#                                            {% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}#}
                                         </div>
                                         <div class="col-xs-2">
                                             {% for prestation in pe.prestations %}
@@ -119,14 +158,14 @@
                                         </div>
                                         <div class="col-xs-2 text-right">
                                             {% if pe.planifie  %}<div class="btn-group">
-                                                <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_bon', { id: pe.id })}}"><span class="glyphicon glyphicon-print"></span></a>
-                                                <a class="btn btn-sm btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
+                                                    <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_bon', { id: pe.id })}}"><span class="glyphicon glyphicon-print"></span></a>
+                                                    <a class="btn btn-sm btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
                                                 </div>
                                             {% elseif pe.realise %}<a class="btn btn-block btn-sm btn-default" href="{{ path('passage_edition', { id: pe.id })}}">Modifier le rapport</a>
                                             {% elseif pe.aPlanifie %}
-                                                    {% for technicien in pe.techniciens %}
-                                                            <a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : technicien.identite, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier</a>
-                                                    {% endfor %}
+                                                {% for technicien in pe.techniciens %}
+                                                    <a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : technicien.identite, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier</a>
+                                                {% endfor %}
                                             {% endif %}
                                         </div>
                                     </div>

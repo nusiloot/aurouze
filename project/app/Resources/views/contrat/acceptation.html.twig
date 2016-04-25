@@ -25,6 +25,14 @@
             </div>
         </div>
         <div class="row">
+            <div class="form-group col-xs-12">
+                {{ form_label(form.commentaire) }}
+                {{ form_errors(form.commentaire) }}
+                {{ form_widget(form.commentaire) }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-xs-4 text-left">
                 <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux contrats</a>
             </div>
@@ -35,7 +43,7 @@
                 {{ form_widget(form.save) }}
             </div>
         </div>
-            {{ form_end(form) }}
+        {{ form_end(form) }}
     </div>
 
 {% endblock %}

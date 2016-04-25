@@ -223,12 +223,12 @@ class PassageCsvImporter {
 
         foreach ($allContrat as $contrat) {
 
-            $nomenclature = $contrat->getNomenclature();
-            $nomenclature = preg_replace('/( n[\.A-Z0-9_-]+)|([\.A-Z0-9_-]+n )|([\.A-Z0-9_-]+n[\.A-Z0-9_-]+)/', '\n', $nomenclature);
-            $nomenclature = preg_replace("/( nn[\.A-Z0-9_-]+)|([\.A-Z0-9_-]+nn )|([\.A-Z0-9_-]+nn[\.A-Z0-9_-]+)/", '\n\n', $nomenclature);
-
-
-            $contrat->setNomenclature($nomenclature);
+//            $nomenclature = $contrat->getNomenclature();
+//            $nomenclature = preg_replace('/( n[\.A-Z0-9_-]+)|([\.A-Z0-9_-]+n )|([\.A-Z0-9_-]+n[\.A-Z0-9_-]+)/', '\n', $nomenclature);
+//            $nomenclature = preg_replace("/( nn[\.A-Z0-9_-]+)|([\.A-Z0-9_-]+nn )|([\.A-Z0-9_-]+nn[\.A-Z0-9_-]+)/", '\n\n', $nomenclature);
+//
+//
+//            $contrat->setNomenclature($nomenclature);
 
 
             $prestationsArr = array();

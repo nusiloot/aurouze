@@ -22,6 +22,8 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
     contrat_type=$11;
     prestation_type=$13;
     localisation=$14;
+    gsub(/\\n/,"#",localisation);
+
     date_contrat=$10;
     date_creation_contrat="";
     if(date_contrat) {

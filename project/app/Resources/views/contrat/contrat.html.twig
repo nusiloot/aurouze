@@ -36,11 +36,11 @@
 <div class="panel panel-default">
     <div class="panel-heading">Nomenclature</div>
     <div class="panel-body">
-        {{ contrat.getNomenclature() }}
+        {{ contrat.getNomenclature() | nl2br }}
     </div>
 </div>
 
-{%  if(contrat.dateDebut is null) %}
+{%  if(contrat.isEnAttenteAcceptation()) %}
     {{ include('contrat/contrat_previsionnel.html.twig', { 'contrat': contrat }) }}
 {%  else %}
     {{ include('contrat/contrat_passages.html.twig', { 'contrat': contrat }) }}

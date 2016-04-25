@@ -14,6 +14,7 @@ use AppBundle\Type\EtablissementType;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Societe;
 
+
 class EtablissementController extends Controller {
 
     /**

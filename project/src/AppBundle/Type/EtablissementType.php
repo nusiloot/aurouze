@@ -36,7 +36,8 @@ class EtablissementType extends AbstractType {
                 ->add('type', ChoiceType::class, array('label' => 'Type :', 'choices' => array_merge(array('' => ''), $this->getTypes()), "attr" => array("class" => "select2 select2-simple")))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")))
         		->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
-        		->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'));
+        		->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'))
+                ->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "attr" => array("class" => "form-control", "rows" => 6)));
        
     }
 
