@@ -11,6 +11,7 @@
         $.initDynamicCollection();
         $.initDatePicker();
         $.initTimePicker();
+        $.initFormEventAjax();
     });
     
     $.initDatePicker = function () {
@@ -59,11 +60,45 @@
             $.callbackDynamicCollection();
         });
     }
+
+    $.initFormEventAjax = function () {
+	    $('#eventForm').submit(function() {
+	    	var form = $(this);
+	    	var request = $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize()
+            });
+	    	request.done(function(msg) {
+	    		try {
+	    		    $.parseJSON(msg);
+	    		    location.reload();
+	    		} catch (e) {
+	    			$('#modal-body').html(msg);
+	                $.callbackEventForm();
+	    		}
+    		});
+    		request.fail(function(jqXHR, textStatus) {
+                $('#modal-body').html(jqXHR.responseText());
+                $.callbackDynamicCollection();
+    		});
+	    	return false;
+	    });
+    }
     
     $.callbackDynamicCollection = function () {
         $.initSelect2();
         $.initSelect2Ajax();
         $.initDatePicker();
+        $.initTimePicker();
+    }
+    
+    $.callbackEventForm = function () {
+        $.initSelect2();
+        $.initSelect2Ajax();
+        $.initDatePicker();
+        $.initTimePicker();
+        $.initFormEventAjax();
     }
 
     $.initTooltips = function () {

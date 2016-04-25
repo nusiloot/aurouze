@@ -7,7 +7,7 @@ use AppBundle\Document\User;
 class UserRepository extends DocumentRepository {
 
     public function findAllByType($type) {
-        return $this->findBy(array('type' => $type));
+        return $this->findAll(); //$this->findBy(array('type' => $type));
     }
     
     public function findByIdentifiant($identifiant) {

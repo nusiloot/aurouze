@@ -23,11 +23,13 @@ $(function () {
                 $('#modal-title').text(title);
                 $('#modal-body').html(response);
                 $('#modal-calendrier-infos').modal();
+                $.callbackEventForm();
             }
             );
         });
 
     });
+    
     /**
      * FullCalendar Settings
      */
@@ -82,6 +84,7 @@ $(function () {
                 $('#modal-title').text(event.title);
                 $('#modal-body').html(response);
                 $('#modal-calendrier-infos').modal();
+                $.callbackEventForm();
             }
             );
         },
