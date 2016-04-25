@@ -59,14 +59,14 @@ class PassageCreationType extends AbstractType
                 'class' => 'AppBundle\Document\User',
         		'expanded' => false, 
         		'multiple' => true,
-        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple")
+        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")
         ));
         
         $builder->add('prestations', ChoiceType::class, array(
             		'choices' => $this->getPrestations(),
 	        		'expanded' => false, 
 	        		'multiple' => true,
-        			'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
+        			'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;"),
         ));
         $builder->get('prestations')->addModelTransformer(new PrestationTransformer($this->dm));
     }

@@ -10,6 +10,7 @@ use AppBundle\Tool\CalendarDateTool;
 use AppBundle\Document\User;
 use AppBundle\Document\UserInfos;
 use Behat\Transliterator\Transliterator;
+use AppBundle\Type\PassageCreationType;
 
 class CalendarController extends Controller {
 
@@ -207,8 +208,20 @@ class CalendarController extends Controller {
         if ($error) {
             throw new \Exception();
         }
-
-        return $this->render('calendar/calendarModal.html.twig', array('passage' => $passage, 'technicien' => $technicien, 'light' => $request->get('light')));
+        
+        $form = $this->createForm(new PassageCreationType($dm), $passage, array(
+        		'action' => $this->generateUrl('calendarRead', array('id' => $request->get('id'), 'technicien' => $request->get('technicien'))),
+        		'method' => 'POST',
+        		'attr' => array('id' => 'eventForm')
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+        	$passage = $form->getData();
+        	$dm->persist($passage);
+        	$dm->flush();
+        	return new Response(json_encode(array("success" => true)));
+        }
+        return $this->render('calendar/calendarModal.html.twig', array('form' => $form->createView(), 'passage' => $passage, 'technicien' => $technicien, 'light' => $request->get('light')));
     }
 
     /**
