@@ -10,6 +10,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Document\Contrat;
+use AppBundle\Document\User;
+use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 
 class ContratAcceptationType extends AbstractType {
 
@@ -47,7 +49,16 @@ class ContratAcceptationType extends AbstractType {
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy'
         ));
-        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "attr" => array("class" => "form-control", "rows" => 3)));
+        
+        $builder->add('technicien', DocumentType::class, array(
+            "choices" => array_merge(array('' => ''), $this->getUsers(User::USER_TYPE_TECHNICIEN)),
+            'label' => 'Technicien :',
+            'class' => 'AppBundle\Document\User',
+            'expanded' => false,
+            'multiple' => false,
+            "attr" => array("class" => "select2 select2-simple")));
+        
+        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "attr" => array("class" => "form-control", "rows" => 6)));
 
 
         $builder->add('save', SubmitType::class, array('label' => 'Acceptation du contrat', "attr" => array("class" => "btn btn-success pull-right")));
@@ -57,6 +68,10 @@ class ContratAcceptationType extends AbstractType {
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Document\Contrat',
         ));
+    }
+    
+    public function getUsers($type) {
+        return $this->dm->getRepository('AppBundle:User')->findAllByType($type);
     }
 
     /**

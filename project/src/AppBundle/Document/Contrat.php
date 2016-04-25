@@ -728,6 +728,13 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         }
         return $passagesDatesArray;
     }
+    
+    public function getTypeContratLibelle() {
+        if(!$this->getTypeContrat()){
+            return "";
+        }
+        return ContratManager::$types_contrat_libelles[$this->getTypeContrat()];
+    }
 
     public function getPassagesEtablissementNode(Etablissement $etablissement)
     {
