@@ -41,10 +41,12 @@ class EtablissementController extends Controller {
         $etablissementsResult = array();
         if (strlen($term) >= 3) {
             $dm = $this->get('doctrine_mongodb')->getManager();
+            $etablissementsByIdentifiant = $dm->getRepository('AppBundle:Etablissement')->findByIdentifiant($term, 'identifiant');
             $etablissementsByNom = $dm->getRepository('AppBundle:Etablissement')->findByTerm($term, 'nom');
             $etablissementsByAdresse = $dm->getRepository('AppBundle:Etablissement')->findByTerm($term, 'adresse.adresse');
             $etablissementsByCp = $dm->getRepository('AppBundle:Etablissement')->findByTerm($term, 'adresse.code_postal');
             $etablissementsByCommune = $dm->getRepository('AppBundle:Etablissement')->findByTerm($term, 'adresse.commune');
+            $this->contructSearchResult($etablissementsByIdentifiant, $etablissementsResult);
             $this->contructSearchResult($etablissementsByNom, $etablissementsResult);
             $this->contructSearchResult($etablissementsByAdresse, $etablissementsResult);
             $this->contructSearchResult($etablissementsByCp, $etablissementsResult);

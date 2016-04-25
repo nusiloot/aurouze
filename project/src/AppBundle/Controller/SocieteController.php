@@ -79,10 +79,12 @@ class SocieteController extends Controller {
         $result = array();
         if (strlen($term) >= 3) {
             $dm = $this->get('doctrine_mongodb')->getManager();
+            $byIdentifiant = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'identifiant');
             $byNom = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'raisonSociale');
             $byAdresse = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'adresse.adresse');
             $byCp = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'adresse.code_postal');
             $byCommune = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'adresse.commune');
+             $this->contructSearchResult($byIdentifiant, $result);
             $this->contructSearchResult($byNom, $result);
             $this->contructSearchResult($byAdresse, $result);
             $this->contructSearchResult($byCp, $result);
@@ -99,7 +101,7 @@ class SocieteController extends Controller {
         foreach ($criterias as $criteria) {
             $newResult = new \stdClass();
             $newResult->id = $criteria->getId();
-            $newResult->term = $criteria->getRaisonSociale();
+            $newResult->term = $criteria->getIntitule();
             $result[] = $newResult;
         }
     }

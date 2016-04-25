@@ -454,4 +454,8 @@ class Societe {
     {
         return $this->contactCoordonnee;
     }
+    
+    public function getIntitule() {
+        return $this->getRaisonSociale()." ".$this->getAdresse()->getIntitule(). ' ('.$this->identifiant.')';
+    }
 }
