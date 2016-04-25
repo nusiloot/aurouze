@@ -22,7 +22,7 @@ class CalendarController extends Controller {
 
         $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
         $technicien = $request->get('technicien');
-        $techniciens = $dm->getRepository('AppBundle:User')->findAllByType(User::USER_TYPE_TECHNICIEN);
+        $techniciens = $dm->getRepository('AppBundle:User')->findAllActif();
 
         $calendrier = $request->get('calendrier');
         $calendarTool = new CalendarDateTool($calendrier);
@@ -49,7 +49,7 @@ class CalendarController extends Controller {
         $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriode($periodeStart, $periodeEnd);
 
         $eventsDates = array();
-        $techniciens = $dm->getRepository('AppBundle:User')->findAllByType(User::USER_TYPE_TECHNICIEN);
+        $techniciens = $dm->getRepository('AppBundle:User')->findAllActif();
 
         while (strtotime($periodeStart) < strtotime($periodeEnd)) {
             $eventsDates[$periodeStart] = array();

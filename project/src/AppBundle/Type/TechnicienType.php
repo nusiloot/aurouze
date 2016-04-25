@@ -52,7 +52,7 @@ class TechnicienType extends AbstractType {
     }
     
     public function getUsers($type) {
-        return $this->dm->getRepository('AppBundle:User')->findAllByType($type);
+        return $this->dm->getRepository('AppBundle:User')->findAllActif();
     }
 
 }
