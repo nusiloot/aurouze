@@ -8,42 +8,70 @@
         {{ form_start(form) }}
         <div class="row">
             <div class="form-group col-xs-6">
-                {{ form_label(form.dateAcceptation) }}
-                {{ form_errors(form.dateAcceptation) }}
-                <div class="input-group">
-                    {{ form_widget(form.dateAcceptation) }}
-                    <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                </div>
+
             </div>
             <div class="form-group col-xs-6">
-                {{ form_label(form.dateDebut) }}
-                {{ form_errors(form.dateDebut) }}
-                <div class="input-group">
-                    {{ form_widget(form.dateDebut) }}
-                    <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                </div>
+
             </div>
         </div>
         <div class="row">
-            <div class="form-group col-xs-12">
+            <div class="form-group col-xs-6">
                 {{ form_label(form.commentaire) }}
                 {{ form_errors(form.commentaire) }}
                 {{ form_widget(form.commentaire) }}
+            </div>        
+            <div class="form-group col-xs-6">
+                <div class="row">
+                    <div class="col-xs-12">
+                        {{ form_label(form.technicien) }}
+                        {{ form_errors(form.technicien) }}
+                        {{ form_widget(form.technicien) }}
+                    </div>
+                    <div class="col-xs-12">
+                        {{ form_label(form.dateAcceptation) }}
+                        {{ form_errors(form.dateAcceptation) }}
+                        <div class="input-group">
+                            {{ form_widget(form.dateAcceptation) }}
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        {{ form_label(form.dateDebut) }}
+                        {{ form_errors(form.dateDebut) }}
+                        <div class="input-group">
+                            {{ form_widget(form.dateDebut) }}
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="row">
+            {% if contrat.isEnAttenteAcceptation() %}
             <div class="col-xs-4 text-left">
-                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux contrats</a>
+                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour à l'édition du contrat</a>
             </div>
-            <div class="col-xs-4 text-center">
-                <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
-            </div>
-            <div class="col-xs-4 text-right">
+                <div class="col-xs-4 text-center">
+                    <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
+                </div>
+                <div class="col-xs-4 text-right">
                 {{ form_widget(form.save) }}
             </div>
+            {% else %} 
+                <div class="col-xs-4 text-left"></div>
+                <div class="col-xs-4 text-center">
+
+                </div> 
+                 <div class="col-xs-4 text-right">
+                {{ form_widget(form.save) }}
+            </div>
+            {% endif%}
+            
         </div>
-        {{ form_end(form) }}
+        <br/>
+        <br/>
     </div>
+    {{ form_end(form) }}
+
 
 {% endblock %}

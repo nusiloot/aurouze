@@ -16,6 +16,7 @@ use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use AppBundle\Type\PrestationType;
 use AppBundle\Document\User;
+use AppBundle\Manager\ContratManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Form\CallbackTransformer;
 use AppBundle\Transformer\EtablissementsTransformer;
@@ -37,7 +38,7 @@ class ContratType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
-                ->add('typeContrat', ChoiceType::class, array('label' => 'Type de contrat :', 'choices' => array_merge(array('' => ''), $this->container->getParameter('contrat_type')), "attr" => array("class" => "select2 select2-simple")))
+                ->add('typeContrat', ChoiceType::class, array('label' => 'Type de contrat :', 'choices' => array_merge(array('' => ''), ContratManager::$types_contrat_libelles), "attr" => array("class" => "select2 select2-simple")))
                 ->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature :', "attr" => array("class" => "form-control", "rows" => 6)))
                 ->add('duree', TextType::class, array('label' => 'Durée du contrat :'))
                 ->add('duree_garantie', TextType::class, array('required' => false, 'label' => 'Durée de la garantie :'))
@@ -75,15 +76,6 @@ class ContratType extends AbstractType {
             'label' => '',
         ));
         
-//        $builder->add('produits', ChoiceType::class, array(
-//        		'choices' => $this->getProduits(),
-//        		'expanded' => false,
-//        		'multiple' => true,
-//        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
-//        ));
-//        $builder->get('produits')->addModelTransformer(new ProduitTransformer($this->dm));
-        
-
         $builder->add('commercial', DocumentType::class, array(
             "choices" => array_merge(array('' => ''), $this->getUsers(User::USER_TYPE_COMMERCIAL)),
             'label' => 'Commercial :',
@@ -91,14 +83,7 @@ class ContratType extends AbstractType {
             'expanded' => false,
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple")));
-
-        $builder->add('technicien', DocumentType::class, array(
-            "choices" => array_merge(array('' => ''), $this->getUsers(User::USER_TYPE_TECHNICIEN)),
-            'label' => 'Technicien :',
-            'class' => 'AppBundle\Document\User',
-            'expanded' => false,
-            'multiple' => false,
-            "attr" => array("class" => "select2 select2-simple")));
+        
 
         $builder->get('dureePassage')
                 ->addModelTransformer(new CallbackTransformer(

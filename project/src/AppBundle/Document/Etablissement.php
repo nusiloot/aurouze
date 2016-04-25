@@ -287,7 +287,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
 
     public function getIntitule() {
 
-        return $this->getNom() . ' ' . $this->getAdresse()->getIntitule();
+        return $this->getNom() . ' ' . $this->getAdresse()->getIntitule(). ' ('.$this->identifiant.')';
     }
 
     /**
