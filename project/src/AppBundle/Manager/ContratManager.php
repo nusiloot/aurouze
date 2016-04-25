@@ -20,7 +20,21 @@ class ContratManager implements MouvementManagerInterface {
     const STATUT_VALIDE = "VALIDE";
     const STATUT_FINI = "FINI";
     const STATUT_RESILIE = "RESILIE";
+    const TYPE_CONTRAT_RECONDUCTION_TACITE = 'RECONDUCTION_TACITE';
+    const TYPE_CONTRAT_PONCTUEL = 'PONCTUEL';
+    const TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION = 'RENOUVELABLE_SUR_PROPOSITION';
+    const TYPE_CONTRAT_AUTRE = 'AUTRE';
 
+    public static $types_contrat_libelles = array(self::TYPE_CONTRAT_RECONDUCTION_TACITE => 'Reconduction tacite',
+        self::TYPE_CONTRAT_PONCTUEL => 'Ponctuel',
+        self::TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION => 'Renouvelable sur proposition',
+        self::TYPE_CONTRAT_AUTRE => 'Autre'
+    );
+    public static $types_contrat_import_index = array(1 => self::TYPE_CONTRAT_RECONDUCTION_TACITE,
+        2 => self::TYPE_CONTRAT_PONCTUEL,
+        3 => self::TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION,
+        4 => self::TYPE_CONTRAT_AUTRE
+    );
     protected $dm;
 
     function __construct(DocumentManager $dm) {
@@ -38,7 +52,7 @@ class ContratManager implements MouvementManagerInterface {
         $contrat->addPrestation(new Prestation());
         $contrat->addProduit(new Produit());
 
-        if($etablissement) {
+        if ($etablissement) {
             $contrat->addEtablissement($etablissement);
         } else {
             $contrat->addEtablissement($societe->getEtablissements()->first());
@@ -58,10 +72,8 @@ class ContratManager implements MouvementManagerInterface {
         return $this->dm->getRepository('AppBundle:Contrat');
     }
 
-
-
     public function generateAllPassagesForContrat($contrat) {
-        if(count($contrat->getContratPassages())){
+        if (count($contrat->getContratPassages())) {
             return;
         }
         $date_debut = $contrat->getDateDebut();
