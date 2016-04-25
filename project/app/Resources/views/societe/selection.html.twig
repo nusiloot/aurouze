@@ -1,15 +1,11 @@
-<div class="row">
+
         {{ form_start(form, {'attr': { 'novalidate': 'novalidate', 'class': 'form-horizontal' } }) }}
         <div class="form-group">
             <div class="col-xs-12">
                 {{ form_errors(form.societes) }}
                 <div class="input-group select2-bootstrap-append">
                     {{ form_widget(form.societes, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher une société', 'data-url' : path('societe_search'), 'aria-hidden': true } }) }}
-                    <span class="input-group-btn">
-                        <button type="submit" class="btn btn-default" type="button">Accéder</button>
-                    </span>
                 </div>
             </div>
         </div>
         {{form_end(form)}}
-</div> 
