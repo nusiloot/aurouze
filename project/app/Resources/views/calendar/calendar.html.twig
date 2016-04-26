@@ -16,7 +16,7 @@
 
 <div class="row">
 	<div id="fc-events" class="col-sm-12">
-		{% if passage  %}
+		{% if passage and not passage.dateFin %}
 		<div class="row">
 	        <div class="col-xs-8">
 	            <div class="panel panel-default">
