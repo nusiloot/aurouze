@@ -1,0 +1,120 @@
+**Proposition n° {{ contrat.numeroArchive }}**
+
+PARIS, le {{ contrat.dateCreation|date("d/m/Y") }}
+
+
+>{{ contrat.societe.raisonSociale }}
+>{{ contrat.societe.adresse.adresse }}
+>{{ contrat.societe.adresse.codePostal }} {{ contrat.societe.adresse.commune }}
+
+
+ 
+# PROPOSITION DE PREVENTION ET LUTTE CONTRE LES NUISIBLES ET PARASITES
+
+entre
+
+```
+Ets AUROUZE Julien
+8, rue des Halles
+75001 PARIS
+```
+
+et
+
+```
+{{ contrat.societe.raisonSociale }}
+{{ contrat.societe.adresse.adresse }}
+{{ contrat.societe.adresse.codePostal }} {{ contrat.societe.adresse.commune }}
+```
+
+## Cette proposition a pour but d’effectuer {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %}
+
+{% for prestation in contrat.prestations %}
+{{  prestation.nom }}
+
+{% endfor %}
+
+## Dans le{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}locaux{% else %}local{% endif %} situé{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}aux adresses{% else %}à l'adresse{% endif %}
+
+{% for etablissement in contrat.etablissements %}
+{{  etablissement.raisonSociale }} / {{ etablissement.adresse.adresse }} {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}
+
+{% endfor %}
+
+## Nomenclature des locaux à traiter
+{{ contrat.nomenclature }}
+
+## Nombre prévisionnel d’interventions par type de prestation 
+{% for prestation in contrat.prestations %}
+{{  prestation.nbPassages }} passage{% if prestation.nbPassages > 1 %}s{% endif %} concernant : {{  prestation.nom }}
+
+{% endfor %}
+
+## Moyens de mise en œuvre 
+**3D**
+
+Détection : la détection consiste à mettre rapidement en évidence toute présence de nuisibles, de les déterminer et de définir leur origine.
+
+Destruction : la destruction consiste à choisir et à mettre en œuvre tous les moyens curatifs appropriés pour enrayer l’infestation des nuisibles dans les locaux (denrées et emballages vides exclus).
+
+Prévention : la prévention consiste à mettre en œuvre les risques éventuels d’infestation, les voies de pénétration et les facteurs favorisant l’implantation des nuisibles dans les locaux, et à préconiser les mesures nécessaires destinées à supprimer les défaillances existantes. Les fiches techniques et de données de sécurité vous seront fournies sur demande.
+
+## Engagement d’exécution de nos prestations
+Nos prestations sont exécutées par un personnel qualifié. Le matériel et l’outillage sont adaptés et en quantité suffisante pour la bonne exécution des prestations mentionnées et conformes à la législation en vigueur.
+
+## Durée
+Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{% if contrat.tacite %}, renouvelable par tacite reconduction. Elle peut être dénoncée par les deux parties à chaque date anniversaire par lettre recommandée avec accusé de réception en respectant un préavis de deux mois{% endif %}.
+
+## Montant forfaitaire
+
+|                                                           |                                                                      |
+| --------------------------------------------------------- | -------------------------------------------------------------------- |
+| HT                                                        | {{ contrat.prixHt|number_format(2, ',', ' ') }}€                     |
+| TVA {{ (contrat.tva * 100)|number_format(2, ',', ' ') }}% | {{ (contrat.tva * contrat.prixHt)|number_format(2, ',', ' ') }}€     |
+| TTC                                                       | {{ ((1+contrat.tva) * contrat.prixHt)|number_format(2, ',', ' ') }}€ |
+
+
+Devis valable {{ contrat.duree }} mois à compter de la date d’édition.
+Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% endif %}.
+Délai de paiement des factures : A réception
+
+## Responsabilité civile
+La société Ets AUROUZE Julien est assurée en responsabilité civile pour les dommages causés aux tiers du fait de son activité auprès de la compagnie GAN EUROCOURTAGE par la police n° RC 86.560.041.
+
+
+## Conditions générales
+Voir annexe ou au verso.
+
+___
+
+**Ets AUROUZE Julien**
+```
+Votre contact : {{ contrat.commercial.prenom }} {{ contrat.commercial.nom }}
+
+Signature :
+
+Date : {{ contrat.dateCreation|date("d/m/Y") }}
+```
+    
+**LE CLIENT**
+```
+J’atteste avoir pris connaissance des conditions générales des ventes.
+
+Nom du signataire :
+
+Date de signature  :
+
+Signature de la proposition et des conditions générales des ventes à nous retourner.
+
+Tampon :
+
+
+
+
+```
+ 
+Fait en double exemplaire.
+
+Un exemplaire à conserver.
+
+Un exemplaire à nous retourner.

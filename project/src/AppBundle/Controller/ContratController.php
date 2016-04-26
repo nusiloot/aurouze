@@ -12,6 +12,7 @@ use AppBundle\Document\Societe;
 use AppBundle\Document\Contrat;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\ContratType;
+use AppBundle\Type\ContratMarkdownType;
 use AppBundle\Type\ContratAcceptationType;
 use AppBundle\Manager\ContratManager;
 use Knp\Snappy\Pdf;
@@ -144,6 +145,35 @@ class ContratController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat));
+    }
+
+    /**
+     * @Route("/contrat/{id}/markdown", name="contrat_markdown")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function markdownAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        if (!$contrat->getMarkdown()) {
+        	$contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
+            $dm->persist($contrat);
+            $dm->flush();
+        }
+        
+        $form = $this->createForm(new ContratMarkdownType(), $contrat, array(
+        		'action' => $this->generateUrl('contrat_markdown', array('id' => $contrat->getId())),
+        		'method' => 'POST',
+        ));
+        
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+        	$contrat = $form->getData();
+            $dm->persist($contrat);
+            $dm->flush();
+        }
+        
+
+        return $this->render('contrat/visualisation.markdown.twig', array('contrat' => $contrat, 'form' => $form->createView()));
     }
 
     /**

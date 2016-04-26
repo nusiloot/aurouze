@@ -11,7 +11,9 @@
             </div>
         </div>
         {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
-
+        
+        
+		<a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
 
     </div>
 {% endblock %}
