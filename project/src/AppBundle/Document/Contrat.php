@@ -81,6 +81,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @MongoDB\String
      */
     protected $commentaire;
+    
+    /**
+     * @MongoDB\String
+     */
+    protected $markdown;
 
     /**
      * @MongoDB\EmbedMany(targetDocument="Prestation")
@@ -1034,5 +1039,37 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     public function getCommentaire()
     {
         return $this->commentaire;
+    }
+
+    /**
+     * Set markdown
+     *
+     * @param string $markdown
+     * @return self
+     */
+    public function setMarkdown($markdown)
+    {
+        $this->markdown = $markdown;
+        return $this;
+    }
+
+    /**
+     * Get markdown
+     *
+     * @return string $markdown
+     */
+    public function getMarkdown()
+    {
+        return $this->markdown;
+    }
+    
+    public function isTacite()
+    {
+    	return $this->getTypeContrat() == ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE;
+    }
+    
+    public function getTva()
+    {
+    	return ($this->getTvaReduite())? 0.1 : 0.2;
     }
 }
