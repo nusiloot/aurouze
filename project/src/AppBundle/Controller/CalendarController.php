@@ -198,28 +198,24 @@ class CalendarController extends Controller {
         if (!$request->isXmlHttpRequest()) {
             throw $this->createNotFoundException();
         }
-
-        $error = false;
+        
         $dm = $this->get('doctrine_mongodb')->getManager();
         $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('id'));
         $technicien = $request->get('technicien');
-
-
-        if ($error) {
-            throw new \Exception();
-        }
         
         $form = $this->createForm(new PassageCreationType($dm), $passage, array(
         		'action' => $this->generateUrl('calendarRead', array('id' => $request->get('id'), 'technicien' => $request->get('technicien'))),
         		'method' => 'POST',
         		'attr' => array('id' => 'eventForm')
         ));
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-        	$passage = $form->getData();
-        	$dm->persist($passage);
-        	$dm->flush();
-        	return new Response(json_encode(array("success" => true)));
+        if (!$passage->isRealise()) {
+	        $form->handleRequest($request);
+	        if ($form->isSubmitted() && $form->isValid()) {
+	        	$passage = $form->getData();
+	        	$dm->persist($passage);
+	        	$dm->flush();
+	        	return new Response(json_encode(array("success" => true)));
+	        }
         }
         return $this->render('calendar/calendarModal.html.twig', array('form' => $form->createView(), 'passage' => $passage, 'technicien' => $technicien, 'light' => $request->get('light')));
     }
@@ -229,17 +225,14 @@ class CalendarController extends Controller {
      */
     public function calendarDeleteAction(Request $request) {
 
-        $error = false;
-
         $dm = $this->get('doctrine_mongodb')->getManager();
         $passageToDelete = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
         $technicien = $request->get('technicien');
-
-        $passageToDelete->setDateFin(null);
-        $dm->persist($passageToDelete);
-        $dm->flush();
-        if ($error) {
-            throw new \Exception();
+        
+        if (!$passageToDelete->isRealise()) {
+        	$passageToDelete->setDateFin(null);
+        	$dm->persist($passageToDelete);
+        	$dm->flush();
         }
 
         return $this->redirect($this->generateUrl('calendar', array('passage' => $request->get('passage'), 'technicien' => $technicien)));
