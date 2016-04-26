@@ -54,6 +54,11 @@ class Compte {
      */
     protected $passages = array();
 
+     /**
+     * @MongoDB\Boolean
+     */
+    protected $actif;
+
     public function generateId() {
         $this->setId(self::PREFIX . '-' . $this->identifiant);
     }
@@ -264,5 +269,27 @@ class Compte {
     public function getPassages()
     {
         return $this->passages;
+    }
+
+    /**
+     * Set actif
+     *
+     * @param boolean $actif
+     * @return self
+     */
+    public function setActif($actif)
+    {
+        $this->actif = $actif;
+        return $this;
+    }
+
+    /**
+     * Get actif
+     *
+     * @return boolean $actif
+     */
+    public function getActif()
+    {
+        return $this->actif;
     }
 }

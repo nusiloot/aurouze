@@ -12,7 +12,22 @@
         $.initDatePicker();
         $.initTimePicker();
         $.initFormEventAjax();
+        $.initSwitcher();
     });
+    
+    $.initSwitcher = function () {
+    	$('.switcher').bootstrapSwitch();
+    	$('.switcher').on('switchChange.bootstrapSwitch', function(event, state) {
+    		var checkbox = $(this);
+    		var etat = state ? 1 : 0;
+    		
+    		$.ajax({
+                type: "POST",
+                url: checkbox.data('url'),
+                data: { etat: etat }
+            });
+    	});
+    }
     
     $.initDatePicker = function () {
     	$('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "right"});

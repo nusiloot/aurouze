@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="{{ asset('/component/bootstrap/css/bootstrap.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('/component/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('/component/bootstrap-timepicker/css/bootstrap-timepicker.css') }}" />
+        <link rel="stylesheet" href="{{ asset('/component/bootstrap-switch/css/bootstrap-switch.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('/component/fullcalendar/css/fullcalendar.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('/component/select2/css/select2.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('/component/select2/css/select2-bootstrap.min.css') }}" />
@@ -61,6 +62,7 @@
                 </ul>
                 <ul class="nav navbar-nav pull-right">
                     <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog"></span></a></li>
+                    <li class="{%if (_menu_active == 'user') %}active{% endif %}"><a href="{{ path('users') }}"><span class="glyphicon glyphicon-user"></span></a></li>
                 </ul>
             </div>
     </nav>
@@ -76,6 +78,7 @@
 <script type="text/javascript" src="{{ asset('/component/bootstrap/js/bootstrap.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/component/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/component/bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/component/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/component/bootstrap-timepicker/js/bootstrap-timepicker.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/component/moment/js/moment.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/component/fullcalendar/js/fullcalendar.min.js') }}"></script>

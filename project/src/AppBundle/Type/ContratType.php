@@ -119,7 +119,7 @@ class ContratType extends AbstractType {
     }
 
     public function getComptes($type) {
-        return $this->dm->getRepository('AppBundle:Compte')->findAllByType($type);
+        return $this->dm->getRepository('AppBundle:Compte')->findAllActif();
     }
 
     public function getProduits()

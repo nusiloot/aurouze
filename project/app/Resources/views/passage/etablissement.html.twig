@@ -165,7 +165,7 @@
                                             {% elseif pe.realise %}<a class="btn btn-block btn-sm btn-default" href="{{ path('passage_edition', { id: pe.id })}}">Modifier le rapport</a>
                                             {% elseif pe.aPlanifie %}
                                                 {% for technicien in pe.techniciens %}
-                                                    <a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : pe.passageIdentifiant,'technicien' : technicien.identite, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier</a>
+                                                    <a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : pe.id|replace({'PASSAGE-': ''}),'technicien' : technicien.identite, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier</a>
                                                 {% endfor %}
                                             {% endif %}
                                         </div>

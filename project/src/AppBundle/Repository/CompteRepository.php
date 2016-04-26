@@ -10,6 +10,10 @@ class CompteRepository extends DocumentRepository {
         return $this->findAll(); //$this->findBy(array('type' => $type));
     }
     
+    public function findAllActif() {
+    	return $this->findBy(array('actif' => true));
+    }
+    
     public function findByIdentifiant($identifiant) {
     	return $this->find(Compte::PREFIX.'-'.$identifiant);
     }
