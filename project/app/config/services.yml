@@ -17,8 +17,8 @@ services:
         class: Twig_Extensions_Extension_Intl
         tags:
             - { name: twig.extension }
-    user.manager:
-        class: AppBundle\Manager\UserManager
+    compte.manager:
+        class: AppBundle\Manager\CompteManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
 
     etablissement.manager:
@@ -39,7 +39,7 @@ services:
 
     passage.importer:
         class: AppBundle\Import\PassageCsvImporter
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @passage.manager, @etablissement.manager, @user.manager, @contrat.manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @passage.manager, @etablissement.manager, @compte.manager, @contrat.manager]
 
     societe.importer:
         class: AppBundle\Import\SocieteCsvImporter
@@ -51,7 +51,7 @@ services:
 
     contrat.importer:
         class: AppBundle\Import\ContratCsvImporter
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, @passage.manager, @etablissement.manager, @societe.manager, @user.manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, @passage.manager, @etablissement.manager, @societe.manager, @compte.manager]
 
     contrat.manager:
         class: AppBundle\Manager\ContratManager
@@ -73,8 +73,8 @@ services:
         class: AppBundle\Tool\OSMAdresses
         arguments: [%osm.url_search%,%osm.return_format%]
 
-    user.importer:
-        class: AppBundle\Import\UserCsvImporter
+    compte.importer:
+        class: AppBundle\Import\CompteCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager]
 
     configurationPrestation.importer:

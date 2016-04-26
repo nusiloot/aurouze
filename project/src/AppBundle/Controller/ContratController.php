@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Contrat;
-use AppBundle\Document\UserInfos;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\ContratType;
 use AppBundle\Type\ContratAcceptationType;

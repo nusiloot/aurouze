@@ -2,16 +2,16 @@
 
 namespace AppBundle\Import;
 
-use AppBundle\Document\User as User;
+use AppBundle\Document\Compte as Compte;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
 use Behat\Transliterator\Transliterator;
 
-class UserCsvImporter extends CsvFile {
+class CompteCsvImporter extends CsvFile {
 
     protected $dm;
 
-    const CSV_IDENTIFIANT_USER = 0;
+    const CSV_IDENTIFIANT = 0;
     const CSV_IDENTITE = 1;
     const CSV_TYPE = 21;
 
@@ -25,9 +25,9 @@ class UserCsvImporter extends CsvFile {
         $csv = $csvFile->getCsv();
         $cpt = 0;
         foreach ($csv as $data) {
-            $user = $this->createFromImport($data);
-            if ($user) {
-                $this->dm->persist($user);
+            $compte = $this->createFromImport($data);
+            if ($compte) {
+                $this->dm->persist($compte);
             }
             if ($cpt > 1000) {
                 $this->dm->flush();
@@ -46,17 +46,17 @@ class UserCsvImporter extends CsvFile {
         $prenom = trim(str_replace($nom, '', $prenomNom));
 
         $identifiant = strtoupper(Transliterator::urlize($prenom . ' ' . $nom));
-        $user = $this->dm->getRepository('AppBundle:User')->findByIdentifiant($identifiant);
+        $compte = $this->dm->getRepository('AppBundle:Compte')->findByIdentifiant($identifiant);
         if (isset($ligne[self::CSV_TYPE])) {
-            if (!$user) {
-                $user = new User();
-                $user->setIdentifiant($identifiant);
-                $user->generateId();
-                $user->setNom($nom);
-                $user->setPrenom($prenom);
-                $user->setCouleur($this->random_color());
-                $user->setType($ligne[self::CSV_TYPE]);
-                return $user;
+            if (!$compte) {
+                $compte = new Compte();
+                $compte->setIdentifiant($identifiant);
+                $compte->generateId();
+                $compte->setNom($nom);
+                $compte->setPrenom($prenom);
+                $compte->setCouleur($this->random_color());
+                $compte->setType($ligne[self::CSV_TYPE]);
+                return $compte;
             }
         }
         return false;

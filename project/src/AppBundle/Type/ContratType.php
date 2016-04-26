@@ -15,7 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use AppBundle\Type\PrestationType;
-use AppBundle\Document\User;
+use AppBundle\Document\Compte;
 use AppBundle\Manager\ContratManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Form\CallbackTransformer;
@@ -77,9 +77,9 @@ class ContratType extends AbstractType {
         ));
         
         $builder->add('commercial', DocumentType::class, array(
-            "choices" => array_merge(array('' => ''), $this->getUsers(User::USER_TYPE_COMMERCIAL)),
+            "choices" => array_merge(array('' => ''), $this->getComptes(Compte::TYPE_COMMERCIAL)),
             'label' => 'Commercial :',
-            'class' => 'AppBundle\Document\User',
+            'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple")));
@@ -118,8 +118,8 @@ class ContratType extends AbstractType {
         return 'contrat';
     }
 
-    public function getUsers($type) {
-        return $this->dm->getRepository('AppBundle:User')->findAllByType($type);
+    public function getComptes($type) {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllByType($type);
     }
 
     public function getProduits()

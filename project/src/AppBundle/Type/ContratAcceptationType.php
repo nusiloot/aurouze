@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Document\Contrat;
-use AppBundle\Document\User;
+use AppBundle\Document\Compte;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 
 class ContratAcceptationType extends AbstractType {
@@ -51,9 +51,9 @@ class ContratAcceptationType extends AbstractType {
         ));
         
         $builder->add('technicien', DocumentType::class, array(
-            "choices" => array_merge(array('' => ''), $this->getUsers(User::USER_TYPE_TECHNICIEN)),
+            "choices" => array_merge(array('' => ''), $this->getComptes(Compte::TYPE_TECHNICIEN)),
             'label' => 'Technicien :',
-            'class' => 'AppBundle\Document\User',
+            'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple")));
@@ -70,8 +70,8 @@ class ContratAcceptationType extends AbstractType {
         ));
     }
     
-    public function getUsers($type) {
-        return $this->dm->getRepository('AppBundle:User')->findAllByType($type);
+    public function getComptes($type) {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllByType($type);
     }
 
     /**

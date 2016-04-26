@@ -14,14 +14,14 @@ namespace AppBundle\Import;
  * @author mathurin
  */
 use AppBundle\Document\Contrat;
-use AppBundle\Document\UserInfos;
+use AppBundle\Document\CompteInfos;
 use AppBundle\Document\Produit;
-use AppBundle\Document\User;
+use AppBundle\Document\Compte;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Manager\EtablissementManager;
-use AppBundle\Manager\UserManager;
+use AppBundle\Manager\CompteManager;
 use AppBundle\Manager\SocieteManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Behat\Transliterator\Transliterator;
@@ -56,7 +56,7 @@ class ContratCsvImporter {
     const CSV_NOM_COMMERCIAL = 16;
     const CSV_NOM_TECHNICIEN = 17;
 
-    public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, SocieteManager $sm, UserManager $um) {
+    public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, SocieteManager $sm, CompteManager $um) {
         $this->dm = $dm;
         $this->cm = $cm;
         $this->pm = $pm;
@@ -75,7 +75,7 @@ class ContratCsvImporter {
         $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
         $produitsArray = $configuration->getProduitsArray();
 
-        $usersArray = $this->um->getRepository()->findAllInArray();
+        $comptesArray = $this->um->getRepository()->findAllInArray();
 
         $i = 0;
         $cptTotal = 0;
@@ -123,16 +123,16 @@ class ContratCsvImporter {
 
             if ($data[self::CSV_NOM_COMMERCIAL]) {
                 $identifiantCommercial = strtoupper(Transliterator::urlize($data[self::CSV_NOM_COMMERCIAL]));
-                if (array_key_exists($identifiantCommercial, $usersArray)) {
-                    $commercial = $usersArray[$identifiantCommercial];
+                if (array_key_exists($identifiantCommercial, $comptesArray)) {
+                    $commercial = $comptesArray[$identifiantCommercial];
                     $contrat->setCommercial($commercial);
                 }
             }
 
             if ($data[self::CSV_NOM_TECHNICIEN]) {
                 $identifiantTechnicien = strtoupper(Transliterator::urlize($data[self::CSV_NOM_TECHNICIEN]));
-                if (array_key_exists($identifiantTechnicien, $usersArray)) {
-                    $technicien = $usersArray[$identifiantTechnicien];
+                if (array_key_exists($identifiantTechnicien, $comptesArray)) {
+                    $technicien = $comptesArray[$identifiantTechnicien];
                     $contrat->setTechnicien($technicien);
                 }
             }

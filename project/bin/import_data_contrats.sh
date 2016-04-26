@@ -40,7 +40,7 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
     if(!date_creation_contrat){
         next;
     }
-    if(date_creation_contrat < "2013-01-01"){
+    if(date_creation_contrat < "2012-09-01"){
         next;
     }
 

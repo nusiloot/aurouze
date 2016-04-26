@@ -1,18 +1,17 @@
 <?php
 namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use AppBundle\Manager\UserManager;
+use AppBundle\Manager\CompteManager;
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\UserRepository")
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\CompteRepository")
  */
-class User {
+class Compte {
 
-    const PREFIX = "USER";
-    const USER_TYPE_TECHNICIEN = "TECHNICIEN";
-    const USER_TYPE_COMMERCIAL = "COMMERCIAL";
-    const USER_TYPE_AUTRE = "AUTRE";
-    const USER_INCONNU = "INCONNU";
+    const PREFIX = "COMPTE";
+    const TYPE_TECHNICIEN = "TECHNICIEN";
+    const TYPE_COMMERCIAL = "COMMERCIAL";
+    const TYPE_AUTRE = "AUTRE";
     const COULEUR_DEFAUT = 'yellow';
 
     /**

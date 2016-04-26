@@ -21,9 +21,9 @@ if test "$REMOTE_DATA"; then
     cd $SYMFODIR
 fi
 
-##### Récupération des Users #####
+##### Récupération des Comptes #####
 
-echo "Récupération des users"
+echo "Récupération des comptes"
 
 cat $DATA_DIR/tblUtilisateur.csv | tr -d "\r" | sort -t ";" -k 1,1 > $DATA_DIR/tblUtilisateur.csv.sorted
 
@@ -129,18 +129,6 @@ cat  $DATA_DIR/tblPrestation.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9
 cat $DATA_DIR/tblPassageAdresse.csv | tr -d '\r' | sort -t ";" -k 2,2 > $DATA_DIR/passageAdresse.sorted.csv
 
 
-echo "Import des commerciaux"
-
-php app/console importer:csv user.importer $DATA_DIR/commerciaux.csv -vvv
-
-echo "Import des techniciens"
-
-php app/console importer:csv user.importer $DATA_DIR/techniciens.csv -vvv
-
-echo "Import Utilisateurs Autres"
-
-php app/console importer:csv user.importer $DATA_DIR/utilisateurAutre.csv -vvv
-
 echo "Import des types de prestations"
 
 php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestationType.csv -vvv
@@ -152,6 +140,18 @@ php app/console importer:csv configurationProduit.importer $DATA_DIR/produits.cs
 echo "Import des sociétés"
 
 php app/console importer:csv societe.importer $DATA_DIR/societes.csv -vvv --no-debug
+
+echo "Import des commerciaux"
+
+php app/console importer:csv compte.importer $DATA_DIR/commerciaux.csv -vvv
+
+echo "Import des techniciens"
+
+php app/console importer:csv compte.importer $DATA_DIR/techniciens.csv -vvv
+
+echo "Import Utilisateurs Autres"
+
+php app/console importer:csv compte.importer $DATA_DIR/utilisateurAutre.csv -vvv
 
 echo "Import des etablissements"
 

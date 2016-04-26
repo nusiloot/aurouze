@@ -7,8 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Tool\CalendarDateTool;
-use AppBundle\Document\User;
-use AppBundle\Document\UserInfos;
+use AppBundle\Document\Compte;
+use AppBundle\Document\CompteInfos;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\PassageCreationType;
 
@@ -22,7 +22,7 @@ class CalendarController extends Controller {
 
         $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
         $technicien = $request->get('technicien');
-        $techniciens = $dm->getRepository('AppBundle:User')->findAllByType(User::USER_TYPE_TECHNICIEN);
+        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllByType(Compte::TYPE_TECHNICIEN);
 
         $calendrier = $request->get('calendrier');
         $calendarTool = new CalendarDateTool($calendrier);
@@ -49,7 +49,7 @@ class CalendarController extends Controller {
         $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriode($periodeStart, $periodeEnd);
 
         $eventsDates = array();
-        $techniciens = $dm->getRepository('AppBundle:User')->findAllByType(User::USER_TYPE_TECHNICIEN);
+        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllByType(Compte::TYPE_TECHNICIEN);
 
         while (strtotime($periodeStart) < strtotime($periodeEnd)) {
             $eventsDates[$periodeStart] = array();
@@ -80,12 +80,12 @@ class CalendarController extends Controller {
 	            $dateDebut = new \DateTime($passageTech->getDateDebut()->format('Y-m-d') . 'T06:00:00');
 	            $diffDebut = (strtotime($passageTech->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
 	            $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-                    $tech = $dm->getRepository('AppBundle:User')->findOneById($technicien->getId());
+                    $tech = $dm->getRepository('AppBundle:Compte')->findOneById($technicien->getId());
 	            
 	            $passageArr = array(
 	                'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
 	                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
-	                'backgroundColor' => ($tech) ? $tech->getCouleur() : User::COULEUR_DEFAUT,
+	                'backgroundColor' => ($tech) ? $tech->getCouleur() : Compte::COULEUR_DEFAUT,
 	                'textColor' => "black",
 	                'coefStart' => round($diffDebut / 30, 1),
 	                'coefEnd' => round($diffFin / 30, 2),
@@ -133,17 +133,17 @@ class CalendarController extends Controller {
         if ($error) {
             throw new \Exception();
         }
-        $tech = $dm->getRepository('AppBundle:User')->findByIdentifiant(strtoupper(Transliterator::urlize($technicien)));
+        $tech = $dm->getRepository('AppBundle:Compte')->findByIdentifiant(strtoupper(Transliterator::urlize($technicien)));
         $event = array('id' => $passageToMove->getPassageIdentifiant(),
             'title' => $passageToMove->getIntitule(),
             'start' => $start,
             'end' => $end,
-            'backgroundColor' => ($tech) ? $tech->getCouleur() : User::COULEUR_DEFAUT,
+            'backgroundColor' => ($tech) ? $tech->getCouleur() : Compte::COULEUR_DEFAUT,
             'textColor' => "black"
         );
         if ($tech) {
-            $userInfos = new UserInfos();
-            $userInfos->copyFromUser($tech);
+            $compteInfos = new CompteInfos();
+            $compteInfos->copyFromCompte($tech);
             $passageToMove->addTechnicien($tech);
         }
         $passageToMove->setDateDebut($start);
@@ -166,7 +166,7 @@ class CalendarController extends Controller {
             throw $this->createNotFoundException();
         }
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $technicien = $dm->getRepository('AppBundle:User')->findByIdentifiant(strtoupper(Transliterator::urlize($request->get('technicien'))));
+        $technicien = $dm->getRepository('AppBundle:Compte')->findByIdentifiant(strtoupper(Transliterator::urlize($request->get('technicien'))));
         $periodeStart = $request->get('start');
         $periodeEnd = $request->get('end');
         $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $technicien);

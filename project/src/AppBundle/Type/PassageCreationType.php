@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use AppBundle\Document\User;
+use AppBundle\Document\Compte;
 use AppBundle\Document\Prestation;
 use Symfony\Component\Form\CallbackTransformer;
 use AppBundle\Transformer\PrestationTransformer;
@@ -55,8 +55,8 @@ class PassageCreationType extends AbstractType
         ;
         
         $builder->add('techniciens', DocumentType::class, array(
-            	'choices' => $this->getUsers(User::USER_TYPE_TECHNICIEN),
-                'class' => 'AppBundle\Document\User',
+            	'choices' => $this->getComptes(Compte::TYPE_TECHNICIEN),
+                'class' => 'AppBundle\Document\Compte',
         		'expanded' => false, 
         		'multiple' => true,
         		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")
@@ -89,9 +89,9 @@ class PassageCreationType extends AbstractType
         return 'passage';
     }
     
-    public function getUsers($type) 
+    public function getComptes($type) 
     {
-    	return $this->dm->getRepository('AppBundle:User')->findAllByType($type);
+    	return $this->dm->getRepository('AppBundle:Compte')->findAllByType($type);
     }
     
     public function getPrestations() 

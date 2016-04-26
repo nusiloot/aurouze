@@ -2,16 +2,16 @@
 
 namespace AppBundle\Repository;
 use Doctrine\ODM\MongoDB\DocumentRepository;
-use AppBundle\Document\User;
+use AppBundle\Document\Compte;
 
-class UserRepository extends DocumentRepository {
+class CompteRepository extends DocumentRepository {
 
     public function findAllByType($type) {
         return $this->findAll(); //$this->findBy(array('type' => $type));
     }
     
     public function findByIdentifiant($identifiant) {
-    	return $this->find(User::PREFIX.'-'.$identifiant);
+    	return $this->find(Compte::PREFIX.'-'.$identifiant);
     }
     
     public function findByIdentite($identite) {
@@ -19,19 +19,19 @@ class UserRepository extends DocumentRepository {
     }
     
     public function findAllByTypeArray($type) {
-        $users = $this->findAllByType($type);
+        $comptes = $this->findAllByType($type);
         $result = array();
-        foreach ($users as $user) {
-            $result[$user->getIdentifiant()] = $user;
+        foreach ($comptes as $compte) {
+            $result[$compte->getIdentifiant()] = $compte;
         }
         return $result;
     }
     
     public function findAllInArray() {
-        $users = $this->findAll();
+        $comptes = $this->findAll();
         $result = array();
-        foreach ($users as $user) {
-            $result[$user->getIdentifiant()] = $user;
+        foreach ($comptes as $compte) {
+            $result[$compte->getIdentifiant()] = $compte;
         }
         return $result;
     }

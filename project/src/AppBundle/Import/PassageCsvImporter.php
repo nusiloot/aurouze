@@ -17,11 +17,11 @@ use AppBundle\Document\Passage;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\ContratPassages;
 use AppBundle\Document\Prestation;
-use AppBundle\Document\User;
+use AppBundle\Document\Compte;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Manager\EtablissementManager;
-use AppBundle\Manager\UserManager;
+use AppBundle\Manager\CompteManager;
 use AppBundle\Manager\ContratManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Import\CsvFile;
@@ -53,7 +53,7 @@ class PassageCsvImporter {
     const CSV_STATUT = 13;
     const CSV_OLD_ID = 14;
 
-    public function __construct(DocumentManager $dm, PassageManager $pm, EtablissementManager $em, UserManager $um, ContratManager $cm) {
+    public function __construct(DocumentManager $dm, PassageManager $pm, EtablissementManager $em, CompteManager $um, ContratManager $cm) {
         $this->dm = $dm;
         $this->pm = $pm;
         $this->em = $em;
@@ -151,9 +151,9 @@ class PassageCsvImporter {
                 $prenomTechnicien = trim(str_replace($nomTechnicien, '', $prenomNomTechnicien));
                 $identifiantTechnicien = strtoupper(Transliterator::urlize($prenomTechnicien . ' ' . $nomTechnicien));
 
-                $user = $this->um->getRepository()->findOneByIdentifiant($identifiantTechnicien);
-                if ($user) {
-                    $passage->addTechnicien($user);
+                $compte = $this->um->getRepository()->findOneByIdentifiant($identifiantTechnicien);
+                if ($compte) {
+                    $passage->addTechnicien($compte);
                     $this->dm->persist($passage);
                 }
             }

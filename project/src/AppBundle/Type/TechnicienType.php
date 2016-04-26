@@ -18,7 +18,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
-use AppBundle\Document\User;
+use AppBundle\Document\Compte;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 
 class TechnicienType extends AbstractType {
@@ -36,9 +36,9 @@ class TechnicienType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
         $builder->add('technicien', DocumentType::class, array(
-            "choices" => array_merge(array('' => ''), $this->getUsers(User::USER_TYPE_TECHNICIEN)),
+            "choices" => array_merge(array('' => ''), $this->getComptes(Compte::TYPE_TECHNICIEN)),
             'label' => 'Technicien :',
-            'class' => 'AppBundle\Document\User',
+            'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple")));
@@ -51,8 +51,8 @@ class TechnicienType extends AbstractType {
         return 'technicien';
     }
     
-    public function getUsers($type) {
-        return $this->dm->getRepository('AppBundle:User')->findAllByType($type);
+    public function getComptes($type) {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllByType($type);
     }
 
 }

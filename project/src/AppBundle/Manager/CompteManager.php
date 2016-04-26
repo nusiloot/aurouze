@@ -16,9 +16,8 @@ namespace AppBundle\Manager;
 
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 
-class UserManager {
+class CompteManager {
     
-    const USER_INCONNU = 'INCONNU';
     protected $dm;
     
     public function __construct(DocumentManager $dm) {
@@ -27,7 +26,7 @@ class UserManager {
 
     public function getRepository() {
 
-        return $this->dm->getRepository('AppBundle:User');
+        return $this->dm->getRepository('AppBundle:Compte');
     }
 
 

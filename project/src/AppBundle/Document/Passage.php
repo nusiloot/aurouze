@@ -92,7 +92,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $description;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="User", inversedBy="techniciens")
+     * @MongoDB\ReferenceMany(targetDocument="Compte", inversedBy="techniciens")
      */
     protected $techniciens;
 
@@ -552,9 +552,9 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /**
      * Add technicien
      *
-     * @param AppBundle\Document\User $technicien
+     * @param AppBundle\Document\Compte $technicien
      */
-    public function addTechnicien(\AppBundle\Document\User $technicien) {
+    public function addTechnicien(\AppBundle\Document\Compte $technicien) {
         foreach ($this->getTechniciens() as $tech) {
             if ($tech == $technicien) {
                 return;
@@ -575,9 +575,9 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /**
      * Remove technicien
      *
-     * @param AppBundle\Document\User $technicien
+     * @param AppBundle\Document\Compte $technicien
      */
-    public function removeTechnicien(\AppBundle\Document\User $technicien) {
+    public function removeTechnicien(\AppBundle\Document\Compte $technicien) {
         $this->techniciens->removeElement($technicien);
     }
 

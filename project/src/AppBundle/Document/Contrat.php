@@ -6,7 +6,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Document\Etablissement;
-use AppBundle\Document\User;
+use AppBundle\Document\Compte;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Societe;
 use AppBundle\Document\ContratPassages;
@@ -33,12 +33,12 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     protected $etablissements;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="User")
+     * @MongoDB\ReferenceOne(targetDocument="Compte")
      */
     protected $commercial;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="User")
+     * @MongoDB\ReferenceOne(targetDocument="Compte")
      */
     protected $technicien;
 
@@ -177,10 +177,10 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     /**
      * Set commercial
      *
-     * @param AppBundle\Document\User $commercial
+     * @param AppBundle\Document\Compte $commercial
      * @return self
      */
-    public function setCommercial(\AppBundle\Document\User $commercial) {
+    public function setCommercial(\AppBundle\Document\Compte $commercial) {
         $this->commercial = $commercial;
         return $this;
     }
@@ -188,7 +188,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     /**
      * Get commercial
      *
-     * @return AppBundle\Document\User $commercial
+     * @return AppBundle\Document\Compte $commercial
      */
     public function getCommercial() {
         return $this->commercial;
@@ -794,10 +794,10 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     /**
      * Set technicien
      *
-     * @param AppBundle\Document\User $technicien
+     * @param AppBundle\Document\Compte $technicien
      * @return self
      */
-    public function setTechnicien(\AppBundle\Document\User $technicien)
+    public function setTechnicien(\AppBundle\Document\Compte $technicien)
     {
         $this->technicien = $technicien;
         return $this;
@@ -806,7 +806,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     /**
      * Get technicien
      *
-     * @return AppBundle\Document\User $technicien
+     * @return AppBundle\Document\Compte $technicien
      */
     public function getTechnicien()
     {
