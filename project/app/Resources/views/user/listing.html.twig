@@ -8,7 +8,7 @@
 			<th></th>
 			<th>Prénom</th>
 			<th>Nom</th>
-			<th>Type</th>
+			<th>Tags</th>
 			<th>Actif</th>
 		</tr>
 	</thead>
@@ -18,7 +18,7 @@
 			<td><span class="glyphicon glyphicon-user" style="color: {{ user.couleur }};"></span></td>
 			<td>{{ user.prenom }}</td>
 			<td>{{ user.nom }}</td>
-			<td>{{ user.type }}</td>
+			<td>{% for tag in user.tags %}{{ tag.nom }}, {% endfor %}</td>
 			<td><input class="switcher" type="checkbox" data-size="mini" data-url="{{ path('user_update_etat', {id: user.id }) }}" /></td>
 		</tr>
 		{% endfor %}

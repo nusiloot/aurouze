@@ -17,13 +17,13 @@ class UserController extends Controller {
      */
     public function usersAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $users = $dm->getRepository('AppBundle:User')->findAll();
+        $users = $dm->getRepository('AppBundle:Compte')->findAll();
         return $this->render('user/listing.html.twig', array('users' => $users));
     }
     
     /**
      * @Route("/user/{id}/etat", name="user_update_etat")
-     * @ParamConverter("user", class="AppBundle:User")
+     * @ParamConverter("user", class="AppBundle:Compte")
      */
     public function updateEtatAction(Request $request, User $user)
     {
