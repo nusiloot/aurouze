@@ -14,6 +14,7 @@
         $.initFormEventAjax();
         $.initSwitcher();
         $.initModalPassage();
+        $.initBtnSwitch();
     });
 
     $.initSwitcher = function () {
@@ -27,6 +28,13 @@
                 url: checkbox.data('url'),
                 data: { etat: etat }
             });
+    	});
+    }
+
+    $.initBtnSwitch = function () {
+    	$('.btn-switcher').click(function() {
+    		$($(this).data('hide')).hide();
+    		$($(this).data('show')).show();
     	});
     }
 

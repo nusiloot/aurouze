@@ -7,8 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Tool\CalendarDateTool;
-use AppBundle\Document\User;
-use AppBundle\Document\UserInfos;
+use AppBundle\Document\Compte;
+use AppBundle\Document\CompteInfos;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\PassageCreationType;
 
@@ -22,7 +22,8 @@ class CalendarController extends Controller {
 
         $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
         $technicien = $request->get('technicien');
-        $techniciens = $dm->getRepository('AppBundle:User')->findAllActif();
+
+        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllActif();
 
         $calendrier = $request->get('calendrier');
         $calendarTool = new CalendarDateTool($calendrier);
@@ -49,7 +50,8 @@ class CalendarController extends Controller {
         $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriode($periodeStart, $periodeEnd);
 
         $eventsDates = array();
-        $techniciens = $dm->getRepository('AppBundle:User')->findAllActif();
+
+        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllActif();
 
         while (strtotime($periodeStart) < strtotime($periodeEnd)) {
             $eventsDates[$periodeStart] = array();
@@ -80,12 +82,13 @@ class CalendarController extends Controller {
 	            $dateDebut = new \DateTime($passageTech->getDateDebut()->format('Y-m-d') . 'T06:00:00');
 	            $diffDebut = (strtotime($passageTech->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
 	            $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-                    $tech = $dm->getRepository('AppBundle:User')->findOneById($technicien->getId());
+
+                $tech = $dm->getRepository('AppBundle:Compte')->findOneById($technicien->getId());
 
 	            $passageArr = array(
 	                'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
 	                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
-	                'backgroundColor' => ($tech) ? $tech->getCouleur() : User::COULEUR_DEFAUT,
+	                'backgroundColor' => ($tech) ? $tech->getCouleur() : Compte::COULEUR_DEFAUT,
 	                'textColor' => "black",
 	                'coefStart' => round($diffDebut / 30, 1),
 	                'coefEnd' => round($diffFin / 30, 2),
@@ -133,17 +136,17 @@ class CalendarController extends Controller {
         if ($error) {
             throw new \Exception();
         }
-        $tech = $dm->getRepository('AppBundle:User')->findByIdentifiant(strtoupper(Transliterator::urlize($technicien)));
+        $tech = $dm->getRepository('AppBundle:Compte')->findByIdentifiant(strtoupper(Transliterator::urlize($technicien)));
         $event = array('id' => $passageToMove->getPassageIdentifiant(),
             'title' => $passageToMove->getIntitule(),
             'start' => $start,
             'end' => $end,
-            'backgroundColor' => ($tech) ? $tech->getCouleur() : User::COULEUR_DEFAUT,
+            'backgroundColor' => ($tech) ? $tech->getCouleur() : Compte::COULEUR_DEFAUT,
             'textColor' => "black"
         );
         if ($tech) {
-            $userInfos = new UserInfos();
-            $userInfos->copyFromUser($tech);
+            $compteInfos = new CompteInfos();
+            $compteInfos->copyFromCompte($tech);
             $passageToMove->addTechnicien($tech);
         }
         $passageToMove->setDateDebut($start);
@@ -166,7 +169,7 @@ class CalendarController extends Controller {
             throw $this->createNotFoundException();
         }
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $technicien = $dm->getRepository('AppBundle:User')->findByIdentifiant(strtoupper(Transliterator::urlize($request->get('technicien'))));
+        $technicien = $dm->getRepository('AppBundle:Compte')->findByIdentifiant(strtoupper(Transliterator::urlize($request->get('technicien'))));
         $periodeStart = $request->get('start');
         $periodeEnd = $request->get('end');
         $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $technicien);
@@ -199,26 +202,23 @@ class CalendarController extends Controller {
             throw $this->createNotFoundException();
         }
 
-        $error = false;
         $dm = $this->get('doctrine_mongodb')->getManager();
         $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('id'));
         $technicien = $request->get('technicien');
-
-        if ($error) {
-            throw new \Exception();
-        }
 
         $form = $this->createForm(new PassageCreationType($dm), $passage, array(
         		'action' => $this->generateUrl('calendarRead', array('id' => $request->get('id'), 'technicien' => $request->get('technicien'))),
         		'method' => 'POST',
         		'attr' => array('id' => 'eventForm')
         ));
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-        	$passage = $form->getData();
-        	$dm->persist($passage);
-        	$dm->flush();
-        	return new Response(json_encode(array("success" => true)));
+        if (!$passage->isRealise()) {
+	        $form->handleRequest($request);
+	        if ($form->isSubmitted() && $form->isValid()) {
+	        	$passage = $form->getData();
+	        	$dm->persist($passage);
+	        	$dm->flush();
+	        	return new Response(json_encode(array("success" => true)));
+	        }
         }
         return $this->render('calendar/calendarModal.html.twig', array('form' => $form->createView(), 'passage' => $passage, 'technicien' => $technicien, 'light' => $request->get('light')));
     }
@@ -228,17 +228,14 @@ class CalendarController extends Controller {
      */
     public function calendarDeleteAction(Request $request) {
 
-        $error = false;
-
         $dm = $this->get('doctrine_mongodb')->getManager();
         $passageToDelete = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
         $technicien = $request->get('technicien');
 
-        $passageToDelete->setDateFin(null);
-        $dm->persist($passageToDelete);
-        $dm->flush();
-        if ($error) {
-            throw new \Exception();
+        if (!$passageToDelete->isRealise()) {
+        	$passageToDelete->setDateFin(null);
+        	$dm->persist($passageToDelete);
+        	$dm->flush();
         }
 
         return $this->redirect($this->generateUrl('calendar', array('passage' => $request->get('passage'), 'technicien' => $technicien)));

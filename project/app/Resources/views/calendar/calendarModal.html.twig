@@ -34,6 +34,8 @@
 	</div>
 </div>
 
+{% if not passage.realise %}
+
 {{ form_start(form) }}
 <div class="row">
 	<div class="form-group col-xs-8">
@@ -88,12 +90,15 @@
 </div>
 {{ form_end(form) }}
 
+{% endif %}
 
 {% if not light %}
 <hr />
 <div class="row">
 	<div class="col-xs-6">
+		{% if not passage.realise %}
 		<a class="btn btn-danger" href="{{path('calendarDelete', {'passage': passage.passageIdentifiant, 'technicien': technicien})}}">Déplannifier</a>
+		{% endif %}
     </div>
     <div class="col-xs-6 text-right">
 		<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span>&nbsp;Fermer</button>

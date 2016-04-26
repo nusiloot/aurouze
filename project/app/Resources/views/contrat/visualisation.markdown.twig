@@ -1,0 +1,20 @@
+{% set _menu_active = 'contrat' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+
+	<div id="visu-markdown">
+		{{ contrat.markdown|markdown }}
+		<a class="btn btn-warning pull-right btn-switcher" href="javascript:void(0)" data-hide="#visu-markdown" data-show="#edit-markdown">Modifier</a>
+	</div>
+	<div id="edit-markdown" style="display:none;">
+		{{ form_start(form) }}
+		<div class="row">
+			<div class="col-xs-12">
+				{{ form_row(form.markdown) }}
+			</div>
+		</div>
+		{{ form_widget(form.save) }}
+		<a class="btn btn-primary pull-right btn-switcher" href="javascript:void(0)" data-hide="#edit-markdown" data-show="#visu-markdown">Retour</a>
+		{{ form_end(form) }}
+	</div>
+{% endblock %}

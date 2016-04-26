@@ -7,7 +7,7 @@ use AppBundle\Model\MouvementManagerInterface;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Passage;
-use AppBundle\Document\UserInfos;
+use AppBundle\Document\CompteInfos;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
 use AppBundle\Document\Societe;

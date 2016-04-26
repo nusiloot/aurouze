@@ -14,11 +14,11 @@ namespace AppBundle\Document;
  * @author mathurin
  */
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use AppBundle\Manager\UserManager;
+use AppBundle\Manager\CompteManager;
 /**
  * @MongoDB\EmbeddedDocument
  */
-class UserInfos {
+class CompteInfos {
 
     /**
      * @MongoDB\string
@@ -158,12 +158,12 @@ class UserInfos {
         return '#ffffff';
     }
 
-    public function copyFromUser($user) {
-        $this->setIdentifiant($user->getIdentifiant());
-        $this->setIdentite($user->getIdentite());
-        $this->setNom($user->getNom());
-        $this->setPrenom($user->getPrenom());
-        $this->setCouleur($user->getCouleur());
+    public function copyFromCompte($compte) {
+        $this->setIdentifiant($compte->getIdentifiant());
+        $this->setIdentite($compte->getIdentite());
+        $this->setNom($compte->getNom());
+        $this->setPrenom($compte->getPrenom());
+        $this->setCouleur($compte->getCouleur());
     }
 
 }
