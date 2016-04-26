@@ -127,7 +127,7 @@ class CalendarController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $id = ($request->get('passage')) ? $request->get('passage') : $request->get('id');
         $technicien = $request->get('technicien');
-        var_dump($id); exit;
+        
         $passageToMove = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($id);
        
         $start = $request->get('start');

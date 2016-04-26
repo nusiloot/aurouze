@@ -25,7 +25,7 @@ class CompteController extends Controller {
      * @Route("/compte/{id}/etat", name="compte_update_etat")
      * @ParamConverter("compte", class="AppBundle:Compte")
      */
-    public function updateEtatAction(Request $request, User $compte)
+    public function updateEtatAction(Request $request, Compte $compte)
     {
     	if (!$request->isXmlHttpRequest()) {
     		throw $this->createNotFoundException();

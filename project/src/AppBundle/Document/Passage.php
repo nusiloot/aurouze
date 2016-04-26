@@ -213,7 +213,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function getPassageIdentifiant() {
-        return $this->etablissementIdentifiant . '-' . $this->identifiant;
+        return $this->identifiant;
     }
 
     public function getSociete() {
