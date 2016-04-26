@@ -144,7 +144,7 @@ cat $DATA_DIR/passagesadressestechniciensprestation.csv | sed -r 's/([a-zA-Z]+)[
     libelle=libelle " (" type_passage ")";
 
     description=$17;
-    technicien=$26;
+    technicien=$1;
     contrat_id=$3;
     prestations=$47;
     produits=$48;

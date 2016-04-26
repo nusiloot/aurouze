@@ -48,10 +48,10 @@ class CompteCsvImporter extends CsvFile {
             $output->writeln(sprintf("<error>La société Aurouze n'a pas été trouvée</error>"));
             return false;
         }
-        $compte = $this->dm->getRepository('AppBundle:Compte')->findOneBy(array('nom' => $nom, 'prenom' => $prenom));
+        $compte = $this->dm->getRepository('AppBundle:Compte')->findOneByIdentifiantReprise($ligne[self::CSV_IDENTIFIANT]);
         if (isset($ligne[self::CSV_TYPE])) {
             if (!$compte) {
-
+                
                 $tag = new CompteTag();
                 $tag->setIdentifiant($ligne[self::CSV_TYPE]);
                 $tag->setNom(CompteManager::$tagsCompteLibelles[$ligne[self::CSV_TYPE]]);
@@ -59,7 +59,7 @@ class CompteCsvImporter extends CsvFile {
 
 
                 $compte = new Compte($societeAurouze);
-
+                $compte->setIdentifiantReprise($ligne[self::CSV_IDENTIFIANT]);
                 $compte->setNom($nom);
                 $compte->setPrenom($prenom);
                 $compte->setCouleur($this->random_color());

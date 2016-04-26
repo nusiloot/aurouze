@@ -1,5 +1,7 @@
 <?php
+
 namespace AppBundle\Document;
+
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\CompteManager;
 use AppBundle\Model\DocumentSocieteInterface;
@@ -43,18 +45,17 @@ class Compte implements DocumentSocieteInterface {
      */
     protected $couleur;
 
-       
-   /**
+    /**
      * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="comptes")
      */
     protected $societe;
-    
+
     /**
      *  @MongoDB\ReferenceMany(targetDocument="Passage", mappedBy="techniciens") 
      */
     protected $passages = array();
 
-     /**
+    /**
      * @MongoDB\Boolean
      */
     protected $actif;
@@ -63,13 +64,11 @@ class Compte implements DocumentSocieteInterface {
      * @MongoDB\String
      */
     protected $identifiantReprise;
-    
+
     /**
      *  @MongoDB\EmbedMany(targetDocument="CompteTag")
      */
     protected $tags = array();
-    
-    
 
     /**
      * Get id
@@ -85,9 +84,7 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return id $id
      */
-
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
         return $this;
     }
@@ -98,8 +95,7 @@ class Compte implements DocumentSocieteInterface {
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant)
-    {
+    public function setIdentifiant($identifiant) {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -109,8 +105,7 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant()
-    {
+    public function getIdentifiant() {
         return $this->identifiant;
     }
 
@@ -120,8 +115,7 @@ class Compte implements DocumentSocieteInterface {
      * @param string $nom
      * @return self
      */
-    public function setNom($nom)
-    {
+    public function setNom($nom) {
         $this->nom = $nom;
         return $this;
     }
@@ -131,8 +125,7 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return string $nom
      */
-    public function getNom()
-    {
+    public function getNom() {
         return $this->nom;
     }
 
@@ -142,8 +135,7 @@ class Compte implements DocumentSocieteInterface {
      * @param string $prenom
      * @return self
      */
-    public function setPrenom($prenom)
-    {
+    public function setPrenom($prenom) {
         $this->prenom = $prenom;
         return $this;
     }
@@ -153,8 +145,7 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return string $prenom
      */
-    public function getPrenom()
-    {
+    public function getPrenom() {
         return $this->prenom;
     }
 
@@ -164,8 +155,7 @@ class Compte implements DocumentSocieteInterface {
      * @param string $identite
      * @return self
      */
-    public function setIdentite($identite)
-    {
+    public function setIdentite($identite) {
         $this->identite = $identite;
         return $this;
     }
@@ -175,9 +165,8 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return string $identite
      */
-    public function getIdentite()
-    {
-        return $this->prenom.' '.$this->nom;
+    public function getIdentite() {
+        return $this->prenom . ' ' . $this->nom;
     }
 
     /**
@@ -186,8 +175,7 @@ class Compte implements DocumentSocieteInterface {
      * @param string $couleur
      * @return self
      */
-    public function setCouleur($couleur)
-    {
+    public function setCouleur($couleur) {
         $this->couleur = $couleur;
         return $this;
     }
@@ -198,7 +186,7 @@ class Compte implements DocumentSocieteInterface {
      * @return string $couleur
      */
     public function getCouleur() {
-        if(!$this->couleur) {
+        if (!$this->couleur) {
 
             return '#ffffff';
         }
@@ -206,7 +194,7 @@ class Compte implements DocumentSocieteInterface {
     }
 
     public function getCouleurText() {
-        if(!$this->getCouleur() || $this->getCouleur() == '#ffffff') {
+        if (!$this->getCouleur() || $this->getCouleur() == '#ffffff') {
 
             return '#000000';
         }
@@ -214,31 +202,57 @@ class Compte implements DocumentSocieteInterface {
         return '#ffffff';
     }
 
-    
+    public function getTag($identifiantTag) {
+        foreach ($this->tags as $tag) {
+            if ($tag->getIdentifiant() == $identifiantTag) {
+                return $tag;
+            }
+        }
+        return false;
+    }
+
+    private function hasTag($tagSearch) {
+        foreach ($this->tags as $tag) {
+            if ($tag->getIdentifiant() == $tagSearch) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function isTechnicien() {
+        return $this->hasTag(CompteManager::TYPE_TECHNICIEN);
+    }
+
+    public function isCommercial() {
+        return $this->hasTag(CompteManager::TYPE_COMMERCIAL);
+    }
+
+    public function isAutre() {
+        return $this->hasTag(CompteManager::TYPE_AUTRE);
+    }
 
     public function getInituleCourt() {
 
         return $this->getPrenom();
     }
-    
+
     public function __toString() {
-    	return $this->getIdentite();
+        return $this->getIdentite();
     }
-    
-    public function __construct(Societe $societe)
-    {
+
+    public function __construct(Societe $societe) {
         $this->passages = new ArrayCollection();
         $this->prestations = new ArrayCollection();
         $this->setSociete($societe);
     }
-    
+
     /**
      * Add passage
      *
      * @param AppBundle\Document\Passage $passage
      */
-    public function addPassage(\AppBundle\Document\Passage $passage)
-    {
+    public function addPassage(\AppBundle\Document\Passage $passage) {
         $this->passages[] = $passage;
     }
 
@@ -247,8 +261,7 @@ class Compte implements DocumentSocieteInterface {
      *
      * @param AppBundle\Document\Passage $passage
      */
-    public function removePassage(\AppBundle\Document\Passage $passage)
-    {
+    public function removePassage(\AppBundle\Document\Passage $passage) {
         $this->passages->removeElement($passage);
     }
 
@@ -257,8 +270,7 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return \Doctrine\Common\Collections\Collection $passages
      */
-    public function getPassages()
-    {
+    public function getPassages() {
         return $this->passages;
     }
 
@@ -268,8 +280,7 @@ class Compte implements DocumentSocieteInterface {
      * @param boolean $actif
      * @return self
      */
-    public function setActif($actif)
-    {
+    public function setActif($actif) {
         $this->actif = $actif;
         return $this;
     }
@@ -279,8 +290,7 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return boolean $actif
      */
-    public function getActif()
-    {
+    public function getActif() {
         return $this->actif;
     }
 
@@ -289,11 +299,9 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return AppBundle\Document\Societe $societe
      */
-    public function getSociete()
-    {
+    public function getSociete() {
         return $this->societe;
     }
-
 
     /**
      * Set societe
@@ -301,26 +309,23 @@ class Compte implements DocumentSocieteInterface {
      * @param AppBundle\Document\Societe $societe
      * @return self
      */
-    public function setSociete(\AppBundle\Document\Societe $societe)
-    {
+    public function setSociete(\AppBundle\Document\Societe $societe) {
         $this->societe = $societe;
         return $this;
     }
-
 
     /**
      * Add tag
      *
      * @param AppBundle\Document\CompteTag $tag
      */
-    public function addTag(\AppBundle\Document\CompteTag $tag)
-    {
+    public function addTag(\AppBundle\Document\CompteTag $tag) {
         foreach ($this->getTags() as $t) {
             if ($t->getIdentifiant() == $tag->getIdentifiant()) {
                 return;
             }
         }
-        
+
         $this->tags[] = $tag;
     }
 
@@ -329,8 +334,7 @@ class Compte implements DocumentSocieteInterface {
      *
      * @param AppBundle\Document\CompteTag $tag
      */
-    public function removeTag(\AppBundle\Document\CompteTag $tag)
-    {
+    public function removeTag(\AppBundle\Document\CompteTag $tag) {
         $this->tags->removeElement($tag);
     }
 
@@ -339,8 +343,7 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return \Doctrine\Common\Collections\Collection $tags
      */
-    public function getTags()
-    {
+    public function getTags() {
         return $this->tags;
     }
 
@@ -350,8 +353,7 @@ class Compte implements DocumentSocieteInterface {
      * @param string $identifiantReprise
      * @return self
      */
-    public function setIdentifiantReprise($identifiantReprise)
-    {
+    public function setIdentifiantReprise($identifiantReprise) {
         $this->identifiantReprise = $identifiantReprise;
         return $this;
     }
@@ -361,8 +363,8 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return string $identifiantReprise
      */
-    public function getIdentifiantReprise()
-    {
+    public function getIdentifiantReprise() {
         return $this->identifiantReprise;
     }
+
 }

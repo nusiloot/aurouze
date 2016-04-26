@@ -126,16 +126,16 @@ class CalendarController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $id = ($request->get('passage')) ? $request->get('passage') : $request->get('id');
         $technicien = $request->get('technicien');
-
+        var_dump($id); exit;
         $passageToMove = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($id);
-
+       
         $start = $request->get('start');
         $end = $request->get('end');
 
         if ($error) {
             throw new \Exception();
         }
-        $tech = $dm->getRepository('AppBundle:Compte')->findByIdentifiant(strtoupper(Transliterator::urlize($technicien)));
+        $tech = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         $event = array('id' => $passageToMove->getPassageIdentifiant(),
             'title' => $passageToMove->getIntitule(),
             'start' => $start,
@@ -168,7 +168,7 @@ class CalendarController extends Controller {
             throw $this->createNotFoundException();
         }
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $technicien = $dm->getRepository('AppBundle:Compte')->findByIdentifiant(strtoupper(Transliterator::urlize($request->get('technicien'))));
+        $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
         $periodeStart = $request->get('start');
         $periodeEnd = $request->get('end');
         $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $technicien);

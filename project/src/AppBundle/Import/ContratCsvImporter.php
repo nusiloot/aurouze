@@ -75,8 +75,7 @@ class ContratCsvImporter {
         $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
         $produitsArray = $configuration->getProduitsArray();
 
-        $comptesArray = $this->um->getRepository()->findAllInArray();
-
+       
         $i = 0;
         $cptTotal = 0;
         foreach ($csv as $data) {
@@ -121,18 +120,16 @@ class ContratCsvImporter {
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
             $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
 
-            if ($data[self::CSV_NOM_COMMERCIAL]) {
-                $identifiantCommercial = strtoupper(Transliterator::urlize($data[self::CSV_NOM_COMMERCIAL]));
-                if (array_key_exists($identifiantCommercial, $comptesArray)) {
-                    $commercial = $comptesArray[$identifiantCommercial];
+            if ($data[self::CSV_ID_COMMERCIAL]) {
+                $commercial = $this->um->getRepository()->findOneByIdentifiantReprise($data[self::CSV_ID_COMMERCIAL]);
+                if ($commercial) {
                     $contrat->setCommercial($commercial);
                 }
             }
 
-            if ($data[self::CSV_NOM_TECHNICIEN]) {
-                $identifiantTechnicien = strtoupper(Transliterator::urlize($data[self::CSV_NOM_TECHNICIEN]));
-                if (array_key_exists($identifiantTechnicien, $comptesArray)) {
-                    $technicien = $comptesArray[$identifiantTechnicien];
+            if ($data[self::CSV_ID_TECHNICIEN]) {
+                $technicien = $this->um->getRepository()->findOneByIdentifiantReprise($data[self::CSV_ID_TECHNICIEN]);
+               if ($technicien) {
                     $contrat->setTechnicien($technicien);
                 }
             }
