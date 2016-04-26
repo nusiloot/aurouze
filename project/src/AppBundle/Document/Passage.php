@@ -556,7 +556,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function addTechnicien(\AppBundle\Document\Compte $technicien) {
         foreach ($this->getTechniciens() as $tech) {
-            if ($tech == $technicien) {
+            if ($tech->getIdentifiant() == $technicien->getIdentifiant()) {
                 return;
             }
         }
@@ -592,7 +592,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function addPrestation(\AppBundle\Document\Prestation $prestation) {
         foreach ($this->getPrestations() as $prest) {
-            if ($prest == $prestation) {
+            if ($prest->getIdentifiant() == $prestation->getIdentifiant()) {
                 return;
             }
         }
@@ -648,7 +648,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function addProduit(\AppBundle\Document\Produit $produit) {
         foreach ($this->getProduits() as $prod) {
-            if ($prod == $produit) {
+            if ($prod->getIdentifiant() == $produit->getIdentifiant()) {
                 return;
             }
         }
