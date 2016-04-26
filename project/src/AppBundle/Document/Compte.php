@@ -60,6 +60,11 @@ class Compte implements DocumentSocieteInterface {
     protected $actif;
 
     /**
+     * @MongoDB\String
+     */
+    protected $identifiantReprise;
+    
+    /**
      *  @MongoDB\EmbedMany(targetDocument="CompteTag")
      */
     protected $tags = array();
@@ -337,5 +342,27 @@ class Compte implements DocumentSocieteInterface {
     public function getTags()
     {
         return $this->tags;
+    }
+
+    /**
+     * Set identifiantReprise
+     *
+     * @param string $identifiantReprise
+     * @return self
+     */
+    public function setIdentifiantReprise($identifiantReprise)
+    {
+        $this->identifiantReprise = $identifiantReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantReprise
+     *
+     * @return string $identifiantReprise
+     */
+    public function getIdentifiantReprise()
+    {
+        return $this->identifiantReprise;
     }
 }

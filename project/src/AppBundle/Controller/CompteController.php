@@ -8,34 +8,34 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\TechnicienChoiceType as TechnicienChoiceType;
-use AppBundle\Document\User;
+use AppBundle\Document\Compte;
 
-class UserController extends Controller {
+class CompteController extends Controller {
 
     /**
-     * @Route("/users", name="users")
+     * @Route("/comptes", name="comptes")
      */
-    public function usersAction(Request $request) {
+    public function comptesAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $users = $dm->getRepository('AppBundle:Compte')->findAll();
-        return $this->render('user/listing.html.twig', array('users' => $users));
+        $comptes = $dm->getRepository('AppBundle:Compte')->findAll();
+        return $this->render('compte/listing.html.twig', array('comptes' => $comptes));
     }
     
     /**
-     * @Route("/user/{id}/etat", name="user_update_etat")
-     * @ParamConverter("user", class="AppBundle:Compte")
+     * @Route("/compte/{id}/etat", name="compte_update_etat")
+     * @ParamConverter("compte", class="AppBundle:Compte")
      */
-    public function updateEtatAction(Request $request, User $user)
+    public function updateEtatAction(Request $request, User $compte)
     {
     	if (!$request->isXmlHttpRequest()) {
     		throw $this->createNotFoundException();
     	}
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
-    	if ($user) {
+    	if ($compte) {
     		try {
-	    		$user->setActif($request->get('etat'));
-	    		$dm->persist($user);
+	    		$compte->setActif($request->get('etat'));
+	    		$dm->persist($compte);
 	    		$dm->flush();
 	    		return new Response(json_encode(array("success" => true)));
     		} catch (\Exception $e) { }
