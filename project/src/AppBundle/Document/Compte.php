@@ -2,20 +2,19 @@
 namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\CompteManager;
+use AppBundle\Model\DocumentSocieteInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\CompteRepository")
  */
-class Compte {
+class Compte implements DocumentSocieteInterface {
 
     const PREFIX = "COMPTE";
-    const TYPE_TECHNICIEN = "TECHNICIEN";
-    const TYPE_COMMERCIAL = "COMMERCIAL";
-    const TYPE_AUTRE = "AUTRE";
     const COULEUR_DEFAUT = 'yellow';
 
     /**
-     * @MongoDB\Id(strategy="NONE", type="string")
+     * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\CompteGenerator"})
      */
     protected $id;
 
@@ -44,10 +43,11 @@ class Compte {
      */
     protected $couleur;
 
-    /**
-     * @MongoDB\String
+       
+   /**
+     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="comptes")
      */
-    protected $type;
+    protected $societe;
     
     /**
      *  @MongoDB\ReferenceMany(targetDocument="Passage", mappedBy="techniciens") 
@@ -59,9 +59,17 @@ class Compte {
      */
     protected $actif;
 
-    public function generateId() {
-        $this->setId(self::PREFIX . '-' . $this->identifiant);
-    }
+    /**
+     * @MongoDB\String
+     */
+    protected $identifiantReprise;
+    
+    /**
+     *  @MongoDB\EmbedMany(targetDocument="CompteTag")
+     */
+    protected $tags = array();
+    
+    
 
     /**
      * Get id
@@ -206,27 +214,7 @@ class Compte {
         return '#ffffff';
     }
 
-    /**
-     * Set type
-     *
-     * @param string $type
-     * @return self
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    /**
-     * Get type
-     *
-     * @return string $type
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
+    
 
     public function getInituleCourt() {
 
@@ -236,9 +224,12 @@ class Compte {
     public function __toString() {
     	return $this->getIdentite();
     }
-    public function __construct()
+    
+    public function __construct(Societe $societe)
     {
-        $this->passages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->passages = new ArrayCollection();
+        $this->prestations = new ArrayCollection();
+        $this->setSociete($societe);
     }
     
     /**
@@ -291,5 +282,87 @@ class Compte {
     public function getActif()
     {
         return $this->actif;
+    }
+
+    /**
+     * Get societe
+     *
+     * @return AppBundle\Document\Societe $societe
+     */
+    public function getSociete()
+    {
+        return $this->societe;
+    }
+
+
+    /**
+     * Set societe
+     *
+     * @param AppBundle\Document\Societe $societe
+     * @return self
+     */
+    public function setSociete(\AppBundle\Document\Societe $societe)
+    {
+        $this->societe = $societe;
+        return $this;
+    }
+
+
+    /**
+     * Add tag
+     *
+     * @param AppBundle\Document\CompteTag $tag
+     */
+    public function addTag(\AppBundle\Document\CompteTag $tag)
+    {
+        foreach ($this->getTags() as $t) {
+            if ($t->getIdentifiant() == $tag->getIdentifiant()) {
+                return;
+            }
+        }
+        
+        $this->tags[] = $tag;
+    }
+
+    /**
+     * Remove tag
+     *
+     * @param AppBundle\Document\CompteTag $tag
+     */
+    public function removeTag(\AppBundle\Document\CompteTag $tag)
+    {
+        $this->tags->removeElement($tag);
+    }
+
+    /**
+     * Get tags
+     *
+     * @return \Doctrine\Common\Collections\Collection $tags
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Set identifiantReprise
+     *
+     * @param string $identifiantReprise
+     * @return self
+     */
+    public function setIdentifiantReprise($identifiantReprise)
+    {
+        $this->identifiantReprise = $identifiantReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantReprise
+     *
+     * @return string $identifiantReprise
+     */
+    public function getIdentifiantReprise()
+    {
+        return $this->identifiantReprise;
     }
 }
