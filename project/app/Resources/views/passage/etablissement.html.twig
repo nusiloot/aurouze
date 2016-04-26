@@ -80,7 +80,7 @@
 
                                 <small>Contrat  n° {{ contrat.numeroArchive }}
                                     sur {{ contrat.duree }} mois</small>&nbsp;
-                                    
+
                                 <span class="pull-right">{{ passagesEtablissement.nbPassagePrevu}} passages prévus</span>
                             </h3>
                         </div>
@@ -128,12 +128,12 @@
                                             {% endif %}
                                         </div>
                                         <div class="col-xs-3">
-                                            {% if(pe.enAttente) %}
+                                            <a data-toggle="modal" data-remote="false" data-target="#modal-passage" href="{{path('calendarRead', { 'id': pe.id })}}">{% if(pe.enAttente) %}
                                                 {{ pe.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                                             {% elseif(pe.APlanifie) %}
                                                 {{ pe.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                                             {% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}
-                                            {#                                            {% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}#}
+                                            {#                                            {% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}#}</a>
                                         </div>
                                         <div class="col-xs-2">
                                             {% for prestation in pe.prestations %}
@@ -177,6 +177,19 @@
                 {% endif %}
             {% endfor %}
         </div>
+    </div>
+
+    <div class="modal fade" id="modal-passage" tabindex="-1" role="dialog">
+    	<div class="modal-dialog modal-lg" role="document">
+    	<div class="modal-content">
+    			<div class="modal-header">
+    			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    			<h4 class="modal-title" id="modal-title"></h4>
+    			</div>
+    			<div class="modal-body" id="modal-body">
+                </div>
+    	</div>
+    	</div>
     </div>
 
 {% endblock %}

@@ -13,14 +13,15 @@
         $.initTimePicker();
         $.initFormEventAjax();
         $.initSwitcher();
+        $.initModalPassage();
     });
-    
+
     $.initSwitcher = function () {
     	$('.switcher').bootstrapSwitch();
     	$('.switcher').on('switchChange.bootstrapSwitch', function(event, state) {
     		var checkbox = $(this);
     		var etat = state ? 1 : 0;
-    		
+
     		$.ajax({
                 type: "POST",
                 url: checkbox.data('url'),
@@ -28,11 +29,11 @@
             });
     	});
     }
-    
+
     $.initDatePicker = function () {
     	$('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "right"});
     }
-    
+
     $.initTimePicker = function () {
         $('.input-timepicker').timepicker({
                 format: 'HH:ii p',
@@ -45,7 +46,7 @@
 
     $.initDynamicCollection = function () {
 
-    	
+
         var addLink = $('.dynamic-collection-add');
 
         $('.dynamic-collection-item').on('click', '.dynamic-collection-remove', function(e) {
@@ -55,11 +56,11 @@
 
         addLink.on('click', function(e) {
             e.preventDefault();
-            
+
             var collectionTarget = $(this).data('collection-target');
             var collectionHolder = $(collectionTarget);
             collectionHolder.data('index', collectionHolder.find(':input').length);
-            
+
             var prototype = collectionHolder.data('prototype');
             var index = collectionHolder.data('index');
             var item = $(prototype.replace(/__name__/g, index));
@@ -71,7 +72,7 @@
             });
 
             $(item).find('input, select').eq(0).focus();
-            
+
             $.callbackDynamicCollection();
         });
     }
@@ -100,14 +101,14 @@
 	    	return false;
 	    });
     }
-    
+
     $.callbackDynamicCollection = function () {
         $.initSelect2();
         $.initSelect2Ajax();
         $.initDatePicker();
         $.initTimePicker();
     }
-    
+
     $.callbackEventForm = function () {
         $.initSelect2();
         $.initSelect2Ajax();
@@ -216,6 +217,17 @@
             $(this).parents('form').submit();
         }
     });
+
+
+    $.initModalPassage = function() {
+
+        $('#modal-passage').on('show.bs.modal', function (event) {
+          var link = $(event.relatedTarget) // Button that triggered the modal
+          $(this).find('.modal-body').load(link.attr('href'), function() {
+              $.callbackEventForm();
+          });
+        })
+    }
 
     $('.hamzastyle').each(function () {
         var select2 = $(this);

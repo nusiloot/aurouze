@@ -63,25 +63,25 @@ class CalendarController extends Controller {
 	            if (!$passageTech->getDateFin()) {
 	                continue;
 	            }
-	
+
 	            if (!isset($passagesCalendar[$technicien->getIdentifiant()])) {
 	                $passagesCalendar[$technicien->getIdentifiant()] = array();
 	                $index = 0;
 	            }
-	
+
 	            if (isset($passagesCalendar[$technicien->getIdentifiant()]) && isset($passagesCalendar[$technicien->getIdentifiant()][($index - 1)]) && $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['end'] >= $passageTech->getDateDebut()->format('Y-m-d\TH:i:s')) {
 	                $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['end'] = $passageTech->getDateFin()->format('Y-m-d\TH:i:s');
 	                $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
 	                $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['coefEnd'] = round($diffFin / 30, 2);
 	                continue;
 	            }
-	
-	
+
+
 	            $dateDebut = new \DateTime($passageTech->getDateDebut()->format('Y-m-d') . 'T06:00:00');
 	            $diffDebut = (strtotime($passageTech->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
 	            $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
                     $tech = $dm->getRepository('AppBundle:User')->findOneById($technicien->getId());
-	            
+
 	            $passageArr = array(
 	                'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
 	                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
@@ -91,7 +91,7 @@ class CalendarController extends Controller {
 	                'coefEnd' => round($diffFin / 30, 2),
 	            );
 	            $index++;
-	
+
 	            $passagesCalendar[$technicien->getIdentifiant()][] = $passageArr;
         	}
         }
@@ -201,14 +201,13 @@ class CalendarController extends Controller {
 
         $error = false;
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('id'));
+        $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('id'));
         $technicien = $request->get('technicien');
-
 
         if ($error) {
             throw new \Exception();
         }
-        
+
         $form = $this->createForm(new PassageCreationType($dm), $passage, array(
         		'action' => $this->generateUrl('calendarRead', array('id' => $request->get('id'), 'technicien' => $request->get('technicien'))),
         		'method' => 'POST',
