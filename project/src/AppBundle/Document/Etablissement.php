@@ -284,6 +284,13 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         return $this->getContactCoordonnee()->getEmail();
     }
     
+     public function getSiteInternet() {
+        if(!$this->getContactCoordonnee()){
+            return null;
+        }
+        return $this->getContactCoordonnee()->getSiteInternet();
+    }
+    
 
     public function getIcon() {
 

@@ -27,34 +27,43 @@
 
                         </div>
                     </div>
-                    {%if ((not etablissement.telephonefixe is null) 
-                      or (not etablissement.telephoneportable is null)
-                      or (not etablissement.fax is null)
-                      or (not etablissement.email is null)) %}
+                    {%if ((etablissement.telephonefixe) 
+                      or (etablissement.telephoneportable)
+                      or (etablissement.fax)) %}
                     <div class="row">
-                        {%if (not etablissement.telephonefixe is null) %}
-                            <div class="col-xs-3">
+                        {%if (etablissement.telephonefixe) %}
+                            <div class="col-xs-4">
                                 Tél fixe : {{ etablissement.telephonefixe }}
                             </div>
                         {% endif %}
-                        {%if (not etablissement.telephoneportable is null) %}
-                            <div class="col-xs-3">
+                        {%if (etablissement.telephoneportable) %}
+                            <div class="col-xs-4">
                                 Tél portable : {{ etablissement.telephoneportable }}
                             </div>
                         {% endif %}
-                        {%if (not etablissement.fax is null) %}
-                            <div class="col-xs-3">
+                        {%if (etablissement.fax) %}
+                            <div class="col-xs-4">
                                 Fax : {{ etablissement.fax }}
                             </div>
                         {% endif %}
-                        {%if (not etablissement.email is null) %}
-                            <div class="col-xs-3">
-                                Email : {{ etablissement.email }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <br/>
+                    </div> 
                     {% endif %}
+                        {% if (etablissement.siteInternet or etablissement.email) %}
+                            <div class="row">
+                                {%if (etablissement.email) %}
+                                    <div class="col-xs-6">
+                                        Email : {{ etablissement.email }}
+                                    </div>
+                                {% endif %}
+                                {%if (etablissement.siteInternet) %}
+                                    <div class="col-xs-6">
+                                        Site web : {{ etablissement.siteInternet }}
+                                    </div>
+                                {% endif %}
+                            </div> 
+                        {% endif %}
+                        <br/>
+
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="well well-sm">
