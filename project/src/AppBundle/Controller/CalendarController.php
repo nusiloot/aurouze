@@ -20,7 +20,11 @@ class CalendarController extends Controller {
     public function calendarAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        $passage = null;
+        if($request->get('passage')) {
+            $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        }
+        
         $technicien = $request->get('technicien');
 
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllActif();
@@ -39,7 +43,10 @@ class CalendarController extends Controller {
      */
     public function calendarManuelAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        $passage = null;
+        if($request->get('passage')) {
+            $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        }
 
         $calendrier = $request->get('calendrier');
         $calendarTool = new CalendarDateTool($calendrier);
