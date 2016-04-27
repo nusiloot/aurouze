@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script>
+        function subst() {
+            var vars={};
+            var x=document.location.search.substring(1).split('&');
+            for (var i in x) {var z=x[i].split('=',2);vars[z[0]] = unescape(z[1]);}
+            var x=['frompage','topage','page','webpage','section','subsection','subsubsection'];
+            for (var i in x) {
+                var y = document.getElementsByClassName(x[i]);
+                for (var j=0; j<y.length; ++j) y[j].textContent = vars[x[i]];
+            }
+        }
+    </script>
+    <style type="text/css">
+    p {
+    	text-align: right;
+    	position: absolute;
+    	top: 100px;
+    	right: 55px;
+    	font-size: 13px;
+    }
+    img {
+    	width: 21cm;
+    }
+    </style>
+</head>
+<body onload="subst()">
+<div>
+	<img src="http://aurouze.preprod.24eme.fr/images/bg-footer-pdf-contrat.jpg" />
+	<p>Page&nbsp;<span class="page"></span>&nbsp;sur&nbsp;<span class="topage"></span></p>
+</div>
+</body>
+</html>

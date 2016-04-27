@@ -5,6 +5,7 @@
 	<div id="visu-markdown">
 		{{ contrat.markdown|markdown }}
 		<a class="btn btn-warning pull-right btn-switcher" href="javascript:void(0)" data-hide="#visu-markdown" data-show="#edit-markdown">Modifier</a>
+		<a class="btn btn-default pull-right" href="{{ path('contrat_pdf', { id: contrat.id }) }}">PDF</a>
 	</div>
 	<div id="edit-markdown" style="display:none;">
 		{{ form_start(form) }}

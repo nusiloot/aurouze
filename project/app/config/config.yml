@@ -60,11 +60,11 @@ swiftmailer:
 knp_snappy:
     pdf:
         enabled:    true
-        binary:     wkhtmltopdf
+        binary:     "%knp_snappy_pdfbinary%"
         options:    []
     image:
         enabled:    true
-        binary:     wkhtmltoimage
+        binary:     "%knp_snappy_imagebinary%"
         options:    []
 
 #    temporary_folder: %kernel.cache_dir%/snappy
