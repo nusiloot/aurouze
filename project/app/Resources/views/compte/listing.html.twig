@@ -20,7 +20,7 @@
                     <td>{{ compte.prenom }}</td>
                     <td>{{ compte.nom }}</td>
                     <td>{% for tag in compte.tags %}{{ tag.nom }}, {% endfor %}</td>
-                    <td><input class="switcher" type="checkbox" data-size="mini" data-url="{{ path('compte_update_etat', {id: compte.id }) }}" /></td>
+                    <td><input class="switcher" type="checkbox" data-size="mini" data-url="{{ path('compte_update_etat', {id: compte.id }) }}" value="{{ compte.actif }}" /></td>
                     <td class="text-center">
                         <div class="row">
                             <div class="col-xs-6">

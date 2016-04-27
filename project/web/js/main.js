@@ -18,7 +18,10 @@
     });
 
     $.initSwitcher = function () {
-    	$('.switcher').bootstrapSwitch();
+    	$('.switcher').each(function(){
+            var state = $(this).val();
+            $(this).bootstrapSwitch('state', state);
+        }); 
     	$('.switcher').on('switchChange.bootstrapSwitch', function(event, state) {
     		var checkbox = $(this);
     		var etat = state ? 1 : 0;
