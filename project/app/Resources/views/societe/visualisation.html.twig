@@ -6,55 +6,103 @@
         <div class="col-xs-12">
             <h3>{{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small> <a class="btn btn-sm btn-warning pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a></h3>
             <div class="panel panel-default">
-			    <div class="panel-heading">Informations</div>
-			    <div class="panel-body">
-			        <div class="row">
-			        	<div class="col-xs-12">Provenance : {{ societe.provenance }}</div>
-			        </div>
-                	<hr />
-			        <div class="row">
-			            <div class="col-xs-12">
-							{{ societe.adresse.adresse }} <br />
-							{{ societe.adresse.codePostal }} {{ societe.adresse.commune }} 
-			            </div>
-			        </div>
-			        <div class="row">
-			            <div class="col-xs-12">
-							<i class="glyphicon glyphicon-earphone"></i> {{ societe.contactCoordonnee.telephoneFixe }} <i class="glyphicon glyphicon-phone"></i>&nbsp;{{ societe.contactCoordonnee.telephoneMobile }} <i class="glyphicon glyphicon-print"></i>&nbsp;{{ societe.contactCoordonnee.fax }} <i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ societe.contactCoordonnee.email }} <i class="glyphicon glyphicon-globe"></i>&nbsp;{{ societe.contactCoordonnee.siteInternet }}
-			            </div>
-			        </div>
-                	<hr />
-			        <div class="row">
-			            <div class="col-xs-12">
-			            {{ societe.commentaire }} 
-			            </div>
-			        </div>
-                	<hr />
-			        <div class="row">
-			            <div class="col-xs-12">
-			            {% for tag in societe.tags %}
-			            <span type="button" class="btn btn-info btn-xs">{{ tag }}</span>
-			            {% endfor %}
-			        	</div>
-			        </div>
-			    </div>
-			</div>
+                <div class="panel-heading">Informations</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12">Provenance : {{ societe.provenance }}</div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-xs-12">
+                            {{ societe.adresse.adresse }} <br />
+                            {{ societe.adresse.codePostal }} {{ societe.adresse.commune }} 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            {%if(societe.contactCoordonnee.telephoneFixe is defined and societe.contactCoordonnee.telephoneFixe)%}
+                                <i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ societe.contactCoordonnee.telephoneFixe }}&nbsp;
+                            {%endif%}
+                            {%if(societe.contactCoordonnee.telephoneMobile is defined and societe.contactCoordonnee.telephoneMobile)%}
+                                <i class="glyphicon glyphicon-phone"></i>&nbsp;{{ societe.contactCoordonnee.telephoneMobile }}&nbsp;
+                            {%endif%}
+                            {%if(societe.contactCoordonnee.fax is defined and societe.contactCoordonnee.fax)%}
+                                <i class="glyphicon glyphicon-print"></i>&nbsp;{{ societe.contactCoordonnee.fax }}&nbsp;
+                            {%endif%}
+                            {%if(societe.contactCoordonnee.email is defined and societe.contactCoordonnee.email)%}
+                                <i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ societe.contactCoordonnee.email }}&nbsp;
+                            {%endif%}
+                            {%if(societe.contactCoordonnee.siteInternet is defined and societe.contactCoordonnee.siteInternet)%}
+                                <i class="glyphicon glyphicon-globe"></i>&nbsp;{{ societe.contactCoordonnee.siteInternet }}&nbsp;
+                            {%endif%}
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-xs-12">
+                            {{ societe.commentaire }} 
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-xs-12">
+                            {% for tag in societe.tags %}
+                                <span type="button" class="btn btn-info btn-xs">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-	<h3>Etablissements ({{ societe.etablissements|length }}) <a class="btn btn-sm btn-warning pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter</strong></a></h3>
+    <h3>Etablissements ({{ societe.etablissements|length }}) <a class="btn btn-sm btn-warning pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter</strong></a></h3>
     <div class="row">
-    	{% for etablissement in societe.etablissements %}
-        <div class="col-xs-4">
-            <div class="panel panel-default">
-			    <div class="panel-heading"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.raisonSociale }} <small>{{ etablissement.nom }}</small> <a class="btn btn-xs btn-warning pull-right" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span></strong></a><a class="btn btn-xs btn-info pull-right" href="{{ path('passage_etablissement', {'id': etablissement.id }) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-eye-open"></span></strong></a></div>
-			    <div class="panel-body">
-			        <div class="rows">
-						{{ etablissement.adresse.adresse }} <br />
-						{{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }} 
-			        </div>
-			    </div>
-			</div>
-        </div>
+        {% for etablissement in societe.etablissements %}
+            <div class="col-xs-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-9">
+                                <i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.raisonSociale }} <small>{{ etablissement.nom }}</small> 
+                            </div>
+                            <div class="col-xs-3 text-right">
+                                <a class="btn btn-xs btn-warning" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span></strong></a>
+                                &nbsp;<a class="btn btn-xs btn-info" href="{{ path('passage_etablissement', {'id': etablissement.id }) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-eye-open"></span></strong></a>
+                            </div></div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row"> 
+                            <div class="col-xs-12">
+                                {{ etablissement.adresse.adresse }} <br />
+                                {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }} 
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                {%if(etablissement.contactCoordonnee.telephoneFixe is defined and etablissement.contactCoordonnee.telephoneFixe)%}
+                                    <i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneFixe }}&nbsp;
+                                {%endif%}
+                                {%if(etablissement.contactCoordonnee.telephoneMobile is defined and etablissement.contactCoordonnee.telephoneMobile)%}
+                                    <i class="glyphicon glyphicon-phone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneMobile }}&nbsp;
+                                {%endif%}
+                                {%if(etablissement.contactCoordonnee.fax is defined and etablissement.contactCoordonnee.fax)%}
+                                    <i class="glyphicon glyphicon-print"></i>&nbsp;{{ etablissement.contactCoordonnee.fax }}&nbsp;
+                                {%endif%}&nbsp;
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                {%if(etablissement.contactCoordonnee.email is defined and etablissement.contactCoordonnee.email)%}
+                                    <i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ etablissement.contactCoordonnee.email }}&nbsp;
+                                {%endif%}
+                                {%if(etablissement.contactCoordonnee.siteInternet is defined and etablissement.contactCoordonnee.siteInternet)%}
+                                    <i class="glyphicon glyphicon-globe"></i>&nbsp;{{ etablissement.contactCoordonnee.siteInternet }}&nbsp;
+                                {%endif%}&nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>            
         {% endfor %}
     </div>
 {% endblock %}

@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\TechnicienChoiceType as TechnicienChoiceType;
 use AppBundle\Document\Compte;
+use AppBundle\Manager\ContratManager;
+use AppBundle\Manager\PassageManager;
 
 class CompteController extends Controller {
 
@@ -18,7 +20,9 @@ class CompteController extends Controller {
     public function comptesAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $comptes = $dm->getRepository('AppBundle:Compte')->findAll();
-        return $this->render('compte/listing.html.twig', array('comptes' => $comptes));
+        $contratManager = new ContratManager($dm);
+        $passageManager = new PassageManager($dm);
+        return $this->render('compte/listing.html.twig', array('comptes' => $comptes,'contratManager' => $contratManager,'passageManager' => $passageManager));
     }
     
     /**

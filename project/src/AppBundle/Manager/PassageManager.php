@@ -79,4 +79,8 @@ class PassageManager {
         return false;
     }
     
+    public function getNbPassagesWithTechnicien($compte) {
+        return $this->getRepository()->countPassagesByTechnicien($compte);       
+    }
+    
 }

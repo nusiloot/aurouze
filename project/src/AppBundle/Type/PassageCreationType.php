@@ -53,18 +53,18 @@ class PassageCreationType extends AbstractType
 			->add('timeFin', TextType::class, array('label' => 'Heure fin', 'attr' => array('class' => 'input-timepicker')))
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success"), ));
         ;
-        
+
         $builder->add('techniciens', DocumentType::class, array(
-            	'choices' => $this->getComptes(Compte::TYPE_TECHNICIEN),
+            	'choices' => $this->getComptes(),
                 'class' => 'AppBundle\Document\Compte',
-        		'expanded' => false, 
+        		'expanded' => false,
         		'multiple' => true,
         		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")
         ));
-        
+
         $builder->add('prestations', ChoiceType::class, array(
             		'choices' => $this->getPrestations(),
-	        		'expanded' => false, 
+	        		'expanded' => false,
 	        		'multiple' => true,
         			'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;"),
         ));
@@ -88,13 +88,13 @@ class PassageCreationType extends AbstractType
     {
         return 'passage';
     }
-    
-    public function getComptes($type) 
+
+    public function getComptes()
     {
     	return $this->dm->getRepository('AppBundle:Compte')->findAllActif();
     }
-    
-    public function getPrestations() 
+
+    public function getPrestations()
     {
     	return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestations()->toArray();
     }

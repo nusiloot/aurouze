@@ -45,7 +45,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @MongoDB\String
      */
     protected $contact;
-   
+
     /**
      * @MongoDB\EmbedOne(targetDocument="Adresse")
      */
@@ -61,7 +61,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      */
     protected $type;
 
-     /**
+    /**
      * @MongoDB\String
      */
     protected $identifiantReprise;
@@ -71,10 +71,9 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      */
     protected $contrats = array();
 
-    
     /**
-    * @MongoDB\Increment
-    */
+     * @MongoDB\Increment
+     */
     protected $numeroPassageIncrement;
 
     /**
@@ -92,8 +91,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant)
-    {
+    public function setIdentifiant($identifiant) {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -103,12 +101,9 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return string $identifiant
      */
-    public function getIdentifiant()
-    {
+    public function getIdentifiant() {
         return $this->identifiant;
     }
-
-
 
     /**
      * Set contrats
@@ -147,8 +142,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param string $raisonSociale
      * @return self
      */
-    public function setRaisonSociale($raisonSociale)
-    {
+    public function setRaisonSociale($raisonSociale) {
         $this->raisonSociale = $raisonSociale;
         return $this;
     }
@@ -158,8 +152,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return string $raisonSociale
      */
-    public function getRaisonSociale()
-    {
+    public function getRaisonSociale() {
         return $this->raisonSociale;
     }
 
@@ -169,8 +162,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param string $commentaire
      * @return self
      */
-    public function setCommentaire($commentaire)
-    {
+    public function setCommentaire($commentaire) {
         $this->commentaire = $commentaire;
         return $this;
     }
@@ -180,8 +172,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return string $commentaire
      */
-    public function getCommentaire()
-    {
+    public function getCommentaire() {
         return $this->commentaire;
     }
 
@@ -191,8 +182,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param string $nom
      * @return self
      */
-    public function setNom($nom)
-    {
+    public function setNom($nom) {
         $this->nom = $nom;
         return $this;
     }
@@ -202,8 +192,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return string $nom
      */
-    public function getNom()
-    {
+    public function getNom() {
         return $this->nom;
     }
 
@@ -213,19 +202,17 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param string $contact
      * @return self
      */
-    public function setContact($contact)
-    {
+    public function setContact($contact) {
         $this->contact = $contact;
         return $this;
     }
-    
+
     /**
      * Get contact
      *
      * @return string $contact
      */
-    public function getContact()
-    {
+    public function getContact() {
         return $this->contact;
     }
 
@@ -235,8 +222,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param Adresse $adresse
      * @return self
      */
-    public function setAdresse(Adresse $adresse)
-    {
+    public function setAdresse(Adresse $adresse) {
         $this->adresse = $adresse;
         return $this;
     }
@@ -246,8 +232,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return Adresse $adresse
      */
-    public function getAdresse()
-    {
+    public function getAdresse() {
         return $this->adresse;
     }
 
@@ -257,8 +242,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param string $type
      * @return self
      */
-    public function setType($type)
-    {
+    public function setType($type) {
         $this->type = $type;
         return $this;
     }
@@ -268,22 +252,45 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return string $type
      */
-    public function getType()
-    {
+    public function getType() {
         return $this->type;
     }
 
     public function getTelephoneFixe() {
-
+        if(!$this->getContactCoordonnee()){
+            return null;
+        }
+        return $this->getContactCoordonnee()->getTelephoneFixe();
     }
 
     public function getTelephonePortable() {
-
+        if(!$this->getContactCoordonnee()){
+            return null;
+        }
+        return $this->getContactCoordonnee()->getTelephoneMobile();
     }
 
     public function getFax() {
-
+        if(!$this->getContactCoordonnee()){
+            return null;
+        }
+        return $this->getContactCoordonnee()->getFax();
     }
+    
+    public function getEmail() {
+        if(!$this->getContactCoordonnee()){
+            return null;
+        }
+        return $this->getContactCoordonnee()->getEmail();
+    }
+    
+     public function getSiteInternet() {
+        if(!$this->getContactCoordonnee()){
+            return null;
+        }
+        return $this->getContactCoordonnee()->getSiteInternet();
+    }
+    
 
     public function getIcon() {
 
@@ -292,7 +299,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
 
     public function getIntitule() {
 
-        return $this->getNom() . ' ' . $this->getAdresse()->getIntitule(). ' ('.$this->identifiant.')';
+        return $this->getNom() . ' ' . $this->getAdresse()->getIntitule() . ' (' . $this->identifiant . ')';
     }
 
     /**
@@ -301,8 +308,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param AppBundle\Document\Societe $societe
      * @return self
      */
-    public function setSociete(\AppBundle\Document\Societe $societe)
-    {
+    public function setSociete(\AppBundle\Document\Societe $societe) {
         $this->societe = $societe;
         return $this;
     }
@@ -312,8 +318,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return AppBundle\Document\Societe $societe
      */
-    public function getSociete()
-    {
+    public function getSociete() {
         return $this->societe;
     }
 
@@ -323,8 +328,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param string $identifiantReprise
      * @return self
      */
-    public function setIdentifiantReprise($identifiantReprise)
-    {
+    public function setIdentifiantReprise($identifiantReprise) {
         $this->identifiantReprise = $identifiantReprise;
         return $this;
     }
@@ -334,8 +338,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return string $identifiantReprise
      */
-    public function getIdentifiantReprise()
-    {
+    public function getIdentifiantReprise() {
         return $this->identifiantReprise;
     }
 
@@ -344,8 +347,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return string $id
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -354,8 +356,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @param AppBundle\Document\Contrat $contrat
      */
-    public function removeContrat(\AppBundle\Document\Contrat $contrat)
-    {
+    public function removeContrat(\AppBundle\Document\Contrat $contrat) {
         $this->contrats->removeElement($contrat);
     }
 
@@ -365,8 +366,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param AppBundle\Document\ContactCoordonnee $contactCoordonnee
      * @return self
      */
-    public function setContactCoordonnee(\AppBundle\Document\ContactCoordonnee $contactCoordonnee)
-    {
+    public function setContactCoordonnee(\AppBundle\Document\ContactCoordonnee $contactCoordonnee) {
         $this->contactCoordonnee = $contactCoordonnee;
         return $this;
     }
@@ -376,8 +376,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return AppBundle\Document\ContactCoordonnee $contactCoordonnee
      */
-    public function getContactCoordonnee()
-    {
+    public function getContactCoordonnee() {
         return $this->contactCoordonnee;
     }
 
@@ -387,8 +386,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @param increment $numeroPassageIncrement
      * @return self
      */
-    public function setNumeroPassageIncrement($numeroPassageIncrement)
-    {
+    public function setNumeroPassageIncrement($numeroPassageIncrement) {
         $this->numeroPassageIncrement = $numeroPassageIncrement;
         return $this;
     }
@@ -398,8 +396,8 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return increment $numeroPassageIncrement
      */
-    public function getNumeroPassageIncrement()
-    {
+    public function getNumeroPassageIncrement() {
         return $this->numeroPassageIncrement;
     }
+
 }

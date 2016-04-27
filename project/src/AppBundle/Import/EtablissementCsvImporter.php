@@ -21,6 +21,7 @@ use AppBundle\Manager\EtablissementManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
+use AppBundle\Document\ContactCoordonnee;
 
 class EtablissementCsvImporter extends CsvFile {
 
@@ -37,14 +38,18 @@ class EtablissementCsvImporter extends CsvFile {
     const CSV_CP = 6;
     const CSV_VILLE = 7;
     const CSV_PAYS = 8;
+    
     const CSV_TEL_FIXE = 9;
     const CSV_TEL_MOBILE = 10;
     const CSV_FAX = 11;
-    const CSV_SITEWEB = 12;
+    const CSV_SITE_WEB = 12;
     const CSV_EMAIL = 13;
+    
     const CSV_ACTIF = 15;
     const CSV_RAISON_SOCIALE = 22;
     const CSV_TYPE_ETABLISSEMENT = 26;
+    
+    
     const CSV_CMT = 37;
     const CSV_COORD_LAT = 38;
     const CSV_COORD_LON = 39;
@@ -66,7 +71,7 @@ class EtablissementCsvImporter extends CsvFile {
         $cptTotal = 0;
         foreach ($csv as $data) {
             $etablissement = $this->createFromImport($data, $output);
-            if(!$etablissement) {
+            if (!$etablissement) {
                 continue;
             }
             $this->dm->persist($etablissement);
@@ -89,14 +94,14 @@ class EtablissementCsvImporter extends CsvFile {
     public function createFromImport($ligne, $output) {
         $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $ligne[self::CSV_ID_SOCIETE]));
 
-        if(!$societe) {
+        if (!$societe) {
 
             $output->writeln(sprintf("<error>La société %s n'existe pas</error>", $ligne[self::CSV_ID_SOCIETE]));
             return;
         }
 
         $etablissement = $this->em->getRepository()->findOneBy(array('identifiantReprise', $ligne[self::CSV_ID_ADRESSE]));
-        if(!$etablissement) {
+        if (!$etablissement) {
             $etablissement = new Etablissement();
         }
         $etablissement->setSociete($societe);
@@ -115,9 +120,7 @@ class EtablissementCsvImporter extends CsvFile {
         $adresse->setAdresse($adresse_str);
         $adresse->setCodePostal($ligne[self::CSV_CP]);
         $adresse->setCommune($ligne[self::CSV_VILLE]);
-        //$adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
-        //$adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
-        //$adresse->setFax($ligne[self::CSV_FAX]);
+
 
         $adresse->setCoordonnees(new Coordonnees());
         if (isset($ligne[self::CSV_COORD_LAT]) && isset($ligne[self::CSV_COORD_LON]) && $ligne[self::CSV_COORD_LAT] && $ligne[self::CSV_COORD_LON]) {
@@ -135,6 +138,16 @@ class EtablissementCsvImporter extends CsvFile {
         }
         $etablissement->setAdresse($adresse);
 
+        
+        $contactCoordonnee = new ContactCoordonnee();
+        $contactCoordonnee->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
+        $contactCoordonnee->setTelephoneMobile($ligne[self::CSV_TEL_MOBILE]);
+        $contactCoordonnee->setFax($ligne[self::CSV_FAX]);
+        $contactCoordonnee->setSiteInternet($ligne[self::CSV_SITE_WEB]);
+        $contactCoordonnee->setEmail($ligne[self::CSV_EMAIL]);
+        
+         $etablissement->setContactCoordonnee($contactCoordonnee);
+        
         if ($ligne[self::CSV_TYPE_ETABLISSEMENT] == "") {
             $etablissement->setType(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
         } else {
