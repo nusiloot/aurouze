@@ -10,13 +10,10 @@
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-xs-5">
-                            <strong>{{ etablissement.nom }}</strong>
+                            <strong><a href="{{path('etablissement_modification',{ 'societe': etablissement.getSociete().getId(), 'id' :etablissement.getId() })}}">{{ etablissement.nom }}</a></strong>
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-xs-7">
                             Société {{ etablissement.raisonsociale }}&nbsp;
-                        </div>
-                        <div class="col-xs-1">
-                            <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" style="cursor: default;" data-original-title="{{ etablissement.commentaire }}"></span>
                         </div>
                     </div>
                 </div>
