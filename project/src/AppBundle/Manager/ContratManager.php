@@ -95,7 +95,7 @@ class ContratManager implements MouvementManagerInterface {
                 if (!$cpt) {
                     $passage->setDateDebut($datePrevision);
                 }
-                
+
                 $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
 
                 $passage->generateId();
@@ -139,6 +139,10 @@ class ContratManager implements MouvementManagerInterface {
         $mouvements = array();
 
         return $mouvements;
+    }
+
+    public function getNbContratWithCompteForCommercial($compte) {
+        return $this->getRepository()->countContratByCommercial($compte);       
     }
 
 }

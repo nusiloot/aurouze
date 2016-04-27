@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\CompteManager;
 use AppBundle\Model\DocumentSocieteInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use AppBundle\Manager\ContratManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\CompteRepository")
@@ -366,5 +367,5 @@ class Compte implements DocumentSocieteInterface {
     public function getIdentifiantReprise() {
         return $this->identifiantReprise;
     }
-
-}
+    
+   }

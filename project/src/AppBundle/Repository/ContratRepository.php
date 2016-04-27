@@ -29,5 +29,12 @@ class ContratRepository extends DocumentRepository {
              ->getQuery()
              ->execute();
     }
+    
+    public function countContratByCommercial($compte) {
+
+        return $this->createQueryBuilder()
+             ->field('commercial.id')->equals($compte->getId())
+             ->getQuery()->execute()->count();
+    }
 
 }
