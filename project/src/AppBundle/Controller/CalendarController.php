@@ -21,21 +21,22 @@ class CalendarController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $passage = null;
-        if($request->get('passage')) {
+        if ($request->get('passage')) {
             $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
         }
-        
-        $technicien = $request->get('technicien');
 
+        $technicien = $request->get('technicien');
+        $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
+        
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllActif();
 
         $calendrier = $request->get('calendrier');
         $calendarTool = new CalendarDateTool($calendrier);
         $etablissement = null;
-        if($passage) {
-		    $etablissement = $passage->getEtablissement();
+        if ($passage) {
+            $etablissement = $passage->getEtablissement();
         }
-        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'etablissement' => $etablissement));
+        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement));
     }
 
     /**
@@ -44,7 +45,7 @@ class CalendarController extends Controller {
     public function calendarManuelAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $passage = null;
-        if($request->get('passage')) {
+        if ($request->get('passage')) {
             $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
         }
 
@@ -68,48 +69,48 @@ class CalendarController extends Controller {
         $passagesCalendar = array();
         $index = 0;
         foreach ($passagesTech as $passageTech) {
-        	foreach ($passageTech->getTechniciens() as $technicien) {
-	            if (!$passageTech->getDateFin()) {
-	                continue;
-	            }
+            foreach ($passageTech->getTechniciens() as $technicien) {
+                if (!$passageTech->getDateFin()) {
+                    continue;
+                }
 
-	            if (!isset($passagesCalendar[$technicien->getIdentifiant()])) {
-	                $passagesCalendar[$technicien->getIdentifiant()] = array();
-	                $index = 0;
-	            }
+                if (!isset($passagesCalendar[$technicien->getIdentifiant()])) {
+                    $passagesCalendar[$technicien->getIdentifiant()] = array();
+                    $index = 0;
+                }
 
-	            if (isset($passagesCalendar[$technicien->getIdentifiant()]) && isset($passagesCalendar[$technicien->getIdentifiant()][($index - 1)]) && $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['end'] >= $passageTech->getDateDebut()->format('Y-m-d\TH:i:s')) {
-	                $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['end'] = $passageTech->getDateFin()->format('Y-m-d\TH:i:s');
-	                $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-	                $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['coefEnd'] = round($diffFin / 30, 2);
-	                continue;
-	            }
+                if (isset($passagesCalendar[$technicien->getIdentifiant()]) && isset($passagesCalendar[$technicien->getIdentifiant()][($index - 1)]) && $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['end'] >= $passageTech->getDateDebut()->format('Y-m-d\TH:i:s')) {
+                    $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['end'] = $passageTech->getDateFin()->format('Y-m-d\TH:i:s');
+                    $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
+                    $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['coefEnd'] = round($diffFin / 30, 2);
+                    continue;
+                }
 
 
-	            $dateDebut = new \DateTime($passageTech->getDateDebut()->format('Y-m-d') . 'T06:00:00');
-	            $diffDebut = (strtotime($passageTech->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-	            $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
+                $dateDebut = new \DateTime($passageTech->getDateDebut()->format('Y-m-d') . 'T06:00:00');
+                $diffDebut = (strtotime($passageTech->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
+                $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
 
                 $tech = $dm->getRepository('AppBundle:Compte')->findOneById($technicien->getId());
 
-                $resumePassage = $passageTech->getEtablissement()->getIntitule()." ".$passageTech->getEtablissementInfos()->getType()."\n";
+                $resumePassage = $passageTech->getEtablissement()->getIntitule() . " " . $passageTech->getEtablissementInfos()->getType() . "\n";
                 foreach ($passageTech->getPrestations() as $p) {
-                    $resumePassage.=$p->getNomToString()." ";
+                    $resumePassage.=$p->getNomToString() . " ";
                 }
-                
-	            $passageArr = array(
-	                'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
-	                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
-	                'backgroundColor' => ($tech) ? $tech->getCouleur() : Compte::COULEUR_DEFAUT,
-	                'textColor' => "black",
-	                'coefStart' => round($diffDebut / 30, 1),
-	                'coefEnd' => round($diffFin / 30, 2),
-                        'resume' => $resumePassage,
-	            );
-	            $index++;
 
-	            $passagesCalendar[$technicien->getIdentifiant()][] = $passageArr;
-        	}
+                $passageArr = array(
+                    'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
+                    'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
+                    'backgroundColor' => ($tech) ? $tech->getCouleur() : Compte::COULEUR_DEFAUT,
+                    'textColor' => "black",
+                    'coefStart' => round($diffDebut / 30, 1),
+                    'coefEnd' => round($diffFin / 30, 2),
+                    'resume' => $resumePassage,
+                );
+                $index++;
+
+                $passagesCalendar[$technicien->getIdentifiant()][] = $passageArr;
+            }
         }
 
         foreach ($eventsDates as $date => $value) {
@@ -193,7 +194,7 @@ class CalendarController extends Controller {
             if (!$passageTech->getDateFin()) {
                 continue;
             }
-           $passageArr = array('id' => $passageTech->getId(),
+            $passageArr = array('id' => $passageTech->getId(),
                 'title' => ($request->get('title')) ? $passageTech->getEtablissementInfos()->getIntitule() : "",
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
@@ -220,18 +221,18 @@ class CalendarController extends Controller {
         $technicien = $request->get('technicien');
 
         $form = $this->createForm(new PassageCreationType($dm), $passage, array(
-        		'action' => $this->generateUrl('calendarRead', array('id' => $request->get('id'), 'technicien' => $request->get('technicien'))),
-        		'method' => 'POST',
-        		'attr' => array('id' => 'eventForm')
+            'action' => $this->generateUrl('calendarRead', array('id' => $request->get('id'), 'technicien' => $request->get('technicien'))),
+            'method' => 'POST',
+            'attr' => array('id' => 'eventForm')
         ));
         if (!$passage->isRealise()) {
-	        $form->handleRequest($request);
-	        if ($form->isSubmitted() && $form->isValid()) {
-	        	$passage = $form->getData();
-	        	$dm->persist($passage);
-	        	$dm->flush();
-	        	return new Response(json_encode(array("success" => true)));
-	        }
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $passage = $form->getData();
+                $dm->persist($passage);
+                $dm->flush();
+                return new Response(json_encode(array("success" => true)));
+            }
         }
         return $this->render('calendar/calendarModal.html.twig', array('form' => $form->createView(), 'passage' => $passage, 'technicien' => $technicien, 'light' => $request->get('light')));
     }
@@ -246,9 +247,9 @@ class CalendarController extends Controller {
         $technicien = $request->get('technicien');
 
         if (!$passageToDelete->isRealise()) {
-        	$passageToDelete->setDateFin(null);
-        	$dm->persist($passageToDelete);
-        	$dm->flush();
+            $passageToDelete->setDateFin(null);
+            $dm->persist($passageToDelete);
+            $dm->flush();
         }
 
         return $this->redirect($this->generateUrl('calendar', array('passage' => $request->get('passage'), 'technicien' => $technicien)));
