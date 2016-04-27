@@ -92,6 +92,11 @@ class CalendarController extends Controller {
 
                 $tech = $dm->getRepository('AppBundle:Compte')->findOneById($technicien->getId());
 
+                $resumePassage = $passageTech->getEtablissement()->getIntitule()." ".$passageTech->getEtablissementInfos()->getType()."\n";
+                foreach ($passageTech->getPrestations() as $p) {
+                    $resumePassage.=$p->getNomToString()." ";
+                }
+                
 	            $passageArr = array(
 	                'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
 	                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
@@ -99,6 +104,7 @@ class CalendarController extends Controller {
 	                'textColor' => "black",
 	                'coefStart' => round($diffDebut / 30, 1),
 	                'coefEnd' => round($diffFin / 30, 2),
+                        'resume' => $resumePassage,
 	            );
 	            $index++;
 
