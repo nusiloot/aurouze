@@ -52,7 +52,7 @@
 	            </div>
 	        </div>
 	        <div class="col-xs-4">
-	            <div class="event btn btn-sm btn-warning pull-right" data-identifiant="{{ passage.passageIdentifiant() }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }}</strong> <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }} ({{ passage.etablissementInfos.adresse.adresse }})</small></div>
+	            <div class="event btn btn-sm btn-warning pull-right" data-identifiant="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }}</strong> <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }} ({{ passage.etablissementInfos.adresse.adresse }})</small></div>
 	        </div>
 	    </div>
 		{% endif %}
@@ -66,7 +66,7 @@
 <ul class="nav nav-tabs nav-justified" role="tablist" style="margin-bottom: 15px; font-size: 13px;">
 	<li role="presentation">
 	{% if passage %}
-		<a href="{{ path('calendarManuel',{'passage': passage.passageIdentifiant(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
+		<a href="{{ path('calendarManuel',{'passage': passage.id, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
 	{% else %}
         <a href="{{ path('calendarManuel', {'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
     {% endif %}
@@ -75,7 +75,7 @@
 {% for tech in techniciens %}
     <li role="presentation"{% if tech.getId() == technicien %} class="active"{% endif %}>
         {% if passage %}
-        <a href="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': tech.getId(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getInituleCourt() }}</strong></a>
+        <a href="{{ path('calendar',{'passage': passage.id, 'technicien': tech.getId(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getInituleCourt() }}</strong></a>
         {% else %}
         <a href="{{ path('calendar',{'technicien': tech.getId(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getInituleCourt() }}</strong></a>
         {% endif %}
@@ -88,12 +88,12 @@
 		<div
 			id="calendrier"
 			data-goto-date="{{ calendarTool.getDateDebutSemaine('Y-m-d') }}"
-			data-url-populate="{{ path('calendarPopulate', {'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}" 
+			data-url-populate="{{ path('calendarPopulate', {'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
 			data-url-read="{{path('calendarRead', {'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
 			{% if passage %}
-			data-url-update="{{path('calendarUpdate', {'passage': passage.passageIdentifiant(), 'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
-			data-url-prev="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': technicien, 'calendrier': calendarTool.getSemainePrecedente('Y-m-d')}) }}"
-			data-url-next="{{ path('calendar',{'passage': passage.passageIdentifiant(), 'technicien': technicien, 'calendrier': calendarTool.getSemaineSuivante('Y-m-d')}) }}"
+			data-url-update="{{path('calendarUpdate', {'passage': passage.id, 'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
+			data-url-prev="{{ path('calendar',{'passage': passage.id, 'technicien': technicien, 'calendrier': calendarTool.getSemainePrecedente('Y-m-d')}) }}"
+			data-url-next="{{ path('calendar',{'passage': passage.id, 'technicien': technicien, 'calendrier': calendarTool.getSemaineSuivante('Y-m-d')}) }}"
 			{% else %}
 			data-url-update="{{path('calendarUpdate', {'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
 			data-url-prev="{{ path('calendar',{'technicien': technicien, 'calendrier': calendarTool.getSemainePrecedente('Y-m-d')}) }}"

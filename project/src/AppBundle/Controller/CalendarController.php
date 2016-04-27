@@ -20,7 +20,11 @@ class CalendarController extends Controller {
     public function calendarAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
+        $passage = null;
+        if($request->get('passage')) {
+            $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        }
+        
         $technicien = $request->get('technicien');
 
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllActif();
@@ -39,7 +43,10 @@ class CalendarController extends Controller {
      */
     public function calendarManuelAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $passage = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
+        $passage = null;
+        if($request->get('passage')) {
+            $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        }
 
         $calendrier = $request->get('calendrier');
         $calendarTool = new CalendarDateTool($calendrier);
@@ -127,9 +134,9 @@ class CalendarController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $id = ($request->get('passage')) ? $request->get('passage') : $request->get('id');
         $technicien = $request->get('technicien');
-        
-        $passageToMove = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($id);
-       
+
+        $passageToMove = $dm->getRepository('AppBundle:Passage')->findOneById($id);
+
         $start = $request->get('start');
         $end = $request->get('end');
 
@@ -137,7 +144,7 @@ class CalendarController extends Controller {
             throw new \Exception();
         }
         $tech = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
-        $event = array('id' => $passageToMove->getPassageIdentifiant(),
+        $event = array('id' => $passageToMove->getId(),
             'title' => $passageToMove->getIntitule(),
             'start' => $start,
             'end' => $end,
@@ -180,7 +187,7 @@ class CalendarController extends Controller {
             if (!$passageTech->getDateFin()) {
                 continue;
             }
-           $passageArr = array('id' => $passageTech->getPassageIdentifiant(),
+           $passageArr = array('id' => $passageTech->getId(),
                 'title' => ($request->get('title')) ? $passageTech->getEtablissementInfos()->getIntitule() : "",
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
@@ -229,7 +236,7 @@ class CalendarController extends Controller {
     public function calendarDeleteAction(Request $request) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $passageToDelete = $dm->getRepository('AppBundle:Passage')->findOneByIdentifiantPassage($request->get('passage'));
+        $passageToDelete = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
         $technicien = $request->get('technicien');
 
         if (!$passageToDelete->isRealise()) {

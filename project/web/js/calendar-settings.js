@@ -29,7 +29,7 @@ $(function () {
         });
 
     });
-    
+
     /**
      * FullCalendar Settings
      */
@@ -76,6 +76,7 @@ $(function () {
             }
         ],
         eventClick: function (event) {
+            console.log(event);
             $.post(
                     $('#calendrier').data('urlRead'), {
                 id: event.id,
@@ -114,7 +115,7 @@ $(function () {
                 end: event.end.format()
             });
         },
-        eventDrop: function (event) {           
+        eventDrop: function (event) {
             $.post(
                $('#calendrier').data('urlUpdate'), {
                 id: event.id,
