@@ -1,5 +1,6 @@
-<h4 class="text-center">Bon de passage n° {{ passage.identifiant }}</h4>
-<br />
+<h2 style="margin-bottom: 10px; font-size: 22px;" class="text-center">Bon de passage du {{ passage.dateDebut | localizeddate("full", "none") }} à 12h30 <small>n°7738877</small>
+</h2>
+<hr style="border-color: #ddd; margin-bottom: 30px;" />
 <div class="row">
     <div class="col-xs-6">
         <p>
@@ -21,10 +22,9 @@
 <br />
 <div class="row">
     <div class="col-xs-12">
-        <h3>Passage du {{ passage.dateDebut | localizeddate("full", "none") }} à {{ passage.dateDebut | localizeddate('none', 'short') }} par Laurent TOUYA</h3>
-        <p class="lead">n° 1 / 6 pour le contrat n° {{ passage.contrat.numeroArchive }}</p>
+        <p class="lead" style="font-weight: 400;">Passage sous contrat n° 1 / 6 effectué par Laurent TOUYA <small> - Contrat n° {{ passage.contrat.numeroArchive }}</small></p>
         <p>{% for prestation in passage.prestations %}
-            <span class="btn btn-xs btn-default">{{ prestation.nom }}</span>
+            <span class="btn btn-sm btn-default">{{ prestation.nomToString }}</span>
         {% endfor %}</p>
     </div>
 </div>

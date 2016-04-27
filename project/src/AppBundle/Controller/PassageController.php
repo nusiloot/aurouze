@@ -40,9 +40,9 @@ class PassageController extends Controller {
      */
     public function creationAction(Request $request, Etablissement $etablissement, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         $passage = $this->get('passage.manager')->create($etablissement, $contrat);
-        
+
         $form = $this->createForm(new PassageCreationType($dm), $passage, array(
             'action' => $this->generateUrl('passage_creation', array('id_etablissement' => $etablissement->getId(), 'id_contrat' => $contrat->getId())),
             'method' => 'POST',
@@ -157,6 +157,31 @@ class PassageController extends Controller {
         $html = $this->renderView('passage/pdfBons.html.twig', array(
                 'passage' => $passage,
                 'parameters' => $fm->getParameters(),
+            ));
+
+        if($request->get('output') == 'html') {
+
+            return new Response($html, 200);
+        }
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+                200,
+                array(
+                    'Content-Type'          => 'application/pdf',
+                    'Content-Disposition'   => 'attachment; filename="bon.pdf"'
+                )
+        );
+    }
+
+    /**
+     * @Route("/passage/pdf-mission/{id}", name="passage_pdf_mission")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function pdfMissionAction(Request $request, Passage $passage) {
+
+        $html = $this->renderView('passage/pdfMission.html.twig', array(
+                'passage' => $passage
             ));
 
         if($request->get('output') == 'html') {
