@@ -37,7 +37,7 @@ class EtablissementType extends AbstractType {
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")))
         		->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
         		->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'))
-                ->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "attr" => array("class" => "form-control", "rows" => 6)));
+                ->add('commentaire', TextareaType::class, array('label' => 'Commentaire :',"required" => false,  "attr" => array("class" => "form-control", "rows" => 6)));
        
     }
 
