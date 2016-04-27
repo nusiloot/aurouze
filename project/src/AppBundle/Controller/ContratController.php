@@ -114,12 +114,14 @@ class ContratController extends Controller {
     public function acceptationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $contratManager = new ContratManager($dm);
+        $oldTechnicien = $contrat->getTechnicien();
         $form = $this->createForm(new ContratAcceptationType($dm, $contrat), $contrat, array(
             'action' => $this->generateUrl('contrat_acceptation', array('id' => $contrat->getId())),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            
             $contrat = $form->getData();
             if ($contrat->isEnAttenteAcceptation()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
@@ -129,6 +131,9 @@ class ContratController extends Controller {
                 $dm->flush();
                 return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
             } else {
+                if($oldTechnicien->getId() != $contrat->getTechnicien()->getId()){
+                    $contrat->changeTechnicien($contrat->getTechnicien());
+                }
                 $dm->persist($contrat);
                 $dm->flush();
                 return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));

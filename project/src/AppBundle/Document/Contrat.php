@@ -818,6 +818,21 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         return $this->technicien;
     }
 
+    public function changeTechnicien($newTechnicien) {
+        if(!$newTechnicien){
+            return false;
+        }
+        $this->setTechnicien($newTechnicien);
+        foreach ($this->getContratPassages() as $contratPassage) {
+            foreach ($contratPassage->getPassagesSorted() as $passage) {
+                if($passage->isEnAttente() || $passage->isAPlanifie()){
+                    $passage->removeAllTechniciens();
+                    $passage->addTechnicien($newTechnicien);
+                }
+            }
+        }
+    }
+    
     /**
      * Add contratPassage
      *

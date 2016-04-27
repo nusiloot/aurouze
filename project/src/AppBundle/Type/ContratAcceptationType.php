@@ -51,14 +51,14 @@ class ContratAcceptationType extends AbstractType {
         ));
         
         $builder->add('technicien', DocumentType::class, array(
-            "choices" => array_merge(array('' => ''), $this->getComptes(Compte::TYPE_TECHNICIEN)),
+            "choices" => array_merge(array('' => ''), $this->getComptes()),            
             'label' => 'Technicien :',
             'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple")));
         
-        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "attr" => array("class" => "form-control", "rows" => 6)));
+        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :',"required" => false, "attr" => array("class" => "form-control", "rows" => 6)));
 
 
         $builder->add('save', SubmitType::class, array('label' => ($this->contrat->isEnAttenteAcceptation())? 'Acceptation du contrat' : 'Modification du contrat', "attr" => array("class" => "btn btn-success pull-right")));
@@ -70,7 +70,7 @@ class ContratAcceptationType extends AbstractType {
         ));
     }
     
-    public function getComptes($type) {
+    public function getComptes() {
         return $this->dm->getRepository('AppBundle:Compte')->findAllActif();
     }
 
