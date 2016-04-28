@@ -1,0 +1,71 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+	<style>
+	h1 {
+		text-align: center;
+		font-size: 26px;
+		line-height: 50px;
+		font-weight: bold;
+		padding: 0 20px;
+		margin-top: 150px;
+	}
+	h2 {
+		font-size: 16px;
+		font-weight: bold;
+	}
+	blockquote {
+		border: none;
+		font-size: 13px;
+		padding: 0px 0px 0px 50%;
+		text-transform: uppercase;
+		margin: 0px;
+	}
+	pre {
+		background-color: #fff;
+		color: #000;
+		border-radius: 0px;
+	}
+	pre:first-of-type,
+	pre:first-of-type + p,
+	pre:first-of-type + p + pre,
+	h1 + p {
+		text-align: center;
+	}
+	code, kbd, pre, samp {
+    	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+		font-size: 13px;
+	}
+	table {
+		margin: 10px 0 20px 0;
+	}
+	table td {
+		padding: 0 100px 5px 0;
+	}
+	table tr td:first-of-type + td  {
+		text-align: right;
+	}
+	p {
+		font-size: 13px;
+	}
+	hr {
+		border-color: #fff;
+		margin: 0;
+		page-break-after: always;
+	}
+	img {
+		margin: -135px 0 0 120px;
+		width: 25%;
+	}
+	body {
+		background: transparent url('http://aurouze.preprod.24eme.fr/images/bg-body-pdf-contrat.jpg') repeat-y left top;
+		background-size: 21cm auto;
+	}
+	.container {
+		margin-left: 200px;
+		margin-right: 50px;
+		padding: 10px 0;
+	}
+	</style>
+	{{ contrat.markdown|markdown }}
+{% endblock %}

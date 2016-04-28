@@ -211,19 +211,36 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function pdfAction(Request $request, Contrat $contrat) {
-        $dm = $this->get('doctrine_mongodb')->getManager();
-
-        $contratVisuUrl = $this->generateUrl('contrat_visualisation', array('id' => $contrat->getId()), true);
-//        $html = $this->renderView('contrat/validation.html.twig', array('contrat' => $contrat));
-//        return $this->render('contrat/validation.html.twig', array('contrat' => $contrat));
-
-        $fileName = "AUROUZE_" . $contrat->getId() . ".pdf";
-        return new Response(
-                $this->container->get('knp_snappy.pdf')->getOutput($contratVisuUrl), 200, array(
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $fileName . '"'
-                )
-        );
+    	
+    	$header =  $this->renderView('contrat/pdf-header.html.twig', array(
+    			'contrat' => $contrat
+    	));
+    	$footer =  $this->renderView('contrat/pdf-footer.html.twig', array(
+    			'contrat' => $contrat
+    	));
+    	$html =  $this->renderView('contrat/pdf.html.twig', array(
+    			'contrat' => $contrat
+    	));
+    	if($request->get('output') == 'html') {
+    	
+    		return new Response($html, 200);
+    	}
+    	
+    	return new Response(
+    			$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+    						'footer-html' => $footer, 
+    						'header-html' => $header,
+    						'margin-top'    => 40,
+    						'margin-right'  => 0,
+    						'margin-bottom' => 40,
+    						'margin-left'   => 0
+    			)),
+    			200,
+    			array(
+    					'Content-Type'          => 'application/pdf',
+    					'Content-Disposition'   => 'attachment; filename="contrat.pdf"'
+    			)
+    			);
     }
 
 }
