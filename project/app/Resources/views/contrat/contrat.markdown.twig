@@ -1,5 +1,3 @@
-**Proposition n° {{ contrat.numeroArchive }}**
-
 PARIS, le {{ contrat.dateCreation|date("d/m/Y") }}
 
 
@@ -75,7 +73,9 @@ Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{%
 
 
 Devis valable {{ contrat.duree }} mois à compter de la date d’édition.
+
 Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% endif %}.
+
 Délai de paiement des factures : A réception
 
 ## Responsabilité civile
@@ -95,6 +95,7 @@ Signature :
 
 Date : {{ contrat.dateCreation|date("d/m/Y") }}
 ```
+![](http://aurouze.preprod.24eme.fr/images/signature.png)
     
 **LE CLIENT**
 ```

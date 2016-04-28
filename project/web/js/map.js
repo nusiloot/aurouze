@@ -4,7 +4,14 @@
     $(document).ready(function ()
     {
         if($('#map').length) {
-            var map = L.map('map').setView([48.8593829, 2.347227], 12);
+            var lat = 48.8593829;
+            var lon = 2.347227;
+            if($('#map').attr('data-lat') && $('#map').attr('data-lon')){
+                lat = $('#map').data('lat');
+                lon = $('#map').data('lon');
+            }
+            
+            var map = L.map('map').setView([lat, lon], 12);
 
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

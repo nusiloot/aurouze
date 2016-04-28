@@ -64,6 +64,16 @@ class Facture implements DocumentSocieteInterface {
      * @MongoDB\EmbedMany(targetDocument="FactureLigne")
      */
     protected $lignes;
+    
+    /**
+     * @MongoDB\String
+     */
+    protected $identifiantReprise;
+    
+     /**
+     * @MongoDB\String
+     */
+    protected $numeroFacture;
 
     public function __construct()
     {
@@ -352,5 +362,49 @@ class Facture implements DocumentSocieteInterface {
     public function getDestinataire()
     {
         return $this->destinataire;
+    }
+
+    /**
+     * Set identifiantReprise
+     *
+     * @param string $identifiantReprise
+     * @return self
+     */
+    public function setIdentifiantReprise($identifiantReprise)
+    {
+        $this->identifiantReprise = $identifiantReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantReprise
+     *
+     * @return string $identifiantReprise
+     */
+    public function getIdentifiantReprise()
+    {
+        return $this->identifiantReprise;
+    }
+
+    /**
+     * Set numeroFacture
+     *
+     * @param string $numeroFacture
+     * @return self
+     */
+    public function setNumeroFacture($numeroFacture)
+    {
+        $this->numeroFacture = $numeroFacture;
+        return $this;
+    }
+
+    /**
+     * Get numeroFacture
+     *
+     * @return string $numeroFacture
+     */
+    public function getNumeroFacture()
+    {
+        return $this->numeroFacture;
     }
 }

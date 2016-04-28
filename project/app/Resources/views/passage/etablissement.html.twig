@@ -10,13 +10,10 @@
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-xs-5">
-                            <strong>{{ etablissement.nom }}</strong>
+                            <strong><a href="{{path('etablissement_modification',{ 'societe': etablissement.getSociete().getId(), 'id' :etablissement.getId() })}}">{{ etablissement.nom }}</a></strong>
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-xs-7">
                             Société {{ etablissement.raisonsociale }}&nbsp;
-                        </div>
-                        <div class="col-xs-1">
-                            <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" style="cursor: default;" data-original-title="{{ etablissement.commentaire }}"></span>
                         </div>
                     </div>
                 </div>
@@ -30,25 +27,53 @@
 
                         </div>
                     </div>
-                    {%if ((not etablissement.telephonefixe is null) and (not etablissement.telephoneportable is null)) %}
-                        <div class="row">
-                            <div class="col-xs-6">
+                    {%if ((etablissement.telephonefixe) 
+                      or (etablissement.telephoneportable)
+                      or (etablissement.fax)) %}
+                    <div class="row">
+                        {%if (etablissement.telephonefixe) %}
+                            <div class="col-xs-4">
                                 Tél fixe : {{ etablissement.telephonefixe }}
                             </div>
-                            <div class="col-xs-6">
+                        {% endif %}
+                        {%if (etablissement.telephoneportable) %}
+                            <div class="col-xs-4">
                                 Tél portable : {{ etablissement.telephoneportable }}
                             </div>
-                        </div>
+                        {% endif %}
+                        {%if (etablissement.fax) %}
+                            <div class="col-xs-4">
+                                Fax : {{ etablissement.fax }}
+                            </div>
+                        {% endif %}
+                    </div> 
                     {% endif %}
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="well well-sm">
-                                <div class="row">
-                                    <div class="col-xs-10">
-                                        <small>{{ etablissement.commentaire }}</small>
+                        {% if (etablissement.siteInternet or etablissement.email) %}
+                            <div class="row">
+                                {%if (etablissement.email) %}
+                                    <div class="col-xs-6">
+                                        Email : {{ etablissement.email }}
                                     </div>
-                                    <div class="col-xs-2">
-                                        <a class="btn btn-xs btn-warning pull-right" href="{{ path('etablissement_modification', {'societe': etablissement.getSociete().getId(),'id': etablissement.getId()}) }}">Modifier</a>
+                                {% endif %}
+                                {%if (etablissement.siteInternet) %}
+                                    <div class="col-xs-6">
+                                        Site web : {{ etablissement.siteInternet }}
+                                    </div>
+                                {% endif %}
+                            </div> 
+                        {% endif %}
+                        <br/>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="well well-sm">
+                                    <div class="row">
+                                        <div class="col-xs-10">
+                                            <small>{{ etablissement.commentaire }}</small>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <a class="btn btn-xs btn-warning pull-right" href="{{ path('etablissement_modification', {'societe': etablissement.getSociete().getId(),'id': etablissement.getId()}) }}">Modifier</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -56,138 +81,145 @@
                     </div>
                 </div>
             </div>
+            <div class="col-xs-4">
+                {% set lat = '' %}
+                {% set lon = '' %}
+                {% if(etablissement.adresse.coordonnees is defined)  %}
+                    {% set lat = etablissement.adresse.coordonnees.lat  %}
+                    {% set lon = etablissement.adresse.coordonnees.lon  %}
+                {%  endif  %}
+                <div id="map" style="width: 100%; height: 280px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}" data-lat="{{ lat }}" data-lon="{{ lon }}"></div>
+            </div>
         </div>
-        <div class="col-xs-4">
-            <div id="map" style="width: 100%; height: 148px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <a href="{{ path('contrat_creation_etablissement', {'id': etablissement.getId()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
-            <hr />
-            {% for contrat in contrats %}
-                {% set passagesEtablissement = contrat.getPassagesEtablissementNode(etablissement) %}
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="{{ path('contrat_creation_etablissement', {'id': etablissement.getId()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
+                <hr />
+                {% for contrat in contrats %}
+                    {% set passagesEtablissement = contrat.getPassagesEtablissementNode(etablissement) %}
 
-                {% if(passagesEtablissement is not null) %}
-                    <div id="contrat-{{ contrat.id }}" class="panel {% if(not contrat.isResilie) %} {% if(not contrat.isTerminee) %}panel-default{% else %}panel-success{% endif %} {% else %}panel-danger{% endif %}">
-                        <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" class="panel-heading">
-                            <h3 class="panel-title" style="cursor: pointer;">
+                    {% if(passagesEtablissement is not null) %}
+                        <div id="contrat-{{ contrat.id }}" class="panel {% if(not contrat.isResilie) %} {% if(not contrat.isTerminee) %}panel-default{% else %}panel-success{% endif %} {% else %}panel-danger{% endif %}">
+                            <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" class="panel-heading">
+                                <h3 class="panel-title" style="cursor: pointer;">
 
-                               {% if(contrat.isResilie) %}Contrat résilié le {{ contrat.dateResiliation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
-                               {% elseif(not contrat.isTerminee) %}Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
-                               {% else %}Contrat terminé en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
-                               {% endif %}
+                                    {% if(contrat.isResilie) %}Contrat résilié le {{ contrat.dateResiliation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
+                                    {% elseif(not contrat.isTerminee) %}Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
+                                    {% else %}Contrat terminé en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                                    {% endif %}
 
-                                <small>Contrat  n° {{ contrat.numeroArchive }}
-                                    sur {{ contrat.duree }} mois</small>&nbsp;
+                                    <small>Contrat  n° {{ contrat.numeroArchive }}
+                                        sur {{ contrat.duree }} mois</small>&nbsp;
 
-                                <span class="pull-right">{{ passagesEtablissement.nbPassagePrevu}} passages prévus</span>
-                            </h3>
-                        </div>
-                        <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(contrat.isTerminee) %}out{% else%}in{% endif %} list-group ">
-                            <div class="panel-body">
-
-                                <div class="row">
-                                    <div class="col-xs-8">
-                                        <div class="well well-sm" style="height:170px; overflow: auto;" ><small>{{ contrat.nomenclature | nl2br }}</small></div>
-                                    </div>
-                                    <div class="col-xs-4  text-right">
-                                        <ul class="list-unstyled">
-                                            <li>
-                                                <a href="{{ path('passage_creation', {'id_etablissement': etablissement.id, 'id_contrat': contrat.id}) }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un passage</a>&nbsp;&nbsp;
-                                                <a class="btn btn-default btn-xs" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
-                                            <li>
-                                                <br/>
-                                            <li>
-                                                <div class="well well-sm"  style="height:80px; overflow: auto;" ><small class="pull-left">{{ contrat.commentaire | nl2br }}</small></div>
-                                            </li>
-                                            <li>
-                                                <a href="{{ path('contrat_acceptation', {'id': contrat.id}) }}" class="btn btn-xs btn-warning">&nbsp;Modifier le commentaire</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-
+                                    <span class="pull-right">{{ passagesEtablissement.nbPassagePrevu}} passages prévus</span>
+                                </h3>
                             </div>
-                            {% for pe in passagesEtablissement.getPassagesSorted %}
-                                <div class="list-group-item {% if(pe.annule or pe.realise) %}small{% endif %}">
+                            <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(contrat.isTerminee) %}out{% else%}in{% endif %} list-group ">
+                                <div class="panel-body">
+
                                     <div class="row">
-                                        <div class="col-xs-1">
-
-                                            {% if(pe.enAttente) %}
-                                                <label class="btn btn-xs btn-block btn-default">{{ pe.getStatutLibelle() }}</label>
-                                            {% elseif(pe.aPlanifie) %}
-                                                <label class="btn btn-xs btn-block btn-primary">{{ pe.getStatutLibelle() }}</label>
-                                            {% elseif(pe.planifie) %}
-                                                <label class="btn btn-xs btn-block btn-warning">{{ pe.getStatutLibelle() }}</label>
-                                            {% elseif(pe.annule) %}
-                                                <label class="btn btn-xs btn-block btn-danger">{{ pe.getStatutLibelle() }}</label>
-
-                                            {% elseif(pe.realise) %}
-                                                <label class="btn btn-xs btn-block btn-success">{{ pe.getStatutLibelle() }}</label>
-                                            {% endif %}
+                                        <div class="col-xs-8">
+                                            <div class="well well-sm" style="height:170px; overflow: auto;" ><small>{{ contrat.nomenclature | nl2br }}</small></div>
                                         </div>
-                                        <div class="col-xs-3">
-                                            <a data-toggle="modal" data-remote="false" data-target="#modal-passage" href="{{path('calendarRead', { 'id': pe.id })}}">{% if(pe.enAttente) %}
-                                                {{ pe.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
-                                            {% elseif(pe.APlanifie) %}
-                                                {{ pe.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
-                                            {% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}
-                                            {#                                            {% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}#}</a>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            {% for prestation in pe.prestations %}
-                                                {% if(prestation.wordToPicto) %}
-                                                    <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                                                        <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}" style="cursor: pointer;" >&nbsp;</i></span>
-                                                    {%else%}
-                                                    <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
-                                                {%endif%}
-                                            {% endfor %}
-                                        </div>
-                                        <div class="col-xs-2">
-                                            {% if(pe.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ pe.duree }}</span>{% endif %}
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <ul class="list-inline list-unstyled">
-                                                {% for technicien in pe.techniciens %}
-                                                    <li>
-                                                        <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ technicien.identite }}
-                                                    </li>
-                                                {% endfor %}
+                                        <div class="col-xs-4  text-right">
+                                            <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="{{ path('passage_creation', {'id_etablissement': etablissement.id, 'id_contrat': contrat.id}) }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un passage</a>&nbsp;&nbsp;
+                                                    <a class="btn btn-default btn-xs" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
+                                                <li>
+                                                    <br/>
+                                                <li>
+                                                    <div class="well well-sm"  style="height:80px; overflow: auto;" ><small class="pull-left">{{ contrat.commentaire | nl2br }}</small></div>
+                                                </li>
+                                                <li>
+                                                    <a href="{{ path('contrat_acceptation', {'id': contrat.id}) }}" class="btn btn-xs btn-warning">&nbsp;Modifier le contrat</a>
+                                                </li>
                                             </ul>
                                         </div>
-                                        <div class="col-xs-2 text-right">
-                                            {% if pe.planifie  %}
-                                                <a class="btn btn-sm btn-block btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
-                                            {% elseif pe.realise %}<a class="btn btn-block btn-sm btn-default" href="{{ path('passage_edition', { id: pe.id })}}">Modifier le rapport</a>
-                                            {% elseif pe.aPlanifie %}
-                                                {% for technicien in pe.techniciens %}
-                                                    <a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : pe.id,'technicien' : technicien.id, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier</a>
-                                                {% endfor %}
-                                            {% endif %}
-                                        </div>
                                     </div>
+
                                 </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
+                                {% for pe in passagesEtablissement.getPassagesSorted %}
+                                    <div class="list-group-item {% if(pe.annule or pe.realise) %}small{% endif %}">
+                                        <div class="row">
+                                            <div class="col-xs-1">
 
-    <div class="modal fade" id="modal-passage" tabindex="-1" role="dialog">
-    	<div class="modal-dialog modal-lg" role="document">
-    	<div class="modal-content">
-    			<div class="modal-header">
-    			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    			<h4 class="modal-title" id="modal-title"></h4>
-    			</div>
-    			<div class="modal-body" id="modal-body">
-                </div>
-    	</div>
-    	</div>
-    </div>
+                                                {% if(pe.enAttente) %}
+                                                    <label class="btn btn-xs btn-block btn-default">{{ pe.getStatutLibelle() }}</label>
+                                                {% elseif(pe.aPlanifie) %}
+                                                    <label class="btn btn-xs btn-block btn-primary">{{ pe.getStatutLibelle() }}</label>
+                                                {% elseif(pe.planifie) %}
+                                                    <label class="btn btn-xs btn-block btn-warning">{{ pe.getStatutLibelle() }}</label>
+                                                {% elseif(pe.annule) %}
+                                                    <label class="btn btn-xs btn-block btn-danger">{{ pe.getStatutLibelle() }}</label>
 
-{% endblock %}
+                                                {% elseif(pe.realise) %}
+                                                    <label class="btn btn-xs btn-block btn-success">{{ pe.getStatutLibelle() }}</label>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-xs-3">
+                                                <a data-toggle="modal" data-remote="false" data-target="#modal-passage" href="{{path('calendarRead', { 'id': pe.id })}}">{% if(pe.enAttente) %}
+                                                    {{ pe.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                                                    {% elseif(pe.APlanifie) %}
+                                                        {{ pe.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                                                        {% else %}{{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}
+                                                                {#                                            {% if(not pe.isAPlanifie) %} à {{ pe.dateDebut | localizeddate('none', 'short') }}{% endif %}#}</a>
+                                                        </div>
+                                                        <div class="col-xs-2">
+                                                            {% for prestation in pe.prestations %}
+                                                                {% if(prestation.wordToPicto) %}
+                                                                    <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
+                                                                        <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}" style="cursor: pointer;" >&nbsp;</i></span>
+                                                                    {%else%}
+                                                                    <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
+                                                                {%endif%}
+                                                            {% endfor %}
+                                                        </div>
+                                                        <div class="col-xs-2">
+                                                            {% if(pe.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ pe.duree }}</span>{% endif %}
+                                                        </div>
+                                                        <div class="col-xs-2">
+                                                            <ul class="list-inline list-unstyled">
+                                                                {% for technicien in pe.techniciens %}
+                                                                    <li>
+                                                                        <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ technicien.identite }}
+                                                                    </li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-xs-2 text-right">
+                                                            {% if pe.planifie  %}<div class="btn-group">
+                                                                    <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_bon', { id: pe.id })}}"><span class="glyphicon glyphicon-print"></span></a>
+                                                                    <a class="btn btn-sm btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
+                                                                </div>
+                                                            {% elseif pe.realise %}<a class="btn btn-block btn-sm btn-default" href="{{ path('passage_edition', { id: pe.id })}}">Modifier le rapport</a>
+                                                            {% elseif pe.aPlanifie %}
+                                                                {% for technicien in pe.techniciens %}
+                                                                    <a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : pe.id,'technicien' : technicien.id, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier</a>
+                                                                {% endfor %}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                                {% endfor %}
+                                                </div>
+                                            </div>
+
+                                            <div class="modal fade" id="modal-passage" tabindex="-1" role="dialog">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                            <h4 class="modal-title" id="modal-title"></h4>
+                                                        </div>
+                                                        <div class="modal-body" id="modal-body">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {% endblock %}

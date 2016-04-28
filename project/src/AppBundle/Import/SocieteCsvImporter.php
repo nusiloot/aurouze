@@ -18,6 +18,7 @@ use AppBundle\Document\Adresse as Adresse;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\EtablissementManager as EtablissementManager;
+use AppBundle\Document\ContactCoordonnee;
 
 class SocieteCsvImporter extends CsvFile {
 
@@ -32,7 +33,7 @@ class SocieteCsvImporter extends CsvFile {
     const CSV_TEL_FIXE = 9;
     const CSV_TEL_MOBILE = 10;
     const CSV_FAX = 11;
-    const CSV_SITEWEB = 12;
+    const CSV_SITE_WEB = 12;
     const CSV_EMAIL = 13;
     const CSV_ADRESSE_COMMENTAIRE = 14;
     const CSV_SOUS_TRAITANT = 21;
@@ -93,11 +94,18 @@ class SocieteCsvImporter extends CsvFile {
         $adresse->setAdresse($adresseStr);
         $adresse->setCodePostal($ligne[self::CSV_CP]);
         $adresse->setCommune($ligne[self::CSV_VILLE]);
-        // $adresse->setFax($ligne[self::CSV_FAX]);
-        // $adresse->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
-        // $adresse->setTelephonePortable($ligne[self::CSV_TEL_MOBILE]);
 
         $societe->setAdresse($adresse);
+        
+         $contactCoordonnee = new ContactCoordonnee();
+        $contactCoordonnee->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
+        $contactCoordonnee->setTelephoneMobile($ligne[self::CSV_TEL_MOBILE]);
+        $contactCoordonnee->setFax($ligne[self::CSV_FAX]);
+        $contactCoordonnee->setSiteInternet($ligne[self::CSV_SITE_WEB]);
+        $contactCoordonnee->setEmail($ligne[self::CSV_EMAIL]);
+        
+        
+         $societe->setContactCoordonnee($contactCoordonnee);
         if ($ligne[self::CSV_TYPE_SOCIETE] == "") {
             $societe->setType(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
         } else {

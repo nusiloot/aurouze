@@ -22,6 +22,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Import\CsvFile;
 use Symfony\Component\Console\Helper\ProgressBar;
+use AppBundle\Document\Facture;
 
 class FactureCsvImporter {
 
@@ -29,13 +30,14 @@ class FactureCsvImporter {
     protected $fm;
     protected $cm;
 
-    const CSV_ID = 0;
-    const CSV_NUM = 1;
-    const CSV_SOCIETE_ID = 2;
-    const CSV_CONTRAT_ID = 3;
-    const CSV_PRIX_UNITAIRE = 4;
-    const CSV_QUANTITE = 5;
-    const CSV_TVA = 6;
+    const CSV_CONTRAT_ID = 0;
+    const CSV_FACTURE_ID = 1;
+    const CSV_NUMERO_FACTURE = 2;
+    const CSV_IS_AVOIR = 3;
+    
+    const CSV_DATE_CREATION = 21;
+    const CSV_PASSAGE = 26;
+    
 
     public function __construct(DocumentManager $dm, FactureManager $fm, ContratManager $cm) {
         $this->dm = $dm;
@@ -61,13 +63,18 @@ class FactureCsvImporter {
                 $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $data[self::CSV_CONTRAT_ID]));
                 continue;
             }
-
+            
+            $facture = new Facture();
+            $facture->setDateEmission(new \DateTime($data[self::CSV_DATE_CREATION]));
+            $facture->setSociete($contrat->getSociete());
+            $facture->setNumeroFacture($data[self::CSV_NUMERO_FACTURE]);
+            $facture->setIdentifiantReprise($data[self::CSV_FACTURE_ID]);
+            $this->dm->persist($facture);
+            
             $mouvement = new Mouvement();
-            $mouvement->setPrix($data[self::CSV_PRIX_UNITAIRE]);
+           // $mouvement->setPrix($data[self::CSV_PRIX_UNITAIRE]);
             $mouvement->setFacturable(true);
-            $mouvement->setFacture(false);
-
-            echo $contrat->getSociete()->getRaisonSociale()." (".$contrat->getSociete()->getId().")".$mouvement->getPrix()."\n";
+            $mouvement->setFacture(false);            
 
             $contrat->addMouvement($mouvement);
 

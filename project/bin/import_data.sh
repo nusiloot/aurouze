@@ -166,3 +166,8 @@ php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv
 #### Récupération et import des passages ####
 
 . bin/import_data_passages.sh
+
+
+#### Récupération et import des factures ####
+
+. bin/import_data_factures.sh

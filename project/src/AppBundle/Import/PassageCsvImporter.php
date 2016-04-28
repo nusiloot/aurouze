@@ -79,7 +79,7 @@ class PassageCsvImporter {
         $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
 
         foreach ($csv as $data) {
-          
+
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
             }
@@ -275,6 +275,10 @@ class PassageCsvImporter {
                     }
                 }
             }
+            if ($contrat->getStatut() != ContratManager::STATUT_RESILIE) {
+                $contrat->setStatut(ContratManager::STATUT_VALIDE);
+            }
+
 
             $contratFini = true;
             foreach ($contrat->getContratPassages() as $contratPassages) {
@@ -290,10 +294,8 @@ class PassageCsvImporter {
                     }
                 }
             }
-            if ($contratFini && count($contrat->getContratPassages())) {
+            if ($contratFini && count($contrat->getContratPassages()) && ($contrat->getStatut() != ContratManager::STATUT_RESILIE)) {
                 $contrat->setStatut(ContratManager::STATUT_FINI);
-            } if ($contrat->getStatut() != ContratManager::STATUT_RESILIE) {
-                $contrat->setStatut(ContratManager::STATUT_VALIDE);
             }
 
             $cptTotal++;
@@ -354,8 +356,10 @@ class PassageCsvImporter {
         $progress->start();
 
         foreach ($allContrat as $contrat) {
-            $contratTechnicien = $this->um->getRepository()->findOneById($contrat->getTechnicien()->getId());
-
+            $contratTechnicien = $contrat->getTechnicien();
+            if ($contratTechnicien) {
+                $contratTechnicien = $this->um->getRepository()->findOneById($contrat->getTechnicien()->getId());
+            }
             if ($contratTechnicien && $contratTechnicien->isTechnicien() && !$contratTechnicien->isCommercial()) {
                 $this->updateAllPassagesNonPlanifie($contratTechnicien, $contrat);
             } else {
