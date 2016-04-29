@@ -5,7 +5,7 @@ namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Document\Coordonnees;
 
-/** 
+/**
  * @MongoDB\EmbeddedDocument
 */
 class ContactCoordonnee {
@@ -35,7 +35,30 @@ class ContactCoordonnee {
      */
     protected $siteInternet;
 
-     
+    public function isSameThan(ContactCoordonnee $contactCoordonnee) {
+        if
+        (
+            ($this->getTelephoneFixe() == $contactCoordonnee->getTelephoneFixe() || !$this->getTelephoneFixe()) &&
+            ($this->getTelephoneMobile() == $contactCoordonnee->getTelephoneMobile() || !$this->getTelephoneMobile()) &&
+            ($this->getFax() == $contactCoordonnee->getFax() || !$this->getFax()) &&
+            ($this->getEmail() == $contactCoordonnee->getEmail() || !$this->getEmail()) &&
+            ($this->getSiteInternet() == $contactCoordonnee->getSiteInternet    () || !$this->getSiteInternet())
+        )
+        {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function copyFrom(ContactCoordonnee $contactCoordonnee) {
+        $this->setTelephoneFixe($contactCoordonnee->getTelephoneFixe());
+        $this->setTelephoneMobile($contactCoordonnee->getTelephoneMobile());
+        $this->setFax($contactCoordonnee->getFax());
+        $this->setEmail($contactCoordonnee->getEmail());
+        $this->setSiteInternet($contactCoordonnee->getSiteInternet());
+    }
 
     /**
      * Set telephoneFixe

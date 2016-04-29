@@ -179,9 +179,13 @@ class PassageController extends Controller {
      * @ParamConverter("passage", class="AppBundle:Passage")
      */
     public function pdfMissionAction(Request $request, Passage $passage) {
+        $pm = $this->get('passage.manager');
+
+        $passagesHistory = $pm->getRepository()->findHistoriqueByEtablissementAndPrestations($passage->getEtablissement(), $passage->getPrestations());
 
         $html = $this->renderView('passage/pdfMission.html.twig', array(
-                'passage' => $passage
+                'passage' => $passage,
+                'passagesHistory' => $passagesHistory,
             ));
 
         if($request->get('output') == 'html') {

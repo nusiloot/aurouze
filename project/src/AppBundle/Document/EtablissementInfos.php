@@ -10,7 +10,7 @@ use AppBundle\Manager\EtablissementManager;
 use AppBundle\Model\EtablissementInfosInterface;
 use AppBundle\Document\Adresse;
 
-/** 
+/**
  * @MongoDB\EmbeddedDocument
  * @MongoDB\Index(keys={"coordonnees"="2d"})
 */
@@ -20,11 +20,6 @@ class EtablissementInfos implements EtablissementInfosInterface {
      * @MongoDB\String
      */
     protected $nom;
-
-    /**
-     * @MongoDB\String
-     */
-    protected $contact;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="Adresse")
@@ -60,28 +55,6 @@ class EtablissementInfos implements EtablissementInfosInterface {
     public function getNom()
     {
         return $this->nom;
-    }
-
-    /**
-     * Set contact
-     *
-     * @param string $contact
-     * @return self
-     */
-    public function setContact($contact)
-    {
-        $this->contact = $contact;
-        return $this;
-    }
-
-    /**
-     * Get contact
-     *
-     * @return string $contact
-     */
-    public function getContact()
-    {
-        return $this->contact;
     }
 
     /**
@@ -133,18 +106,18 @@ class EtablissementInfos implements EtablissementInfosInterface {
     }
 
     public function getTelephonePortable() {
-        
+
     }
 
     public function getFax() {
-        
+
     }
 
     public function getIcon() {
 
         return EtablissementManager::$type_icon[$this->getType()];
     }
-    
+
     public function getIntitule() {
 
         return $this->getNom() . ' ' . $this->getAdresse()->getIntitule();
@@ -152,7 +125,6 @@ class EtablissementInfos implements EtablissementInfosInterface {
 
     public function pull(EtablissementInfosInterface $etablissementFrom) {
         $this->setNom($etablissementFrom->getNom());
-        $this->setContact($etablissementFrom->getContact());
         $this->setAdresse(clone $etablissementFrom->getAdresse());
         $this->setType($etablissementFrom->getType());
     }

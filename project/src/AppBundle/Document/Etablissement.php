@@ -3,6 +3,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use AppBundle\Model\EtablissementInfosInterface;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Document\Adresse;
@@ -10,7 +11,7 @@ use AppBundle\Manager\EtablissementManager;
 use AppBundle\Document\Contrat;
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository")
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository") @HasLifecycleCallbacks
  */
 class Etablissement implements DocumentSocieteInterface, EtablissementInfosInterface {
 
@@ -40,11 +41,6 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @MongoDB\String
      */
     protected $nom;
-
-    /**
-     * @MongoDB\String
-     */
-    protected $contact;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="Adresse")
@@ -83,6 +79,36 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
 
     public function __construct() {
         $this->adresse = new Adresse();
+        $this->contactCoordonnee = new ContactCoordonnee();
+    }
+
+    /** @MongoDB\PreUpdate */
+    public function preUpdate() {
+        $this->pullInfosFromSociete();
+    }
+
+    /** @MongoDB\PrePersist */
+    public function prePersist() {
+        $this->pullInfosFromSociete();
+    }
+
+    public function isSameAdresseThanSociete() {
+
+        return $this->getAdresse()->isSameThan($this->getSociete()->getAdresse());
+    }
+
+    public function isSameContactCoordonneeThanSociete() {
+
+        return $this->getContactCoordonnee()->isSameThan($this->getSociete()->getContactCoordonnee());
+    }
+
+    public function pullInfosFromSociete() {
+        if($this->isSameAdresseThanSociete()) {
+            $this->getAdresse()->copyFrom($this->getSociete()->getAdresse());
+        }
+        if($this->isSameContactCoordonneeThanSociete()) {
+            $this->getContactCoordonnee()->copyFrom($this->getSociete()->getContactCoordonnee());
+        }
     }
 
     /**
@@ -197,26 +223,6 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     }
 
     /**
-     * Set contact
-     *
-     * @param string $contact
-     * @return self
-     */
-    public function setContact($contact) {
-        $this->contact = $contact;
-        return $this;
-    }
-
-    /**
-     * Get contact
-     *
-     * @return string $contact
-     */
-    public function getContact() {
-        return $this->contact;
-    }
-
-    /**
      * Set adresse
      *
      * @param Adresse $adresse
@@ -276,21 +282,21 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         }
         return $this->getContactCoordonnee()->getFax();
     }
-    
+
     public function getEmail() {
         if(!$this->getContactCoordonnee()){
             return null;
         }
         return $this->getContactCoordonnee()->getEmail();
     }
-    
+
      public function getSiteInternet() {
         if(!$this->getContactCoordonnee()){
             return null;
         }
         return $this->getContactCoordonnee()->getSiteInternet();
     }
-    
+
 
     public function getIcon() {
 
@@ -399,5 +405,6 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function getNumeroPassageIncrement() {
         return $this->numeroPassageIncrement;
     }
+
 
 }

@@ -27,7 +27,7 @@
 
                         </div>
                     </div>
-                    {%if ((etablissement.telephonefixe) 
+                    {%if ((etablissement.telephonefixe)
                       or (etablissement.telephoneportable)
                       or (etablissement.fax)) %}
                     <div class="row">
@@ -46,7 +46,7 @@
                                 Fax : {{ etablissement.fax }}
                             </div>
                         {% endif %}
-                    </div> 
+                    </div>
                     {% endif %}
                         {% if (etablissement.siteInternet or etablissement.email) %}
                             <div class="row">
@@ -60,7 +60,7 @@
                                         Site web : {{ etablissement.siteInternet }}
                                     </div>
                                 {% endif %}
-                            </div> 
+                            </div>
                         {% endif %}
                         <br/>
 
@@ -188,10 +188,8 @@
                                                             </ul>
                                                         </div>
                                                         <div class="col-xs-2 text-right">
-                                                            {% if pe.planifie  %}<div class="btn-group">
-                                                                    <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_bon', { id: pe.id })}}"><span class="glyphicon glyphicon-print"></span></a>
-                                                                    <a class="btn btn-sm btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
-                                                                </div>
+                                                            {% if pe.planifie  %}
+                                                                <a class="btn btn-sm btn-block btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
                                                             {% elseif pe.realise %}<a class="btn btn-block btn-sm btn-default" href="{{ path('passage_edition', { id: pe.id })}}">Modifier le rapport</a>
                                                             {% elseif pe.aPlanifie %}
                                                                 {% for technicien in pe.techniciens %}

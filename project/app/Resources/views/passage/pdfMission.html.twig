@@ -1,7 +1,8 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
-<h2 style="margin-bottom: 10px; font-size: 22px;" class="text-center">Suivi client : Passage du {{ passage.dateDebut | localizeddate("full", "none") }} à 12h30 <small>n°00000000</small>
+<h2 style="margin-bottom: 10px; font-size: 22px;" class="text-center"><strong>Suivi client : Passage du {{ passage.dateDebut | localizeddate("full", "none") }} à 12h30 <small>n°00000000</small>
+</strong>
 </h2>
 <hr style="border-color: #ddd; margin-bottom: 40px;" />
 <div class="row">
@@ -11,7 +12,9 @@
         {{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}
     </div>
     <div class="col-xs-6">
-        Tél : 01 00 00 00 00<br />
+        {% if (passage.etablissement.societe.contactCoordonnee.telephoneFixe) %}
+        Tél : {{ passage.etablissement.societe.contactCoordonnee.telephoneFixe }}
+        {% endif %}
         Commentaire :
         <br />
     </div>
@@ -29,18 +32,16 @@
     <thead>
         <tr>
             <th class="col-xs-2 text-center">Quantité utilisée</th>
-            <th class="col-xs-5">Produit</th>
-            <th class="col-xs-3">Conditionnement</th>
-            <td class="col-xs-2 text-center">Quantité restante</td>
+            <th class="col-xs-8">Produit</th>
+            <td class="col-xs-2 text-center">Quantité totales</td>
         </tr>
     </thead>
     <tbody>
         {% for produit in passage.produits  %}
         <tr>
             <td></td>
-            <td>{{ produit.nom}}</td>
-            <td>{{ produit.conditionnement }}</td>
-            <td class="text-right">10,00</td>
+            <td>{{ produit.nom}} <small class="text-muted">({{ produit.conditionnement }})</small></td>
+            <td class="text-right">{{ produit.nbTotalContrat }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -51,46 +52,34 @@
 <h5 style="margin-bottom: 10px; margin-top: 40px;"><strong>Historique des passages</strong></h5>
 <hr style="border-color: #ddd; margin-bottom: 5px; margin-top: 0px;" />
 <small>
-<p>{{ passage.dateDebut | localizeddate("full", "none") | capitalize }} <small>Passage n° 6 / 6 réalisé par Machin Machin</small></p>
-<p>Traitement : {% for prestation in passage.prestations %}
-    <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
-{% endfor %}</p>
-<p>Compte rendu du passage</p>
-<table style="margin-bottom: 0;" class="table table-bordered table-condensed">
-    <tbody>
-        {% for produit in passage.produits  %}
-        <tr>
-            <td class="col-xs-2 text-right">{{ produit.nbUtilisePassage }}</td>
-            <td class="col-xs-10">{{ produit.nom}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<hr style="border-color: #ddd; margin-bottom: 10px; margin-top: 0px;" />
-<p>{{ passage.dateDebut | localizeddate("full", "none") | capitalize }} <small>Passage n° 5 / 6 réalisé par Machin Machin</small></p>
-    <p>Traitement : {% for prestation in passage.prestations %}
-        <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
-    {% endfor %}</p>
-<p>Compte rendu du passage</p>
-<table style="margin-bottom: 0;" class="table table-bordered table-condensed">
-    <tbody>
-        {% for produit in passage.produits  %}
-        <tr>
-            <td class="col-xs-2 text-right">{{ produit.nbUtilisePassage }}</td>
-            <td class="col-xs-10">{{ produit.nom}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<hr style="border-color: #ddd; margin-bottom: 0px; margin-top: 0px;" />
+    {% for passageHistory in passagesHistory %}
+        <p><strong>{{ passageHistory.dateDebut | localizeddate("full", "none") | capitalize }}</strong> réalisé par {{ passageHistory.techniciens.first() }}</p>
+        <p>Traitement : {% for prestation in passageHistory.prestations %}
+            <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
+        {% endfor %}</p>
+        <p>{{ passageHistory.description }}</p>
+        <table style="margin-bottom: 0;" class="table table-bordered table-condensed">
+            <tbody>
+                {% for produit in passageHistory.produits  %}
+                    {% if (produit.nbUtilisePassage) %}
+                    <tr>
+                        <td style="padding-top: 2px; padding-bottom: 2px;" class="col-xs-2 text-right">{{ produit.nbUtilisePassage }}</td>
+                        <td style="padding-top: 2px; padding-bottom: 2px;" class="col-xs-10">{{ produit.nom}} <small class="text-muted">({{ produit.conditionnement }})</small></td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr style="border-color: #ddd; margin-bottom: 10px; margin-top: 0px;" />
+    {% endfor %}
 </small>
 
 <p style="margin-bottom: 10px; margin-top: 10px"><strong>Prochain passage</strong></p>
 <hr style="border-color: #ddd; margin-bottom: 10px; margin-top: 0px;" />
 <small>
-<p>Juin 2015 <small>Passage n° 6 / 6</small></p>
-<p>Traitement : {% for prestation in passage.prestations %}
-    <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
-{% endfor %}</p>
+    <p>Juin 2015 <small>Passage n° 6 / 6</small></p>
+    <p>Traitement : {% for prestation in passage.prestations %}
+        <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
+    {% endfor %}</p>
 </small>
 {% endblock %}

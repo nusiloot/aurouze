@@ -17,7 +17,7 @@ namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Document\Coordonnees;
 
-/** 
+/**
  * @MongoDB\EmbeddedDocument
  * @MongoDB\Index(keys={"coordonnees"="2d"})
 */
@@ -38,15 +38,36 @@ class Adresse {
      */
     protected $commune;
 
-     /** 
-     * @MongoDB\EmbedOne(targetDocument="Coordonnees") 
+     /**
+     * @MongoDB\EmbedOne(targetDocument="Coordonnees")
      */
     protected $coordonnees;
 
-    /** 
-     * @MongoDB\Distance 
+    /**
+     * @MongoDB\Distance
      */
     protected $distance;
+
+    public function isSameThan(Adresse $adresse) {
+        if
+        (
+            ($this->getAdresse() == $adresse->getAdresse() || !$this->getAdresse()) &&
+            ($this->getCommune() == $adresse->getCommune() || !$this->getCommune()) &&
+            ($this->getCodePostal() == $adresse->getCodePostal() || !$this->getCodePostal())
+        )
+        {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function copyFrom(Adresse $adresse) {
+        $this->setAdresse($adresse->getAdresse());
+        $this->setCommune($adresse->getCommune());
+        $this->setCodePostal($adresse->getCodePostal());
+    }
 
     public function __construct() {
         $this->coordonnees = new Coordonnees();
