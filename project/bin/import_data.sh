@@ -71,6 +71,9 @@ print $1 ";" $2 ";" $3 ";" $4 ";" $5 ";" nom;
 
 }' > $DATA_DIR/prestationType.csv
 
+cat $DATA_DIR/prestations_utilises.csv | tr -d '"' | sed -r 's|(.+);(.+)|\s/\1#\/\2#\/|g' | grep -E "^s/" > $DATA_DIR/sed_prestations_utilises
+
+
 cat $DATA_DIR/prestationType.csv | sort -t ";" -k 1,1 > $DATA_DIR/prestationType.sorted.csv
 
 ##### Récupération des types de produits #####
@@ -131,7 +134,7 @@ cat $DATA_DIR/tblPassageAdresse.csv | tr -d '\r' | sort -t ";" -k 2,2 > $DATA_DI
 
 echo "Import des types de prestations"
 
-php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestationType.csv -vvv
+php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestations_utilises.csv -vvv
 
 echo "Import des types de produits"
 
