@@ -1,0 +1,96 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+<h2 style="margin-bottom: 10px; font-size: 22px;" class="text-center">Suivi client : Passage du {{ passage.dateDebut | localizeddate("full", "none") }} à 12h30 <small>n°00000000</small>
+</h2>
+<hr style="border-color: #ddd; margin-bottom: 40px;" />
+<div class="row">
+    <div class="col-xs-6">
+        <h3 style="margin-top: 0;">{{ passage.etablissementInfos.nom }}</h3>
+        {{ passage.etablissementInfos.adresse.adresse }}<br />
+        {{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}
+    </div>
+    <div class="col-xs-6">
+        Tél : 01 00 00 00 00<br />
+        Commentaire :
+        <br />
+    </div>
+</div>
+<br />
+<br />
+<p><strong>Traitement :</strong> {% for prestation in passage.prestations %}
+    <span class="btn btn-default">{{ prestation.nomToString }}</span>
+{% endfor %}
+<br />
+<br />
+<strong>Passage sous contrat n° 1 / 6</strong> <small>- Contrat n° {{ passage.contrat.numeroArchive }} (réalisé par Machin Machin)</small>
+</p>
+<table style="margin-top: 20px;" class="table table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th class="col-xs-2 text-center">Quantité utilisée</th>
+            <th class="col-xs-5">Produit</th>
+            <th class="col-xs-3">Conditionnement</th>
+            <td class="col-xs-2 text-center">Quantité restante</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for produit in passage.produits  %}
+        <tr>
+            <td></td>
+            <td>{{ produit.nom}}</td>
+            <td>{{ produit.conditionnement }}</td>
+            <td class="text-right">10,00</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<strong>Détail de la prestation : </strong>
+<p style="line-height: 14px;margin-top: 10px;">{{ passage.contrat.nomenclature | nl2br }}</p>
+
+<h5 style="margin-bottom: 10px; margin-top: 40px;"><strong>Historique des passages</strong></h5>
+<hr style="border-color: #ddd; margin-bottom: 5px; margin-top: 0px;" />
+<small>
+<p>{{ passage.dateDebut | localizeddate("full", "none") | capitalize }} <small>Passage n° 6 / 6 réalisé par Machin Machin</small></p>
+<p>Traitement : {% for prestation in passage.prestations %}
+    <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
+{% endfor %}</p>
+<p>Compte rendu du passage</p>
+<table style="margin-bottom: 0;" class="table table-bordered table-condensed">
+    <tbody>
+        {% for produit in passage.produits  %}
+        <tr>
+            <td class="col-xs-2 text-right">{{ produit.nbUtilisePassage }}</td>
+            <td class="col-xs-10">{{ produit.nom}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<hr style="border-color: #ddd; margin-bottom: 10px; margin-top: 0px;" />
+<p>{{ passage.dateDebut | localizeddate("full", "none") | capitalize }} <small>Passage n° 5 / 6 réalisé par Machin Machin</small></p>
+    <p>Traitement : {% for prestation in passage.prestations %}
+        <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
+    {% endfor %}</p>
+<p>Compte rendu du passage</p>
+<table style="margin-bottom: 0;" class="table table-bordered table-condensed">
+    <tbody>
+        {% for produit in passage.produits  %}
+        <tr>
+            <td class="col-xs-2 text-right">{{ produit.nbUtilisePassage }}</td>
+            <td class="col-xs-10">{{ produit.nom}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<hr style="border-color: #ddd; margin-bottom: 0px; margin-top: 0px;" />
+</small>
+
+<p style="margin-bottom: 10px; margin-top: 10px"><strong>Prochain passage</strong></p>
+<hr style="border-color: #ddd; margin-bottom: 10px; margin-top: 0px;" />
+<small>
+<p>Juin 2015 <small>Passage n° 6 / 6</small></p>
+<p>Traitement : {% for prestation in passage.prestations %}
+    <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
+{% endfor %}</p>
+</small>
+{% endblock %}
