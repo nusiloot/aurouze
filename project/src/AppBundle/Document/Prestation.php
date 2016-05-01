@@ -74,15 +74,16 @@ class Prestation {
     }
 
     public function getWordToPicto() {
-        $nom_libelles = explode('-', $this->getIdentifiant());
-        
+        $nom_libelles = explode(' - ', $this->getNom());
         $mot_rongeur = array('DERATISATION', 'RONGEURS');
         $mot_puce = array('RAMPANTS');
         $mot_moustique = array('VOLANTS');
         $mot_cafard = array('BLATTES', 'PUNAISES');
         $mot_chenille = array('CHENILLES');
         $mot_pigeon = array('DEPIGEONNAGE');
-        
+        $mot_bois = array('TRAITEMENT DES BOIS');
+        $mot_travaux = array('TRAVAUX DIVERS');
+        $mot_DEIV = array('MAINTENANCE D.E.I.V');
         if($this->isPictoForLibelles($nom_libelles, $mot_rongeur)){
             $type_rongeur = "";
             if($this->isPictoForLibelles($nom_libelles,array('RATS'))){
@@ -109,7 +110,14 @@ class Prestation {
             return 'chenille';
         }elseif($this->isPictoForLibelles($nom_libelles, $mot_pigeon)){
             return 'pigeon';
+        }elseif($this->isPictoForLibelles($nom_libelles, $mot_bois)){
+            return 'spa mdi';
+        }elseif($this->isPictoForLibelles($nom_libelles, $mot_travaux)){
+            return 'build mdi';
+        }elseif($this->isPictoForLibelles($nom_libelles, $mot_DEIV)){
+            return 'settings-input-component mdi';
         }
+        
         return false;
     }
 

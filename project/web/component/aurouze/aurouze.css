@@ -23,13 +23,13 @@
 [data-icon]:before { content: attr(data-icon); }
 
 [data-icon]:before,
-.icon-cafard:before,
-.icon-chenille:before,
-.icon-marker:before,
-.icon-moustique:before,
-.icon-pigeon:before,
-.icon-puce:before,
-.icon-rongeur:before {
+.mdi-cafard:before,
+.mdi-chenille:before,
+.mdi-marker:before,
+.mdi-moustique:before,
+.mdi-pigeon:before,
+.mdi-puce:before,
+.mdi-rongeur:before {
     display: inline-block;
     font-family: "aurouze";
     font-style: normal;
@@ -44,13 +44,13 @@
     font-smoothing: antialiased;
 }
 
-.icon-cafard:before { content: "\f100"; }
-.icon-chenille:before { content: "\f101"; }
-.icon-marker:before { content: "\f102"; }
-.icon-moustique:before { content: "\f103"; }
-.icon-pigeon:before { content: "\f104"; }
-.icon-puce:before { content: "\f105"; }
-.icon-rongeur:before { content: "\f106"; }
+.mdi-cafard:before { content: "\f100"; }
+.mdi-chenille:before { content: "\f101"; }
+.mdi-marker:before { content: "\f102"; }
+.mdi-moustique:before { content: "\f103"; }
+.mdi-pigeon:before { content: "\f104"; }
+.mdi-puce:before { content: "\f105"; }
+.mdi-rongeur:before { content: "\f106"; }
 
 .size-12 { font-size: 12px; }
 

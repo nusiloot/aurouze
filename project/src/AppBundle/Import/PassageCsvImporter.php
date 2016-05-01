@@ -137,13 +137,16 @@ class PassageCsvImporter {
                     if (trim($prestationNom) != "") {
                         $prestationIdentifiant = strtoupper(Transliterator::urlize($prestationNom));
                         if (!array_key_exists($prestationIdentifiant, $prestationsType)) {
-                            $output->writeln(sprintf("<error>La prestation : %s n'existe pas dans la configuration </error>", $prestationIdentifiant));
+                            $output->writeln(sprintf("<comment>La prestation : %s n'existe pas dans la configuration </comment>", $prestationIdentifiant));
+                            continue;
                         }
                         $prestation = $prestationsType[$prestationIdentifiant];
                         $passage->addPrestation($prestation);
                         $this->dm->persist($passage);
                     }
                 }
+            }else{
+                $output->writeln(sprintf("<comment>Le passage : %s n'a aucune presta </comment>", $data[self::CSV_OLD_ID]));
             }
 
             $identifiantRepriseTechnicien = $data[self::CSV_TECHNICIEN];

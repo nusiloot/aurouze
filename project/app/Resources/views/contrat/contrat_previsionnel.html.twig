@@ -15,7 +15,7 @@
                                     {% for prestation in passage.prestations %}
                                         {% if(prestation.wordToPicto) %}
                                             <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                                                <i id="icon-{{prestation.wordToPicto}}" class="icon-{{prestation.wordToPicto}}">&nbsp;</i></span>                                                          
+                                                <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i></span>                                                          
                                             {%else%}
                                             <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
                                         {%endif%}
