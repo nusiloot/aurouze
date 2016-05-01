@@ -22,75 +22,76 @@
         <link rel="stylesheet" media="print" href="{{ asset('/component/fullcalendar/css/fullcalendar.print.css') }}" />
         <link rel="stylesheet" href="{{ asset('/css/main.css') }}" />
 
-    {% block stylesheets %}{% endblock %}
-</head>
+        {% block stylesheets %}{% endblock %}
+    </head>
 
-<body>
-    <div id="ajax_notifications">
-        <div id="ajax_form_progress_notification">
-            Traitement en cours...
+    <body>
+        <div id="ajax_notifications">
+            <div id="ajax_form_progress_notification">
+                Traitement en cours...
+            </div>
+            <div id="ajax_form_error_notification">
+                Oops, une erreur est survenue ! </br>
+                Vous pouvez <a href="javascript:location.reload();">recharger la page</a><br />ou si le problème persiste contactez le 24eme.
+            </div>
         </div>
-        <div id="ajax_form_error_notification">
-            Oops, une erreur est survenue ! </br>
-            Vous pouvez <a href="javascript:location.reload();">recharger la page</a><br />ou si le problème persiste contactez le 24eme.
-        </div>
-    </div>
 
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="" href="{{ path('passage') }}" style="margin: 5px 10px 5px 0;"><img src="{{ asset('/images/logo.jpg') }}" height="40" style="margin-top: 5px;"  /></a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="{%if (_menu_active == 'passage') %}active{% endif %}">
+                            <a href="{% if(app.request.get('etablissement') and _menu_active != 'passage') %}{{ path('passage_etablissement', { id: app.request.get('etablissement').id }) }}{% else %}{{ path('passage') }}{% endif %}">Passages / Planification</a>
+                        </li>
+                        <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}">Calendrier</a></li>
+
+                        <li class="{%if (_menu_active == 'contrat') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'contrat') %}{{ path('contrats_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('contrat') }}{% endif %}">Contrats</a></li>
+
+                        <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}">Factures</a></li>
+                        <li class="{%if (_menu_active == 'societe') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('societe_visualisation', { id: app.request.get('societe').id }) }}{% else %}{{ path('societe') }}{% endif %}">Société</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav pull-right">
+                        <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog"></span></a></li>
+                        <li class="{%if (_menu_active == 'compte') %}active{% endif %}"><a href="{{ path('comptes') }}"><span class="glyphicon glyphicon-user"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="" href="{{ path('passage') }}" style="margin: 5px 10px 5px 0;"><img src="{{ asset('/images/logo.jpg') }}" height="40" style="margin-top: 5px;"  /></a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="{%if (_menu_active == 'passage') %}active{% endif %}">
-                        <a href="{% if(app.request.get('etablissement') and _menu_active != 'passage') %}{{ path('passage_etablissement', { id: app.request.get('etablissement').id }) }}{% else %}{{ path('passage') }}{% endif %}">Passages / Planification</a>
-                    </li>
-                    <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}">Calendrier</a></li>
+        {% block body %}{% endblock %}
+        </div>
 
-                    <li class="{%if (_menu_active == 'contrat') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'contrat') %}{{ path('contrats_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('contrat') }}{% endif %}">Contrats</a></li>
+        {% block javascripts %}{% endblock %}
 
-                    <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}">Factures</a></li>
-                    <li class="{%if (_menu_active == 'societe') %}active{% endif %}"><a href="{{ path('societe') }}">Société</a></li>
-                </ul>
-                <ul class="nav navbar-nav pull-right">
-                    <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog"></span></a></li>
-                    <li class="{%if (_menu_active == 'compte') %}active{% endif %}"><a href="{{ path('comptes') }}"><span class="glyphicon glyphicon-user"></span></a></li>
-                </ul>
-            </div>
-    </nav>
+        <script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/bootstrap-timepicker/js/bootstrap-timepicker.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/moment/js/moment.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/fullcalendar/js/fullcalendar.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/fullcalendar/js/fullcalendar-languages.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/select2/js/select2.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/select2/js/i18n/fr.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/leaflet/leaflet.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/leaflet-extra-markers/js/leaflet.extra-markers.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/js/calendar-settings.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/js/main.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/js/map.js') }}"></script>
 
-    <div class="container">
-    {% block body %}{% endblock %}
-</div>
-
-{% block javascripts %}{% endblock %}
-
-<script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/bootstrap/js/bootstrap.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/bootstrap-timepicker/js/bootstrap-timepicker.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/moment/js/moment.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/fullcalendar/js/fullcalendar.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/fullcalendar/js/fullcalendar-languages.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/select2/js/select2.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/select2/js/i18n/fr.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/leaflet/leaflet.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/component/leaflet-extra-markers/js/leaflet.extra-markers.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/js/calendar-settings.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/js/main.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/js/map.js') }}"></script>
-
-</body>
+    </body>
 </html>
