@@ -3,22 +3,38 @@
 {% block body %}
 
 	<div id="visu-markdown">
-		<h3>Prévisualisation</h3>		
+		<h3>Prévisualisation</h3>
+		{{ form_start(formGenerator) }}
+		<div class="row">
+			<div class="col-xs-3">
+            	{{ form_row(formGenerator.moyens) }}
+			</div>
+			<div class="col-xs-9">
+            	{{ form_row(formGenerator.conditionsParticulieres) }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 pull-right">
+				{{ form_widget(formGenerator.save) }}
+			</div>
+		</div>
+		
+		{{ form_end(formGenerator) }}		
 		<object data="{{ path('contrat_pdf', { id: contrat.id }) }}?output=html" type="text/html" style="width: 100%; height: 500px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); margin: 30px 0;"></object>
 		<a class="btn btn-warning pull-right btn-switcher" href="javascript:void(0)" data-hide="#visu-markdown" data-show="#edit-markdown">Modifier</a>
 		<a class="btn btn-default pull-right" href="{{ path('contrat_pdf', { id: contrat.id }) }}">PDF</a>
 	</div>
 	<div id="edit-markdown" style="display:none;">
 		<h3>Prévisualisation</h3>
-		{{ form_start(form) }}
+		{{ form_start(formMarkdown) }}
 		<div class="row">
 			<div class="col-xs-12">
-            	{{ form_errors(form.markdown) }}
-            	{{ form_widget(form.markdown, { 'attr': {'style': 'width: 100%; height: 500px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); margin: 30px 0;'} }) }}
+            	{{ form_errors(formMarkdown.markdown) }}
+            	{{ form_widget(formMarkdown.markdown, { 'attr': {'style': 'width: 100%; height: 500px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); margin: 30px 0;'} }) }}
 			</div>
 		</div>
-		{{ form_widget(form.save) }}
+		{{ form_widget(formMarkdown.save) }}
 		<a class="btn btn-primary pull-right btn-switcher" href="javascript:void(0)" data-hide="#edit-markdown" data-show="#visu-markdown">Retour</a>
-		{{ form_end(form) }}
+		{{ form_end(formMarkdown) }}
 	</div>
 {% endblock %}
