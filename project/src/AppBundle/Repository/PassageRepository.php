@@ -109,7 +109,7 @@ class PassageRepository extends DocumentRepository {
     }
 
     public function findToPlan() {
-        $date= \DateTime::createFromFormat('Y-m-d', '2016-01-01');//new \DateTime();
+        $date= new \DateTime();
         $twoMonth = clone $date;
         $twoMonth->modify("+1 month");
         $mongoStartDate = new MongoDate(strtotime($date->format('Y-m-d')));

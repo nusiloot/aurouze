@@ -36,11 +36,14 @@ class SocieteCsvImporter extends CsvFile {
     const CSV_SITE_WEB = 12;
     const CSV_EMAIL = 13;
     const CSV_ADRESSE_COMMENTAIRE = 14;
-    const CSV_SOUS_TRAITANT = 21;
-    const CSV_RAISON_SOCIALE = 22;
-    const CSV_COMMENTAIRE = 25;
-    const CSV_TYPE_SOCIETE = 26;
-    const CSV_CODE_COMPTABLE = 30;
+    const CSV_TYPE_SOCIETE = 27;
+    const CSV_RAISON_SOCIALE = 23;
+    
+    const CSV_SOUS_TRAITANT = 22;
+    
+    const CSV_COMMENTAIRE = 26;
+    
+    const CSV_CODE_COMPTABLE = 31;
 
     public function __construct(DocumentManager $dm) {
         $this->dm = $dm;
@@ -52,6 +55,7 @@ class SocieteCsvImporter extends CsvFile {
         $csv = $csvFile->getCsv();
         $cpt = 0;
         foreach ($csv as $data) {
+           
             $societe = $this->createFromImport($data);
             if(!$societe) {
 
@@ -70,7 +74,7 @@ class SocieteCsvImporter extends CsvFile {
     }
 
     public function createFromImport($ligne) {
-
+        
         if(!is_numeric($ligne[self::CSV_ID_SOCIETE])) {
 
             return;
