@@ -68,7 +68,6 @@ class FactureCsvImporter {
         $cptTotal = 0;
 
         foreach ($csv as $data) {
-            
             $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_CONTRAT_ID]);
 
             if (!$contrat) {
@@ -76,44 +75,62 @@ class FactureCsvImporter {
                 continue;
             }
 
+            $mvtIsFacture = boolval($data[self::CSV_NUMERO_FACTURE]);
+
             $facture = $this->fm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_FACTURE_ID]);
             if ($facture) {
                 $output->writeln(sprintf("<comment>La facture %s existe déjà avec l'id %s </comment>", $data[self::CSV_FACTURE_ID], $facture->getId()));
             } else {
+
                 $facture = new Facture();
                 $facture->setDateEmission(new \DateTime($data[self::CSV_DATE_CREATION]));
                 $facture->setSociete($contrat->getSociete());
             }
-            $this->dm->persist($facture);
+            if (!$mvtIsFacture) {
+                $output->writeln(sprintf("<comment>Pas d'import, la facture %s n'est pas facture </comment>", $data[self::CSV_FACTURE_ID]));
+            } else {
 
-            $facture->setIdentifiantReprise($data[self::CSV_FACTURE_ID]);
-            $facture->setNumeroFacture($data[self::CSV_NUMERO_FACTURE]);
-            
-            $fl = new FactureLigne();
-            $fl->setLibelle($data[self::CSV_FACTURE_LIGNE_LIBELLE]);
-            $fl->setMontantHT($data[self::CSV_FACTURE_LIGNE_PUHT]);
-            $fl->setPrixUnitaire($data[self::CSV_FACTURE_LIGNE_PUHT]);
-            $fl->setQuantite($data[self::CSV_FACTURE_LIGNE_QTE]);
-            $fl->setTauxTaxe(0.2);
-            if ($data[self::CSV_TVA_REDUITE]) {
-                $fl->setTauxTaxe(0.1);
-            }            
-            $fl->setOrigineDocument($contrat);
-            $this->dm->persist($fl);
-            $facture->addLigne($fl);
-            $facture->update();
-            
+                $this->dm->persist($facture);
+                $facture->setIdentifiantReprise($data[self::CSV_FACTURE_ID]);
+                $facture->setNumeroFacture($data[self::CSV_NUMERO_FACTURE]);
+                $fl = new FactureLigne();
+                $fl->setLibelle(str_replace('#', "\n", $data[self::CSV_FACTURE_LIGNE_LIBELLE]));
+                $fl->setMontantHT($data[self::CSV_FACTURE_LIGNE_PUHT]);
+                $fl->setPrixUnitaire($data[self::CSV_FACTURE_LIGNE_PUHT]);
+                $fl->setQuantite($data[self::CSV_FACTURE_LIGNE_QTE]);
+                $fl->setTauxTaxe(0.2);
+                if ($data[self::CSV_TVA_REDUITE]) {
+                    $fl->setTauxTaxe(0.1);
+                }
+                $fl->setOrigineDocument($contrat);
+                $this->dm->persist($fl);
+                $facture->addLigne($fl);
+                $facture->update();
+            }
+
+
+
+
             $mouvement = new Mouvement();
             $mouvement->setPrix($data[self::CSV_FACTURE_LIGNE_PUHT]);
             $mouvement->setFacturable(true);
-            $mouvement->setFacture(true);
-            $mouvement->setOrigineDocument($facture);           
-            $mouvement->setLibelle($data[self::CSV_FACTURE_LIGNE_LIBELLE]);
-            /*
-             * ????
-             */
-            
-            
+            $mouvement->setFacture($mvtIsFacture);
+
+            $mouvement->setOrigineDocument($facture);
+            $mouvement->setLibelle(str_replace('#', "\n", $data[self::CSV_FACTURE_LIGNE_LIBELLE]));
+
+            if ($data[self::CSV_FACTURE_LIGNE_PASSAGE]) {
+                $refPassage = str_replace('#', "", $data[self::CSV_FACTURE_LIGNE_PASSAGE]);
+                $passage = $this->dm->getRepository('AppBundle:Passage')->findOneByIdentifiantReprise($refPassage);
+                if (!$passage) {
+                    $output->writeln(sprintf("<comment>Le passage d'identifiant de reprise %s n'est pas trouvé dans la base </comment>", $refPassage));
+                } else {
+                    $passage->setMouvementDeclenchable(true);
+                    $passage->setMouvementDeclenche($mvtIsFacture);
+                }
+            }
+
+
             $contrat->addMouvement($mouvement);
 
             $i++;
