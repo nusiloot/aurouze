@@ -45,14 +45,14 @@ class EtablissementCsvImporter extends CsvFile {
     const CSV_SITE_WEB = 12;
     const CSV_EMAIL = 13;
     
-    const CSV_ACTIF = 15;
-    const CSV_RAISON_SOCIALE = 22;
-    const CSV_TYPE_ETABLISSEMENT = 26;
+    const CSV_ACTIF = 16;
+    const CSV_RAISON_SOCIALE = 23;
+    const CSV_TYPE_ETABLISSEMENT = 27;
     
     
-    const CSV_CMT = 37;
-    const CSV_COORD_LAT = 38;
-    const CSV_COORD_LON = 39;
+    const CSV_CMT = 38;
+    const CSV_COORD_LAT = 39;
+    const CSV_COORD_LON = 40;
 
     public function __construct(DocumentManager $dm, SocieteManager $sm, EtablissementManager $em) {
         $this->dm = $dm;

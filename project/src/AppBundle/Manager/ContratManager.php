@@ -98,7 +98,7 @@ class ContratManager implements MouvementManagerInterface {
 
                 $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
 
-                $passage->generateId();
+                
                 $passage->setContrat($contrat);
                 foreach ($passageInfos->prestations as $prestationNom) {
                     $prestationObj = new Prestation();
