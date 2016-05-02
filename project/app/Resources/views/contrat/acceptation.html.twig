@@ -2,7 +2,7 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <div id="wrapper">
-        <h1>Contrat en attente d'acceptation <small>{{ contrat.getIdentifiant() }}</small> <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a></h1>
+        <h1>Contrat en attente d'acceptation <small>n° {{ contrat.numeroArchive }}</small> <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a></h1>
 
         {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
         {{ form_start(form) }}
@@ -19,7 +19,7 @@
                 {{ form_label(form.commentaire) }}
                 {{ form_errors(form.commentaire) }}
                 {{ form_widget(form.commentaire) }}
-            </div>        
+            </div>
             <div class="form-group col-xs-6">
                 <div class="row">
                     <div class="col-xs-12">
@@ -57,16 +57,16 @@
                 <div class="col-xs-4 text-right">
                 {{ form_widget(form.save) }}
             </div>
-            {% else %} 
+            {% else %}
                 <div class="col-xs-4 text-left"></div>
                 <div class="col-xs-4 text-center">
 
-                </div> 
+                </div>
                  <div class="col-xs-4 text-right">
                 {{ form_widget(form.save) }}
             </div>
             {% endif%}
-            
+
         </div>
         <br/>
         <br/>

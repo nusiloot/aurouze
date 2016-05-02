@@ -25,6 +25,45 @@ class ContratGenerator extends AbstractIdGenerator
 
         $document->setIdentifiant(sprintf("%s-%s-%04d", $document->getSociete()->getIdentifiant(), $document->getDateCreation()->format('Ymd'), $result['value']['contratIncrement']));
 
-        return sprintf("%s-%s", "CONTRAT", $document->getIdentifiant());
+        $id = sprintf("%s-%s", "CONTRAT", $document->getIdentifiant());
+
+        if($document->getNumeroArchive()) {
+
+            return $id;
+        }
+
+        $this->updateNumeroArchive($db);
+
+        $command = array();
+        $command['findandmodify'] = 'doctrine_increment_ids';
+        $command['query'] = array('_id' => "ContratArchive");
+        $command['update'] = array('$inc' => array('current_id' => 1));
+        $command['upsert'] = true;
+        $command['new'] = true;
+        $result = $db->command($command);
+
+        $document->setNumeroArchive($result['value']['current_id']);
+
+        return $id;
+    }
+
+    public function updateNumeroArchive($db) {
+        $command = array();
+        $command['aggregate'] = "Contrat";
+        $command['pipeline'] = array(array('$group' => array('_id' => 'numero_archive_maxium', 'numeroArchive' => array('$max' => '$numeroArchive'))));
+        $result = $db->command($command);
+        if(count($result["result"]) > 0) {
+            $number = $result["result"][0]['numeroArchive']*1;
+            $result = $db->selectCollection('doctrine_increment_ids')->findOne(array('_id' => "ContratArchive"));
+            if(isset($result) && $result['current_id'] < $number) {
+                $command = array();
+                $command['findandmodify'] = 'doctrine_increment_ids';
+                $command['query'] = array('_id' => "ContratArchive");
+                $command['update'] = array('current_id' => $number);
+                $command['upsert'] = true;
+                $command['new'] = true;
+                $db->command($command);
+            }
+        }
     }
 }
