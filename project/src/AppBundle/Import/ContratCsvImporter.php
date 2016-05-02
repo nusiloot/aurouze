@@ -118,11 +118,7 @@ class ContratCsvImporter {
             $contrat->setNomenclature(str_replace('#', "\n", $data[self::CSV_NOMENCLATURE]));
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
-            if(!is_integer($data[self::CSV_ARCHIVAGE])) {
-                $contrat->setNumeroArchive(1);
-            } else {
-                $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
-            }
+            $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
 
             if ($data[self::CSV_ID_COMMERCIAL]) {
                 $commercial = $this->um->getRepository()->findOneByIdentifiantReprise($data[self::CSV_ID_COMMERCIAL]);
@@ -167,7 +163,7 @@ class ContratCsvImporter {
                 $progress->advance();
             }
 
-            if ($i >= 10000) {
+            if ($i >= 1000) {
                 $this->dm->flush();
                 $this->dm->clear();
                 gc_collect_cycles();

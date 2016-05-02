@@ -27,7 +27,7 @@ class ContratGenerator extends AbstractIdGenerator
 
         $id = sprintf("%s-%s", "CONTRAT", $document->getIdentifiant());
 
-        if($document->getNumeroArchive()) {
+        /*if($document->getNumeroArchive()) {
 
             return $id;
         }
@@ -42,7 +42,7 @@ class ContratGenerator extends AbstractIdGenerator
         $command['new'] = true;
         $result = $db->command($command);
 
-        $document->setNumeroArchive($result['value']['current_id']);
+        $document->setNumeroArchive($result['value']['current_id']);*/
 
         return $id;
     }
