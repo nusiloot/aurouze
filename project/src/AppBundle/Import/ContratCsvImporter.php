@@ -119,7 +119,7 @@ class ContratCsvImporter {
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
             if(!is_integer($data[self::CSV_ARCHIVAGE])) {
-                $contrat->setNumeroArchive(null);
+                $contrat->setNumeroArchive(1);
             } else {
                 $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
             }
