@@ -75,7 +75,7 @@ class ContratCsvImporter {
         $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
         $produitsArray = $configuration->getProduitsArray();
 
-       
+
         $i = 0;
         $cptTotal = 0;
         foreach ($csv as $data) {
@@ -99,7 +99,7 @@ class ContratCsvImporter {
             $contrat->setTvaReduite(boolval($data[self::CSV_TVA_REDUITE]));
             $type_contrat = ContratManager::$types_contrat_import_index[$data[self::CSV_TYPE_CONTRAT]];
             $contrat->setTypeContrat($type_contrat);
-            
+
             if ($data[self::CSV_DATE_DEBUT]) {
                 $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
             }
@@ -118,7 +118,11 @@ class ContratCsvImporter {
             $contrat->setNomenclature(str_replace('#', "\n", $data[self::CSV_NOMENCLATURE]));
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
-            $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
+            if(!is_integer($data[self::CSV_ARCHIVAGE])) {
+                $contrat->setNumeroArchive(null);
+            } else {
+                $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
+            }
 
             if ($data[self::CSV_ID_COMMERCIAL]) {
                 $commercial = $this->um->getRepository()->findOneByIdentifiantReprise($data[self::CSV_ID_COMMERCIAL]);

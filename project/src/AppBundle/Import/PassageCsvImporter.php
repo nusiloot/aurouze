@@ -105,6 +105,7 @@ class PassageCsvImporter {
             $passage->setDatePrevision(new \DateTime($data[self::CSV_DATE_PREVISION]));
 
             $passage->setIdentifiantReprise($data[self::CSV_OLD_ID]);
+            $passage->setNumeroArchive($data[self::CSV_OLD_ID]);
 
             $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_CONTRAT_ID]);
             if (!$contrat) {

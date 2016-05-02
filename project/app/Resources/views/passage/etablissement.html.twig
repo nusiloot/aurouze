@@ -27,24 +27,18 @@
 
                         </div>
                     </div>
-                    {%if ((etablissement.telephonefixe)
-                      or (etablissement.telephoneportable)
-                      or (etablissement.fax)) %}
+                    {% if ((etablissement.contactCoordonnee.telephoneFixe)
+                      or (etablissement.contactCoordonnee.telephoneMobile)
+                      or (etablissement.contactCoordonnee.fax)) %}
                     <div class="row">
-                        {%if (etablissement.telephonefixe) %}
-                            <div class="col-xs-4">
-                                Tél fixe : {{ etablissement.telephonefixe }}
-                            </div>
+                        {%if (etablissement.contactCoordonnee.telephoneFixe) %}
+                            <div class="col-xs-4">Tél fixe : {{ etablissement.contactCoordonnee.telephoneFixe }}</div>
                         {% endif %}
-                        {%if (etablissement.telephoneportable) %}
-                            <div class="col-xs-4">
-                                Tél portable : {{ etablissement.telephoneportable }}
-                            </div>
+                        {%if (etablissement.contactCoordonnee.telephoneMobile) %}
+                            <div class="col-xs-4">Tél portable : {{ etablissement.contactCoordonnee.telephoneMobile }}</div>
                         {% endif %}
-                        {%if (etablissement.fax) %}
-                            <div class="col-xs-4">
-                                Fax : {{ etablissement.fax }}
-                            </div>
+                        {%if (etablissement.contactCoordonnee.fax) %}
+                            <div class="col-xs-4">Fax : {{ etablissement.contactCoordonnee.fax }}</div>
                         {% endif %}
                     </div>
                     {% endif %}
@@ -66,7 +60,7 @@
 
                         <div class="row">
                             <div class="col-xs-12">
-                                <div class="well well-sm">
+                                <div class="">
                                     <div class="row">
                                         <div class="col-xs-10">
                                             <small>{{ etablissement.commentaire }}</small>

@@ -1,7 +1,7 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
-<h2 style="margin-bottom: 10px; font-size: 22px;" class="text-center"><strong>Suivi client : Passage du {{ passage.dateDebut | localizeddate("full", "none") }} à 12h30 <small>n°00000000</small>
+<h2 style="margin-bottom: 10px; font-size: 22px;" class="text-center"><strong>Suivi client : Passage du {{ passage.dateDebut | localizeddate("full", "none") }} à 12h30 <small>n° {{ passage.numeroArchive }}</small>
 </strong>
 </h2>
 <hr style="border-color: #ddd; margin-bottom: 40px;" />

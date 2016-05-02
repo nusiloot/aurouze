@@ -15,14 +15,26 @@ class PassageManager {
     const STATUT_REALISE = "REALISE";
     const STATUT_ANNULE = "ANNULE";
 
+    const TYPE_PASSAGE_CONTRAT = "CONTRAT";
+    const TYPE_PASSAGE_GARANTIE = "GARANTIE";
+    const TYPE_PASSAGE_CONTROLE = "CONTROLE";
+
     public static $statutsLibellesActions = array(self::STATUT_A_PLANIFIER => 'A planifier',
         self::STATUT_EN_ATTENTE => 'Prévu',
         self::STATUT_PLANIFIE => 'Planifié',
         self::STATUT_REALISE => 'Réalisé',self::STATUT_ANNULE => 'Annulé');
+
     public static $statutsLibelles = array(self::STATUT_A_PLANIFIER => 'À planifier',
         self::STATUT_EN_ATTENTE => 'En attente',
         self::STATUT_PLANIFIE => 'Planifié',
         self::STATUT_REALISE => 'Réalisé',self::STATUT_ANNULE => 'Annulé');
+
+    public static $typesPassageLibelles = array(
+         self::TYPE_PASSAGE_CONTRAT => "Sous contrat",
+         self::TYPE_PASSAGE_GARANTIE => "Sous garantie",
+         self::TYPE_PASSAGE_CONTROLE => "Contrôle",
+    );
+
     protected $dm;
 
     function __construct(DocumentManager $dm) {
@@ -34,7 +46,7 @@ class PassageManager {
 
         $passage->setEtablissement($etablissement);
         $passage->setContrat($contrat);
-      
+
         return $passage;
     }
 
@@ -44,10 +56,10 @@ class PassageManager {
     }
 
 
-    
+
      public function getNextPassageFromPassage($passage) {
         $contrat = $passage->getContrat();
-        
+
         $etablissement = $passage->getEtablissement();
         $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
         $nextPassage = null;
@@ -59,28 +71,28 @@ class PassageManager {
             }
             if($key == $passage->getId()){
                 $founded = true;
-            }           
+            }
         }
         return $nextPassage;
     }
 
     public function isFirstPassageNonRealise($passage) {
         $contrat = $passage->getContrat();
-        
+
         $etablissement = $passage->getEtablissement();
         $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
         $passagePrecedent = null;
         foreach($passagesEtablissement->getPassagesSorted() as $key => $passageEtb){
             if(($passage->getId() == $passageEtb->getId()) && (is_null($passagePrecedent) || $passagePrecedent->isRealise())){
                 return true;
-            }  
+            }
             $passagePrecedent = $passageEtb;
         }
         return false;
     }
-    
+
     public function getNbPassagesWithTechnicien($compte) {
-        return $this->getRepository()->countPassagesByTechnicien($compte);       
+        return $this->getRepository()->countPassagesByTechnicien($compte);
     }
-    
+
 }
