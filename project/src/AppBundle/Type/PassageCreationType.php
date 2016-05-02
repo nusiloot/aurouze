@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Document\Compte;
+use AppBundle\Manager\PassageManager;
 use AppBundle\Document\Prestation;
 use Symfony\Component\Form\CallbackTransformer;
 use AppBundle\Transformer\PrestationTransformer;
@@ -31,6 +32,7 @@ class PassageCreationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('typePassage', ChoiceType::class, array('label' => 'Type de passage :', 'choices' => array_merge(array('' => ''), PassageManager::$typesPassageLibelles), "attr" => array("class" => "select2 select2-simple")))
             ->add('dateDebut', DateType::class, array(
 				"attr" => array(
 						'class' => 'input-inline datepicker',

@@ -131,6 +131,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $identifiantReprise;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $typePassage;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
@@ -751,5 +756,27 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getNumeroArchive()
     {
         return $this->numeroArchive;
+    }
+
+    /**
+     * Set typePassage
+     *
+     * @param string $typePassage
+     * @return self
+     */
+    public function setTypePassage($typePassage)
+    {
+        $this->typePassage = $typePassage;
+        return $this;
+    }
+
+    /**
+     * Get typePassage
+     *
+     * @return string $typePassage
+     */
+    public function getTypePassage()
+    {
+        return $this->typePassage;
     }
 }

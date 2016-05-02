@@ -7,10 +7,12 @@
             <h3>Création du passage <small class="text-muted">{{ passage.identifiant }}</small></h3>
             <p>Etablissement : {{ passage.intitule }}</p>
             <p>Contrat : </p>
-            
+
             {{ form_start(form) }}
-                
-            	<div class="row">
+
+                {{ form_row(form.typePassage ) }}
+
+                <div class="row">
 		            <div class="form-group col-xs-8">
 		                {{ form_label(form.dateDebut) }}
 		                {{ form_errors(form.dateDebut) }}
@@ -46,21 +48,21 @@
                         </div>
                     </div>
 	        	</div>
-	            
+
                 <div class="panel panel-default">
             		<div class="panel-heading"><strong>Techniciens</strong></div>
             		<div class="panel-body">
                 		{{ form_widget(form.techniciens) }}
 					</div>
 				</div>
-	            
+
                 <div class="panel panel-default">
             		<div class="panel-heading"><strong>Prestations</strong></div>
             		<div class="panel-body">
                 		{{ form_widget(form.prestations) }}
 					</div>
 				</div>
-            
+
             {{ form_widget(form.save) }}
         	{{ form_end(form) }}
         </div>
