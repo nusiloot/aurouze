@@ -237,7 +237,7 @@ class ContratController extends Controller {
     			200,
     			array(
     					'Content-Type'          => 'application/pdf',
-    					'Content-Disposition'   => 'attachment; filename="contrat.pdf"'
+    					'Content-Disposition'   => 'attachment; filename="contrat-'.$contrat->getNumeroArchive().'.pdf"'
     			)
     			);
     }

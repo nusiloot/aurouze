@@ -15,7 +15,7 @@ class ContratMarkdownType extends AbstractType {
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
-		$builder->add('markdown', TextareaType::class, array('label' => 'MarkDown :', "attr" => array("class" => "form-control", "rows" => 60)))
+		$builder->add('markdown', TextareaType::class, array('label' => 'MarkDown :', "attr" => array("class" => "form-control")))
 		        ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")));
 	}
 

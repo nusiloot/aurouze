@@ -3,15 +3,18 @@
 {% block body %}
 
 	<div id="visu-markdown">
-		{{ contrat.markdown|markdown }}
+		<h3>Prévisualisation</h3>		
+		<object data="{{ path('contrat_pdf', { id: contrat.id }) }}?output=html" type="text/html" style="width: 100%; height: 500px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); margin: 30px 0;"></object>
 		<a class="btn btn-warning pull-right btn-switcher" href="javascript:void(0)" data-hide="#visu-markdown" data-show="#edit-markdown">Modifier</a>
 		<a class="btn btn-default pull-right" href="{{ path('contrat_pdf', { id: contrat.id }) }}">PDF</a>
 	</div>
 	<div id="edit-markdown" style="display:none;">
+		<h3>Prévisualisation</h3>
 		{{ form_start(form) }}
 		<div class="row">
 			<div class="col-xs-12">
-				{{ form_row(form.markdown) }}
+            	{{ form_errors(form.markdown) }}
+            	{{ form_widget(form.markdown, { 'attr': {'style': 'width: 100%; height: 500px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); margin: 30px 0;'} }) }}
 			</div>
 		</div>
 		{{ form_widget(form.save) }}
