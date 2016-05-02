@@ -18,71 +18,40 @@
 	<div id="fc-events" class="col-sm-12">
 		{% if passage and not passage.dateFin %}
 		<div class="row">
-	        <div class="col-xs-8">
-	            <div class="panel panel-default">
-	                <div class="panel-heading">
-	                    <div class="row">
-	                        <div class="col-xs-6">
-	                            <a href="{{ path('passage_etablissement', {id: etablissement.id }) }}"><strong>{{ etablissement.nom }}</strong></a>
-	                        </div>
-	                        <div class="col-xs-6">
-	                            Société {{ etablissement.raisonsociale }}
-	                        </div>
-	                    </div>
-	                </div>
-	                <div class="panel-body">
-	                    <div class="row">
-	                        <div class="col-xs-10">
-	                            {{ etablissement.adresse.intitule }}
-	                        </div>
-	                        <div class="col-xs-2">
-	                            <i style="cursor: default;" class="pull-right mdi mdi-{{ etablissement.icon }} mdi-4x" title="{{ etablissement.type }}" data-toggle="tooltip" ></i>
-
-	                        </div>
-	                    </div>
-	                    <div class="row">
-	                        <div class="col-xs-6">
-	                            Tél fixe : {{ etablissement.telephonefixe }}
-	                        </div>
-	                        <div class="col-xs-6">
-	                            Tél portable : {{ etablissement.telephoneportable }}
-	                        </div>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	        <div class="col-xs-4">
-	            <div class="event btn btn-sm btn-warning pull-right" data-identifiant="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }}</strong><br/> <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }} ({{ passage.etablissementInfos.adresse.adresse }})</small></div>
-                    <div class="hidden" id="retour_technicien_btn" >
-                        <a class="btn btn-sm btn-default pull-right" href="{{ path('passage')~'#filtre=["'~technicienObj.getIdentite()~'"]' }}"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux passages de {{technicienObj.getIdentite()}}</a>
-                    </div>
+	        <div class="col-xs-12">
+	            <div class="event btn btn-sm btn-warning pull-right" data-identifiant="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }}</strong> <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }} ({{ passage.etablissementInfos.adresse.adresse }})</small></div>
+                <div class="hidden" id="retour_technicien_btn" >
+                	<a class="btn btn-sm btn-default pull-right" href="{{ path('passage')~'#filtre=["'~technicienObj.getIdentite()~'"]' }}"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux passages de {{technicienObj.getIdentite()}}</a>
+                </div>
 	        </div>
 	    </div>
 		{% endif %}
 	</div>
-    <br/>
 </div>
 
-<ul class="nav nav-tabs nav-justified" role="tablist" style="margin-bottom: 15px; font-size: 13px;">
-	<li role="presentation">
-	{% if passage %}
-		<a href="{{ path('calendarManuel',{'passage': passage.id, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
-	{% else %}
-        <a href="{{ path('calendarManuel', {'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
-    {% endif %}
-    </li>
-{% set i=0 %}
-{% for tech in techniciens %}
-    <li role="presentation"{% if tech.getId() == technicien %} class="active"{% endif %}>
-        {% if passage %}
-        <a href="{{ path('calendar',{'passage': passage.id, 'technicien': tech.getId(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getInituleCourt() }}</strong></a>
-        {% else %}
-        <a href="{{ path('calendar',{'technicien': tech.getId(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getInituleCourt() }}</strong></a>
-        {% endif %}
-    </li>
-    {% set i=loop.index %}
-{% endfor %}
-</ul>
+<div class="row">
+	<ul class="nav nav-tabs nav-justified" role="tablist" style="margin: 15px 0; font-size: 13px;">
+		<li role="presentation">
+		{% if passage %}
+			<a href="{{ path('calendarManuel',{'passage': passage.id, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
+		{% else %}
+	        <a href="{{ path('calendarManuel', {'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
+	    {% endif %}
+	    </li>
+	{% set i=0 %}
+	{% for tech in techniciens %}
+	    <li role="presentation"{% if tech.getId() == technicien %} class="active"{% endif %}>
+	        {% if passage %}
+	        <a href="{{ path('calendar',{'passage': passage.id, 'technicien': tech.getId(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getInituleCourt() }}</strong></a>
+	        {% else %}
+	        <a href="{{ path('calendar',{'technicien': tech.getId(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getInituleCourt() }}</strong></a>
+	        {% endif %}
+	    </li>
+	    {% set i=loop.index %}
+	{% endfor %}
+	</ul>
+</div>
+
 <div class="row">
 	<div class="col-sm-12">
 		<div
