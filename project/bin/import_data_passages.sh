@@ -21,7 +21,8 @@ cat $DATA_DIR/passagesadressestechniciens.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0
     d=$7;
     date_creation=$19;
     date_passage_prevision="";
-
+    cmt=$17
+    gsub(/\\n/,"#",cmt);
     if(date_prevision) {
         cmd="date --date=\""date_prevision"\" \"+%Y-%m-%d %H:%M:%S\"";
         cmd | getline date_passage_prevision;
@@ -43,15 +44,13 @@ cat $DATA_DIR/passagesadressestechniciens.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0
     if(!date_passage_prevision || (date_passage_prevision < "2015-01-01")) {
         next;
     }
-    print $0;
+    print $0 ";" cmt ;
 
 }' > $DATA_DIR/passagesadressestechniciens.csv
 
-# A ENLEVER plus tard, pour debug
+
 echo 'NO DEBUG MODE => IMPORT TOTAL '
-#cat $DATA_DIR/passagesadressestechniciens.csv | head -n 10000 > $DATA_DIR/passagesadressestechniciens.csv.tmp
-#cat $DATA_DIR/passagesadressestechniciens.csv.tmp > $DATA_DIR/passagesadressestechniciens.csv
-#
+
 
 cat $DATA_DIR/tblPassagePrestationType.csv | tr -d '\r' | grep -v "RefPassagePrestationType;" > $DATA_DIR/tblPassagePrestationType.csv.tmp
 
@@ -142,30 +141,31 @@ cat $DATA_DIR/passagesadressestechniciensprestation.proper.csv | sed -r 's/([a-z
     libelle=$4;
     type_passage="";
 
-    if($5 == "1") { type_passage="Sous contrat";}
-    if($5 == "2") { type_passage="Sous garantie";}
-    if($5 == "3") { type_passage="Contrôle"; }
+    if($5 == "1") { type_passage="CONTRAT";}
+    if($5 == "2") { type_passage="GARANTIE";}
+    if($5 == "3") { type_passage="CONTROLE"; }
     libelle=libelle " (" type_passage ")";
 
-    description=$17;
     technicien=$1;
     contrat_id=$3;
-    prestations=$47;
-    produits=$48;
+    
+    description=$47;
+    prestations=$48;
+    produits=$49;
 
      if(effectue){
         if(!date_passage_debut && date_passage_prevision) { date_passage_debut=date_passage_prevision; }
         if(!date_passage_fin && date_passage_prevision) { date_passage_fin=date_passage_prevision; }
-        print date_passage_creation ";" etablissement_id ";" date_passage_prevision ";" date_passage_debut ";" date_passage_fin ";" duree ";" technicien ";" libelle ";" description ";" contrat_id ";" effectue ";" prestations ";" produits ";REALISE;"old_id;
+        print date_passage_creation ";" etablissement_id ";" date_passage_prevision ";" date_passage_debut ";" date_passage_fin ";" duree ";" technicien ";" libelle ";" description ";" contrat_id ";" effectue ";" prestations ";" produits ";REALISE;"old_id  ";" type_passage ;
     }else{
         if(planifie){
             date_passage_debut=d;
             date_passage_fin="";
-            print date_passage_creation ";" etablissement_id ";" date_passage_prevision ";" date_passage_debut ";" date_passage_fin ";" duree ";" technicien ";" libelle ";" description ";" contrat_id ";0;" prestations ";" produits ";PLANIFIE;"old_id ;
+            print date_passage_creation ";" etablissement_id ";" date_passage_prevision ";" date_passage_debut ";" date_passage_fin ";" duree ";" technicien ";" libelle ";" description ";" contrat_id ";0;" prestations ";" produits ";PLANIFIE;"old_id ";" type_passage ;
         }else{
             date_passage_debut="";
             date_passage_fin="";
-            print date_passage_creation ";" etablissement_id ";" date_passage_prevision ";" date_passage_debut ";" date_passage_fin ";" duree ";" technicien ";" libelle ";" description ";" contrat_id ";0;" prestations ";" produits ";EN_ATTENTE;"old_id ;
+            print date_passage_creation ";" etablissement_id ";" date_passage_prevision ";" date_passage_debut ";" date_passage_fin ";" duree ";" technicien ";" libelle ";" description ";" contrat_id ";0;" prestations ";" produits ";EN_ATTENTE;"old_id ";" type_passage ;
         }
     }
 

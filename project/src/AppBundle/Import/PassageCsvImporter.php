@@ -53,6 +53,7 @@ class PassageCsvImporter {
     const CSV_PRODUITS = 12;
     const CSV_STATUT = 13;
     const CSV_OLD_ID = 14;
+    const CSV_TYPE_PASSAGE = 15;
 
     public function __construct(DocumentManager $dm, PassageManager $pm, EtablissementManager $em, CompteManager $um, ContratManager $cm) {
         $this->dm = $dm;
@@ -125,7 +126,8 @@ class PassageCsvImporter {
             }
 
             $passage->setLibelle($data[self::CSV_LIBELLE]);
-            $passage->setDescription(str_replace('\n', "\n", $data[self::CSV_DESCRIPTION]));
+            $passage->setTypePassage($data[self::CSV_TYPE_PASSAGE]);
+            $passage->setDescription(str_replace('#', "\n", $data[self::CSV_DESCRIPTION]));
             if (!preg_match('/^[0-9]+$/', $data[self::CSV_CONTRAT_ID])) {
                 $output->writeln(sprintf("<error>Passage dont le numéro %s n'est pas correct</error>", $data[self::CSV_CONTRAT_ID]));
                 continue;
