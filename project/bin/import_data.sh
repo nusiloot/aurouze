@@ -98,7 +98,7 @@ cat  $DATA_DIR/tblAdresse.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;
 
 cat $DATA_DIR/adresse.csv.temp | grep -e "^[0-9]*;[0-9]*;1" > $DATA_DIR/adresse_facturation.csv
 
-join -a 2 -t ';' -1 2 -2 1 -o auto $DATA_DIR/adresse_facturation.csv $DATA_DIR/entite.csv.temp | sort -n -k 1,1 > $DATA_DIR/societes.csv
+join -a 2 -t ';' -1 2 -2 1 -o auto $DATA_DIR/adresse_facturation.csv $DATA_DIR/entite.csv.temp | grep -Ev "RefEntite;;" | sort -n -k 1,1 > $DATA_DIR/societes.csv
 
 ##### Récupération des Etablissements #####
 
