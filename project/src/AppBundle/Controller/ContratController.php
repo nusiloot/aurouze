@@ -230,15 +230,14 @@ class ContratController extends Controller {
     			$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
     						'footer-html' => $footer, 
     						'header-html' => $header,
-    						'margin-top'    => 40,
     						'margin-right'  => 0,
-    						'margin-bottom' => 40,
-    						'margin-left'   => 0
+    						'margin-left'   => 0,
+    						'page-size' => "A4"
     			)),
     			200,
     			array(
     					'Content-Type'          => 'application/pdf',
-    					'Content-Disposition'   => 'attachment; filename="contrat.pdf"'
+    					'Content-Disposition'   => 'attachment; filename="contrat-'.$contrat->getNumeroArchive().'.pdf"'
     			)
     			);
     }
