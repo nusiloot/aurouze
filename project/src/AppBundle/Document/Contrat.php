@@ -172,11 +172,22 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     protected $tvaReduite;
 
+     /**
+     * @MongoDB\Collection
+     */
+    protected $moyens;
+
+     /**
+     * @MongoDB\String
+     */
+    protected $conditionsParticulieres;
+
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->produits = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mouvements = new ArrayCollection();
+        $this->moyens = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -1086,5 +1097,49 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     public function getTva()
     {
     	return ($this->getTvaReduite())? 0.1 : 0.2;
+    }
+
+    /**
+     * Set moyens
+     *
+     * @param collection $moyens
+     * @return self
+     */
+    public function setMoyens($moyens)
+    {
+        $this->moyens = $moyens;
+        return $this;
+    }
+
+    /**
+     * Get moyens
+     *
+     * @return collection $moyens
+     */
+    public function getMoyens()
+    {
+        return $this->moyens;
+    }
+
+    /**
+     * Set conditionsParticulieres
+     *
+     * @param string $conditionsParticulieres
+     * @return self
+     */
+    public function setConditionsParticulieres($conditionsParticulieres)
+    {
+        $this->conditionsParticulieres = $conditionsParticulieres;
+        return $this;
+    }
+
+    /**
+     * Get conditionsParticulieres
+     *
+     * @return string $conditionsParticulieres
+     */
+    public function getConditionsParticulieres()
+    {
+        return $this->conditionsParticulieres;
     }
 }

@@ -13,6 +13,7 @@ use AppBundle\Document\Contrat;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\ContratType;
 use AppBundle\Type\ContratMarkdownType;
+use AppBundle\Type\ContratGeneratorType;
 use AppBundle\Type\ContratAcceptationType;
 use AppBundle\Manager\ContratManager;
 use Knp\Snappy\Pdf;
@@ -165,20 +166,33 @@ class ContratController extends Controller {
             $dm->flush();
         }
         
-        $form = $this->createForm(new ContratMarkdownType(), $contrat, array(
+        $formMarkdown = $this->createForm(new ContratMarkdownType(), $contrat, array(
         		'action' => $this->generateUrl('contrat_markdown', array('id' => $contrat->getId())),
         		'method' => 'POST',
         ));
         
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-        	$contrat = $form->getData();
+        $formMarkdown->handleRequest($request);
+        if ($formMarkdown->isSubmitted() && $formMarkdown->isValid()) {
+        	$contrat = $formMarkdown->getData();
+            $dm->persist($contrat);
+            $dm->flush();
+        }
+        
+        $formGenerator = $this->createForm(new ContratGeneratorType(), $contrat, array(
+        		'action' => $this->generateUrl('contrat_markdown', array('id' => $contrat->getId())),
+        		'method' => 'POST',
+        ));
+        
+        $formGenerator->handleRequest($request);
+        if ($formGenerator->isSubmitted() && $formGenerator->isValid()) {
+        	$contrat = $formGenerator->getData();
+        	$contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
             $dm->persist($contrat);
             $dm->flush();
         }
         
 
-        return $this->render('contrat/visualisation.markdown.twig', array('contrat' => $contrat, 'form' => $form->createView()));
+        return $this->render('contrat/visualisation.markdown.twig', array('contrat' => $contrat, 'formMarkdown' => $formMarkdown->createView(), 'formGenerator' => $formGenerator->createView()));
     }
 
     /**
