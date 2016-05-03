@@ -13,10 +13,10 @@ $(function () {
             revertDuration: 0
         });
         $(this).click(function () {
-        	var id = $(this).data('identifiant');
-        	var title = $.trim($(this).data('title'));
-        	$.post(
-            $('#calendrier').data('urlRead'), {
+            var id = $(this).data('identifiant');
+            var title = $.trim($(this).data('title'));
+            $.post(
+                    $('#calendrier').data('urlRead'), {
                 id: id,
                 light: 0
             }, function (response) {
@@ -40,14 +40,14 @@ $(function () {
         customButtons: {
             prevButton: {
                 text: '',
-                click: function() {
+                click: function () {
                     window.location.href = $('#calendrier').data('urlPrev');
                 },
                 icon: 'left-single-arrow'
             },
             nextButton: {
                 text: '',
-                click: function() {
+                click: function () {
                     window.location.href = $('#calendrier').data('urlNext');
                 },
                 icon: 'right-single-arrow'
@@ -109,7 +109,7 @@ $(function () {
         },
         eventResize: function (event) {
             $.post(
-               $('#calendrier').data('urlUpdate'), {
+                    $('#calendrier').data('urlUpdate'), {
                 id: event.id,
                 start: event.start.format(),
                 end: event.end.format()
@@ -117,7 +117,7 @@ $(function () {
         },
         eventDrop: function (event) {
             $.post(
-               $('#calendrier').data('urlUpdate'), {
+                    $('#calendrier').data('urlUpdate'), {
                 id: event.id,
                 start: event.start.format(),
                 end: event.end.format()

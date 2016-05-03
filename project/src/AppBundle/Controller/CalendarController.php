@@ -27,7 +27,7 @@ class CalendarController extends Controller {
 
         $technicien = $request->get('technicien');
         $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
-        
+
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllActif();
 
         $calendrier = $request->get('calendrier');

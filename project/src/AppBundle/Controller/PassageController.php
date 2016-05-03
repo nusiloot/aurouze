@@ -14,6 +14,9 @@ use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
 use AppBundle\Type\PassageCreationType;
 use AppBundle\Manager\PassageManager;
+use AppBundle\Type\InterventionRapideCreationType;
+use AppBundle\Manager\ContratManager;
+use AppBundle\Document\Prestation;
 
 class PassageController extends Controller {
 
@@ -155,21 +158,19 @@ class PassageController extends Controller {
         $fm = $this->get('facture.manager');
 
         $html = $this->renderView('passage/pdfBons.html.twig', array(
-                'passage' => $passage,
-                'parameters' => $fm->getParameters(),
-            ));
+            'passage' => $passage,
+            'parameters' => $fm->getParameters(),
+        ));
 
-        if($request->get('output') == 'html') {
+        if ($request->get('output') == 'html') {
 
             return new Response($html, 200);
         }
 
         return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
-                200,
-                array(
-                    'Content-Type'          => 'application/pdf',
-                    'Content-Disposition'   => 'attachment; filename="bon.pdf"'
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="bon.pdf"'
                 )
         );
     }
@@ -184,21 +185,19 @@ class PassageController extends Controller {
         $passagesHistory = $pm->getRepository()->findHistoriqueByEtablissementAndPrestations($passage->getEtablissement(), $passage->getPrestations());
 
         $html = $this->renderView('passage/pdfMission.html.twig', array(
-                'passage' => $passage,
-                'passagesHistory' => $passagesHistory,
-            ));
+            'passage' => $passage,
+            'passagesHistory' => $passagesHistory,
+        ));
 
-        if($request->get('output') == 'html') {
+        if ($request->get('output') == 'html') {
 
             return new Response($html, 200);
         }
 
         return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
-                200,
-                array(
-                    'Content-Type'          => 'application/pdf',
-                    'Content-Disposition'   => 'attachment; filename="bon.pdf"'
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="bon.pdf"'
                 )
         );
     }
@@ -255,6 +254,61 @@ class PassageController extends Controller {
             $geojson->features[] = $feature;
         }
         return $geojson;
+    }
+
+    /**
+     * @Route("/passages/{id}/creation-rapide", name="passage_creation_rapide")
+     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
+     */
+    public function creationRapideAction(Request $request, Etablissement $etablissement) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $newContrat = new Contrat();
+        $newContrat->setSociete($etablissement->getSociete());
+        $newContrat->setDateCreation(new \DateTime());
+
+        $configurationPrestationArray = $dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
+
+        $form = $this->createForm(new InterventionRapideCreationType($dm), $newContrat, array(
+            'action' => $this->generateUrl('passage_creation_rapide', array('id' => $etablissement->getId())),
+            'method' => 'POST',
+        ));
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $parameters = $request->get('interventionRapide');
+            $newContrat->setTypeContrat(ContratManager::TYPE_CONTRAT_PONCTUEL);
+            $dateDebut = clone $newContrat->getDateDebut();
+            $newContrat->setDateFin($dateDebut->modify("+" . $newContrat->getDuree() . " month"));
+            $newContrat->setDureeGarantie(0);
+            $newContrat->setPrixHt(null);
+            $newContrat->setTvaReduite(false);
+            $dm->persist($newContrat);
+
+            $newPassage = new Passage();
+            $newPassage->setEtablissement($etablissement);
+            $newPassage->setDatePrevision($newContrat->getDateDebut());
+            foreach ($parameters['prestations'] as $prestationParam) {
+                $prestationIdentifiant = $prestationParam['identifiant'];
+                $prestation = clone $configurationPrestationArray[$prestationIdentifiant];               
+                $prestation->setNbPassages($prestationParam['nbPassages']);
+                
+                $newContrat->addPrestation($prestation);
+                $prestationPassage = clone $prestation;
+                $prestationPassage->setNbPassages(null);
+                $newPassage->addPrestation($prestationPassage);
+            }
+            $newPassage->setMouvementDeclenchable(true);
+            $newPassage->addTechnicien($newContrat->getTechnicien());
+            $newContrat->addPassage($etablissement, $newPassage);
+            $dm->persist($newPassage);
+            $dm->flush();
+            return $this->redirectToRoute('calendar', array('passage' => $newPassage->getId(),
+                        'technicien' => $newContrat->getTechnicien()->getId(),
+                        'calendrier' => $newContrat->getDateDebut()->format('Y-m-d')));
+        }
+
+        return $this->render('passage/creationRapide.html.twig', array('etablissement' => $etablissement, 'contrat' => $newContrat, 'form' => $form->createView()));
     }
 
 }
