@@ -42,13 +42,16 @@ class PassageRepository extends DocumentRepository {
     }
 
     public function findHistoriqueByEtablissementAndPrestations($etablissement, $prestations = array(), $limit = 2) {
-        $passages = array();
+        $passagesHistorique = array();
 
         foreach($prestations as $prestation) {
-            $passages = array_merge($passages, $this->findBy(array('etablissement.id' => $etablissement->getId(), 'statut' => PassageManager::STATUT_REALISE, 'prestations.identifiant' => $prestation->getIdentifiant()), array('dateDebut' => 'DESC'), $limit));
+            $passages = $this->findBy(array('etablissement.id' => $etablissement->getId(), 'statut' => PassageManager::STATUT_REALISE, 'prestations.identifiant' => $prestation->getIdentifiant()), array('dateDebut' => 'DESC'), $limit);
+            foreach($passages as $passage) {
+                $passagesHistorique[$passage->getDateDebut()->format('YmdHi')."_".$passage->getId()] = $passage;
+            }
         }
 
-        return $passages;
+        return $passagesHistorique;
     }
 
     public function findOneByIdentifiantPassage($identifiantPassage) {

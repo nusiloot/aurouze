@@ -242,6 +242,50 @@ class PassageController extends Controller {
     }
 
     /**
+     * @Route("/passage/pdf-missions-massif", name="passage_pdf_missions_massif")
+     */
+    public function pdfMissionsMassifAction(Request $request) {
+        $fm = $this->get('facture.manager');
+        $pm = $this->get('passage.manager');
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        if($request->get('technicien')) {
+            $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
+            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien);
+            $filename = sprintf("suivi_client_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
+        } else {
+            $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'));
+            $filename = sprintf("suivi_client_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'));
+        }
+
+        $passagesHistories = array();
+
+        foreach($passages as $passage) {
+            $passagesHistories[$passage->getId()] = $pm->getRepository()->findHistoriqueByEtablissementAndPrestations($passage->getEtablissement(), $passage->getPrestations());
+        }
+
+        $html = $this->renderView('passage/pdfMissionsMassif.html.twig', array(
+                'passages' => $passages,
+                'passagesHistories' => $passagesHistories,
+            ));
+
+        if($request->get('output') == 'html') {
+
+            return new Response($html, 200);
+        }
+
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+                200,
+                array(
+                    'Content-Type'          => 'application/pdf',
+                    'Content-Disposition'   => 'attachment; filename="'.$filename.'"'
+                )
+        );
+    }
+
+    /**
      * @Route("/etablissement-all", name="etablissement_all")
      */
     public function allAction(Request $request) {

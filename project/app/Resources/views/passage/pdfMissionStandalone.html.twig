@@ -1,0 +1,81 @@
+<h2 style="margin-bottom: 10px; font-size: 22px;" class="text-center"><strong>Suivi client : Passage du {{ passage.dateDebut | localizeddate("full", "none") }} à 12h30 <small>n° {{ passage.numeroArchive }}</small>
+</strong>
+</h2>
+<hr style="border-color: #ddd; margin-bottom: 40px;" />
+<div class="row">
+    <div class="col-xs-6">
+        <h3 style="margin-top: 0;">{{ passage.etablissementInfos.nom }}</h3>
+        {{ passage.etablissementInfos.adresse.adresse }}<br />
+        {{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}
+    </div>
+    <div class="col-xs-6">
+        {% if (passage.etablissement.societe.contactCoordonnee.telephoneFixe) %}
+        Tél : {{ passage.etablissement.societe.contactCoordonnee.telephoneFixe }}
+        {% endif %}
+        Commentaire :
+        <br />
+    </div>
+</div>
+<br />
+<br />
+<p><strong>Traitement :</strong> {% for prestation in passage.prestations %}
+    <span class="btn btn-default">{{ prestation.nomToString }}</span>
+{% endfor %}
+<br />
+<br />
+<strong>Passage sous contrat n° 1 / 6</strong> <small>- Contrat n° {{ passage.contrat.numeroArchive }} (réalisé par Machin Machin)</small>
+</p>
+<table style="margin-top: 20px;" class="table table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th class="col-xs-2 text-center">Quantité utilisée</th>
+            <th class="col-xs-8">Produit</th>
+            <td class="col-xs-2 text-center">Quantité totales</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for produit in passage.produits  %}
+        <tr>
+            <td></td>
+            <td>{{ produit.nom}} <small class="text-muted">({{ produit.conditionnement }})</small></td>
+            <td class="text-right">{{ produit.nbTotalContrat }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<strong>Détail de la prestation : </strong>
+<p style="line-height: 14px;margin-top: 10px;">{{ passage.contrat.nomenclature | nl2br }}</p>
+
+<h5 style="margin-bottom: 10px; margin-top: 40px;"><strong>Historique des passages</strong></h5>
+<hr style="border-color: #ddd; margin-bottom: 5px; margin-top: 0px;" />
+<small>
+    {% for passageHistory in passagesHistory %}
+        <p><strong>{{ passageHistory.dateDebut | localizeddate("full", "none") | capitalize }}</strong> réalisé par {{ passageHistory.techniciens.first() }}</p>
+        <p>Traitement : {% for prestation in passageHistory.prestations %}
+            <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
+        {% endfor %}</p>
+        <p>{{ passageHistory.description }}</p>
+        <table style="margin-bottom: 0;" class="table table-bordered table-condensed">
+            <tbody>
+                {% for produit in passageHistory.produits  %}
+                    {% if (produit.nbUtilisePassage) %}
+                    <tr>
+                        <td style="padding-top: 2px; padding-bottom: 2px;" class="col-xs-2 text-right">{{ produit.nbUtilisePassage }}</td>
+                        <td style="padding-top: 2px; padding-bottom: 2px;" class="col-xs-10">{{ produit.nom}} <small class="text-muted">({{ produit.conditionnement }})</small></td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr style="border-color: #ddd; margin-bottom: 10px; margin-top: 0px;" />
+    {% endfor %}
+</small>
+
+<p style="margin-bottom: 10px; margin-top: 10px"><strong>Prochain passage</strong></p>
+<hr style="border-color: #ddd; margin-bottom: 10px; margin-top: 0px;" />
+<small>
+    <p>Juin 2015 <small>Passage n° 6 / 6</small></p>
+    <p>Traitement : {% for prestation in passage.prestations %}
+        <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
+    {% endfor %}</p>
+</small>

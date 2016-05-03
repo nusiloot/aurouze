@@ -48,17 +48,17 @@
 				</button>
 				<ul class="dropdown-menu">
 					<li><a href="{{ path('passage_pdf_bons_massif', { 'dateDebut': calendarTool.dateDebut | date('Y-m-d'), 'dateFin': calendarTool.dateFin | date('Y-m-d'), 'technicien': technicienObj.id }) }}">Bons de passage</a></li>
-					<li><a href="#">Fiches de suivi client</a></li>
+					<li><a href="{{ path('passage_pdf_missions_massif', { 'dateDebut': calendarTool.dateDebut | date('Y-m-d'), 'dateFin': calendarTool.dateFin | date('Y-m-d'), 'technicien': technicienObj.id }) }}">Fiches de suivi client</a></li>
 				</ul>
 			</div>
 			<div class="btn-group">
-				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': 'MOIS' }) }}" class="btn {% if (calendarTool.mode == "MOIS") %}active{% endif %} btn-md btn-default">
+				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getDateDebut() | date("Y-m-d"), 'mode': 'MOIS' }) }}" class="btn {% if (calendarTool.mode == "MOIS") %}active{% endif %} btn-md btn-default">
 					<i class="mdi mdi-view-comfy"></i> Mois
 				</a>
-				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': 'SEMAINE' }) }}" class="btn btn-default {% if (calendarTool.mode == "SEMAINE") %}active{% endif %}">
+				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getDateDebut() | date("Y-m-d"), 'mode': 'SEMAINE' }) }}" class="btn btn-default {% if (calendarTool.mode == "SEMAINE") %}active{% endif %}">
 					<i class="mdi mdi-view-week"></i> Semaine
 				</a>
-				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': 'JOUR' }) }}" class="btn btn-md btn-default {% if (calendarTool.mode == "JOUR") %}active{% endif %}">
+				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getDateDebut() | date("Y-m-d"), 'mode': 'JOUR' }) }}" class="btn btn-md btn-default {% if (calendarTool.mode == "JOUR") %}active{% endif %}">
 					<i class="mdi mdi-view-day"></i> Jour
 				</a>
 			</div>
