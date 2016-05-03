@@ -30,8 +30,9 @@ class CalendarController extends Controller {
 
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllActif();
 
-        $calendrier = $request->get('calendrier');
-        $calendarTool = new CalendarDateTool($calendrier);
+        $date = $request->get('date', new \DateTime());
+        $calendarTool = new CalendarDateTool($date, $request->get('mode', CalendarDateTool::MODE_WEEK));
+
         $etablissement = null;
         if ($passage) {
             $etablissement = $passage->getEtablissement();
@@ -49,7 +50,7 @@ class CalendarController extends Controller {
             $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
         }
 
-        $calendrier = $request->get('calendrier');
+        $calendrier = $request->get('date');
         $calendarTool = new CalendarDateTool($calendrier);
 
         $periodeStart = $calendarTool->getDateDebutSemaine('Y-m-d');
