@@ -50,8 +50,7 @@ class CalendarController extends Controller {
             $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
         }
 
-        $calendrier = $request->get('date');
-        $calendarTool = new CalendarDateTool($calendrier);
+        $calendarTool = new CalendarDateTool($request->get('date'), $request->get('mode'));
 
         $periodeStart = $calendarTool->getDateDebutSemaine('Y-m-d');
         $periodeEnd = $calendarTool->getDateFinSemaine('Y-m-d');
