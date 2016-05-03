@@ -126,6 +126,9 @@ class ContratCsvImporter {
             $contrat->setNomenclature(str_replace('#', "\n", $data[self::CSV_NOMENCLATURE]));
             $contrat->setPrixHt($data[self::CSV_PRIXHT]);
             $contrat->setIdentifiantReprise($data[self::CSV_ID_CONTRAT]);
+            if(is_integer($data[self::CSV_ARCHIVAGE])) {
+                $contrat->setNumeroArchive(0);
+            }
             $contrat->setNumeroArchive($data[self::CSV_ARCHIVAGE]);
 
             if ($data[self::CSV_ID_COMMERCIAL]) {

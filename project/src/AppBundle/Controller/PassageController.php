@@ -14,6 +14,7 @@ use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
 use AppBundle\Type\PassageCreationType;
 use AppBundle\Manager\PassageManager;
+use Behat\Transliterator\Transliterator;
 use AppBundle\Type\InterventionRapideCreationType;
 use AppBundle\Manager\ContratManager;
 use AppBundle\Document\Prestation;
@@ -176,6 +177,44 @@ class PassageController extends Controller {
     }
 
     /**
+     * @Route("/passage/pdf-bons-massif", name="passage_pdf_bons_massif")
+     */
+    public function pdfBonsMassifAction(Request $request) {
+        $fm = $this->get('facture.manager');
+        $pm = $this->get('passage.manager');
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        if($request->get('technicien')) {
+            $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
+            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien);
+            $filename = sprintf("bon_passage_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
+        } else {
+            $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'));
+            $filename = sprintf("bon_passage_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'));
+        }
+
+        $html = $this->renderView('passage/pdfBonsMassif.html.twig', array(
+                'passages' => $passages,
+                'parameters' => $fm->getParameters(),
+            ));
+
+        if($request->get('output') == 'html') {
+
+            return new Response($html, 200);
+        }
+
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+                200,
+                array(
+                    'Content-Type'          => 'application/pdf',
+                    'Content-Disposition'   => 'attachment; filename="'.$filename.'"'
+                )
+        );
+    }
+
+    /**
      * @Route("/passage/pdf-mission/{id}", name="passage_pdf_mission")
      * @ParamConverter("passage", class="AppBundle:Passage")
      */
@@ -198,6 +237,50 @@ class PassageController extends Controller {
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, array(
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="bon.pdf"'
+                )
+        );
+    }
+
+    /**
+     * @Route("/passage/pdf-missions-massif", name="passage_pdf_missions_massif")
+     */
+    public function pdfMissionsMassifAction(Request $request) {
+        $fm = $this->get('facture.manager');
+        $pm = $this->get('passage.manager');
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        if($request->get('technicien')) {
+            $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
+            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien);
+            $filename = sprintf("suivi_client_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
+        } else {
+            $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'));
+            $filename = sprintf("suivi_client_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'));
+        }
+
+        $passagesHistories = array();
+
+        foreach($passages as $passage) {
+            $passagesHistories[$passage->getId()] = $pm->getRepository()->findHistoriqueByEtablissementAndPrestations($passage->getEtablissement(), $passage->getPrestations());
+        }
+
+        $html = $this->renderView('passage/pdfMissionsMassif.html.twig', array(
+                'passages' => $passages,
+                'passagesHistories' => $passagesHistories,
+            ));
+
+        if($request->get('output') == 'html') {
+
+            return new Response($html, 200);
+        }
+
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+                200,
+                array(
+                    'Content-Type'          => 'application/pdf',
+                    'Content-Disposition'   => 'attachment; filename="'.$filename.'"'
                 )
         );
     }
@@ -290,9 +373,9 @@ class PassageController extends Controller {
             $newPassage->setDatePrevision($newContrat->getDateDebut());
             foreach ($parameters['prestations'] as $prestationParam) {
                 $prestationIdentifiant = $prestationParam['identifiant'];
-                $prestation = clone $configurationPrestationArray[$prestationIdentifiant];               
+                $prestation = clone $configurationPrestationArray[$prestationIdentifiant];
                 $prestation->setNbPassages($prestationParam['nbPassages']);
-                
+
                 $newContrat->addPrestation($prestation);
                 $prestationPassage = clone $prestation;
                 $prestationPassage->setNbPassages(null);

@@ -1,9 +1,5 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
-    {% include 'passage/pdfBon.html.twig' with {'passage': passage, 'parameters': parameters} %}
-    <br />
-    <br />
-    <br />
-    {% include 'passage/pdfBon.html.twig' with {'passage': passage, 'parameters': parameters} %}
+    {% include 'passage/pdfBonsStandalone.html.twig' with {'passage': passage, 'parameters': parameters} %}
 {% endblock %}

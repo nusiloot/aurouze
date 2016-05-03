@@ -15,23 +15,26 @@ use MongoDate as MongoDate;
 
 class PassageRepository extends DocumentRepository {
 
-    public function findAllByPeriodeAndIdentifiantTechnicien($startDate, $endDate, $technicien) {
+    public function findAllPlanifieByPeriodeAndIdentifiantTechnicien($startDate, $endDate, $technicien) {
         $mongoStartDate = new MongoDate(strtotime($startDate));
         $mongoEndDate = new MongoDate(strtotime($endDate));
         $query = $this->createQueryBuilder('Passage')
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
+                ->field('statut')->equals(PassageManager::STATUT_PLANIFIE)
                 ->field('techniciens')->includesReferenceTo($technicien)
+                ->sort('dateDebut', 'asc')
                 ->getQuery();
         return $query->execute();
     }
 
-    public function findAllByPeriode($startDate, $endDate) {
+    public function findAllPlanifieByPeriode($startDate, $endDate) {
         $mongoStartDate = new MongoDate(strtotime($startDate));
         $mongoEndDate = new MongoDate(strtotime($endDate));
         $query = $this->createQueryBuilder('Passage')
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
+                ->field('statut')->equals(PassageManager::STATUT_PLANIFIE)
     			->sort('technicien', 'desc')
     			->sort('dateDebut', 'asc')
                 ->getQuery();
@@ -39,13 +42,16 @@ class PassageRepository extends DocumentRepository {
     }
 
     public function findHistoriqueByEtablissementAndPrestations($etablissement, $prestations = array(), $limit = 2) {
-        $passages = array();
+        $passagesHistorique = array();
 
         foreach($prestations as $prestation) {
-            $passages = array_merge($passages, $this->findBy(array('etablissement.id' => $etablissement->getId(), 'statut' => PassageManager::STATUT_REALISE, 'prestations.identifiant' => $prestation->getIdentifiant()), array('dateDebut' => 'DESC'), $limit));
+            $passages = $this->findBy(array('etablissement.id' => $etablissement->getId(), 'statut' => PassageManager::STATUT_REALISE, 'prestations.identifiant' => $prestation->getIdentifiant()), array('dateDebut' => 'DESC'), $limit);
+            foreach($passages as $passage) {
+                $passagesHistorique[$passage->getDateDebut()->format('YmdHi')."_".$passage->getId()] = $passage;
+            }
         }
 
-        return $passages;
+        return $passagesHistorique;
     }
 
     public function findOneByIdentifiantPassage($identifiantPassage) {

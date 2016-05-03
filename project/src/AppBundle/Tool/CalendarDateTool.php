@@ -82,6 +82,12 @@ class CalendarDateTool
 		return ($format)? $ds->format($format) : $ds;
 	}
 
+	public function getDateFinJour($format = null)
+	{
+		$ds = clone $this->date;
+		return ($format)? $ds->format($format) : $ds;
+	}
+
 	public function getDateDebutSemaine($format = null)
 	{
 		$ds = clone $this->date;
@@ -93,6 +99,13 @@ class CalendarDateTool
 	{
 		$ds = clone $this->date;
 		$ds->modify('first day of this month');
+		return ($format)? $ds->format($format) : $ds;
+	}
+
+	public function getDateFinMois($format = null)
+	{
+		$ds = clone $this->date;
+		$ds->modify('last day of this month');
 		return ($format)? $ds->format($format) : $ds;
 	}
 
@@ -164,6 +177,21 @@ class CalendarDateTool
 
 		return $this->getDateDebutSemaine($format);
 	}
+
+	public function getDateFin($format = null) {
+		if($this->getMode() == self::MODE_DAY) {
+
+			return $this->getDateFinJour($format);
+		}
+
+		if($this->getMode() == self::MODE_MONTH) {
+
+			return $this->getDateFinMois($format);
+		}
+
+		return $this->getDateFinSemaine($format);
+	}
+
 
 	public function getPrecedent() {
 		if($this->getMode() == self::MODE_DAY) {
