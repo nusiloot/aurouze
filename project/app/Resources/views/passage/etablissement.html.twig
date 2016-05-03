@@ -4,7 +4,7 @@
 
     {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
 
-    <div class="row" style="margin-top: 10px; min-height: 140px;">
+    <div class="row" style="margin-top: 10px; min-height: 150px;">
         <div class="col-xs-8">
             <h3 style="margin-top: 5px;"><i style="cursor: default;" class="mdi mdi-{{ etablissement.icon }} mdi-lg" title="{{ etablissement.type }}" data-toggle="tooltip" ></i> {{ etablissement.nom }} <small class="text-muted">({{ etablissement.raisonSociale }})</small></h3>
             <p>
@@ -12,7 +12,7 @@
                 {{ etablissement.adresse.codePostal }}
                 {{ etablissement.adresse.commune }}
             </p>
-            <p class="lead">
+            <p style="margin-bottom: 10px;" class="lead">
                 {% if etablissement.contactCoordonnee.telephoneFixe %}
                 <a href="callto:{{ etablissement.contactCoordonnee.telephoneFixe }}">{{ etablissement.contactCoordonnee.telephoneFixe }}</a>
                 {% endif %}
@@ -33,7 +33,7 @@
                 {% set lat = etablissement.adresse.coordonnees.lat  %}
                 {% set lon = etablissement.adresse.coordonnees.lon  %}
             {%  endif  %}
-            <div id="map" style="width: 100%; height: 140px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}" data-lat="{{ lat }}" data-lon="{{ lon }}"></div>
+            <div id="map" style="width: 100%; height: 150px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}" data-lat="{{ lat }}" data-lon="{{ lon }}"></div>
         </div>
     </div>
 
@@ -54,6 +54,7 @@
                                 {% endif %}
                                 <small>Contrat  n° {{ contrat.numeroArchive }}
                                     sur {{ contrat.duree }} mois</small>&nbsp;
+                                    <span class="pull-right"><span class="glyphicon glyphicon-chevron-down"></span></span>
                             </h4>
                         </div>
                         <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(contrat.isTerminee) %}out{% else%}in{% endif %} list-group">
