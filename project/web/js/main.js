@@ -15,8 +15,21 @@
         $.initSwitcher();
         $.initModalPassage();
         $.initBtnSwitch();
+        $.initCollapseCheckbox();
     });
 
+    $.initCollapseCheckbox = function () {
+
+    	$('.collapse-checkbox').click(function(){
+    		if( $(this).is(':checked') ){
+    			$($(this).data('target')).collapse('hide');
+    		} else {
+    			$($(this).data('target')).collapse('show');
+    		}
+        }); 
+
+    }
+    
     $.initSwitcher = function () {
     	$('.switcher').each(function(){
             var state = $(this).val();

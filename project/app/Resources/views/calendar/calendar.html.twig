@@ -1,75 +1,81 @@
 {% set _menu_active = 'calendar' %}
 {% extends 'base.html.twig' %}
 {% block body %}
+	<div class="row">
+		<div class="col-sm-12">
+		<ul class="nav nav-tabs nav-justified" role="tablist" style="margin: 15px 0; font-size: 13px;">
+			<li role="presentation">
+		        <a href="{{ path('calendarManuel', {'date': calendarTool.getDateDebut('Y-m-d'), 'passage': ((passage) ? passage.id : null), 'mode': calendarTool.mode }) }}" role="tab" style="color: black;"><i class="mdi mdi-apps mdi-lg"></i> Résumé</a>
+		    </li>
+		{% set i=0 %}
+		{% for tech in techniciens %}
+		    <li role="presentation"{% if tech.getId() == technicien %} class="active"{% endif %}>
+		        <a href="{{ path('calendar',{'technicien': tech.getId(), 'passage': ((passage) ? passage.id : null), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" role="tab" style="color: {{ tech.getCouleur() }};">
+					<i class="mdi mdi-face mdi-lg"></i> <strong>{{ tech.getInituleCourt() }}</strong>
+				</a>
+		    </li>
+		    {% set i=loop.index %}
+		{% endfor %}
+		</ul>
+		</div>
+	</div>
 
-    <div class="modal fade" id="modal-calendrier-infos" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="modal-title"></h4>
-                </div>
-                <div class="modal-body" id="modal-body"></div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div id="fc-events" class="col-sm-12">
-            {% if passage and not passage.dateFin %}
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="event btn btn-sm btn-warning pull-right" data-identifiant="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.intitule }}"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }}</strong> <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }} ({{ passage.etablissementInfos.adresse.adresse }})</small></div>
-                        <div class="hidden" id="retour_technicien_btn" >
-                            <a class="btn btn-sm btn-default pull-right" href="{{ path('passage')~'#filtre=["'~technicienObj.getIdentite()~'"]' }}"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux passages de {{technicienObj.getIdentite()}}</a>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="btn-group">
+				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a>
+				<a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0;" class="btn btn-link">{{ calendarTool.getLibelle() }}</a>
+				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a>
+			</div>
+		</div>
+		<div class="col-sm-5 text-center">
+			{% if passage and not passage.dateFin %}
+				<div id="fc-events">
+		            <div class="event" style="display: inline-block; background: {{ technicienObj.getCouleur() }}; padding: 5px; border-radius: 4px; cursor: move;" data-identifiant="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.etablissementInfos.nom }} ({{ passage.etablissementInfos.adresse.codePostal }})">
+						<span class="mdi mdi-today mdi-lg" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }} <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
+					</div>
+				</div>
+				<div class="hidden" id="retour_technicien_btn" >
+					<a class="btn btn-sm btn-default" href="{{ path('passage')~'#filtre=["'~technicienObj.getIdentite()~'"]' }}"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux passages de {{technicienObj.getIdentite()}}</a>
+				</div>
+			{% endif %}
+		</div>
+		<div class="col-sm-3 text-right">
+			<div class="btn-group">
+				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': 'MOIS' }) }}" class="btn {% if (calendarTool.mode == "MOIS") %}active{% endif %} btn-md btn-default"><i class="mdi mdi-view-comfy"></i> Mois
+				</a>
+				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': 'SEMAINE' }) }}" class="btn btn-default {% if (calendarTool.mode == "SEMAINE") %}active{% endif %}"><i class="mdi mdi-view-week"></i> Semaine
+				</a>
+				<a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': 'JOUR' }) }}" class="btn btn-md btn-default {% if (calendarTool.mode == "JOUR") %}active{% endif %}"><i class="mdi mdi-view-day"></i> Jour
+				</a>
+			</div>
+		</div>
+	</div>
+	<div class="row" style="margin-top: 10px;">
+		<div class="col-sm-12">
+			<div
+				id="calendrier"
+				data-view="{{ calendarTool.getViewJs() }}"
+				data-goto-date="{{ calendarTool.getDateDebut('Y-m-d') }}"
+				data-url-populate="{{ path('calendarPopulate', {'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
+				data-url-read="{{path('calendarRead', {'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
+				data-url-update="{{path('calendarUpdate', {'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
+				data-url-prev="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemainePrecedente('Y-m-d')}) }}"
+				data-url-next="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemaineSuivante('Y-m-d')}) }}"
+			>
+			</div>
+		</div>
+	</div>
 
-    <div class="row">
-        <ul class="nav nav-tabs nav-justified" role="tablist" style="margin: 15px 0; font-size: 13px;">
-            <li role="presentation">
-                {% if passage %}
-                    <a href="{{ path('calendarManuel',{'passage': passage.id, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
-                {% else %}
-                    <a href="{{ path('calendarManuel', {'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: black;"><strong>Tous</strong></a>
-                {% endif %}
-            </li>
-            {% set i=0 %}
-            {% for tech in techniciens %}
-                <li role="presentation"{% if tech.getId() == technicien %} class="active"{% endif %}>
-                    {% if passage %}
-                        <a href="{{ path('calendar',{'passage': passage.id, 'technicien': tech.getId(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getInituleCourt() }}</strong></a>
-                            {% else %}
-                        <a href="{{ path('calendar',{'technicien': tech.getId(), 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')}) }}" role="tab" style="color: {{ tech.getCouleur() }};"><strong>{{ tech.getInituleCourt() }}</strong></a>
-                            {% endif %}
-                </li>
-                {% set i=loop.index %}
-            {% endfor %}
-        </ul>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-12">
-            <div
-                id="calendrier"
-                data-goto-date="{{ calendarTool.getDateDebutSemaine('Y-m-d') }}"
-                data-url-populate="{{ path('calendarPopulate', {'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
-                data-url-read="{{path('calendarRead', {'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
-                {% if passage %}
-                    data-url-update="{{path('calendarUpdate', {'passage': passage.id, 'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
-                    data-url-prev="{{ path('calendar',{'passage': passage.id, 'technicien': technicien, 'calendrier': calendarTool.getSemainePrecedente('Y-m-d')}) }}"
-                    data-url-next="{{ path('calendar',{'passage': passage.id, 'technicien': technicien, 'calendrier': calendarTool.getSemaineSuivante('Y-m-d')}) }}"
-                {% else %}
-                    data-url-update="{{path('calendarUpdate', {'technicien': technicien, 'calendrier': calendarTool.getDateDebutSemaine('Y-m-d')})}}"
-                    data-url-prev="{{ path('calendar',{'technicien': technicien, 'calendrier': calendarTool.getSemainePrecedente('Y-m-d')}) }}"
-                    data-url-next="{{ path('calendar',{'technicien': technicien, 'calendrier': calendarTool.getSemaineSuivante('Y-m-d')}) }}"
-                {% endif %}
-                >
-            </div>
-        </div>
-    </div>
+	<div class="modal fade" id="modal-calendrier-infos" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+				<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="modal-title"></h4>
+				</div>
+				<div class="modal-body" id="modal-body"></div>
+		</div>
+		</div>
+	</div>
 {% endblock %}

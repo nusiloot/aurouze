@@ -59,7 +59,7 @@ class EtablissementManager {
         self::TYPE_ETB_ADMINISTRATION => "description",
         self::TYPE_ETB_MAIRIE => "account-balance",
         self::TYPE_ETB_ENTREPRISE_PRIVEE => "store",
-        self::TYPE_ETB_PARTICULIER => "face",
+        self::TYPE_ETB_PARTICULIER => "person",
         self::TYPE_ETB_FERME => "spa",
         self::TYPE_ETB_SYNDIC => "home",
         self::TYPE_ETB_COMMERCE => "local-grocery-store",

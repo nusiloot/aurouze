@@ -1,7 +1,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">Contrat de type <strong>{{ contrat.getTypeContratLibelle() }}</strong></div>
     <div class="panel-body">
-        <div class="rows">
+        <div class="row">
             <div class="col-xs-6">
                 Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
                 <strong>{{ contrat.getDateDebut()|date("d/m/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />
@@ -21,20 +21,19 @@
     {{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small>&nbsp;
 
 </h1>
+
 <br/>
 
 <div class="panel panel-default">
-    <div class="panel-heading">Lieux de passage : </div>
-    <div class="panel-body">
-        <ul class="list-unstyled">
-            {% for etablissement in contrat.getEtablissements %}
-                <li><span>{{ etablissement.intitule }}</span></li>
-                    {% endfor %} 
-        </ul>
-    </div>
+    <div class="panel-heading"><h3 class="panel-title">Lieux de passage : </h3></div>
+    <ul class="list-group">
+        {% for etablissement in contrat.getEtablissements %}
+            <li class="list-group-item"><span>{{ etablissement.intitule }}</span></li>
+        {% endfor %}
+    </ul>
 </div>
 <div class="panel panel-default">
-    <div class="panel-heading">Nomenclature</div>
+    <div class="panel-heading"><h3 class="panel-title">Nomenclature</h3></div>
     <div class="panel-body">
         {{ contrat.getNomenclature() | nl2br }}
     </div>
@@ -48,29 +47,25 @@
 
 
 <div class="panel panel-default">
-    <div class="panel-heading">Produits</div>
-    <div class="panel-body">
-        <table class="table-stripped">
-            <thead>
+    <div class="panel-heading"><h3 class="panel-title">Produits</h3></div>
+    <table class="table table-bordered table-condensed table-stripped">
+        <thead>
+            <tr>
+                <th class="col-xs-2 text-center">  <strong>Nombre prévu</strong></th>
+                <th class="col-xs-6">Nom produit</th>
+                <th class="col-xs-2"><span class="text-muted">Prix d'achat</span></th>
+                <th class="col-xs-2"><span class="text-muted">Prix de vente prestation</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produit in contrat.produits %}
                 <tr>
-                    <th class="col-xs-6">Nom produit</th>
-                    <th class="col-xs-2">  <small class="text-muted">Prix d'achat</th>
-                    <th class="col-xs-2">  <small class="text-muted">Prix de vente prestation</small></th>
-                    <th class="col-xs-2 text-center">  <strong>Nombre prévu</strong></th>
+                    <td class="col-xs-2 text-right">  <strong>{{ produit.nbTotalContrat }}</strong></td>
+                    <td class="col-xs-6">{{ produit.nom }} {% if(produit.conditionnement) %}<small class="text-muted">({{ produit.conditionnement }})</small>{% endif %}</td>
+                    <td class="col-xs-2">  <span class="text-muted">{{ produit.prixHt }}&nbsp;€&nbsp;HT</span></td>
+                    <td class="col-xs-2">  <span class="text-muted">{{ produit.prixPrestation }}&nbsp;€&nbsp;HT</span></td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for produit in contrat.produits %}
-                    <tr>
-                        <td class="col-xs-6">{{ produit.nom }}</td>
-                        <td class="col-xs-2">  <small class="text-muted">{{ produit.prixHt }}&nbsp;€&nbsp;HT</small></td>
-                        <td class="col-xs-2">  <small class="text-muted">{{ produit.prixPrestation }}&nbsp;€&nbsp;HT</small></td>
-                        <td class="col-xs-2 text-center">  <strong>{{ produit.nbTotalContrat }}</strong></td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        </ul>
-    </div>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-

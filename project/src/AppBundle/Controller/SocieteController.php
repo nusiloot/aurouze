@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\SocieteType;
 use AppBundle\Document\Societe;
+use AppBundle\Document\Etablissement;
+use AppBundle\Manager\EtablissementManager;
 
 class SocieteController extends Controller {
 
@@ -52,9 +54,10 @@ class SocieteController extends Controller {
     	
     	$dm = $this->get('doctrine_mongodb')->getManager();
     	
-    	$societe = ($id)? $this->get('societe.manager')->getRepository()->find($id) : new Societe();
+    	$isNew = ($id)? false : true;
+    	$societe = (!$isNew)? $this->get('societe.manager')->getRepository()->find($id) : new Societe();
     	
-    	$form = $this->createForm(new SocieteType($this->container, $dm), $societe, array(
+    	$form = $this->createForm(new SocieteType($this->container, $dm, $isNew), $societe, array(
     			'action' => $this->generateUrl('societe_modification', array('id' => $id)),
     			'method' => 'POST',
     	));
@@ -63,10 +66,19 @@ class SocieteController extends Controller {
     		$societe = $form->getData();
     		$dm->persist($societe);
     		$dm->flush();
+    		if ($isNew && $form->get("generer")->getData()) {
+    			 $etablissement = new Etablissement();
+    			 $etablissement->setSociete($societe);
+    			 $etablissement->setRaisonSociale($societe->getRaisonSociale());
+    			 $etablissement->setNom($societe->getRaisonSociale());
+    			 $etablissement->setType(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
+    			 $dm->persist($etablissement);
+    			 $dm->flush();
+    		}
     		return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
     	}
 
-    	return $this->render('societe/modification.html.twig', array('form' => $form->createView()));
+    	return $this->render('societe/modification.html.twig', array('form' => $form->createView(), 'isNew' => $isNew));
     }
 
     /**

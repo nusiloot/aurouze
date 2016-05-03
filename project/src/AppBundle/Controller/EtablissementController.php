@@ -125,7 +125,7 @@ class EtablissementController extends Controller {
     		return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
     	}
 
-    	return $this->render('etablissement/modification.html.twig', array('societe' => $societe, 'form' => $form->createView()));
+    	return $this->render('etablissement/modification.html.twig', array('societe' => $societe, 'form' => $form->createView(), 'etablissement' => $etablissement));
     }
 
 }

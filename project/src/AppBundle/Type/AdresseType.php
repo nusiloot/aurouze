@@ -15,9 +15,9 @@ class AdresseType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
-                ->add('adresse', TextType::class, array('label' => 'Adresse :'))
-                ->add('codePostal', TextType::class, array('label' => 'Code postal :'))
-                ->add('commune', TextType::class, array('label' => 'Ville :'));
+                ->add('adresse', TextType::class, array('label' => 'Adresse :', 'required' => false, 'empty_data'  => null))
+                ->add('codePostal', TextType::class, array('label' => 'Code postal :', 'required' => false, 'empty_data'  => null))
+                ->add('commune', TextType::class, array('label' => 'Ville :', 'required' => false, 'empty_data'  => null));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {

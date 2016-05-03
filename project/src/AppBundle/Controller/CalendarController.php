@@ -30,8 +30,9 @@ class CalendarController extends Controller {
 
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllActif();
 
-        $calendrier = $request->get('calendrier');
-        $calendarTool = new CalendarDateTool($calendrier);
+        $date = $request->get('date', new \DateTime());
+        $calendarTool = new CalendarDateTool($date, $request->get('mode', CalendarDateTool::MODE_WEEK));
+
         $etablissement = null;
         if ($passage) {
             $etablissement = $passage->getEtablissement();
@@ -49,8 +50,7 @@ class CalendarController extends Controller {
             $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
         }
 
-        $calendrier = $request->get('calendrier');
-        $calendarTool = new CalendarDateTool($calendrier);
+        $calendarTool = new CalendarDateTool($request->get('date'), $request->get('mode'));
 
         $periodeStart = $calendarTool->getDateDebutSemaine('Y-m-d');
         $periodeEnd = $calendarTool->getDateFinSemaine('Y-m-d');
@@ -93,9 +93,9 @@ class CalendarController extends Controller {
 
                 $tech = $dm->getRepository('AppBundle:Compte')->findOneById($technicien->getId());
 
-                $resumePassage = $passageTech->getEtablissement()->getIntitule() . " " . $passageTech->getEtablissementInfos()->getType() . "\n";
+                $resumePassage = $passageTech->getEtablissement()->getNom() . " (" . $passageTech->getEtablissementInfos()->getAdresse()->getCodePostal() . ")\n";
                 foreach ($passageTech->getPrestations() as $p) {
-                    $resumePassage.=$p->getNomToString() . " ";
+                    //$resumePassage.=$p->getNomToString() . " ";
                 }
 
                 $passageArr = array(
@@ -195,7 +195,7 @@ class CalendarController extends Controller {
                 continue;
             }
             $passageArr = array('id' => $passageTech->getId(),
-                'title' => ($request->get('title')) ? $passageTech->getEtablissementInfos()->getIntitule() : "",
+                'title' => $passageTech->getEtablissementInfos()->getNom()." (".$passageTech->getEtablissementInfos()->getAdresse()->getCodePostal().")",
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
                 'backgroundColor' => $technicien->getCouleur(),

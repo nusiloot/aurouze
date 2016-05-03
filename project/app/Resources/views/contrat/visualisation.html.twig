@@ -4,15 +4,15 @@
     <div id="wrapper">
         <div class="row">
             <div class="col-xs-8">
-                <h1>Contrat <small>{{ contrat.getIdentifiant() }}</small></h1>
+                <h1>Contrat <small>n° {{ contrat.getNumeroArchive() }}</small></h1>
             </div>
             <div class="col-xs-4 text-right" style="padding-top: 30px; ">
                 <a href="{{ path('passage_etablissement', {'id': contrat.getEtablissements().first().getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux passages</a>
             </div>
         </div>
         {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
-        
-        
+
+
 		<a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
 
     </div>
