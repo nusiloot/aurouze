@@ -20,7 +20,7 @@
                         {% for passage in passages %}
                             {% if(passage.techniciens | length == 0) %}
                             {% else %}
-                            <a data-words='{{ [passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate('full', 'none'), passage.etablissementInfos.nom]|json_encode() }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
+                            <a data-words='{{ [passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom]|json_encode() }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="row">
