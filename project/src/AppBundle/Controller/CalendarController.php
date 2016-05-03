@@ -93,9 +93,9 @@ class CalendarController extends Controller {
 
                 $tech = $dm->getRepository('AppBundle:Compte')->findOneById($technicien->getId());
 
-                $resumePassage = $passageTech->getEtablissement()->getIntitule() . " " . $passageTech->getEtablissementInfos()->getType() . "\n";
+                $resumePassage = $passageTech->getEtablissement()->getNom() . " (" . $passageTech->getEtablissementInfos()->getAdresse()->getCodePostal() . ")\n";
                 foreach ($passageTech->getPrestations() as $p) {
-                    $resumePassage.=$p->getNomToString() . " ";
+                    //$resumePassage.=$p->getNomToString() . " ";
                 }
 
                 $passageArr = array(
