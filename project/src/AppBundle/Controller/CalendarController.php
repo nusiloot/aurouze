@@ -27,7 +27,7 @@ class CalendarController extends Controller {
 
         $technicien = $request->get('technicien');
         $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
-        
+
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllActif();
 
         $calendrier = $request->get('calendrier');
@@ -195,7 +195,7 @@ class CalendarController extends Controller {
                 continue;
             }
             $passageArr = array('id' => $passageTech->getId(),
-                'title' => ($request->get('title')) ? $passageTech->getEtablissementInfos()->getIntitule() : "",
+                'title' => $passageTech->getEtablissementInfos()->getNom()." (".$passageTech->getEtablissementInfos()->getAdresse()->getCodePostal().")",
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
                 'backgroundColor' => $technicien->getCouleur(),

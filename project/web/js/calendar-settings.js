@@ -36,7 +36,7 @@ $(function () {
     $('#calendrier').fullCalendar({
         minTime: '06:00:00',
         maxTime: '18:00:00',
-        height: 600,
+        height: 698,
         customButtons: {
             prevButton: {
                 text: '',
