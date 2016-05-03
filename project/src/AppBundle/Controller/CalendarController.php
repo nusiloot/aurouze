@@ -55,7 +55,7 @@ class CalendarController extends Controller {
         $periodeStart = $calendarTool->getDateDebutSemaine('Y-m-d');
         $periodeEnd = $calendarTool->getDateFinSemaine('Y-m-d');
 
-        $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriode($periodeStart, $periodeEnd);
+        $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllPlanifieByPeriode($periodeStart, $periodeEnd);
 
         $eventsDates = array();
 
@@ -186,7 +186,7 @@ class CalendarController extends Controller {
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
         $periodeStart = $request->get('start');
         $periodeEnd = $request->get('end');
-        $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $technicien);
+        $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllPlanifieByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $technicien);
 
         $passagesCalendar = array();
 
