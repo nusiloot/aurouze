@@ -69,7 +69,7 @@
                                         <a href="" title="{{ contrat.nomenclature | nl2br }}" data-html="true" data-toggle="tooltip">Voir la nomenclature</a>
                                     </div>
                                     <div class="col-xs-1">
-                                        {% if(contrat.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ contrat.duree }}</span>{% endif %}
+                                        {% if(contrat.getDureePassage) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ contrat.getHumanDureePassage }}</span>{% endif %}
                                     </div>
                                     <div class="col-xs-3">
                                         {% if contrat.commentaire %}
