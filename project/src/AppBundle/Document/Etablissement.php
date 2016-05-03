@@ -91,6 +91,22 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function prePersist() {
         $this->pullInfosFromSociete();
     }
+    
+    public function getSameAdresse() {
+    	return $this->isSameAdresseThanSociete();
+    }
+    
+    public function setSameAdresse($value) {
+    	return $this;
+    }
+
+    public function getSameContact() {
+    	return $this->isSameContactCoordonneeThanSociete();
+    }
+    
+    public function setSameContact($value) {
+    	return $this;
+    }
 
     public function isSameAdresseThanSociete() {
 

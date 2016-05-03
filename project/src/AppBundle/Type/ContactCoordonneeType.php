@@ -15,11 +15,11 @@ class ContactCoordonneeType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
-                ->add('telephoneFixe', TextType::class, array('label' => 'Tél. Fixe :','required' => false))
-                ->add('telephoneMobile', TextType::class, array('label' => 'Tél. Mobile :','required' => false))
-                ->add('fax', TextType::class, array('label' => 'Fax :','required' => false))
-                ->add('email', TextType::class, array('label' => 'Email :','required' => false))
-                ->add('siteInternet', TextType::class, array('label' => 'Site internet :','required' => false));
+                ->add('telephoneFixe', TextType::class, array('label' => 'Tél. Fixe :','required' => false, 'empty_data'  => null))
+                ->add('telephoneMobile', TextType::class, array('label' => 'Tél. Mobile :','required' => false, 'empty_data'  => null))
+                ->add('fax', TextType::class, array('label' => 'Fax :','required' => false, 'empty_data'  => null))
+                ->add('email', TextType::class, array('label' => 'Email :','required' => false, 'empty_data'  => null))
+                ->add('siteInternet', TextType::class, array('label' => 'Site internet :','required' => false, 'empty_data'  => null));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
