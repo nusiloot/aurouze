@@ -45,16 +45,17 @@ class ContratCsvImporter {
     const CSV_TYPE_PRESTATION = 5;
     const CSV_NOMENCLATURE = 6;
     const CSV_DATE_CREATION = 7;
-    const CSV_DATE_DEBUT = 8;
-    const CSV_DUREE = 9;
-    const CSV_GARANTIE = 10;
-    const CSV_PRIXHT = 11;
-    const CSV_ARCHIVAGE = 12;
-    const CSV_TVA_REDUITE = 13;
-    const CSV_DATE_RESILIATION = 14;
-    const CSV_PRODUITS = 15;
-    const CSV_NOM_COMMERCIAL = 16;
-    const CSV_NOM_TECHNICIEN = 17;
+    const CSV_DATE_ACCEPTATION = 8;
+    const CSV_DATE_DEBUT = 9;
+    const CSV_DUREE = 10;
+    const CSV_GARANTIE = 11;
+    const CSV_PRIXHT = 12;
+    const CSV_ARCHIVAGE = 13;
+    const CSV_TVA_REDUITE = 14;
+    const CSV_DATE_RESILIATION = 15;
+    const CSV_PRODUITS = 16;
+    const CSV_NOM_COMMERCIAL = 17;
+    const CSV_NOM_TECHNICIEN = 18;
 
     public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, SocieteManager $sm, CompteManager $um) {
         $this->dm = $dm;
@@ -102,6 +103,13 @@ class ContratCsvImporter {
 
             if ($data[self::CSV_DATE_DEBUT]) {
                 $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
+            }
+            
+            if($data[self::CSV_DATE_ACCEPTATION]){
+                $contrat->setDateAcceptation(new \DateTime($data[self::CSV_DATE_ACCEPTATION]));
+                $contrat->setStatut(ContratManager::STATUT_VALIDE);
+            }else{
+                $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
             }
 
             if (!preg_match("/^[0-9+]+$/", $data[self::CSV_DUREE])) {
