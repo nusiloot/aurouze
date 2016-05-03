@@ -388,6 +388,7 @@ class PassageController extends Controller {
             $newPassage->setMouvementDeclenchable(true);
             $newPassage->addTechnicien($newContrat->getTechnicien());
             $newContrat->addPassage($etablissement, $newPassage);
+            $newContrat->setStatut(ContratManager::STATUT_BROUILLON);
             $dm->persist($newPassage);
             $dm->flush();
             return $this->redirectToRoute('calendar', array('passage' => $newPassage->getId(),

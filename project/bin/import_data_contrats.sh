@@ -32,11 +32,20 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
         close(cmd);
     }
     date_acceptation=$16;
+    date_acceptation_contrat="";
+    if(!date_acceptation_contrat){
+        cmd="date --date=\""date_acceptation"\" \"+%Y-%m-%d %H:%M:%S\"";
+        cmd | getline date_acceptation_contrat;
+        close(cmd);
+    }
+
     if(!date_creation_contrat){
         cmd="date --date=\""date_acceptation"\" \"+%Y-%m-%d %H:%M:%S\"";
         cmd | getline date_creation_contrat;
         close(cmd);
     }
+
+
     if(!date_creation_contrat){
         next;
     }
@@ -64,7 +73,7 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
     garantie=$30;
     prixht=$26;
     tva_reduite=$27;
-    print contrat_id";"societe_old_id";"commercial_id";"technicien_id";"contrat_type";"prestation_type";"localisation";"date_creation_contrat";"date_debut_contrat";"duree";"garantie";"prixht";"contrat_archivage";"tva_reduite";"date_resiliation_contrat;
+    print contrat_id ";" societe_old_id ";" commercial_id ";" technicien_id ";" contrat_type ";" prestation_type ";" localisation ";" date_creation_contrat ";" date_acceptation_contrat ";" date_debut_contrat ";" duree ";" garantie ";" prixht ";" contrat_archivage ";" tva_reduite ";" date_resiliation_contrat;
 }' > $DATA_DIR/contrats.csv.tmp;
 
 cat $DATA_DIR/tblPrestationProduit.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationProduit.sorted.csv
