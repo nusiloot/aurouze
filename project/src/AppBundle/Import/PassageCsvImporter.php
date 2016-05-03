@@ -148,7 +148,7 @@ class PassageCsvImporter {
                         $this->dm->persist($passage);
                     }
                 }
-            }else{
+            } else {
                 $output->writeln(sprintf("<comment>Le passage : %s n'a aucune presta </comment>", $data[self::CSV_OLD_ID]));
             }
 

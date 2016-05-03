@@ -55,3 +55,7 @@ body {
 .fc-agendaWeek-view .fc-event .fc-time {
     display: none;
 }
+.panel-heading .checkbox {
+	margin: 0;
+	
+}

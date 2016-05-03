@@ -15,15 +15,18 @@ use AppBundle\Type\Adresse;
 use AppBundle\Type\ContactCoordonnee;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Transformer\ProvenanceTransformer;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class SocieteType extends AbstractType {
 
     protected $container;
     protected $dm;
+    protected $isNew;
 
-    public function __construct(ContainerInterface $container, DocumentManager $documentManager) {
+    public function __construct(ContainerInterface $container, DocumentManager $documentManager, $isNew = false) {
         $this->container = $container;
         $this->dm = $documentManager;
+        $this->isNew = $isNew;
     }
 
     /**
@@ -33,11 +36,14 @@ class SocieteType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
                 ->add('raisonSociale', TextType::class, array('label' => 'Raison sociale :'))
-                ->add('codeComptable', TextType::class, array('label' => 'Code comptable :'))
-                ->add('commentaire', TextareaType::class, array('label' => 'Commentaires :', "attr" => array("class" => "form-control", "rows" => 6)))
+                ->add('codeComptable', TextType::class, array('label' => 'Code comptable :', 'required' => false, 'empty_data'  => null))
+                ->add('commentaire', TextareaType::class, array('label' => 'Commentaires :', "attr" => array("class" => "form-control", "rows" => 6), 'required' => false, 'empty_data'  => null))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")))
         		->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
         		->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'));
+        if ($this->isNew) {
+        	$builder->add('generer', CheckboxType::class, array('label' => 'Générer l\'établissement lié, à partir des données de la société', 'required' => false,   'empty_data'  => null, 'mapped' => false, 'data' => true));
+        }
         
        
         
@@ -45,6 +51,8 @@ class SocieteType extends AbstractType {
             		'choices' => array_merge(array('' => ''), $this->getProvenances()),
 	        		'expanded' => false, 
 	        		'multiple' => false,
+        			'required' => false, 
+        			'empty_data'  => null,
         			'attr' => array("class" => "select2 select2-simple"),
         ));
         $builder->get('provenance')->addModelTransformer(new ProvenanceTransformer($this->dm));
@@ -53,6 +61,8 @@ class SocieteType extends AbstractType {
         		'choices' => $this->getTags(),
         		'expanded' => false,
         		'multiple' => true,
+        			'required' => false, 
+        			'empty_data'  => null,
         		'attr' => array("class" => "select2 select2-simple", "data-tags" => "true"),
         ));
         $builder->get('tags')->resetViewTransformers();

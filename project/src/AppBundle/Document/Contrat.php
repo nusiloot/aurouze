@@ -187,6 +187,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->produits = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mouvements = new ArrayCollection();
+        $this->contratPassages = array();
     }
 
     /**

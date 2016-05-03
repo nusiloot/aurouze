@@ -158,7 +158,7 @@ class ContratCsvImporter {
                         $contrat->addProduit($produitToAdd);
                     }
                 }
-            }
+            }            
             $this->dm->persist($contrat);
             $i++;
             $cptTotal++;
