@@ -36,7 +36,7 @@ $(function () {
     $('#calendrier').fullCalendar({
         minTime: '06:00:00',
         maxTime: '18:00:00',
-        height: 698,
+        height: 650,
         customButtons: {
             prevButton: {
                 text: '',
@@ -53,10 +53,7 @@ $(function () {
                 icon: 'right-single-arrow'
             }
         },
-        header: {
-            left: 'prevButton, title, nextButton',
-            right: 'month, agendaWeek, agendaDay',
-        },
+        header: false,
         lang: 'fr',
         timeFormat: 'H:mm',
         allDaySlot: false,
@@ -65,7 +62,7 @@ $(function () {
         droppable: true,
         slotEventOverlap: false,
         hiddenDays: [0],
-        defaultView: "agendaWeek",
+        defaultView: $('#calendrier').data('view'),
         eventSources: [
             {
                 url: $('#calendrier').data('urlPopulate'),
