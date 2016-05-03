@@ -163,6 +163,8 @@ class PassageController extends Controller {
             'parameters' => $fm->getParameters(),
         ));
 
+        $filename = sprintf("bon_passage_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getTechniciens()->first()->getIdentite())));
+
         if ($request->get('output') == 'html') {
 
             return new Response($html, 200);
@@ -171,7 +173,7 @@ class PassageController extends Controller {
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, array(
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="bon.pdf"'
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"'
                 )
         );
     }
@@ -187,10 +189,10 @@ class PassageController extends Controller {
         if($request->get('technicien')) {
             $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
             $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien);
-            $filename = sprintf("bon_passage_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
+            $filename = sprintf("bons_passage_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
         } else {
             $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'));
-            $filename = sprintf("bon_passage_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'));
+            $filename = sprintf("bons_passage_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'));
         }
 
         $html = $this->renderView('passage/pdfBonsMassif.html.twig', array(
@@ -223,6 +225,8 @@ class PassageController extends Controller {
 
         $passagesHistory = $pm->getRepository()->findHistoriqueByEtablissementAndPrestations($passage->getEtablissement(), $passage->getPrestations());
 
+        $filename = sprintf("suivi_client_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getTechniciens()->first()->getIdentite())));
+
         $html = $this->renderView('passage/pdfMission.html.twig', array(
             'passage' => $passage,
             'passagesHistory' => $passagesHistory,
@@ -236,7 +240,7 @@ class PassageController extends Controller {
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, array(
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="bon.pdf"'
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"'
                 )
         );
     }
@@ -252,10 +256,10 @@ class PassageController extends Controller {
         if($request->get('technicien')) {
             $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
             $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien);
-            $filename = sprintf("suivi_client_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
+            $filename = sprintf("suivis_client_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
         } else {
             $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'));
-            $filename = sprintf("suivi_client_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'));
+            $filename = sprintf("suivis_client_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'));
         }
 
         $passagesHistories = array();
