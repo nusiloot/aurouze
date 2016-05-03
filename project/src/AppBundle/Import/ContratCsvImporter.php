@@ -162,7 +162,6 @@ class ContratCsvImporter {
             if ($cptTotal % (count($csv) / 100) == 0) {
                 $progress->advance();
             }
-
             if ($i >= 1000) {
                 $this->dm->flush();
                 $this->dm->clear();
