@@ -5,7 +5,7 @@
 	<div class="col-sm-12">
 	<ul class="nav nav-tabs nav-justified" role="tablist" style="margin: 15px 0; font-size: 13px;">
 		<li role="presentation" class="active">
-			<a href="{{ path('calendarManuel', {'date': calendarTool.getDateDebut('Y-m-d'), 'passage': ((passage) ? passage.id : null), 'mode': calendarTool.mode }) }}" role="tab" style="color: black;"><i class="mdi mdi-apps mdi-lg"></i></a>
+			<a href="{{ path('calendarManuel', {'date': calendarTool.getDateDebut('Y-m-d'), 'passage': ((passage) ? passage.id : null), 'mode': calendarTool.mode }) }}" role="tab" style="color: black;"><i class="mdi mdi-apps mdi-lg"></i> Résumé</a>
 		</li>
 	{% set i=0 %}
 	{% for tech in techniciens %}
