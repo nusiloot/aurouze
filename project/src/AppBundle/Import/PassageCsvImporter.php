@@ -120,6 +120,7 @@ class PassageCsvImporter {
                 $output->writeln(sprintf("<comment>Le passage d'id %s existe déjà en base (%s)!</comment>", $passage->getId(), $data[self::CSV_OLD_ID]));
             }
             $resultStatut = $this->generateStatut($data, $passage, $output);
+            $passage->updateStatut();
             if (!$resultStatut) {
                 $output->writeln(sprintf("<error>Aucun statut déterminable pour le passage d'id %s (%s)!</error>", $passage->getId(), $data[self::CSV_OLD_ID]));
                 continue;
@@ -151,7 +152,7 @@ class PassageCsvImporter {
             } else {
                 $output->writeln(sprintf("<comment>Le passage : %s n'a aucune presta </comment>", $data[self::CSV_OLD_ID]));
             }
-
+            
             $identifiantRepriseTechnicien = $data[self::CSV_TECHNICIEN];
             if (!is_null($identifiantRepriseTechnicien)) {
                 $compte = $this->um->getRepository()->findOneByIdentifiantReprise($identifiantRepriseTechnicien);
@@ -202,20 +203,14 @@ class PassageCsvImporter {
 
         $this->dm->flush();
         $progress->finish();
-
-        echo "\n\n**************************\n";
-        echo "\nMis en cohérence des contrats et passages...\n";
-        echo "\n**************************\n";
-
-        $this->updateContratsAndPassages($output);
+       // $this->updateContratsAndPassages($output);
     }
 
     public function updateContratsAndPassages($output) {
         echo "\nMis à jour des prestations des contrats et passages...\n";
         $this->updateContratsAndPassagesPrestations($output);
 
-        echo "\nMis à jour des passages en attente...\n";
-        $this->updatePassagesAttentes($output);
+
 
         echo "\nMis à jour des techniciens...\n";
         $this->updateTechniciens($output);
@@ -266,23 +261,10 @@ class PassageCsvImporter {
             $contratResilie = ($contrat->getStatut() == ContratManager::STATUT_RESILIE);
 
             if ($contratResilie) {
-                foreach ($contrat->getContratPassages() as $contratPassages) {
-                    foreach ($contratPassages->getPassages() as $passage) {
-                        if (!$this->pm->getRepository()->findById($passage->getId())) {
-                            $output->writeln(sprintf("<comment>Le passage d'id %s semble Introuvable dans la base pourtant référencé par le contrat  %s !</comment>", $passage->getId(), $contrat->getId()));
-                            continue;
-                        }
-                        if ($contratResilie) {
-                            if ($passage->getDatePrevision()->format('YmdHi') > $contrat->getDateResiliation()->format('YmdHi')) {
-                                $passage->setStatut(PassageManager::STATUT_ANNULE);
-                                $this->dm->persist($passage);
-                            }
-                        }
-                    }
-                }
+                
             }
             if ($contrat->getStatut() != ContratManager::STATUT_RESILIE) {
-                $contrat->setStatut(ContratManager::STATUT_VALIDE);
+                $contrat->setStatut(ContratManager::STATUT_EN_COURS);
             }
 
 
@@ -439,39 +421,9 @@ class PassageCsvImporter {
         }
     }
 
-    public function updatePassagesAttentes($output) {
-
-        $allPassagesAttente = $this->pm->getRepository()->findByStatut(PassageManager::STATUT_EN_ATTENTE);
-
-
-        $cptTotal = 0;
-        $i = 0;
-        $progress = new ProgressBar($output, 100);
-        $progress->start();
-        foreach ($allPassagesAttente as $passage) {
-            if ($this->pm->isFirstPassageNonRealise($passage)) {
-                $passage->setDateDebut($passage->getDatePrevision());
-            }
-
-            $this->dm->persist($passage);
-            $cptTotal++;
-            if ($cptTotal % (count($allPassagesAttente) / 100) == 0) {
-                $progress->advance();
-            }
-            if ($i >= 2000) {
-                $this->dm->flush();
-                $i = 0;
-            }
-            $i++;
-        }
-        $this->dm->flush();
-        $progress->finish();
-    }
-
     public function generateStatut($data, &$passage, $output) {
-
         switch ($data[self::CSV_STATUT]) {
-            case PassageManager::STATUT_REALISE: {
+            case PassageManager::STATUT_REALISE: {                  
                     return $this->updateStatutRealise($data, $passage, $output);
                     break;
                 }
@@ -502,6 +454,7 @@ class PassageCsvImporter {
     public function updateStatutRealise($data, &$passage, $output) {
         $passage = $this->updateDateDebutDateFin($data, $passage, $output);
         $passage->setDateRealise($passage->getDateDebut());
+        
         return $passage;
     }
 

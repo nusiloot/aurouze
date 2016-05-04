@@ -127,7 +127,7 @@ class ContratController extends Controller {
             if ($contrat->isEnAttenteAcceptation()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $contrat->setDateFin($contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month"));
-                $contrat->setStatut(ContratManager::STATUT_VALIDE);
+                $contrat->setStatut(ContratManager::STATUT_EN_COURS);
                 $dm->persist($contrat);
                 $dm->flush();
                 return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));

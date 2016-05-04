@@ -175,3 +175,9 @@ cat $DATA_DIR/passagesadressestechniciensprestation.proper.csv | sed -r 's/([a-z
 echo -e "\nImport des passages"
 
 php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv --no-debug
+
+echo -e "\n****************************************************\n"
+echo -e "\nMis en cohérence des contrats et passages...\n";
+echo -e "\n****************************************************\n";
+
+php app/console update:contrat-update-statut contrats.updateStatut -vvv --no-debug

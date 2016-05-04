@@ -33,7 +33,7 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | s
     }
     date_acceptation=$16;
     date_acceptation_contrat="";
-    if(!date_acceptation_contrat){
+    if(date_acceptation){
         cmd="date --date=\""date_acceptation"\" \"+%Y-%m-%d %H:%M:%S\"";
         cmd | getline date_acceptation_contrat;
         close(cmd);

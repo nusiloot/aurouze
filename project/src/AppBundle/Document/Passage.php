@@ -208,11 +208,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
     public function updateStatut() {
         if (!$this->isAnnule()) {
-            if ($this->getDatePrevision() && !boolval($this->getDateFin()) && !boolval($this->getDateDebut())) {
+            if ($this->getDatePrevision() && !boolval($this->getDateFin()) && !boolval($this->getDateDebut()) && !boolval($this->getDateRealise())) {
                 $this->setStatut(PassageManager::STATUT_EN_ATTENTE);
                 return;
             }
-            if (boolval($this->getDateDebut()) && !boolval($this->getDateFin())) {
+            if (boolval($this->getDateDebut()) && !boolval($this->getDateFin()) && !boolval($this->getDateRealise())) {
                 $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
                 return;
             }
@@ -725,9 +725,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->dateRealise;
     }
 
-    public function isFirstPassageNonRealise() {
-
-    }
 
     /**
      * Set identifiantReprise

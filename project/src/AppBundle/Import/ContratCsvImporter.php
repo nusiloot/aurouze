@@ -107,7 +107,7 @@ class ContratCsvImporter {
             
             if($data[self::CSV_DATE_ACCEPTATION]){
                 $contrat->setDateAcceptation(new \DateTime($data[self::CSV_DATE_ACCEPTATION]));
-                $contrat->setStatut(ContratManager::STATUT_VALIDE);
+                $contrat->setStatut(ContratManager::STATUT_EN_COURS);
             }else{
                 $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
             }

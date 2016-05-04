@@ -1045,8 +1045,12 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         return ($this->statut == ContratManager::STATUT_BROUILLON);
     }
     
-     public function isValide() {
-        return ($this->statut == ContratManager::STATUT_VALIDE);
+     public function isEnCours() {
+        return ($this->statut == ContratManager::STATUT_EN_COURS);
+    }
+    
+     public function isAVenir() {
+        return ($this->statut == ContratManager::STATUT_A_VENIR);
     }
     
     public function isEnAttenteAcceptation() {
