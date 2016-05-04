@@ -71,7 +71,7 @@ class SocieteController extends Controller {
     			 $etablissement->setSociete($societe);
     			 $etablissement->setRaisonSociale($societe->getRaisonSociale());
     			 $etablissement->setNom($societe->getRaisonSociale());
-    			 $etablissement->setType(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
+    			 $etablissement->setType($societe->getType());
     			 $dm->persist($etablissement);
     			 $dm->flush();
     		}

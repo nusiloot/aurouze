@@ -5,7 +5,7 @@
 
 {% block _contrat_prestations_entry_row %}
     <div class="row form-group dynamic-collection-item">
-        <div class="col-xs-9">
+        <div class="col-xs-7">
             {{ form_widget(form.identifiant) }}
         </div>
         <div class="col-xs-2 text-right">
@@ -19,7 +19,7 @@
 
 {% block _contrat_produits_entry_row %}
     <div class="row form-group dynamic-collection-item">
-        <div class="col-xs-9">
+        <div class="col-xs-7">
             {{ form_widget(form.identifiant) }}
         </div>
         <div class="col-xs-2 text-right">
@@ -32,111 +32,129 @@
 {% endblock %}
 
 {% block body %}
-	<style>
-	label {
-		font-weight: normal;
-	}
-	</style>
     <div id="wrapper">
         <h1>Création Contrat</h1>
         {{ form_start(form) }}
         <div class="panel panel-default">
-            <div class="panel-heading"><strong>Contrat</strong></div>
-            <div class="panel-body">
+            <div class="panel-heading"><strong>Informations</strong></div>
+            <div class="panel-body col-xs-offset-2">
                 <div class="row">
-                    <div class="col-xs-3">
+                    <div class="col-xs-5">
                         {{ form_row(form.commercial) }}
                     </div>
-                    <div class="col-xs-3">
-                       {{ form_label(form.duree) }}
-                        {{ form_errors(form.duree) }}
-                        <div class="input-group ">
-                            {{ form_widget(form.duree) }}
-                            <div class="input-group-addon">mois</div>
-                        </div>
-                    </div>
-                    <div class="col-xs-3">
-                        {{ form_label(form.duree_garantie) }}
-                        {{ form_errors(form.duree_garantie) }}
-                        <div class="input-group">
-                            {{ form_widget(form.duree_garantie) }}
-                            <div class="input-group-addon">mois</div>
-                        </div>
-                    </div>
-                    <div class="col-xs-3 bootstrap-timepicker timepicker">
-                        {{ form_label(form.dureePassage) }}
-                        {{ form_errors(form.dureePassage) }}
-                        <div class="input-group">
-                            {{ form_widget(form.dureePassage) }}
-                            <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+                    <div class="col-xs-5 bootstrap-timepicker timepicker">
+                    	<div class="form-group">
+	                        {{ form_label(form.dureePassage) }}
+	                        {{ form_errors(form.dureePassage) }}
+	                        <div class="input-group">
+	                            {{ form_widget(form.dureePassage) }}
+	                            <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+	                        </div>
                         </div>
                     </div>
                 </div>
-                <hr style="margin-top: 5px;" />
                 <div class="row">
-                    <div class="col-xs-12">
+                    <div class="col-xs-5">
+                    	<div class="form-group">
+	                       {{ form_label(form.duree) }}
+	                       {{ form_errors(form.duree) }}
+	                       <div class="input-group ">
+	                           {{ form_widget(form.duree) }}
+	                           <div class="input-group-addon">mois</div>
+	                       </div>
+	                    </div>
+                    </div>
+                    <div class="col-xs-5">
+                    	<div class="form-group">
+	                        {{ form_label(form.duree_garantie) }}
+	                        {{ form_errors(form.duree_garantie) }}
+	                        <div class="input-group">
+	                            {{ form_widget(form.duree_garantie) }}
+	                            <div class="input-group-addon">mois</div>
+	                        </div>
+	                    </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-10">
                         {{ form_row(form.etablissements) }}
                     </div>
                 </div>
-                <hr style="margin-top: 5px;" />
                 <div class="row">
-                    <div class="col-xs-9">
-                        Prestations :
+                    <div class="col-xs-10">
+                        {{ form_row(form.nomenclature) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Prestations</strong></div>
+            <div class="panel-body col-xs-offset-2">
+                <div class="row">
+                    <div class="col-xs-7">
+                    	<label class="control-label">Prestations :</label>
                     </div>
                     <div class="col-xs-2 text-center">
-                        Nombre de passages :
+                        <label class="control-label">Nb passages :</label>
                     </div>
                 </div>
 	            {{ form_widget(form.prestations, { 'attr': {'class': 'dynamic-collection'} }) }}
 			    <div class="row">
-			        <div class="col-xs-12 text-right">
+			        <div class="col-xs-10 text-right">
 			            <a href="javascript:void(0);" data-collection-target="#contrat_prestations" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
 			        </div>
 			    </div>
-                <hr style="margin-top: 20px;" />
+            </div>
+        </div>
+        
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Produits</strong></div>
+            <div class="panel-body col-xs-offset-2">
                 <div class="row">
-                    <div class="col-xs-9">
-                        Produits :
+                    <div class="col-xs-7">
+                        <label class="control-label">Produit :</label>
                     </div>
                     <div class="col-xs-2 text-center">
-                        Quantité prévue :
+                        <label class="control-label">Quantité :</label>
                     </div>
                 </div>
-                {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
+            	{{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
 			    <div class="row">
-			        <div class="col-xs-12 text-right">
+			        <div class="col-xs-10 text-right">
 			            <a href="javascript:void(0);" data-collection-target="#contrat_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
 			        </div>
 			    </div>
-                <hr style="margin-top: 20px;" />
+            </div>
+        </div>
+
+		<div class="panel panel-default">
+            <div class="panel-heading"><strong>Facturation</strong></div>
+            <div class="panel-body col-xs-offset-2">
                 <div class="row">
-                    <div class="col-xs-12">
-                        {{ form_row(form.nomenclature) }}
-                    </div>
-                </div>
-                    <hr style="margin-top: 5px;" />
-                <div class="row">
-                    <div class="col-xs-3">
+                    <div class="col-xs-5">
                         {{ form_row(form.typeContrat) }}
                     </div>
-                    <div class="col-xs-3">
+                    <div class="col-xs-5">
                          {{ form_row(form.nbFactures) }}
                     </div>
-                    <div class="col-xs-3">
-                       {{ form_label(form.prixHt) }}
-                        {{ form_errors(form.prixHt) }}
-                        <div class="input-group">
-                            {{ form_widget(form.prixHt) }}
-                            <div class="input-group-addon">€</div>
-                        </div>
-                    </div>
-                            <div class="col-xs-3 text-center" style="padding-top: 20px;">
+                </div>
+                <div class="row">
+                    <div class="col-xs-5">
+                    	<div class="form-group">
+                       		{{ form_label(form.prixHt) }}
+                        	{{ form_errors(form.prixHt) }}
+                        	<div class="input-group">
+                            	{{ form_widget(form.prixHt) }} <div class="input-group-addon">€</div>
+                        	</div>
+                       	</div>
+					</div>
+                    <div class="col-xs-5" style="padding-top: 20px;">
                        {{ form_row(form.tvaReduite) }}
                     </div>
                 </div>
             </div>
         </div>
-
         {{ form_widget(form.save) }}
         {{ form_end(form) }}
     </div>

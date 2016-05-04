@@ -2,6 +2,11 @@
     <div class="panel-heading">Contrat de type <strong>{{ contrat.getTypeContratLibelle() }}</strong></div>
     <div class="panel-body">
         <div class="row">
+            {% if contrat.referenceClient %}
+            <div class="col-xs-12">
+            	Numéro de commande : <strong>{{ contrat.referenceClient }}</strong>
+            </div>
+            {% endif %}
             <div class="col-xs-6">
                 Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
                 <strong>{{ contrat.getDateDebut()|date("d/m/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />

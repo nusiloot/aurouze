@@ -246,6 +246,8 @@ class ContratController extends Controller {
     						'header-html' => $header,
     						'margin-right'  => 0,
     						'margin-left'   => 0,
+    						'margin-top'   => 38,
+    						'margin-bottom'   => 38,
     						'page-size' => "A4"
     			)),
     			200,

@@ -12,8 +12,9 @@
         </div>
         {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
 
-
-		<a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
+		<div class="row text-center">
+			<a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
+		</div>
 
     </div>
 {% endblock %}

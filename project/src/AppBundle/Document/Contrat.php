@@ -182,6 +182,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     protected $conditionsParticulieres;
 
+     /**
+     * @MongoDB\String
+     */
+    protected $referenceClient;
+
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
@@ -1153,5 +1158,27 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     public function getConditionsParticulieres()
     {
         return $this->conditionsParticulieres;
+    }
+
+    /**
+     * Set referenceClient
+     *
+     * @param string $referenceClient
+     * @return self
+     */
+    public function setReferenceClient($referenceClient)
+    {
+        $this->referenceClient = $referenceClient;
+        return $this;
+    }
+
+    /**
+     * Get referenceClient
+     *
+     * @return string $referenceClient
+     */
+    public function getReferenceClient()
+    {
+        return $this->referenceClient;
     }
 }

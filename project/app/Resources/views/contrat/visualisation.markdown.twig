@@ -1,7 +1,7 @@
 {% set _menu_active = 'contrat' %}
 {% extends 'base.html.twig' %}
 {% block body %}
-
+	{{ include('contrat/conditionsTextesModal.html.twig') }}
 	<div id="visu-markdown">
 		<h3>Prévisualisation</h3>
 		{{ form_start(formGenerator) }}
@@ -10,7 +10,12 @@
             	{{ form_row(formGenerator.moyens) }}
 			</div>
 			<div class="col-xs-9">
-            	{{ form_row(formGenerator.conditionsParticulieres) }}
+				<div class="form-group">
+                	{{ form_label(formGenerator.conditionsParticulieres) }}
+					<a class="pull-right" role="button" data-toggle="modal" data-target="#modal-conditions-textes"><span class="glyphicon glyphicon-text-size"></span></a>
+                    {{ form_errors(formGenerator.conditionsParticulieres) }}
+                    {{ form_widget(formGenerator.conditionsParticulieres) }}
+				</div>
 			</div>
 		</div>
 		<div class="row">

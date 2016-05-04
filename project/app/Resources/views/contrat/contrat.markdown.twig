@@ -79,6 +79,15 @@ Pour l'exécution de la prestation, le client s'engage à nous fournir l'électr
 ## Engagement d'exécution de nos prestations
 Nos prestations sont exécutées par un personnel qualifié. Le matériel et l'outillage sont adaptés et en quantité suffisante pour la bonne exécution des prestations mentionnées et conformes à la législation en vigueur.
 
+{% if contrat.dureeGarantie %}
+## Garantie
+Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accordée pour la durée de la proposition{% else %}de {{ contrat.dureeGarantie }} mois est accordée{% endif %} pour {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %} :
+
+{% for prestation in contrat.prestations %}
+{{  prestation.nom }}  
+{% endfor %}
+
+{% endif %}
 ## Durée
 Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{% if contrat.tacite %}, renouvelable par tacite reconduction. Elle peut être dénoncée par les deux parties à chaque date anniversaire par lettre recommandée avec accusé de réception en respectant un préavis de deux mois{% endif %}.
 
