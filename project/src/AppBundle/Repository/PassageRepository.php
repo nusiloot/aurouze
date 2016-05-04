@@ -21,7 +21,7 @@ class PassageRepository extends DocumentRepository {
         $query = $this->createQueryBuilder('Passage')
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
-                ->field('statut')->equals(PassageManager::STATUT_PLANIFIE)
+                ->field('dateFin')->gte($mongoStartDate)
                 ->field('techniciens')->includesReferenceTo($technicien)
                 ->sort('dateDebut', 'asc')
                 ->getQuery();
