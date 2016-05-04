@@ -586,11 +586,6 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         return $this->mouvements;
     }
 
-    public function isTerminee() {
-
-        return ($this->getDateFin() < new \DateTime());
-    }
-
     public function updateObject() {
         if (!$this->getNbPassages()) {
             $max = 0;
@@ -1060,6 +1055,10 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     
     public function isEnAttenteAcceptation() {
         return ($this->statut == ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+    }
+    
+    public function isFini() {
+        return ($this->statut == ContratManager::STATUT_FINI);
     }
 
     /**
