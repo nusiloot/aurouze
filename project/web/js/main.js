@@ -16,8 +16,15 @@
         $.initModalPassage();
         $.initBtnSwitch();
         $.initCollapseCheckbox();
+        $.initTextSelector();
     });
-
+    $.initTextSelector = function () {
+    	$('.text-selector').click(function(){
+    		console.log('yop');
+    		$(this).select();
+        }); 
+    		
+    }
     $.initCollapseCheckbox = function () {
 
     	$('.collapse-checkbox').click(function(){
