@@ -37,13 +37,13 @@ class ContratUpdateStatutCommand extends ContainerAwareCommand {
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
 
         echo "\nMis à jour des contrats non acceptés...\n";
-      //  $this->updateContratsNonAcceptes($output);
+        $this->updateContratsNonAcceptes($output);
 
         echo "\nMis à jour des contrats résiliés...\n";
-      //  $this->updateContratsResilies($output);
+        $this->updateContratsResilies($output);
 
         echo "\nMis à jour des passages en attente...\n";
-      //  $this->updatePassagesAPlanifier($output);
+        $this->updatePassagesAPlanifier($output);
 
         echo "\nMis à jour des contrats à venir...\n";
         $this->updateContratsAVenir($output);
