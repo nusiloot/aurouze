@@ -3,38 +3,38 @@ body {
 }
 
 #ajax_notifications {
-	position: fixed;
-	width: 100%;
-	top: 0;
-	z-index: 1199;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1199;
 }
 
 #ajax_form_progress_notification, #ajax_form_error_notification {
-	display: none;
-	margin: 2px auto;
-	color: #fff;
-	padding: 5px;
-	text-align: center;
-	// .opacite(0.9);
+    display: none;
+    margin: 2px auto;
+    color: #fff;
+    padding: 5px;
+    text-align: center;
+    // .opacite(0.9);
 }
 
 #ajax_form_progress_notification {
-	background: #114C8D;
-	z-index: 1200;
-	width: 150px;
+    background: #114C8D;
+    z-index: 1200;
+    width: 150px;
 }
 
 #ajax_form_error_notification {
-	z-index: 1201;
-	background: #900000;
-	width: 400px;
+    z-index: 1201;
+    background: #900000;
+    width: 400px;
     a
     {
         color: #fff;
         text-decoration : underline;
     }
 
-   a:hover { text-decoration : none; }
+    a:hover { text-decoration : none; }
 }
 
 .tooltip {
@@ -56,6 +56,31 @@ body {
     display: none;
 }
 .panel-heading .checkbox {
-	margin: 0;
-	
+    margin: 0;
+
+}
+
+.badge-danger {
+    background-color: #d43f3a !important;
+    color: white !important;
+}
+
+.badge-warning {
+    background-color: #d58512 !important;
+    color: white !important;
+}
+
+.badge-success {
+    background-color: #398439 !important;
+    color: white !important;
+}
+
+.badge-info {
+    background-color: #269abc !important;
+    color: white !important;
+}
+
+.badge-inverse {
+    background-color: #333333 !important;
+    color: white !important;
 }

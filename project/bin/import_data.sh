@@ -180,8 +180,13 @@ echo -e "\n****************************************************\n"
 echo -e "\nMis en cohérence des techniciens...\n";
 echo -e "\n****************************************************\n";
 
-
 php app/console update:passages-update-technicien -vvv --no-debug
+
+echo -e "\n****************************************************\n"
+echo -e "\nMis en cohérence des prestations...\n";
+echo -e "\n****************************************************\n";
+
+php app/console update:contrat-update-prestation -vvv --no-debug
 
 #### Récupération et import des factures ####
 

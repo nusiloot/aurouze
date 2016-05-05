@@ -40,7 +40,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $produits;
 
-
     /**
      * @MongoDB\String
      */
@@ -107,8 +106,8 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $contrat;
 
     /**
-    * @MongoDB\String
-    */
+     * @MongoDB\String
+     */
     protected $numeroArchive;
 
     /**
@@ -146,14 +145,28 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function getNumeroPassage() {
-
-        return "1";
+        if ($this->isControle()) {
+            return "C";
+        }
+        if ($this->isGarantie()) {
+            return "G";
+        }
+        $numero = 1;
+        foreach ($this->getContrat()->getPassages($this->getEtablissement()) as $passageId => $p) {
+            if ($passageId == $this->getId()) {
+                return $numero;
+            }
+            if ($p->isSousContrat()) {
+                $numero++;
+            }
+        }
+        return "?";
     }
 
     public function getTechniciensIdentite() {
         $techniciens = array();
 
-        foreach($this->getTechniciens() as $technicien) {
+        foreach ($this->getTechniciens() as $technicien) {
             $techniciens[$technicien->getId()] = $technicien->getIdentite();
         }
 
@@ -173,7 +186,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function setDuree($duree) {
-
+        
     }
 
     public function isRealise() {
@@ -284,8 +297,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getIdentifiant() {
         return $this->identifiant;
     }
-
-
 
     /**
      * Set societeIdentifiant
@@ -657,12 +668,12 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
     public function getTimeDebut() {
         $dateTime = $this->getDateDebut();
-        return ($dateTime)? $dateTime->format('H:i') : null;
+        return ($dateTime) ? $dateTime->format('H:i') : null;
     }
 
     public function getTimeFin() {
         $dateTime = $this->getDateFin();
-        return ($dateTime)? $dateTime->format('H:i') : null;
+        return ($dateTime) ? $dateTime->format('H:i') : null;
     }
 
     /**
@@ -725,7 +736,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->dateRealise;
     }
 
-
     /**
      * Set identifiantReprise
      *
@@ -746,15 +756,13 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->identifiantReprise;
     }
 
-
     /**
      * Set numeroArchive
      *
      * @param increment $numeroArchive
      * @return self
      */
-    public function setNumeroArchive($numeroArchive)
-    {
+    public function setNumeroArchive($numeroArchive) {
         $this->numeroArchive = $numeroArchive;
         return $this;
     }
@@ -764,8 +772,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      *
      * @return increment $numeroArchive
      */
-    public function getNumeroArchive()
-    {
+    public function getNumeroArchive() {
         return $this->numeroArchive;
     }
 
@@ -775,8 +782,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @param string $typePassage
      * @return self
      */
-    public function setTypePassage($typePassage)
-    {
+    public function setTypePassage($typePassage) {
         $this->typePassage = $typePassage;
         return $this;
     }
@@ -786,8 +792,20 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      *
      * @return string $typePassage
      */
-    public function getTypePassage()
-    {
+    public function getTypePassage() {
         return $this->typePassage;
     }
+
+    public function isSousContrat() {
+        return $this->getTypePassage() == PassageManager::TYPE_PASSAGE_CONTRAT;
+    }
+
+    public function isControle() {
+        return $this->getTypePassage() == PassageManager::TYPE_PASSAGE_CONTROLE;
+    }
+
+    public function isGarantie() {
+        return $this->getTypePassage() == PassageManager::TYPE_PASSAGE_GARANTIE;
+    }
+
 }
