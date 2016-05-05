@@ -808,4 +808,14 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->getTypePassage() == PassageManager::TYPE_PASSAGE_GARANTIE;
     }
 
+    public function copyTechnicienFromPassage(Passage $p) {
+        if (!count($this->getTechniciens()) && count($p->getTechniciens())) {
+            foreach ($p->getTechniciens() as $technicien) {
+                $this->addTechnicien($technicien);
+            }
+            return $this;
+        }
+        return false;
+    }
+
 }
