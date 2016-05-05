@@ -104,3 +104,17 @@ done < $DATA_DIR/contrats.csv.tmp
 echo -e "\nImport des contrats"
 
 php app/console importer:csv contrat.importer $DATA_DIR/contrats.csv -vvv --no-debug
+
+
+echo -e "\n****************************************************\n"
+echo -e "\nAjout des prestations dans les contrats...\n";
+echo -e "\n****************************************************\n";
+
+cat $DATA_DIR/tblPrestationPrestationType.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sort -t ';' -k 3,3 | grep -Ev 'RefPrestationPrestationType;RefPrestation;' > $DATA_DIR/contratsPrestationType.tmp.csv
+
+join -t ';' -a 1 -1 3 -2 1 $DATA_DIR/contratsPrestationType.tmp.csv $DATA_DIR/prestationType.sorted.csv  > $DATA_DIR/contratsPrestationType.csv
+
+cat $DATA_DIR/contratsPrestationType.csv | sed -r 's/(.*)/\1#/g' | sed -f $DATA_DIR/sed_prestations_utilises > $DATA_DIR/contratsPrestation.csv
+
+php app/console importer:csv contratPrestation.importer $DATA_DIR/contratsPrestation.csv -vvv --no-debug
+

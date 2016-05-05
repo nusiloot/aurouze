@@ -103,7 +103,7 @@ class ContratUpdateStatutCommand extends ContainerAwareCommand {
                         if ($passage->isEnAttente()) {
                             $passage->setStatut(PassageManager::STATUT_ANNULE);
                         } else {
-                            $output->writeln(sprintf("<comment>Le passage d'id %s ne semble pas en attente dans la base (contrat  %s) !</comment>", $passage->getId(), $contrat->getId()));
+                            $output->writeln(sprintf("<comment>ANNULATION DE PASSAGE : %s ne semble pas 'en attente' (statut='%s') => contrat  %s !</comment>", $passage->getId(),$passage->getStatut(), $contrat->getId()));
                         }
                     }
                 }

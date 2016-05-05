@@ -84,6 +84,7 @@ class Prestation {
         $mot_bois = array('TRAITEMENT DES BOIS');
         $mot_travaux = array('TRAVAUX DIVERS');
         $mot_DEIV = array('MAINTENANCE D.E.I.V');
+        $mot_desinfection = array('DESINFECTION','ASSAINISSEMENT');
         if($this->isPictoForLibelles($nom_libelles, $mot_rongeur)){
             $type_rongeur = "";
             if($this->isPictoForLibelles($nom_libelles,array('RATS'))){
@@ -116,7 +117,10 @@ class Prestation {
             return 'build mdi';
         }elseif($this->isPictoForLibelles($nom_libelles, $mot_DEIV)){
             return 'settings-input-component mdi';
+        }elseif($this->isPictoForLibelles($nom_libelles, $mot_desinfection)){
+            return 'delete mdi';
         }
+        
         
         return false;
     }

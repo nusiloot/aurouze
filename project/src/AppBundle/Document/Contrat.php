@@ -282,7 +282,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     public function addPrestation(\AppBundle\Document\Prestation $prestation) {
         foreach ($this->getPrestations() as $prest) {
-            if($prest == $prestation){
+            if($prest->getIdentifiant() == $prestation->getIdentifiant()){
                 return;
             }
         }
