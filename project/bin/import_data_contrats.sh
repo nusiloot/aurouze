@@ -10,7 +10,22 @@ echo -e "\n\nRécupération des contrats"
 cat $DATA_DIR/tblPrestationAdresse.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationAdresse.sorted.csv
 
 
-cat $DATA_DIR/tblPrestation.cleaned.csv | grep -v "RefPrestation;RefEntite;" | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
+cat $DATA_DIR/tblPrestation.tmp.cleaned.csv | grep -Ev '"' > $DATA_DIR/tblPrestation1.cleaned.csv
+cat $DATA_DIR/tblPrestation.tmp.cleaned.csv | grep -E '"' | sed -r 's/\"\"//g'  > $DATA_DIR/tblPrestation2.cleaned.csv
+
+cat $DATA_DIR/tblPrestation2.cleaned.csv | sed -r 's/(;")([^"]+[^"]+)(";)/~\2~/g' > $DATA_DIR/tblPrestation2.tmp.cleaned.csv
+
+cat $DATA_DIR/tblPrestation2.tmp.cleaned.csv | awk -F '~'  '{
+nomenclature=$2;
+gsub(/;/,"",nomenclature);
+print $1 ";" nomenclature ";" $3;
+}' > $DATA_DIR/tblPrestation.cleaned.csv
+
+cat $DATA_DIR/tblPrestation1.cleaned.csv >> $DATA_DIR/tblPrestation.cleaned.csv
+
+cat $DATA_DIR/tblPrestation.cleaned.csv | sort -t ";" -k 1,1 > $DATA_DIR/prestation.sorted.csv
+
+cat $DATA_DIR/prestation.sorted.csv | grep -v "RefPrestation;RefEntite;" | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
     contrat_id=$1;
     societe_old_id=$2;
     contrat_archivage=$8;
