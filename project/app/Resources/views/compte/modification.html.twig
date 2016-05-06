@@ -1,0 +1,103 @@
+{% set _menu_active = 'societe' %}
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small> <a class="btn btn-sm btn-warning pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a></h3>
+        </div>
+    </div>
+    <h3>Modification d'un compte</h3>
+    <div class="row">
+        {{ form_start(form) }}
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Informations</strong></div>
+            <div class="panel-body col-xs-offset-2">
+                <div class="row">
+                    <div class="col-xs-3">
+                        {{ form_row(form.civilite) }}
+                    </div>
+               
+                    <div class="col-xs-3">
+                        {{ form_row(form.prenom) }}
+                    </div>
+                    <div class="col-xs-3">
+                        {{ form_row(form.nom) }}
+                    </div>
+                    <div class="col-xs-3">
+                        {{ form_row(form.actif) }}
+                    </div>
+                </div>
+                <div class="row">
+	                <div class="col-xs-6">
+	                	{#{{ form_row(form.tags) }}#}
+	                </div>
+	            </div>
+            </div>
+        </div>
+                    
+                    
+                    
+                <div class="panel panel-default">
+		            <div class="panel-heading">
+		            	<strong>Adresse</strong>
+		                <div class="pull-right">
+		            		{{ form_row(form.sameAdresse) }}
+		            	</div>
+		            </div>
+		            <div class="panel-body col-xs-offset-2 collapse{% if not compte.sameAdresse %} in{% endif %}" id="collapseAdresse">
+		                <div class="row">
+		                    <div class="col-xs-10">
+		                        {{ form_row(form.adresse.adresse) }}
+		                    </div>
+		                </div>
+		                <div class="row">
+		                    <div class="col-xs-3">
+		                        {{ form_row(form.adresse.codePostal) }}
+		                    </div>
+		                    <div class="col-xs-7">
+		                        {{ form_row(form.adresse.commune) }}
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		        <div class="panel panel-default">
+		            <div class="panel-heading">
+		            	<strong>Contact</strong>
+		                <div class="pull-right">
+		            		{{ form_row(form.sameContact) }}
+		            	</div>
+		            </div>
+		            <div class="panel-body col-xs-offset-2 collapse{% if not compte.sameContact %} in{% endif %}" id="collapseContact">
+		                <div class="row">
+		                    <div class="col-xs-4">
+		                        {{ form_row(form.contactCoordonnee.telephoneFixe) }}
+		                    </div>
+		                    <div class="col-xs-6">
+		                        {{ form_row(form.contactCoordonnee.email) }}
+		                    </div>
+		                </div>
+		                <div class="row">
+		                    <div class="col-xs-4">
+		                        {{ form_row(form.contactCoordonnee.telephoneMobile) }}
+		                    </div>
+		                    <div class="col-xs-6">
+		                        {{ form_row(form.contactCoordonnee.siteInternet) }}
+		                    </div>
+		                </div>
+		                <div class="row">
+		                    <div class="col-xs-4">
+		                        {{ form_row(form.contactCoordonnee.fax) }}
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+     
+        <div class="row">
+            <div class="col-xs-12">
+                {{ form_widget(form.save) }}
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

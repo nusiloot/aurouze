@@ -24,6 +24,7 @@ class CompteManager {
     const TYPE_COMMERCIAL = "COMMERCIAL";
     const TYPE_ADMINISTRATIF = "ADMINISTRATIF";
     const TYPE_AUTRE = "AUTRE";
+    const TYPE_CALENDRIER = "CALENDRIER";
     
     const CIVILITE_MONSIEUR = "Monsieur";
     const CIVILITE_MADAME = "Madame";
@@ -42,6 +43,7 @@ class CompteManager {
         self::TYPE_COMMERCIAL => 'Commercial',
         self::TYPE_AUTRE => 'Autre',
         self::TYPE_TECHNICIEN => 'Technicien',
+        self::TYPE_CALENDRIER => 'Calendrier',
     );
 
 
