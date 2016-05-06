@@ -415,7 +415,16 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return string $libelle
      */
     public function getLibelle() {
-        return $this->libelle;
+        $nbPassage = $this->getNumeroPassage();
+        if($nbPassage == 'G'){
+            return "Passage en garantie";
+        }
+        if($nbPassage == 'C'){
+            return "Passage de contrôle";
+        }
+       
+            return "Passage ".$nbPassage." sur ".$this->getContrat()->getNbPassagesPrevu()." (sous contrat)";
+        
     }
 
     /**
