@@ -32,12 +32,17 @@ class FactureCsvImporter {
     protected $fm;
     protected $cm;
 
+    protected $facturesRedressees = array();
+    protected $contratsNbFactures = array();
+
     const CSV_FACTURE_ID = 0;
     const CSV_NUMERO_FACTURE = 1;
     const CSV_IS_AVOIR = 2;
     const CSV_REF_AVOIR = 3;
     const CSV_CONTRAT_ID = 7;
     const CSV_SOCIETE_ID = 5;
+    const CSV_TVA_REDUITE = 21;
+    const CSV_DESCRIPTION = 13;
     const CSV_FACTURE_LIGNE_ID = 27;
     const CSV_FACTURE_LIGNE_PASSAGE = 28;
     const CSV_FACTURE_LIGNE_PRODUIT = 29;
@@ -50,8 +55,6 @@ class FactureCsvImporter {
     const CSV_REGLEMENT_TYPE = 10;
     const CSV_VEROUILLE = 12;
     const CSV_FACTURE_CMT = 13;
-    const CSV_TVA_REDUITE = 21;
-    const CSV_DATE_CREATION = 22;
 
     public function __construct(DocumentManager $dm, FactureManager $fm, SocieteManager $sm, ContratManager $cm) {
         $this->dm = $dm;
@@ -75,7 +78,6 @@ class FactureCsvImporter {
         $currentIdFacture = null;
 
         foreach ($csv as $data) {
-
             if(is_null($currentIdFacture)) {
                 $currentIdFacture = $data[self::CSV_FACTURE_ID];
             }
@@ -86,15 +88,7 @@ class FactureCsvImporter {
                 continue;
             }
 
-            $this->importFacture($lignes);
-            $lignes[] = $data;
-
-
-
-            $facture->update();
-            $this->dm->persist($facture);
-
-
+            $this->importFacture($lignes, $output);
 
             $i++;
             $cptTotal++;
@@ -103,51 +97,70 @@ class FactureCsvImporter {
             }
 
             if ($i >= 1000) {
-                //$this->dm->flush();
+                $this->dm->flush();
+                $this->dm->clear();
                 $i = 0;
             }
+
+            $lignes = array();
+            $currentIdFacture = $data[self::CSV_FACTURE_ID];
+            $lignes[] = $data;
         }
+
+        $this->importFacture($lignes);
 
         $this->dm->flush();
         $progress->finish();
     }
 
-    public function importFacture($lignes) {
+    public function importFacture($lignes, $output) {
         $ligneFacture = $lignes[0];
+
+        $facture = $this->fm->getRepository()->findOneByIdentifiantReprise($ligneFacture[self::CSV_FACTURE_ID]);
+        if ($facture) {
+            $output->writeln(sprintf("<comment>La facture %s existe déjà avec l'id %s </comment>", $ligneFacture[self::CSV_FACTURE_ID], $facture->getId()));
+            return;
+        }
 
         $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $ligneFacture[self::CSV_SOCIETE_ID]));
 
         if (!$societe) {
             $output->writeln(sprintf("<error>La societe %s n'existe pas</error>", $ligneFacture[self::CSV_SOCIETE_ID]));
-            continue;
+            return;
         }
 
-        $facture = $this->fm->getRepository()->findOneByIdentifiantReprise($ligneFacture[self::CSV_FACTURE_ID]);
-        if ($facture) {
-            $output->writeln(sprintf("<comment>La facture %s existe déjà avec l'id %s </comment>", $ligneFacture[self::CSV_FACTURE_ID], $facture->getId()));
-            continue;
-        }
-
-        $facture = new Facture();
-        $facture->setDateEmission(new \DateTime($ligneFacture[self::CSV_DATE_FACTURATION]));
-        $facture->setDateFacturation(new \DateTime($ligneFacture[self::CSV_DATE_FACTURATION]));
-        $facture->setSociete($societe);
-
-        $facture->setIdentifiantReprise($ligneFacture[self::CSV_FACTURE_ID]);
-        $facture->setNumeroFacture($ligneFacture[self::CSV_NUMERO_FACTURE]);
-
+        $mouvements = array();
         foreach($lignes as $ligne) {
-
             $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($ligne[self::CSV_CONTRAT_ID]);
 
+            if($ligne[self::CSV_CONTRAT_ID] && !$contrat) {
+                $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $ligneFacture[self::CSV_CONTRAT_ID]));
+                return;
+            }
+
+            $coefficient = ($ligneFacture[self::CSV_IS_AVOIR]) ? -1 : 1;
+
             $mouvement = new Mouvement();
-            $mouvement->setPrix($ligne[self::CSV_FACTURE_LIGNE_PUHT]);
-            $mouvement->setFacturable(true);
-            $mouvement->setFacture($mvtIsFacture);
+            $mouvement->setFacturable(boolval($ligneFacture[self::CSV_NUMERO_FACTURE]));
+            $mouvement->setFacture(false);
+            $mouvement->setPrixUnitaire($ligne[self::CSV_FACTURE_LIGNE_PUHT] * $coefficient);
+            $mouvement->setQuantite($ligne[self::CSV_FACTURE_LIGNE_QTE]);
+            if($ligne[self::CSV_FACTURE_LIGNE_TVA] == 1) {
+                $mouvement->setTauxTaxe(0.055);
+            } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 2) {
+                $mouvement->setTauxTaxe(0.196);
+            } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 3) {
+                $mouvement->setTauxTaxe(0.07);
+            } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 4) {
+                $mouvement->setTauxTaxe(0.2);
+            } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 5) {
+                $mouvement->setTauxTaxe(0.1);
+            }
+            $mouvement->setIdentifiant($ligne[self::CSV_FACTURE_LIGNE_ID]);
+            $mouvement->setSociete($societe->getId());
+            $mouvement->setLibelle(preg_replace('/^".*"$/', "", str_replace('#', "\n", $ligne[self::CSV_FACTURE_LIGNE_LIBELLE])));
 
-            $mouvement->setLibelle(str_replace('#', "\n", $ligne[self::CSV_FACTURE_LIGNE_LIBELLE]));
-
-            if ($ligne[self::CSV_FACTURE_LIGNE_PASSAGE]) {
+            /*if ($ligne[self::CSV_FACTURE_LIGNE_PASSAGE]) {
                 $refPassage = str_replace('#', "", $ligne[self::CSV_FACTURE_LIGNE_PASSAGE]);
                 $passage = $this->dm->getRepository('AppBundle:Passage')->findOneByIdentifiantReprise($refPassage);
                 if (!$passage) {
@@ -156,27 +169,49 @@ class FactureCsvImporter {
                     $passage->setMouvementDeclenchable(true);
                     $passage->setMouvementDeclenche($mvtIsFacture);
                 }
-            }
+            }*/
 
             if($contrat) {
-                $mouvement->setOrigineDocument($contrat);
+                $mouvement->setDocument($contrat);
+            }
+
+            if($contrat && !array_key_exists($contrat->getId(), $this->contratsNbFactures)) {
+                $this->contratsNbFactures[$contrat->getId()] = 0;
+            }
+
+            if($contrat && !$ligneFacture[self::CSV_IS_AVOIR]) {
+                $this->contratsNbFactures[$contrat->getId()] += 1;
+            }
+
+            if($contrat && $ligneFacture[self::CSV_IS_AVOIR]) {
+                $this->contratsNbFactures[$contrat->getId()] -= 1;
+            }
+
+            if($mouvement->isFacturable() && $contrat) {
                 $contrat->addMouvement($mouvement);
             }
 
-            $fl = new FactureLigne();
+            $mouvements[] = $mouvement;
+        }
 
-            $fl->setLibelle(str_replace('#', "\n", $ligne[self::CSV_FACTURE_LIGNE_LIBELLE]));
-            $fl->setMontantHT($ligne[self::CSV_FACTURE_LIGNE_PUHT]);
-            $fl->setPrixUnitaire($ligne[self::CSV_FACTURE_LIGNE_PUHT]);
-            $fl->setQuantite($ligne[self::CSV_FACTURE_LIGNE_QTE]);
-            $fl->setTauxTaxe(0.2);
-            if ($ligne[self::CSV_TVA_REDUITE]) {
-                $fl->setTauxTaxe(0.1);
-            }
-            if($contrat) {
-                $fl->setOrigineDocument($contrat);
-            }
-            $facture->addLigne($fl);
+        if(!$ligneFacture[self::CSV_NUMERO_FACTURE]) {
+            return;
+        }
+
+        $facture = $this->fm->create($societe, $mouvements, new \DateTime($ligneFacture[self::CSV_DATE_FACTURATION]));
+
+        $facture->setDateEmission(new \DateTime($ligneFacture[self::CSV_DATE_FACTURATION]));
+        $facture->setDateLimitePaiement(new \DateTime($ligneFacture[self::CSV_DATE_LIMITE_REGLEMENT]));
+
+        $facture->setIdentifiantReprise($ligneFacture[self::CSV_FACTURE_ID]);
+        $facture->setNumeroFacture($ligneFacture[self::CSV_NUMERO_FACTURE]);
+        $facture->setDescription(preg_replace('/^".*"$/', "", str_replace('#', "\n", $ligne[self::CSV_DESCRIPTION])));
+        $facture->facturerMouvements();
+
+        $this->dm->persist($facture);
+
+        if($ligneFacture[self::CSV_REF_AVOIR]) {
+            $this->facturesRedressees[$ligneFacture[self::CSV_REF_AVOIR]] = $facture->getId();
         }
     }
 

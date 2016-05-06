@@ -76,12 +76,12 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @MongoDB\String
      */
     protected $nomenclature;
-    
+
     /**
      * @MongoDB\String
      */
     protected $commentaire;
-    
+
     /**
      * @MongoDB\String
      */
@@ -121,7 +121,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @MongoDB\Date
      */
     protected $dateResiliation;
-    
+
     /**
      * @MongoDB\Int
      */
@@ -153,7 +153,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     protected $prixHt;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Mouvement")
+     * @MongoDB\EmbedMany(targetDocument="Mouvement", strategy="set")
      */
     protected $mouvements;
 
@@ -188,9 +188,9 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     protected $referenceClient;
 
     public function __construct() {
-        $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->produits = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->etablissements = new ArrayCollection();
+        $this->prestations = new ArrayCollection();
+        $this->produits = new ArrayCollection();
         $this->mouvements = new ArrayCollection();
         $this->contratPassages = array();
     }
@@ -559,33 +559,6 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         return $this->statut;
     }
 
-    /**
-     * Add mouvement
-     *
-     * @param AppBundle\Document\Mouvement $mouvement
-     */
-    public function addMouvement(\AppBundle\Document\Mouvement $mouvement) {
-        $this->mouvements[] = $mouvement;
-    }
-
-    /**
-     * Remove mouvement
-     *
-     * @param AppBundle\Document\Mouvement $mouvement
-     */
-    public function removeMouvement(\AppBundle\Document\Mouvement $mouvement) {
-        $this->mouvements->removeElement($mouvement);
-    }
-
-    /**
-     * Get mouvements
-     *
-     * @return \Doctrine\Common\Collections\Collection $mouvements
-     */
-    public function getMouvements() {
-        return $this->mouvements;
-    }
-
     public function updateObject() {
         if (!$this->getNbPassages()) {
             $max = 0;
@@ -744,7 +717,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         }
         return $passagesDatesArray;
     }
-    
+
     public function getTypeContratLibelle() {
         if(!$this->getTypeContrat()){
             return "";
@@ -843,7 +816,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
             }
         }
     }
-    
+
     /**
      * Add contratPassage
      *
@@ -1034,29 +1007,29 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     public function getTvaReduite()
     {
         return $this->tvaReduite;
-        
+
     }
-    
+
      public function isResilie() {
         return ($this->statut == ContratManager::STATUT_RESILIE);
     }
-    
+
     public function isBrouillon() {
         return ($this->statut == ContratManager::STATUT_BROUILLON);
     }
-    
+
      public function isEnCours() {
         return ($this->statut == ContratManager::STATUT_EN_COURS);
     }
-    
+
      public function isAVenir() {
         return ($this->statut == ContratManager::STATUT_A_VENIR);
     }
-    
+
     public function isEnAttenteAcceptation() {
         return ($this->statut == ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
     }
-    
+
     public function isFini() {
         return ($this->statut == ContratManager::STATUT_FINI);
     }
@@ -1104,12 +1077,12 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     {
         return $this->markdown;
     }
-    
+
     public function isTacite()
     {
     	return $this->getTypeContrat() == ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE;
     }
-    
+
     public function getTva()
     {
     	return ($this->getTvaReduite())? 0.1 : 0.2;
@@ -1179,5 +1152,35 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     public function getReferenceClient()
     {
         return $this->referenceClient;
+    }
+
+    /**
+     * Add mouvement
+     *
+     * @param AppBundle\Document\Mouvement $mouvement
+     */
+    public function addMouvement(\AppBundle\Document\Mouvement $mouvement)
+    {
+        $this->mouvements[$mouvement->getIdentifiant()] = $mouvement;
+    }
+
+    /**
+     * Remove mouvement
+     *
+     * @param AppBundle\Document\Mouvement $mouvement
+     */
+    public function removeMouvement(\AppBundle\Document\Mouvement $mouvement)
+    {
+        $this->mouvements->removeElement($mouvement);
+    }
+
+    /**
+     * Get mouvements
+     *
+     * @return \Doctrine\Common\Collections\Collection $mouvements
+     */
+    public function getMouvements()
+    {
+        return $this->mouvements;
     }
 }

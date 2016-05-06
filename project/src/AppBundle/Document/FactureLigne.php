@@ -39,9 +39,51 @@ class FactureLigne {
     protected $montantTaxe;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="AppBundle\Document\Contrat")
+     * @MongoDB\ReferenceOne()
      */
     protected $origineDocument;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $origineMouvement;
+
+    public function update() {
+        $this->montantHT = round($this->getQuantite() * $this->getPrixUnitaire(), 2);
+        $this->montantTaxe = round($this->getMontantHT() * $this->getTauxTaxe(), 2);
+    }
+
+    public function isOrigineContrat() {
+
+        return $this->getOrigineDocument() && $this->getOrigineDocument() instanceof \AppBundle\Document\Contrat;
+    }
+
+    public function pullFromMouvement(Mouvement $mouvement) {
+        $this->setLibelle($mouvement->getLibelle());
+        $this->setQuantite($mouvement->getQuantite());
+        $this->setPrixUnitaire($mouvement->getPrixUnitaire());
+        $this->setTauxTaxe($mouvement->getTauxTaxe());
+        $this->setOrigineDocument($mouvement->getDocument());
+        $this->setOrigineMouvement($mouvement->getIdentifiant());
+    }
+
+    public function facturerMouvement() {
+        if(!$this->getOrigineDocument()) {
+
+            return null;
+        }
+        
+        $this->getMouvement()->facturer();
+    }
+
+    public function getMouvement() {
+        if(!$this->getOrigineDocument()) {
+
+            return null;
+        }
+
+        return $this->getOrigineDocument()->getMouvements()->get($this->getOrigineMouvement());
+    }
 
     /**
      * Set libelle
@@ -107,16 +149,6 @@ class FactureLigne {
     public function getQuantite()
     {
         return $this->quantite;
-    }
-
-    public function update() {
-        $this->montantHT = round($this->getQuantite() * $this->getPrixUnitaire(), 2);
-        $this->montantTaxe = round($this->getMontantHT() * $this->getTauxTaxe(), 2);
-    }
-
-    public function isOrigineContrat() {
-
-        return $this->getOrigineDocument() && $this->getOrigineDocument() instanceof \AppBundle\Document\Contrat;
     }
 
     /**
@@ -189,10 +221,10 @@ class FactureLigne {
     /**
      * Set origineDocument
      *
-     * @param AppBundle\Model\DocumentFacturableInterface $origineDocument
+     * @param $origineDocument
      * @return self
      */
-    public function setOrigineDocument(\AppBundle\Model\DocumentFacturableInterface $origineDocument)
+    public function setOrigineDocument($origineDocument)
     {
         $this->origineDocument = $origineDocument;
         return $this;
@@ -201,10 +233,32 @@ class FactureLigne {
     /**
      * Get origineDocument
      *
-     * @return AppBundle\Model\DocumentFacturableInterface $origineDocument
+     * @return $origineDocument
      */
     public function getOrigineDocument()
     {
         return $this->origineDocument;
+    }
+
+    /**
+     * Set origineMouvement
+     *
+     * @param string $origineMouvement
+     * @return self
+     */
+    public function setOrigineMouvement($origineMouvement)
+    {
+        $this->origineMouvement = $origineMouvement;
+        return $this;
+    }
+
+    /**
+     * Get origineMouvement
+     *
+     * @return string $origineMouvement
+     */
+    public function getOrigineMouvement()
+    {
+        return $this->origineMouvement;
     }
 }

@@ -46,6 +46,11 @@ class Facture implements DocumentSocieteInterface {
     protected $datePaiement;
 
     /**
+     * @MongoDB\Date
+     */
+    protected $dateLimitePaiement;
+
+    /**
      * @MongoDB\Float
      */
     protected $montantHT;
@@ -64,16 +69,26 @@ class Facture implements DocumentSocieteInterface {
      * @MongoDB\EmbedMany(targetDocument="FactureLigne")
      */
     protected $lignes;
-    
+
     /**
      * @MongoDB\String
      */
     protected $identifiantReprise;
-    
+
+    /**
+    * @MongoDB\String
+    */
+   protected $description;
+
      /**
      * @MongoDB\String
      */
     protected $numeroFacture;
+
+    /**
+    * @MongoDB\String
+    */
+    protected $avoir;
 
     public function __construct()
     {
@@ -98,6 +113,12 @@ class Facture implements DocumentSocieteInterface {
 
         $destinataire->setNom($societe->getRaisonSociale());
         $destinataire->setAdresse(clone $societe->getAdresse());
+    }
+
+    public function facturerMouvements() {
+        foreach($this->getLignes() as $ligne) {
+            $ligne->facturerMouvement();
+        }
     }
 
     /**
@@ -406,5 +427,49 @@ class Facture implements DocumentSocieteInterface {
     public function getNumeroFacture()
     {
         return $this->numeroFacture;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return self
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string $description
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set avoir
+     *
+     * @param string $avoir
+     * @return self
+     */
+    public function setAvoir($avoir)
+    {
+        $this->avoir = $avoir;
+        return $this;
+    }
+
+    /**
+     * Get avoir
+     *
+     * @return string $avoir
+     */
+    public function getAvoir()
+    {
+        return $this->avoir;
     }
 }
