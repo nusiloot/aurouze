@@ -20,7 +20,7 @@ use AppBundle\Manager\ContratManager;
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\ContratRepository") @HasLifecycleCallbacks
  *
  */
-class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface {
+class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\ContratGenerator"})
@@ -62,7 +62,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     protected $numeroArchive;
 
-     /**
+    /**
      * @MongoDB\Boolean
      */
     protected $multiTechnicien;
@@ -167,22 +167,22 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     protected $identifiantReprise;
 
-     /**
+    /**
      * @MongoDB\Boolean
      */
     protected $tvaReduite;
 
-     /**
+    /**
      * @MongoDB\Collection
      */
     protected $moyens;
 
-     /**
+    /**
      * @MongoDB\String
      */
     protected $conditionsParticulieres;
 
-     /**
+    /**
      * @MongoDB\String
      */
     protected $referenceClient;
@@ -282,7 +282,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     public function addPrestation(\AppBundle\Document\Prestation $prestation) {
         foreach ($this->getPrestations() as $prest) {
-            if($prest->getIdentifiant() == $prestation->getIdentifiant()){
+            if ($prest->getIdentifiant() == $prestation->getIdentifiant()) {
                 return;
             }
         }
@@ -314,7 +314,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     public function addProduit(\AppBundle\Document\Produit $produit) {
         foreach ($this->getProduits() as $prod) {
-            if($prod == $produit){
+            if ($prod == $produit) {
                 return;
             }
         }
@@ -476,6 +476,18 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @return int $nbPassages
      */
     public function getNbPassages() {
+        if (!$this->nbPassages) {
+            $nbPassagesEtb = array();
+            foreach ($this->getContratPassages() as $contratPassage) {
+                $nbPassagesEtb[$contratPassage->getEtablissement()->getId()] = 0;
+                foreach ($contratPassage->getPassages() as $p) {
+                    if ($p->isSousContrat()) {
+                        $nbPassagesEtb[$contratPassage->getEtablissement()->getId()] = $nbPassagesEtb[$contratPassage->getEtablissement()->getId()] + 1;
+                    }
+                }
+            }
+            $this->setNbPassages(max($nbPassagesEtb));
+        }
         return $this->nbPassages;
     }
 
@@ -569,30 +581,29 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
             }
             $this->setNbPassages($max);
         }
-
     }
 
-    public function updatePrestations($dm){
+    public function updatePrestations($dm) {
         $cm = new ConfigurationManager($dm);
         $configuration = $cm->getRepository()->findOneById(Configuration::PREFIX);
         $prestationArray = $configuration->getPrestationsArray();
-         foreach ($this->getPrestations() as $prestation) {
-            $prestationNom =  $prestationArray[$prestation->getIdentifiant()];
+        foreach ($this->getPrestations() as $prestation) {
+            $prestationNom = $prestationArray[$prestation->getIdentifiant()];
             $prestation->setNom($prestationNom);
         }
     }
-    public function updateProduits($dm){
+
+    public function updateProduits($dm) {
         $cm = new ConfigurationManager($dm);
         $configuration = $cm->getRepository()->findOneById(Configuration::PREFIX);
         $produitsArray = $configuration->getProduitsArray();
-         foreach ($this->getProduits() as $produit) {
-            $produitConf =  $produitsArray[$produit->getIdentifiant()];
+        foreach ($this->getProduits() as $produit) {
+            $produitConf = $produitsArray[$produit->getIdentifiant()];
             $produit->setNom($produitConf->getNom());
             $produit->setPrixHt($produitConf->getPrixHt());
             $produit->setPrixPrestation($produitConf->getPrixPrestation());
         }
     }
-
 
     public function getHumanDureePassage() {
         $duree = $this->getDureePassage();
@@ -613,6 +624,10 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         $prixMouvement = $this->getPrixMouvements();
 
         return $this->getPrixHt() - $this->getPrixMouvements();
+    }
+
+    public function getNbPassagesPrevu() {
+        return $this->getNbPassages();
     }
 
     public function getNbFacturesRestantes() {
@@ -650,7 +665,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
             }
         }
         $passagesDatesArray = array();
-        if(!count($this->getPrestations())){
+        if (!count($this->getPrestations())) {
             return $passagesDatesArray;
         }
         $monthInterval = (floatval($dureeContratMois) / floatval($maxNbPrestations));
@@ -719,41 +734,37 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     }
 
     public function getTypeContratLibelle() {
-        if(!$this->getTypeContrat()){
+        if (!$this->getTypeContrat()) {
             return "";
         }
         return ContratManager::$types_contrat_libelles[$this->getTypeContrat()];
     }
 
-    public function getPassagesEtablissementNode(Etablissement $etablissement)
-    {
-          $contratPassages = $this->getContratPassages();
-        if(!isset($contratPassages[$etablissement->getId()])){
+    public function getPassagesEtablissementNode(Etablissement $etablissement) {
+        $contratPassages = $this->getContratPassages();
+        if (!isset($contratPassages[$etablissement->getId()])) {
             return null;
         }
 
         return $contratPassages[$etablissement->getId()];
     }
 
-    public function getPassages(Etablissement $etablissement)
-    {
-        if(!isset($this->contratPassages[$etablissement->getId()])){
+    public function getPassages(Etablissement $etablissement) {
+        if (!isset($this->contratPassages[$etablissement->getId()])) {
             return array();
         }
 
         return $this->contratPassages[$etablissement->getId()]->getPassagesSorted();
     }
 
-
     /**
      * Add etablissement
      *
      * @param AppBundle\Document\Etablissement $etablissement
      */
-    public function addEtablissement(\AppBundle\Document\Etablissement $etablissement)
-    {
-        foreach ($this->getEtablissements() as $etb){
-            if($etb->getId() == $etablissement->getId()){
+    public function addEtablissement(\AppBundle\Document\Etablissement $etablissement) {
+        foreach ($this->getEtablissements() as $etb) {
+            if ($etb->getId() == $etablissement->getId()) {
                 return;
             }
         }
@@ -765,8 +776,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @param AppBundle\Document\Etablissement $etablissement
      */
-    public function removeEtablissement(\AppBundle\Document\Etablissement $etablissement)
-    {
+    public function removeEtablissement(\AppBundle\Document\Etablissement $etablissement) {
         $this->etablissements->removeElement($etablissement);
     }
 
@@ -775,8 +785,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return \Doctrine\Common\Collections\Collection $etablissements
      */
-    public function getEtablissements()
-    {
+    public function getEtablissements() {
         return $this->etablissements;
     }
 
@@ -786,8 +795,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param AppBundle\Document\Compte $technicien
      * @return self
      */
-    public function setTechnicien(\AppBundle\Document\Compte $technicien)
-    {
+    public function setTechnicien(\AppBundle\Document\Compte $technicien) {
         $this->technicien = $technicien;
         return $this;
     }
@@ -797,19 +805,18 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return AppBundle\Document\Compte $technicien
      */
-    public function getTechnicien()
-    {
+    public function getTechnicien() {
         return $this->technicien;
     }
 
     public function changeTechnicien($newTechnicien) {
-        if(!$newTechnicien){
+        if (!$newTechnicien) {
             return false;
         }
         $this->setTechnicien($newTechnicien);
         foreach ($this->getContratPassages() as $contratPassage) {
             foreach ($contratPassage->getPassagesSorted() as $passage) {
-                if($passage->isEnAttente() || $passage->isAPlanifie()){
+                if ($passage->isEnAttente() || $passage->isAPlanifie()) {
                     $passage->removeAllTechniciens();
                     $passage->addTechnicien($newTechnicien);
                 }
@@ -822,18 +829,17 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @param AppBundle\Document\Passage $passage
      */
-    public function addPassage(\AppBundle\Document\Etablissement $etablissement, Passage $passage)
-    {
+    public function addPassage(\AppBundle\Document\Etablissement $etablissement, Passage $passage) {
         $contratPassagesToSet = new ContratPassages();
         foreach ($this->getContratPassages() as $contratPassages) {
-            if($etablissement->getId() == $contratPassages->getEtablissement()->getId()){
+            if ($etablissement->getId() == $contratPassages->getEtablissement()->getId()) {
                 $contratPassagesToSet = $contratPassages;
             }
         }
         $contratPassagesToSet->addPassage($passage);
         $contratPassagesToSet->setEtablissement($etablissement);
 
-        $this->addContratPassage($etablissement,$contratPassagesToSet);
+        $this->addContratPassage($etablissement, $contratPassagesToSet);
     }
 
     /**
@@ -841,8 +847,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @param AppBundle\Document\ContratPassages $contratPassage
      */
-    public function addContratPassage($etablissement, \AppBundle\Document\ContratPassages $contratPassage)
-    {
+    public function addContratPassage($etablissement, \AppBundle\Document\ContratPassages $contratPassage) {
         $this->contratPassages[$etablissement->getId()] = $contratPassage;
     }
 
@@ -851,8 +856,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @param AppBundle\Document\ContratPassages $contratPassage
      */
-    public function removeContratPassage(\AppBundle\Document\ContratPassages $contratPassage)
-    {
+    public function removeContratPassage(\AppBundle\Document\ContratPassages $contratPassage) {
         $this->contratPassages->removeElement($contratPassage);
     }
 
@@ -861,8 +865,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return \Doctrine\Common\Collections\Collection $contratPassages
      */
-    public function getContratPassages()
-    {
+    public function getContratPassages() {
         return $this->contratPassages;
     }
 
@@ -872,8 +875,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param AppBundle\Document\Societe $societe
      * @return self
      */
-    public function setSociete(\AppBundle\Document\Societe $societe)
-    {
+    public function setSociete(\AppBundle\Document\Societe $societe) {
         $this->societe = $societe;
         return $this;
     }
@@ -883,8 +885,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return AppBundle\Document\Societe $societe
      */
-    public function getSociete()
-    {
+    public function getSociete() {
         return $this->societe;
     }
 
@@ -894,8 +895,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param boolean $multiTechnicien
      * @return self
      */
-    public function setMultiTechnicien($multiTechnicien)
-    {
+    public function setMultiTechnicien($multiTechnicien) {
         $this->multiTechnicien = $multiTechnicien;
         return $this;
     }
@@ -905,8 +905,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return boolean $multiTechnicien
      */
-    public function getMultiTechnicien()
-    {
+    public function getMultiTechnicien() {
         return $this->multiTechnicien;
     }
 
@@ -916,8 +915,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param string $numeroArchive
      * @return self
      */
-    public function setNumeroArchive($numeroArchive)
-    {
+    public function setNumeroArchive($numeroArchive) {
         $this->numeroArchive = $numeroArchive;
         return $this;
     }
@@ -927,8 +925,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return string $numeroArchive
      */
-    public function getNumeroArchive()
-    {
+    public function getNumeroArchive() {
         return $this->numeroArchive;
     }
 
@@ -938,8 +935,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param string $identifiantReprise
      * @return self
      */
-    public function setIdentifiantReprise($identifiantReprise)
-    {
+    public function setIdentifiantReprise($identifiantReprise) {
         $this->identifiantReprise = $identifiantReprise;
         return $this;
     }
@@ -949,8 +945,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return string $identifiantReprise
      */
-    public function getIdentifiantReprise()
-    {
+    public function getIdentifiantReprise() {
         return $this->identifiantReprise;
     }
 
@@ -959,11 +954,9 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return string $id
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
-
 
     /**
      * Set dateResiliation
@@ -971,8 +964,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param date $dateResiliation
      * @return self
      */
-    public function setDateResiliation($dateResiliation)
-    {
+    public function setDateResiliation($dateResiliation) {
         $this->dateResiliation = $dateResiliation;
         return $this;
     }
@@ -982,8 +974,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return date $dateResiliation
      */
-    public function getDateResiliation()
-    {
+    public function getDateResiliation() {
         return $this->dateResiliation;
     }
 
@@ -993,8 +984,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param boolean $tvaReduite
      * @return self
      */
-    public function setTvaReduite($tvaReduite)
-    {
+    public function setTvaReduite($tvaReduite) {
         $this->tvaReduite = $tvaReduite;
         return $this;
     }
@@ -1004,13 +994,13 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return boolean $tvaReduite
      */
-    public function getTvaReduite()
-    {
-        return $this->tvaReduite;
+    public function getTvaReduite() {
 
+        return $this->tvaReduite;
     }
 
-     public function isResilie() {
+    public function isResilie() {
+
         return ($this->statut == ContratManager::STATUT_RESILIE);
     }
 
@@ -1022,15 +1012,18 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         return ($this->statut == ContratManager::STATUT_EN_COURS);
     }
 
-     public function isAVenir() {
+    public function isAVenir() {
+
         return ($this->statut == ContratManager::STATUT_A_VENIR);
     }
 
     public function isEnAttenteAcceptation() {
+
         return ($this->statut == ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
     }
 
     public function isFini() {
+        
         return ($this->statut == ContratManager::STATUT_FINI);
     }
 
@@ -1040,8 +1033,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param string $commentaire
      * @return self
      */
-    public function setCommentaire($commentaire)
-    {
+    public function setCommentaire($commentaire) {
         $this->commentaire = $commentaire;
         return $this;
     }
@@ -1051,8 +1043,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return string $commentaire
      */
-    public function getCommentaire()
-    {
+    public function getCommentaire() {
         return $this->commentaire;
     }
 
@@ -1062,8 +1053,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param string $markdown
      * @return self
      */
-    public function setMarkdown($markdown)
-    {
+    public function setMarkdown($markdown) {
         $this->markdown = $markdown;
         return $this;
     }
@@ -1073,8 +1063,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return string $markdown
      */
-    public function getMarkdown()
-    {
+    public function getMarkdown() {
         return $this->markdown;
     }
 
@@ -1094,8 +1083,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param collection $moyens
      * @return self
      */
-    public function setMoyens($moyens)
-    {
+    public function setMoyens($moyens) {
         $this->moyens = $moyens;
         return $this;
     }
@@ -1105,8 +1093,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return collection $moyens
      */
-    public function getMoyens()
-    {
+    public function getMoyens() {
         return $this->moyens;
     }
 
@@ -1116,8 +1103,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param string $conditionsParticulieres
      * @return self
      */
-    public function setConditionsParticulieres($conditionsParticulieres)
-    {
+    public function setConditionsParticulieres($conditionsParticulieres) {
         $this->conditionsParticulieres = $conditionsParticulieres;
         return $this;
     }
@@ -1127,8 +1113,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return string $conditionsParticulieres
      */
-    public function getConditionsParticulieres()
-    {
+    public function getConditionsParticulieres() {
         return $this->conditionsParticulieres;
     }
 
@@ -1138,8 +1123,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      * @param string $referenceClient
      * @return self
      */
-    public function setReferenceClient($referenceClient)
-    {
+    public function setReferenceClient($referenceClient) {
         $this->referenceClient = $referenceClient;
         return $this;
     }
@@ -1149,8 +1133,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      *
      * @return string $referenceClient
      */
-    public function getReferenceClient()
-    {
+    public function getReferenceClient() {
         return $this->referenceClient;
     }
 
@@ -1183,4 +1166,5 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     {
         return $this->mouvements;
     }
+
 }

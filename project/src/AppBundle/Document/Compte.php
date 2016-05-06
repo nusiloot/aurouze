@@ -52,6 +52,16 @@ class Compte implements DocumentSocieteInterface {
     protected $societe;
 
     /**
+     * @MongoDB\EmbedOne(targetDocument="Adresse")
+     */
+    protected $adresse;
+
+    /**
+     * @MongoDB\EmbedOne(targetDocument="ContactCoordonnee")
+     */
+    protected $contactCoordonnee;
+
+    /**
      *  @MongoDB\ReferenceMany(targetDocument="Passage", mappedBy="techniciens") 
      */
     protected $passages = array();
@@ -367,5 +377,49 @@ class Compte implements DocumentSocieteInterface {
     public function getIdentifiantReprise() {
         return $this->identifiantReprise;
     }
-    
-   }
+
+
+    /**
+     * Set adresse
+     *
+     * @param AppBundle\Document\Adresse $adresse
+     * @return self
+     */
+    public function setAdresse(\AppBundle\Document\Adresse $adresse)
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+
+    /**
+     * Get adresse
+     *
+     * @return AppBundle\Document\Adresse $adresse
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * Set contactCoordonnee
+     *
+     * @param AppBundle\Document\ContactCoordonnee $contactCoordonnee
+     * @return self
+     */
+    public function setContactCoordonnee(\AppBundle\Document\ContactCoordonnee $contactCoordonnee)
+    {
+        $this->contactCoordonnee = $contactCoordonnee;
+        return $this;
+    }
+
+    /**
+     * Get contactCoordonnee
+     *
+     * @return AppBundle\Document\ContactCoordonnee $contactCoordonnee
+     */
+    public function getContactCoordonnee()
+    {
+        return $this->contactCoordonnee;
+    }
+}

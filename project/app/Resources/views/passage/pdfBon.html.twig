@@ -22,7 +22,7 @@
 <br />
 <div class="row">
     <div class="col-xs-12">
-        <p class="lead" style="font-weight: 400;">Passage {{ passage.typePassage }} n° {{ passage.numeroPassage }} / {{ passage.contrat.nbPassages }} effectué par {{ passage.getTechniciensIdentite() | join(", ")}} <small> - Contrat n° {{ passage.contrat.numeroArchive }}</small></p>
+        <p class="lead" style="font-weight: 400;">{{ passage.libelle }} effectué par {{ passage.getTechniciensIdentite() | join(", ")}} <small> - Contrat n° {{ passage.contrat.numeroArchive }}</small></p>
         <p>{% for prestation in passage.prestations %}
             <span class="btn btn-sm btn-default">{{ prestation.nomToString }}</span>
         {% endfor %}</p>
