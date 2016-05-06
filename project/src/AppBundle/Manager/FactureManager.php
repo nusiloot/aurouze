@@ -52,12 +52,11 @@ class FactureManager {
         $facture->getEmetteur()->setFax($this->parameters['emetteur']['fax']);
 
         foreach($mouvements as $mouvement) {
+            if(!$mouvement->isFacturable() || $mouvement->isFacture()) {
+                continue;
+            }
             $ligne = new FactureLigne();
-            $ligne->setLibelle($mouvement->getLibelle());
-            $ligne->setQuantite(1);
-            $ligne->setPrixUnitaire($mouvement->getPrix());
-            $ligne->setTauxTaxe(0.20);
-            $ligne->setOrigineDocument($mouvement->getOrigineDocument());
+            $ligne->pullFromMouvement($mouvement);
             $facture->addLigne($ligne);
         }
 

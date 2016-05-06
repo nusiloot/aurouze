@@ -13,7 +13,17 @@ class Mouvement {
     /**
      * @MongoDB\Float
      */
-    protected $prix;
+    protected $prixUnitaire;
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $quantite;
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $tauxTaxe;
 
     /**
      * @MongoDB\Boolean
@@ -21,37 +31,48 @@ class Mouvement {
     protected $facturable;
 
     /**
+     * @MongoDB\Boolean
+     */
+    protected $facture;
+
+    /**
      * @MongoDB\String
      */
     protected $libelle;
 
     /**
-     * @MongoDB\Boolean
-     */
-    protected $facture;
-
-    protected $origineDocument;
+    * @MongoDB\String
+    */
+    protected $societe;
 
     /**
-     * Set prix
-     *
-     * @param float $prix
-     * @return self
-     */
-    public function setPrix($prix)
-    {
-        $this->prix = $prix;
-        return $this;
+    * @MongoDB\String
+    */
+    protected $identifiant;
+
+    /**
+    * @MongoDB\ReferenceOne()
+    */
+    protected $document;
+
+    public function facturer() {
+        if(!$this->getFacturable()) {
+            return false;
+        }
+
+        $this->setFacture(true);
+
+        return true;
     }
 
-    /**
-     * Get prix
-     *
-     * @return float $prix
-     */
-    public function getPrix()
-    {
-        return $this->prix;
+    public function isFacturable() {
+
+        return $this->getFacturable() && !$this->getFacture();
+    }
+
+    public function isFacture() {
+
+        return !$this->getFacturable() || $this->getFacture();
     }
 
     /**
@@ -98,17 +119,6 @@ class Mouvement {
         return $this->facture;
     }
 
-    public function setOrigineDocument($origineDocument) {
-        $this->origineDocument = $origineDocument;
-
-        return $this->origineDocument;
-    }
-
-    public function getOrigineDocument() {
-
-        return $this->origineDocument;
-    }
-
     /**
      * Set libelle
      *
@@ -129,5 +139,138 @@ class Mouvement {
     public function getLibelle()
     {
         return $this->libelle;
+    }
+
+    /**
+     * Set quantite
+     *
+     * @param float $quantite
+     * @return self
+     */
+    public function setQuantite($quantite)
+    {
+        $this->quantite = $quantite;
+        return $this;
+    }
+
+    /**
+     * Get quantite
+     *
+     * @return float $quantite
+     */
+    public function getQuantite()
+    {
+        return $this->quantite;
+    }
+
+    /**
+     * Set societe
+     *
+     * @param string $societe
+     * @return self
+     */
+    public function setSociete($societe)
+    {
+        $this->societe = $societe;
+        return $this;
+    }
+
+    /**
+     * Get societe
+     *
+     * @return string $societe
+     */
+    public function getSociete()
+    {
+        return $this->societe;
+    }
+
+    /**
+     * Set identifiant
+     *
+     * @param string $identifiant
+     * @return self
+     */
+    public function setIdentifiant($identifiant)
+    {
+        $this->identifiant = $identifiant;
+        return $this;
+    }
+
+    /**
+     * Get identifiant
+     *
+     * @return string $identifiant
+     */
+    public function getIdentifiant()
+    {
+        return $this->identifiant;
+    }
+
+
+    /**
+     * Set document
+     *
+     * @param $document
+     * @return self
+     */
+    public function setDocument($document)
+    {
+        $this->document = $document;
+        return $this;
+    }
+
+    /**
+     * Get document
+     *
+     * @return $document
+     */
+    public function getDocument()
+    {
+        return $this->document;
+    }
+
+    /**
+     * Set prixUnitaire
+     *
+     * @param float $prixUnitaire
+     * @return self
+     */
+    public function setPrixUnitaire($prixUnitaire)
+    {
+        $this->prixUnitaire = $prixUnitaire;
+        return $this;
+    }
+
+    /**
+     * Get prixUnitaire
+     *
+     * @return float $prixUnitaire
+     */
+    public function getPrixUnitaire()
+    {
+        return $this->prixUnitaire;
+    }
+
+    /**
+     * Set tauxTaxe
+     *
+     * @param float $tauxTaxe
+     * @return self
+     */
+    public function setTauxTaxe($tauxTaxe)
+    {
+        $this->tauxTaxe = $tauxTaxe;
+        return $this;
+    }
+
+    /**
+     * Get tauxTaxe
+     *
+     * @return float $tauxTaxe
+     */
+    public function getTauxTaxe()
+    {
+        return $this->tauxTaxe;
     }
 }
