@@ -113,7 +113,7 @@
         {% endfor %}
     </div>
     
-    <h2 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('compte_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un établissement</a>Etablissements <span class="badge">{{ societe.etablissements | length }}</span></h2>
+    <h2 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('compte_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un compte</a>Comptes <span class="badge">{{ societe.comptes | length }}</span></h2>
     <div class="row">
         {% for compte in societe.comptes %}
             <div class="col-xs-4">
