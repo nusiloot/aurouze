@@ -14,6 +14,11 @@ class FactureLigne {
     protected $libelle;
 
     /**
+     * @MongoDB\String
+     */
+    protected $description;
+
+    /**
      * @MongoDB\Float
      */
     protected $prixUnitaire;
@@ -72,7 +77,7 @@ class FactureLigne {
 
             return null;
         }
-        
+
         $this->getMouvement()->facturer();
     }
 
@@ -260,5 +265,27 @@ class FactureLigne {
     public function getOrigineMouvement()
     {
         return $this->origineMouvement;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return self
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string $description
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

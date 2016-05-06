@@ -23,8 +23,7 @@
 </div>
 
 <h1 class="text-center">
-    {{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small>&nbsp;
-
+    {{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small> <small>en {{ contrat.nbFactures }} factures</small> 
 </h1>
 
 <br/>

@@ -42,7 +42,7 @@ class FactureCsvImporter {
     const CSV_CONTRAT_ID = 7;
     const CSV_SOCIETE_ID = 5;
     const CSV_TVA_REDUITE = 21;
-    const CSV_DESCRIPTION = 13;
+    const CSV_DESCRIPTION = 12;
     const CSV_FACTURE_LIGNE_ID = 27;
     const CSV_FACTURE_LIGNE_PASSAGE = 28;
     const CSV_FACTURE_LIGNE_PRODUIT = 29;
@@ -54,7 +54,6 @@ class FactureCsvImporter {
     const CSV_DATE_LIMITE_REGLEMENT = 9;
     const CSV_REGLEMENT_TYPE = 10;
     const CSV_VEROUILLE = 12;
-    const CSV_FACTURE_CMT = 13;
 
     public function __construct(DocumentManager $dm, FactureManager $fm, SocieteManager $sm, ContratManager $cm) {
         $this->dm = $dm;
@@ -88,7 +87,11 @@ class FactureCsvImporter {
                 continue;
             }
 
-            $this->importFacture($lignes, $output);
+            $facture = $this->importFacture($lignes, $output);
+
+            if ($facture && $facture->getDateFacturation()->format('Y-m-d') < '2015-01-01') {
+                break;
+            }
 
             $i++;
             $cptTotal++;
@@ -107,13 +110,38 @@ class FactureCsvImporter {
             $lignes[] = $data;
         }
 
-        $this->importFacture($lignes);
+        $this->importFacture($lignes, $output);
 
         $this->dm->flush();
+        $this->dm->clear();
         $progress->finish();
+
+        foreach($this->facturesRedressees as $identifiantFacture => $idAvoir) {
+            $facture = $this->fm->getRepository()->findOneByIdentifiantReprise($identifiantFacture);
+            if(!$facture) {
+                $output->writeln(sprintf("<error>La facture %s de l'avoir %s n'a pas été trouvé</error>", $identifiantFacture, $idAvoir));
+                continue;
+            }
+            $facture->setAvoir($idAvoir);
+        }
+        $this->dm->flush();
+        $this->dm->clear();
+
+        foreach($this->contratsNbFactures as $idContrat => $nbFactures) {
+            $contrat = $this->cm->getRepository()->findOneById($idContrat);
+            $contrat->setNbFactures($nbFactures);
+        }
+
+        $this->dm->flush();
+        $this->dm->clear();
     }
 
     public function importFacture($lignes, $output) {
+        if(!count($lignes)) {
+
+            return;
+        }
+
         $ligneFacture = $lignes[0];
 
         $facture = $this->fm->getRepository()->findOneByIdentifiantReprise($ligneFacture[self::CSV_FACTURE_ID]);
@@ -208,11 +236,17 @@ class FactureCsvImporter {
         $facture->setDescription(preg_replace('/^".*"$/', "", str_replace('#', "\n", $ligne[self::CSV_DESCRIPTION])));
         $facture->facturerMouvements();
 
+        if($facture->getDescription() && count($facture->getLignes()) == 1) {
+            $facture->getLignes()->first()->setDescription($facture->getDescription());
+        }
+
         $this->dm->persist($facture);
 
         if($ligneFacture[self::CSV_REF_AVOIR]) {
             $this->facturesRedressees[$ligneFacture[self::CSV_REF_AVOIR]] = $facture->getId();
         }
+
+        return $facture;
     }
 
 }
