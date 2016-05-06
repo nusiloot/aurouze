@@ -373,6 +373,14 @@ class Compte implements DocumentSocieteInterface {
     public function getTags() {
         return $this->tags;
     }
+    
+    public function getTagsArray() {
+        $result= array();
+        foreach ($this->getTags() as $tag) {
+           $result[$tag->getIdentifiant()] = $tag; 
+        }
+        return $result;
+    }
 
     /**
      * Set identifiantReprise

@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-class TagType extends AbstractType {
+class CompteTagType extends AbstractType {
 
     protected $container;
     protected $dm;
@@ -27,9 +27,6 @@ class TagType extends AbstractType {
         $builder->add('nom');
     }
 
-   
-    
-    
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Document\CompteTag',
