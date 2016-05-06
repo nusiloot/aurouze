@@ -46,7 +46,7 @@ self::TYPE_ADMINISTRATIF => 'Administratif',
 );
 
 public static $civilites = array(self::CIVILITE_MONSIEUR => self::CIVILITE_MONSIEUR, self::CIVILITE_MADAME => self::CIVILITE_MADAME, self::CIVILITE_MADEMOISELLE => self::CIVILITE_MADEMOISELLE
-)
+);
 
 
 public function __construct(DocumentManager $dm) {
