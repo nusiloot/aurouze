@@ -21,9 +21,9 @@ if test "$REMOTE_DATA"; then
     cd $SYMFODIR
 fi
 
-##### Récupération des Comptes #####
+##### Récupération des Comptes AUROUZE #####
 
-echo "Récupération des comptes"
+echo "Récupération des comptes AUROUZE"
 
 cat $DATA_DIR/tblUtilisateur.csv | tr -d "\r" | sort -t ";" -k 1,1 > $DATA_DIR/tblUtilisateur.csv.sorted
 
@@ -126,6 +126,16 @@ do
 
 done < $DATA_DIR/etablissementsCmt.csv.tmp
 
+
+##### Récupération des Comptes #####
+
+echo "Récupération des comptes"
+
+cat $DATA_DIR/tbmContactAdresse.csv | tr -d "\r" | sort -t ';' -k 2,2 > $DATA_DIR/contactAdresse.sorted.csv
+
+cat $DATA_DIR/tblContact.csv  | tr -d "\r" | sort -t ';' -k 1,1 > $DATA_DIR/contact.sorted.csv
+
+join -t ';' -1 1 -2 2 $DATA_DIR/contact.sorted.csv $DATA_DIR/contactAdresse.sorted.csv > $DATA_DIR/comptes.csv
 
 cat  $DATA_DIR/tblPrestation.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/#/g' | sed -r 's/~/#/g' | sort -t ";" -k 1,1 > $DATA_DIR/tblPrestation.tmp.cleaned.csv
 
