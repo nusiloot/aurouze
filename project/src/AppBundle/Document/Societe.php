@@ -2,7 +2,6 @@
 
 namespace AppBundle\Document;
 
-
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\EtablissementManager;
 
@@ -56,30 +55,35 @@ class Societe {
      */
     protected $contactCoordonnee;
 
-     /**
+    /**
      * @MongoDB\String
      */
     protected $identifiantReprise;
 
     /**
-    * @MongoDB\Increment
-    */
+     * @MongoDB\Increment
+     */
     protected $etablissementIncrement;
 
     /**
-    * @MongoDB\Increment
-    */
+     * @MongoDB\Increment
+     */
     protected $contratIncrement;
 
     /**
-    * @MongoDB\Increment
-    */
+     * @MongoDB\Increment
+     */
     protected $factureIncrement;
 
-     /**
+    /**
      *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe")
      */
     protected $etablissements;
+    
+    /**
+     *  @MongoDB\ReferenceMany(targetDocument="Compte", mappedBy="societe")
+     */
+    protected $comptes;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="Provenance")
@@ -91,8 +95,7 @@ class Societe {
      */
     protected $tags;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->adresse = new Adresse();
         $this->contactCoordonnee = new ContactCoordonnee();
@@ -103,8 +106,7 @@ class Societe {
      *
      * @return string $id
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -114,8 +116,7 @@ class Societe {
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant)
-    {
+    public function setIdentifiant($identifiant) {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -125,8 +126,7 @@ class Societe {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant()
-    {
+    public function getIdentifiant() {
         return $this->identifiant;
     }
 
@@ -136,8 +136,7 @@ class Societe {
      * @param string $raisonSociale
      * @return self
      */
-    public function setRaisonSociale($raisonSociale)
-    {
+    public function setRaisonSociale($raisonSociale) {
         $this->raisonSociale = $raisonSociale;
         return $this;
     }
@@ -147,8 +146,7 @@ class Societe {
      *
      * @return string $raisonSociale
      */
-    public function getRaisonSociale()
-    {
+    public function getRaisonSociale() {
         return $this->raisonSociale;
     }
 
@@ -158,8 +156,7 @@ class Societe {
      * @param boolean $sousTraitant
      * @return self
      */
-    public function setSousTraitant($sousTraitant)
-    {
+    public function setSousTraitant($sousTraitant) {
         $this->sousTraitant = $sousTraitant;
         return $this;
     }
@@ -169,8 +166,7 @@ class Societe {
      *
      * @return boolean $sousTraitant
      */
-    public function getSousTraitant()
-    {
+    public function getSousTraitant() {
         return $this->sousTraitant;
     }
 
@@ -180,8 +176,7 @@ class Societe {
      * @param string $commentaire
      * @return self
      */
-    public function setCommentaire($commentaire)
-    {
+    public function setCommentaire($commentaire) {
         $this->commentaire = $commentaire;
         return $this;
     }
@@ -191,8 +186,7 @@ class Societe {
      *
      * @return string $commentaire
      */
-    public function getCommentaire()
-    {
+    public function getCommentaire() {
         return $this->commentaire;
     }
 
@@ -202,8 +196,7 @@ class Societe {
      * @param string $type
      * @return self
      */
-    public function setType($type)
-    {
+    public function setType($type) {
         $this->type = $type;
         return $this;
     }
@@ -213,8 +206,7 @@ class Societe {
      *
      * @return string $type
      */
-    public function getType()
-    {
+    public function getType() {
         return $this->type;
     }
 
@@ -224,8 +216,7 @@ class Societe {
      * @param string $codeComptable
      * @return self
      */
-    public function setCodeComptable($codeComptable)
-    {
+    public function setCodeComptable($codeComptable) {
         $this->codeComptable = $codeComptable;
         return $this;
     }
@@ -235,8 +226,7 @@ class Societe {
      *
      * @return string $codeComptable
      */
-    public function getCodeComptable()
-    {
+    public function getCodeComptable() {
         return $this->codeComptable;
     }
 
@@ -246,8 +236,7 @@ class Societe {
      * @param AppBundle\Document\Adresse $adresse
      * @return self
      */
-    public function setAdresse(\AppBundle\Document\Adresse $adresse)
-    {
+    public function setAdresse(\AppBundle\Document\Adresse $adresse) {
         $this->adresse = $adresse;
         return $this;
     }
@@ -257,8 +246,7 @@ class Societe {
      *
      * @return AppBundle\Document\Adresse $adresse
      */
-    public function getAdresse()
-    {
+    public function getAdresse() {
         return $this->adresse;
     }
 
@@ -268,8 +256,7 @@ class Societe {
      * @param string $identifiantReprise
      * @return self
      */
-    public function setIdentifiantReprise($identifiantReprise)
-    {
+    public function setIdentifiantReprise($identifiantReprise) {
         $this->identifiantReprise = $identifiantReprise;
         return $this;
     }
@@ -279,8 +266,7 @@ class Societe {
      *
      * @return string $identifiantReprise
      */
-    public function getIdentifiantReprise()
-    {
+    public function getIdentifiantReprise() {
         return $this->identifiantReprise;
     }
 
@@ -290,8 +276,7 @@ class Societe {
      * @param increment $etablissementIncrement
      * @return self
      */
-    public function setEtablissementIncrement($etablissementIncrement)
-    {
+    public function setEtablissementIncrement($etablissementIncrement) {
         $this->etablissementIncrement = $etablissementIncrement;
         return $this;
     }
@@ -301,8 +286,7 @@ class Societe {
      *
      * @return increment $etablissementIncrement
      */
-    public function getEtablissementIncrement()
-    {
+    public function getEtablissementIncrement() {
         return $this->etablissementIncrement;
     }
 
@@ -312,8 +296,7 @@ class Societe {
      * @param increment $contratIncrement
      * @return self
      */
-    public function setContratIncrement($contratIncrement)
-    {
+    public function setContratIncrement($contratIncrement) {
         $this->contratIncrement = $contratIncrement;
         return $this;
     }
@@ -323,8 +306,7 @@ class Societe {
      *
      * @return increment $contratIncrement
      */
-    public function getContratIncrement()
-    {
+    public function getContratIncrement() {
         return $this->contratIncrement;
     }
 
@@ -334,8 +316,7 @@ class Societe {
      * @param increment $factureIncrement
      * @return self
      */
-    public function setFactureIncrement($factureIncrement)
-    {
+    public function setFactureIncrement($factureIncrement) {
         $this->factureIncrement = $factureIncrement;
         return $this;
     }
@@ -345,8 +326,7 @@ class Societe {
      *
      * @return increment $factureIncrement
      */
-    public function getFactureIncrement()
-    {
+    public function getFactureIncrement() {
         return $this->factureIncrement;
     }
 
@@ -355,8 +335,7 @@ class Societe {
      *
      * @param AppBundle\Document\Etablissement $etablissement
      */
-    public function addEtablissement(\AppBundle\Document\Etablissement $etablissement)
-    {
+    public function addEtablissement(\AppBundle\Document\Etablissement $etablissement) {
         $this->etablissements[] = $etablissement;
     }
 
@@ -365,8 +344,7 @@ class Societe {
      *
      * @param AppBundle\Document\Etablissement $etablissement
      */
-    public function removeEtablissement(\AppBundle\Document\Etablissement $etablissement)
-    {
+    public function removeEtablissement(\AppBundle\Document\Etablissement $etablissement) {
         $this->etablissements->removeElement($etablissement);
     }
 
@@ -375,20 +353,25 @@ class Societe {
      *
      * @return \Doctrine\Common\Collections\Collection $etablissements
      */
-    public function getEtablissements()
-    {
+    public function getEtablissements() {
         return $this->etablissements;
     }
 
-
-    public function getIcon()
-    {
-    	return EtablissementManager::$type_icon[$this->getType()];
+    /**
+     * Get comptes
+     *
+     * @return \Doctrine\Common\Collections\Collection $comptes
+     */
+    public function getComptes() {
+        return $this->comptes;
     }
 
-    public function getTypeLibelle()
-    {
-    	return EtablissementManager::$type_libelles[$this->getType()];
+    public function getIcon() {
+        return EtablissementManager::$type_icon[$this->getType()];
+    }
+
+    public function getTypeLibelle() {
+        return EtablissementManager::$type_libelles[$this->getType()];
     }
 
     /**
@@ -397,8 +380,7 @@ class Societe {
      * @param AppBundle\Document\Provenance $provenance
      * @return self
      */
-    public function setProvenance(\AppBundle\Document\Provenance $provenance)
-    {
+    public function setProvenance(\AppBundle\Document\Provenance $provenance) {
         $this->provenance = $provenance;
         return $this;
     }
@@ -408,8 +390,7 @@ class Societe {
      *
      * @return AppBundle\Document\Provenance $provenance
      */
-    public function getProvenance()
-    {
+    public function getProvenance() {
         return $this->provenance;
     }
 
@@ -419,8 +400,7 @@ class Societe {
      * @param collection $tags
      * @return self
      */
-    public function setTags($tags)
-    {
+    public function setTags($tags) {
         $this->tags = $tags;
         return $this;
     }
@@ -430,8 +410,7 @@ class Societe {
      *
      * @return collection $tags
      */
-    public function getTags()
-    {
+    public function getTags() {
         return $this->tags;
     }
 
@@ -441,8 +420,7 @@ class Societe {
      * @param AppBundle\Document\ContactCoordonnee $contactCoordonnee
      * @return self
      */
-    public function setContactCoordonnee(\AppBundle\Document\ContactCoordonnee $contactCoordonnee)
-    {
+    public function setContactCoordonnee(\AppBundle\Document\ContactCoordonnee $contactCoordonnee) {
         $this->contactCoordonnee = $contactCoordonnee;
         return $this;
     }
@@ -452,12 +430,32 @@ class Societe {
      *
      * @return AppBundle\Document\ContactCoordonnee $contactCoordonnee
      */
-    public function getContactCoordonnee()
-    {
+    public function getContactCoordonnee() {
         return $this->contactCoordonnee;
     }
 
     public function getIntitule() {
-        return $this->getRaisonSociale()." ".$this->getAdresse()->getIntitule(). ' ('.$this->identifiant.')';
+        return $this->getRaisonSociale() . " " . $this->getAdresse()->getIntitule() . ' (' . $this->identifiant . ')';
+    }
+
+
+    /**
+     * Add compte
+     *
+     * @param AppBundle\Document\Compte $compte
+     */
+    public function addCompte(\AppBundle\Document\Compte $compte)
+    {
+        $this->comptes[] = $compte;
+    }
+
+    /**
+     * Remove compte
+     *
+     * @param AppBundle\Document\Compte $compte
+     */
+    public function removeCompte(\AppBundle\Document\Compte $compte)
+    {
+        $this->comptes->removeElement($compte);
     }
 }

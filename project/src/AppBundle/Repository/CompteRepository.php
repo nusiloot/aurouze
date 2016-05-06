@@ -1,44 +1,50 @@
 <?php
 
 namespace AppBundle\Repository;
+
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use AppBundle\Document\Compte;
+use AppBundle\Manager\CompteManager;
 
 class CompteRepository extends DocumentRepository {
 
-    public function findAllByType($type) {
-        return $this->findAll(); //$this->findBy(array('type' => $type));
+    public function findAllUtilisateurs() {
+        $societe = $this->dm->getRepository('AppBundle:Societe')->findOneByRaisonSociale("AUROUZE");
+        return $this->findBy(array('societe.id' => $societe->getId()));
     }
-    
-    public function findAllActif() {
-    	return $this->findBy(array('actif' => true));
+
+    public function findAllUtilisateursTechnicien() {
+        return $this->findAllUtilisateursHasTag(CompteManager::TYPE_TECHNICIEN);
     }
-    
-    public function findByIdentifiant($identifiant) {
-    	return $this->find(Compte::PREFIX.'-'.$identifiant);
+
+    public function findAllUtilisateursCommercial() {
+        return $this->findAllUtilisateursHasTag(CompteManager::TYPE_COMMERCIAL);
     }
-    
-    public function findByIdentite($identite) {
-    	return $this->findOneBy(array('identite' => $identite));
+
+    public function findAllUtilisateursCalendrier() {
+        return $this->findAllUtilisateursHasTag(CompteManager::TAG_CALENDRIER);
     }
-    
-    public function findAllByTypeArray($type) {
-        $comptes = $this->findAllByType($type);
-        $result = array();
-        foreach ($comptes as $compte) {
-            $result[$compte->getIdentifiant()] = $compte;
+
+    public function findAllUtilisateursHasTag($tag) {
+        $compteUtilisateurs = $this->findAllUtilisateurs();
+        $utilisateurs = array();
+        foreach ($compteUtilisateurs as $utilisateur) {
+            if ($utilisateur->hasTag($tag) && $utilisateur->isActif($tag)) {
+                $utilisateurs[$utilisateur->getId()] = $utilisateur;
+            }
         }
-        return $result;
+        return $utilisateurs;
     }
-    
-    public function findAllInArray() {
-        $comptes = $this->findAll();
-        $result = array();
-        foreach ($comptes as $compte) {
-            $result[$compte->getIdentifiant()] = $compte;
+
+    public function findAllUtilisateursActif() {
+        $compteUtilisateurs = $this->findAllUtilisateurs();
+        $utilisateurs = array();
+        foreach ($compteUtilisateurs as $utilisateur) {
+            if ($utilisateur->isActif()) {
+                $utilisateurs[$utilisateur->getId()] = $utilisateur;
+            }
         }
-        return $result;
+        return $utilisateurs;
     }
-    
 
 }

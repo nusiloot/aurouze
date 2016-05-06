@@ -135,7 +135,12 @@ cat $DATA_DIR/tbmContactAdresse.csv | tr -d "\r" | sort -t ';' -k 2,2 > $DATA_DI
 
 cat $DATA_DIR/tblContact.csv  | tr -d "\r" | sort -t ';' -k 1,1 > $DATA_DIR/contact.sorted.csv
 
-join -t ';' -1 1 -2 2 $DATA_DIR/contact.sorted.csv $DATA_DIR/contactAdresse.sorted.csv > $DATA_DIR/comptes.csv
+join -t ';' -1 1 -2 2 $DATA_DIR/contact.sorted.csv $DATA_DIR/contactAdresse.sorted.csv > $DATA_DIR/contactsAdresse.csv
+
+cat $DATA_DIR/contactsAdresse.csv | sort -t ';' -k 11,11 > $DATA_DIR/contactsAdresse.sorted.csv
+cat $DATA_DIR/adresse.csv.temp | sort -t ';' -k 1,1 > $DATA_DIR/adresseForCompte.sorted.csv
+
+join -t ';' -1 11 -2 1 $DATA_DIR/contactsAdresse.sorted.csv $DATA_DIR/adresseForCompte.sorted.csv > $DATA_DIR/contacts.csv
 
 cat  $DATA_DIR/tblPrestation.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/#/g' | sed -r 's/~/#/g' | sort -t ";" -k 1,1 > $DATA_DIR/tblPrestation.tmp.cleaned.csv
 
@@ -169,6 +174,10 @@ php app/console importer:csv compte.importer $DATA_DIR/utilisateurAutre.csv -vvv
 echo "Import des etablissements"
 
 php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv -vvv  --no-debug
+
+echo "Import des comptes"
+
+php app/console importer:csv contact.importer $DATA_DIR/contacts.csv -vvv  --no-debug
 
 
 #### Récupération et import des contrats ####

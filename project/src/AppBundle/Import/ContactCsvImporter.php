@@ -2,20 +2,32 @@
 
 namespace AppBundle\Import;
 
-use AppBundle\Document\Compte as Compte;
+use AppBundle\Document\Compte;
+use AppBundle\Document\ContactCoordonnee;
+use AppBundle\Document\Adresse;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Document\CompteTag;
 use AppBundle\Manager\CompteManager;
+use Symfony\Component\Console\Helper\ProgressBar;
 
-class CompteCsvImporter extends CsvFile {
+class ContactCsvImporter extends CsvFile {
 
     protected $dm;
 
-    const CSV_IDENTIFIANT = 0;
-    const CSV_IDENTITE = 1;
-    const CSV_TYPE = 21;
+    const CSV_IDENTIFIANT_REPRISE_ETABLISSEMENT = 0;
+    const CSV_IDENTIFIANT_REPRISE_CONTACT = 1;
+    const CSV_CIVILITE = 2;
+    const CSV_PRENOM = 3;
+    const CSV_NOM = 4;
+    const CSV_TITRE = 11;
+    const CSV_TELEPHONE_FIXE = 12;
+    const CSV_TELEPHONE_PORTABLE = 13;
+    const CSV_FAX = 14;
+    const CSV_EMAIL = 15;
+    const CSV_ACTIF = 17;
+    const CSV_IDENTIFIANT_REPRISE_SOCIETE = 22;
 
     public function __construct(DocumentManager $dm) {
         $this->dm = $dm;
@@ -26,64 +38,105 @@ class CompteCsvImporter extends CsvFile {
 
         $csv = $csvFile->getCsv();
 
-        foreach ($csv as $data) {
-            $compte = $this->createFromImport($data, $output);
-            if ($compte) {
-                $this->dm->persist($compte);
-            }
-            $this->dm->flush();
-        }
+        $i = 0;
+        $cptTotal = 0;
 
+        $progress = new ProgressBar($output, 100);
+        $progress->start();
+
+        foreach ($csv as $data) {
+
+
+            $this->createContactFromImport($data, $output);
+
+
+            $i++;
+            $cptTotal++;
+            if ($cptTotal % (count($csv) / 100) == 0) {
+                $progress->advance();
+            }
+            if ($i >= 1000) {
+                $this->dm->flush();
+                $this->dm->clear();
+                gc_collect_cycles();
+                $i = 0;
+            }
+        }
 
         $this->dm->flush();
     }
 
-    public function createFromImport($ligne, $output) {
-        $prenomNom = trim($ligne[self::CSV_IDENTITE]);
-        $nom = substr(strrchr($prenomNom, " "), 1);
-        $prenom = trim(str_replace($nom, '', $prenomNom));
+    public function createContactFromImport($ligne, $output) {
+        
+        $identifiantRepriseEtablissement = $ligne[self::CSV_IDENTIFIANT_REPRISE_ETABLISSEMENT];
+        $identifiantRepriseSociete = $ligne[self::CSV_IDENTIFIANT_REPRISE_SOCIETE];
+        $etablissement = $this->dm->getRepository('AppBundle:Etablissement')->findOneByIdentifiantReprise($identifiantRepriseEtablissement);
+        $societe = null;
+        if($etablissement){
+            $societe = $etablissement->getSociete();
+        }
+        
+        if (!$societe) {
+            $societe = $this->dm->getRepository('AppBundle:Societe')->findOneByIdentifiantReprise($identifiantRepriseSociete);
+        }
 
-        $societeAurouze = $this->dm->getRepository('AppBundle:Societe')->findOneByRaisonSociale("AUROUZE");
-        if (!$societeAurouze) {
-            $output->writeln(sprintf("<error>La société Aurouze n'a pas été trouvée</error>"));
+        if (!$societe) {
+            $output->writeln(sprintf("\n<error>La société d'identifiant de reprise %s n'a pas été trouvée (etb? = %s)</error>", $identifiantRepriseSociete,$identifiantRepriseEtablissement));
             return false;
         }
-        $compte = $this->dm->getRepository('AppBundle:Compte')->findOneByIdentifiantReprise($ligne[self::CSV_IDENTIFIANT]);
-        if (isset($ligne[self::CSV_TYPE])) {
-            if (!$compte) {
-                
-                $tag = new CompteTag();
-                $tag->setIdentifiant($ligne[self::CSV_TYPE]);
-                $tag->setNom(CompteManager::$tagsCompteLibelles[$ligne[self::CSV_TYPE]]);
-                $this->dm->persist($tag);
 
+        $compte = new Compte($societe);
+        $compte->setSociete($societe);
+        $compte->setIdentifiantReprise($ligne[self::CSV_IDENTIFIANT_REPRISE_CONTACT]);
+        $compte->setCivilite($this->getCivilite($ligne[self::CSV_CIVILITE]));
 
-                $compte = new Compte($societeAurouze);
-                $compte->setIdentifiantReprise($ligne[self::CSV_IDENTIFIANT]);
-                $compte->setNom($nom);
-                $compte->setPrenom($prenom);
-                $compte->setCouleur($this->random_color());
-                $compte->addTag($tag);
+        $compte->setPrenom($ligne[self::CSV_PRENOM]);
+        $compte->setNom($ligne[self::CSV_NOM]);
+        $compte->setIdentite($compte->getIdentite());
 
-                return $compte;
-            } else {
-                $tag = new CompteTag();
-                $tag->setIdentifiant($ligne[self::CSV_TYPE]);
-                $tag->setNom(CompteManager::$tagsCompteLibelles[$ligne[self::CSV_TYPE]]);
-                $this->dm->persist($tag);
-                $compte->addTag($tag);
-                return $compte;
-            }
+        $compte->setTitre($this->getTitre($ligne[self::CSV_TITRE]));
+
+        $contactCoordonnee = new ContactCoordonnee();
+
+        $contactCoordonnee->setTelephoneFixe($ligne[self::CSV_TELEPHONE_FIXE]);
+        $contactCoordonnee->setTelephoneMobile($ligne[self::CSV_TELEPHONE_PORTABLE]);
+        $contactCoordonnee->setFax($ligne[self::CSV_FAX]);
+        $contactCoordonnee->setEmail($ligne[self::CSV_EMAIL]);
+        $compte->setContactCoordonnee($contactCoordonnee);
+        $compte->setActif(boolval($ligne[self::CSV_ACTIF]));
+
+        $adresse = new Adresse();
+        $compte->setAdresse($adresse);
+        $this->dm->persist($compte);
+        return $compte;
+    }
+
+    public function getCivilite($c) {
+        if ($c == "1") {
+            return CompteManager::CIVILITE_MONSIEUR;
+        } elseif ($c == "2") {
+            return CompteManager::CIVILITE_MADAME;
+        } elseif ($c == "3") {
+            return CompteManager::CIVILITE_MADEMOISELLE;
         }
-        return false;
+        return "";
     }
 
-    public function random_color_part() {
-        return str_pad(dechex(mt_rand(0, 255)), 2, '0', STR_PAD_LEFT);
-    }
-
-    public function random_color() {
-        return '#' . $this->random_color_part() . $this->random_color_part() . $this->random_color_part();
+    public function getTitre($t) {
+        if ($t == "1") {
+            return CompteManager::TITRE_MONSIEUR_MAIRE;
+        } elseif ($t == "2") {
+            return CompteManager::TITRE_MADAME_MAIRE;
+        } elseif ($t == "3") {
+            return CompteManager::TITRE_MONSIEUR_PRESIDENT_SYNDICAL;
+        } elseif ($t == "4") {
+            return CompteManager::TITRE_MADAME_PRESIDENTE_SYNDICAL;
+        } elseif ($t == "5") {
+            return CompteManager::TITRE_MONSIEUR_DIRECTEUR;
+        } elseif ($t == "6") {
+            return CompteManager::TITRE_MADAME_DIRECTEUR;
+        }
+        return "";
     }
 
 }

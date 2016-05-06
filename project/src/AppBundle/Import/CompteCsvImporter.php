@@ -3,6 +3,7 @@
 namespace AppBundle\Import;
 
 use AppBundle\Document\Compte as Compte;
+use AppBundle\Document\Adresse;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
 use Behat\Transliterator\Transliterator;
@@ -51,7 +52,7 @@ class CompteCsvImporter extends CsvFile {
         $compte = $this->dm->getRepository('AppBundle:Compte')->findOneByIdentifiantReprise($ligne[self::CSV_IDENTIFIANT]);
         if (isset($ligne[self::CSV_TYPE])) {
             if (!$compte) {
-                
+
                 $tag = new CompteTag();
                 $tag->setIdentifiant($ligne[self::CSV_TYPE]);
                 $tag->setNom(CompteManager::$tagsCompteLibelles[$ligne[self::CSV_TYPE]]);
