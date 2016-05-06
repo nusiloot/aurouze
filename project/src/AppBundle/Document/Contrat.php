@@ -182,6 +182,11 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     protected $conditionsParticulieres;
 
+     /**
+     * @MongoDB\String
+     */
+    protected $referenceClient;
+
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->prestations = new \Doctrine\Common\Collections\ArrayCollection();
@@ -277,7 +282,7 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     public function addPrestation(\AppBundle\Document\Prestation $prestation) {
         foreach ($this->getPrestations() as $prest) {
-            if($prest == $prestation){
+            if($prest->getIdentifiant() == $prestation->getIdentifiant()){
                 return;
             }
         }
@@ -579,11 +584,6 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
      */
     public function getMouvements() {
         return $this->mouvements;
-    }
-
-    public function isTerminee() {
-
-        return ($this->getDateFin() < new \DateTime());
     }
 
     public function updateObject() {
@@ -1045,12 +1045,20 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
         return ($this->statut == ContratManager::STATUT_BROUILLON);
     }
     
-     public function isValide() {
-        return ($this->statut == ContratManager::STATUT_VALIDE);
+     public function isEnCours() {
+        return ($this->statut == ContratManager::STATUT_EN_COURS);
+    }
+    
+     public function isAVenir() {
+        return ($this->statut == ContratManager::STATUT_A_VENIR);
     }
     
     public function isEnAttenteAcceptation() {
         return ($this->statut == ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+    }
+    
+    public function isFini() {
+        return ($this->statut == ContratManager::STATUT_FINI);
     }
 
     /**
@@ -1149,5 +1157,27 @@ class Contrat implements DocumentSocieteInterface,  DocumentFacturableInterface 
     public function getConditionsParticulieres()
     {
         return $this->conditionsParticulieres;
+    }
+
+    /**
+     * Set referenceClient
+     *
+     * @param string $referenceClient
+     * @return self
+     */
+    public function setReferenceClient($referenceClient)
+    {
+        $this->referenceClient = $referenceClient;
+        return $this;
+    }
+
+    /**
+     * Get referenceClient
+     *
+     * @return string $referenceClient
+     */
+    public function getReferenceClient()
+    {
+        return $this->referenceClient;
     }
 }

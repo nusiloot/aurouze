@@ -73,7 +73,13 @@ class ContratPassages {
     }
 
     public function getNbPassagePrevu() {
-        return count($this->getPassages());
+        $nbPrevus = 0;
+        foreach ($this->getPassages() as $passage){
+            if($passage->isSousContrat()){
+                $nbPrevus ++;
+            }
+        }
+        return $nbPrevus;
     }
 
     public function getNbPassagesRealises() {

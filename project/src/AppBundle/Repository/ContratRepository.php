@@ -30,6 +30,10 @@ class ContratRepository extends DocumentRepository {
              ->execute();
     }
     
+    public function findAllSortedByNumeroArchive() {
+       return $this->findBy(array(), array('numeroArchive' => 'ASC'));
+    }
+    
     public function countContratByCommercial($compte) {
 
         return $this->createQueryBuilder()

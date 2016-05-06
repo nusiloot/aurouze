@@ -16,8 +16,8 @@ class ContratGeneratorType extends AbstractType {
 	 * @param array $options
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
-		$builder->add('moyens', ChoiceType::class, array('expanded' => true, 'multiple' => true, 'choices' => $this->getChoices(), 'label' => 'Moyens de mise en oeuvre', "attr" => array("class" => "")))
-				->add('conditionsParticulieres', TextareaType::class, array('label' => 'Conditions particulières :', "attr" => array("class" => "form-control", "rows" => 5)))
+		$builder->add('moyens', ChoiceType::class, array('expanded' => true, 'multiple' => true, 'choices' => $this->getChoices(), 'label' => 'Moyens de mise en oeuvre', "attr" => array("class" => ""), 'required' => false))
+				->add('conditionsParticulieres', TextareaType::class, array('label' => 'Conditions particulières :', "attr" => array("class" => "form-control", "rows" => 5), 'required' => false))
 		        ->add('save', SubmitType::class, array('label' => 'Générer', "attr" => array("class" => "btn btn-success pull-right")));
 	}
 

@@ -175,3 +175,5 @@ cat $DATA_DIR/passagesadressestechniciensprestation.proper.csv | sed -r 's/([a-z
 echo -e "\nImport des passages"
 
 php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv --no-debug
+
+

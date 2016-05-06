@@ -127,7 +127,7 @@ do
 done < $DATA_DIR/etablissementsCmt.csv.tmp
 
 
-cat  $DATA_DIR/tblPrestation.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/tblPrestation.cleaned.csv
+cat  $DATA_DIR/tblPrestation.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/#/g' | sed -r 's/~/#/g' | sort -t ";" -k 1,1 > $DATA_DIR/tblPrestation.tmp.cleaned.csv
 
 cat $DATA_DIR/tblPassageAdresse.csv | tr -d '\r' | sort -t ";" -k 2,2 > $DATA_DIR/passageAdresse.sorted.csv
 
@@ -170,6 +170,23 @@ php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv
 
 . bin/import_data_passages.sh
 
+echo -e "\n****************************************************\n"
+echo -e "\nMis en cohérence des contrats et passages...\n";
+echo -e "\n****************************************************\n";
+
+php app/console update:contrat-update-statut -vvv --no-debug
+
+echo -e "\n****************************************************\n"
+echo -e "\nMis en cohérence des techniciens...\n";
+echo -e "\n****************************************************\n";
+
+php app/console update:passages-update-technicien -vvv --no-debug
+
+echo -e "\n****************************************************\n"
+echo -e "\nMis en cohérence des prestations...\n";
+echo -e "\n****************************************************\n";
+
+php app/console update:contrat-update-prestation -vvv --no-debug
 
 #### Récupération et import des factures ####
 

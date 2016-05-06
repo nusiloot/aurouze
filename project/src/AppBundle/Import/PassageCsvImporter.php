@@ -120,6 +120,7 @@ class PassageCsvImporter {
                 $output->writeln(sprintf("<comment>Le passage d'id %s existe déjà en base (%s)!</comment>", $passage->getId(), $data[self::CSV_OLD_ID]));
             }
             $resultStatut = $this->generateStatut($data, $passage, $output);
+            $passage->updateStatut();
             if (!$resultStatut) {
                 $output->writeln(sprintf("<error>Aucun statut déterminable pour le passage d'id %s (%s)!</error>", $passage->getId(), $data[self::CSV_OLD_ID]));
                 continue;
@@ -151,7 +152,7 @@ class PassageCsvImporter {
             } else {
                 $output->writeln(sprintf("<comment>Le passage : %s n'a aucune presta </comment>", $data[self::CSV_OLD_ID]));
             }
-
+            
             $identifiantRepriseTechnicien = $data[self::CSV_TECHNICIEN];
             if (!is_null($identifiantRepriseTechnicien)) {
                 $compte = $this->um->getRepository()->findOneByIdentifiantReprise($identifiantRepriseTechnicien);
@@ -202,276 +203,12 @@ class PassageCsvImporter {
 
         $this->dm->flush();
         $progress->finish();
-
-        echo "\n\n**************************\n";
-        echo "\nMis en cohérence des contrats et passages...\n";
-        echo "\n**************************\n";
-
-        $this->updateContratsAndPassages($output);
-    }
-
-    public function updateContratsAndPassages($output) {
-        echo "\nMis à jour des prestations des contrats et passages...\n";
-        $this->updateContratsAndPassagesPrestations($output);
-
-        echo "\nMis à jour des passages en attente...\n";
-        $this->updatePassagesAttentes($output);
-
-        echo "\nMis à jour des techniciens...\n";
-        $this->updateTechniciens($output);
-
-        echo "\nMis à jour des techniciens, des contrats et passages...\n";
-        $this->updateContratsAndPassagesTechniciens($output);
-    }
-
-    public function updateContratsAndPassagesPrestations($output) {
-
-        $allContrat = $this->cm->getRepository()->findAll();
-
-        $cptTotal = 0;
-        $i = 0;
-        $progress = new ProgressBar($output, 100);
-        $progress->start();
-
-        foreach ($allContrat as $contrat) {
-
-            $prestationsArr = array();
-
-            foreach ($contrat->getContratPassages() as $contratPassages) {
-                foreach ($contratPassages->getPassages() as $passage) {
-
-                    if (!$this->pm->getRepository()->findById($passage->getId())) {
-                        $output->writeln('');
-                        $output->writeln(sprintf("<comment>Le passage d'id %s semble Introuvable dans la base pourtant référencé par le contrat  %s !</comment>", $passage->getId(), $contrat->getId()));
-                        continue;
-                    }
-
-                    $this->cleanPassage($passage);
-
-                    foreach ($passage->getPrestations() as $prestation) {
-                        if (array_key_exists($prestation->getIdentifiant(), $prestationsArr)) {
-                            $prestationsArr[$prestation->getIdentifiant()]->setNbPassages($prestationsArr[$prestation->getIdentifiant()]->getNbPassages() + 1);
-                        } else {
-                            $prestation->setNbPassages(1);
-                            $prestationsArr[$prestation->getIdentifiant()] = $prestation;
-                        }
-                    }
-                }
-            }
-
-            foreach ($prestationsArr as $prestation) {
-                $contrat->addPrestation($prestation);
-            }
-
-            $contratResilie = ($contrat->getStatut() == ContratManager::STATUT_RESILIE);
-
-            if ($contratResilie) {
-                foreach ($contrat->getContratPassages() as $contratPassages) {
-                    foreach ($contratPassages->getPassages() as $passage) {
-                        if (!$this->pm->getRepository()->findById($passage->getId())) {
-                            $output->writeln(sprintf("<comment>Le passage d'id %s semble Introuvable dans la base pourtant référencé par le contrat  %s !</comment>", $passage->getId(), $contrat->getId()));
-                            continue;
-                        }
-                        if ($contratResilie) {
-                            if ($passage->getDatePrevision()->format('YmdHi') > $contrat->getDateResiliation()->format('YmdHi')) {
-                                $passage->setStatut(PassageManager::STATUT_ANNULE);
-                                $this->dm->persist($passage);
-                            }
-                        }
-                    }
-                }
-            }
-            if ($contrat->getStatut() != ContratManager::STATUT_RESILIE) {
-                $contrat->setStatut(ContratManager::STATUT_VALIDE);
-            }
-
-
-            $contratFini = true;
-            foreach ($contrat->getContratPassages() as $contratPassages) {
-                foreach ($contratPassages->getPassages() as $passage) {
-
-                    if (!$this->pm->getRepository()->findById($passage->getId())) {
-                        $output->writeln(sprintf("<comment>Le passage d'id %s semble Introuvable dans la base pourtant référencé par le contrat  %s !</comment>", $passage->getId(), $contrat->getId()));
-                        continue;
-                    }
-                    if (!$passage->isRealise()) {
-                        $contratFini = false;
-                        break;
-                    }
-                }
-            }
-            if ($contratFini && count($contrat->getContratPassages()) && ($contrat->getStatut() != ContratManager::STATUT_RESILIE)) {
-                $contrat->setStatut(ContratManager::STATUT_FINI);
-            }
-
-            $cptTotal++;
-            if ($cptTotal % (count($allContrat) / 100) == 0) {
-                $progress->advance();
-            }
-            if ($i >= 2000) {
-                $this->dm->flush();
-                $i = 0;
-            }
-            $i++;
-        }
-        $this->dm->flush();
-        $progress->finish();
-    }
-
-    public function updateTechniciens($output) {
-
-        $allContrat = $this->cm->getRepository()->findAll();
-        foreach ($allContrat as $contrat) {
-            if ($contrat->getTechnicien() && $contrat->getTechnicien()->isAutre() && (count($contrat->getTechnicien()->getTags()) == 1)) {
-                $tag = new CompteTag();
-                $tag->setIdentifiant(CompteManager::TYPE_TECHNICIEN);
-                $tag->setNom(CompteManager::$tagsCompteLibelles[CompteManager::TYPE_TECHNICIEN]);
-                $this->dm->persist($tag);
-                $contrat->getTechnicien()->addTag($tag);
-            }
-            foreach ($contrat->getContratPassages() as $contratPassages) {
-                foreach ($contratPassages->getPassages() as $passage) {
-                    foreach ($passage->getTechniciens() as $technicien) {
-                        if ($technicien && $technicien->isAutre() && (count($technicien->getTags()) == 1)) {
-                            $tag = new CompteTag();
-                            $tag->setIdentifiant(CompteManager::TYPE_TECHNICIEN);
-                            $tag->setNom(CompteManager::$tagsCompteLibelles[CompteManager::TYPE_TECHNICIEN]);
-                            $this->dm->persist($tag);
-                            $contrat->getTechnicien()->addTag($tag);
-                        }
-                    }
-                }
-            }
-        }
-        $allComptes = $this->um->getRepository()->findAll();
-        foreach ($allComptes as $compte) {
-            if (($compte->isTechnicien() || $compte->isCommercial()) && $compte->isAutre()) {
-
-                $compte->removeTag($compte->getTag(CompteManager::TYPE_AUTRE));
-            }
-        }
-        $this->dm->flush();
-    }
-
-    public function updateContratsAndPassagesTechniciens($output) {
-        $allContrat = $this->cm->getRepository()->findAll();
-
-        $cptTotal = 0;
-        $i = 0;
-        $progress = new ProgressBar($output, 100);
-        $progress->start();
-
-        foreach ($allContrat as $contrat) {
-            $contratTechnicien = $contrat->getTechnicien();
-            if ($contratTechnicien) {
-                $contratTechnicien = $this->um->getRepository()->findOneById($contrat->getTechnicien()->getId());
-            }
-            if ($contratTechnicien && $contratTechnicien->isTechnicien() && !$contratTechnicien->isCommercial()) {
-                $this->updateAllPassagesNonPlanifie($contratTechnicien, $contrat);
-            } else {
-                $technicienArr = array();
-                foreach ($contrat->getContratPassages() as $contratPassages) {
-                    foreach ($contratPassages->getPassages() as $passage) {
-                        if (count($passage->getTechniciens())) {
-                            foreach ($passage->getTechniciens() as $technicien) {
-                                if (array_key_exists($technicien->getId(), $technicienArr)) {
-                                    $technicienArr[$technicien->getId()] = $technicienArr[$technicien->getId()] + 1;
-                                } else {
-                                    $technicienArr[$technicien->getId()] = 1;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (!count($technicienArr)) {
-                    $this->updateAllPassagesNonPlanifie($contratTechnicien, $contrat);
-                } else {
-                    $technicienFav = null;
-                    $max = 0;
-                    foreach ($technicienArr as $compteId => $nb) {
-                        if (!$this->um->getRepository()->findOneById($compteId)->isCommercial()) {
-                            if ($nb > $max) {
-                                $technicienFav = $compteId;
-                                $max = $nb;
-                            }
-                        }
-                    }
-                    if (!$technicienFav) {
-                        foreach ($technicienArr as $compteId => $nb) {
-                            if ($nb > $max) {
-                                $technicienFav = $compteId;
-                                $max = $nb;
-                            }
-                        }
-                    }
-                    $technicienPrivilegie = $this->um->getRepository()->findOneById($technicienFav);
-
-                    $this->updateAllPassagesNonPlanifie($technicienPrivilegie, $contrat);
-                    $contrat->setTechnicien($technicienPrivilegie);
-                }
-            }
-            $cptTotal++;
-            if ($cptTotal % (count($allContrat) / 100) == 0) {
-                $progress->advance();
-            }
-            if ($i >= 2000) {
-                $this->dm->flush();
-                $i = 0;
-            }
-            $i++;
-        }
-        $this->dm->flush();
-        $progress->finish();
-    }
-
-    private function updateAllPassagesNonPlanifie($technicien, &$contrat) {
-        foreach ($contrat->getContratPassages() as $contratPassages) {
-            foreach ($contratPassages->getPassages() as $passage) {
-                if (!count($passage->getTechniciens())) {
-                    $passage->addTechnicien($technicien);
-                } else {
-                    if (!$passage->isRealise()) {
-                        $passage->removeAllTechniciens();
-                        $passage->addTechnicien($technicien);
-                    }
-                }
-            }
-        }
-    }
-
-    public function updatePassagesAttentes($output) {
-
-        $allPassagesAttente = $this->pm->getRepository()->findByStatut(PassageManager::STATUT_EN_ATTENTE);
-
-
-        $cptTotal = 0;
-        $i = 0;
-        $progress = new ProgressBar($output, 100);
-        $progress->start();
-        foreach ($allPassagesAttente as $passage) {
-            if ($this->pm->isFirstPassageNonRealise($passage)) {
-                $passage->setDateDebut($passage->getDatePrevision());
-            }
-
-            $this->dm->persist($passage);
-            $cptTotal++;
-            if ($cptTotal % (count($allPassagesAttente) / 100) == 0) {
-                $progress->advance();
-            }
-            if ($i >= 2000) {
-                $this->dm->flush();
-                $i = 0;
-            }
-            $i++;
-        }
-        $this->dm->flush();
-        $progress->finish();
+      
     }
 
     public function generateStatut($data, &$passage, $output) {
-
         switch ($data[self::CSV_STATUT]) {
-            case PassageManager::STATUT_REALISE: {
+            case PassageManager::STATUT_REALISE: {                  
                     return $this->updateStatutRealise($data, $passage, $output);
                     break;
                 }
@@ -502,6 +239,7 @@ class PassageCsvImporter {
     public function updateStatutRealise($data, &$passage, $output) {
         $passage = $this->updateDateDebutDateFin($data, $passage, $output);
         $passage->setDateRealise($passage->getDateDebut());
+        
         return $passage;
     }
 
@@ -537,33 +275,6 @@ class PassageCsvImporter {
         }
         return $passage;
     }
-
-    public function cleanPassage($passage) {
-        /*
-         * Clean prestation Passage !
-         */
-        $prestationsPassageArr = array();
-        foreach ($passage->getPrestations() as $prestation) {
-            $prestationsPassageArr[$prestation->getIdentifiant()] = $prestation;
-        }
-        $passage->removeAllPrestations();
-        foreach ($prestationsPassageArr as $passagePrestation) {
-            $passage->addPrestation($passagePrestation);
-        }
-        $this->dm->persist($passage);
-
-        /**
-         * Clean Technicien Passage !
-         */
-        $techniciensPassageArr = array();
-        foreach ($passage->getTechniciens() as $technicien) {
-            $techniciensPassageArr[$technicien->getIdentifiant()] = $technicien;
-        }
-        $passage->removeAllTechniciens();
-        foreach ($techniciensPassageArr as $passageTechnicien) {
-            $passage->addTechnicien($passageTechnicien);
-        }
-        $this->dm->persist($passage);
-    }
+  
 
 }

@@ -27,9 +27,9 @@
 		#pdf-contrat blockquote {
 			border: none;
 			font-size: 13px;
-			padding: 0px 0px 0px 50%;
+			padding: 0px 0px 0px 45%;
 			text-transform: uppercase;
-			margin: 20px 0 0 0;
+			margin: 25px 0 0 0;
 		}
 		#pdf-contrat pre {
 			background-color: #fff;
@@ -65,12 +65,18 @@
 			page-break-after: always;
 		}
 		#pdf-contrat img {
-			margin: -135px 0 0 120px;
+			margin: -145px 0 0 120px;
 			width: 25%;
 		}
 		body  {
 			background: transparent url('http://aurouze.preprod.24eme.fr/images/bg-body-pdf-contrat.jpg') repeat-y left top;
-			background-size: 21cm auto;
+			background-size: auto 21.6cm;
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			margin: 0;
+			padding: 0;
 		}
 		#pdf-contrat {
 			margin-left: 200px;
@@ -79,8 +85,8 @@
 		#pdf-contrat table, #pdf-contrat tr, #pdf-contrat td, #pdf-contrat th, #pdf-contrat tbody, #pdf-contrat thead, #pdf-contrat tfoot, #pdf-contrat p, #pdf-contrat h2, #pdf-contrat pre {
 	    	page-break-inside: avoid !important;
 		}
-		#pdf-contrat table, #pdf-contrat p, #pdf-contrat h2, #pdf-contrat pre {
-	    	padding: 5px 0 0 0;
+		#pdf-contrat p:last-of-type {
+			padding-bottom: 5px;
 		}
 		</style>
     </head>
