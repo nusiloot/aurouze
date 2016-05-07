@@ -10,7 +10,7 @@ DATA_DIR=$TMP/AUROUZE_DATAS
 
 if test "$REMOTE_DATA"; then
     echo "Récupération de l'archive"
-    scp $REMOTE_DATA:AUROUZE_DATAS.tar.gz $TMP/AUROUZE_DATAS.tar.gz
+    scp $REMOTE_DATA:AUROUZE_DATAS_FINAL.tar.gz $TMP/AUROUZE_DATAS.tar.gz
 
     echo "Désarchivage"
     cd $TMP
