@@ -4,7 +4,7 @@
 
     {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
 
-    <div class="row" style="margin-top: 10px;">
+    <div class="row" style="margin-top: 10px; height: 130px;">
         <div class="col-xs-8">
             <h3 style="margin-top: 5px;"><i style="cursor: default;" class="mdi mdi-{{ etablissement.icon }} mdi-lg" title="{{ etablissement.type }}" data-toggle="tooltip" ></i> {{ etablissement.nom }} <small class="text-muted">({{ etablissement.raisonSociale }})</small></h3>
             <p class="lead">
@@ -28,7 +28,7 @@
                 {% set lat = etablissement.adresse.coordonnees.lat  %}
                 {% set lon = etablissement.adresse.coordonnees.lon  %}
             {%  endif  %}
-            <div id="map" style="width: 100%; height: 100px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}" data-lat="{{ lat }}" data-lon="{{ lon }}"></div>
+            <div id="map" style="width: 100%; height: 130px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}" data-lat="{{ lat }}" data-lon="{{ lon }}"></div>
         </div>
     </div>
 
@@ -58,22 +58,17 @@
                                     Contrat non commencé (début {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }})
 
                                 {% endif %}
-                                <small>Contrat  n° {{ contrat.numeroArchive }}
-                                    sur {{ contrat.duree }} mois</small>&nbsp;
-                                    {% if (contrat.isBrouillon) %}
-                                    <a href="{{ path('contrat_acceptation',{id : contrat.id}) }}" class="btn btn-xs btn-link pull-right">modifier</a>
-                                {% else %}
-                                    <a href="{{ path('contrat_modification',{id : contrat.id}) }}" class="btn btn-xs btn-link pull-right">modifier</a>
-                                {% endif %}
+                                <small>n° {{ contrat.numeroArchive }}</small>&nbsp;
                                 {% for prestation in contrat.prestations %}
                                     {% if(prestation.wordToPicto) %}
                                         &nbsp;<span class="step size-18" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
                                             <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i>&nbsp;<span>{{ prestation.nbPassages }}</span></span>
                                         {%else%}
-                                        <span class="label label-xs label-primary">{{  prestation.nomToString }}&nbsp;<span>{{ prestation.nbPassages }}</span></span>
+                                        <span class="btn btn-xs label-primary">{{  prestation.nomToString }}&nbsp;<span>{{ prestation.nbPassages }}</span></span>
                                     {%endif%}
 
                                 {% endfor %}
+                                <span class="pull-right"><span class="glyphicon glyphicon-chevron-down"></span></span>
                             </h4>
                         </div>
                         <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(not contrat.isEnCours) %}out{% else%}in{% endif %} list-group">
@@ -82,10 +77,11 @@
                                  {% if(contrat.isBrouillon or contrat.isEnAttenteAcceptation) %} list-group-item-warning {% endif %}
                                  " {% if(contrat.isAVenir) %}style="opacity: 0.5;"{% endif %}>
                                 <div class="row">
-                                    <div class="col-xs-1">
+                                    <div class="col-xs-2">
+                                        {{ passagesEtablissement.nbPassagePrevu}} passages prévus
                                     </div>
                                     <div class="col-xs-3">
-                                        {{ passagesEtablissement.nbPassagePrevu}} passages prévus
+                                        sur {{ contrat.duree }} mois
                                     </div>
                                     <div class="col-xs-2">
                                         <a href="" title="{{ contrat.nomenclature | nl2br }}" data-html="true" data-toggle="tooltip">Voir la nomenclature</a>
@@ -97,7 +93,7 @@
                                         {% if contrat.commentaire %}
                                             <a href="" title="{{ contrat.commentaire | nl2br }}" data-html="true" data-toggle="tooltip">Voir le commentare</a>
                                         {% else %}
-                                            <small><em class="text-muted">Aucun commentaire</em></small>
+                                            <small><em class="text-muted">Aucun commentaire</em> <a href="{{ path('contrat_acceptation',{id : contrat.id}) }}">(Ajouter)</a></small>
                                         {% endif %}
                                     </div>
                                     <div class="col-xs-2">
@@ -108,35 +104,39 @@
                             {% for pe in passagesEtablissement.getPassagesSorted(true) %}
                                 <div class="list-group-item">
                                     <div class="row">
-                                        <div class="col-xs-4">                                           
+                                        <div class="col-xs-2">
                                             <div class="row">
-                                                <div class="col-xs-4">
-
-                                                    {% if(pe.enAttente) %}
-                                                        <label class="btn btn-xs btn-block btn-default"><span class="badge pull-left {% if(pe.isControle) %} badge-info {% endif %} {% if(pe.isGarantie) %} badge-danger {% endif %}" style="margin-top:2px">{{ pe.getNumeroPassage() }}</span>{{ pe.getStatutLibelle() }}</label>
-                                                    {% elseif(pe.aPlanifie) %}
-                                                        <label class="btn btn-xs btn-block btn-primary"><span class="badge pull-left {% if(pe.isControle) %} badge-info {% endif %} {% if(pe.isGarantie) %} badge-danger {% endif %}" style="margin-top:2px">{{ pe.getNumeroPassage() }}</span>{{ pe.getStatutLibelle() }}</label>
-                                                    {% elseif(pe.planifie) %}
-                                                        <label class="btn btn-xs btn-block btn-warning"><span class="badge pull-left {% if(pe.isControle) %} badge-info {% endif %} {% if(pe.isGarantie) %} badge-danger {% endif %}" style="margin-top:2px">{{ pe.getNumeroPassage() }}</span>{{ pe.getStatutLibelle() }}</label>
-                                                    {% elseif(pe.annule) %}
-                                                        <label class="btn btn-xs btn-block btn-danger"><span class="badge pull-left {% if(pe.isControle) %} badge-info {% endif %} {% if(pe.isGarantie) %} badge-danger {% endif %}" style="margin-top:2px">{{ pe.getNumeroPassage() }}</span>{{ pe.getStatutLibelle() }}</label>
-                                                    {% elseif(pe.realise) %}
-                                                        <label class="btn btn-xs btn-block btn-success"><span class="badge pull-left {% if(pe.isControle) %} badge-info {% endif %} {% if(pe.isGarantie) %} badge-danger {% endif %}" style="margin-top:2px">{{ pe.getNumeroPassage() }}</span>{{ pe.getStatutLibelle() }}</label>
-                                                    {% endif %} 
-                                                </div> 
-                                                <div class="col-xs-8">
-                                                    <a data-toggle="modal" data-remote="false" data-target="#modal-passage" href="{{path('calendarRead', { 'id': pe.id })}}">
-                                                        {% if (pe.enAttente) %}
-                                                            {{ pe.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
-                                                        {% elseif (pe.APlanifie) %}
-                                                            {{ pe.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
-                                                        {% else %}
-                                                            {{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}
-                                                        {% endif %}
-                                                    </a>
-                                                    {% if(pe.duree) %}<span class="pull-right">{{pe.dateDebut | date("H:i") }}</span>{% endif %}
+                                                <div class="col-xs-3">
+                                                    <span style="cursor: help;" title="{{ pe.libelle }}" data-toggle="tooltip" class="badge {% if(pe.isGarantie) %}badge-warning{% elseif(pe.isControle)%}badge-warning{% else %}badge-default{% endif %} {% if(pe.mouvementDeclenchable) %}badge-inverse{% endif %} btn-xs">{{ pe.getNumeroPassage() }}</span>
+                                                </div>
+                                                <div class="col-xs-9">
+                                                    {% if (pe.enAttente) %}
+                                                        <button class="btn btn-xs btn-block btn-default">{{ pe.getStatutLibelle() }}</button>
+                                                    {% elseif (pe.aPlanifie) %}
+                                                        <button class="btn btn-xs btn-block btn-primary">{{ pe.getStatutLibelle() }}</button>
+                                                    {% elseif (pe.planifie) %}
+                                                        <button class="btn btn-xs btn-block btn-warning">{{ pe.getStatutLibelle() }}</button>
+                                                    {% elseif (pe.annule) %}
+                                                        <button class="btn btn-xs btn-block btn-danger">{{ pe.getStatutLibelle() }}</button>
+                                                    {% elseif (pe.realise) %}
+                                                        <button class="btn btn-xs btn-block btn-success">{{ pe.getStatutLibelle() }}</button>
+                                                    {% endif %}
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <a data-toggle="modal" data-remote="false" data-target="#modal-passage" href="{{path('calendarRead', { 'id': pe.id })}}">
+                                                {% if (pe.enAttente) %}
+                                                    {{ pe.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                                                {% elseif (pe.APlanifie) %}
+                                                    {{ pe.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                                                {% else %}
+                                                    {{ pe.dateDebut | localizeddate('full', 'none') | capitalize }}
+                                                {% endif %}
+
+                                                {% if(pe.duree) %} à {{pe.dateDebut | date("H") }}h{{pe.dateDebut | date("i") }}{% endif %}
+                                            </a>
+
                                         </div>
                                         <div class="col-xs-2">
                                             {% for prestation in pe.prestations %}
@@ -163,7 +163,7 @@
                                         <div class="col-xs-2 text-right">
                                             {% if pe.planifie  %}
                                                 <a class="btn btn-sm btn-block btn-warning" href="{{ path('passage_edition', { id: pe.id })}}">Saisir le rapport</a>
-                                            {% elseif pe.realise %}<a class="btn btn-block btn-sm btn-default" href="{{ path('passage_edition', { id: pe.id })}}">Modifier le rapport</a>
+                                            {% elseif pe.realise %}<a class="btn btn-block btn-xs btn-default" href="{{ path('passage_edition', { id: pe.id })}}">Modifier le rapport</a>
                                             {% elseif pe.aPlanifie %}
                                                 {% for technicien in pe.techniciens %}
                                                     <a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : pe.id,'technicien' : technicien.id, 'calendrier' : pe.datedebut|date('d-m-Y')})}}">Planifier</a>

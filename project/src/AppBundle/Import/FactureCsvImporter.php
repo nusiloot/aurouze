@@ -89,10 +89,6 @@ class FactureCsvImporter {
 
             $facture = $this->importFacture($lignes, $output);
 
-            if ($facture && $facture->getDateFacturation()->format('Y-m-d') < '2015-01-01') {
-                break;
-            }
-
             $i++;
             $cptTotal++;
             if ($cptTotal % (count($csv) / 100) == 0) {
@@ -188,16 +184,15 @@ class FactureCsvImporter {
             $mouvement->setSociete($societe->getId());
             $mouvement->setLibelle(preg_replace('/^".*"$/', "", str_replace('#', "\n", $ligne[self::CSV_FACTURE_LIGNE_LIBELLE])));
 
-            /*if ($ligne[self::CSV_FACTURE_LIGNE_PASSAGE]) {
-                $refPassage = str_replace('#', "", $ligne[self::CSV_FACTURE_LIGNE_PASSAGE]);
-                $passage = $this->dm->getRepository('AppBundle:Passage')->findOneByIdentifiantReprise($refPassage);
+            if ($ligne[self::CSV_FACTURE_LIGNE_PASSAGE]) {
+                $passage = $this->dm->getRepository('AppBundle:Passage')->findOneByIdentifiantReprise($ligne[self::CSV_FACTURE_LIGNE_PASSAGE]);
                 if (!$passage) {
-                    $output->writeln(sprintf("<comment>Le passage d'identifiant de reprise %s n'est pas trouvé dans la base </comment>", $refPassage));
+                    $output->writeln(sprintf("<comment>Le passage d'identifiant de reprise %s n'est pas trouvé dans la base (%s)</comment>", $ligne[self::CSV_FACTURE_LIGNE_PASSAGE], $societe->getIdentifiant()));
                 } else {
                     $passage->setMouvementDeclenchable(true);
-                    $passage->setMouvementDeclenche($mvtIsFacture);
+                    $passage->setMouvementDeclenche($mouvement->getFacturable());
                 }
-            }*/
+            }
 
             if($contrat) {
                 $mouvement->setDocument($contrat);

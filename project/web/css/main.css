@@ -60,6 +60,12 @@ body {
 
 }
 
+.badge-default {
+    border: 1px solid #ccc !important;
+    background-color: #fff !important;
+    color: #333333 !important;
+}
+
 .badge-danger {
     background-color: #d43f3a !important;
     color: white !important;
