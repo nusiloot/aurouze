@@ -132,7 +132,7 @@ class ContratController extends Controller {
                 $dm->flush();
                 return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
             } else {
-                if($oldTechnicien->getId() != $contrat->getTechnicien()->getId()){
+                if((!$oldTechnicien) || $oldTechnicien->getId() != $contrat->getTechnicien()->getId()){
                     $contrat->changeTechnicien($contrat->getTechnicien());
                 }
                 $dm->persist($contrat);
