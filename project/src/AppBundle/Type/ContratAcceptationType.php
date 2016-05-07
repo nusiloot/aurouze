@@ -74,7 +74,7 @@ class ContratAcceptationType extends AbstractType {
     }
     
     public function getComptes() {
-        return $this->dm->getRepository('AppBundle:Compte')->findAllActif();
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursActif();
     }
 
     /**

@@ -64,7 +64,7 @@ cat $DATA_DIR/prestation.sorted.csv | grep -v "RefPrestation;RefEntite;" | sed -
     if(!date_creation_contrat){
         next;
     }
-    if(date_creation_contrat < "2012-09-01"){
+    if(date_creation_contrat < "2013-01-01"){
         next;
     }
 

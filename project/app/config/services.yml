@@ -89,3 +89,6 @@ services:
         class: AppBundle\Import\ContratPrestationCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager]
         
+    contact.importer:
+        class: AppBundle\Import\ContactCsvImporter
+        arguments: [@doctrine_mongodb.odm.default_document_manager]    

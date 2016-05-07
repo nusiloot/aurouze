@@ -52,7 +52,7 @@ class TechnicienType extends AbstractType {
     }
     
     public function getComptes($type) {
-        return $this->dm->getRepository('AppBundle:Compte')->findAllActif();
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursActif();
     }
 
 }

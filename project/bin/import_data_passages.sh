@@ -41,7 +41,7 @@ cat $DATA_DIR/passagesadressestechniciens.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0
         }
     }
 
-    if(!date_passage_prevision || (date_passage_prevision < "2015-01-01")) {
+    if(!date_passage_prevision || (date_passage_prevision < "2012-01-01")) {
         next;
     }
     print $0 ";" cmt ;

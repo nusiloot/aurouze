@@ -77,6 +77,16 @@ class Compte implements DocumentSocieteInterface {
     protected $identifiantReprise;
 
     /**
+     * @MongoDB\String
+     */
+    protected $civilite;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $titre;
+
+    /**
      *  @MongoDB\EmbedMany(targetDocument="CompteTag")
      */
     protected $tags = array();
@@ -177,7 +187,10 @@ class Compte implements DocumentSocieteInterface {
      * @return string $identite
      */
     public function getIdentite() {
-        return $this->prenom . ' ' . $this->nom;
+        $identite = ($this->getCivilite()) ? $this->getCivilite() . ' ' : '';
+        $identite.= ($this->getPrenom()) ? $this->getPrenom() . ' ' : '';
+        $identite.= ($this->getNom()) ? $this->getNom() . ' ' : '';
+        return $identite;
     }
 
     /**
@@ -253,9 +266,12 @@ class Compte implements DocumentSocieteInterface {
     }
 
     public function __construct(Societe $societe) {
+        $this->adresse = new Adresse();
+        $this->contactCoordonnee = new ContactCoordonnee();
         $this->passages = new ArrayCollection();
         $this->prestations = new ArrayCollection();
         $this->setSociete($societe);
+        
     }
 
     /**
@@ -357,6 +373,14 @@ class Compte implements DocumentSocieteInterface {
     public function getTags() {
         return $this->tags;
     }
+    
+    public function getTagsArray() {
+        $result= array();
+        foreach ($this->getTags() as $tag) {
+           $result[$tag->getIdentifiant()] = $tag; 
+        }
+        return $result;
+    }
 
     /**
      * Set identifiantReprise
@@ -378,15 +402,13 @@ class Compte implements DocumentSocieteInterface {
         return $this->identifiantReprise;
     }
 
-
     /**
      * Set adresse
      *
      * @param AppBundle\Document\Adresse $adresse
      * @return self
      */
-    public function setAdresse(\AppBundle\Document\Adresse $adresse)
-    {
+    public function setAdresse(\AppBundle\Document\Adresse $adresse) {
         $this->adresse = $adresse;
         return $this;
     }
@@ -396,8 +418,7 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return AppBundle\Document\Adresse $adresse
      */
-    public function getAdresse()
-    {
+    public function getAdresse() {
         return $this->adresse;
     }
 
@@ -407,8 +428,7 @@ class Compte implements DocumentSocieteInterface {
      * @param AppBundle\Document\ContactCoordonnee $contactCoordonnee
      * @return self
      */
-    public function setContactCoordonnee(\AppBundle\Document\ContactCoordonnee $contactCoordonnee)
-    {
+    public function setContactCoordonnee(\AppBundle\Document\ContactCoordonnee $contactCoordonnee) {
         $this->contactCoordonnee = $contactCoordonnee;
         return $this;
     }
@@ -418,8 +438,96 @@ class Compte implements DocumentSocieteInterface {
      *
      * @return AppBundle\Document\ContactCoordonnee $contactCoordonnee
      */
-    public function getContactCoordonnee()
-    {
+    public function getContactCoordonnee() {
         return $this->contactCoordonnee;
     }
+
+    /** @MongoDB\PreUpdate */
+    public function preUpdate() {
+        $this->pullInfosFromSociete();
+    }
+
+    /** @MongoDB\PrePersist */
+    public function prePersist() {
+        $this->pullInfosFromSociete();
+    }
+
+    public function getSameAdresse() {
+        return $this->isSameAdresseThanSociete();
+    }
+
+    public function setSameAdresse($value) {
+        return $this;
+    }
+
+    public function getSameContact() {
+        return $this->isSameContactCoordonneeThanSociete();
+    }
+
+    public function setSameContact($value) {
+        return $this;
+    }
+
+    public function isSameAdresseThanSociete() {
+        return $this->getAdresse()->isSameThan($this->getSociete()->getAdresse());
+    }
+
+    public function isSameContactCoordonneeThanSociete() {
+
+        return $this->getContactCoordonnee()->isSameThan($this->getSociete()->getContactCoordonnee());
+    }
+
+    public function pullInfosFromSociete() {
+        if ($this->isSameAdresseThanSociete()) {
+            $this->getAdresse()->copyFrom($this->getSociete()->getAdresse());
+        }
+        if ($this->isSameContactCoordonneeThanSociete()) {
+            $this->getContactCoordonnee()->copyFrom($this->getSociete()->getContactCoordonnee());
+        }
+    }
+
+    public function isActif() {
+        return boolval($this->getActif());
+    }
+
+    /**
+     * Set civilite
+     *
+     * @param string $civilite
+     * @return self
+     */
+    public function setCivilite($civilite) {
+        $this->civilite = $civilite;
+        return $this;
+    }
+
+    /**
+     * Get civilite
+     *
+     * @return string $civilite
+     */
+    public function getCivilite() {
+        return $this->civilite;
+    }
+
+    /**
+     * Set titre
+     *
+     * @param string $titre
+     * @return self
+     */
+    public function setTitre($titre) {
+        $this->titre = $titre;
+        return $this;
+    }
+
+    /**
+     * Get titre
+     *
+     * @return string $titre
+     */
+    public function getTitre() {
+        return $this->titre;
+    }
+
 }

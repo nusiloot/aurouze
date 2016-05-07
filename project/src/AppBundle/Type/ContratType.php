@@ -48,17 +48,17 @@ class ContratType extends AbstractType {
                 ->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false, 'label_attr' => array('class' => 'control-label')))
                 ->add('save', SubmitType::class, array('label' => 'Suivant', "attr" => array("class" => "btn btn-success pull-right")));
 
-       
+
 
         $builder->add('etablissements', ChoiceType::class, array('label' => 'Lieux de passage* : ',
-            		'choices' => $this->getEtablissements($builder),
-	        		'expanded' => false, 
-	        		'multiple' => true,
-        			'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
+            'choices' => $this->getEtablissements($builder),
+            'expanded' => false,
+            'multiple' => true,
+            'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
         ));
 
-         $builder->get('etablissements')->addModelTransformer(new EtablissementsTransformer($this->dm,$builder->getData()->getSociete()));
-        
+        $builder->get('etablissements')->addModelTransformer(new EtablissementsTransformer($this->dm, $builder->getData()->getSociete()));
+
         $builder->add('prestations', CollectionType::class, array(
             'entry_type' => new PrestationType($this->dm),
             'allow_add' => true,
@@ -66,7 +66,7 @@ class ContratType extends AbstractType {
             'delete_empty' => true,
             'label' => '',
         ));
-        
+
 
         $builder->add('produits', CollectionType::class, array(
             'entry_type' => new ProduitType($this->dm),
@@ -75,7 +75,7 @@ class ContratType extends AbstractType {
             'delete_empty' => true,
             'label' => '',
         ));
-        
+
         $builder->add('commercial', DocumentType::class, array(
             "choices" => array_merge(array('' => ''), $this->getComptes()),
             'label' => 'Commercial* :',
@@ -83,7 +83,7 @@ class ContratType extends AbstractType {
             'expanded' => false,
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple")));
-        
+
 
         $builder->get('dureePassage')
                 ->addModelTransformer(new CallbackTransformer(
@@ -119,12 +119,11 @@ class ContratType extends AbstractType {
     }
 
     public function getComptes() {
-        return $this->dm->getRepository('AppBundle:Compte')->findAllActif();
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursActif();
     }
 
-    public function getProduits()
-    {
-    	return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getProduits()->toArray();
+    public function getProduits() {
+        return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getProduits()->toArray();
     }
 
 }
