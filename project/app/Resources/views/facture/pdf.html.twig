@@ -45,7 +45,7 @@
     {% for ligne in facture.lignes %}
         <tr>
             <td>
-                {{ ligne.libelle }}<br />
+                {% if(ligne.libelle) %}{{ ligne.libelle }}<br />{% endif %}
                 {% if ligne.origineContrat %}
                 <small>
                     <small>Votre Réf CDE 00000000000</small><br />
@@ -65,6 +65,8 @@
                         </ul>
                     </small>
                 </small>
+                {% elseif (ligne.description) %}
+                <small>{{ ligne.description | nl2br }}</small>
                 {% endif %}
             </td>
             <td class="text-center">{{ ligne.quantite }}</td>

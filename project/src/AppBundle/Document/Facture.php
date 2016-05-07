@@ -472,4 +472,26 @@ class Facture implements DocumentSocieteInterface {
     {
         return $this->avoir;
     }
+
+    /**
+     * Set dateLimitePaiement
+     *
+     * @param date $dateLimitePaiement
+     * @return self
+     */
+    public function setDateLimitePaiement($dateLimitePaiement)
+    {
+        $this->dateLimitePaiement = $dateLimitePaiement;
+        return $this;
+    }
+
+    /**
+     * Get dateLimitePaiement
+     *
+     * @return date $dateLimitePaiement
+     */
+    public function getDateLimitePaiement()
+    {
+        return $this->dateLimitePaiement;
+    }
 }
