@@ -31,9 +31,9 @@ cat $DATA_DIR/prestation.sorted.csv | grep -v "RefPrestation;RefEntite;" | sed -
     contrat_archivage=$8;
     commercial_id=$5;
     technicien_id=$7;
-    if(!technicien_id){
-        technicien_id=$5;
-    }
+#    if(!technicien_id){
+#        technicien_id=$5;
+#    }
     contrat_type=$11;
     prestation_type=$13;
     localisation=$14;

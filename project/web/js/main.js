@@ -17,62 +17,70 @@
         $.initBtnSwitch();
         $.initCollapseCheckbox();
         $.initTextSelector();
+        $.initLinkInPanels();
     });
+
+    $.initLinkInPanels = function () {
+        $('.panel-heading a.stopPropagation').click(function (e) {
+            e.stopPropagation();
+        });
+    }
+
     $.initTextSelector = function () {
-    	$('.text-selector').click(function(){
-    		console.log('yop');
-    		$(this).select();
-        }); 
-    		
+        $('.text-selector').click(function () {
+            console.log('yop');
+            $(this).select();
+        });
+
     }
     $.initCollapseCheckbox = function () {
 
-    	$('.collapse-checkbox').click(function(){
-    		if( $(this).is(':checked') ){
-    			$($(this).data('target')).collapse('hide');
-    		} else {
-    			$($(this).data('target')).collapse('show');
-    		}
-        }); 
+        $('.collapse-checkbox').click(function () {
+            if ($(this).is(':checked')) {
+                $($(this).data('target')).collapse('hide');
+            } else {
+                $($(this).data('target')).collapse('show');
+            }
+        });
 
     }
-    
+
     $.initSwitcher = function () {
-    	$('.switcher').each(function(){
+        $('.switcher').each(function () {
             var state = $(this).val();
             $(this).bootstrapSwitch('state', state);
-        }); 
-    	$('.switcher').on('switchChange.bootstrapSwitch', function(event, state) {
-    		var checkbox = $(this);
-    		var etat = state ? 1 : 0;
+        });
+        $('.switcher').on('switchChange.bootstrapSwitch', function (event, state) {
+            var checkbox = $(this);
+            var etat = state ? 1 : 0;
 
-    		$.ajax({
+            $.ajax({
                 type: "POST",
                 url: checkbox.data('url'),
-                data: { etat: etat }
+                data: {etat: etat}
             });
-    	});
+        });
     }
 
     $.initBtnSwitch = function () {
-    	$('.btn-switcher').click(function() {
-    		$($(this).data('hide')).hide();
-    		$($(this).data('show')).show();
-    	});
+        $('.btn-switcher').click(function () {
+            $($(this).data('hide')).hide();
+            $($(this).data('show')).show();
+        });
     }
 
     $.initDatePicker = function () {
-    	$('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "right"});
+        $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "right"});
     }
 
     $.initTimePicker = function () {
         $('.input-timepicker').timepicker({
-                format: 'HH:ii p',
-                autoclose: true,
-                showMeridian: false,
-                startView: 1,
-                maxView: 1,defaultTime: '01:00'
-            });
+            format: 'HH:ii p',
+            autoclose: true,
+            showMeridian: false,
+            startView: 1,
+            maxView: 1, defaultTime: '01:00'
+        });
     }
 
     $.initDynamicCollection = function () {
@@ -80,12 +88,12 @@
 
         var addLink = $('.dynamic-collection-add');
 
-        $('.dynamic-collection-item').on('click', '.dynamic-collection-remove', function(e) {
+        $('.dynamic-collection-item').on('click', '.dynamic-collection-remove', function (e) {
             e.preventDefault();
             $(e.delegateTarget).remove();
         });
 
-        addLink.on('click', function(e) {
+        addLink.on('click', function (e) {
             e.preventDefault();
 
             var collectionTarget = $(this).data('collection-target');
@@ -97,7 +105,7 @@
             var item = $(prototype.replace(/__name__/g, index));
             collectionHolder.data('index', index + 1);
             collectionHolder.append(item);
-            $(item).on('click', '.dynamic-collection-remove', function(e) {
+            $(item).on('click', '.dynamic-collection-remove', function (e) {
                 e.preventDefault();
                 $(e.delegateTarget).remove();
             });
@@ -109,28 +117,28 @@
     }
 
     $.initFormEventAjax = function () {
-	    $('#eventForm').submit(function() {
-	    	var form = $(this);
-	    	var request = $.ajax({
+        $('#eventForm').submit(function () {
+            var form = $(this);
+            var request = $.ajax({
                 type: form.attr('method'),
                 url: form.attr('action'),
                 data: form.serialize()
             });
-	    	request.done(function(msg) {
-	    		try {
-	    		    $.parseJSON(msg);
-	    		    location.reload();
-	    		} catch (e) {
-	    			$('#modal-body').html(msg);
-	                $.callbackEventForm();
-	    		}
-    		});
-    		request.fail(function(jqXHR, textStatus) {
+            request.done(function (msg) {
+                try {
+                    $.parseJSON(msg);
+                    location.reload();
+                } catch (e) {
+                    $('#modal-body').html(msg);
+                    $.callbackEventForm();
+                }
+            });
+            request.fail(function (jqXHR, textStatus) {
                 $('#modal-body').html(jqXHR.responseText());
                 $.callbackDynamicCollection();
-    		});
-	    	return false;
-	    });
+            });
+            return false;
+        });
     }
 
     $.callbackDynamicCollection = function () {
@@ -250,13 +258,13 @@
     });
 
 
-    $.initModalPassage = function() {
+    $.initModalPassage = function () {
 
         $('#modal-passage').on('show.bs.modal', function (event) {
-          var link = $(event.relatedTarget) // Button that triggered the modal
-          $(this).find('.modal-body').load(link.attr('href'), function() {
-              $.callbackEventForm();
-          });
+            var link = $(event.relatedTarget) // Button that triggered the modal
+            $(this).find('.modal-body').load(link.attr('href'), function () {
+                $.callbackEventForm();
+            });
         })
     }
 
@@ -272,7 +280,7 @@
         var data = [];
         for (key in words) {
             if (words[key] + "") {
-                data.push({id: words[key]+"", text: (words[key] + "")});
+                data.push({id: words[key] + "", text: (words[key] + "")});
             }
         }
 
@@ -344,4 +352,5 @@
         }
     }
 
-})(jQuery);
+}
+)(jQuery);

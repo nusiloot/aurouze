@@ -56,7 +56,6 @@
                                     Contrat terminé en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                                 {% elseif (contrat.isAVenir) %}
                                     Contrat non commencé (début {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }})
-
                                 {% endif %}
                                 <small>n° {{ contrat.numeroArchive }}</small>&nbsp;
                                 {% for prestation in contrat.prestations %}

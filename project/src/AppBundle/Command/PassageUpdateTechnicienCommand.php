@@ -35,14 +35,14 @@ class PassageUpdateTechnicienCommand extends ContainerAwareCommand {
 
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
 
-        
-        $this->updatePassagesTechniciens($output,PassageManager::STATUT_A_PLANIFIER);
-        $this->updatePassagesTechniciens($output,PassageManager::STATUT_PLANIFIE);
-        $this->updatePassagesTechniciens($output,PassageManager::STATUT_REALISE);
+
+        $this->updatePassagesTechniciens($output, PassageManager::STATUT_A_PLANIFIER);
+        $this->updatePassagesTechniciens($output, PassageManager::STATUT_PLANIFIE);
+        $this->updatePassagesTechniciens($output, PassageManager::STATUT_REALISE);
     }
 
-    public function updatePassagesTechniciens($output,$statut) {
-        echo "\nMis à jour des techniciens non renseignés pour les passage ".$statut."...\n";
+    public function updatePassagesTechniciens($output, $statut) {
+        echo "\nMis à jour des techniciens non renseignés pour les passage " . $statut . "...\n";
         $allPassagesAPlanifier = $this->dm->getRepository('AppBundle:Passage')->findByStatut($statut);
 
         $cptTotal = 0;
@@ -69,7 +69,8 @@ class PassageUpdateTechnicienCommand extends ContainerAwareCommand {
                         }
                     }
                 }
-                $technicienFav = null; $max = 0;
+                $technicienFav = null;
+                $max = 0;
                 foreach ($technicienArr as $compteId => $nb) {
                     if ($this->dm->getRepository('AppBundle:Compte')->findOneById($compteId)) {
                         if ($nb > $max) {
@@ -78,11 +79,20 @@ class PassageUpdateTechnicienCommand extends ContainerAwareCommand {
                         }
                     }
                 }
-                if($technicienFav){
+                if ($technicienFav) {
                     $tech = $this->dm->getRepository('AppBundle:Compte')->findOneById($technicienFav);
-                    $passage->addTechnicien($tech);
-                }else{
-                    $passage->addTechnicien($passage->getContrat()->getTechnicien());
+                    if ($tech) {
+                        $passage->addTechnicien($tech);
+                    } else {
+                        $output->writeln(sprintf("\n<comment>ATTENTION LE technicien : %s n'existe pas en base %s !</comment>", $technicienFav));
+                    }
+                } else {
+                    $tech = $passage->getContrat()->getTechnicien();
+                    if ($tech) {
+                        $passage->addTechnicien($tech);
+                    } else {
+                        $output->writeln(sprintf("\n<comment>Passage : %s de contrat %s n'aura aucun technicien !</comment>", $passage->getId(),$passage->getContrat()->getId()));
+                    }
                 }
             }
             $cptTotal++;
@@ -98,4 +108,5 @@ class PassageUpdateTechnicienCommand extends ContainerAwareCommand {
         $this->dm->flush();
         $progress->finish();
     }
+
 }
