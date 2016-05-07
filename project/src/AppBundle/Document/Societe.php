@@ -69,6 +69,11 @@ class Societe {
      * @MongoDB\Increment
      */
     protected $contratIncrement;
+    
+    /**
+     * @MongoDB\Increment
+     */
+    protected $compteIncrement;
 
     /**
      * @MongoDB\Increment
@@ -457,5 +462,27 @@ class Societe {
     public function removeCompte(\AppBundle\Document\Compte $compte)
     {
         $this->comptes->removeElement($compte);
+    }
+
+    /**
+     * Set compteIncrement
+     *
+     * @param increment $compteIncrement
+     * @return self
+     */
+    public function setCompteIncrement($compteIncrement)
+    {
+        $this->compteIncrement = $compteIncrement;
+        return $this;
+    }
+
+    /**
+     * Get compteIncrement
+     *
+     * @return increment $compteIncrement
+     */
+    public function getCompteIncrement()
+    {
+        return $this->compteIncrement;
     }
 }

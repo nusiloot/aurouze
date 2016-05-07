@@ -100,6 +100,7 @@ class ContratCsvImporter {
             $contrat->setTvaReduite(boolval($data[self::CSV_TVA_REDUITE]));
             $type_contrat = ContratManager::$types_contrat_import_index[$data[self::CSV_TYPE_CONTRAT]];
             $contrat->setTypeContrat($type_contrat);
+            $contrat->setReconduit(false);
 
             if ($data[self::CSV_DATE_DEBUT]) {
                 $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
