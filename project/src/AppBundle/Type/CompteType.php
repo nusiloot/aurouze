@@ -45,6 +45,7 @@ class CompteType extends AbstractType {
                     'choices' => $this->getTags(),
                     'expanded' => false,
                     'multiple' => true,
+                    'required' => false,
                     'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
                 ))
                 ->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'));
@@ -52,7 +53,7 @@ class CompteType extends AbstractType {
         $builder->add('sameContact', CheckboxType::class, array('label' => 'Même contact société', 'required' => false, 'empty_data' => null, "attr" => array("class" => "collapse-checkbox", "data-target" => "#collapseContact")));
         $builder->add('sameAdresse', CheckboxType::class, array('label' => 'Même adresse société', 'required' => false, 'empty_data' => null, "attr" => array("class" => "collapse-checkbox", "data-target" => "#collapseAdresse")));
 
-        $builder->get('tags')->addModelTransformer(new TagsTransformer($this->dm, $builder->getData()->getId()));
+        $builder->get('tags')->addModelTransformer(new TagsTransformer($this->dm, $builder->getData()));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {

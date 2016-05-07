@@ -6,22 +6,25 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use AppBundle\Document\CompteTag;
+use AppBundle\Document\Compte;
 use AppBundle\Manager\CompteManager;
 
 class TagsTransformer implements DataTransformerInterface {
 
     protected $dm;
-    protected $compteId;
+    protected $compte;
 
-    public function __construct(DocumentManager $dm, $compteId) {
-        $this->compteId = $compteId;
+    public function __construct(DocumentManager $dm, Compte $compte) {
+        $this->compte = $compte;
         $this->dm = $dm;
     }
 
     public function transform($values) {
         $result = array();
-
-        $tags = $tags = $this->dm->getRepository('AppBundle:Compte')->findOneById($this->compteId)->getTagsArray();
+        $tags = array();
+        if ($this->compte) {
+            $tags = $this->compte->getTagsArray();
+        }
         $tagsArray = array();
         foreach ($values as $value) {
             $tagsArray[] = $value->getIdentifiant();
@@ -36,17 +39,20 @@ class TagsTransformer implements DataTransformerInterface {
 
     public function reverseTransform($values) {
         $result = array();
-        $tags = $this->dm->getRepository('AppBundle:Compte')->findOneById($this->compteId)->getTagsArray();
+        $tags = array();
+        if ($this->compte) {
+            $tags = $this->compte->getTagsArray();
+        }
         $tagsPreCal = CompteManager::$tagsCompteLibelles;
         foreach ($values as $value) {
 
             if (!array_key_exists($value, $tags)) {
-                $tag = new CompteTag();              
+                $tag = new CompteTag();
                 $tag->setNom($value);
                 if (array_key_exists($value, $tagsPreCal)) {
                     $tag->setNom($tagsPreCal[$value]);
                 }
-                $this->dm->getRepository('AppBundle:Compte')->findOneById($this->compteId)->addTag($tag);
+                $this->compte->addTag($tag);
                 $result[] = $tag;
             } else {
                 $result[] = $tags[$value];
