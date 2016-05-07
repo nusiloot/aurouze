@@ -40,23 +40,23 @@
 
                     <div class="list-group-item">
                         <ul class="list-inline" style="margin-bottom: 0">
-                        {% if(societe.provenance) %}
-                        <li>Provenance : {{ societe.provenance }}</li>
-                        {% endif %}
-                        <li>Code comptable : {{ societe.codeComptable }}</li>
+                            {% if(societe.provenance) %}
+                                <li>Provenance : {{ societe.provenance }}</li>
+                                {% endif %}
+                            <li>Code comptable : {{ societe.codeComptable }}</li>
                         </ul>
                     </div>
                     {% if(societe.tags | length > 0) %}
-                    <div class="list-group-item">
-                        {% for tag in societe.tags %}
-                            <span type="button" class="btn btn-info btn-xs">{{ tag }}</span>
-                        {% endfor %}
-                    </div>
+                        <div class="list-group-item">
+                            {% for tag in societe.tags %}
+                                <span type="button" class="btn btn-info btn-xs">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
                     {% endif %}
                     {% if(societe.commentaire) %}
-                    <div class="list-group-item">
-                        {{ societe.commentaire }}
-                    </div>
+                        <div class="list-group-item">
+                            {{ societe.commentaire }}
+                        </div>
                     {% endif %}
                 </div>
             </div>
@@ -65,23 +65,23 @@
     <h2 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un établissement</a>Etablissements <span class="badge">{{ societe.etablissements | length }}</span></h2>
     <div class="row">
         {% for etablissement in societe.etablissements %}
-            <div class="col-xs-12">
+            <div class="col-xs-4">
                 <div class="panel panel-default">
                     <div class="list-group">
                         <div class="list-group-item">
                             <a class="btn btn-sm btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}">Modifier</a>
-                            <h3 style="margin-top: 0;margin-bottom: 0;"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.nom }}</h3>
+                            <h3 style="margin-top: 0;margin-bottom: 0; height: 70px;" ><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.nom }}</h3>
                         </div>
-                        <div class="list-group-item text-center">
+                        <div class="list-group-item text-center" style="height: 80px;">
                             {% if (not etablissement.sameAdresseThanSociete) %}
-                            {{ etablissement.adresse.adresse }} <br />
-                            {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}
+                                {{ etablissement.adresse.adresse }} <br />
+                                {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}
                             {% else %}
                                 <em class="text-muted">Même adresse que la société</em>
                             {% endif %}
                         </div>
-                        <div class="list-group-item text-center">
-                            {% if(not etablissement.sameContactCoordonneeThanSociete) %}
+                        {% if(not etablissement.sameContactCoordonneeThanSociete) %}
+                            <div class="list-group-item text-center">
                                 {%if(etablissement.contactCoordonnee.telephoneFixe is defined and etablissement.contactCoordonnee.telephoneFixe)%}
                                     <i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneFixe }}&nbsp;
                                 {%endif%}
@@ -91,13 +91,8 @@
                                 {%if(etablissement.contactCoordonnee.fax is defined and etablissement.contactCoordonnee.fax)%}
                                     <i class="glyphicon glyphicon-print"></i>&nbsp;{{ etablissement.contactCoordonnee.fax }}&nbsp;
                                 {%endif%}&nbsp;
-                            {% else %}
-                            <em class="text-muted">Même contact que la société</em>
-                            {% endif %}
-                        </div>
-                        {% if(not etablissement.sameContactCoordonneeThanSociete) %}
-                        <div class="row">
-                            <div class="col-xs-12">
+                            </div>
+                            <div class="list-group-item text-center">
                                 {%if(etablissement.contactCoordonnee.email is defined and etablissement.contactCoordonnee.email)%}
                                     <i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ etablissement.contactCoordonnee.email }}&nbsp;
                                 {%endif%}
@@ -105,14 +100,20 @@
                                     <i class="glyphicon glyphicon-globe"></i>&nbsp;{{ etablissement.contactCoordonnee.siteInternet }}&nbsp;
                                 {%endif%}&nbsp;
                             </div>
-                        </div>
+                        {% else %}
+                            <div class="list-group-item text-center" style="height: 80px;" >
+
+                                <em class="text-muted">Même contact que la société</em>
+                            </div>
+                        {% endif %}
+                        {% if(not etablissement.sameContactCoordonneeThanSociete) %}
                         {% endif %}
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
-    
+
     <h2 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('compte_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un compte</a>Comptes <span class="badge">{{ societe.comptes | length }}</span></h2>
     <div class="row">
         {% for compte in societe.comptes %}
@@ -125,8 +126,8 @@
                         </div>
                         <div class="list-group-item text-center">
                             {% if (not compte.sameAdresseThanSociete) %}
-                            {{ compte.adresse.adresse }} <br />
-                            {{ compte.adresse.codePostal }} {{ compte.adresse.commune }}
+                                {{ compte.adresse.adresse }} <br />
+                                {{ compte.adresse.codePostal }} {{ compte.adresse.commune }}
                             {% else %}
                                 <em class="text-muted">Même adresse que la société</em>
                             {% endif %}
@@ -143,27 +144,27 @@
                                     <i class="glyphicon glyphicon-print"></i>&nbsp;{{ compte.contactCoordonnee.fax }}&nbsp;
                                 {%endif%}&nbsp;
                             {% else %}
-                            <em class="text-muted">Même contact que la société</em>
+                                <em class="text-muted">Même contact que la société</em>
                             {% endif %}
                         </div>
                         {% if(not compte.sameContactCoordonneeThanSociete) %}
-                        <div class="row">
-                            <div class="col-xs-12">
-                                {%if(compte.contactCoordonnee.email is defined and compte.contactCoordonnee.email)%}
-                                    <i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ compte.contactCoordonnee.email }}&nbsp;
-                                {%endif%}
-                                {%if(compte.contactCoordonnee.siteInternet is defined and compte.contactCoordonnee.siteInternet)%}
-                                    <i class="glyphicon glyphicon-globe"></i>&nbsp;{{ compte.contactCoordonnee.siteInternet }}&nbsp;
-                                {%endif%}&nbsp;
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    {%if(compte.contactCoordonnee.email is defined and compte.contactCoordonnee.email)%}
+                                        <i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ compte.contactCoordonnee.email }}&nbsp;
+                                    {%endif%}
+                                    {%if(compte.contactCoordonnee.siteInternet is defined and compte.contactCoordonnee.siteInternet)%}
+                                        <i class="glyphicon glyphicon-globe"></i>&nbsp;{{ compte.contactCoordonnee.siteInternet }}&nbsp;
+                                    {%endif%}&nbsp;
+                                </div>
                             </div>
-                        </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
-    
-    
-    
+
+
+
 {% endblock %}

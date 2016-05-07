@@ -25,7 +25,7 @@ class CompteManager {
     const TYPE_ADMINISTRATIF = "ADMINISTRATIF";
     const TYPE_AUTRE = "AUTRE";
     const TAG_CALENDRIER = "CALENDRIER";
-    const TAG_SOUS_TRAITANT = "SOUSTRAITANT";
+    const TAG_SOUS_TRAITANT = "SOUS-TRAITANT";
     
     const CIVILITE_MONSIEUR = "Monsieur";
     const CIVILITE_MADAME = "Madame";
