@@ -66,7 +66,7 @@ class Produit {
      */
     public function setNom($nom) {
         $this->nom = $nom;
-        $this->setIdentifiant(strtoupper(Transliterator::urlize($nom)));
+        
         return $this;
     }
 

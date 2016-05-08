@@ -71,7 +71,7 @@ print $1 ";" $2 ";" $3 ";" $4 ";" $5 ";" nom;
 
 }' > $DATA_DIR/prestationType.csv
 
-cat $DATA_DIR/prestations_utilises.csv | tr -d '"' | sed -r 's|(.+);(.+)|\s/\1#\/\2#\/|g' | grep -E "^s/" > $DATA_DIR/sed_prestations_utilises
+cat $DATA_DIR/prestations_utilises.csv | tr -d '"' | awk -F ';' '{ print $1 ";" $2 }' | sed -r 's|(.+);(.+)|\s/\1#\/\2#\/|g' | grep -E "^s/" > $DATA_DIR/sed_prestations_utilises
 
 
 cat $DATA_DIR/prestationType.csv | sort -t ";" -k 1,1 > $DATA_DIR/prestationType.sorted.csv

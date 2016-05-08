@@ -16,9 +16,19 @@ class FactureSoussigne  {
     protected $nom;
 
     /**
-     * @MongoDB\EmbedOne(targetDocument="Adresse")
+     * @MongoDB\String
      */
     protected $adresse;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $codePostal;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $commune;
 
     /**
      * @MongoDB\String
@@ -66,28 +76,6 @@ class FactureSoussigne  {
     public function getNom()
     {
         return $this->nom;
-    }
-
-    /**
-     * Set adresse
-     *
-     * @param AppBundle\Document\Adresse $adresse
-     * @return self
-     */
-    public function setAdresse(\AppBundle\Document\Adresse $adresse)
-    {
-        $this->adresse = $adresse;
-        return $this;
-    }
-
-    /**
-     * Get adresse
-     *
-     * @return AppBundle\Document\Adresse $adresse
-     */
-    public function getAdresse()
-    {
-        return $this->adresse;
     }
 
     /**

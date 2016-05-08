@@ -43,13 +43,12 @@ class FactureManager {
         $facture->setDateFacturation($dateFacturation);
 
         $facture->getEmetteur()->setNom($this->parameters['emetteur']['nom']);
-        $adresse = new Adresse();
-        $adresse->setAdresse($this->parameters['emetteur']['adresse']);
-        $adresse->setCodePostal($this->parameters['emetteur']['code_postal']);
-        $adresse->setCommune($this->parameters['emetteur']['commune']);
-        $facture->getEmetteur()->setAdresse($adresse);
+        $facture->getEmetteur()->setAdresse($this->parameters['emetteur']['adresse']);
+        $facture->getEmetteur()->setCodePostal($this->parameters['emetteur']['code_postal']);
+        $facture->getEmetteur()->setCommune($this->parameters['emetteur']['commune']);
         $facture->getEmetteur()->setTelephone($this->parameters['emetteur']['telephone']);
         $facture->getEmetteur()->setFax($this->parameters['emetteur']['fax']);
+        $facture->getEmetteur()->setEmail($this->parameters['emetteur']['email']);
 
         foreach($mouvements as $mouvement) {
             if(!$mouvement->isFacturable() || $mouvement->isFacture()) {
