@@ -25,6 +25,7 @@ class SocieteCsvImporter extends CsvFile {
     protected $dm;
 
     const CSV_ID_SOCIETE = 0;
+    const CSV_TYPE_ADRESSE = 2;
     const CSV_ADRESSE_SOCIETE_1 = 4;
     const CSV_ADRESSE_SOCIETE_2 = 5;
     const CSV_CP = 6;
@@ -38,11 +39,11 @@ class SocieteCsvImporter extends CsvFile {
     const CSV_ADRESSE_COMMENTAIRE = 14;
     const CSV_TYPE_SOCIETE = 27;
     const CSV_RAISON_SOCIALE = 23;
-    
+
     const CSV_SOUS_TRAITANT = 22;
-    
+
     const CSV_COMMENTAIRE = 26;
-    
+
     const CSV_CODE_COMPTABLE = 31;
 
     public function __construct(DocumentManager $dm) {
@@ -55,7 +56,7 @@ class SocieteCsvImporter extends CsvFile {
         $csv = $csvFile->getCsv();
         $cpt = 0;
         foreach ($csv as $data) {
-           
+
             $societe = $this->createFromImport($data);
             if(!$societe) {
 
@@ -74,7 +75,7 @@ class SocieteCsvImporter extends CsvFile {
     }
 
     public function createFromImport($ligne) {
-        
+
         if(!is_numeric($ligne[self::CSV_ID_SOCIETE])) {
 
             return;
@@ -86,7 +87,18 @@ class SocieteCsvImporter extends CsvFile {
 
         $societe->setRaisonSociale($ligne[self::CSV_RAISON_SOCIALE]);
         $societe->setCodeComptable($ligne[self::CSV_CODE_COMPTABLE]);
-        $societe->setCommentaire($ligne[self::CSV_COMMENTAIRE]);
+        $societe->setCommentaire(null);
+        $ligne[self::CSV_COMMENTAIRE] = str_replace('"', "", $ligne[self::CSV_COMMENTAIRE]);
+        $ligne[self::CSV_ADRESSE_COMMENTAIRE] = str_replace('"', "", $ligne[self::CSV_COMMENTAIRE]);
+        if($ligne[self::CSV_TYPE_ADRESSE] != "1") {
+            $ligne[self::CSV_ADRESSE_COMMENTAIRE] = null;
+        }
+        if(trim($ligne[self::CSV_COMMENTAIRE])) {
+            $societe->setCommentaire($ligne[self::CSV_COMMENTAIRE]."\n");
+        }
+        if(trim($ligne[self::CSV_ADRESSE_COMMENTAIRE]) && $ligne[self::CSV_COMMENTAIRE] != $ligne[self::CSV_ADRESSE_COMMENTAIRE]) {
+            $societe->setCommentaire($societe->getCommentaire()."\n".$ligne[self::CSV_ADRESSE_COMMENTAIRE]);
+        }
         $societe->setSousTraitant(!($ligne[self::CSV_SOUS_TRAITANT]));
 
         $adresse = new Adresse();
@@ -100,15 +112,15 @@ class SocieteCsvImporter extends CsvFile {
         $adresse->setCommune($ligne[self::CSV_VILLE]);
 
         $societe->setAdresse($adresse);
-        
+
          $contactCoordonnee = new ContactCoordonnee();
         $contactCoordonnee->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
         $contactCoordonnee->setTelephoneMobile($ligne[self::CSV_TEL_MOBILE]);
         $contactCoordonnee->setFax($ligne[self::CSV_FAX]);
         $contactCoordonnee->setSiteInternet($ligne[self::CSV_SITE_WEB]);
         $contactCoordonnee->setEmail($ligne[self::CSV_EMAIL]);
-        
-        
+
+
          $societe->setContactCoordonnee($contactCoordonnee);
         if ($ligne[self::CSV_TYPE_SOCIETE] == "") {
             $societe->setType(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
