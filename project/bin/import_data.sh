@@ -96,9 +96,35 @@ cat  $DATA_DIR/tblEntite.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[
 # Gère les retours charriots dans les champs
 cat  $DATA_DIR/tblAdresse.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 2,2 > $DATA_DIR/adresse.csv.temp
 
-cat $DATA_DIR/adresse.csv.temp | grep -e "^[0-9]*;[0-9]*;1" > $DATA_DIR/adresse_facturation.csv
+cat $DATA_DIR/adresse.csv.temp > $DATA_DIR/adresse_facturation.csv
 
-join -a 2 -t ';' -1 2 -2 1 -o auto $DATA_DIR/adresse_facturation.csv $DATA_DIR/entite.csv.temp | grep -Ev "RefEntite;;" | sort -n -k 1,1 > $DATA_DIR/societes.csv
+join -a 2 -t ';' -1 2 -2 1 -o auto $DATA_DIR/adresse_facturation.csv $DATA_DIR/entite.csv.temp | sort > $DATA_DIR/societes_doublonnees.csv
+
+cat $DATA_DIR/societes_doublonnees.csv | awk -F ';' '{
+    if(societes[$1] && $3 != "1") {
+        next;
+    }
+
+    if(societes[$1] && !$17) {
+        next;
+    }
+
+    if(societes[$1] && types[$1]=="1" && $4 != $24) {
+        next;
+    }
+
+    if(societes[$1] && types[$1]!="1" && $3 != "1" && $4 != $24) {
+        next;
+    }
+
+    societes[$1] = $0;
+    types[$1] = $3;
+}
+END {
+    for (id_societe in societes) {
+        print societes[id_societe]
+    }
+}' | grep -Ev "RefEntite;;" | sort -n -k 1,1 > $DATA_DIR/societes.csv
 
 ##### Récupération des Etablissements #####
 

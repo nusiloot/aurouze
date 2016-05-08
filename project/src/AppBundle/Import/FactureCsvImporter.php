@@ -187,7 +187,9 @@ class FactureCsvImporter {
             if ($ligne[self::CSV_FACTURE_LIGNE_PASSAGE]) {
                 $passage = $this->dm->getRepository('AppBundle:Passage')->findOneByIdentifiantReprise($ligne[self::CSV_FACTURE_LIGNE_PASSAGE]);
                 if (!$passage) {
-                    $output->writeln(sprintf("<comment>Le passage d'identifiant de reprise %s n'est pas trouvé dans la base (%s)</comment>", $ligne[self::CSV_FACTURE_LIGNE_PASSAGE], $societe->getIdentifiant()));
+                    if(($contrat && !$contrat->isEnAttenteAcceptation()) || !$contrat) {
+                        $output->writeln(sprintf("<comment>Le passage d'identifiant de reprise %s n'est pas trouvé dans la base (%s)</comment>", $ligne[self::CSV_FACTURE_LIGNE_PASSAGE], $societe->getIdentifiant()));
+                    }
                 } else {
                     $passage->setMouvementDeclenchable(true);
                     $passage->setMouvementDeclenche($mouvement->getFacturable());
