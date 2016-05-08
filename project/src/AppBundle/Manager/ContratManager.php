@@ -26,7 +26,7 @@ class ContratManager implements MouvementManagerInterface {
     const TYPE_CONTRAT_PONCTUEL = 'PONCTUEL';
     const TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION = 'RENOUVELABLE_SUR_PROPOSITION';
     const TYPE_CONTRAT_AUTRE = 'AUTRE';
-    const TYPE_CONTRAT_ANNULE = 'CONTRAT_ANNULE';
+    const TYPE_CONTRAT_ANNULE = 'ANNULE';
 
     const MOYEN_3D = 'MOYEN_3D';
     const MOYEN_PIGEONS = 'MOYEN_PIGEONS';
