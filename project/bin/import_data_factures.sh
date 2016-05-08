@@ -17,4 +17,4 @@ join -t ';' -1 1 -2 2 $DATA_DIR/factures.cleaned.sorted.csv  $DATA_DIR/facturesl
 
 echo "Import des factures"
 
-php app/console importer:csv facture.importer $DATA_DIR/factures.csv -vvv --no-debug
+php app/console importer:csv facture.importer $DATA_DIR/factures_complets.csv -vvv --no-debug
