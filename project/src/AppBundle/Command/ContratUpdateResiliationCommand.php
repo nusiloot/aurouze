@@ -50,12 +50,14 @@ class ContratUpdateResiliationCommand extends ContainerAwareCommand {
         $progress = new ProgressBar($output, 100);
         $progress->start();
         foreach ($allContratsByNumero as $contrat) {
-            if (!array_key_exists($contrat->getNumeroArchive(), $contratsByNumero)) {
-                $contratsByNumero[$contrat->getNumeroArchive()] = new \stdClass();
-                $contratsByNumero[$contrat->getNumeroArchive()]->contrats = array();
-                $contratsByNumero[$contrat->getNumeroArchive()]->resiliation = false;
+            $numArchive = $contrat->getNumeroArchive();
+            if (!array_key_exists($numArchive, $contratsByNumero)) {
+                $contratsByNumero[$numArchive] = new \stdClass();
+                $contratsByNumero[$numArchive]->contrats = array();
+                $contratsByNumero[$numArchive]->resiliation = false;
             }
-            $contratsByNumero[$contrat->getNumeroArchive()]->contrats[$contrat->getDateDebut()] = $contrat;
+            $dDebut = $contrat->getDateDebut()->format('Ymd');
+            $contratsByNumero[$numArchive]->contrats[$dDebut] = $contrat;
             if ($contrat->isResilie()) {
                 $contratsByNumero[$contrat->getNumeroArchive()]->resiliation = true;
             }
@@ -79,7 +81,7 @@ class ContratUpdateResiliationCommand extends ContainerAwareCommand {
                         if (!$hasAnnules) {
                             $output->writeln(sprintf("\n<comment>CONTRAT : %s ne possède pas de passages Annulé et est résilié</comment>", $contrat->getId()));
                         }
-                        $contrat->setType(ContratManager::TYPE_CONTRAT_ANNULE);
+                        $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
                         $contrat->setStatut(ContratManager::STATUT_FINI);
                     }
                     $contrat->setReconduit(false);
@@ -92,6 +94,7 @@ class ContratUpdateResiliationCommand extends ContainerAwareCommand {
                     }
                     $contrat->setReconduit(true);
                 }
+                $numContrat++;
             }
             $cptTotal++;
             if ($cptTotal % (count($contratsByNumero) / 100) == 0) {

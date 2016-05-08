@@ -1015,7 +1015,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     
     public function isAnnule() {
 
-        return ($this->statut == ContratManager::TYPE_CONTRAT_ANNULE);
+        return ($this->typeContrat == ContratManager::TYPE_CONTRAT_ANNULE);
     }
 
     public function isBrouillon() {
