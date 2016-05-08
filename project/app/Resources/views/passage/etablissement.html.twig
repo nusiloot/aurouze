@@ -38,15 +38,15 @@
                 {% set passagesEtablissement = contrat.getPassagesEtablissementNode(etablissement) %}
                 {% if(passagesEtablissement is not null) %}
                     <div id="contrat-{{ contrat.id }}" class="panel panel-default
-                         {% if(contrat.isResilie) %} panel-danger {% endif %}
-                         {% if(contrat.isFini) %} panel-success {% endif %}
-                         {% if(contrat.isBrouillon or contrat.isEnAttenteAcceptation) %} panel-warning {% endif %}
+                         {% if(contrat.isAnnule) %} panel-danger 
+                         {% elseif(contrat.isFini) %} panel-success 
+                         {% elseif(contrat.isBrouillon or contrat.isEnAttenteAcceptation) %} panel-warning {% endif %}
                          " {% if(contrat.isAVenir) %}style="opacity: 0.5;"{% endif %}
                          >
                         <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" style="{% if(not contrat.isFini and not contrat.isResilie) %}background: #fff;{% else %}{% endif %} border-bottom: 0;" class="panel-heading">
                             <h4 style="cursor: pointer; margin-top: 0; margin-bottom: 0;">
 
-                                {% if(contrat.isResilie) %}
+                                {% if(contrat.isAnnule) %}
                                     Contrat résilié le {{ contrat.dateResiliation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
                                 {% elseif (contrat.isEnCours) %}
                                     Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
@@ -71,9 +71,9 @@
                             </h4>
                         </div>
                         <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(not contrat.isEnCours) %}out{% else%}in{% endif %} list-group">
-                            <div class="list-group-item {% if(contrat.isResilie) %} list-group-item-danger{% endif %}
-                                 {% if(contrat.isFini) %}list-group-item-success{% endif %}
-                                 {% if(contrat.isBrouillon or contrat.isEnAttenteAcceptation) %} list-group-item-warning {% endif %}
+                            <div class="list-group-item {% if(contrat.isAnnule) %} list-group-item-danger
+                                 {% elseif(contrat.isFini) %}list-group-item-success
+                                 {% elseif(contrat.isBrouillon or contrat.isEnAttenteAcceptation) %} list-group-item-warning {% endif %}
                                  " {% if(contrat.isAVenir) %}style="opacity: 0.5;"{% endif %}>
                                 <div class="row">
                                     <div class="col-xs-2">

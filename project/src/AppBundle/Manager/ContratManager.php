@@ -20,12 +20,13 @@ class ContratManager implements MouvementManagerInterface {
     const STATUT_EN_COURS = "EN_COURS";
     const STATUT_A_VENIR = "A_VENIR";
     const STATUT_FINI = "FINI";
-    const STATUT_RESILIE = "RESILIE";
+    const STATUT_RESILIE = "RESILIE"; // statut à retirer = ce n'est pas un statut mais un type!!
     
     const TYPE_CONTRAT_RECONDUCTION_TACITE = 'RECONDUCTION_TACITE';
     const TYPE_CONTRAT_PONCTUEL = 'PONCTUEL';
     const TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION = 'RENOUVELABLE_SUR_PROPOSITION';
     const TYPE_CONTRAT_AUTRE = 'AUTRE';
+    const TYPE_CONTRAT_ANNULE = 'CONTRAT_ANNULE';
 
     const MOYEN_3D = 'MOYEN_3D';
     const MOYEN_PIGEONS = 'MOYEN_PIGEONS';

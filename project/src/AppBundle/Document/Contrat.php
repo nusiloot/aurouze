@@ -66,6 +66,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      * @MongoDB\Boolean
      */
     protected $multiTechnicien;
+    
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $reconduit;
 
     /**
      * @MongoDB\String
@@ -999,9 +1004,18 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->tvaReduite;
     }
 
+    
+    /*
+     * Fonction à retiré => un contrat ne doit pas être resilié sous forme de statut mais sous forme de type 
+     */
     public function isResilie() {
 
         return ($this->statut == ContratManager::STATUT_RESILIE);
+    }
+    
+    public function isAnnule() {
+
+        return ($this->statut == ContratManager::TYPE_CONTRAT_ANNULE);
     }
 
     public function isBrouillon() {
@@ -1167,4 +1181,26 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->mouvements;
     }
 
+
+    /**
+     * Set reconduit
+     *
+     * @param boolean $reconduit
+     * @return self
+     */
+    public function setReconduit($reconduit)
+    {
+        $this->reconduit = $reconduit;
+        return $this;
+    }
+
+    /**
+     * Get reconduit
+     *
+     * @return boolean $reconduit
+     */
+    public function getReconduit()
+    {
+        return $this->reconduit;
+    }
 }

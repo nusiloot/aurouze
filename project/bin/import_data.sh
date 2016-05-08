@@ -233,6 +233,14 @@ echo -e "\n****************************************************\n";
 
 php app/console update:contrat-update-prestation -vvv --no-debug
 
+
+echo -e "\n****************************************************\n"
+echo -e "\nMis en cohérence des résiliation...\n";
+echo -e "\n****************************************************\n";
+
+
+php app/console update:contrat-update-resiliation -vvv --no-debug
+
 #### Récupération et import des factures ####
 
 . bin/import_data_factures.sh
