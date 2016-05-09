@@ -415,6 +415,15 @@ class PassageController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
     
     	if ($passage->isRealise()) {
+    		$contrat = $passage->getContrat();
+    		foreach ($contrat->getPassages($passage->getEtablissement()) as $pass) {
+    			if ($pass->isAPlanifie()) {
+    				$pass->setDateDebut(null);
+    				$pass->setStatut(PassageManager::STATUT_EN_ATTENTE);
+		    		$dm->persist($passage);
+		    		$dm->flush();
+    			}
+    		}
     		$passage->setDateFin(null);
     		$passage->setDateRealise(null);
     		$passage->setStatut(PassageManager::STATUT_A_PLANIFIER);
