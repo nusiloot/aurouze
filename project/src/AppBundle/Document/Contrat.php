@@ -491,7 +491,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                     }
                 }
             }
-            if ($nbPassagesEtb) {
+            if ($nbPassagesEtb && count($nbPassagesEtb)) {
             	$this->setNbPassages(max($nbPassagesEtb));
             } else {
             	$this->setNbPassages(0);
@@ -675,6 +675,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
         $passagesDatesArray = array();
         if (!count($this->getPrestations())) {
+            return $passagesDatesArray;
+        }
+        if (!$maxNbPrestations) {
             return $passagesDatesArray;
         }
         $monthInterval = (floatval($dureeContratMois) / floatval($maxNbPrestations));
