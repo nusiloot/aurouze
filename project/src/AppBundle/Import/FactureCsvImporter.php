@@ -231,17 +231,18 @@ class FactureCsvImporter {
 
         $facture = $this->fm->create($societe, $mouvements, new \DateTime($ligneFacture[self::CSV_DATE_FACTURATION]));
 
-        $facture->getDestinataire()->setNom($data[self:CSV_NOM]);
+        $facture->getDestinataire()->setNom($ligneFacture[self::CSV_NOM]);
         $adresse = "";
-        if(trim($data[self::CSV_NOM_DESTINATAIRE])) {
-            $adresse .= $data[self::CSV_NOM_DESTINATAIRE]."\n";
+        if(trim($ligneFacture[self::CSV_NOM_DESTINATAIRE])) {
+            $adresse .= $ligneFacture[self::CSV_NOM_DESTINATAIRE]."\n";
         }
-        $adresse .= $data[self::CSV_ADRESSE_1];
-        if(trim($data[self::CSV_ADRESSE_2])) {
-            $adresse .= "\n".$data[self::CSV_ADRESSE_2];
+        $adresse .= $ligneFacture[self::CSV_ADRESSE_1];
+        if(trim($ligneFacture[self::CSV_ADRESSE_2])) {
+            $adresse .= "\n".$ligneFacture[self::CSV_ADRESSE_2];
+        }
         $facture->getDestinataire()->setAdresse($adresse);
-        $facture->getDestinataire()->setCodePostal($data[self:CSV_CODE_POSTAL]);
-        $facture->getDestinataire()->setCommune($data[self:CSV_COMMUNE]);
+        $facture->getDestinataire()->setCodePostal($ligneFacture[self::CSV_CODE_POSTAL]);
+        $facture->getDestinataire()->setCommune($ligneFacture[self::CSV_COMMUNE]);
 
         $facture->setDateEmission(new \DateTime($ligneFacture[self::CSV_DATE_FACTURATION]));
         $facture->setDateLimitePaiement(new \DateTime($ligneFacture[self::CSV_DATE_LIMITE_REGLEMENT]));
