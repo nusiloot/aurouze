@@ -9,13 +9,13 @@ class ContratRepository extends DocumentRepository {
 
     public function findBySociete($societe) {
         return $this->findBy(
-                        array('societe.id' => $societe->getId()),
+                        array('societe' => $societe->getId()),
                         array('dateFin' => 'DESC'));
     }
 
     public function findByEtablissement($etablissement) {
         return $this->findBy(
-                        array('societe.id' => $etablissement->getSociete()->getId()),
+                        array('societe' => $etablissement->getSociete()->getId()),
                         array('dateFin' => 'DESC'));
     }
 
@@ -23,21 +23,21 @@ class ContratRepository extends DocumentRepository {
 
         return $this->createQueryBuilder()
              ->select('mouvements')
-             ->field('societe.id')->equals($societe->getId())
+             ->field('societe')->equals($societe->getId())
              ->field('mouvements.facturable')->equals($isFacturable)
              ->field('mouvements.facture')->equals($isFacture)
              ->getQuery()
              ->execute();
     }
-    
+
     public function findAllSortedByNumeroArchive() {
        return $this->findBy(array(), array('numeroArchive' => 'ASC'));
     }
-    
+
     public function countContratByCommercial($compte) {
 
         return $this->createQueryBuilder()
-             ->field('commercial.id')->equals($compte->getId())
+             ->field('commercial')->equals($compte->getId())
              ->getQuery()->execute()->count();
     }
 

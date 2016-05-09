@@ -22,7 +22,7 @@ class PassageRepository extends DocumentRepository {
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
                 ->field('dateFin')->gte($mongoStartDate)
-                ->field('techniciens')->includesReferenceTo($technicien)
+                ->field('techniciens')->equals($technicien->getId())
                 ->sort('dateDebut', 'asc')
                 ->getQuery();
         return $query->execute();
@@ -45,7 +45,7 @@ class PassageRepository extends DocumentRepository {
         $passagesHistorique = array();
 
         foreach($prestations as $prestation) {
-            $passages = $this->findBy(array('etablissement.id' => $etablissement->getId(), 'statut' => PassageManager::STATUT_REALISE, 'prestations.identifiant' => $prestation->getIdentifiant()), array('dateDebut' => 'DESC'), $limit);
+            $passages = $this->findBy(array('etablissement' => $etablissement->getId(), 'statut' => PassageManager::STATUT_REALISE, 'prestations.identifiant' => $prestation->getIdentifiant()), array('dateDebut' => 'DESC'), $limit);
             foreach($passages as $passage) {
                 $passagesHistorique[$passage->getDateDebut()->format('YmdHi')."_".$passage->getId()] = $passage;
             }
@@ -137,7 +137,7 @@ class PassageRepository extends DocumentRepository {
     public function countPassagesByTechnicien($compte) {
 
         return $this->createQueryBuilder()
-             ->field('techniciens')->includesReferenceTo($compte)
+             ->field('techniciens')->equals($compte->getId())
              ->getQuery()->execute()->count();
     }
 

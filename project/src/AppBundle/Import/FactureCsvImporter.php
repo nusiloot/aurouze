@@ -54,6 +54,12 @@ class FactureCsvImporter {
     const CSV_DATE_LIMITE_REGLEMENT = 9;
     const CSV_REGLEMENT_TYPE = 10;
     const CSV_VEROUILLE = 12;
+    const CSV_NOM = 13;
+    const CSV_NOM_DESTINATAIRE = 14;
+    const CSV_ADRESSE_1 = 15;
+    const CSV_ADRESSE_2 = 16;
+    const CSV_CODE_POSTAL = 17;
+    const CSV_COMMUNE = 18;
 
     public function __construct(DocumentManager $dm, FactureManager $fm, SocieteManager $sm, ContratManager $cm) {
         $this->dm = $dm;
@@ -224,6 +230,19 @@ class FactureCsvImporter {
         }
 
         $facture = $this->fm->create($societe, $mouvements, new \DateTime($ligneFacture[self::CSV_DATE_FACTURATION]));
+
+        $facture->getDestinataire()->setNom($ligneFacture[self::CSV_NOM]);
+        $adresse = "";
+        if(trim($ligneFacture[self::CSV_NOM_DESTINATAIRE])) {
+            $adresse .= $ligneFacture[self::CSV_NOM_DESTINATAIRE]."\n";
+        }
+        $adresse .= $ligneFacture[self::CSV_ADRESSE_1];
+        if(trim($ligneFacture[self::CSV_ADRESSE_2])) {
+            $adresse .= "\n".$ligneFacture[self::CSV_ADRESSE_2];
+        }
+        $facture->getDestinataire()->setAdresse($adresse);
+        $facture->getDestinataire()->setCodePostal($ligneFacture[self::CSV_CODE_POSTAL]);
+        $facture->getDestinataire()->setCommune($ligneFacture[self::CSV_COMMUNE]);
 
         $facture->setDateEmission(new \DateTime($ligneFacture[self::CSV_DATE_FACTURATION]));
         $facture->setDateLimitePaiement(new \DateTime($ligneFacture[self::CSV_DATE_LIMITE_REGLEMENT]));

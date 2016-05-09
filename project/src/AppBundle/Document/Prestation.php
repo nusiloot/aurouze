@@ -23,9 +23,14 @@ class Prestation {
     /**
      * @MongoDB\String
      */
+    protected $nomCourt;
+
+    /**
+     * @MongoDB\String
+     */
     protected $nbPassages;
 
-  
+
     /**
      * Set nom
      *
@@ -34,7 +39,6 @@ class Prestation {
      */
     public function setNom($nom) {
         $this->nom = $nom;
-        $this->setIdentifiant(strtoupper(Transliterator::urlize($nom)));
         return $this;
     }
 
@@ -66,15 +70,14 @@ class Prestation {
     public function getNbPassages() {
         return $this->nbPassages;
     }
-    
+
     public function getNomToString() {
-        $mot_inutiles = array('DERATISATION', 'RONGEURS', 'DESINSECTISATION', 'INSECTES', 'RAMPANTS');
-        $nom_libelles = explode('-', $this->nom);
-        return $this->echapLibelles($nom_libelles, $mot_inutiles);
+
+        return $this->getNom();
     }
 
     public function getWordToPicto() {
-        $nom_libelles = explode(' - ', $this->getNom());
+        $nom_libelles = explode('-', $this->getIdentifiant());
         $mot_rongeur = array('DERATISATION', 'RONGEURS');
         $mot_puce = array('RAMPANTS');
         $mot_moustique = array('VOLANTS');
@@ -99,7 +102,7 @@ class Prestation {
             if($this->isPictoForLibelles($nom_libelles,array('SURMULOTS'))){
                     $type_rongeur = "surmulots-color";
             }
-            
+
             return 'rongeur '.$type_rongeur;
         }elseif($this->isPictoForLibelles($nom_libelles, $mot_puce)){
             return 'puce';
@@ -120,8 +123,8 @@ class Prestation {
         }elseif($this->isPictoForLibelles($nom_libelles, $mot_desinfection)){
             return 'delete mdi';
         }
-        
-        
+
+
         return false;
     }
 
@@ -134,9 +137,9 @@ class Prestation {
         }
         return trim($str);
     }
-    
+
     private function isPictoForLibelles($nom_libelles, $mot_picto) {
-       
+
         foreach ($nom_libelles as $libelle) {
             if (trim($libelle) && in_array(trim($libelle), $mot_picto)) {
                 return true;
@@ -167,11 +170,33 @@ class Prestation {
     {
         return $this->identifiant;
     }
-    
+
 
 
     public function __toString()
     {
     	return $this->getNom();
+    }
+
+    /**
+     * Set nomCourt
+     *
+     * @param string $nomCourt
+     * @return self
+     */
+    public function setNomCourt($nomCourt)
+    {
+        $this->nomCourt = $nomCourt;
+        return $this;
+    }
+
+    /**
+     * Get nomCourt
+     *
+     * @return string $nomCourt
+     */
+    public function getNomCourt()
+    {
+        return $this->nomCourt;
     }
 }

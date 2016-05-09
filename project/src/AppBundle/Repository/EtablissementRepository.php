@@ -14,11 +14,11 @@ class EtablissementRepository extends DocumentRepository {
 
     public function findAllOrderedByIdentifiantSociete($societe) {
 
-        return $this->findBy(array('societe.id' => $societe->getId()));
+        return $this->findBy(array('societe' => $societe->getId()));
     }
     public function findAllOrderedByIdentifiantSocieteArray($societe) {
 
-        $etbs =  $this->findBy(array('societe.id' => $societe->getId()));
+        $etbs =  $this->findBy(array('societe' => $societe->getId()));
         $result = array();
         foreach ($etbs as $etb) {
             $result[$etb->getId()] = $etb;

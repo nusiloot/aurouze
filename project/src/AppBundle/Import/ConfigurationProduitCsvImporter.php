@@ -6,6 +6,7 @@ use AppBundle\Document\Configuration;
 use AppBundle\Document\Produit;
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use Symfony\Component\Console\Output\OutputInterface;
+use Behat\Transliterator\Transliterator;
 
 class ConfigurationProduitCsvImporter extends CsvFile {
 
@@ -35,7 +36,8 @@ class ConfigurationProduitCsvImporter extends CsvFile {
         }
         foreach ($csv as $data) {
             $produit = new Produit();
-            $produit->setNom($data[self::CSV_NOM]);
+            $produit->setIdentifiant(strtoupper(Transliterator::urlize(trim(preg_replace("/[ ]+/", " ", $data[self::CSV_NOM])))));
+            $produit->setNom(ucfirst(strtolower($data[self::CSV_NOM])));
             $produit->setConditionnement($data[self::CSV_CONDITIONNEMENT]);
             $produit->setPrixHt($data[self::CSV_PRIX_HT]);
             $produit->setPrixPrestation($data[self::CSV_PRIX_PRESTATION]);

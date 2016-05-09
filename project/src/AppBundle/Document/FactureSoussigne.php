@@ -16,9 +16,19 @@ class FactureSoussigne  {
     protected $nom;
 
     /**
-     * @MongoDB\EmbedOne(targetDocument="Adresse")
+     * @MongoDB\String
      */
     protected $adresse;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $codePostal;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $commune;
 
     /**
      * @MongoDB\String
@@ -66,28 +76,6 @@ class FactureSoussigne  {
     public function getNom()
     {
         return $this->nom;
-    }
-
-    /**
-     * Set adresse
-     *
-     * @param AppBundle\Document\Adresse $adresse
-     * @return self
-     */
-    public function setAdresse(\AppBundle\Document\Adresse $adresse)
-    {
-        $this->adresse = $adresse;
-        return $this;
-    }
-
-    /**
-     * Get adresse
-     *
-     * @return AppBundle\Document\Adresse $adresse
-     */
-    public function getAdresse()
-    {
-        return $this->adresse;
     }
 
     /**
@@ -198,5 +186,71 @@ class FactureSoussigne  {
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Set adresse
+     *
+     * @param string $adresse
+     * @return self
+     */
+    public function setAdresse($adresse)
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+
+    /**
+     * Get adresse
+     *
+     * @return string $adresse
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * Set codePostal
+     *
+     * @param string $codePostal
+     * @return self
+     */
+    public function setCodePostal($codePostal)
+    {
+        $this->codePostal = $codePostal;
+        return $this;
+    }
+
+    /**
+     * Get codePostal
+     *
+     * @return string $codePostal
+     */
+    public function getCodePostal()
+    {
+        return $this->codePostal;
+    }
+
+    /**
+     * Set commune
+     *
+     * @param string $commune
+     * @return self
+     */
+    public function setCommune($commune)
+    {
+        $this->commune = $commune;
+        return $this;
+    }
+
+    /**
+     * Get commune
+     *
+     * @return string $commune
+     */
+    public function getCommune()
+    {
+        return $this->commune;
     }
 }

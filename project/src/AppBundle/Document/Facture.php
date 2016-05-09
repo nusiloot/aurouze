@@ -16,7 +16,7 @@ class Facture implements DocumentSocieteInterface {
     protected $id;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="factures")
+     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="factures", simple=true)
      */
     protected $societe;
 
@@ -112,7 +112,10 @@ class Facture implements DocumentSocieteInterface {
         $destinataire = $this->getDestinataire();
 
         $destinataire->setNom($societe->getRaisonSociale());
-        $destinataire->setAdresse(clone $societe->getAdresse());
+        $destinataire->setAdresse($societe->getAdresse()->getAdresse());
+        $destinataire->setCodePostal($societe->getAdresse()->getAdresse());
+        $destinataire->setCommune($societe->getAdresse()->getAdresse());
+        $destinataire->setCodeComptable($societe->getCodeComptable());
     }
 
     public function facturerMouvements() {

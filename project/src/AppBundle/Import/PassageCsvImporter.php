@@ -152,7 +152,7 @@ class PassageCsvImporter {
             } else {
                 $output->writeln(sprintf("<comment>Le passage : %s n'a aucune presta </comment>", $data[self::CSV_OLD_ID]));
             }
-            
+
             $identifiantRepriseTechnicien = $data[self::CSV_TECHNICIEN];
             if (!is_null($identifiantRepriseTechnicien)) {
                 $compte = $this->um->getRepository()->findOneByIdentifiantReprise($identifiantRepriseTechnicien);
@@ -203,12 +203,12 @@ class PassageCsvImporter {
 
         $this->dm->flush();
         $progress->finish();
-      
+
     }
 
     public function generateStatut($data, &$passage, $output) {
         switch ($data[self::CSV_STATUT]) {
-            case PassageManager::STATUT_REALISE: {                  
+            case PassageManager::STATUT_REALISE: {
                     return $this->updateStatutRealise($data, $passage, $output);
                     break;
                 }
@@ -239,7 +239,7 @@ class PassageCsvImporter {
     public function updateStatutRealise($data, &$passage, $output) {
         $passage = $this->updateDateDebutDateFin($data, $passage, $output);
         $passage->setDateRealise($passage->getDateDebut());
-        
+
         return $passage;
     }
 
@@ -275,6 +275,6 @@ class PassageCsvImporter {
         }
         return $passage;
     }
-  
+
 
 }

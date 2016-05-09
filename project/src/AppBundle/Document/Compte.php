@@ -47,7 +47,7 @@ class Compte implements DocumentSocieteInterface {
     protected $couleur;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="comptes")
+     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="comptes", simple=true)
      */
     protected $societe;
 
@@ -62,7 +62,7 @@ class Compte implements DocumentSocieteInterface {
     protected $contactCoordonnee;
 
     /**
-     *  @MongoDB\ReferenceMany(targetDocument="Passage", mappedBy="techniciens") 
+     *  @MongoDB\ReferenceMany(targetDocument="Passage", mappedBy="techniciens")
      */
     protected $passages = array();
 
@@ -271,7 +271,7 @@ class Compte implements DocumentSocieteInterface {
         $this->passages = new ArrayCollection();
         $this->prestations = new ArrayCollection();
         $this->setSociete($societe);
-        
+
     }
 
     /**
@@ -373,11 +373,11 @@ class Compte implements DocumentSocieteInterface {
     public function getTags() {
         return $this->tags;
     }
-    
+
     public function getTagsArray() {
         $result= array();
         foreach ($this->getTags() as $tag) {
-           $result[$tag->getIdentifiant()] = $tag;           
+           $result[$tag->getIdentifiant()] = $tag;
         }
         return $result;
     }

@@ -21,7 +21,7 @@ class ContratManager implements MouvementManagerInterface {
     const STATUT_A_VENIR = "A_VENIR";
     const STATUT_FINI = "FINI";
     const STATUT_RESILIE = "RESILIE"; // statut à retirer = ce n'est pas un statut mais un type!!
-    
+
     const TYPE_CONTRAT_RECONDUCTION_TACITE = 'RECONDUCTION_TACITE';
     const TYPE_CONTRAT_PONCTUEL = 'PONCTUEL';
     const TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION = 'RENOUVELABLE_SUR_PROPOSITION';
@@ -32,14 +32,14 @@ class ContratManager implements MouvementManagerInterface {
     const MOYEN_PIGEONS = 'MOYEN_PIGEONS';
     const MOYEN_BOIS = 'MOYEN_BOIS';
     const MOYEN_VO = 'MOYEN_VO';
-    
+
     public static $moyens_contrat_libelles = array(
     		self::MOYEN_3D => '3D',
     		self::MOYEN_PIGEONS => 'Pigeons',
     		self::MOYEN_BOIS => 'Bois',
     		self::MOYEN_VO => 'V.O'
     );
-    		
+
     public static $types_contrat_libelles = array(self::TYPE_CONTRAT_RECONDUCTION_TACITE => 'Reconduction tacite',
         self::TYPE_CONTRAT_PONCTUEL => 'Ponctuel',
         self::TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION => 'Renouvelable sur proposition',
@@ -113,7 +113,7 @@ class ContratManager implements MouvementManagerInterface {
 
                 $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
 
-                
+
                 $passage->setContrat($contrat);
                 foreach ($passageInfos->prestations as $prestationNom) {
                     $prestationObj = new Prestation();
