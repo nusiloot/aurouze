@@ -1,5 +1,13 @@
 {% extends 'base_pdf.html.twig' %}
 
+{% block stylesheets %}
+<style>
+body {
+    font-family: "Dejavu Sans";
+}
+</style>
+{% endblock %}
+
 {% block body %}
     {% include 'passage/pdfBonsStandalone.html.twig' with {'passage': passage, 'parameters': parameters} %}
 {% endblock %}
