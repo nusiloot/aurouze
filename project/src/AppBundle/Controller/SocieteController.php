@@ -44,7 +44,9 @@ class SocieteController extends Controller {
      */
     public function visualisationAction(Request $request, $societe) {
 
-    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe));
+        $nbContratsSociete = '0';
+        $nbPassagesSociete = '0';
+    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe, 'nbContratsSociete' => $nbContratsSociete, 'nbPassagesSociete' => $nbPassagesSociete));
     }
     
     /**

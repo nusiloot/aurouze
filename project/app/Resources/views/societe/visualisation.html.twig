@@ -8,7 +8,12 @@
                 <div class="list-group">
                     <div class="list-group-item">
                         <h3 style="margin-top:0; margin-bottom: 0;"><i class="mdi mdi-business mdi-lg"></i>
-                            {{  societe.raisonSociale }}<a class="btn btn-sm btn-default pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}">Modifier</a></h3>
+                            {{  societe.raisonSociale }}<a class="btn btn-sm btn-default pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}">Modifier</a>
+                            <small class="pull-right" style="padding-top: 5px; padding-right: 10px;">
+                                        <label class="label label-xs label-default ">{{  nbContratsSociete }} contrat(s)</label>
+                                &nbsp;<label class="label label-xs label-default ">{{ nbContratsSociete }} passages(s)</label>
+                            </small>&nbsp;
+                        </h3>
                     </div>
                     <div class="list-group-item text-center">
                         <span class="lead" style="font-size: 19px;">
