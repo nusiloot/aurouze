@@ -12,8 +12,11 @@
             <div class="panel panel-default">
                 <div class="list-group">
                     <div class="list-group-item">
-                        <h3 style="margin-top:0; margin-bottom: 0;"><i class="mdi mdi-business mdi-lg"></i>
-                            {{  societe.raisonSociale }}<a class="btn btn-sm btn-default pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}">Modifier</a>
+                        <h3 style="margin-top:0; margin-bottom: 0;">
+                        	<i class="mdi mdi-business mdi-lg"></i>
+                            {{  societe.raisonSociale }}
+                        	{% if not societe.actif %} <small><label class="label label-xs label-danger">SUSPENDU</label></small>{% endif %}
+                            <a class="btn btn-sm btn-default pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}">Modifier</a>
                             <small class="pull-right" style="padding-top: 5px; padding-right: 10px;">
                                         <label class="label label-xs label-default ">{{  nbContratsSociete }} contrat(s)</label>
                                 &nbsp;<label class="label label-xs label-default ">{{ nbPassagesSociete }} passages(s)</label>
@@ -80,7 +83,10 @@
                     <div class="list-group">
                         <div class="list-group-item">
                             <a class="btn btn-sm btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}">Modifier</a>
-                            <h3 style="margin-top: 0;margin-bottom: 0; height: 70px;" ><a href="{{ path('passage_etablissement', {'id': etablissement.id }) }}"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.nom }}</a></h3>
+                            <h3 style="margin-top: 0;margin-bottom: 0; height: 70px;" >
+                            	<a href="{{ path('passage_etablissement', {'id': etablissement.id }) }}"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.nom }}</a>
+                            	{% if not societe.actif %} <small><label class="label label-xs label-danger">SUSPENDU</label></small>{% endif %}
+                            </h3>
                         </div>
                         <div class="list-group-item text-center" style="height: 80px;">
                             {% if (not etablissement.sameAdresseThanSociete) %}
