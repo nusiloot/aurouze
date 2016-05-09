@@ -1,6 +1,85 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
+	<style type="text/css">
+		#pdf-contrat h1 {
+			text-align: center;
+			font-size: 26px;
+			line-height: 50px;
+			font-weight: bold;
+			padding: 0 20px;
+			margin-top: 120px;
+		}
+		#pdf-contrat h2 {
+			font-size: 16px;
+			font-weight: bold;
+		}
+		#pdf-contrat blockquote {
+			border: none;
+			font-size: 13px;
+			padding: 0px 0px 0px 45%;
+			text-transform: uppercase;
+			margin: 25px 0 0 0;
+		}
+		#pdf-contrat pre {
+			background-color: #fff;
+			color: #000;
+			border-radius: 0px;
+		}
+		#pdf-contrat pre:first-of-type,
+		#pdf-contrat pre:first-of-type + p,
+		#pdf-contrat pre:first-of-type + p + pre,
+		#pdf-contrat h1 + p {
+			text-align: center;
+		}
+		#pdf-contrat code, kbd, pre, samp {
+	    	font-family: "Nimbus sans-serif";
+			font-size: 12px;
+			padding: 0 10px;
+		}
+		#pdf-contrat table {
+			margin: 10px 0 20px 0;
+		}
+		#pdf-contrat table td {
+			padding: 0 100px 5px 0;
+		}
+		#pdf-contrat table tr td:first-of-type + td  {
+			text-align: right;
+		}
+		#pdf-contrat p {
+			font-size: 12px;
+		}
+		#pdf-contrat hr {
+			border-color: #fff;
+			margin: 0;
+			page-break-after: always;
+		}
+		#pdf-contrat img {
+			margin: -145px 0 0 120px;
+			width: 25%;
+		}
+		body  {
+			background: transparent url("file://{{ kernelRootDir }}/../web/images/bg-body-pdf-contrat.jpg") repeat-y left top;
+			background-size: auto 21.6cm;
+			margin: 0;
+			padding: 0;
+	    	font-family: "Nimbus sans-serif";
+		}
+		.container {
+			margin: 0;
+			padding: 0;
+		}
+		#pdf-contrat {
+			margin-left: 200px;
+			margin-right: 50px;
+		}
+		#pdf-contrat table, #pdf-contrat tr, #pdf-contrat td, #pdf-contrat th, #pdf-contrat tbody, #pdf-contrat thead, #pdf-contrat tfoot, #pdf-contrat p, #pdf-contrat h2, #pdf-contrat pre {
+	    	page-break-inside: avoid !important;
+		}
+		#pdf-contrat p:last-of-type {
+			padding-bottom: 5px;
+		}
+		</style>
 	<div id="pdf-contrat">
 	{{ contrat.markdown|markdown }}	
 	<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
