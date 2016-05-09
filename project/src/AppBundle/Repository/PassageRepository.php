@@ -16,8 +16,8 @@ use MongoDate as MongoDate;
 class PassageRepository extends DocumentRepository {
 
     public function findAllPlanifieByPeriodeAndIdentifiantTechnicien($startDate, $endDate, $technicien) {
-        $mongoStartDate = new MongoDate(strtotime($startDate));
-        $mongoEndDate = new MongoDate(strtotime($endDate));
+        $mongoStartDate = new MongoDate(strtotime($startDate." 00:00:00"));
+        $mongoEndDate = new MongoDate(strtotime($endDate." 23:59:59"));
         $query = $this->createQueryBuilder('Passage')
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
