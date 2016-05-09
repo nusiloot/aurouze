@@ -42,9 +42,18 @@ class SocieteController extends Controller {
      * @Route("/societe/{id}/visualisation", name="societe_visualisation")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function visualisationAction(Request $request, $societe) {
-
-    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe));
+    public function visualisationAction(Request $request, $societe) {       
+        
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+    	$form = $this->createForm(SocieteChoiceType::class, array('societe' => $societe), array(
+    			'action' => $this->generateUrl('societe_choice'),
+    			'method' => 'POST',
+    	));
+        
+        $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));        
+        $nbPassagesSociete = count($this->get('societe.manager')->getRepository()->findAllPassages($societe));
+        
+    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe,'form' => $form->createView(), 'nbContratsSociete' => $nbContratsSociete, 'nbPassagesSociete' => $nbPassagesSociete));
     }
 
     /**

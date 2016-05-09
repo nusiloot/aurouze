@@ -2,6 +2,7 @@
     <div class="panel-heading">
         <strong>Interventions prévues</strong> <span class='pull-right'>Avec une date de début de contrat au <strong>{{ "now" | date("d/m/y")}}</strong></span></div>
     <div class="panel-body">
+    	{% if contrat.previsionnel|length > 0 %}
         <ul class="list-inline list-group">
             {% for date,passage in contrat.previsionnel %}
                 {% set counter = loop.index %}
@@ -32,5 +33,8 @@
                 </li>
             {% endfor %}
         </ul>
+        {% else %}
+        <p class="bg-warning" style="padding: 15px;">Attention, la saisie ne permet pas d'établir un prévisionnel d'intervention pour ce contrat.</p>
+        {% endif %}
     </div>
 </div>

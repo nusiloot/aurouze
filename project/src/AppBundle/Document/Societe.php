@@ -69,7 +69,7 @@ class Societe {
      * @MongoDB\Increment
      */
     protected $contratIncrement;
-    
+
     /**
      * @MongoDB\Increment
      */
@@ -84,7 +84,7 @@ class Societe {
      *  @MongoDB\ReferenceMany(targetDocument="Etablissement", mappedBy="societe")
      */
     protected $etablissements;
-    
+
     /**
      *  @MongoDB\ReferenceMany(targetDocument="Compte", mappedBy="societe")
      */
@@ -99,6 +99,11 @@ class Societe {
      * @MongoDB\Collection
      */
     protected $tags;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $actif;
 
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
@@ -443,14 +448,12 @@ class Societe {
         return $this->getRaisonSociale() . " " . $this->getAdresse()->getIntitule() . ' (' . $this->identifiant . ')';
     }
 
-
     /**
      * Add compte
      *
      * @param AppBundle\Document\Compte $compte
      */
-    public function addCompte(\AppBundle\Document\Compte $compte)
-    {
+    public function addCompte(\AppBundle\Document\Compte $compte) {
         $this->comptes[] = $compte;
     }
 
@@ -459,8 +462,7 @@ class Societe {
      *
      * @param AppBundle\Document\Compte $compte
      */
-    public function removeCompte(\AppBundle\Document\Compte $compte)
-    {
+    public function removeCompte(\AppBundle\Document\Compte $compte) {
         $this->comptes->removeElement($compte);
     }
 
@@ -470,8 +472,7 @@ class Societe {
      * @param increment $compteIncrement
      * @return self
      */
-    public function setCompteIncrement($compteIncrement)
-    {
+    public function setCompteIncrement($compteIncrement) {
         $this->compteIncrement = $compteIncrement;
         return $this;
     }
@@ -481,8 +482,30 @@ class Societe {
      *
      * @return increment $compteIncrement
      */
-    public function getCompteIncrement()
-    {
+    public function getCompteIncrement() {
         return $this->compteIncrement;
+    }
+
+
+    /**
+     * Set actif
+     *
+     * @param boolean $actif
+     * @return self
+     */
+    public function setActif($actif)
+    {
+        $this->actif = $actif;
+        return $this;
+    }
+
+    /**
+     * Get actif
+     *
+     * @return boolean $actif
+     */
+    public function getActif()
+    {
+        return $this->actif;
     }
 }

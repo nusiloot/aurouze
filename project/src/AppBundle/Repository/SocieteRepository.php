@@ -57,4 +57,16 @@ class SocieteRepository extends DocumentRepository
                 ->execute();
         return $request->toArray();
     }
+    
+    public function findAllPassages($societe) {
+        $societe = $this->findOneById($societe->getId());
+        $passagesArray = array();
+        foreach ($societe->getEtablissements() as $etb) {
+            $passages = $this->dm->getRepository('AppBundle:Passage')->findByEtablissement($etb->getId());
+            foreach ($passages as $passage) {
+                $passagesArray[$passage->getId()] = $passage;
+            }
+        }
+        return $passagesArray;
+    }
 }
