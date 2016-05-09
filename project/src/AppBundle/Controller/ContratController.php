@@ -238,6 +238,11 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function pdfAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+    	$contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
+    	$dm->persist($contrat);
+    	$dm->flush();
     	
     	$header =  $this->renderView('contrat/pdf-header.html.twig', array(
     			'contrat' => $contrat
