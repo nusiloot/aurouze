@@ -22,7 +22,7 @@ class PassageRepository extends DocumentRepository {
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)
                 ->field('dateFin')->gte($mongoStartDate)
-                ->field('techniciens.$id')->equals($technicien->getId())
+                ->field('techniciens')->equals($technicien->getId())
                 ->sort('dateDebut', 'asc')
                 ->getQuery();
         return $query->execute();
