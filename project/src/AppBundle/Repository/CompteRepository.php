@@ -10,7 +10,7 @@ class CompteRepository extends DocumentRepository {
 
     public function findAllUtilisateurs() {
         $societe = $this->dm->getRepository('AppBundle:Societe')->findOneByRaisonSociale("AUROUZE");
-        return $this->findBy(array('societe.id' => $societe->getId()));
+        return $this->findBy(array('societe' => $societe->getId()));
     }
 
     public function findAllUtilisateursTechnicien() {

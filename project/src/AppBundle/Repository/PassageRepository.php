@@ -45,7 +45,7 @@ class PassageRepository extends DocumentRepository {
         $passagesHistorique = array();
 
         foreach($prestations as $prestation) {
-            $passages = $this->findBy(array('etablissement.id' => $etablissement->getId(), 'statut' => PassageManager::STATUT_REALISE, 'prestations.identifiant' => $prestation->getIdentifiant()), array('dateDebut' => 'DESC'), $limit);
+            $passages = $this->findBy(array('etablissement' => $etablissement->getId(), 'statut' => PassageManager::STATUT_REALISE, 'prestations.identifiant' => $prestation->getIdentifiant()), array('dateDebut' => 'DESC'), $limit);
             foreach($passages as $passage) {
                 $passagesHistorique[$passage->getDateDebut()->format('YmdHi')."_".$passage->getId()] = $passage;
             }
