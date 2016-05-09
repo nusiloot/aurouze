@@ -63,7 +63,7 @@
         <p>Traitement : {% for prestation in passageHistory.prestations %}
             <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
         {% endfor %}</p>
-        <p>{{ passageHistory.description | nl2br }}</p>
+        <p>{{ passageHistory.description | replace({"\n\n": "\n"}) | nl2br }}</p>
         <table style="margin-bottom: 10px;" class="table table-bordered table-condensed">
             <tbody>
                 {% for produit in passageHistory.produits  %}
