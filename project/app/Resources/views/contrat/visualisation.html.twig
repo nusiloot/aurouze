@@ -6,13 +6,22 @@
             <div class="col-xs-8">
                 <h1>Contrat <small>n° {{ contrat.getNumeroArchive() }}</small></h1>
             </div>
+            {%  if (contrat.isEnAttenteAcceptation()) %}
+            <div class="col-xs-4 text-right" style="padding-top: 30px; ">
+                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-warning"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a>
+            </div>
+            {% else %}
             <div class="col-xs-4 text-right" style="padding-top: 30px; ">
                 <a href="{{ path('passage_etablissement', {'id': contrat.getEtablissements().first().getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux passages</a>
             </div>
+            {% endif %}
         </div>
         {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
 
 		<div class="row text-center">
+			{%  if (contrat.isEnAttenteAcceptation()) %}
+                <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
+            {% endif %}
 			<a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
 		</div>
 
