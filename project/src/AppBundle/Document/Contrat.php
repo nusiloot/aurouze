@@ -28,17 +28,17 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $id;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Etablissement", inversedBy="contrats")
+     * @MongoDB\ReferenceMany(targetDocument="Etablissement", inversedBy="contrats", simple=true)
      */
     protected $etablissements;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Compte")
+     * @MongoDB\ReferenceOne(targetDocument="Compte", simple=true)
      */
     protected $commercial;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Compte")
+     * @MongoDB\ReferenceOne(targetDocument="Compte", simple=true)
      */
     protected $technicien;
 
@@ -48,7 +48,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $contratPassages;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Societe")
+     * @MongoDB\ReferenceOne(targetDocument="Societe", simple=true)
      */
     protected $societe;
 
@@ -66,7 +66,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      * @MongoDB\Boolean
      */
     protected $multiTechnicien;
-    
+
     /**
      * @MongoDB\Boolean
      */
@@ -1004,15 +1004,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->tvaReduite;
     }
 
-    
+
     /*
-     * Fonction à retiré => un contrat ne doit pas être resilié sous forme de statut mais sous forme de type 
+     * Fonction à retiré => un contrat ne doit pas être resilié sous forme de statut mais sous forme de type
      */
     public function isResilie() {
 
         return ($this->statut == ContratManager::STATUT_RESILIE);
     }
-    
+
     public function isAnnule() {
 
         return ($this->typeContrat == ContratManager::TYPE_CONTRAT_ANNULE);
@@ -1037,7 +1037,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isFini() {
-        
+
         return ($this->statut == ContratManager::STATUT_FINI);
     }
 

@@ -187,4 +187,70 @@ class FactureSoussigne  {
     {
         return $this->email;
     }
+
+    /**
+     * Set adresse
+     *
+     * @param string $adresse
+     * @return self
+     */
+    public function setAdresse($adresse)
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+
+    /**
+     * Get adresse
+     *
+     * @return string $adresse
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * Set codePostal
+     *
+     * @param string $codePostal
+     * @return self
+     */
+    public function setCodePostal($codePostal)
+    {
+        $this->codePostal = $codePostal;
+        return $this;
+    }
+
+    /**
+     * Get codePostal
+     *
+     * @return string $codePostal
+     */
+    public function getCodePostal()
+    {
+        return $this->codePostal;
+    }
+
+    /**
+     * Set commune
+     *
+     * @param string $commune
+     * @return self
+     */
+    public function setCommune($commune)
+    {
+        $this->commune = $commune;
+        return $this;
+    }
+
+    /**
+     * Get commune
+     *
+     * @return string $commune
+     */
+    public function getCommune()
+    {
+        return $this->commune;
+    }
 }

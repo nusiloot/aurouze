@@ -12,12 +12,12 @@ use AppBundle\Document\Passage;
 class ContratPassages {
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Etablissement")
+     * @MongoDB\ReferenceOne(targetDocument="Etablissement", simple=true)
      */
     protected $etablissement;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Passage")
+     * @MongoDB\ReferenceMany(targetDocument="Passage", simple=true)
      */
     protected $passages;
 

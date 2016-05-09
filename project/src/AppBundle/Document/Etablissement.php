@@ -28,7 +28,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $identifiant;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="etablissements")
+     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="etablissements", simple=true)
      */
     protected $societe;
 
@@ -91,11 +91,11 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function prePersist() {
         $this->pullInfosFromSociete();
     }
-    
+
     public function getSameAdresse() {
     	return $this->isSameAdresseThanSociete();
     }
-    
+
     public function setSameAdresse($value) {
     	return $this;
     }
@@ -103,7 +103,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function getSameContact() {
     	return $this->isSameContactCoordonneeThanSociete();
     }
-    
+
     public function setSameContact($value) {
     	return $this;
     }

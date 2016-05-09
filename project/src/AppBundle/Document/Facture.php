@@ -16,7 +16,7 @@ class Facture implements DocumentSocieteInterface {
     protected $id;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="factures")
+     * @MongoDB\ReferenceOne(targetDocument="Societe", inversedBy="factures", simple=true)
      */
     protected $societe;
 

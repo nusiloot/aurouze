@@ -13,6 +13,11 @@ class SocieteGenerator extends AbstractIdGenerator
         $className = get_class($document);
         $db = $dm->getDocumentDatabase($className);
 
+        if($document->getIdentifiant()) {
+            
+            return "SOCIETE-".$document->getIdentifiant();
+        }
+
         $command = array();
         $command['findandmodify'] = 'doctrine_increment_ids';
         $command['query'] = array('_id' => "Societe");

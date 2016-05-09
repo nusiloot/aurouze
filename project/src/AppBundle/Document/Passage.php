@@ -71,7 +71,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $etablissementIdentifiant;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="passages")
+     * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="passages", simple=true)
      */
     protected $etablissement;
 
@@ -91,7 +91,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $description;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Compte", inversedBy="techniciens")
+     * @MongoDB\ReferenceMany(targetDocument="Compte", inversedBy="techniciens", simple=true)
      */
     protected $techniciens;
 
@@ -101,7 +101,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $statut;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Contrat")
+     * @MongoDB\ReferenceOne(targetDocument="Contrat", simple=true)
      */
     protected $contrat;
 
@@ -186,7 +186,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function setDuree($duree) {
-        
+
     }
 
     public function isRealise() {
@@ -422,9 +422,9 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         if($nbPassage == 'C'){
             return "Passage de contrôle";
         }
-       
+
             return "Passage ".$nbPassage." sur ".$this->getContrat()->getNbPassagesPrevu()." (sous contrat)";
-        
+
     }
 
     /**
