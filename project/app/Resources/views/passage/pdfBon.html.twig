@@ -1,10 +1,10 @@
-<h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Bon de passage du {{ passage.dateDebut | localizeddate("full", "none") }} à {{ passage.dateDebut | date("H") }}h{{ passage.dateDebut | date("i") }}</strong> <small>n° {{ passage.numeroArchive }}</small>
+<h2 style="margin-bottom: 10px; font-size: 19px;" class="text-center"><strong>Bon de passage du {{ passage.dateDebut | localizeddate("full", "none") }} à {{ passage.dateDebut | date("H") }}h{{ passage.dateDebut | date("i") }}</strong> <small>n° {{ passage.numeroArchive }}</small>
 </h2>
 <hr style="border-color: #ddd; margin-bottom: 30px;" />
 <div class="row">
     <div class="col-xs-6">
         <p>
-            <span class="lead" style="font-weight: 400; font-size: 18px">{{ parameters.emetteur.nom }}</span><br />
+            <span class="lead" style="font-weight: 400; font-size: 16px">{{ parameters.emetteur.nom }}</span><br />
             {{ parameters.emetteur.adresse }}<br />
             {{ parameters.emetteur.code_postal }} {{ parameters.emetteur.commune }} <br />
             Tél : {{ parameters.emetteur.telephone }}<br />
@@ -12,7 +12,7 @@
         </p>
     </div>
     <div class="col-xs-6 text-left form-horizontal">
-        <p><span class="lead" style="font-weight: 400; font-size: 18px">{{ passage.etablissementInfos.nom }}</span><br />
+        <p><span class="lead" style="font-weight: 400; font-size: 16px">{{ passage.etablissementInfos.nom }}</span><br />
             {{ passage.etablissementInfos.adresse.adresse }}<br />
             {{ passage.etablissementInfos.adresse.codePostal }}
             {{ passage.etablissementInfos.adresse.Commune }}
