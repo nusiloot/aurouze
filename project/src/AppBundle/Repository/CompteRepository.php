@@ -29,7 +29,7 @@ class CompteRepository extends DocumentRepository {
         $compteUtilisateurs = $this->findAllUtilisateurs();
         $utilisateurs = array();
         foreach ($compteUtilisateurs as $utilisateur) {
-            if ($utilisateur->hasTag($tag) && $utilisateur->isActif($tag)) {
+            if ($utilisateur->hasTag($tag)) {
                 $utilisateurs[$utilisateur->getId()] = $utilisateur;
             }
         }

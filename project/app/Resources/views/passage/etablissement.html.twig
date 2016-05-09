@@ -56,7 +56,9 @@
                                     Contrat terminé en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                                 {% elseif (contrat.isAVenir) %}
                                     Contrat non commencé (début {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }})
-                                {% endif %}
+                                 {% elseif (contrat.isBrouillon) %}
+                                    Contrat brouillon
+                                {% endif %}          
                                 <small>n° {{ contrat.numeroArchive }}</small>&nbsp;
                                 {% for prestation in contrat.prestations %}
                                     {% if(prestation.wordToPicto) %}
@@ -71,7 +73,7 @@
                             </h4>
                         </div>
                         <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(not contrat.isEnCours) %}out{% else%}in{% endif %} list-group">
-                            <div class="list-group-item {% if(contrat.isAnnule) %} list-group-item-danger
+                               <div class="list-group-item {% if(contrat.isAnnule) %} list-group-item-danger
                                  {% elseif(contrat.isFini) %}list-group-item-success
                                  {% elseif(contrat.isBrouillon or contrat.isEnAttenteAcceptation) %} list-group-item-warning {% endif %}
                                  " {% if(contrat.isAVenir) %}style="opacity: 0.5;"{% endif %}>
@@ -98,7 +100,7 @@
                                     <div class="col-xs-2">
                                         <a href="{{ path('contrat_visualisation', {'id': contrat.id })}}" class="btn btn-block btn-xs btn-default">Voir le contrat</a>
                                     </div>
-                                </div>
+                                </div>                          
                             </div>
                             {% for pe in passagesEtablissement.getPassagesSorted(true) %}
                                 <div class="list-group-item">
@@ -108,7 +110,7 @@
                                                 <div class="col-xs-3">
                                                     <span style="cursor: help;" title="{{ pe.libelle }}" data-toggle="tooltip" class="badge {% if(pe.isGarantie) %}badge-warning{% elseif(pe.isControle)%}badge-warning{% else %}badge-default{% endif %} {% if(pe.mouvementDeclenchable) %}badge-inverse{% endif %} btn-xs">{{ pe.getNumeroPassage() }}</span>
                                                 </div>
-                                                <div class="col-xs-9">
+                                                <div class="col-xs-9">                                                   
                                                     {% if (pe.enAttente) %}
                                                         <button class="btn btn-xs btn-block btn-default">{{ pe.getStatutLibelle() }}</button>
                                                     {% elseif (pe.aPlanifie) %}
