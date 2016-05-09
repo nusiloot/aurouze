@@ -127,6 +127,7 @@ class ContratManager implements MouvementManagerInterface {
                     $prestationObj->setNom($prestationPrevu->getNom());
                     $prestationObj->setNomCourt($prestationPrevu->getNomCourt());
                     $prestationObj->setIdentifiant($prestationPrevu->getIdentifiant());
+                    $prestationObj->setNbPassages(0);
                     $passage->addPrestation($prestationObj);
                 }
                 foreach ($contrat->getProduits() as $produit) {

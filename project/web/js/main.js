@@ -19,15 +19,28 @@
         $.initTextSelector();
         $.initLinkInPanels();
         $.initDeplanifierLink();
+        $.initSearchActif();
     });
 
+    $.initSearchActif = function () {
+        $('form input[type="checkbox"][data-search-actif="1"]').each(function () {
+
+            $(this).parents('form').find('select').attr('data-nonactif',"0");
+
+            $(this).click(function () {
+                $(this).parents('form').find('select').attr('data-nonactif',($(this).is(':checked')? "1" : "0"));
+                $.initSelect2Ajax();
+            })
+        });
+    }
+
     $.initDeplanifierLink = function () {
-    	$('.deplanifier-link').click(function (e) {
+        $('.deplanifier-link').click(function (e) {
             e.preventDefault();
-	    	var link = $(this).attr('href');
-	    	$.post(link, function (data) {
-	    		document.location.reload();
-	        });
+            var link = $(this).attr('href');
+            $.post(link, function (data) {
+                document.location.reload();
+            });
         });
     }
 
@@ -61,15 +74,15 @@
             $(this).bootstrapSwitch('state', state);
         });
         $('.switcher').on('switchChange.bootstrapSwitch', function (event, state) {
-        	
+
             var checkbox = $(this);
             var etat = state ? 1 : 0;
             if (checkbox.attr("data-url")) {
-	            $.ajax({
-	                type: "POST",
-	                url: checkbox.data('url'),
-	                data: {etat: etat}
-	            });
+                $.ajax({
+                    type: "POST",
+                    url: checkbox.data('url'),
+                    data: {etat: etat}
+                });
             }
         });
     }
@@ -224,7 +237,12 @@
 
     $.initSelect2Ajax = function () {
         $('.select2-ajax').each(function () {
-            var urlComponent = $(this).data('url');
+            var urlComponent = $(this).attr('data-url')+"?";
+            if ($(this).attr('data-nonactif') == '1') {
+                urlComponent += "nonactif=1";
+            }else{
+                urlComponent += "nonactif=0";
+            }
             $(this).select2({
                 theme: 'bootstrap',
                 minimumInputLength: 3,
@@ -234,9 +252,9 @@
                     url: urlComponent,
                     delay: 500,
                     data: function (params) {
-
                         var queryParameters = {
                             term: params.term
+                            
                         }
                         return queryParameters;
                     },
