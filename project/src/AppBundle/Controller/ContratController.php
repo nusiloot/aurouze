@@ -105,7 +105,7 @@ class ContratController extends Controller {
             $dm->flush();
             return $this->redirectToRoute('contrat_acceptation', array('id' => $contrat->getId()));
         }
-        return $this->render('contrat/modification.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
+        return $this->render('contrat/modification.html.twig', array('contrat' => $contrat, 'form' => $form->createView(), 'societe' => $contrat->getSociete()));
     }
 
     /**
@@ -140,7 +140,7 @@ class ContratController extends Controller {
                 return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
             }
         }
-        return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat, 'form' => $form->createView()));
+        return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat, 'form' => $form->createView(), 'societe' => $contrat->getSociete()));
     }
 
     /**
@@ -150,7 +150,7 @@ class ContratController extends Controller {
     public function visualisationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat));
+        return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat,'societe' => $contrat->getSociete()));
     }
 
     /**
