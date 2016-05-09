@@ -16,6 +16,7 @@ use AppBundle\Type\ContactCoordonnee;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Transformer\ProvenanceTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\CallbackTransformer;
 
 class SocieteType extends AbstractType {
 
@@ -39,6 +40,7 @@ class SocieteType extends AbstractType {
                 ->add('codeComptable', TextType::class, array('label' => 'Code comptable :', 'required' => false, 'empty_data'  => null))
                 ->add('commentaire', TextareaType::class, array('label' => 'Commentaires :', "attr" => array("class" => "form-control", "rows" => 6), 'required' => false, 'empty_data'  => null))
                 ->add('type', ChoiceType::class, array('label' => 'Type* :', 'choices' => array_merge(array('' => ''), $this->getTypes()), "attr" => array("class" => "select2 select2-simple")))
+                ->add('actif', CheckboxType::class, array('label' => ' ', 'required' => false, "attr" => array("class" => "switcher")))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")))
         		->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
         		->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'));
@@ -67,6 +69,15 @@ class SocieteType extends AbstractType {
         		'attr' => array("class" => "select2 select2-simple", "data-tags" => "true"),
         ));
         $builder->get('tags')->resetViewTransformers();
+        
+        /*$builder->get('actif')->addModelTransformer(new CallbackTransformer(
+        		function ($originalDescription) {
+        			return ($originalDescription)? true : false;
+        		},
+        		function ($submittedDescription) {
+        			return (int)$submittedDescription;
+        		}
+        		));*/
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {

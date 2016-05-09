@@ -57,18 +57,20 @@
 
     $.initSwitcher = function () {
         $('.switcher').each(function () {
-            var state = $(this).val();
+            var state = $(this).is(':checked');
             $(this).bootstrapSwitch('state', state);
         });
         $('.switcher').on('switchChange.bootstrapSwitch', function (event, state) {
+        	
             var checkbox = $(this);
             var etat = state ? 1 : 0;
-
-            $.ajax({
-                type: "POST",
-                url: checkbox.data('url'),
-                data: {etat: etat}
-            });
+            if (checkbox.attr("data-url")) {
+	            $.ajax({
+	                type: "POST",
+	                url: checkbox.data('url'),
+	                data: {etat: etat}
+	            });
+            }
         });
     }
 
