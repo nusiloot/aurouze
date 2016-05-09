@@ -27,7 +27,7 @@ class PassageController extends Controller {
     public function indexAction(Request $request) {
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
-            'method' => 'POST',
+            'method' => 'GET',
         ));
 
         $passages = $this->get('passage.manager')->getRepository()->findToPlan();
@@ -139,7 +139,7 @@ class PassageController extends Controller {
         if ($nextPassage) {
             $nextPassage->setDateDebut($nextPassage->getDatePrevision());
             $nextPassage->copyTechnicienFromPassage($passage);
-            
+
             $dm->persist($nextPassage);
         }
 
@@ -403,7 +403,7 @@ class PassageController extends Controller {
 
         return $this->render('passage/creationRapide.html.twig', array('etablissement' => $etablissement, 'contrat' => $newContrat, 'form' => $form->createView()));
     }
-    
+
 
 
     /**
@@ -416,7 +416,7 @@ class PassageController extends Controller {
             throw $this->createNotFoundException();
         }
         $dm = $this->get('doctrine_mongodb')->getManager();
-    
+
     	if ($passage->isRealise()) {
     		$aplanifier = false;
     		$contrat = $passage->getContrat();

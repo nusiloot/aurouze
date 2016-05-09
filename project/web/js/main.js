@@ -228,10 +228,9 @@
                 minimumInputLength: 3,
                 allowClear: true,
                 ajax: {
-                    type: "POST",
+                    type: "GET",
                     url: urlComponent,
-                    dataType: 'json',
-                    quietMillis: 100,
+                    delay: 500,
                     data: function (params) {
 
                         var queryParameters = {
@@ -240,23 +239,10 @@
                         return queryParameters;
                     },
                     processResults: function (data) {
-
                         return {
-                            results: $.map(data, function (item) {
-                                return {
-                                    text: item.term,
-                                    id: item.id
-                                }
-                            })
+                            results: data
                         };
                     }
-
-                },
-                formatResult: function (data, term) {
-                    return data;
-                },
-                formatSelection: function (data) {
-                    return data;
                 }
             });
         });
