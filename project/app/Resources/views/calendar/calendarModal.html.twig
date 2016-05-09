@@ -106,7 +106,9 @@
 <div class="row">
 	<div class="col-xs-6">
 		{% if not passage.realise %}
-		<a class="btn btn-danger" href="{{path('calendarDelete', {'passage': passage.id, 'technicien': technicien})}}">Déplannifier</a>
+		<a class="btn btn-danger" href="{{path('calendarDelete', {'passage': passage.id, 'technicien': technicien})}}">Déplanifier</a>
+		{% elseif passage.realise %}
+		<a class="btn btn-danger deplanifier-link" href="{{path('passage_deplanifier', { 'id': passage.id })}}">Revenir "à planifier"</a>
 		{% endif %}
     </div>
     <div class="col-xs-6 text-right">

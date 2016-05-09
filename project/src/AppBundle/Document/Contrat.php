@@ -491,7 +491,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                     }
                 }
             }
-            $this->setNbPassages(max($nbPassagesEtb));
+            if ($nbPassagesEtb) {
+            	$this->setNbPassages(max($nbPassagesEtb));
+            } else {
+            	$this->setNbPassages(0);
+            }
         }
         return $this->nbPassages;
     }
