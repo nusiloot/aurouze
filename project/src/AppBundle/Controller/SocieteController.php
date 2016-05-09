@@ -87,7 +87,7 @@ class SocieteController extends Controller {
     		return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
     	}
 
-    	return $this->render('societe/modification.html.twig', array('form' => $form->createView(), 'isNew' => $isNew));
+    	return $this->render('societe/modification.html.twig', array('form' => $form->createView(), 'societe' => $societe,  'isNew' => $isNew));
     }
 
     /**

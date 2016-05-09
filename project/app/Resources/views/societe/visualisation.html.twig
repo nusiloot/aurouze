@@ -1,7 +1,10 @@
 {% set _menu_active = 'societe' %}
 {% extends 'base.html.twig' %}
 {% block body %}
-
+ <ol class="breadcrumb">
+        <li><a href="{{ path('societe') }}">Societe</a></li>    
+        <li><a href="{{ path('societe_visualisation',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+    </ol>  
     
      {{ include('societe/choixForm.html.twig', {'form': form}) }}
     <div class="row">

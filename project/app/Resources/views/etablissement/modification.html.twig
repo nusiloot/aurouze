@@ -2,6 +2,13 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 
+    <ol class="breadcrumb">
+        <li><a href="{{ path('societe') }}">Societe</a></li>    
+        <li><a href="{{ path('societe_visualisation',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+        <li>&nbsp;{{ etablissement.nom }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></li>
+
+    </ol> 
+
     <div class="row">
         <div class="col-xs-12">
             <h3>{{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small> <a class="btn btn-sm btn-warning pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a></h3>
@@ -27,80 +34,80 @@
                     </div>
                 </div>
                 <div class="row">
-	                <div class="col-xs-10">
-	                	{{ form_row(form.commentaire) }}
-	                </div>
-	            </div>
+                    <div class="col-xs-10">
+                        {{ form_row(form.commentaire) }}
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-xs-10">
-                    	<div class="col-xs-6" style="padding-top: 15px;">
-                    		<label>Actif :</label>
-                    	</div>
-                    	<div class="text-right col-xs-6">
-                        	{{ form_row(form.actif) }}
+                        <div class="col-xs-6" style="padding-top: 15px;">
+                            <label>Actif :</label>
+                        </div>
+                        <div class="text-right col-xs-6">
+                            {{ form_row(form.actif) }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-                    
-                    
-                    
-                <div class="panel panel-default">
-		            <div class="panel-heading">
-		            	<strong>Adresse</strong>
-		                <div class="pull-right">
-		            		{{ form_row(form.sameAdresse) }}
-		            	</div>
-		            </div>
-		            <div class="panel-body col-xs-offset-2 collapse{% if not etablissement.sameAdresse %} in{% endif %}" id="collapseAdresse">
-		                <div class="row">
-		                    <div class="col-xs-10">
-		                        {{ form_row(form.adresse.adresse) }}
-		                    </div>
-		                </div>
-		                <div class="row">
-		                    <div class="col-xs-3">
-		                        {{ form_row(form.adresse.codePostal) }}
-		                    </div>
-		                    <div class="col-xs-7">
-		                        {{ form_row(form.adresse.commune) }}
-		                    </div>
-		                </div>
-		            </div>
-		        </div>
-		        <div class="panel panel-default">
-		            <div class="panel-heading">
-		            	<strong>Contact</strong>
-		                <div class="pull-right">
-		            		{{ form_row(form.sameContact) }}
-		            	</div>
-		            </div>
-		            <div class="panel-body col-xs-offset-2 collapse{% if not etablissement.sameContact %} in{% endif %}" id="collapseContact">
-		                <div class="row">
-		                    <div class="col-xs-4">
-		                        {{ form_row(form.contactCoordonnee.telephoneFixe) }}
-		                    </div>
-		                    <div class="col-xs-6">
-		                        {{ form_row(form.contactCoordonnee.email) }}
-		                    </div>
-		                </div>
-		                <div class="row">
-		                    <div class="col-xs-4">
-		                        {{ form_row(form.contactCoordonnee.telephoneMobile) }}
-		                    </div>
-		                    <div class="col-xs-6">
-		                        {{ form_row(form.contactCoordonnee.siteInternet) }}
-		                    </div>
-		                </div>
-		                <div class="row">
-		                    <div class="col-xs-4">
-		                        {{ form_row(form.contactCoordonnee.fax) }}
-		                    </div>
-		                </div>
-		            </div>
-		        </div>
-     
+
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Adresse</strong>
+                <div class="pull-right">
+                    {{ form_row(form.sameAdresse) }}
+                </div>
+            </div>
+            <div class="panel-body col-xs-offset-2 collapse{% if not etablissement.sameAdresse %} in{% endif %}" id="collapseAdresse">
+                <div class="row">
+                    <div class="col-xs-10">
+                        {{ form_row(form.adresse.adresse) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-3">
+                        {{ form_row(form.adresse.codePostal) }}
+                    </div>
+                    <div class="col-xs-7">
+                        {{ form_row(form.adresse.commune) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Contact</strong>
+                <div class="pull-right">
+                    {{ form_row(form.sameContact) }}
+                </div>
+            </div>
+            <div class="panel-body col-xs-offset-2 collapse{% if not etablissement.sameContact %} in{% endif %}" id="collapseContact">
+                <div class="row">
+                    <div class="col-xs-4">
+                        {{ form_row(form.contactCoordonnee.telephoneFixe) }}
+                    </div>
+                    <div class="col-xs-6">
+                        {{ form_row(form.contactCoordonnee.email) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        {{ form_row(form.contactCoordonnee.telephoneMobile) }}
+                    </div>
+                    <div class="col-xs-6">
+                        {{ form_row(form.contactCoordonnee.siteInternet) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        {{ form_row(form.contactCoordonnee.fax) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-xs-12">
                 {{ form_widget(form.save) }}
