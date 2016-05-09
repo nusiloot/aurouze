@@ -157,7 +157,7 @@ class ContratManager implements MouvementManagerInterface {
     }
 
     public function getNbContratWithCompteForCommercial($compte) {
-        return 0;$this->getRepository()->countContratByCommercial($compte);
+        return $this->getRepository()->countContratByCommercial($compte);
     }
 
 }

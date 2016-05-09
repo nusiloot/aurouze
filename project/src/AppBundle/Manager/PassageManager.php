@@ -92,7 +92,7 @@ class PassageManager {
     }
 
     public function getNbPassagesWithTechnicien($compte) {
-        return 0;$this->getRepository()->countPassagesByTechnicien($compte);
+        return $this->getRepository()->countPassagesByTechnicien($compte);
     }
 
 }
