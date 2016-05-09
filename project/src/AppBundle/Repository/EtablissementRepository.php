@@ -26,13 +26,37 @@ class EtablissementRepository extends DocumentRepository {
         return $result;
     }
 
-    public function findByTerm($term,$criteria) {
-        $request = $this->createQueryBuilder()
-                ->find()
-                ->field($criteria)->equals(new \MongoRegex('/.*'.$term.'.*/i'))
-                ->getQuery()
-                ->execute();
-        return $request;
+    public function findByTerms($queryString) {
+        $terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $queryString)));
+        $results = null;
+        foreach($terms as $term) {
+            if(strlen($term) < 3) {
+                continue;
+            }
+            $q = $this->createQueryBuilder();
+            $etablissements = $q
+                  ->addOr($q->expr()->field('identifiant')->equals(new \MongoRegex('/.*'.$term.'.*/i')))
+                  ->addOr($q->expr()->field('nom')->equals(new \MongoRegex('/.*'.$term.'.*/i')))
+                  ->addOr($q->expr()->field('adresse.adresse')->equals(new \MongoRegex('/.*'.$term.'.*/i')))
+                  ->addOr($q->expr()->field('adresse.codePostal')->equals(new \MongoRegex('/.*'.$term.'.*/i')))
+                  ->addOr($q->expr()->field('adresse.commune')->equals(new \MongoRegex('/.*'.$term.'.*/i')))
+                  ->field('actif')->equals(true)
+                  ->limit(1000)
+                  ->getQuery()->execute();
+
+            $currentResults = array();
+            foreach($etablissements as $etablissement) {
+                $currentResults[$etablissement->getId()] = $etablissement->getIntitule();
+            }
+
+            if(!is_null($results)) {
+                $results = array_intersect_assoc($results, $currentResults);
+            } else {
+                $results = $currentResults;
+            }
+        }
+
+        return is_null($results) ? array() : $results;
     }
 
     public function findAllPostfixByIdentifiantSociete($societe) {

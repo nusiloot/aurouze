@@ -19,7 +19,7 @@ class SocieteController extends Controller {
      * @Route("/societe", name="societe")
      */
     public function indexAction() {
-    	
+
     	$dm = $this->get('doctrine_mongodb')->getManager();
     	$form = $this->createForm(SocieteChoiceType::class, null, array(
     			'action' => $this->generateUrl('societe_choice'),
@@ -34,7 +34,7 @@ class SocieteController extends Controller {
      */
     public function societeChoiceAction(Request $request) {
     	$formData = $request->get('societe_choice');
-    
+
     	return $this->redirectToRoute('societe_visualisation', array('id' => $formData['societes']));
     }
 
@@ -55,17 +55,17 @@ class SocieteController extends Controller {
         
     	return $this->render('societe/visualisation.html.twig', array('societe' => $societe,'form' => $form->createView(), 'nbContratsSociete' => $nbContratsSociete, 'nbPassagesSociete' => $nbPassagesSociete));
     }
-    
+
     /**
      * @Route("/societe/modification/{id}", defaults={"id" = null}, name="societe_modification")
      */
     public function modificationAction(Request $request, $id) {
-    	
+
     	$dm = $this->get('doctrine_mongodb')->getManager();
-    	
+
     	$isNew = ($id)? false : true;
     	$societe = (!$isNew)? $this->get('societe.manager')->getRepository()->find($id) : new Societe();
-    	
+
     	$form = $this->createForm(new SocieteType($this->container, $dm, $isNew), $societe, array(
     			'action' => $this->generateUrl('societe_modification', array('id' => $id)),
     			'method' => 'POST',
@@ -93,36 +93,23 @@ class SocieteController extends Controller {
     /**
      * @Route("/societe/rechercher", name="societe_search")
      */
-    public function societeSearchAction(Request $request) {
-
-        $term = $request->get('term');
-        $response = new Response();
-        $result = array();
-        if (strlen($term) >= 3) {
-            $dm = $this->get('doctrine_mongodb')->getManager();
-            $byIdentifiant = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'identifiant');
-            $byNom = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'raisonSociale');
-            $byAdresse = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'adresse.adresse');
-            $byCp = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'adresse.code_postal');
-            $byCommune = $dm->getRepository('AppBundle:Societe')->findByTerm($term, 'adresse.commune');
-             $this->contructSearchResult($byIdentifiant, $result);
-            $this->contructSearchResult($byNom, $result);
-            $this->contructSearchResult($byAdresse, $result);
-            $this->contructSearchResult($byCp, $result);
-            $this->contructSearchResult($byCommune, $result);
-        }
-        $data = json_encode($result);
-        $response->headers->set('Content-Type', 'application/json');
-        $response->setContent($data);
-        return $response;
-    }
+     public function societeSearchAction(Request $request) {
+         $dm = $this->get('doctrine_mongodb')->getManager();
+         $response = new Response();
+         $societesResult = array();
+         $this->contructSearchResult($dm->getRepository('AppBundle:Societe')->findByTerms($request->get('term')),  $societesResult);
+         $data = json_encode($societesResult);
+         $response->headers->set('Content-Type', 'application/json');
+         $response->setContent($data);
+         return $response;
+     }
 
     public function contructSearchResult($criterias, &$result) {
 
-        foreach ($criterias as $criteria) {
+        foreach ($criterias as $id => $nom) {
             $newResult = new \stdClass();
-            $newResult->id = $criteria->getId();
-            $newResult->term = $criteria->getIntitule();
+            $newResult->id = $id;
+            $newResult->text = $nom;
             $result[] = $newResult;
         }
     }
