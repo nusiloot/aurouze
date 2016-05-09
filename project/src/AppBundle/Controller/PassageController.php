@@ -153,6 +153,10 @@ class PassageController extends Controller {
         return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
     }
 
+    public function getPdfGenerationOptions() {
+         return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4, 'zoom' => 0.8)
+    }
+
     /**
      * @Route("/passage/pdf-bon/{id}", name="passage_pdf_bon")
      * @ParamConverter("passage", class="AppBundle:Passage")
@@ -173,7 +177,7 @@ class PassageController extends Controller {
         }
 
         return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array('margin-left' => 3, 'margin-right' => 3, 'margin-top' => 3, 'margin-bottom' => 3, 'zoom' => 0.7)), 200, array(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="'.$filename.'"'
                 )
@@ -209,7 +213,7 @@ class PassageController extends Controller {
 
 
         return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()),
                 200,
                 array(
                     'Content-Type'          => 'application/pdf',
@@ -240,7 +244,7 @@ class PassageController extends Controller {
         }
 
         return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, array(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="'.$filename.'"'
                 )
@@ -282,7 +286,7 @@ class PassageController extends Controller {
 
 
         return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()),
                 200,
                 array(
                     'Content-Type'          => 'application/pdf',
