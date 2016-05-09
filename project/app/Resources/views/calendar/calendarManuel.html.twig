@@ -1,34 +1,37 @@
 {% set _menu_active = 'calendar' %}
 {% extends 'base.html.twig' %}
 {% block body %}
-<div class="row">
-	<div class="col-sm-12">
-	<ul class="nav nav-tabs nav-justified" role="tablist" style="margin: 15px 0; font-size: 13px;">
-		<li role="presentation" class="active">
-			<a href="{{ path('calendarManuel', {'date': calendarTool.getDateDebut('Y-m-d'), 'passage': ((passage) ? passage.id : null), 'mode': calendarTool.mode }) }}" role="tab" style="color: black;"><i class="mdi mdi-apps mdi-lg"></i> Résumé</a>
-		</li>
-	{% set i=0 %}
-	{% for tech in techniciens %}
-		<li role="presentation">
-			<a href="{{ path('calendar',{'technicien': tech.getId(), 'passage': ((passage) ? passage.id : null), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" role="tab" style="color: {{ tech.getCouleur() }};">
-				<i class="mdi mdi-face mdi-lg"></i> <strong>{{ tech.getInituleCourt() }}</strong>
-			</a>
-		</li>
-		{% set i=loop.index %}
-	{% endfor %}
-	</ul>
-	</div>
-</div>
-<div class="row">
-	<div class="col-sm-4">
-		<div class="btn-group">
-			<a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a>
-			<a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0;" class="btn btn-link">{{ calendarTool.getLibelle() }}</a>
-			<a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a>
-		</div>
-	</div>
-	<div class="col-sm-5 text-center">
-
+    <ol class="breadcrumb">
+        <li><a href="{{ path('calendarManuel') }}">Calendrier global</a></li>
+        <li><a href="{{ path('calendarManuel', {'date' : date}) }}">&nbsp;Semaine {{ calendarTool.getLibelle() }}</a></li>
+    </ol>
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="nav nav-tabs nav-justified" role="tablist" style="margin: 15px 0; font-size: 13px;">
+                <li role="presentation" class="active">
+                    <a href="{{ path('calendarManuel', {'date': calendarTool.getDateDebut('Y-m-d'), 'passage': ((passage) ? passage.id : null), 'mode': calendarTool.mode }) }}" role="tab" style="color: black;"><i class="mdi mdi-apps mdi-lg"></i> Résumé</a>
+                </li>
+                {% set i=0 %}
+                {% for tech in techniciens %}
+                    <li role="presentation">
+                        <a href="{{ path('calendar',{'technicien': tech.getId(), 'passage': ((passage) ? passage.id : null), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" role="tab" style="color: {{ tech.getCouleur() }};">
+                            <i class="mdi mdi-face mdi-lg"></i> <strong>{{ tech.getInituleCourt() }}</strong>
+                        </a>
+                    </li>
+                    {% set i=loop.index %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="btn-group">
+                <a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                <a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0;" class="btn btn-link">{{ calendarTool.getLibelle() }}</a>
+                <a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a>
+            </div>
+        </div>
+        <div class="col-sm-5 text-center">
 	</div>
 	<div class="col-sm-3 text-right">
 	</div>
@@ -136,4 +139,7 @@
 		</div>
 	</div>
 </div>
+	<script type="text/javascript">
+	    setTimeout(function () { document.location.reload();}, 20 * 1000);
+	</script>
 {% endblock %}
