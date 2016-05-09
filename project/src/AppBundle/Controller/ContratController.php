@@ -214,10 +214,10 @@ class ContratController extends Controller {
         if (!$contrat->isModifiable()) {
         	throw $this->createNotFoundException();
         }
-        $etablissementId = $contrat->getEtablissement()->getId();
+        $societeId = $contrat->getSociete()->getId();
         $dm->remove($contrat);
         $dm->flush();
-        return $this->redirectToRoute('passage_etablissement', array('id' => $etablissementId));
+        return $this->redirectToRoute('contrats_societe', array('id' => $societeId));
     }
 
     /**
@@ -238,6 +238,11 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function pdfAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+    	$contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
+    	$dm->persist($contrat);
+    	$dm->flush();
     	
     	$header =  $this->renderView('contrat/pdf-header.html.twig', array(
     			'contrat' => $contrat

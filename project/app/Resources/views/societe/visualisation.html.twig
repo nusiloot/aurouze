@@ -138,7 +138,8 @@
                     <div class="list-group">
                         <div class="list-group-item">
                             <a class="btn btn-xs btn-default pull-right" href="{{ path('compte_modification', {'societe': societe.id, 'id': compte.id }) }}">Modifier</a>
-                            <h5 style="margin-top: 0;margin-bottom: 0;"><i class="mdi mdi-face mdi-lg"></i> {{ compte.identite }}</h5>
+                            <h5 style="margin-top: 0;margin-bottom: 0;"><i class="mdi mdi-face mdi-lg"></i> {{ compte.identite }}{% if not compte.actif %} <small><label class="label label-xs label-danger">SUSPENDU</label></small>{% endif %}
+                            </h5>
                         </div>
                         <div class="list-group-item text-center">
                             {% if (not compte.sameAdresseThanSociete) %}
