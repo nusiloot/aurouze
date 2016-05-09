@@ -76,6 +76,11 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @MongoDB\String
      */
     protected $commentaire;
+    
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $actif;
 
     public function __construct() {
         $this->adresse = new Adresse();
@@ -423,4 +428,26 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     }
 
 
+
+    /**
+     * Set actif
+     *
+     * @param boolean $actif
+     * @return self
+     */
+    public function setActif($actif)
+    {
+        $this->actif = $actif;
+        return $this;
+    }
+
+    /**
+     * Get actif
+     *
+     * @return boolean $actif
+     */
+    public function getActif()
+    {
+        return $this->actif;
+    }
 }
