@@ -159,8 +159,7 @@ class CalendarController extends Controller {
             'textColor' => "black"
         );
         if ($tech) {
-            $compteInfos = new CompteInfos();
-            $compteInfos->copyFromCompte($tech);
+        	$passageToMove->removeAllTechniciens();
             $passageToMove->addTechnicien($tech);
         }
         $passageToMove->setDateDebut($start);
