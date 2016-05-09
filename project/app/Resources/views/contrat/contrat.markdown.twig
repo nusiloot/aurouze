@@ -9,17 +9,21 @@ PARIS, le {{ contrat.dateCreation|date("d/m/Y") }}
 entre
 
 ```
+
 Ets AUROUZE Julien
 8, rue des Halles
 75001 PARIS
+
 ```
 
 et
 
 ```
+
 {{ contrat.societe.raisonSociale|trim }}
 {{ contrat.societe.adresse.adresse|trim }}
 {{ contrat.societe.adresse.codePostal|trim }} {{ contrat.societe.adresse.commune|trim }}
+
 ```
 ___
 
