@@ -133,7 +133,7 @@ class ContratController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             
             $contrat = $form->getData();
-            if ($contrat->isEnAttenteAcceptation()) {
+            if ($contrat->isModifiable()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $contrat->setDateFin($contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month"));
                 $contrat->setStatut(ContratManager::STATUT_EN_COURS);

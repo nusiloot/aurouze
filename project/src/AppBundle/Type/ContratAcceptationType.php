@@ -30,7 +30,7 @@ class ContratAcceptationType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $readonly = array();
-        if (!$this->contrat->isEnAttenteAcceptation()) {
+        if (!$this->contrat->isModifiable()) {
             $readonly = array('readonly' => 'readonly');
         }
         $builder->add('dateDebut', DateType::class, array(
