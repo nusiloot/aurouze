@@ -25,7 +25,6 @@ et
 {{ contrat.societe.adresse.codePostal|trim }} {{ contrat.societe.adresse.commune|trim }}
 
 ```
-___
 
 ## Cette proposition a pour but d'effectuer {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %}
 
@@ -85,7 +84,7 @@ Nos prestations sont exécutées par un personnel qualifié. Le matériel et l'o
 
 {% if contrat.dureeGarantie %}
 ## Garantie
-Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accordée pour la durée de la proposition{% else %}de {{ contrat.dureeGarantie }} mois est accordée{% endif %} pour {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %} :
+Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accordée pour la durée de la proposition{% else %}de {{ contrat.dureeGarantie }} mois est accordée{% endif %} pour {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %}&nbsp;:
 
 {% for prestation in contrat.prestations %}
 {{  prestation.nom|trim }}  
