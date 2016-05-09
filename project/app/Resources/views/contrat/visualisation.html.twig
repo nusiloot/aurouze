@@ -8,7 +8,7 @@
             </div>
             {%  if (contrat.isEnAttenteAcceptation()) %}
             <div class="col-xs-4 text-right" style="padding-top: 30px; ">
-                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-warning"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a>
+                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
             </div>
             {% else %}
             <div class="col-xs-4 text-right" style="padding-top: 30px; ">
@@ -18,7 +18,7 @@
         </div>
         {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
 
-		<div class="row text-center">
+		<div class="text-center">
 			{%  if (contrat.isEnAttenteAcceptation()) %}
                 <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
             {% endif %}
