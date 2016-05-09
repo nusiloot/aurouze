@@ -97,7 +97,8 @@ class SocieteController extends Controller {
          $dm = $this->get('doctrine_mongodb')->getManager();
          $response = new Response();
          $societesResult = array();
-         $this->contructSearchResult($dm->getRepository('AppBundle:Societe')->findByTerms($request->get('term')),  $societesResult);
+         $withNonActif = (!$request->get('nonactif'))? false : $request->get('nonactif');
+         $this->contructSearchResult($dm->getRepository('AppBundle:Societe')->findByTerms($request->get('term'), $withNonActif),  $societesResult);
          $data = json_encode($societesResult);
          $response->headers->set('Content-Type', 'application/json');
          $response->setContent($data);
