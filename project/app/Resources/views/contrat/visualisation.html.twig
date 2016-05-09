@@ -11,7 +11,7 @@
             <div class="col-xs-8">
                 <h1>Contrat <small>n° {{ contrat.getNumeroArchive() }}</small></h1>
             </div>
-            {%  if (contrat.isEnAttenteAcceptation()) %}
+            {%  if (contrat.isModifiable()) %}
                 <div class="col-xs-4 text-right" style="padding-top: 30px; ">
                     <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
                 </div>
@@ -24,7 +24,7 @@
         {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
 
         <div class="text-center">
-            {%  if (contrat.isEnAttenteAcceptation()) %}
+            {%  if (contrat.isModifiable()) %}
                 <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
             {% endif %}
             <a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
