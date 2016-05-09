@@ -72,13 +72,12 @@ class Prestation {
     }
 
     public function getNomToString() {
-        $mot_inutiles = array('DERATISATION', 'RONGEURS', 'DESINSECTISATION', 'INSECTES', 'RAMPANTS');
-        $nom_libelles = explode('-', $this->nom);
-        return $this->echapLibelles($nom_libelles, $mot_inutiles);
+
+        return $this->getNom();
     }
 
     public function getWordToPicto() {
-        $nom_libelles = explode(' - ', $this->getNom());
+        $nom_libelles = explode('-', $this->getIdentifiant());
         $mot_rongeur = array('DERATISATION', 'RONGEURS');
         $mot_puce = array('RAMPANTS');
         $mot_moustique = array('VOLANTS');
