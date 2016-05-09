@@ -21,25 +21,22 @@ class ContratManager implements MouvementManagerInterface {
     const STATUT_A_VENIR = "A_VENIR";
     const STATUT_FINI = "FINI";
     const STATUT_RESILIE = "RESILIE"; // statut à retirer = ce n'est pas un statut mais un type!!
-
     const TYPE_CONTRAT_RECONDUCTION_TACITE = 'RECONDUCTION_TACITE';
     const TYPE_CONTRAT_PONCTUEL = 'PONCTUEL';
     const TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION = 'RENOUVELABLE_SUR_PROPOSITION';
     const TYPE_CONTRAT_AUTRE = 'AUTRE';
     const TYPE_CONTRAT_ANNULE = 'ANNULE';
-
     const MOYEN_3D = 'MOYEN_3D';
     const MOYEN_PIGEONS = 'MOYEN_PIGEONS';
     const MOYEN_BOIS = 'MOYEN_BOIS';
     const MOYEN_VO = 'MOYEN_VO';
 
     public static $moyens_contrat_libelles = array(
-    		self::MOYEN_3D => '3D',
-    		self::MOYEN_PIGEONS => 'Pigeons',
-    		self::MOYEN_BOIS => 'Bois',
-    		self::MOYEN_VO => 'V.O'
+        self::MOYEN_3D => '3D',
+        self::MOYEN_PIGEONS => 'Pigeons',
+        self::MOYEN_BOIS => 'Bois',
+        self::MOYEN_VO => 'V.O'
     );
-
     public static $types_contrat_libelles = array(self::TYPE_CONTRAT_RECONDUCTION_TACITE => 'Reconduction tacite',
         self::TYPE_CONTRAT_PONCTUEL => 'Ponctuel',
         self::TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION => 'Renouvelable sur proposition',
@@ -87,12 +84,21 @@ class ContratManager implements MouvementManagerInterface {
         return $this->dm->getRepository('AppBundle:Contrat');
     }
 
-    public function generateAllPassagesForContrat($contrat) {
-        if (count($contrat->getContratPassages())) {
-            return;
+    private function removeAllPassagesForContrat($contrat) {
+        foreach ($contrat->getContratPassages() as $contratPassage) {
+            foreach ($contratPassage->getPassages() as $p) {
+                $this->dm->remove($p);
+            }
         }
+        $contrat->reInitContratPassages();
+    }
+
+    public function generateAllPassagesForContrat($contrat) {
+        $this->removeAllPassagesForContrat($contrat);
+
         $date_debut = $contrat->getDateDebut();
-        if (!$date_debut) {
+        $date_acceptation = $contrat->getDateAcceptation();
+        if (!$date_debut && !$date_acceptation) {
             return false;
         }
         $date_debut = clone $contrat->getDateDebut();
@@ -115,9 +121,12 @@ class ContratManager implements MouvementManagerInterface {
 
 
                 $passage->setContrat($contrat);
-                foreach ($passageInfos->prestations as $prestationNom) {
+                $passage->setTypePassage(PassageManager::TYPE_PASSAGE_CONTRAT);
+                foreach ($passageInfos->prestations as $prestationPrevu) {
                     $prestationObj = new Prestation();
-                    $prestationObj->setNom($prestationNom);
+                    $prestationObj->setNom($prestationPrevu->getNom());
+                    $prestationObj->setNomCourt($prestationPrevu->getNomCourt());
+                    $prestationObj->setIdentifiant($prestationPrevu->getIdentifiant());
                     $passage->addPrestation($prestationObj);
                 }
                 foreach ($contrat->getProduits() as $produit) {
@@ -128,12 +137,11 @@ class ContratManager implements MouvementManagerInterface {
                 if ($passage) {
                     $contrat->addPassage($etablissement, $passage);
                     $this->dm->persist($passage);
-                    $this->dm->persist($contrat);
                 }
                 $cpt++;
-                $this->dm->flush();
             }
         }
+        $this->dm->flush();
     }
 
     public function getMouvementsBySociete(Societe $societe, $isFaturable, $isFacture) {

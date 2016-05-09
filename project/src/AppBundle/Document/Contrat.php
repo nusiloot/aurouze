@@ -880,6 +880,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getContratPassages() {
         return $this->contratPassages;
     }
+    
+   
+    public function reInitContratPassages() {
+        $this->contratPassages = array();
+    }
 
     /**
      * Set societe
@@ -1012,7 +1017,20 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
     
     public function isModifiable() {
-    	return ($this->isEnAttenteAcceptation() || $this->isBrouillon() || $this->isAVenir());
+        if($this->isEnAttenteAcceptation() || $this->isBrouillon() || $this->isAVenir()){
+            return true;
+        }
+        if($this->isEnCours()){
+            foreach ($this->getContratPassages() as $contratPassage) {
+                foreach ($contratPassage->getPassages() as $p) {
+                    if($p->isPlanifie() || $p->isRealise() || $p->isAnnule()){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
 
