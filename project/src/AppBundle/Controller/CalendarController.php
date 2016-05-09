@@ -37,7 +37,7 @@ class CalendarController extends Controller {
         if ($passage) {
             $etablissement = $passage->getEtablissement();
         }
-        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement));
+        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement, 'date' => $date, 'mode' => $request->get('mode')));
     }
 
     /**
@@ -125,7 +125,7 @@ class CalendarController extends Controller {
                 }
             }
         }
-        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage));
+        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage, 'date' => $request->get('date') ));
     }
 
     /**

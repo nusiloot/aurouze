@@ -1,27 +1,32 @@
 {% set _menu_active = 'passage' %}
 {% extends 'base.html.twig' %}
 {% block body %}
-<h1>Saisie du rapport de passage</h1>
-{{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
-<div class="row">
-    <div class="col-xs-12">
-        <div class="form-group">
-            <div class="col-xs-3">
-                {{ form_errors(form.duree) }}
-                {{ form_label(form.duree) }}
-                {{ form_widget(form.duree) }}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('passage') }}">Passage</a></li>
+        <li><a href="{{ path('passage_etablissement',{ 'id' : passage.etablissement.id }) }}">&nbsp;{{ passage.etablissement.nom }}&nbsp;<small>{{passage.etablissement.adresse.intitule }}</small></a></li>
+        <li><a href="{{ path('passage_edition',{ 'id' : passage.id }) }}">&nbsp;<small>{{ passage.dateDebut | localizeddate('full', 'none') | capitalize }}</small></a></li>
+    </ol>
+    <h1>Saisie du rapport de passage</h1>
+    {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="col-xs-3">
+                    {{ form_errors(form.duree) }}
+                    {{ form_label(form.duree) }}
+                    {{ form_widget(form.duree) }}
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-xs-12">
-                {{ form_errors(form.description) }}
-                {{ form_label(form.description) }}
-                {{ form_widget(form.description) }}
+            <div class="form-group">
+                <div class="col-xs-12">
+                    {{ form_errors(form.description) }}
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description) }}
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-{{ form_widget(form.save) }}
-{{ form_end(form) }}
+    {{ form_widget(form.save) }}
+    {{ form_end(form) }}
 {% endblock %}
