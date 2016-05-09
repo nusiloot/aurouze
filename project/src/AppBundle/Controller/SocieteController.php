@@ -42,10 +42,11 @@ class SocieteController extends Controller {
      * @Route("/societe/{id}/visualisation", name="societe_visualisation")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function visualisationAction(Request $request, $societe) {
-
-        $nbContratsSociete = '0';
-        $nbPassagesSociete = '0';
+    public function visualisationAction(Request $request, $societe) {       
+        
+        $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
+        
+        $nbPassagesSociete = count($this->get('societe.manager')->getRepository()->findAllPassages($societe));
     	return $this->render('societe/visualisation.html.twig', array('societe' => $societe, 'nbContratsSociete' => $nbContratsSociete, 'nbPassagesSociete' => $nbPassagesSociete));
     }
     
