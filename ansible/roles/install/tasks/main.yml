@@ -6,9 +6,12 @@
   - apache2
   - libapache2-mod-php5
   - php5-intl
+  - php5-mongo
   - git
   - mongodb
   - recode
+  - wkhtmltopdf
+  - xvfb
 
 - name: "bonne version git"
   git: repo=https://github.com/24eme/aurouze.git

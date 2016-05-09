@@ -34,6 +34,6 @@ parameters:
             infos: ""
             banque: ""
             virement: ""
-            
-    knp_snappy_pdfbinary: wkhtmltopdf
-    knp_snappy_imagebinary: wkhtmltoimage
+
+    knp_snappy_pdfbinary: xvfb-run wkhtmltopdf
+    knp_snappy_imagebinary: xvfb-run wkhtmltoimage
