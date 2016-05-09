@@ -36,49 +36,43 @@ class SocieteUpdateActifCommand extends ContainerAwareCommand {
 
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
 
-        echo "\nMis à jour du nombre de prestation des contrats...\n";
+        echo "\nMis à jour des etablissements actifs...\n";
         $this->updateEtablissementActif($output);
 
-        echo "\nMis à jour des societe n'ayant aucune prestations...\n";
+        echo "\nMis à jour des societes actives...\n";
         $this->updateSocieteActif($output);
     }
 
-    public function updatePassagesPrestations($output) {
+    public function updateEtablissementActif($output) {
 
         $allPassages = $this->dm->getRepository('AppBundle:Passage')->findAll();
+
+        $allEtbWithPassage = array();
+
+        foreach ($allPassages as $passage) {
+            $allEtbWithPassage[$passage->getEtablissement()->getId()] = $passage->getEtablissement()->getId();
+        }
+
+        $allContrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
+
+        foreach ($allContrats as $contrat) {
+            foreach ($contrat->getContratPassages() as $contratPassage) {
+                $allEtbWithPassage[$contratPassage->getEtablissement()->getId()] = $contratPassage->getEtablissement()->getId();
+            }
+        }
+
+        $allEtablissements = $this->dm->getRepository('AppBundle:Etablissement')->findAll();
 
         $cptTotal = 0;
         $i = 0;
         $progress = new ProgressBar($output, 100);
         $progress->start();
 
-        foreach ($allPassages as $passage) {
-            if (!count($passage->getPrestations())) {
-                $contratPassages = $passage->getContrat()->getPassagesEtablissementNode($passage->getEtablissement())->getPassagesSorted(true);
-                $founded = false;
-                $previousPassage = null;
-                foreach ($contratPassages as $passageId => $cPassage) {
-                    if ($founded) {
-                        $previousPassage = $cPassage;
-                        break;
-                    }
-                    if ($passageId == $cPassage->getId()) {
-                        $founded = true;
-                    }
-                }
-                if ($previousPassage && count($previousPassage->getPrestations())) {
-                    foreach ($previousPassage->getPrestations() as $previousPresta) {
-                        $prestation = clone $previousPresta;
-                        $passage->addPrestation($prestation);
-                    }
-                } else {
-                    if (count($passage->getContrat()->getPrestations())) {
-                        foreach ($passage->getContrat()->getPrestations() as $contratPresta) {
-                            $prestation = clone $contratPresta;
-                            $passage->addPrestation($prestation);
-                        }
-                    }
-                }
+        foreach ($allEtablissements as $etablissement) {
+            if (in_array($etablissement->getId(), $allEtbWithPassage)) {
+                $etablissement->setActif(true);
+            } else {
+                $etablissement->setActif(false);
             }
             $cptTotal++;
             if ($cptTotal % (count($allPassages) / 100) == 0) {
@@ -94,43 +88,32 @@ class SocieteUpdateActifCommand extends ContainerAwareCommand {
         $progress->finish();
     }
 
-    public function updateContratsPrestationsNombre($output) {
+    public function updateSocieteActif($output) {
         $allContrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
+
+        $allSocWithContrat = array();
+
+        foreach ($allContrats as $contrat) {
+            if (!array_key_exists($contrat->getSociete()->getId(), $allSocWithContrat)) {
+                $allSocWithContrat[$contrat->getSociete()->getId()] = $contrat->getSociete()->getId();
+            }
+        }
+
+        $allSocietes = $this->dm->getRepository('AppBundle:Societe')->findAll();
 
         $cptTotal = 0;
         $i = 0;
         $progress = new ProgressBar($output, 100);
         $progress->start();
-        foreach ($allContrats as $contrat) {
-            $contratPrestationsArr = array();
-            $etbReference = null;
-            foreach ($contrat->getContratPassages() as $contratPassages) {
-                $etbReference = $contratPassages->getEtablissement();
-                foreach ($contratPassages->getPassages() as $passage) {
-                    foreach ($passage->getPrestations() as $prestation) {
-                        if ($passage->isSousContrat()) {
-                            if (!array_key_exists($prestation->getIdentifiant(), $contratPrestationsArr)) {
-                                $contratPrestationsArr[$prestation->getIdentifiant()] = 0;
-                            }
-                            $contratPrestationsArr[$prestation->getIdentifiant()] = $contratPrestationsArr[$prestation->getIdentifiant()] + 1;
-                        }
-                    }
-                }
-                break;
-            }
-            if (count($contrat->getContratPassages()) > 1) {
-                $output->writeln(sprintf("\n<comment>ATTENTION LE CONTRAT : %s à plusieurs établissement. Ses prestation seront uniquement calculé avec l'etb %s !</comment>", $contrat->getId(), $etbReference->getId()));
-            }
-
-            foreach ($contrat->getPrestations() as $prestationContrat) {
-                if (!array_key_exists($prestationContrat->getIdentifiant(), $contratPrestationsArr)) {
-                    continue;
-                }
-                $prestationContrat->setNbPassages($contratPrestationsArr[$prestationContrat->getIdentifiant()]);
+        foreach ($allSocietes as $societe) {
+            if (in_array($societe->getId(), $allSocWithContrat)) {
+                $societe->setActif(true);
+            } else {
+                $societe->setActif(false);
             }
 
             $cptTotal++;
-            if ($cptTotal % (count($allContrats) / 100) == 0) {
+            if ($cptTotal % (count($allSocietes) / 100) == 0) {
                 $progress->advance();
             }
             if ($i >= 1000) {
@@ -138,7 +121,7 @@ class SocieteUpdateActifCommand extends ContainerAwareCommand {
                 $i = 0;
             }
             $i++;
-           }
+        }
         $this->dm->flush();
         $progress->finish();
     }
