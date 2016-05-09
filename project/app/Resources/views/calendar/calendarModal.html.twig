@@ -10,6 +10,7 @@
   	</div>
  	<div class="col-xs-6">
         <p class="text-right">
+            <a href="{{ path('passage_etablissement', {'id': passage.etablissement.id  }) }}">Voir le contrat n° {{ passage.contrat.numeroArchive }}</a>
             {% if(passage.realise) %} <span class="label label-success">Réalisé</span>
             {% elseif(passage.planifie)  %} <span class="label label-default">Planifié non réalisé</span>
             {% elseif(passage.aPlanifie)  %} <span class="label label-warning">Non Planifié</span>
@@ -32,6 +33,16 @@
     <div class="col-xs-6 text-right">
     	{% for tech in passage.techniciens %}
         <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ tech.identite }}
+        {% endfor %}
+        <br />
+        {% for prestation in passage.prestations %}
+            {% if(prestation.wordToPicto) %}
+                &nbsp;<span class="step size-18" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
+                    <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i>&nbsp;<span>{{ prestation.nbPassages }}</span></span>
+                {%else%}
+                <span class="btn btn-xs label-primary">{{  prestation.nomToString }}&nbsp;<span>{{ prestation.nbPassages }}</span></span>
+            {%endif%}
+
         {% endfor %}
     </div>
   </div>

@@ -10,10 +10,17 @@
     </div>
     <div class="col-xs-6">
         {% if (passage.etablissement.societe.contactCoordonnee.telephoneFixe) %}
-        Tél : {{ passage.etablissement.societe.contactCoordonnee.telephoneFixe }}
+        Tél : {{ passage.etablissement.societe.contactCoordonnee.telephoneFixe }}<br />
         {% endif %}
+        {% if(passage.etablissement.commentaire or passage.contrat.commentaire) %}
         Commentaire :
-        <br />
+        {% endif %}
+        {% if(passage.etablissement.commentaire) %}
+            {{ passage.etablissement.commentaire }}<br />
+        {% endif %}
+        {% if(passage.contrat.commentaire) %}
+            {{ passage.contrat.commentaire }}<br />
+        {% endif %}
     </div>
 </div>
 <br />
@@ -23,14 +30,14 @@
 {% endfor %}
 <br />
 <br />
-<strong>Passage sous contrat n° 1 / 6</strong> <small>- Contrat n° {{ passage.contrat.numeroArchive }} (réalisé par Machin Machin)</small>
+<strong>{{ passage.libelle }}</strong> <small>- Contrat n° {{ passage.contrat.numeroArchive }} (réalisé par {{ passage.contrat.commercial.identite }})</small>
 </p>
 <table style="margin-top: 20px;" class="table table-bordered table-condensed">
     <thead>
         <tr>
             <th class="col-xs-2 text-center">Quantité utilisée</th>
             <th class="col-xs-8">Produit</th>
-            <td class="col-xs-2 text-center">Quantité totales</td>
+            <th class="col-xs-2 text-center">Quantité totales</th>
         </tr>
     </thead>
     <tbody>
@@ -38,13 +45,15 @@
         <tr>
             <td></td>
             <td>{{ produit.nom}} <small class="text-muted">({{ produit.conditionnement }})</small></td>
-            <td class="text-right">{{ produit.nbTotalContrat }}</td>
+            <td class="text-right">{{ passage.getNbProduitsContrat(produit.identifiant)  }}</td>
         </tr>
         {% endfor %}
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
     </tbody>
 </table>
 <strong>Détail de la prestation : </strong>
-<p style="line-height: 14px;margin-top: 10px;">{{ passage.contrat.nomenclature | nl2br }}</p>
+<p style="line-height: 15px;margin-top: 10px;">{{ passage.contrat.nomenclature | nl2br }}</p>
 
 <h5 style="margin-bottom: 10px; margin-top: 40px;"><strong>Historique des passages</strong></h5>
 <hr style="border-color: #ddd; margin-bottom: 5px; margin-top: 0px;" />
@@ -55,7 +64,7 @@
             <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
         {% endfor %}</p>
         <p>{{ passageHistory.description }}</p>
-        <table style="margin-bottom: 0;" class="table table-bordered table-condensed">
+        <table style="margin-bottom: 10px;" class="table table-bordered table-condensed">
             <tbody>
                 {% for produit in passageHistory.produits  %}
                     {% if (produit.nbUtilisePassage) %}
@@ -67,15 +76,14 @@
                 {% endfor %}
             </tbody>
         </table>
-        <hr style="border-color: #ddd; margin-bottom: 10px; margin-top: 0px;" />
     {% endfor %}
 </small>
 
-<p style="margin-bottom: 10px; margin-top: 10px"><strong>Prochain passage</strong></p>
+<!--<p style="margin-bottom: 10px; margin-top: 10px"><strong>Prochain passage</strong></p>
 <hr style="border-color: #ddd; margin-bottom: 10px; margin-top: 0px;" />
 <small>
     <p>Juin 2015 <small>Passage n° 6 / 6</small></p>
     <p>Traitement : {% for prestation in passage.prestations %}
         <span class="btn btn-xs btn-default">{{ prestation.nomToString }}</span>
     {% endfor %}</p>
-</small>
+</small>-->
