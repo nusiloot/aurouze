@@ -3,90 +3,72 @@
 
 {% block body %}
     {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
-    <a href="{{ path('contrat_creation', {'id': societe.getId()}) }}" class="btn btn-sm btn-warning"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
+    <div style="margin-bottom: 50px;" >
+    <a style="margin-bottom: 10px;" href="{{ path('contrat_creation', {'id': societe.getId()}) }}" class="btn btn-sm btn-default pull-right"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
+    </div>
         {% for contrat in contrats %}
-        <h2>Contrat numéro {{ contrat.identifiantReprise }}</h2>
-        <div id="contrat-{{ contrat.id }}" class="panel {% if(not contrat.isFini) %}panel-default{% else %}panel-success{% endif %}">
-                        <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" class="panel-heading">
-                            <h3 class="panel-title">
-                                </span>
-                                {% if(not contrat.isFini) %}Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% else %}Contrat terminée en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}{% endif %}
+        <div id="contrat-{{ contrat.id }}" class="panel panel-default
+             {% if(contrat.isAnnule) %} panel-danger
+             {% elseif(contrat.isFini) %} panel-success
+             {% elseif(contrat.isBrouillon or contrat.isEnAttenteAcceptation) %} panel-warning {% endif %}
+             " {% if(contrat.isAVenir) %}style="opacity: 0.5;"{% endif %}
+             >
+             <div data-toggle="collapse" data-parent="contrat-{{ contrat.id }}" href="#contrat-{{ contrat.id }}-passages" aria-controls="contrat-{{ contrat.id }}-passages" style="{% if(not contrat.isFini and not contrat.isResilie) %}background: #fff;{% else %}{% endif %} border-bottom: 0;" class="panel-heading">
+                 <h4 style="cursor: pointer; margin-top: 0; margin-bottom: 0;">
+                     {% if(contrat.isAnnule) %}
+                         Contrat résilié le {{ contrat.dateResiliation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
+                     {% elseif (contrat.isEnCours) %}
+                         Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
+                     {% elseif (contrat.isEnAttenteAcceptation) %}
+                         Contrat en cours d'acceptation prévu jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
+                     {% elseif (contrat.isFini) %}
+                         Contrat terminé en {{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                     {% elseif (contrat.isAVenir) %}
+                         Contrat non commencé (début {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }})
+                      {% elseif (contrat.isBrouillon) %}
+                         Contrat brouillon
+                     {% endif %}
+                     <small>n° {{ contrat.numeroArchive }}</small>&nbsp;
+                     {% for prestation in contrat.prestations %}
+                         {% if(prestation.wordToPicto) %}
+                             &nbsp;<span class="step size-18" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
+                                 <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i>&nbsp;<span>{{ prestation.nbPassages }}</span></span>
+                             {%else%}
+                             <span class="btn btn-xs label-primary">{{  prestation.nomToString }}&nbsp;<span>{{ prestation.nbPassages }}</span></span>
+                         {%endif%}
 
-                                <small>Contrat  n° {{ contrat.numeroArchive }}
-                                    sur {{ contrat.duree }} mois</small>
-                            </h3>
-                        </div>
-        {% for contratPassages in contrat.contratPassages %}
-            <h2>{{ contratPassages.etablissement.nom }}</h2>
-            
-
-                {% if(contratPassages is not null) %}
-                    
-
-                        <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(contrat.isFini) %}out{% else%}in{% endif %} list-group ">
-                            <div class="panel-body">
-                                <a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
-                            </div>
-                            {% for passage in contratPassages.passages %}
-                                <div class="list-group-item">
-                                    <div class="row">
-                                        <div class="col-xs-1">
-                                            {% if(passage.enAttente) %}
-                                                <label class="btn btn-xs btn-block btn-default">{{ passage.getStatutLibelle() }}</label>
-                                            {% elseif(passage.aPlanifie) %}
-                                                <label class="btn btn-xs btn-block btn-primary">{{ passage.getStatutLibelle() }}</label>
-                                            {% elseif(passage.planifie) %}
-                                                <label class="btn btn-xs btn-block btn-warning">{{ passage.getStatutLibelle() }}</label>
-                                            {% elseif(passage.realise) %}
-                                                <label class="btn btn-xs btn-block btn-success">{{ passage.getStatutLibelle() }}</label>
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-xs-3">
-                                            {% if(passage.enAttente) %}
-                                                {{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
-                                            {% elseif(passage.APlanifie) %}
-                                                {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }} 
-                                            {% else %}{{ passage.dateDebut | localizeddate('full', 'none') | capitalize }}{% endif %}
-                                            {#                                            {% if(not passage.isAPlanifie) %} à {{ passage.dateDebut | localizeddate('none', 'short') }}{% endif %}#}
-                                        </div>
-                                        <div class="col-xs-2">
-                                            {% for prestation in passage.prestations %}
-                                                {% if(prestation.wordToPicto) %}
-                                                    <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                                                        <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i></span>
-                                                    {%else%}
-                                                    <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
-                                                {%endif%}
-                                            {% endfor %}
-                                        </div>
-                                        <div class="col-xs-2">
-                                            {% if(passage.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ passage.duree }}</span>{% endif %}
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <ul class="list-inline list-unstyled">
-                                                {% for technicien in passage.techniciens %}
-                                                    <li>
-                                                        <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ technicien.identite }}
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        </div>
-                                        <div class="col-xs-2 text-right">
-                                            {% if passage.planifie  %}<a class="btn btn-block btn-sm btn-warning" href="{{ path('passage_edition', { id: passage.id })}}">Saisir le rapport</a>
-                                            {% elseif passage.aPlanifie %}
-                                                {% for technicien in passage.techniciens %}
-                                                    <a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : passage.passageIdentifiant,'technicien' : technicien.identite, 'calendrier' : passage.datedebut|date('d-m-Y')})}}">Planifier</a>
-                                                {% endfor %}
-                                            {% endif %}
-                                        </div>
-                                    </div>
+                     {% endfor %}
+                     <span class="pull-right"><span class="glyphicon glyphicon-chevron-down"></span></span>
+                 </h4>
+             </div>
+             <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(not contrat.isEnCours) %}out{% else%}in{% endif %} list-group">
+                    <div class="panel-body">
+                        <a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_visualisation', { 'id': contrat.id }) }}">Voir</a>
+                    </div>
+                    {% for contratPassages in contrat.contratPassages %}
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-xs-1">
+                                    <span class="badge badge-default">{{ contratPassages.getNbPassagesRealises }} / {{ contratPassages.getNbPassagePrevu }}</span>
                                 </div>
-                            {% endfor %}
+                                <div class="col-xs-7">
+                                {{ contratPassages.etablissement.nom }}
+                                <span class="text-muted">{{ contratPassages.etablissement.adresse.adresse }} {{ contratPassages.etablissement.adresse.codePostal }}</span>
+                                </div>
+                                <div class="col-xs-2">
+                                    {% for passage in contratPassages.passages %}
+                                        {% if (passage.APlanifie) %}
+                                            {{ passage.dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="col-xs-2">
+                                    <a class="btn btn-xs btn-block btn-default" href="{{ path('passage_etablissement', {'id': contratPassages.etablissement.id })}}">Voir les passage</a>
+                                </div>
+                            </div>
                         </div>
-                {% endif %}
-            {% endfor %}
+                    {% endfor %}
+             </div>
         </div>
     {% endfor %}
             {% endblock %}
-
-
