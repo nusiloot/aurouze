@@ -17,22 +17,22 @@ Ets AUROUZE Julien
 et
 
 ```
-{{ contrat.societe.raisonSociale }}
-{{ contrat.societe.adresse.adresse }}
-{{ contrat.societe.adresse.codePostal }} {{ contrat.societe.adresse.commune }}
+{{ contrat.societe.raisonSociale|trim }}
+{{ contrat.societe.adresse.adresse|trim }}
+{{ contrat.societe.adresse.codePostal|trim }} {{ contrat.societe.adresse.commune|trim }}
 ```
 ___
 
 ## Cette proposition a pour but d'effectuer {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %}
 
 {% for prestation in contrat.prestations %}
-{{  prestation.nom }}  
+{{  prestation.nom|trim }}  
 {% endfor %}
 
 ## Dans le{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}locaux{% else %}local{% endif %} situé{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}aux adresses{% else %}à l'adresse{% endif %}
 
 {% for etablissement in contrat.etablissements %}
-{{  etablissement.raisonSociale }} / {{ etablissement.adresse.adresse }} {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}  
+{{  etablissement.raisonSociale|trim }} / {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}  
 {% endfor %}
 
 ## Nomenclature des locaux à traiter
@@ -45,7 +45,7 @@ ___
 {% endif %}
 ## Nombre prévisionnel d'interventions par type de prestation 
 {% for prestation in contrat.prestations %}
-{{  prestation.nbPassages }} passage{% if prestation.nbPassages > 1 %}s{% endif %} concernant : {{  prestation.nom }}  
+{{  prestation.nbPassages }} passage{% if prestation.nbPassages > 1 %}s{% endif %} concernant : {{  prestation.nom|trim }}  
 {% endfor %}
 
 ## Moyens de mise en œuvre 
@@ -84,7 +84,7 @@ Nos prestations sont exécutées par un personnel qualifié. Le matériel et l'o
 Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accordée pour la durée de la proposition{% else %}de {{ contrat.dureeGarantie }} mois est accordée{% endif %} pour {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %} :
 
 {% for prestation in contrat.prestations %}
-{{  prestation.nom }}  
+{{  prestation.nom|trim }}  
 {% endfor %}
 
 {% endif %}
@@ -115,7 +115,7 @@ ___
 **Ets AUROUZE Julien**
 ```
 
-	Votre contact : {{ contrat.commercial.prenom }} {{ contrat.commercial.nom }}
+	Votre contact : {{ contrat.commercial.prenom|trim }} {{ contrat.commercial.nom|trim }}
 
 	Signature :
 
