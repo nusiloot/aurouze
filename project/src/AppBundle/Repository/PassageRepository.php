@@ -137,7 +137,7 @@ class PassageRepository extends DocumentRepository {
     public function countPassagesByTechnicien($compte) {
 
         return $this->createQueryBuilder()
-             ->field('techniciens')->equals($technicien->getId())
+             ->field('techniciens')->equals($compte->getId())
              ->getQuery()->execute()->count();
     }
 
