@@ -33,7 +33,7 @@ class FactureManager {
 
     public function findBySociete(Societe $societe) {
 
-        return $this->getRepository()->findBy(array('societe.id' => $societe->getId()), array('dateEmission' => 'desc'));
+        return $this->getRepository()->findBy(array('societe' => $societe->getId()), array('dateEmission' => 'desc'));
     }
 
     public function create(Societe $societe, $mouvements, $dateFacturation) {
