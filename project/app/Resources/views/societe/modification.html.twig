@@ -1,8 +1,13 @@
 {% set _menu_active = 'societe' %}
 {% extends 'base.html.twig' %}
 {% block body %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('societe') }}">Societe</a></li>    
+        <li><a href="{{ path('societe_visualisation',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+    </ol> 
+
     <div id="wrapper">
-        <h1>Création Société</h1>
+        <h1>{% if isNew %}Création Société{% else %}Modification {{ societe.raisonSociale }}{% endif %}</h1>
         {{ form_start(form) }}
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Informations</strong><div class="pull-right">{{ form_row(form.actif) }}</div></div>
@@ -82,20 +87,20 @@
             </div>
         </div>
         {% if isNew %}
-        <div class="panel panel-default">
-            <div class="panel-heading"><strong>Options</strong></div>
-            <div class="panel-body col-xs-offset-2">
-                <div class="row">
-                    <div class="col-xs-10">
-                        {{ form_row(form.generer) }}
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>Options</strong></div>
+                <div class="panel-body col-xs-offset-2">
+                    <div class="row">
+                        <div class="col-xs-10">
+                            {{ form_row(form.generer) }}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         {% endif %}
         <div class="row">
-        	<div class="col-xs-12">
-            	{{ form_widget(form.save) }}
+            <div class="col-xs-12">
+                {{ form_widget(form.save) }}
             </div>
         </div>
         {{ form_end(form) }}
