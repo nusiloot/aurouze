@@ -70,7 +70,7 @@
                     <div class="list-group">
                         <div class="list-group-item">
                             <a class="btn btn-sm btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}">Modifier</a>
-                            <h3 style="margin-top: 0;margin-bottom: 0; height: 70px;" ><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.nom }}</h3>
+                            <h3 style="margin-top: 0;margin-bottom: 0; height: 70px;" ><a href="{{ path('passage_etablissement', {'id': etablissement.id }) }}"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.nom }}</a></h3>
                         </div>
                         <div class="list-group-item text-center" style="height: 80px;">
                             {% if (not etablissement.sameAdresseThanSociete) %}
