@@ -173,7 +173,7 @@ class PassageController extends Controller {
         }
 
         return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, array(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array('margin-left' => 3, 'margin-right' => 3, 'margin-top' => 3, 'margin-bottom' => 3, 'zoom' => 0.7)), 200, array(
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="'.$filename.'"'
                 )
