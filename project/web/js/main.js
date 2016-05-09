@@ -18,7 +18,18 @@
         $.initCollapseCheckbox();
         $.initTextSelector();
         $.initLinkInPanels();
+        $.initDeplanifierLink();
     });
+
+    $.initDeplanifierLink = function () {
+    	$('.deplanifier-link').click(function (e) {
+            e.preventDefault();
+	    	var link = $(this).attr('href');
+	    	$.post(link, function (data) {
+	    		document.location.reload();
+	        });
+        });
+    }
 
     $.initLinkInPanels = function () {
         $('.panel-heading a.stopPropagation').click(function (e) {
@@ -28,7 +39,6 @@
 
     $.initTextSelector = function () {
         $('.text-selector').click(function () {
-            console.log('yop');
             $(this).select();
         });
 
@@ -154,6 +164,7 @@
         $.initDatePicker();
         $.initTimePicker();
         $.initFormEventAjax();
+        $.initDeplanifierLink();
     }
 
     $.initTooltips = function () {

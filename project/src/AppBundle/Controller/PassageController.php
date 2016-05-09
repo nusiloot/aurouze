@@ -400,5 +400,38 @@ class PassageController extends Controller {
 
         return $this->render('passage/creationRapide.html.twig', array('etablissement' => $etablissement, 'contrat' => $newContrat, 'form' => $form->createView()));
     }
+    
+
+
+    /**
+     * @Route("/passage/deplanifier/{id}", name="passage_deplanifier")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function deplanifierAction(Request $request, Passage $passage) {
+
+        if (!$request->isXmlHttpRequest()) {
+            throw $this->createNotFoundException();
+        }
+        $dm = $this->get('doctrine_mongodb')->getManager();
+    
+    	if ($passage->isRealise()) {
+    		$contrat = $passage->getContrat();
+    		foreach ($contrat->getPassages($passage->getEtablissement()) as $pass) {
+    			if ($pass->isAPlanifie()) {
+    				$pass->setDateDebut(null);
+    				$pass->setStatut(PassageManager::STATUT_EN_ATTENTE);
+		    		$dm->persist($passage);
+		    		$dm->flush();
+    			}
+    		}
+    		$passage->setDateFin(null);
+    		$passage->setDateRealise(null);
+    		$passage->setStatut(PassageManager::STATUT_A_PLANIFIER);
+    		$dm->persist($passage);
+    		$dm->flush();
+    		return new Response(json_encode(array("success" => true)));
+    	}
+    	return new Response(json_encode(array("success" => false)));
+    }
 
 }
