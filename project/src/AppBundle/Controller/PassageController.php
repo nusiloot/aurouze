@@ -418,9 +418,11 @@ class PassageController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
     
     	if ($passage->isRealise()) {
+    		$aplanifier = false;
     		$contrat = $passage->getContrat();
     		foreach ($contrat->getPassages($passage->getEtablissement()) as $pass) {
-    			if ($pass->isAPlanifie()) {
+    			if ($pass->isAPlanifie() && $pass->getDateDebut() > $passage->getDateDebut()) {
+    				$aplanifier = true;
     				$pass->setDateDebut(null);
     				$pass->setStatut(PassageManager::STATUT_EN_ATTENTE);
 		    		$dm->persist($passage);
@@ -429,7 +431,12 @@ class PassageController extends Controller {
     		}
     		$passage->setDateFin(null);
     		$passage->setDateRealise(null);
-    		$passage->setStatut(PassageManager::STATUT_A_PLANIFIER);
+    		if ($aplanifier) {
+    			$passage->setStatut(PassageManager::STATUT_A_PLANIFIER);
+    		} else {
+    			$pass->setDateDebut(null);
+    			$pass->setStatut(PassageManager::STATUT_EN_ATTENTE);
+    		}
     		$dm->persist($passage);
     		$dm->flush();
     		return new Response(json_encode(array("success" => true)));
