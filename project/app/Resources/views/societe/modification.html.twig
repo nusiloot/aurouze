@@ -5,7 +5,7 @@
         <h1>Création Société</h1>
         {{ form_start(form) }}
         <div class="panel panel-default">
-            <div class="panel-heading"><strong>Informations</strong></div>
+            <div class="panel-heading"><strong>Informations</strong><div class="pull-right">{{ form_row(form.actif) }}</div></div>
             <div class="panel-body col-xs-offset-2">
                 <div class="row">
                     <div class="col-xs-10">
@@ -33,16 +33,6 @@
                 <div class="row">
                     <div class="col-xs-10">
                         {{ form_row(form.tags) }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-10">
-                    	<div class="col-xs-6" style="padding-top: 15px;">
-                    		<label>Actif :</label>
-                    	</div>
-                    	<div class="text-right col-xs-6">
-                        	{{ form_row(form.actif) }}
-                        </div>
                     </div>
                 </div>
             </div>
