@@ -412,6 +412,7 @@ class PassageController extends Controller {
         if (!$request->isXmlHttpRequest()) {
             throw $this->createNotFoundException();
         }
+        $dm = $this->get('doctrine_mongodb')->getManager();
     
     	if ($passage->isRealise()) {
     		$passage->setDateFin(null);
