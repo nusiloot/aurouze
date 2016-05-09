@@ -2,6 +2,11 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <div id="wrapper">
+        <ol class="breadcrumb">
+            <li><a href="{{ path('contrat') }}">Contrat</a></li>
+            <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+            <li><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a></li>
+        </ol>
         <h1>Contrat en attente d'acceptation <small>n° {{ contrat.numeroArchive }}</small> <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a></h1>
 
         {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
