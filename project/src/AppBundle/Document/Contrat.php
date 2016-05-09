@@ -1010,6 +1010,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return $this->tvaReduite;
     }
+    
+    public function isModifiable() {
+    	return ($this->isEnAttenteAcceptation() || $this->isBrouillon() || $this->isAVenir());
+    }
 
 
     /*

@@ -89,6 +89,10 @@ class ContratController extends Controller {
      */
     public function modificationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        if (!$contrat->isModifiable()) {
+        	throw $this->createNotFoundException();
+        }
 
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
             'action' => $this->generateUrl('contrat_modification', array('id' => $contrat->getId())),
@@ -114,6 +118,11 @@ class ContratController extends Controller {
      */
     public function acceptationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        if (!$contrat->isModifiable()) {
+        	throw $this->createNotFoundException();
+        }
+        
         $contratManager = new ContratManager($dm);
         $oldTechnicien = $contrat->getTechnicien();
         $form = $this->createForm(new ContratAcceptationType($dm, $contrat), $contrat, array(
@@ -201,6 +210,10 @@ class ContratController extends Controller {
      */
     public function suppressionAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        if (!$contrat->isModifiable()) {
+        	throw $this->createNotFoundException();
+        }
         $etablissementId = $contrat->getEtablissement()->getId();
         $dm->remove($contrat);
         $dm->flush();
