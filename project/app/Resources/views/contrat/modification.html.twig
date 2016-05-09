@@ -31,8 +31,13 @@
     </div>
 {% endblock %}
 
-{% block body %}
+{% block body %}    
     <div id="wrapper">
+        <ol class="breadcrumb">
+            <li><a href="{{ path('contrat') }}">Contrat</a></li>
+            <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+            <li><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a></li>
+        </ol>
         <h1>Création Contrat</h1>
         {{ form_start(form) }}
         <div class="panel panel-default">
@@ -43,36 +48,36 @@
                         {{ form_row(form.commercial) }}
                     </div>
                     <div class="col-xs-5 bootstrap-timepicker timepicker">
-                    	<div class="form-group">
-	                        {{ form_label(form.dureePassage) }}
-	                        {{ form_errors(form.dureePassage) }}
-	                        <div class="input-group">
-	                            {{ form_widget(form.dureePassage) }}
-	                            <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
-	                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.dureePassage) }}
+                            {{ form_errors(form.dureePassage) }}
+                            <div class="input-group">
+                                {{ form_widget(form.dureePassage) }}
+                                <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-5">
-                    	<div class="form-group">
-	                       {{ form_label(form.duree) }}
-	                       {{ form_errors(form.duree) }}
-	                       <div class="input-group ">
-	                           {{ form_widget(form.duree) }}
-	                           <div class="input-group-addon">mois</div>
-	                       </div>
-	                    </div>
+                        <div class="form-group">
+                            {{ form_label(form.duree) }}
+                            {{ form_errors(form.duree) }}
+                            <div class="input-group ">
+                                {{ form_widget(form.duree) }}
+                                <div class="input-group-addon">mois</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-xs-5">
-                    	<div class="form-group">
-	                        {{ form_label(form.duree_garantie) }}
-	                        {{ form_errors(form.duree_garantie) }}
-	                        <div class="input-group">
-	                            {{ form_widget(form.duree_garantie) }}
-	                            <div class="input-group-addon">mois</div>
-	                        </div>
-	                    </div>
+                        <div class="form-group">
+                            {{ form_label(form.duree_garantie) }}
+                            {{ form_errors(form.duree_garantie) }}
+                            <div class="input-group">
+                                {{ form_widget(form.duree_garantie) }}
+                                <div class="input-group-addon">mois</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -87,27 +92,27 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Prestations</strong></div>
             <div class="panel-body col-xs-offset-2">
                 <div class="row">
                     <div class="col-xs-7">
-                    	<label class="control-label">Prestations :</label>
+                        <label class="control-label">Prestations :</label>
                     </div>
                     <div class="col-xs-2 text-center">
                         <label class="control-label">Nb passages :</label>
                     </div>
                 </div>
-	            {{ form_widget(form.prestations, { 'attr': {'class': 'dynamic-collection'} }) }}
-			    <div class="row">
-			        <div class="col-xs-10 text-right">
-			            <a href="javascript:void(0);" data-collection-target="#contrat_prestations" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
-			        </div>
-			    </div>
+                {{ form_widget(form.prestations, { 'attr': {'class': 'dynamic-collection'} }) }}
+                <div class="row">
+                    <div class="col-xs-10 text-right">
+                        <a href="javascript:void(0);" data-collection-target="#contrat_prestations" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+                    </div>
+                </div>
             </div>
         </div>
-        
+
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Produits</strong></div>
             <div class="panel-body col-xs-offset-2">
@@ -119,16 +124,16 @@
                         <label class="control-label">Quantité :</label>
                     </div>
                 </div>
-            	{{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
-			    <div class="row">
-			        <div class="col-xs-10 text-right">
-			            <a href="javascript:void(0);" data-collection-target="#contrat_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
-			        </div>
-			    </div>
+                {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
+                <div class="row">
+                    <div class="col-xs-10 text-right">
+                        <a href="javascript:void(0);" data-collection-target="#contrat_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+                    </div>
+                </div>
             </div>
         </div>
 
-		<div class="panel panel-default">
+        <div class="panel panel-default">
             <div class="panel-heading"><strong>Facturation</strong></div>
             <div class="panel-body col-xs-offset-2">
                 <div class="row">
@@ -136,21 +141,21 @@
                         {{ form_row(form.typeContrat) }}
                     </div>
                     <div class="col-xs-5">
-                         {{ form_row(form.nbFactures) }}
+                        {{ form_row(form.nbFactures) }}
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-5">
-                    	<div class="form-group">
-                       		{{ form_label(form.prixHt) }}
-                        	{{ form_errors(form.prixHt) }}
-                        	<div class="input-group">
-                            	{{ form_widget(form.prixHt) }} <div class="input-group-addon">€</div>
-                        	</div>
+                        <div class="form-group">
+                            {{ form_label(form.prixHt) }}
+                            {{ form_errors(form.prixHt) }}
+                            <div class="input-group">
+                                {{ form_widget(form.prixHt) }} <div class="input-group-addon">€</div>
+                            </div>
                        	</div>
-					</div>
+                    </div>
                     <div class="col-xs-5" style="padding-top: 20px;">
-                       {{ form_row(form.tvaReduite) }}
+                        {{ form_row(form.tvaReduite) }}
                     </div>
                 </div>
             </div>
