@@ -8,7 +8,7 @@
             </div>
             {% endif %}
             <div class="col-xs-6">
-                Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
+                {% if contrat.getCommercial() %}Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />{% endif %}
                 <strong>{{ contrat.getDateDebut()|date("d/m/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />
                 {% if contrat.getDureeGarantie() %}Garantie : <strong>{{ contrat.getDureeGarantie() }}</strong> mois{% endif %}
             </div>

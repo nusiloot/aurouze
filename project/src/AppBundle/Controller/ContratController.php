@@ -214,10 +214,10 @@ class ContratController extends Controller {
         if (!$contrat->isModifiable()) {
         	throw $this->createNotFoundException();
         }
-        $etablissementId = $contrat->getEtablissement()->getId();
+        $societeId = $contrat->getSociete()->getId();
         $dm->remove($contrat);
         $dm->flush();
-        return $this->redirectToRoute('passage_etablissement', array('id' => $etablissementId));
+        return $this->redirectToRoute('contrats_societe', array('id' => $societeId));
     }
 
     /**
