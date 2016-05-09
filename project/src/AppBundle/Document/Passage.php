@@ -144,6 +144,17 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         $this->mouvement_declenche = false;
     }
 
+    public function getNbProduitsContrat($identifiant) {
+        foreach($this->getContrat()->getProduits() as $produit) {
+            if($produit->getIdentifiant() == $identifiant) {
+
+                return $produit->getNbTotalContrat();
+            }
+        }
+
+        return null;
+    }
+
     public function getNumeroPassage() {
         if ($this->isControle()) {
             return "C";
