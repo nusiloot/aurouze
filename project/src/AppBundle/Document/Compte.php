@@ -235,7 +235,7 @@ class Compte implements DocumentSocieteInterface {
         return false;
     }
 
-    private function hasTag($tagSearch) {
+    public function hasTag($tagSearch) {
         foreach ($this->tags as $tag) {
             if ($tag->getIdentifiant() == $tagSearch) {
                 return true;

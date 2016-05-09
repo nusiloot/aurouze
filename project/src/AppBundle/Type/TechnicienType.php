@@ -36,7 +36,7 @@ class TechnicienType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
         $builder->add('technicien', DocumentType::class, array(
-            "choices" => array_merge(array('' => ''), $this->getComptes(Compte::TYPE_TECHNICIEN)),
+            "choices" => array_merge(array('' => ''), $this->getTechniciens()),
             'label' => 'Technicien :',
             'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
@@ -51,8 +51,7 @@ class TechnicienType extends AbstractType {
         return 'technicien';
     }
     
-    public function getComptes($type) {
-        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursActif();
+   public function getTechniciens() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
     }
-
 }

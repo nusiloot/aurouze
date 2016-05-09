@@ -37,7 +37,7 @@ class InterventionRapideCreationType extends AbstractType {
                     'widget' => 'single_text',
                     'format' => 'dd/MM/yyyy'))
                 ->add('technicien', DocumentType::class, array(
-                    "choices" => array_merge(array('' => ''), $this->getComptes()),
+                    "choices" => array_merge(array('' => ''), $this->getTechniciens()),
                     'label' => 'Technicien :',
                     'class' => 'AppBundle\Document\Compte',
                     'expanded' => false,
@@ -50,7 +50,7 @@ class InterventionRapideCreationType extends AbstractType {
                     'delete_empty' => true,
                     'label' => ''))
                 ->add('commercial', DocumentType::class, array(
-                    "choices" => array_merge(array('' => ''), $this->getComptes()),
+                    "choices" => array_merge(array('' => ''), $this->getCommerciaux()),
                     'label' => 'Commercial :',
                     'class' => 'AppBundle\Document\Compte',
                     'expanded' => false,
@@ -76,8 +76,12 @@ class InterventionRapideCreationType extends AbstractType {
         return 'interventionRapide';
     }
 
-    public function getComptes() {
-        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursActif();
+    public function getCommerciaux() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursCommercial();
+    }
+
+    public function getTechniciens() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
     }
 
 }
