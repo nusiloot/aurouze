@@ -22,25 +22,25 @@ use AppBundle\Manager\PassageManager;
 use Symfony\Component\Console\Helper\ProgressBar;
 use AppBundle\Manager\ContratManager;
 
-class ContratUpdatePrestationCommand extends ContainerAwareCommand {
+class SocieteUpdateActifCommand extends ContainerAwareCommand {
 
     protected $dm;
 
     protected function configure() {
         $this
-                ->setName('update:contrat-update-prestation')
-                ->setDescription('Contrat update prestation');
+                ->setName('update:societe-update-actif')
+                ->setDescription('Societe update actif');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
 
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
 
-        echo "\nMis à jour des passages n'ayant aucune prestations...\n";
-        $this->updatePassagesPrestations($output);
-
         echo "\nMis à jour du nombre de prestation des contrats...\n";
-        $this->updateContratsPrestationsNombre($output);
+        $this->updateEtablissementActif($output);
+
+        echo "\nMis à jour des societe n'ayant aucune prestations...\n";
+        $this->updateSocieteActif($output);
     }
 
     public function updatePassagesPrestations($output) {
