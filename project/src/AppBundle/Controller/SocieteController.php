@@ -44,10 +44,16 @@ class SocieteController extends Controller {
      */
     public function visualisationAction(Request $request, $societe) {       
         
-        $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+    	$form = $this->createForm(SocieteChoiceType::class, array('societe' => $societe), array(
+    			'action' => $this->generateUrl('societe_choice'),
+    			'method' => 'POST',
+    	));
         
+        $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));        
         $nbPassagesSociete = count($this->get('societe.manager')->getRepository()->findAllPassages($societe));
-    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe, 'nbContratsSociete' => $nbContratsSociete, 'nbPassagesSociete' => $nbPassagesSociete));
+        
+    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe,'form' => $form->createView(), 'nbContratsSociete' => $nbContratsSociete, 'nbPassagesSociete' => $nbPassagesSociete));
     }
     
     /**
