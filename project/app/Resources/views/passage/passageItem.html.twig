@@ -4,12 +4,12 @@
 {% set techIdentite = "" %}
 
 {% if(passage.techniciens | length == 0) %}
-    {% set words = ["sans technicien", passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom, passage.identifiantReprise]|json_encode() %}
+    {% set words = ["sans technicien", passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom]|json_encode() %}
     {% set techColor = 'white' %}
     {% set techBgColor = 'black' %}
     {% set techIdentite = "sans technicien" %}
 {% else %}
-    {% set words = [passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom | passage.identifiantReprise ]|json_encode() %}
+    {% set words = [passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom]|json_encode() %}
     {% set techColor = passage.techniciens[0].couleurText %}
     {% set techBgColor = passage.techniciens[0].couleur %}
     {% set techIdentite = passage.techniciens[0].identite %}
