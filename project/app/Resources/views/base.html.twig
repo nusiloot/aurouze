@@ -58,7 +58,7 @@
                         <li class="{%if (_menu_active == 'contrat') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'contrat') %}{{ path('contrats_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('contrat') }}{% endif %}">Contrats</a></li>
 
                         <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}">Factures</a></li>
-                        <li class="{%if (_menu_active == 'societe') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('societe_visualisation', { id: app.request.get('societe').id }) }}{% else %}{{ path('societe') }}{% endif %}">Société</a></li>
+                        <li class="{%if (_menu_active == 'societe') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'societe') %}{{ path('societe_visualisation', { id: app.request.get('societe').id }) }}{% else %}{{ path('societe') }}{% endif %}">Société</a></li>
                     </ul>
                     <ul class="nav navbar-nav pull-right">
                         <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog"></span></a></li>

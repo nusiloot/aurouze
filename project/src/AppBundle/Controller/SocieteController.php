@@ -16,7 +16,7 @@ use AppBundle\Manager\EtablissementManager;
 class SocieteController extends Controller {
 
     /**
-     * @Route("/societes", name="societe")
+     * @Route("/societe", name="societe")
      */
     public function indexAction() {
     	
@@ -30,7 +30,7 @@ class SocieteController extends Controller {
     }
 
     /**
-     * @Route("/societes/selection", name="societe_choice")
+     * @Route("/societe/selection", name="societe_choice")
      */
     public function societeChoiceAction(Request $request) {
     	$formData = $request->get('societe_choice');
@@ -48,7 +48,7 @@ class SocieteController extends Controller {
     }
     
     /**
-     * @Route("/societes/modification/{id}", defaults={"id" = null}, name="societe_modification")
+     * @Route("/societe/modification/{id}", defaults={"id" = null}, name="societe_modification")
      */
     public function modificationAction(Request $request, $id) {
     	
@@ -82,7 +82,7 @@ class SocieteController extends Controller {
     }
 
     /**
-     * @Route("/societes/rechercher", name="societe_search")
+     * @Route("/societe/rechercher", name="societe_search")
      */
     public function societeSearchAction(Request $request) {
 

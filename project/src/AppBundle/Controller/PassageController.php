@@ -355,7 +355,10 @@ class PassageController extends Controller {
         $newContrat = new Contrat();
         $newContrat->setSociete($etablissement->getSociete());
         $newContrat->setDateCreation(new \DateTime());
-
+        $prestation = new Prestation();
+        $prestation->setNbPassages(1);
+        $newContrat->setDuree("1");
+        $newContrat->addPrestation($prestation);
         $configurationPrestationArray = $dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
 
         $form = $this->createForm(new InterventionRapideCreationType($dm), $newContrat, array(

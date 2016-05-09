@@ -77,7 +77,7 @@ class ContratType extends AbstractType {
         ));
 
         $builder->add('commercial', DocumentType::class, array(
-            "choices" => array_merge(array('' => ''), $this->getComptes()),
+            "choices" => array_merge(array('' => ''), $this->getCommerciaux()),
             'label' => 'Commercial* :',
             'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
@@ -118,8 +118,8 @@ class ContratType extends AbstractType {
         return 'contrat';
     }
 
-    public function getComptes() {
-        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursActif();
+    public function getCommerciaux() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursCommercial();
     }
 
     public function getProduits() {

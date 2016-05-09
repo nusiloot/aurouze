@@ -54,7 +54,7 @@ class ContratAcceptationType extends AbstractType {
         ));
         
         $builder->add('technicien', DocumentType::class, array(
-            "choices" => array_merge(array('' => ''), $this->getComptes()),            
+            "choices" => array_merge(array('' => ''), $this->getTechniciens()),            
             'label' => 'Technicien* :',
             'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
@@ -73,8 +73,8 @@ class ContratAcceptationType extends AbstractType {
         ));
     }
     
-    public function getComptes() {
-        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursActif();
+    public function getTechniciens() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
     }
 
     /**

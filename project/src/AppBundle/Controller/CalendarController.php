@@ -28,7 +28,7 @@ class CalendarController extends Controller {
         $technicien = $request->get('technicien');
         $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
 
-        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursActif();
+        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
 
         $date = $request->get('date', new \DateTime());
         $calendarTool = new CalendarDateTool($date, $request->get('mode', CalendarDateTool::MODE_WEEK));
@@ -59,7 +59,7 @@ class CalendarController extends Controller {
 
         $eventsDates = array();
 
-        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursActif();
+        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
 
         while (strtotime($periodeStart) < strtotime($periodeEnd)) {
             $eventsDates[$periodeStart] = array();

@@ -57,7 +57,7 @@ class PassageCreationType extends AbstractType
         ;
 
         $builder->add('techniciens', DocumentType::class, array(
-            	'choices' => $this->getComptes(),
+            	'choices' => $this->getTechniciens(),
                 'class' => 'AppBundle\Document\Compte',
         		'expanded' => false,
         		'multiple' => true,
@@ -91,9 +91,8 @@ class PassageCreationType extends AbstractType
         return 'passage';
     }
 
-    public function getComptes()
-    {
-    	return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursActif();
+    public function getTechniciens() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
     }
 
     public function getPrestations()
