@@ -109,6 +109,7 @@ class Societe {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->adresse = new Adresse();
         $this->contactCoordonnee = new ContactCoordonnee();
+        $this->setActif(true);
     }
 
     /**

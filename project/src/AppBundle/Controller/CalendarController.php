@@ -141,8 +141,10 @@ class CalendarController extends Controller {
 
         $error = false;
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $id = ($request->get('passage')) ? $request->get('passage') : $request->get('id');
+        $id = ($request->get('id')) ? $request->get('id') : $request->get('passage');
         $technicien = $request->get('technicien');
+
+        $newRdv = !$request->get('id');
 
         $passageToMove = $dm->getRepository('AppBundle:Passage')->findOneById($id);
 
@@ -160,8 +162,9 @@ class CalendarController extends Controller {
             'backgroundColor' => ($tech) ? $tech->getCouleur() : Compte::COULEUR_DEFAUT,
             'textColor' => "black"
         );
-        if ($tech) {
-            $passageToMove->removeAllTechniciens();
+
+        if ($tech && $newRdv) {
+            $passageToMove->removeAllTechniciens($tech);
             $passageToMove->addTechnicien($tech);
         }
         $passageToMove->setDateDebut($start);
