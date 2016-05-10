@@ -8,11 +8,13 @@
     {% set techColor = 'white' %}
     {% set techBgColor = 'black' %}
     {% set techIdentite = "sans technicien" %}
+    {% set urlPlanif = path('calendarManuel') %}
 {% else %}
     {% set words = [passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom]|json_encode() %}
     {% set techColor = passage.techniciens[0].couleurText %}
     {% set techBgColor = passage.techniciens[0].couleur %}
     {% set techIdentite = passage.techniciens[0].identite %}
+    {% set urlPlanif = path('calendar', {'passage' : passage.id,'technicien' : passage.techniciens[0].id, 'calendrier' : passage.datedebut|date('d-m-Y')}) %}
 {% endif %}
 <a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
     <div class="row">
@@ -55,8 +57,10 @@
             <small>01h</small>
         </div>
         <div class="col-sm-5 text-right">
-            <i class="mdi mdi-date-range mdi-lg"></i>
-            <small>{{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</small>
+            <div data-url="{{ urlPlanif }}" class="btn btn-link calendar_lien" >
+                <i class="mdi mdi-date-range mdi-lg"></i>
+                <small>{{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</small>
+            </div>
         </div>
     </div>
 </a>
