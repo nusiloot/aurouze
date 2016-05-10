@@ -658,7 +658,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getPrevisionnel($dateDebut = null) {
-
         if (!$dateDebut) {
             $dateDebut = new \DateTime();
         }
