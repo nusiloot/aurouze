@@ -120,9 +120,9 @@ class ContratController extends Controller {
     public function acceptationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        if (!$contrat->isModifiable()) {
-            throw $this->createNotFoundException();
-        }
+//        if (!$contrat->isModifiable()) {
+//            throw $this->createNotFoundException();
+//        }
 
         $contratManager = new ContratManager($dm);
         $oldTechnicien = $contrat->getTechnicien();

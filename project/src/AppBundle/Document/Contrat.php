@@ -755,6 +755,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return ContratManager::$statuts_libelles[$this->getStatut()];
     }
+    
+    public function getStatutLibelleLong() {
+        return ContratManager::$statuts_libelles_long[$this->getStatut()];
+    }
 
     public function getStatutCouleur() {
 
