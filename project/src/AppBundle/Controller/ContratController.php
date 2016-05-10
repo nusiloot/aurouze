@@ -50,7 +50,8 @@ class ContratController extends Controller {
     public function societeAction(Request $request, Societe $societe) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contrats = $this->get('contrat.manager')->getRepository()->findBySociete($societe);
+        $contrats = $this->get('contrat.manager')->getRepository()->findBy(array('societe' => $societe->getId()), array('dateDebut' => 'DESC'));
+        
         $formSociete = $this->createForm(SocieteChoiceType::class, array('societes' => $societe->getIdentifiant(), 'societe' => $societe), array(
             'action' => $this->generateUrl('contrat_societe_choice'),
             'method' => 'POST',
@@ -245,38 +246,41 @@ class ContratController extends Controller {
     public function pdfAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
-        $dm->persist($contrat);
-        $dm->flush();
 
-        $header = $this->renderView('contrat/pdf-header.html.twig', array(
-            'contrat' => $contrat
-        ));
-        $footer = $this->renderView('contrat/pdf-footer.html.twig', array(
-            'contrat' => $contrat
-        ));
-        $html = $this->renderView('contrat/pdf.html.twig', array(
-            'contrat' => $contrat
-        ));
-        if ($request->get('output') == 'html') {
+    	$contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
+    	$dm->persist($contrat);
+    	$dm->flush();
 
-            return new Response($html, 200);
-        }
+    	$header =  $this->renderView('contrat/pdf-header.html.twig', array(
+    			'contrat' => $contrat
+    	));
+    	$footer =  $this->renderView('contrat/pdf-footer.html.twig', array(
+    			'contrat' => $contrat
+    	));
+    	$html =  $this->renderView('contrat/pdf.html.twig', array(
+    			'contrat' => $contrat
+    	));
+    	if($request->get('output') == 'html') {
 
-        return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
-                    'footer-html' => $footer,
-                    'header-html' => $header,
-                    'margin-right' => 0,
-                    'margin-left' => 0,
-                    'margin-top' => 38,
-                    'margin-bottom' => 38,
-                    'page-size' => "A4"
-                )), 200, array(
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="contrat-' . $contrat->getNumeroArchive() . '.pdf"'
-                )
-        );
+    		return new Response($html, 200);
+    	}
+
+    	return new Response(
+    			$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+    						'footer-html' => $footer,
+    						'header-html' => $header,
+    						'margin-right'  => 0,
+    						'margin-left'   => 0,
+    						'margin-top'   => 38,
+    						'margin-bottom'   => 38,
+    						'page-size' => "A4"
+    			)),
+    			200,
+    			array(
+    					'Content-Type'          => 'application/pdf',
+    					'Content-Disposition'   => 'attachment; filename="contrat-'.$contrat->getNumeroArchive().'.pdf"'
+    			)
+    			);
     }
 
 }

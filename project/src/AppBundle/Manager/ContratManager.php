@@ -40,12 +40,29 @@ class ContratManager implements MouvementManagerInterface {
     public static $types_contrat_libelles = array(self::TYPE_CONTRAT_RECONDUCTION_TACITE => 'Reconduction tacite',
         self::TYPE_CONTRAT_PONCTUEL => 'Ponctuel',
         self::TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION => 'Renouvelable sur proposition',
-        self::TYPE_CONTRAT_AUTRE => 'Autre'
+        self::TYPE_CONTRAT_AUTRE => 'Autre',
+        self::TYPE_CONTRAT_ANNULE => 'Résilié'
     );
     public static $types_contrat_import_index = array(1 => self::TYPE_CONTRAT_RECONDUCTION_TACITE,
         2 => self::TYPE_CONTRAT_PONCTUEL,
         3 => self::TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION,
         4 => self::TYPE_CONTRAT_AUTRE
+    );
+    public static $statuts_libelles = array(
+        self::STATUT_BROUILLON => 'Brouillon',
+        self::STATUT_EN_ATTENTE_ACCEPTATION => "Acceptation",
+        self::STATUT_EN_COURS => 'En cours',
+        self::STATUT_A_VENIR => 'A venir',
+        self::STATUT_FINI => 'Terminé',
+        self::STATUT_RESILIE => 'Résilié'
+    );
+    public static $statuts_couleurs = array(
+        self::STATUT_BROUILLON => 'info',
+        self::STATUT_EN_ATTENTE_ACCEPTATION => "warning",
+        self::STATUT_EN_COURS => 'default',
+        self::STATUT_A_VENIR => 'default',
+        self::STATUT_FINI => 'success',
+        self::STATUT_RESILIE => 'danger'
     );
     protected $dm;
 
