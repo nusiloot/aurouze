@@ -52,6 +52,8 @@ class ContratController extends Controller {
 
         $contrats = $this->get('contrat.manager')->getRepository()->findBy(array('societe' => $societe->getId()), array('dateDebut' => 'DESC'));
         
+        usort($contrats, array("AppBundle\Document\Contrat", "cmpContrat"));
+        
         $formSociete = $this->createForm(SocieteChoiceType::class, array('societes' => $societe->getIdentifiant(), 'societe' => $societe), array(
             'action' => $this->generateUrl('contrat_societe_choice'),
             'method' => 'POST',
