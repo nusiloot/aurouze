@@ -367,6 +367,20 @@ class Societe {
         return $this->etablissements;
     }
 
+    public function getEtablissementsByStatut($statut) {
+        $etablissements = array();
+
+        foreach($this->getEtablissements() as $etablissement) {
+            if($etablissement->getActif() != $statut) {
+                continue;
+            }
+
+            $etablissements[$etablissement->getId()] = $etablissement;
+        }
+        
+        return $etablissements;
+    }
+
     /**
      * Get comptes
      *

@@ -16,6 +16,7 @@
                 <th class="col-xs-2">Type</th>
                 <th class="col-xs-1">N°</th>
                 <th class="col-xs-2">Date</th>
+                <th class="col-xs-1">Garantie</th>
                 <th class="col-xs-1" class="text-center">Prix</th>
                 <th class="col-xs-3">Prestations</th>
                 <th class="col-xs-2 text-center">Lieu de passage</th>
@@ -27,6 +28,7 @@
             <td><small>{{ contrat.typeContratLibelle }}</small></td>
             <td><a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">n°&nbsp;{{ contrat.numeroArchive }}</a></td>
             <td>{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% endif %}</td>
+            <td class="text-right">{% if(contrat.dureeGarantie) %}{{ contrat.dureeGarantie }} mois{% else %}<small class="text-muted">Aucune</small>{% endif %}</td>
             <td class="text-right">{{ "%0.2f" | format(contrat.getPrixHt)  }}&nbsp;€</td>
             <td>
                 {% for prestation in contrat.prestations %}
@@ -40,9 +42,9 @@
             </td>
             <td class="text-center">
                 {% if contrat.etablissements | length > 1 %}
-                    <a href="{{ path('contrat_visualisation', {'id': contrat.id }) }}">{{ contrat.etablissements | length }} établissements</a>
+                    <a href="{{ path('contrat_visualisation', {'id': contrat.id }) }}">{{ contrat.etablissements | length }}&nbsp;établissements</a>
                 {% elseif contrat.etablissements | length == 1 %}
-                    <a href="{{ path('passage_etablissement', {'id': contrat.etablissements[0].id }) }}">1 établissement</a>
+                    <a title="{% for etablissement in contrat.etablissements %} {{ etablissement.nom }} - {{ etablissement.adresse.commune }} {% endfor %}" data-toggle="tooltip" href="{{ path('passage_etablissement', {'id': contrat.etablissements[0].id }) }}">1&nbsp;établissement</a>
                 {% else %}
                     <small>Aucun</small>
                 {% endif %}
