@@ -42,7 +42,7 @@
             </td>
             <td class="text-center">
                 {% if contrat.etablissements | length > 1 %}
-                    <a href="{{ path('contrat_visualisation', {'id': contrat.id }) }}">{{ contrat.etablissements | length }}&nbsp;établissements</a>
+                    <a title="Voir la liste" data-toggle="tooltip" href="{{ path('contrat_visualisation', {'id': contrat.id }) }}">{{ contrat.etablissements | length }}&nbsp;établissements</a>
                 {% elseif contrat.etablissements | length == 1 %}
                     <a title="{% for etablissement in contrat.etablissements %} {{ etablissement.nom }} - {{ etablissement.adresse.commune }} {% endfor %}" data-toggle="tooltip" href="{{ path('passage_etablissement', {'id': contrat.etablissements[0].id }) }}">1&nbsp;établissement</a>
                 {% else %}
