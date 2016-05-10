@@ -623,7 +623,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getPrixMouvements() {
         $prix = 0;
         foreach ($this->getMouvements() as $mouvement) {
-            $prix = $prix + $mouvement->getPrix();
+            $prix = $prix + $mouvement->getPrixUnitaire();
         }
 
         return $prix;
@@ -750,6 +750,16 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             return "";
         }
         return ContratManager::$types_contrat_libelles[$this->getTypeContrat()];
+    }
+
+    public function getStatutLibelle() {
+
+        return ContratManager::$statuts_libelles[$this->getStatut()];
+    }
+
+    public function getStatutCouleur() {
+
+        return ContratManager::$statuts_couleurs[$this->getStatut()];
     }
 
     public function getPassagesEtablissementNode(Etablissement $etablissement) {
@@ -880,8 +890,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getContratPassages() {
         return $this->contratPassages;
     }
-    
-   
+
+
     public function reInitContratPassages() {
         $this->contratPassages = array();
     }
@@ -1015,7 +1025,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return $this->tvaReduite;
     }
-    
+
     public function isModifiable() {
         if($this->isEnAttenteAcceptation() || $this->isBrouillon() || $this->isAVenir()){
             return true;
