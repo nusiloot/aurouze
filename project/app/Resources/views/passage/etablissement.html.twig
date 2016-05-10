@@ -82,10 +82,10 @@
                              " {% if(contrat.isAVenir) %}style="opacity: 0.5;"{% endif %}>
                                 <div class="row">
                                     <div class="col-xs-2">
-                                        {{ passagesEtablissement.nbPassagePrevu}} passages prévus
+                                    <a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">Voir le contrat</a>
                                     </div>
                                     <div class="col-xs-3">
-                                        sur {{ contrat.duree }} mois
+                                        {{ passagesEtablissement.nbPassagePrevu}} passages prévus sur {{ contrat.duree }} mois
                                     </div>
                                     <div class="col-xs-2">
                                         <a href="" title="{{ contrat.nomenclature | nl2br }}" data-html="true" data-toggle="tooltip">Voir la nomenclature</a>
@@ -101,7 +101,8 @@
                                         {% endif %}
                                     </div>
                                     <div class="col-xs-2">
-                                        <a href="{{ path('contrat_visualisation', {'id': contrat.id })}}" class="btn btn-block btn-xs btn-default">Voir le contrat</a>
+                                        <!--<a href="{{ path('contrat_visualisation', {'id': contrat.id })}}" class="btn btn-block btn-xs btn-default">Voir le contrat</a>-->
+                                        <a href="{{ path('passage_creation', {'id_contrat': contrat.id, 'id_etablissement': etablissement.id })}}" class="btn btn-block btn-xs btn-default">Créer un passage</a>
                                     </div>
                                 </div>
                             </div>
