@@ -9,11 +9,16 @@
         </ol>
         <div class="row">
             <div class="col-xs-8">
-                <h1>Contrat <small>n° {{ contrat.getNumeroArchive() }}</small></h1>
+                <h1>Contrat {{ contrat.getStatutLibelleLong }}&nbsp;<small>n° {{ contrat.getNumeroArchive() }}</small></h1>
             </div>
             {%  if (contrat.isModifiable()) %}
                 <div class="col-xs-4 text-right" style="padding-top: 30px; ">
-                    <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
+                    {%  if (contrat.isEnAttenteAcceptation()) %}
+                        <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-warning"><i class="mdi mdi-check-circle"></i>&nbsp;Accepter le contrat</a>
+                    {% else %}
+                    
+                        <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
+                    {% endif %}
                 </div>
             {% else %}
                 <div class="col-xs-4 text-right" style="padding-top: 30px; ">

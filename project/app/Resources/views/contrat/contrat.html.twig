@@ -32,21 +32,15 @@
     <div class="panel-heading"><h3 class="panel-title">Lieux de passage : </h3></div>
     <ul class="list-group">
         {% for etablissement in contrat.getEtablissements %}
-            <li class="list-group-item"><span>{{ etablissement.intitule }}</span></li>
+            <li class="list-group-item"><span><a href="{{ path('passage_etablissement', { 'id': etablissement.id }) }}">{{ etablissement.intitule }}</a></span></li>
         {% endfor %}
     </ul>
 </div>
-<div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title">Nomenclature</h3></div>
-    <div class="panel-body">
-        {{ contrat.getNomenclature() | nl2br }}
-    </div>
-</div>
 
 {%  if(contrat.isEnAttenteAcceptation()) %}
-    {{ include('contrat/contrat_previsionnel.html.twig', { 'contrat': contrat }) }}
+    {{ include('contrat/contrat_previsionnel.html.twig', { 'contrat': contrat ,'form' : (form is defined)? form : null}) }}
 {%  else %}
-    {{ include('contrat/contrat_passages.html.twig', { 'contrat': contrat }) }}
+    {{ include('contrat/contrat_passages.html.twig', { 'contrat': contrat ,'form' : (form is defined)? form : null }) }}
 {% endif %}
 
 
