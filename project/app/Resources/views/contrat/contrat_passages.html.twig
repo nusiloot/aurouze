@@ -1,4 +1,15 @@
 <div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Nomenclature</h3></div>
+    <div class="panel-body">
+        {% if(form is defined and not form is null)%}
+            {{ form_errors(form.nomenclature) }}
+            {{ form_widget(form.nomenclature) }}
+        {% else %}
+            {{ contrat.getNomenclature() | nl2br }}
+        {% endif %}
+    </div>
+</div>
+<div class="panel panel-default">
     <div class="panel-heading">
         <strong>Interventions</strong> (Acceptation du contrat le {{ contrat.dateAcceptation | date("d/m/y")}})  <span class='pull-right'>Date de début : <strong>{{ contrat.dateDebut | date("d/m/Y")}}</strong></span></div>
     <div class="panel-body">

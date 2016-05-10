@@ -30,41 +30,53 @@ class ContratAcceptationType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $readonly = array();
+        $datePicker = array();
         if (!$this->contrat->isModifiable()) {
             $readonly = array('readonly' => 'readonly');
+        } else {
+            $datePicker = array('class' => 'input-inline datepicker',
+                'data-provide' => 'datepicker');
         }
+        if (!$this->contrat->isEnAttenteAcceptation() && !$this->contrat->isBrouillon()) {
+            $builder->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature* :', "attr" => array("class" => "form-control", "rows" => 6)));
+        }
+
         $builder->add('dateDebut', DateType::class, array(
-            "attr" => array_merge(array(
-                'class' => 'input-inline datepicker',
-                'data-provide' => 'datepicker',
+            "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy',
             'label' => 'Date de début* :',
         ))->add('dateAcceptation', DateType::class, array(
-            "attr" => array_merge(array(
-                'class' => 'input-inline datepicker',
-                'data-provide' => 'datepicker',
+            "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
-            'format' => 'dd/MM/yyyy',        
+            'format' => 'dd/MM/yyyy',
             'label' => 'Date d\'acceptation* :',
         ));
-        
+
         $builder->add('technicien', DocumentType::class, array(
-            "choices" => array_merge(array('' => ''), $this->getTechniciens()),            
+            "choices" => array_merge(array('' => ''), $this->getTechniciens()),
             'label' => 'Technicien* :',
             'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple")));
-        
-        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :',"required" => false, "attr" => array("class" => "form-control", "rows" => 11)));
-		$builder->add('referenceClient', TextType::class, array('label' => 'Numéro de commande :', 'required' => false));
 
-        $builder->add('save', SubmitType::class, array('label' => ($this->contrat->isEnAttenteAcceptation())? 'Acceptation du contrat' : 'Modification du contrat', "attr" => array("class" => "btn btn-success pull-right")));
+        $builder->add('commercial', DocumentType::class, array(
+            "choices" => array_merge(array('' => ''), $this->getCommerciaux()),
+            'label' => 'Commercial* :',
+            'class' => 'AppBundle\Document\Compte',
+            'expanded' => false,
+            'multiple' => false,
+            "attr" => array("class" => "select2 select2-simple")));
+
+        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "required" => false, "attr" => array("class" => "form-control", "rows" => 12)));
+        $builder->add('referenceClient', TextType::class, array('label' => 'Numéro de commande :', 'required' => false));
+
+        $builder->add('save', SubmitType::class, array('label' => ($this->contrat->isEnAttenteAcceptation()) ? 'Acceptation du contrat' : 'Modification du contrat', "attr" => array("class" => "btn btn-success pull-right")));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
@@ -72,9 +84,13 @@ class ContratAcceptationType extends AbstractType {
             'data_class' => 'AppBundle\Document\Contrat',
         ));
     }
-    
+
     public function getTechniciens() {
         return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
+    }
+
+    public function getCommerciaux() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursCommercial();
     }
 
     /**
