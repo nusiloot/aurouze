@@ -12,6 +12,7 @@ use AppBundle\Model\DocumentEtablissementInterface;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
+use AppBundle\Manager\ContratManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
@@ -145,8 +146,8 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function getNbProduitsContrat($identifiant) {
-        foreach($this->getContrat()->getProduits() as $produit) {
-            if($produit->getIdentifiant() == $identifiant) {
+        foreach ($this->getContrat()->getProduits() as $produit) {
+            if ($produit->getIdentifiant() == $identifiant) {
 
                 return $produit->getNbTotalContrat();
             }
@@ -197,7 +198,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function setDuree($duree) {
-
+        
     }
 
     public function isRealise() {
@@ -245,10 +246,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
                 return;
             }
             if (boolval($this->getDateRealise())) {
-                $this->setStatut(PassageManager::STATUT_REALISE);
+                $this->setStatut(PassageManager::STATUT_REALISE);                
             }
         }
     }
+
 
     public function getIntitule() {
 
@@ -427,15 +429,14 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function getLibelle() {
         $nbPassage = $this->getNumeroPassage();
-        if($nbPassage == 'G'){
+        if ($nbPassage == 'G') {
             return "Passage en garantie";
         }
-        if($nbPassage == 'C'){
+        if ($nbPassage == 'C') {
             return "Passage de contrôle";
         }
 
-            return "Passage ".$nbPassage." sur ".$this->getContrat()->getNbPassagesPrevu()." (sous contrat)";
-
+        return "Passage " . $nbPassage . " sur " . $this->getContrat()->getNbPassagesPrevu() . " (sous contrat)";
     }
 
     /**
