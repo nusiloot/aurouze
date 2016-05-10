@@ -118,20 +118,35 @@ class PassageRepository extends DocumentRepository {
         $date= new \DateTime();
         $twoMonth = clone $date;
         $twoMonth->modify("+1 month");
-        $mongoStartDate = new MongoDate(strtotime($date->format('Y-m-d')));
+     //   $mongoStartDate = new MongoDate(strtotime($date->format('Y-m-d')));
 
         $mongoEndDate = new MongoDate(strtotime($twoMonth->format('Y-m-d')));
 
         $query = $this->createQueryBuilder('Passage')
                       ->field('statut')->equals(PassageManager::STATUT_A_PLANIFIER)
                 // A enlever
-                       ->field('datePrevision')->gte($mongoStartDate)
+                     //  ->field('datePrevision')->gte($mongoStartDate)
 
                       ->field('datePrevision')->lte($mongoEndDate)
                       ->sort('datePrevision', 'asc')
                       ->getQuery();
 
         return $query->execute();
+    }
+    
+    public function getNbPassagesToPlanPerMonth() {
+        $passages = $this->findToPlan();
+        $result = array();
+        foreach ($passages as $passage) {
+            $moisAnnee = $passage->getDatePrevision()->format('Ym');
+            if(!array_key_exists($moisAnnee, $result)){
+                $result[$moisAnnee] = new \stdClass();
+                $result[$moisAnnee]->nb = 0;
+                $result[$moisAnnee]->date = $passage->getDatePrevision();
+            }
+            $result[$moisAnnee]->nb = $result[$moisAnnee]->nb + 1;
+        }
+        return $result;
     }
 
     public function countPassagesByTechnicien($compte) {

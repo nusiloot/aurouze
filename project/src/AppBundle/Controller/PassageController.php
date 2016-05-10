@@ -31,10 +31,11 @@ class PassageController extends Controller {
         ));
 
         $passages = $this->get('passage.manager')->getRepository()->findToPlan();
-
+        $moisPassagesArray = $this->get('passage.manager')->getRepository()->getNbPassagesToPlanPerMonth();
+        
         $geojson = $this->buildGeoJson($passages);
 
-        return $this->render('passage/index.html.twig', array('passages' => $passages, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson));
+        return $this->render('passage/index.html.twig', array('passages' => $passages, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson, 'moisPassagesArray' => $moisPassagesArray));
     }
 
     /**
