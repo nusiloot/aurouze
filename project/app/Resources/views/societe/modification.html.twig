@@ -3,7 +3,11 @@
 {% block body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('societe') }}">Societe</a></li>    
+        {% if societe.id %}
         <li><a href="{{ path('societe_visualisation',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+        {% else %}
+        <li><small>Nouveau</small></li>
+        {% endif %}
     </ol> 
 
     <div id="wrapper">
