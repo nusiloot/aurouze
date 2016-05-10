@@ -31,7 +31,7 @@ class ContratController extends Controller {
             'method' => 'POST',
         ));
         $formSociete->handleRequest($request);
-        
+
         return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView()));
     }
 
@@ -49,8 +49,8 @@ class ContratController extends Controller {
      */
     public function societeAction(Request $request, Societe $societe) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
-        $contrats = $this->get('contrat.manager')->getRepository()->findBySociete($societe);
+
+        $contrats = $this->get('contrat.manager')->getRepository()->findBy(array('societe' => $societe->getId()), array('dateDebut' => 'DESC'));
         $formSociete = $this->createForm(SocieteChoiceType::class, array('societes' => $societe->getIdentifiant(), 'societe' => $societe), array(
             'action' => $this->generateUrl('contrat_societe_choice'),
             'method' => 'POST',
@@ -89,7 +89,7 @@ class ContratController extends Controller {
      */
     public function modificationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         if (!$contrat->isModifiable()) {
         	throw $this->createNotFoundException();
         }
@@ -118,11 +118,11 @@ class ContratController extends Controller {
      */
     public function acceptationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         if (!$contrat->isModifiable()) {
         	throw $this->createNotFoundException();
         }
-        
+
         $contratManager = new ContratManager($dm);
         $oldTechnicien = $contrat->getTechnicien();
         $form = $this->createForm(new ContratAcceptationType($dm, $contrat), $contrat, array(
@@ -131,7 +131,7 @@ class ContratController extends Controller {
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
             $contrat = $form->getData();
             if ($contrat->isModifiable()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
@@ -168,30 +168,30 @@ class ContratController extends Controller {
      */
     public function markdownAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         if (!$contrat->getMarkdown()) {
         	$contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
             $dm->persist($contrat);
             $dm->flush();
         }
-        
+
         $formMarkdown = $this->createForm(new ContratMarkdownType(), $contrat, array(
         		'action' => $this->generateUrl('contrat_markdown', array('id' => $contrat->getId())),
         		'method' => 'POST',
         ));
-        
+
         $formMarkdown->handleRequest($request);
         if ($formMarkdown->isSubmitted() && $formMarkdown->isValid()) {
         	$contrat = $formMarkdown->getData();
             $dm->persist($contrat);
             $dm->flush();
         }
-        
+
         $formGenerator = $this->createForm(new ContratGeneratorType(), $contrat, array(
         		'action' => $this->generateUrl('contrat_markdown', array('id' => $contrat->getId())),
         		'method' => 'POST',
         ));
-        
+
         $formGenerator->handleRequest($request);
         if ($formGenerator->isSubmitted() && $formGenerator->isValid()) {
         	$contrat = $formGenerator->getData();
@@ -199,7 +199,7 @@ class ContratController extends Controller {
             $dm->persist($contrat);
             $dm->flush();
         }
-        
+
 
         return $this->render('contrat/visualisation.markdown.twig', array('contrat' => $contrat, 'formMarkdown' => $formMarkdown->createView(), 'formGenerator' => $formGenerator->createView()));
     }
@@ -210,7 +210,7 @@ class ContratController extends Controller {
      */
     public function suppressionAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         if (!$contrat->isModifiable()) {
         	throw $this->createNotFoundException();
         }
@@ -243,7 +243,7 @@ class ContratController extends Controller {
     	$contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
     	$dm->persist($contrat);
     	$dm->flush();
-    	
+
     	$header =  $this->renderView('contrat/pdf-header.html.twig', array(
     			'contrat' => $contrat
     	));
@@ -254,13 +254,13 @@ class ContratController extends Controller {
     			'contrat' => $contrat
     	));
     	if($request->get('output') == 'html') {
-    	
+
     		return new Response($html, 200);
     	}
-    	
+
     	return new Response(
     			$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
-    						'footer-html' => $footer, 
+    						'footer-html' => $footer,
     						'header-html' => $header,
     						'margin-right'  => 0,
     						'margin-left'   => 0,

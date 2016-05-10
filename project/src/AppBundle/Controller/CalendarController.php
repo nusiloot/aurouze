@@ -26,8 +26,10 @@ class CalendarController extends Controller {
         }
 
         $technicien = $request->get('technicien');
-        $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
-
+        $technicienObj = null;
+        if ($technicien) {
+            $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
+        }
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
 
         $date = $request->get('date', new \DateTime());
@@ -125,7 +127,7 @@ class CalendarController extends Controller {
                 }
             }
         }
-        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage, 'date' => $request->get('date') ));
+        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage, 'date' => $request->get('date')));
     }
 
     /**
@@ -159,7 +161,7 @@ class CalendarController extends Controller {
             'textColor' => "black"
         );
         if ($tech) {
-        	$passageToMove->removeAllTechniciens();
+            $passageToMove->removeAllTechniciens();
             $passageToMove->addTechnicien($tech);
         }
         $passageToMove->setDateDebut($start);
@@ -194,7 +196,7 @@ class CalendarController extends Controller {
                 continue;
             }
             $passageArr = array('id' => $passageTech->getId(),
-                'title' => $passageTech->getEtablissementInfos()->getNom()." (".$passageTech->getEtablissementInfos()->getAdresse()->getCodePostal().")",
+                'title' => $passageTech->getEtablissementInfos()->getNom() . " (" . $passageTech->getEtablissementInfos()->getAdresse()->getCodePostal() . ")",
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
                 'backgroundColor' => $technicien->getCouleur(),
@@ -243,6 +245,7 @@ class CalendarController extends Controller {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $passageToDelete = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        $etablissement = $passageToDelete->getEtablissement()->getId();
         $technicien = $request->get('technicien');
 
         if (!$passageToDelete->isRealise()) {
@@ -250,8 +253,11 @@ class CalendarController extends Controller {
             $dm->persist($passageToDelete);
             $dm->flush();
         }
-
-        return $this->redirect($this->generateUrl('calendar', array('passage' => $request->get('passage'), 'technicien' => $technicien)));
+        if ($technicien) {
+            return $this->redirect($this->generateUrl('calendar', array('passage' => $request->get('passage'), 'technicien' => $technicien)));
+        } else {
+            return $this->redirect($this->generateUrl('passage_etablissement', array('id' => $etablissement)));
+        }
     }
 
 }
