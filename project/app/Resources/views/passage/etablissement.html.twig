@@ -96,7 +96,7 @@
                                     </div>
                                     <div class="col-xs-2">
                                         {% if contrat.commentaire %}
-                                            <a href="" title="{{ contrat.commentaire | nl2br }}" data-html="true" data-toggle="tooltip">Voir le commentaire</a>
+                                            <div title="{{ contrat.commentaire | nl2br }}" data-html="true" data-toggle="tooltip"><a href="{{ path('contrat_acceptation',{id : contrat.id}) }}">Commentaire&nbsp;<small>(modifier)</small></a></div>
                                         {% else %}
                                             <small><em class="text-muted">Aucun commentaire</em> <a href="{{ path('contrat_acceptation',{id : contrat.id}) }}">(Ajouter)</a></small>
                                         {% endif %}

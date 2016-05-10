@@ -30,26 +30,26 @@ class ContratAcceptationType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $readonly = array();
+        $datePicker = array();
         if (!$this->contrat->isModifiable()) {
             $readonly = array('readonly' => 'readonly');
+        } else {
+            $datePicker = array('class' => 'input-inline datepicker',
+                'data-provide' => 'datepicker');
         }
         if (!$this->contrat->isEnAttenteAcceptation() && !$this->contrat->isBrouillon()) {
-           $builder->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature* :', "attr" => array("class" => "form-control", "rows" => 6)));
+            $builder->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature* :', "attr" => array("class" => "form-control", "rows" => 6)));
         }
-        
+
         $builder->add('dateDebut', DateType::class, array(
-            "attr" => array_merge(array(
-                'class' => 'input-inline datepicker',
-                'data-provide' => 'datepicker',
+            "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy',
             'label' => 'Date de début* :',
         ))->add('dateAcceptation', DateType::class, array(
-            "attr" => array_merge(array(
-                'class' => 'input-inline datepicker',
-                'data-provide' => 'datepicker',
+            "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
