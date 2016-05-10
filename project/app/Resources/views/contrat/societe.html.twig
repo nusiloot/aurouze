@@ -8,9 +8,7 @@
         <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
     </ol>
     {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
-    <div style="margin-bottom: 50px;" >
-        <a style="margin-bottom: 10px;" href="{{ path('contrat_creation', {'id': societe.getId()}) }}" class="btn btn-sm btn-default pull-right"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a>
-    </div>
+    <h3>Liste des contrats de la société {{ societe.raisonSociale }} <a style="margin-bottom: 10px;" href="{{ path('contrat_creation', {'id': societe.getId()}) }}" class="btn btn-sm btn-default pull-right"><strong><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</strong></a></h3>
     <table class="table table-bordered">
         <thead>
             <tr>
