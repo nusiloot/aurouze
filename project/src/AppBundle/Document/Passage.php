@@ -136,6 +136,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $typePassage;
 
+    /**
+    * @MongoDB\ReferenceOne(targetDocument="RendezVous", simple=true)
+     */
+    protected $rendezVous;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
@@ -198,7 +203,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function setDuree($duree) {
-        
+
     }
 
     public function isRealise() {
@@ -246,7 +251,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
                 return;
             }
             if (boolval($this->getDateRealise())) {
-                $this->setStatut(PassageManager::STATUT_REALISE);                
+                $this->setStatut(PassageManager::STATUT_REALISE);
             }
         }
     }
@@ -839,4 +844,26 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return false;
     }
 
+
+    /**
+     * Set rendezVous
+     *
+     * @param AppBundle\Document\RendezVous $rendezVous
+     * @return self
+     */
+    public function setRendezVous(\AppBundle\Document\RendezVous $rendezVous)
+    {
+        $this->rendezVous = $rendezVous;
+        return $this;
+    }
+
+    /**
+     * Get rendezVous
+     *
+     * @return AppBundle\Document\RendezVous $rendezVous
+     */
+    public function getRendezVous()
+    {
+        return $this->rendezVous;
+    }
 }
