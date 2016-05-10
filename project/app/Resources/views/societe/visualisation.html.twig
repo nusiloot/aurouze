@@ -2,10 +2,10 @@
 {% extends 'base.html.twig' %}
 {% block body %}
  <ol class="breadcrumb">
-        <li><a href="{{ path('societe') }}">Societe</a></li>    
+        <li><a href="{{ path('societe') }}">Societe</a></li>
         <li><a href="{{ path('societe_visualisation',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
-    </ol>  
-    
+    </ol>
+
      {{ include('societe/choixForm.html.twig', {'form': form}) }}
     <div class="row">
         <div class="col-xs-12">
@@ -18,8 +18,8 @@
                         	{% if not societe.actif %} <small><label class="label label-xs label-danger">SUSPENDU</label></small>{% endif %}
                             <a class="btn btn-sm btn-default pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}">Modifier</a>
                             <small class="pull-right" style="padding-top: 5px; padding-right: 10px;">
-                                        <label class="label label-xs label-default ">{{  nbContratsSociete }} contrat(s)</label>
-                                &nbsp;<label class="label label-xs label-default ">{{ nbPassagesSociete }} passages(s)</label>
+                                        <label class="label label-xs label-info ">{{  nbContratsSociete }} contrat(s)</label>
+                                &nbsp;<label class="label label-xs label-info">{{ nbPassagesSociete }} passages(s)</label>
                             </small>&nbsp;
                         </h3>
                     </div>
@@ -75,60 +75,10 @@
             </div>
         </div>
     </div>
-    <h2 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un établissement</a>Etablissements <span class="badge">{{ societe.etablissements | length }}</span></h2>
-    <div class="row">
-        {% for etablissement in societe.etablissements %}
-            <div class="col-xs-4">
-                <div class="panel panel-default">
-                    <div class="list-group">
-                        <div class="list-group-item">
-                            <a class="btn btn-sm btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}">Modifier</a>
-                            <h3 style="margin-top: 0;margin-bottom: 0; height: 70px;" >
-                            	<a href="{{ path('passage_etablissement', {'id': etablissement.id }) }}"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.nom }}</a>
-                            	{% if not societe.actif %} <small><label class="label label-xs label-danger">SUSPENDU</label></small>{% endif %}
-                            </h3>
-                        </div>
-                        <div class="list-group-item text-center" style="height: 80px;">
-                            {% if (not etablissement.sameAdresseThanSociete) %}
-                                {{ etablissement.adresse.adresse }} <br />
-                                {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}
-                            {% else %}
-                                <em class="text-muted">Même adresse que la société</em>
-                            {% endif %}
-                        </div>
-                        {% if(not etablissement.sameContactCoordonneeThanSociete) %}
-                            <div class="list-group-item text-center">
-                                {%if(etablissement.contactCoordonnee.telephoneFixe is defined and etablissement.contactCoordonnee.telephoneFixe)%}
-                                    <i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneFixe }}&nbsp;
-                                {%endif%}
-                                {%if(etablissement.contactCoordonnee.telephoneMobile is defined and etablissement.contactCoordonnee.telephoneMobile)%}
-                                    <i class="glyphicon glyphicon-phone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneMobile }}&nbsp;
-                                {%endif%}
-                                {%if(etablissement.contactCoordonnee.fax is defined and etablissement.contactCoordonnee.fax)%}
-                                    <i class="glyphicon glyphicon-print"></i>&nbsp;{{ etablissement.contactCoordonnee.fax }}&nbsp;
-                                {%endif%}&nbsp;
-                            </div>
-                            <div class="list-group-item text-center">
-                                {%if(etablissement.contactCoordonnee.email is defined and etablissement.contactCoordonnee.email)%}
-                                    <i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ etablissement.contactCoordonnee.email }}&nbsp;
-                                {%endif%}
-                                {%if(etablissement.contactCoordonnee.siteInternet is defined and etablissement.contactCoordonnee.siteInternet)%}
-                                    <i class="glyphicon glyphicon-globe"></i>&nbsp;{{ etablissement.contactCoordonnee.siteInternet }}&nbsp;
-                                {%endif%}&nbsp;
-                            </div>
-                        {% else %}
-                            <div class="list-group-item text-center" style="height: 80px;" >
+    <h2 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un établissement</a>Etablissements <span class="badge">{{ societe.getEtablissementsByStatut(true) | length }}</span></h2>
 
-                                <em class="text-muted">Même contact que la société</em>
-                            </div>
-                        {% endif %}
-                        {% if(not etablissement.sameContactCoordonneeThanSociete) %}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(true)}) }}
+    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(false)}) }}
 
     <h2 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('compte_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un compte</a>Comptes <span class="badge">{{ societe.comptes | length }}</span></h2>
     <div class="row">
