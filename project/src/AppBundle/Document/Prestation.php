@@ -84,9 +84,9 @@ class Prestation {
         $mot_cafard = array('BLATTES', 'PUNAISES');
         $mot_chenille = array('CHENILLES');
         $mot_pigeon = array('DEPIGEONNAGE');
-        $mot_bois = array('TRAITEMENT DES BOIS');
-        $mot_travaux = array('TRAVAUX DIVERS');
-        $mot_DEIV = array('MAINTENANCE D.E.I.V');
+        $mot_bois = array('TRAITEMENT', 'BOIS');
+        $mot_travaux = array('TRAVAUX', 'DIVERS');
+        $mot_DEIV = array('MAINTENANCE', 'D.E.I.V');
         $mot_desinfection = array('DESINFECTION','ASSAINISSEMENT');
         if($this->isPictoForLibelles($nom_libelles, $mot_rongeur)){
             $type_rongeur = "";

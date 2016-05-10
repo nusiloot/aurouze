@@ -32,7 +32,6 @@ class EtablissementType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
-                ->add('raisonSociale', TextType::class, array('label' => 'Raison sociale* :'))
                 ->add('nom', TextType::class, array('label' => 'Nom* :'))
                 ->add('type', ChoiceType::class, array('label' => 'Type* :', 'choices' => array_merge(array('' => ''), $this->getTypes()), "attr" => array("class" => "select2 select2-simple")))
                 ->add('actif', CheckboxType::class, array('label' => ' ', 'required' => false, "attr" => array("class" => "switcher", "data-size" => "mini")))
