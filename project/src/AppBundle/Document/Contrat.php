@@ -658,7 +658,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getPrevisionnel($dateDebut = null) {
-
         if (!$dateDebut) {
             $dateDebut = new \DateTime();
         }
@@ -756,6 +755,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return ContratManager::$statuts_libelles[$this->getStatut()];
     }
+    
+    public function getStatutLibelleLong() {
+        return ContratManager::$statuts_libelles_long[$this->getStatut()];
+    }
 
     public function getStatutCouleur() {
 
@@ -769,6 +772,17 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
 
         return $contratPassages[$etablissement->getId()];
+    }
+    
+    public static function cmpContrat($a, $b)
+    {
+    	$statutsPositions = ContratManager::$statuts_positions;
+    	$pa = ($a->getStatut())? $statutsPositions[$a->getStatut()] : 99;
+    	$pb = ($b->getStatut())? $statutsPositions[$b->getStatut()] : 99;
+    	if ($pa == $pb) {
+    		return 0;
+    	}
+    	return ($pa > $pb) ? +1 : -1;
     }
 
     public function getPassages(Etablissement $etablissement) {

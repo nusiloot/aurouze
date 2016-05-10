@@ -12,6 +12,7 @@
   - recode
   - wkhtmltopdf
   - xvfb
+  - fonts-liberation
 
 - name: "bonne version git"
   git: repo=https://github.com/24eme/aurouze.git

@@ -72,6 +72,22 @@ class ContratPassages {
         return $this->passages;
     }
 
+    public function getPassagesDateSorted() {
+    	$passages = $this->passages->toArray();
+    	usort($passages, array("AppBundle\Document\ContratPassages", "cmpPassage"));
+    	return $passages;
+    }
+    
+    public static function cmpPassage($a, $b)
+    {
+    	$da = ($a->getDatePrevision())? $a->getDatePrevision()->format('Ymd') : 0;
+    	$db = ($b->getDatePrevision())? $b->getDatePrevision()->format('Ymd') : 0;
+    	if ($da == $db) {
+    		return 0;
+    	}
+    	return ($da > $db) ? +1 : -1;
+    }
+
     public function getNbPassagePrevu() {
         $nbPrevus = 0;
         foreach ($this->getPassages() as $passage){

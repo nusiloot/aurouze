@@ -112,7 +112,7 @@ class CalendarDateTool
 	public function getDateFinSemaine($format = null)
 	{
 		$ds = clone $this->date;
-		$ds->modify('+'.(7 - $ds->format('N')).' day');
+		$ds->modify('+'.(6 - $ds->format('N')).' day');
 		return ($format)? $ds->format($format) : $ds;
 	}
 
