@@ -34,6 +34,14 @@ class PassageManager {
          self::TYPE_PASSAGE_GARANTIE => "Sous garantie",
          self::TYPE_PASSAGE_CONTROLE => "Contrôle",
     );
+    
+    public static $applications = array(
+    	'En place',
+    	'Souillés',
+    	'Disparus',
+    	'Ecrasés',
+    	'Déplacés'
+    );
 
     protected $dm;
 

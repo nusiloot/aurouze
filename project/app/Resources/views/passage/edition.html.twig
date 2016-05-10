@@ -1,32 +1,84 @@
 {% set _menu_active = 'passage' %}
 {% extends 'base.html.twig' %}
+{% form_theme form _self %}
+
+{% block _passage_produits_entry_row %}
+    <div class="row form-group dynamic-collection-item">
+        <div class="col-xs-7">
+            {{ form_widget(form.identifiant) }}
+        </div>
+        <div class="col-xs-2 text-right">
+            {{ form_widget(form.nbUtilisePassage) }}
+        </div>
+        <div class="col-xs-1 text-right">
+            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
+    </div>
+{% endblock %}
+
 {% block body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('passage') }}">Passage</a></li>
         <li><a href="{{ path('passage_etablissement',{ 'id' : passage.etablissement.id }) }}">&nbsp;{{ passage.etablissement.nom }}&nbsp;<small>{{passage.etablissement.adresse.intitule }}</small></a></li>
         <li><a href="{{ path('passage_edition',{ 'id' : passage.id }) }}">&nbsp;<small>{{ passage.dateDebut | localizeddate('full', 'none') | capitalize }}</small></a></li>
     </ol>
-    <h1>Saisie du rapport de passage</h1>
+    <h1>Rapport de passage</h1>
     {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="form-group">
-                <div class="col-xs-3">
-                    {{ form_errors(form.duree) }}
-                    {{ form_label(form.duree) }}
-                    {{ form_widget(form.duree) }}
+    
+    <div class="panel panel-default">
+            <div class="panel-heading"><strong>Observations</strong></div>
+            <div class="panel-body col-xs-offset-2">
+	            <div class="row">
+                    <div class="col-xs-5 bootstrap-timepicker timepicker">
+                        <div class="form-group">
+                            {{ form_label(form.duree) }}
+                            {{ form_errors(form.duree) }}
+                            <div class="input-group">
+                                {{ form_widget(form.duree) }}
+                                <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+                            </div>
+                        </div>
+                    </div>
+            	</div>
+            	<div class="row">
+                	<div class="col-xs-10">
+                    {{ form_row(form.description) }}
+	                </div>
+	            </div>
+                <div class="row">
+                    <div class="col-xs-10">
+                        {{ form_row(form.nettoyages) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-10">
+                        {{ form_row(form.applications) }}
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-xs-12">
-                    {{ form_errors(form.description) }}
-                    {{ form_label(form.description) }}
-                    {{ form_widget(form.description) }}
+    </div>
+    
+    <div class="panel panel-default">
+            <div class="panel-heading"><strong>Produits</strong></div>
+            <div class="panel-body col-xs-offset-2">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <label class="control-label">Produit :</label>
+                    </div>
+                    <div class="col-xs-2 text-center">
+                        <label class="control-label">Quantité :</label>
+                    </div>
+                </div>
+                {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
+                <div class="row">
+                    <div class="col-xs-10 text-right">
+                        <a href="javascript:void(0);" data-collection-target="#passage_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
+	<div class="text-right">
     {{ form_widget(form.save) }}
+    </div>
     {{ form_end(form) }}
 {% endblock %}
