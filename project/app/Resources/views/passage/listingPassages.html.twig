@@ -1,0 +1,90 @@
+{% for passage in passages %}
+<div class="list-group-item">
+	<div class="row">
+		<div class="col-xs-2">
+			<div class="row">
+				<div class="col-xs-3">
+					<span style="cursor: help;" title="{{ passage.libelle }}"
+						data-toggle="tooltip"
+						class="badge {% if(passage.isGarantie) %}badge-warning{% elseif(passage.isControle)%}badge-warning{% else %}badge-default{% endif %} {% if(passage.mouvementDeclenchable) %}badge-inverse{% endif %} btn-xs">{{
+						passage.getNumeroPassage() }}</span>
+				</div>
+				<div class="col-xs-9">
+					{% if (passage.enAttente) %}
+					<button class="btn btn-xs btn-block btn-default">{{
+						passage.getStatutLibelle() }}</button>
+					{% elseif (passage.aPlanifie) %}
+					<button class="btn btn-xs btn-block btn-primary">{{
+						passage.getStatutLibelle() }}</button>
+					{% elseif (passage.planifie) %}
+					<button class="btn btn-xs btn-block btn-warning">{{
+						passage.getStatutLibelle() }}</button>
+					{% elseif (passage.annule) %}
+					<button class="btn btn-xs btn-block btn-danger">{{
+						passage.getStatutLibelle() }}</button>
+					{% elseif (passage.realise) %}
+					<button class="btn btn-xs btn-block btn-success">{{
+						passage.getStatutLibelle() }}</button>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-3">
+			<a data-toggle="modal" data-remote="false"
+				data-target="#modal-passage"
+				href="{{path('calendarRead', { 'id': passage.id })}}"> {% if
+				(passage.enAttente) %} {{ passage.datePrevision | localizeddate("medium",
+				"none", null, null, "MMMM YYYY") | capitalize }} {% elseif
+				(passage.APlanifie) %} {{ passage.dateDebut | localizeddate("medium", "none",
+				null, null, "MMMM YYYY") | capitalize }} {% else %} {{ passage.dateDebut
+				| localizeddate('full', 'none') | capitalize }} {% endif %} {%
+				if(passage.duree) %} à {{passage.dateDebut | date("H") }}h{{passage.dateDebut |
+				date("i") }}{% endif %} </a>
+
+		</div>
+		<div class="col-xs-2">
+			{% for prestation in passage.prestations %} {% if(prestation.wordToPicto)
+			%} <span class="step size-24" title="{{  prestation.nomToString }}"
+				data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
+				style="cursor: pointer;">&nbsp;</i></span> {%else%} <span
+				class="label label-xs label-primary">{{ prestation.nomToString }}</span>
+			{%endif%} {% endfor %}
+		</div>
+		<div class="col-xs-1">
+			{% if(passage.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{
+				passage.duree }}</span>{% endif %}
+		</div>
+		<div class="col-xs-2">
+			<ul class="list-inline list-unstyled">
+				{% for technicien in passage.techniciens %}
+				<li><i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ technicien.identite
+					}}</li> {% endfor %}
+			</ul>
+		</div>
+		<div class="col-xs-2 text-right">
+			{% if passage.planifie %} <a class="btn btn-sm btn-block btn-warning"
+				href="{{ path('passage_edition', { id: passage.id })}}">Saisir le rapport</a>
+			{% elseif passage.realise %}<a class="btn btn-block btn-xs btn-default"
+				href="{{ path('passage_edition', { id: passage.id })}}">Modifier le
+				rapport</a> {% elseif passage.aPlanifie %} 
+				{% if passage.techniciens|length > 0 %} 
+					<a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : passage.id,'technicien' : passage.techniciens.0, 'date' : passage.datedebut|date('d-m-Y')})}}">Planifier</a>
+				{% else %}
+					<a class="btn btn-sm btn-block btn-primary" href="{{path('calendarManuel', {'passage' : passage.id, 'date' : passage.datedebut|date('d-m-Y')})}}">Planifier</a>
+				{% endif %}
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% endfor %}
+<div class="modal fade" id="modal-passage" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="modal-title"></h4>
+			</div>
+			<div class="modal-body" id="modal-body"></div>
+		</div>
+	</div>
+</div>
