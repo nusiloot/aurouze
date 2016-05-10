@@ -6,7 +6,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <h3>Liste des passages à planifier <span class="badge">{{ passages | length }}</span></h3>
+            <h3>Liste des passages à planifier {% for moisPassage in moisPassagesArray %}<small>{{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM") | capitalize }}</small>&nbsp;<span class="badge">{{ moisPassage.nb }}</span>&nbsp;&nbsp;{% endfor %}</h3>
             <div class="form-horizontal">
                 <div class="form-group">
                     <div class="col-xs-12">
