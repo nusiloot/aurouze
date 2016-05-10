@@ -73,6 +73,7 @@
 
                                 {% endfor %}
                                 <span class="pull-right"><span class="glyphicon glyphicon-chevron-down"></span></span>
+                               <span class="pull-right">{% if(contrat.dureeGarantie) %} Garantie {{ contrat.dureeGarantie }} mois{% else %}Aucune garantie{% endif %}&nbsp;&nbsp;&nbsp;</span>
                             </h4>
                         </div>
                         <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(not contrat.isEnCours) %}out{% else%}in{% endif %} list-group">

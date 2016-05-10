@@ -5,7 +5,7 @@
         <ul class="list-inline list-group">
             {% if(contrat.contratPassages | length) %}
                 {% set firstEtbPassages = contrat.contratPassages | first %}
-                {% for passage in firstEtbPassages.passages %}
+                {% for passage in firstEtbPassages.passagesDateSorted %}
                     {% set counter = loop.index %}
                     <li class="col-xs-4">
                         <div class="panel panel-default">
