@@ -2,6 +2,8 @@
 {% extends 'base.html.twig' %}
 {% form_theme form _self %}
 
+{% block title %}Bon passage {{ passage.etablissement.nom }}{% endblock title %}
+
 {% block _passage_produits_entry_row %}
     <div class="row form-group dynamic-collection-item">
         <div class="col-xs-7">
@@ -29,7 +31,7 @@
     <p class="bg-warning" style="padding: 15px;"><span class="glyphicon glyphicon-exclamation-sign"></span> La saisie de ce rapport de passage entraine le déclenchement d'un mouvement de facture.</p>
     {% endif %}
     {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
-    
+
     <div class="panel panel-default">
             <div class="panel-heading"><strong>Observations</strong></div>
             <div class="panel-body col-xs-offset-2">
@@ -62,7 +64,7 @@
                 </div>
             </div>
     </div>
-    
+
     <div class="panel panel-default">
             <div class="panel-heading"><strong>Produits</strong></div>
             <div class="panel-body col-xs-offset-2">

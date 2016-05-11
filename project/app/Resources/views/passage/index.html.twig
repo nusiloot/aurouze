@@ -1,5 +1,6 @@
 {% set _menu_active = 'passage' %}
 {% extends 'base.html.twig' %}
+{% block title %}Passages{% endblock title %}
 {% block body %}
 
     {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}

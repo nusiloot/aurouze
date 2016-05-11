@@ -1,5 +1,6 @@
 {% set _menu_active = 'contrat' %}
 {% extends 'base.html.twig' %}
+{% block title %}Contrat n°{{ contrat.numeroArchive }} {{ societe.raisonSociale }}{% endblock title %}
 {% block body %}
     <div id="wrapper">
         <ol class="breadcrumb">
@@ -9,7 +10,7 @@
         </ol>
         <h1>
             Contrat {{ contrat.getStatutLibelleLong }}
-            <small>n° {{ contrat.numeroArchive }}</small>             
+            <small>n° {{ contrat.numeroArchive }}</small>
             {%  if (contrat.isModifiable()) %}
                 <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
             {%  endif %}
@@ -90,7 +91,7 @@
                 </div>
                 <div class="col-xs-4 text-right">
                     <button class="btn btn-default btn" name="{{ "brouillon" }}"  type="submit" value="1"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Enregistrer brouillon</button>&nbsp;
-                    {{ form_widget(form.save) }}                  
+                    {{ form_widget(form.save) }}
                 </div>
             {% else %}
                 <div class="col-xs-4 text-left"></div>

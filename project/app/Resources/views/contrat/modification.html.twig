@@ -3,6 +3,8 @@
 
 {% form_theme form _self %}
 
+{% block title %}{% if (contrat.id ) %}Contrat n°{{ contrat.numeroArchive }}{% else %}Création Contrat{% endif %} {{ societe.raisonSociale }}{% endblock title %}
+
 {% block _contrat_prestations_entry_row %}
     <div class="row form-group dynamic-collection-item">
         <div class="col-xs-7">
@@ -34,12 +36,12 @@
     </div>
 {% endblock %}
 
-{% block body %}    
+{% block body %}
     <div id="wrapper">
         <ol class="breadcrumb">
             <li><a href="{{ path('contrat') }}">Contrat</a></li>
             <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
-            <li><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a></li>
+            <li>{% if (contrat.id ) %}<a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a>{% else %}Nouveau contrat{% endif %}</li>
         </ol>
         <h1>Création Contrat</h1>
         {{ form_start(form) }}

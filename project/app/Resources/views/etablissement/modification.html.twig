@@ -1,13 +1,14 @@
 {% set _menu_active = 'societe' %}
 {% extends 'base.html.twig' %}
+{% block title %}{% if etablissement.id %}Modification {{ etablissment.nom }}{% else %}Création établissement{% endif %}{% endblock title %}
 {% block body %}
 
     <ol class="breadcrumb">
-        <li><a href="{{ path('societe') }}">Societe</a></li>    
+        <li><a href="{{ path('societe') }}">Societe</a></li>
         <li><a href="{{ path('societe_visualisation',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
         <li>&nbsp;{{ etablissement.nom }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></li>
 
-    </ol> 
+    </ol>
 
     <div class="row">
         <div class="col-xs-12">
