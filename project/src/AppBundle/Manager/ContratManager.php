@@ -52,7 +52,7 @@ class ContratManager implements MouvementManagerInterface {
     );
     public static $statuts_libelles = array(
         self::STATUT_BROUILLON => 'Brouillon',
-        self::STATUT_EN_ATTENTE_ACCEPTATION => "Acceptation",
+        self::STATUT_EN_ATTENTE_ACCEPTATION => "En attente",
         self::STATUT_EN_COURS => 'En cours',
         self::STATUT_A_VENIR => 'A venir',
         self::STATUT_FINI => 'Terminé',
