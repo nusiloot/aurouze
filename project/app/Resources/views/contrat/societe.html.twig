@@ -20,9 +20,8 @@
                 <th class="col-xs-2">Date</th>
                 <th class="col-xs-1">Garantie</th>
                 <th class="col-xs-1" class="text-center">Prix</th>
-                <th class="col-xs-2">Prestations</th>
+                <th class="col-xs-3">Prestations</th>
                 <th class="col-xs-2 text-center">Lieu de passage</th>
-                <th class="col-xs-1 text-center">Suppr.</th>
             </tr>
         </thead>
         {% for contrat in contrats %}
@@ -51,11 +50,6 @@
                     {% else %}
                         <small>Aucun</small>
                     {% endif %}
-                </td>
-                <td class="text-center">
-                    {%  if (contrat.isEnAttenteAcceptation() or contrat.isBrouillon()) %}
-                        <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-xs btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir supprimer le contrat n° '+{{ contrat.numeroArchive }}+'?');">X</a>
-                    {%  endif %}
                 </td>
             </tr>
         {% endfor %}
