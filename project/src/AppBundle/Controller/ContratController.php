@@ -115,7 +115,7 @@ class ContratController extends Controller {
         return $this->render('contrat/modification.html.twig', array('contrat' => $contrat, 'form' => $form->createView(), 'societe' => $contrat->getSociete()));
     }
 
-    /**
+     /**
      * @Route("/contrat/{id}/acceptation", name="contrat_acceptation")
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
@@ -132,11 +132,12 @@ class ContratController extends Controller {
             'action' => $this->generateUrl('contrat_acceptation', array('id' => $contrat->getId())),
             'method' => 'POST',
         ));
+        $isBrouillon = $request->get('brouillon');
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $contrat = $form->getData();
-            if ($contrat->isModifiable()) {
+            if ($contrat->isModifiable() && !$isBrouillon && $contrat->getTechnicien() && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $contrat->setDateFin($contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month"));
                 $contrat->setStatut(ContratManager::STATUT_EN_COURS);
