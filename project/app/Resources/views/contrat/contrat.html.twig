@@ -70,7 +70,7 @@
     </table>
 </div>
 
-{% if(factures | length > 0) %}
+{% if(contrat.mouvements | length > 0) %}
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Facturation</h3></div>
     <table class="table table-bordered table-condensed table-stripped">
@@ -79,7 +79,6 @@
                 <th>Intitulé</th>
                 <th class="text-center">Facture</th>
                 <th class="text-right">Montant HT</th>
-                <th class="text-right">Montant TTC</th>
             </tr>
         </thead>
         <tbody>
@@ -89,9 +88,15 @@
                 <td>{{ mouvement.libelle }}</td>
                 <td class="text-center"><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;{{ facture.numeroFacture }}</a></td>
                 <td class="text-right">{{ mouvement.montantHT }} €</td>
-                <td class="text-right">{{ mouvement.montantHT + mouvement.montantTaxe }} €</td>
             </tr>
         {% endfor %}
+        {% endfor %}
+        {% for mouvement in contrat.mouvements if not mouvement.facture %}
+            <tr>
+                <td>{{ mouvement.libelle }}</td>
+                <td class="text-center"><small>En attente</small></td>
+                <td class="text-right">{{ mouvement.prixUnitaire }} €</td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>
