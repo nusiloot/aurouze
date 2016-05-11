@@ -158,7 +158,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $prixHt;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Mouvement", strategy="set")
+     * @MongoDB\EmbedMany(targetDocument="Mouvement")
      */
     protected $mouvements;
 
@@ -1230,7 +1230,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function addMouvement(\AppBundle\Document\Mouvement $mouvement)
     {
-        $this->mouvements[$mouvement->getIdentifiant()] = $mouvement;
+        $this->mouvements[] = $mouvement;
     }
 
     /**
