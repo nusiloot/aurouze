@@ -17,6 +17,7 @@ use AppBundle\Manager\EtablissementManager;
 use AppBundle\Transformer\ProvenanceTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\FormEvents;
 
 class SocieteType extends AbstractType {
 
@@ -37,47 +38,47 @@ class SocieteType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
                 ->add('raisonSociale', TextType::class, array('label' => 'Raison sociale* :'))
-                ->add('codeComptable', TextType::class, array('label' => 'Code comptable :', 'required' => false, 'empty_data'  => null))
-                ->add('commentaire', TextareaType::class, array('label' => 'Commentaires :', "attr" => array("class" => "form-control", "rows" => 6), 'required' => false, 'empty_data'  => null))
+                ->add('codeComptable', TextType::class, array('label' => 'Code comptable :', 'required' => false, 'empty_data' => null))
+                ->add('commentaire', TextareaType::class, array('label' => 'Commentaires :', "attr" => array("class" => "form-control", "rows" => 6), 'required' => false, 'empty_data' => null))
                 ->add('type', ChoiceType::class, array('label' => 'Type* :', 'choices' => array_merge(array('' => ''), $this->getTypes()), "attr" => array("class" => "select2 select2-simple")))
                 ->add('actif', CheckboxType::class, array('label' => ' ', 'required' => false, "attr" => array("class" => "switcher", "data-size" => "mini")))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")))
-        		->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
-        		->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'));
+                ->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
+                ->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'));
         if ($this->isNew) {
-        	$builder->add('generer', CheckboxType::class, array('label' => 'Générer l\'établissement lié, à partir des données de la société', 'required' => false,   'empty_data'  => null, 'mapped' => false, 'data' => true));
+            $builder->add('generer', CheckboxType::class, array('label' => 'Générer l\'établissement lié, à partir des données de la société', 'required' => false, 'empty_data' => null, 'mapped' => false, 'data' => true));
         }
-        
-       
-        
+
+
+
         $builder->add('provenance', ChoiceType::class, array(
-            		'choices' => array_merge(array('' => ''), $this->getProvenances()),
-	        		'expanded' => false, 
-	        		'multiple' => false,
-        			'required' => false, 
-        			'empty_data'  => null,
-        			'attr' => array("class" => "select2 select2-simple"),
+            'choices' => array_merge(array('' => ''), $this->getProvenances()),
+            'expanded' => false,
+            'multiple' => false,
+            'required' => false,
+            'empty_data' => null,
+            'attr' => array("class" => "select2 select2-simple"),
         ));
         $builder->get('provenance')->addModelTransformer(new ProvenanceTransformer($this->dm));
-        
+
         $builder->add('tags', ChoiceType::class, array(
-        		'choices' => $this->getTags(),
-        		'expanded' => false,
-        		'multiple' => true,
-        			'required' => false, 
-        			'empty_data'  => null,
-        		'attr' => array("class" => "select2 select2-simple", "data-tags" => "true"),
+            'choices' => $this->getTags(),
+            'expanded' => false,
+            'multiple' => true,
+            'required' => false,
+            'empty_data' => null,
+            'attr' => array("class" => "select2 select2-simple", "data-tags" => "true"),
         ));
         $builder->get('tags')->resetViewTransformers();
-        
-        /*$builder->get('actif')->addModelTransformer(new CallbackTransformer(
-        		function ($originalDescription) {
-        			return ($originalDescription)? true : false;
-        		},
-        		function ($submittedDescription) {
-        			return (int)$submittedDescription;
-        		}
-        		));*/
+
+        /* $builder->get('actif')->addModelTransformer(new CallbackTransformer(
+          function ($originalDescription) {
+          return ($originalDescription)? true : false;
+          },
+          function ($submittedDescription) {
+          return (int)$submittedDescription;
+          }
+          )); */
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
@@ -85,31 +86,30 @@ class SocieteType extends AbstractType {
             'data_class' => 'AppBundle\Document\Societe',
         ));
     }
-    
-    public function getProvenances() 
-    {
-    	return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getProvenances()->toArray();
+
+    public function getProvenances() {
+        return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getProvenances()->toArray();
     }
-    
-    public function getTags() 
-    {
-    	$tags = $this->dm->getRepository('AppBundle:Societe')->findAllTags();
-    	$result = array();
-    	foreach ($tags as $tag) {
-    		$result[$tag] = $tag;
-    	}
-    	return $result;
+
+    public function getTags() {
+        $tags = $this->dm->getRepository('AppBundle:Societe')->findAllTags();
+        $result = array();
+        foreach ($tags as $tag) {
+            $result[$tag] = $tag;
+        }
+        return $result;
     }
 
     /**
      * @return string
      */
     public function getName() {
-        return 'societe';
+        return 'societe_edition';
     }
 
     public function getTypes() {
         return EtablissementManager::$type_libelles;
     }
+
 
 }
