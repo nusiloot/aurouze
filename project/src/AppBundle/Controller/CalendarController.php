@@ -198,8 +198,12 @@ class CalendarController extends Controller {
             if (!$passageTech->getDateFin()) {
                 continue;
             }
+            $title = $passageTech->getEtablissementInfos()->getNom() . " ". $passageTech->getEtablissementInfos()->getAdresse()->getCommune()." (" . $passageTech->getEtablissementInfos()->getAdresse()->getCodePostal() . ") ";
+            if($passageTech->isImprime()){
+                $title.= "*";
+            }
             $passageArr = array('id' => $passageTech->getId(),
-                'title' => $passageTech->getEtablissementInfos()->getNom() . " (" . $passageTech->getEtablissementInfos()->getAdresse()->getCodePostal() . ")",
+                'title' => $title,
                 'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
                 'backgroundColor' => $technicien->getCouleur(),
