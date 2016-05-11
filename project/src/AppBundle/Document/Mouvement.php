@@ -55,6 +55,11 @@ class Mouvement {
     */
     protected $document;
 
+    /**
+    * @MongoDB\ReferenceOne()
+    */
+    protected $origineDocumentGeneration;
+
     public function facturer() {
         if(!$this->getFacturable()) {
             return false;
@@ -272,5 +277,28 @@ class Mouvement {
     public function getTauxTaxe()
     {
         return $this->tauxTaxe;
+    }
+
+
+    /**
+     * Set origineDocumentGeneration
+     *
+     * @param $origineDocumentGeneration
+     * @return self
+     */
+    public function setOrigineDocumentGeneration($origineDocumentGeneration)
+    {
+        $this->origineDocumentGeneration = $origineDocumentGeneration;
+        return $this;
+    }
+
+    /**
+     * Get origineDocumentGeneration
+     *
+     * @return $origineDocumentGeneration
+     */
+    public function getOrigineDocumentGeneration()
+    {
+        return $this->origineDocumentGeneration;
     }
 }
