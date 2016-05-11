@@ -112,7 +112,7 @@ class Facture implements DocumentSocieteInterface {
         $destinataire = $this->getDestinataire();
 
         $destinataire->setNom($societe->getRaisonSociale());
-        $destinataire->setAdresse($societe->getAdresse()->getAdresse());
+        $destinataire->setAdresse($societe->getAdresse()->getAdresseFormatee());
         $destinataire->setCodePostal($societe->getAdresse()->getAdresse());
         $destinataire->setCommune($societe->getAdresse()->getAdresse());
         $destinataire->setCodeComptable($societe->getCodeComptable());
@@ -122,6 +122,23 @@ class Facture implements DocumentSocieteInterface {
         foreach($this->getLignes() as $ligne) {
             $ligne->facturerMouvement();
         }
+    }
+
+    public function isPaye() {
+
+        return false;
+    }
+
+    public function getOrigines() {
+        $origines = array();
+        foreach($this->getLignes() as $ligne) {
+            if(!$ligne->getOrigineDocument()) {
+                continue;
+            }
+            $origines[$ligne->getOrigineDocument()->getId()] = $ligne->getOrigineDocument();
+        }
+
+        return $origines;
     }
 
     /**

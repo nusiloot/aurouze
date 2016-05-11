@@ -72,9 +72,10 @@ class ContratPassages {
         return $this->passages;
     }
 
-    public function getPassagesDateSorted() {
+    public function getPassagesDateSorted($inversed = false) {
     	$passages = $this->passages->toArray();
-    	usort($passages, array("AppBundle\Document\ContratPassages", "cmpPassage"));
+    	$cmp = ($inversed)? "cmpInvPassage" : "cmpPassage";
+    	usort($passages, array("AppBundle\Document\ContratPassages", $cmp));
     	return $passages;
     }
     
@@ -86,6 +87,16 @@ class ContratPassages {
     		return 0;
     	}
     	return ($da > $db) ? +1 : -1;
+    }
+    
+    public static function cmpInvPassage($a, $b)
+    {
+    	$da = ($a->getDatePrevision())? $a->getDatePrevision()->format('Ymd') : 0;
+    	$db = ($b->getDatePrevision())? $b->getDatePrevision()->format('Ymd') : 0;
+    	if ($da == $db) {
+    		return 0;
+    	}
+    	return ($da > $db) ? -1 : +1;
     }
 
     public function getNbPassagePrevu() {

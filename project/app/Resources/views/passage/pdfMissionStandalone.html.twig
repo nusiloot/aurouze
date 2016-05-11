@@ -1,11 +1,11 @@
-<h2 style="margin-bottom: 10px; font-size: 22px;" class="text-center"><strong>Suivi client : Passage du {{ passage.dateDebut | localizeddate("full", "none") }} à 12h30 <small>n° {{ passage.numeroArchive }}</small>
+<h2 style="margin-bottom: 10px; font-size: 22px;" class="text-center"><strong>Suivi client : Passage du {{ passage.dateDebut | localizeddate("full", "none") }} à {{ passage.dateDebut | date('H') }}h{{ passage.dateDebut | date('i') }} <small>n° {{ passage.numeroArchive }}</small>
 </strong>
 </h2>
 <hr style="border-color: #ddd; margin-bottom: 40px;" />
 <div class="row">
     <div class="col-xs-6">
         <h3 style="margin-top: 0;">{{ passage.etablissementInfos.nom }}</h3>
-        {{ passage.etablissementInfos.adresse.adresse }}<br />
+        {{ passage.etablissementInfos.adresse.adresseFormatee }}<br />
         {{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}
     </div>
     <div class="col-xs-6">

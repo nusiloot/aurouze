@@ -35,8 +35,8 @@ $(function () {
      */
     $('#calendrier').fullCalendar({
         minTime: '06:00:00',
-        maxTime: '18:00:00',
-        height: 650,
+        maxTime: '19:00:00',
+        height: 705,
         customButtons: {
             prevButton: {
                 text: '',
@@ -61,7 +61,7 @@ $(function () {
         editable: true,
         droppable: true,
         slotEventOverlap: false,
-        hiddenDays: [0],
+        hiddenDays: [0,6],
         defaultView: $('#calendrier').data('view'),
         eventSources: [
             {

@@ -1,36 +1,17 @@
 {% set _menu_active = 'facture' %}
 {% extends 'base.html.twig' %}
 
+{% block title %}Factures {{ societe.raisonSociale }}{% endblock title %}
+
 {% block body %}
 
     {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
 
-    <h3>Factures</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Numéro</th>
-                <th></th>
-                <th class="text-right">Montant TTC</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for facture in factures %}
-            <tr>
-                <td>{{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY") }}</td>
-                <td></td>
-                <td><a href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.id }}</a></td>
-                <td class="text-right">{{ facture.montantTTC }} €</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 
-    <a class="pull-right btn btn-primary" href="{{ path('facture_societe_generation', { 'id': societe.id })}}">Facturer</a>
 
-    <h3>Mouvements à facturer</h3>
-    <table class="table">
+    <h3>Mouvements à facturer <a {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} class="pull-right btn btn-primary" href="{#{ path('facture_societe_generation', { 'id': societe.id })}#}">Facturer</a></h3>
+    {% if(mouvements | length > 0) %}
+    <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Document d'origine</th>
@@ -41,11 +22,44 @@
         <tbody>
         {% for mouvement in mouvements %}
             <tr>
-                <td>{{ mouvement.origineDocument.id }}</td>
+                <td>{{ mouvement.document.id }}</td>
                 <td>{{ mouvement.libelle }}</td>
-                <td class="text-right">{{ mouvement.prix }} €</td>
+                <td class="text-right">{{ mouvement.prixUnitaire }} €</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <p class="text-muted"><i>Aucun mouvement</i></p>
+    {% endif %}
+
+    <h3>Liste des Factures</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="col-xs-2">Date</th>
+                <th class="col-xs-1">Numéro</th>
+                <th class="col-xs-5">Contenu</th>
+                <th class="col-xs-2 text-right">Montant TTC</th>
+                <th class="col-xs-2 text-right">Montant Payé</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for facture in factures %}
+            <tr class="{{ (facture.paye) ? "success" : "" }}">
+                <td>{{ facture.dateEmission | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</td>
+                <td><a href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.numeroFacture }}</a></td>
+                <td>
+                    <a data-toggle="tooltip" title="{% for ligne in facture.lignes %}{{ (ligne.libelle) ? ligne.libelle~"\n" : "Aucun" }}{% endfor %}" href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.lignes | length}} ligne(s)</a>
+                    {% for origine in facture.origines %}
+                        : <a href="{{ path('contrat_visualisation', {'id': origine.id })}}">Contrat n° {{ origine.numeroArchive }}</a>
+                    {% endfor %}
+                </td>
+                <td class="text-right">{{ "%0.2f" | format(facture.montantTTC)  }}&nbsp;€</td>
+                <td class="text-right"><span class="text-muted">0.00 €</span></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}

@@ -30,11 +30,12 @@ class PassageController extends Controller {
             'method' => 'GET',
         ));
 
-        $passages = $this->get('passage.manager')->getRepository()->findToPlan();
+        $passageManager = $this->get('passage.manager');
+        $passages = $passageManager->getRepository()->findToPlan();
+        $moisPassagesArray = $passageManager->getRepository()->getNbPassagesToPlanPerMonth();
 
         $geojson = $this->buildGeoJson($passages);
-
-        return $this->render('passage/index.html.twig', array('passages' => $passages, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson));
+        return $this->render('passage/index.html.twig', array('passages' => $passages, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson, 'moisPassagesArray' => $moisPassagesArray, 'passageManager' => $passageManager));
     }
 
     /**
@@ -121,7 +122,7 @@ class PassageController extends Controller {
     public function editionAction(Request $request, Passage $passage) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $form = $this->createForm(new PassageType(), $passage, array(
+        $form = $this->createForm(new PassageType($dm), $passage, array(
             'action' => $this->generateUrl('passage_edition', array('id' => $passage->getId())),
             'method' => 'POST',
         ));
@@ -142,12 +143,22 @@ class PassageController extends Controller {
 
             $dm->persist($nextPassage);
         }
+
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+
+
+
+        if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
+            if ($contrat->generateMouvement($passage)) {
+                $passage->setMouvementDeclenche(true);
+            }
+        }
+
         $passage->setDateRealise($passage->getDateDebut());
         $dm->persist($passage);
         $dm->flush();
 
         $contratIsFini = true;
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
         foreach ($passage->getContrat()->getContratPassages() as $contratPassages) {
             foreach ($contratPassages->getPassages() as $passage) {
                 if (!$passage->isAnnule() && !$passage->isRealise()) {
@@ -159,6 +170,7 @@ class PassageController extends Controller {
         if ($contratIsFini) {
             $contrat->setStatut(ContratManager::STATUT_FINI);
         }
+
         $dm->persist($contrat);
         $dm->flush();
 
@@ -176,13 +188,16 @@ class PassageController extends Controller {
      * @ParamConverter("passage", class="AppBundle:Passage")
      */
     public function pdfBonAction(Request $request, Passage $passage) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
 
         $html = $this->renderView('passage/pdfBons.html.twig', array(
             'passage' => $passage,
             'parameters' => $fm->getParameters(),
         ));
-
+        $passage->setImprime(true);
+//        var_dump($passage->getImprime()); exit;
+        $dm->flush();
         $filename = sprintf("bon_passage_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getTechniciens()->first()->getIdentite())));
 
         if ($request->get('output') == 'html') {
@@ -220,6 +235,10 @@ class PassageController extends Controller {
             'parameters' => $fm->getParameters(),
         ));
 
+        foreach ($passages as $passage) {
+            $passage->setImprime(true);
+        }
+        $dm->flush();
         if ($request->get('output') == 'html') {
 
             return new Response($html, 200);

@@ -158,7 +158,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $prixHt;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Mouvement", strategy="set")
+     * @MongoDB\EmbedMany(targetDocument="Mouvement")
      */
     protected $mouvements;
 
@@ -520,6 +520,14 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->dureePassage;
     }
 
+    public function getDureePassageFormat()
+    {
+    	$minute = $this->getDureePassage();
+    	$heure = intval(abs($minute / 60));
+    	$minute = $minute - ($heure * 60);
+    	return sprintf("%02dh%02d", $heure, $minute);
+    }
+
     /**
      * Set nbFactures
      *
@@ -640,21 +648,31 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getNbFacturesRestantes() {
-
-        return 1;
+        return $this->getNbFactures() - count($this->getMouvements());
     }
 
-    public function generateMouvement() {
+    public function generateMouvement($origineDocumentGeneration = null) {
         if ($this->getPrixRestant() <= 0 || $this->getNbFacturesRestantes() <= 0) {
-            return;
+            return null;
         }
         $mouvement = new Mouvement();
-        $mouvement->setPrix(round($this->getPrixRestant() / $this->getNbFacturesRestantes(), 2));
+        $mouvement->setIdentifiant(uniqid());
+        $mouvement->setPrixUnitaire(round($this->getPrixRestant() / $this->getNbFacturesRestantes(), 2));
+        $mouvement->setQuantite(1);
+        $mouvement->setTauxTaxe($this->getTva());
         $mouvement->setFacturable(true);
         $mouvement->setFacture(false);
-        $mouvement->setLibelle(sprintf("Facture %s/%s - Proposition n° %s du %s au %s", 1, 2, "0000000000", $this->getDateDebut()->format('m/Y'), $this->getDateFin()->format('m/Y')));
+        $mouvement->setSociete($this->getSociete());
+        $mouvement->setLibelle(sprintf("Facture %s/%s - Proposition n° %s du %s au %s", count($this->getMouvements()) + 1, $this->getNbFactures(), $this->getNumeroArchive(), $this->getDateDebut()->format('m/Y'), $this->getDateFin()->format('m/Y')));
+
+        $mouvement->setDocument($this);
+        if($origineDocumentGeneration) {
+            $mouvement->setOrigineDocumentGeneration($origineDocumentGeneration);
+        }
 
         $this->addMouvement($mouvement);
+
+        return $mouvement;
     }
 
     public function getPrevisionnel($dateDebut = null) {
@@ -741,6 +759,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             }
             $cpt++;
         }
+        krsort($passagesDatesArray);
         return $passagesDatesArray;
     }
 
@@ -756,6 +775,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return ContratManager::$statuts_libelles[$this->getStatut()];
     }
 
+    public function getStatutLibelleLong() {
+        return ContratManager::$statuts_libelles_long[$this->getStatut()];
+    }
+
     public function getStatutCouleur() {
 
         return ContratManager::$statuts_couleurs[$this->getStatut()];
@@ -768,6 +791,17 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
 
         return $contratPassages[$etablissement->getId()];
+    }
+
+    public static function cmpContrat($a, $b)
+    {
+    	$statutsPositions = ContratManager::$statuts_positions;
+    	$pa = ($a->getStatut())? $statutsPositions[$a->getStatut()] : 99;
+    	$pb = ($b->getStatut())? $statutsPositions[$b->getStatut()] : 99;
+    	if ($pa == $pb) {
+    		return 0;
+    	}
+    	return ($pa > $pb) ? +1 : -1;
     }
 
     public function getPassages(Etablissement $etablissement) {
@@ -1026,10 +1060,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isModifiable() {
-        if($this->isEnAttenteAcceptation() || $this->isBrouillon() || $this->isAVenir()){
+        if($this->isEnAttenteAcceptation() || $this->isBrouillon()){
             return true;
         }
-        if($this->isEnCours()){
+        if($this->isEnCours() || $this->isAVenir()){
             foreach ($this->getContratPassages() as $contratPassage) {
                 foreach ($contratPassage->getPassages() as $p) {
                     if($p->isPlanifie() || $p->isRealise() || $p->isAnnule()){
@@ -1196,7 +1230,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function addMouvement(\AppBundle\Document\Mouvement $mouvement)
     {
-        $this->mouvements[$mouvement->getIdentifiant()] = $mouvement;
+        $this->mouvements[] = $mouvement;
     }
 
     /**

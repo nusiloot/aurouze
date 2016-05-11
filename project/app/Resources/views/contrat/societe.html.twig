@@ -1,6 +1,8 @@
 {% set _menu_active = 'contrat' %}
 {% extends 'base.html.twig' %}
 
+{% block title %}Contrats {{ societe.raisonSociale }}{% endblock title %}
+
 {% block body %}
 
     <ol class="breadcrumb">
@@ -22,34 +24,34 @@
                 <th class="col-xs-2 text-center">Lieu de passage</th>
             </tr>
         </thead>
-    {% for contrat in contrats %}
-        <tr class="{{ contrat.statutCouleur }}">
-            <td><small class="text-{{ contrat.statutCouleur }}">{{ contrat.statutLibelle }}</small></td>
-            <td><small>{{ contrat.typeContratLibelle }}</small></td>
-            <td><a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">n°&nbsp;{{ contrat.numeroArchive }}</a></td>
-            <td>{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% endif %}</td>
-            <td class="text-right">{% if(contrat.dureeGarantie) %}{{ contrat.dureeGarantie }} mois{% else %}<small class="text-muted">Aucune</small>{% endif %}</td>
-            <td class="text-right">{{ "%0.2f" | format(contrat.getPrixHt)  }}&nbsp;€</td>
-            <td>
-                {% for prestation in contrat.prestations %}
-                    {% if(prestation.wordToPicto) %}
-                        &nbsp;<span class="" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                            <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i>&nbsp;<span>{{ prestation.nbPassages }}</span></span>
-                        {% else %}
-                        <span class="btn btn-xs label-primary">{{  prestation.nomToString }}&nbsp;<span>{{ prestation.nbPassages }}</span></span>
+        {% for contrat in contrats %}
+            <tr class="{{ contrat.statutCouleur }}">
+                <td><small class="text-{{ contrat.statutCouleur }}">{{ contrat.statutLibelle }}</small></td>
+                <td><small>{{ contrat.typeContratLibelle }}</small></td>
+                <td><a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">n°&nbsp;{{ contrat.numeroArchive }}</a></td>
+                <td>{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% endif %}</td>
+                <td class="text-right">{% if(contrat.dureeGarantie) %}{{ contrat.dureeGarantie }} mois{% else %}<small class="text-muted">Aucune</small>{% endif %}</td>
+                <td class="text-right">{{ "%0.2f" | format(contrat.getPrixHt)  }}&nbsp;€</td>
+                <td>
+                    {% for prestation in contrat.prestations %}
+                        {% if(prestation.wordToPicto) %}
+                            &nbsp;<span class="" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
+                                <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i>&nbsp;<span>{{ prestation.nbPassages }}</span></span>
+                            {% else %}
+                            <span class="btn btn-xs label-primary">{{  prestation.nomToString }}&nbsp;<span>{{ prestation.nbPassages }}</span></span>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td class="text-center">
+                    {% if contrat.etablissements | length > 1 %}
+                        <a title="Voir la liste" data-toggle="tooltip" href="{{ path('contrat_visualisation', {'id': contrat.id }) }}">{{ contrat.etablissements | length }}&nbsp;établissements</a>
+                    {% elseif contrat.etablissements | length == 1 %}
+                        <a title="{% for etablissement in contrat.etablissements %} {{ etablissement.nom }} - {{ etablissement.adresse.commune }} {% endfor %}" data-toggle="tooltip" href="{{ path('passage_etablissement', {'id': contrat.etablissements[0].id }) }}">1&nbsp;établissement</a>
+                    {% else %}
+                        <small>Aucun</small>
                     {% endif %}
-                {% endfor %}
-            </td>
-            <td class="text-center">
-                {% if contrat.etablissements | length > 1 %}
-                    <a title="Voir la liste" data-toggle="tooltip" href="{{ path('contrat_visualisation', {'id': contrat.id }) }}">{{ contrat.etablissements | length }}&nbsp;établissements</a>
-                {% elseif contrat.etablissements | length == 1 %}
-                    <a title="{% for etablissement in contrat.etablissements %} {{ etablissement.nom }} - {{ etablissement.adresse.commune }} {% endfor %}" data-toggle="tooltip" href="{{ path('passage_etablissement', {'id': contrat.etablissements[0].id }) }}">1&nbsp;établissement</a>
-                {% else %}
-                    <small>Aucun</small>
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
     </table>
 {% endblock %}

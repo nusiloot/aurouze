@@ -6,9 +6,9 @@
         <br />
         <p>
             <span class="lead">{{ facture.emetteur.nom }}</span><br />
-            {% if(facture.emetteur.adresse) %}
-            {{ facture.emetteur.adresse.adresse }}<br />
-            {{ facture.emetteur.adresse.codePostal }}, {{ facture.emetteur.adresse.commune }}<br />
+            {% if(facture.emetteur) %}
+            {{ facture.emetteur.adresse }}<br />
+            {{ facture.emetteur.codePostal }}, {{ facture.emetteur.commune }}<br />
             {% endif %}
             Tél : {{ facture.emetteur.telephone }}<br />
             Fax: {{ facture.emetteur.fax }}
@@ -25,8 +25,8 @@
         <br />
         <p>
             {{ facture.destinataire.nom }}<br />
-            {{ facture.destinataire.adresse.adresse }}<br />
-            {{ facture.destinataire.adresse.codePostal }} {{ facture.destinataire.adresse.commune }}<br />
+            {{ facture.destinataire.adresseFormatee }}<br />
+            {{ facture.destinataire.codePostal }} {{ facture.destinataire.commune }}<br />
         </p>
     </div>
 </div>

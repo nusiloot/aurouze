@@ -3,6 +3,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Document\Societe;
 
 /**
  * @MongoDB\EmbeddedDocument
@@ -41,8 +42,8 @@ class Mouvement {
     protected $libelle;
 
     /**
-    * @MongoDB\String
-    */
+     * @MongoDB\ReferenceOne(targetDocument="Societe", simple=true)
+     */
     protected $societe;
 
     /**
@@ -54,6 +55,11 @@ class Mouvement {
     * @MongoDB\ReferenceOne()
     */
     protected $document;
+
+    /**
+    * @MongoDB\ReferenceOne()
+    */
+    protected $origineDocumentGeneration;
 
     public function facturer() {
         if(!$this->getFacturable()) {
@@ -166,11 +172,10 @@ class Mouvement {
     /**
      * Set societe
      *
-     * @param string $societe
+     * @param AppBundle\Document\Societe $societe
      * @return self
      */
-    public function setSociete($societe)
-    {
+    public function setSociete(\AppBundle\Document\Societe $societe) {
         $this->societe = $societe;
         return $this;
     }
@@ -178,10 +183,9 @@ class Mouvement {
     /**
      * Get societe
      *
-     * @return string $societe
+     * @return AppBundle\Document\Societe $societe
      */
-    public function getSociete()
-    {
+    public function getSociete() {
         return $this->societe;
     }
 
@@ -272,5 +276,28 @@ class Mouvement {
     public function getTauxTaxe()
     {
         return $this->tauxTaxe;
+    }
+
+
+    /**
+     * Set origineDocumentGeneration
+     *
+     * @param $origineDocumentGeneration
+     * @return self
+     */
+    public function setOrigineDocumentGeneration($origineDocumentGeneration)
+    {
+        $this->origineDocumentGeneration = $origineDocumentGeneration;
+        return $this;
+    }
+
+    /**
+     * Get origineDocumentGeneration
+     *
+     * @return $origineDocumentGeneration
+     */
+    public function getOrigineDocumentGeneration()
+    {
+        return $this->origineDocumentGeneration;
     }
 }

@@ -1,6 +1,8 @@
 {% set _menu_active = 'facture' %}
 {% extends 'base.html.twig' %}
 
+{% block title %}Factures{% endblock title %}
+
 {% block body %}
 {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
 {% endblock %}

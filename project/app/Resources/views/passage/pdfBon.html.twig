@@ -13,7 +13,7 @@
     </div>
     <div class="col-xs-6 text-left form-horizontal">
         <p><span class="lead" style="font-weight: 400; font-size: 18px">{{ passage.etablissementInfos.nom }}</span><br />
-            {{ passage.etablissementInfos.adresse.adresse }}<br />
+            {{ passage.etablissementInfos.adresse.adresseFormatee | nl2br }}<br />
             {{ passage.etablissementInfos.adresse.codePostal }}
             {{ passage.etablissementInfos.adresse.Commune }}
         </p>

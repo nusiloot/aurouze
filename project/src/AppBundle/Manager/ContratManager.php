@@ -21,6 +21,8 @@ class ContratManager implements MouvementManagerInterface {
     const STATUT_A_VENIR = "A_VENIR";
     const STATUT_FINI = "FINI";
     const STATUT_RESILIE = "RESILIE"; // statut à retirer = ce n'est pas un statut mais un type!!
+    const STATUT_ANNULE = "ANNULE";
+    
     const TYPE_CONTRAT_RECONDUCTION_TACITE = 'RECONDUCTION_TACITE';
     const TYPE_CONTRAT_PONCTUEL = 'PONCTUEL';
     const TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION = 'RENOUVELABLE_SUR_PROPOSITION';
@@ -50,11 +52,21 @@ class ContratManager implements MouvementManagerInterface {
     );
     public static $statuts_libelles = array(
         self::STATUT_BROUILLON => 'Brouillon',
-        self::STATUT_EN_ATTENTE_ACCEPTATION => "Acceptation",
+        self::STATUT_EN_ATTENTE_ACCEPTATION => "En attente",
         self::STATUT_EN_COURS => 'En cours',
         self::STATUT_A_VENIR => 'A venir',
         self::STATUT_FINI => 'Terminé',
-        self::STATUT_RESILIE => 'Résilié'
+        self::STATUT_RESILIE => 'Résilié',
+        self::STATUT_ANNULE => 'Annulé'
+    );
+    
+    public static $statuts_libelles_long = array(
+        self::STATUT_BROUILLON => 'en brouillon',
+        self::STATUT_EN_ATTENTE_ACCEPTATION => "en attente d'acceptation",
+        self::STATUT_EN_COURS => 'en cours',
+        self::STATUT_A_VENIR => 'à venir',
+        self::STATUT_FINI => 'terminé',
+        self::STATUT_RESILIE => 'résilié'
     );
     public static $statuts_couleurs = array(
         self::STATUT_BROUILLON => 'info',
@@ -62,7 +74,17 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_EN_COURS => 'default',
         self::STATUT_A_VENIR => 'default',
         self::STATUT_FINI => 'success',
-        self::STATUT_RESILIE => 'danger'
+        self::STATUT_RESILIE => 'danger',
+        self::STATUT_ANNULE => 'danger'
+    );
+    public static $statuts_positions = array(
+        self::STATUT_BROUILLON => 0,
+        self::STATUT_EN_ATTENTE_ACCEPTATION => 2,
+        self::STATUT_EN_COURS => 1,
+        self::STATUT_A_VENIR => 3,
+        self::STATUT_FINI => 4,
+        self::STATUT_RESILIE => 5,
+        self::STATUT_ANNULE => 6    		
     );
     protected $dm;
 
@@ -120,6 +142,7 @@ class ContratManager implements MouvementManagerInterface {
         }
         $date_debut = clone $contrat->getDateDebut();
         $passagesArray = $contrat->getPrevisionnel($date_debut);
+        ksort($passagesArray);
         foreach ($contrat->getEtablissements() as $etablissement) {
             $cpt = 0;
             foreach ($passagesArray as $datePassage => $passageInfos) {
@@ -168,7 +191,6 @@ class ContratManager implements MouvementManagerInterface {
 
         foreach ($contrats as $contrat) {
             foreach ($contrat->getMouvements() as $mouvement) {
-                $mouvement->setOrigineDocument($contrat);
                 $mouvements[] = $mouvement;
             }
         }

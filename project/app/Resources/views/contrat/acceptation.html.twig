@@ -1,5 +1,6 @@
 {% set _menu_active = 'contrat' %}
 {% extends 'base.html.twig' %}
+{% block title %}Contrat n°{{ contrat.numeroArchive }} {{ societe.raisonSociale }}{% endblock title %}
 {% block body %}
     <div id="wrapper">
         <ol class="breadcrumb">
@@ -7,10 +8,16 @@
             <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
             <li><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a></li>
         </ol>
-        <h1>Contrat en attente d'acceptation <small>n° {{ contrat.numeroArchive }}</small> <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a></h1>
+        <h1>
+            Contrat {{ contrat.getStatutLibelleLong }}
+            <small>n° {{ contrat.numeroArchive }}</small>
+            {%  if (contrat.isModifiable()) %}
+                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
+            {%  endif %}
+        </h1>
 
-        {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
         {{ form_start(form) }}
+        {{ include('contrat/contrat.html.twig', { 'contrat': contrat ,'form' : form}) }}
         <div class="row">
             <div class="form-group col-xs-6">
 
@@ -20,72 +27,80 @@
             </div>
         </div>
         <div class="row">
-        	<div class="col-xs-6">
-	            <div class="form-group">
-	                {{ form_label(form.commentaire) }}
-	                {{ form_errors(form.commentaire) }}
-	                {{ form_widget(form.commentaire) }}
-	            </div>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    {{ form_label(form.commentaire) }}
+                    {{ form_errors(form.commentaire) }}
+                    {{ form_widget(form.commentaire) }}
+                </div>
             </div>
             <div class="col-xs-6">
                 <div class="row">
-                    <div class="col-xs-12">
-	            		<div class="form-group">
-	                        {{ form_label(form.technicien) }}
-	                        {{ form_errors(form.technicien) }}
-	                        {{ form_widget(form.technicien) }}
-	                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            {{ form_label(form.technicien) }}
+                            {{ form_errors(form.technicien) }}
+                            {{ form_widget(form.technicien) }}
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            {{ form_label(form.commercial) }}
+                            {{ form_errors(form.commercial) }}
+                            {{ form_widget(form.commercial) }}
+                        </div>
                     </div>
                     <div class="col-xs-12">
-	            		<div class="form-group">
-	                        {{ form_label(form.referenceClient) }}
-	                        {{ form_errors(form.referenceClient) }}
-	                        {{ form_widget(form.referenceClient) }}
-	                    </div>
+                        <div class="form-group">
+                            {{ form_label(form.referenceClient) }}
+                            {{ form_errors(form.referenceClient) }}
+                            {{ form_widget(form.referenceClient) }}
+                        </div>
                     </div>
                     <div class="col-xs-12">
-	            		<div class="form-group">
-	                        {{ form_label(form.dateAcceptation) }}
-	                        {{ form_errors(form.dateAcceptation) }}
-	                        <div class="input-group">
-	                            {{ form_widget(form.dateAcceptation) }}
-	                            <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-	                        </div>
-	                    </div>
+                        <div class="form-group">
+                            {{ form_label(form.dateAcceptation) }}
+                            {{ form_errors(form.dateAcceptation) }}
+                            <div class="input-group">
+                                {{ form_widget(form.dateAcceptation) }}
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-xs-12">
-	            		<div class="form-group">
-	                        {{ form_label(form.dateDebut) }}
-	                        {{ form_errors(form.dateDebut) }}
-	                        <div class="input-group">
-	                            {{ form_widget(form.dateDebut) }}
-	                            <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-	                        </div>
-	                    </div>
+                        <div class="form-group">
+                            {{ form_label(form.dateDebut) }}
+                            {{ form_errors(form.dateDebut) }}
+                            <div class="input-group">
+                                {{ form_widget(form.dateDebut) }}
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
             {% if contrat.isEnAttenteAcceptation() %}
-            <div class="col-xs-4 text-left">
-                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour à l'édition du contrat</a>
-            </div>
+                <div class="col-xs-4 text-left">
+                    <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour à l'édition du contrat</a>
+                </div>
                 <div class="col-xs-4 text-center">
                     <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
-                	<a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
+                    <a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
                 </div>
                 <div class="col-xs-4 text-right">
-                {{ form_widget(form.save) }}
-            </div>
+                    <button class="btn btn-default btn" name="{{ "brouillon" }}"  type="submit" value="1"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Enregistrer brouillon</button>&nbsp;
+                    {{ form_widget(form.save) }}
+                </div>
             {% else %}
                 <div class="col-xs-4 text-left"></div>
                 <div class="col-xs-4 text-center">
-					<a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
+                    <a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
                 </div>
-                 <div class="col-xs-4 text-right">
-                	{{ form_widget(form.save) }}
-            	</div>
+                <div class="col-xs-4 text-right">
+                    {{ form_widget(form.save) }}
+                </div>
             {% endif%}
 
         </div>

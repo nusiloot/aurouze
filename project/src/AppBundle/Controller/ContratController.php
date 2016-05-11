@@ -51,7 +51,9 @@ class ContratController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $contrats = $this->get('contrat.manager')->getRepository()->findBy(array('societe' => $societe->getId()), array('dateDebut' => 'DESC'));
-        
+
+        usort($contrats, array("AppBundle\Document\Contrat", "cmpContrat"));
+
         $formSociete = $this->createForm(SocieteChoiceType::class, array('societes' => $societe->getIdentifiant(), 'societe' => $societe), array(
             'action' => $this->generateUrl('contrat_societe_choice'),
             'method' => 'POST',
@@ -67,9 +69,8 @@ class ContratController extends Controller {
     public function creationAction(Request $request, Societe $societe) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $contrat = $this->get('contrat.manager')->createBySociete($societe);
-        $dm->persist($contrat);
-        $dm->flush();
-        return $this->redirectToRoute('contrat_modification', array('id' => $contrat->getId()));
+
+        return $this->modificationAction($request, $contrat);
     }
 
     /**
@@ -79,9 +80,8 @@ class ContratController extends Controller {
     public function creationFromEtablissementAction(Request $request, Etablissement $etablissement) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $contrat = $this->get('contrat.manager')->createBySociete($etablissement->getSociete(), null, $etablissement);
-        $dm->persist($contrat);
-        $dm->flush();
-        return $this->redirectToRoute('contrat_modification', array('id' => $contrat->getId()));
+
+        return $this->modificationAction($request, $contrat);
     }
 
     /**
@@ -96,7 +96,7 @@ class ContratController extends Controller {
         }
 
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
-            'action' => $this->generateUrl('contrat_modification', array('id' => $contrat->getId())),
+            'action' => "",
             'method' => 'POST',
         ));
         $form->handleRequest($request);
@@ -113,16 +113,16 @@ class ContratController extends Controller {
         return $this->render('contrat/modification.html.twig', array('contrat' => $contrat, 'form' => $form->createView(), 'societe' => $contrat->getSociete()));
     }
 
-    /**
+     /**
      * @Route("/contrat/{id}/acceptation", name="contrat_acceptation")
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function acceptationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        if (!$contrat->isModifiable()) {
-            throw $this->createNotFoundException();
-        }
+//        if (!$contrat->isModifiable()) {
+//            throw $this->createNotFoundException();
+//        }
 
         $contratManager = new ContratManager($dm);
         $oldTechnicien = $contrat->getTechnicien();
@@ -130,11 +130,12 @@ class ContratController extends Controller {
             'action' => $this->generateUrl('contrat_acceptation', array('id' => $contrat->getId())),
             'method' => 'POST',
         ));
+        $isBrouillon = $request->get('brouillon');
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $contrat = $form->getData();
-            if ($contrat->isModifiable()) {
+            if ($contrat->isModifiable() && !$isBrouillon && $contrat->getTechnicien() && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $contrat->setDateFin($contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month"));
                 $contrat->setStatut(ContratManager::STATUT_EN_COURS);
@@ -159,8 +160,10 @@ class ContratController extends Controller {
      */
     public function visualisationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        $factures = $dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
 
-        return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat, 'societe' => $contrat->getSociete()));
+        return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat, 'factures' => $factures, 'societe' => $contrat->getSociete()));
     }
 
     /**

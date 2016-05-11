@@ -1,5 +1,6 @@
 {% set _menu_active = 'calendar' %}
 {% extends 'base.html.twig' %}
+{% block title %}Calendrier Résumé{% endblock title %}
 {% block body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('calendarManuel') }}">Calendrier global</a></li>
@@ -63,7 +64,7 @@
 						<tbody class="fc-body">
 							<tr>
 								<td class="fc-widget-content">
-									<div class="fc-time-grid-container" style="height: 627px; overflow: hidden;">
+									<div class="fc-time-grid-container" style="height: 687px; overflow: hidden;">
 										<div class="fc-time-grid">
 											<div class="fc-bg">
 												<table>
@@ -80,7 +81,7 @@
 											<div class="fc-slats">
 												<table>
 													<tbody>
-														{% for i in 6..18 %}
+														{% for i in 6..19 %}
 															<tr data-time="{{ "%02d:00:00"|format(i) }}">
 																<td class="fc-axis fc-time fc-widget-content" style="width: 17px;"><span>{{ "%02d"|format(i) }}</span></td>
 																<td class="fc-widget-content"></td>

@@ -35,11 +35,6 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     /**
      * @MongoDB\String
      */
-    protected $raisonSociale;
-
-    /**
-     * @MongoDB\String
-     */
     protected $nom;
 
     /**
@@ -85,6 +80,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function __construct() {
         $this->adresse = new Adresse();
         $this->contactCoordonnee = new ContactCoordonnee();
+        $this->setActif(true);
     }
 
     /** @MongoDB\PreUpdate */
@@ -182,25 +178,9 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function getContrats() {
         return $this->contrats;
     }
-
-    /**
-     * Set raisonSociale
-     *
-     * @param string $raisonSociale
-     * @return self
-     */
-    public function setRaisonSociale($raisonSociale) {
-        $this->raisonSociale = $raisonSociale;
-        return $this;
-    }
-
-    /**
-     * Get raisonSociale
-     *
-     * @return string $raisonSociale
-     */
+    
     public function getRaisonSociale() {
-        return $this->raisonSociale;
+        return $this->getSociete()->getRaisonSociale();
     }
 
     /**
@@ -224,7 +204,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     }
 
     /**
-     * Set nom
+     * Set setNom
      *
      * @param string $nom
      * @return self

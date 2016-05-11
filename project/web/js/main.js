@@ -20,15 +20,22 @@
         $.initLinkInPanels();
         $.initDeplanifierLink();
         $.initSearchActif();
+        $.initListingPassage();
     });
+    $.initListingPassage = function () {
+        $('.calendar_lien').click(function (event) {
+            event.preventDefault();
+            var url = $(this).attr('data-url');
+            window.location.href = url;
+        });
+    };
 
     $.initSearchActif = function () {
         $('form input[type="checkbox"][data-search-actif="1"]').each(function () {
 
-            $(this).parents('form').find('select').attr('data-nonactif',"0");
-
+            $(this).parents('form').find('select').attr('data-nonactif', "0");
             $(this).click(function () {
-                $(this).parents('form').find('select').attr('data-nonactif',($(this).is(':checked')? "1" : "0"));
+                $(this).parents('form').find('select').attr('data-nonactif', ($(this).is(':checked') ? "1" : "0"));
                 $.initSelect2Ajax();
             })
         });
@@ -54,7 +61,6 @@
         $('.text-selector').click(function () {
             $(this).select();
         });
-
     }
     $.initCollapseCheckbox = function () {
 
@@ -65,7 +71,6 @@
                 $($(this).data('target')).collapse('show');
             }
         });
-
     }
 
     $.initSwitcher = function () {
@@ -99,12 +104,16 @@
     }
 
     $.initTimePicker = function () {
-        $('.input-timepicker').timepicker({
-            format: 'HH:ii p',
-            autoclose: true,
-            showMeridian: false,
-            startView: 1,
-            maxView: 1, defaultTime: '01:00'
+        $('.input-timepicker').each(function () {
+           var defaultTiming = ($(this).attr('data-default'))? $(this).attr('data-default') : '01:00';
+            $(this).timepicker({
+                format: 'HH:ii p',
+                autoclose: true,
+                showMeridian: false,
+                startView: 1,
+                maxView: 1,
+                defaultTime: ""+defaultTiming
+            });
         });
     }
 
@@ -112,19 +121,15 @@
 
 
         var addLink = $('.dynamic-collection-add');
-
         $('.dynamic-collection-item').on('click', '.dynamic-collection-remove', function (e) {
             e.preventDefault();
             $(e.delegateTarget).remove();
         });
-
         addLink.on('click', function (e) {
             e.preventDefault();
-
             var collectionTarget = $(this).data('collection-target');
             var collectionHolder = $(collectionTarget);
             collectionHolder.data('index', collectionHolder.find(':input').length);
-
             var prototype = collectionHolder.data('prototype');
             var index = collectionHolder.data('index');
             var item = $(prototype.replace(/__name__/g, index));
@@ -134,9 +139,7 @@
                 e.preventDefault();
                 $(e.delegateTarget).remove();
             });
-
             $(item).find('input, select').eq(0).focus();
-
             $.callbackDynamicCollection();
         });
     }
@@ -191,7 +194,6 @@
 
         var notificationError = $('#ajax_form_error_notification');
         var notificationProgress = $('#ajax_form_progress_notification');
-
         $(document).ajaxError(
                 function (event, xhr, settings) {
                     if (settings.type === "POST") {
@@ -199,7 +201,6 @@
                     }
                 }
         );
-
         $(document).ajaxSuccess(
                 function (event, xhr, settings) {
                     if (settings.type === "POST") {
@@ -207,7 +208,6 @@
                     }
                 }
         );
-
         $(document).ajaxSend(
                 function (event, xhr, settings) {
                     if (settings.type === "POST") {
@@ -216,7 +216,6 @@
                     }
                 }
         );
-
         $(document).ajaxComplete(
                 function (event, xhr, settings) {
                     if (settings.type === "POST") {
@@ -225,7 +224,6 @@
                 }
         );
     };
-
     $.initSelect2 = function () {
         $('.select2-simple').each(function () {
             $(this).select2({
@@ -237,10 +235,10 @@
 
     $.initSelect2Ajax = function () {
         $('.select2-ajax').each(function () {
-            var urlComponent = $(this).attr('data-url')+"?";
+            var urlComponent = $(this).attr('data-url') + "?";
             if ($(this).attr('data-nonactif') == '1') {
                 urlComponent += "nonactif=1";
-            }else{
+            } else {
                 urlComponent += "nonactif=0";
             }
             $(this).select2({
@@ -254,7 +252,7 @@
                     data: function (params) {
                         var queryParameters = {
                             term: params.term
-                            
+
                         }
                         return queryParameters;
                     },
@@ -273,8 +271,6 @@
             $(this).parents('form').submit();
         }
     });
-
-
     $.initModalPassage = function () {
 
         $('#modal-passage').on('show.bs.modal', function (event) {
@@ -291,9 +287,7 @@
         $('.hamzastyle-item').each(function () {
             words = words.concat(JSON.parse($(this).attr('data-words')));
         });
-
         var words = unique(words.sort());
-
         var data = [];
         for (key in words) {
             if (words[key] + "") {
@@ -307,7 +301,6 @@
             data: data
         })
     });
-
     $(document).find('.hamzastyle').on("change", function (e) {
         var select2Data = $(this).select2("data");
         var selectedWords = [];
@@ -321,7 +314,6 @@
             document.location.hash = encodeURI("#filtre=" + JSON.stringify(selectedWords));
         }
     });
-
     $.initQueryHash = function () {
         $(window).on('hashchange', function () {
             if ($(document).find('.hamzastyle').length) {
@@ -339,7 +331,6 @@
                 }
 
                 $(document).find('.hamzastyle').val(select2Data).trigger("change");
-
                 $(document).find('.hamzastyle-item').each(function () {
                     var words = $(this).attr('data-words');
                     var find = true;
@@ -363,7 +354,6 @@
                 }
             }
         });
-
         if (location.hash) {
             $(window).trigger('hashchange');
         }
