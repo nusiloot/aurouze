@@ -20,10 +20,8 @@ class ContratRepository extends DocumentRepository {
     }
 
     public function findContratMouvements($societe, $isFacturable, $isFacture) {
-
         return $this->createQueryBuilder()
              ->select('mouvements')
-             ->field('societe')->equals($societe->getId())
              ->field('mouvements.facturable')->equals($isFacturable)
              ->field('mouvements.facture')->equals($isFacture)
              ->getQuery()
