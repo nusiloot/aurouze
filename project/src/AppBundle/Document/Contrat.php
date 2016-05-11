@@ -1060,10 +1060,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isModifiable() {
-        if($this->isEnAttenteAcceptation() || $this->isBrouillon() || $this->isAVenir()){
+        if($this->isEnAttenteAcceptation() || $this->isBrouillon()){
             return true;
         }
-        if($this->isEnCours()){
+        if($this->isEnCours() || $this->isAVenir()){
             foreach ($this->getContratPassages() as $contratPassage) {
                 foreach ($contratPassage->getPassages() as $p) {
                     if($p->isPlanifie() || $p->isRealise() || $p->isAnnule()){
