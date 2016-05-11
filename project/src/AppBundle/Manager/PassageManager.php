@@ -31,16 +31,13 @@ class PassageManager {
         self::TYPE_PASSAGE_GARANTIE => "Sous garantie",
         self::TYPE_PASSAGE_CONTROLE => "Contrôle",
     );
-    
     public static $applications = array(
-    	'En place',
-    	'Souillés',
-    	'Disparus',
-    	'Ecrasés',
-    	'Déplacés'
+        'En place',
+        'Souillés',
+        'Disparus',
+        'Ecrasés',
+        'Déplacés'
     );
-
-
     protected $dm;
 
     function __construct(DocumentManager $dm) {
@@ -51,8 +48,32 @@ class PassageManager {
         $passage = new Passage();
 
         $passage->setEtablissement($etablissement);
-        $passage->setContrat($contrat);
 
+        foreach ($contrat->getPrestations() as $prestationContrat) {
+            $prestation = clone $prestationContrat;
+            $prestation->setNbPassages(0);
+            $passage->addPrestation($prestation);
+        }
+        $previousPassage = null;
+        foreach ($contrat->getPassagesEtablissementNode($etablissement)->getPassagesSorted(true) as $p) {           
+            if (($p->getId() != $passage->getId()) && count($p->getTechniciens())) {
+                $previousPassage = $p;
+                break;
+            }
+        }
+        if ($previousPassage) {
+            foreach ($previousPassage->getTechniciens() as $tech) {
+                $passage->addTechnicien($tech);
+            }
+        } elseif ($contrat->getTechnicien()) {
+            $passage->addTechnicien($contrat->getTechnicien());
+        }
+        foreach ($contrat->getProduits() as $produitContrat) {
+            $produit = clone $produitContrat;
+            $produit->setNbUtilisePassage(0);
+            $passage->addProduit($produit);
+        }
+        $passage->setContrat($contrat);
         return $passage;
     }
 
@@ -123,7 +144,7 @@ class PassageManager {
         $passagesArrayByNumeroArchive = $this->getPassagesByNumeroArchiveContrat($passage);
         foreach ($passagesArrayByNumeroArchive as $etbId => $passagesEtb) {
             foreach ($passagesEtb as $p) {
-                if($p->getId() == $passage->getId()){
+                if ($p->getId() == $passage->getId()) {
                     return $lastPassage;
                 }
                 $lastPassage = $p;
