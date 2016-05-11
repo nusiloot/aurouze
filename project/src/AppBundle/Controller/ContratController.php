@@ -161,8 +161,10 @@ class ContratController extends Controller {
      */
     public function visualisationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        $factures = $dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
 
-        return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat, 'societe' => $contrat->getSociete()));
+        return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat, 'factures' => $factures, 'societe' => $contrat->getSociete()));
     }
 
     /**
