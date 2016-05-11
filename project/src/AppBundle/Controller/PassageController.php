@@ -30,12 +30,12 @@ class PassageController extends Controller {
             'method' => 'GET',
         ));
 
-        $passages = $this->get('passage.manager')->getRepository()->findToPlan();
-        $moisPassagesArray = $this->get('passage.manager')->getRepository()->getNbPassagesToPlanPerMonth();
+        $passageManager = $this->get('passage.manager');
+        $passages = $passageManager->getRepository()->findToPlan();
+        $moisPassagesArray = $passageManager->getRepository()->getNbPassagesToPlanPerMonth();
         
         $geojson = $this->buildGeoJson($passages);
-
-        return $this->render('passage/index.html.twig', array('passages' => $passages, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson, 'moisPassagesArray' => $moisPassagesArray));
+        return $this->render('passage/index.html.twig', array('passages' => $passages, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson, 'moisPassagesArray' => $moisPassagesArray,'passageManager' => $passageManager));
     }
 
     /**
@@ -122,7 +122,7 @@ class PassageController extends Controller {
     public function editionAction(Request $request, Passage $passage) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $form = $this->createForm(new PassageType(), $passage, array(
+        $form = $this->createForm(new PassageType($dm), $passage, array(
             'action' => $this->generateUrl('passage_edition', array('id' => $passage->getId())),
             'method' => 'POST',
         ));

@@ -52,6 +52,11 @@ class Produit {
      * @MongoDB\Int
      */
     protected $nbUtilisePassage;
+    
+    /**
+     * @MongoDB\Int
+     */
+    protected $nbPremierPassage;
 
     /**
      * @MongoDB\String
@@ -243,4 +248,26 @@ class Produit {
         return $this->statut;
     }
 
+
+    /**
+     * Set nbPremierPassage
+     *
+     * @param int $nbPremierPassage
+     * @return self
+     */
+    public function setNbPremierPassage($nbPremierPassage)
+    {
+        $this->nbPremierPassage = $nbPremierPassage;
+        return $this;
+    }
+
+    /**
+     * Get nbPremierPassage
+     *
+     * @return int $nbPremierPassage
+     */
+    public function getNbPremierPassage()
+    {
+        return $this->nbPremierPassage;
+    }
 }

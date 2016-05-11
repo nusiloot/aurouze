@@ -142,6 +142,7 @@ class ContratManager implements MouvementManagerInterface {
         }
         $date_debut = clone $contrat->getDateDebut();
         $passagesArray = $contrat->getPrevisionnel($date_debut);
+        ksort($passagesArray);
         foreach ($contrat->getEtablissements() as $etablissement) {
             $cpt = 0;
             foreach ($passagesArray as $datePassage => $passageInfos) {

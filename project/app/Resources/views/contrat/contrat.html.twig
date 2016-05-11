@@ -50,7 +50,8 @@
         <thead>
             <tr>
                 <th class="col-xs-2 text-center">  <strong>Nombre prévu</strong></th>
-                <th class="col-xs-6">Nom produit</th>
+                <th class="col-xs-2 text-center">  <strong>Nb premier passage</strong></th>
+                <th class="col-xs-4">Nom produit</th>
                 <th class="col-xs-2"><span class="text-muted">Prix d'achat</span></th>
                 <th class="col-xs-2"><span class="text-muted">Prix de vente prestation</span></th>
             </tr>
@@ -59,7 +60,8 @@
             {% for produit in contrat.produits %}
                 <tr>
                     <td class="col-xs-2 text-right">  <strong>{{ produit.nbTotalContrat }}</strong></td>
-                    <td class="col-xs-6">{{ produit.nom }} {% if(produit.conditionnement) %}<small class="text-muted">({{ produit.conditionnement }})</small>{% endif %}</td>
+                    <td class="col-xs-2 text-right">  <strong>{{ produit.nbPremierPassage }}</strong></td>
+                    <td class="col-xs-4">{{ produit.nom }} {% if(produit.conditionnement) %}<small class="text-muted">({{ produit.conditionnement }})</small>{% endif %}</td>
                     <td class="col-xs-2">  <span class="text-muted">{{ produit.prixHt }}&nbsp;€&nbsp;HT</span></td>
                     <td class="col-xs-2">  <span class="text-muted">{{ produit.prixPrestation }}&nbsp;€&nbsp;HT</span></td>
                 </tr>

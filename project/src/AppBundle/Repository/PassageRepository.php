@@ -156,4 +156,17 @@ class PassageRepository extends DocumentRepository {
              ->getQuery()->execute()->count();
     }
 
+    public function findAllNettoyages() {
+    	$request = $this->createQueryBuilder()
+    	->distinct('nettoyages')
+    	->hydrate(false)
+    	->getQuery()
+    	->execute();
+    	return $request->toArray();
+    }
+    
+    public function findAllApplications() {
+    	return PassageManager::$applications;
+    }
+
 }

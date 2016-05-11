@@ -443,7 +443,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getDuree() {
         return $this->duree;
     }
-
+    
     /**
      * Set dureeGarantie
      *
@@ -518,6 +518,14 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getDureePassage() {
         return $this->dureePassage;
+    }
+    
+    public function getDureePassageFormat()
+    {
+    	$minute = $this->getDureePassage();
+    	$heure = intval(abs($minute / 60));
+    	$minute = $minute - ($heure * 60);
+    	return sprintf("%02dh%02d", $heure, $minute);
     }
 
     /**
@@ -741,6 +749,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             }
             $cpt++;
         }
+        krsort($passagesDatesArray);
         return $passagesDatesArray;
     }
 

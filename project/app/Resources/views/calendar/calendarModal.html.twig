@@ -20,21 +20,22 @@
  </div>
  <div class="row" style="margin-top: 20px;">
  	<div class="col-xs-6">
-        <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ passage.dateDebut | localizeddate('full', 'none') }} <strong>{{ passage.dateDebut | localizeddate('none', 'short') }}</strong></span>
+        <span><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ passage.dateDebut | localizeddate('full', 'none') }} <strong>{{ passage.dateDebut | localizeddate('none', 'short') }}</strong></span><br />
+        {% for tech in passage.techniciens %}
+        <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ tech.identite }}
+        {% endfor %}
     </div>
     <div class="col-xs-6 text-right">
+        {{ passage.etablissementInfos.adresse.adresse }} {{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}<br />
         <span>{{ passage.libelle }}</span>
     </div>
  </div>
   <div class="row">
  	<div class="col-xs-6">
         {% if(passage.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ passage.duree }}</span>{% endif %}
+
     </div>
     <div class="col-xs-6 text-right">
-    	{% for tech in passage.techniciens %}
-        <i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ tech.identite }}
-        {% endfor %}
-        <br />
         {% for prestation in passage.prestations %}
             {% if(prestation.wordToPicto) %}
                 &nbsp;<span class="step size-18" title="{{  prestation.nomToString }}" data-toggle="tooltip" >

@@ -2,20 +2,21 @@
 {% set techColor = "" %}
 {% set techBgColor = "" %}
 {% set techIdentite = "" %}
-
+{% set dptKeyWord = (passage.etablissementInfos.adresse.codePostal | slice(0, 2))? "departement "~passage.etablissementInfos.adresse.codePostal | slice(0, 2) : "" %}
 {% if(passage.techniciens | length == 0) %}
-    {% set words = ["sans technicien", passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom]|json_encode() %}
+    {% set words = [dptKeyWord, "sans technicien", passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom]|json_encode() %}
     {% set techColor = 'white' %}
     {% set techBgColor = 'black' %}
     {% set techIdentite = "sans technicien" %}
     {% set urlPlanif = path('calendarManuel') %}
 {% else %}
-    {% set words = [passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom]|json_encode() %}
+    {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom]|json_encode() %}
     {% set techColor = passage.techniciens[0].couleurText %}
     {% set techBgColor = passage.techniciens[0].couleur %}
     {% set techIdentite = passage.techniciens[0].identite %}
     {% set urlPlanif = path('calendar', {'passage' : passage.id,'technicien' : passage.techniciens[0].id, 'calendrier' : passage.datedebut|date('d-m-Y')}) %}
 {% endif %}
+{% set passagePec = passageManager.passagePrecedent(passage) %}
 <a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
     <div class="row">
         <div class="col-sm-12">
@@ -37,29 +38,32 @@
                 </div>
             </div>
         </div>
-        {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
-            <div class="col-sm-12">
+        <div class="col-sm-12">
+            {% if passage.etablissement.telephoneFixe or passage.etablissement.telephonePortable %}
                 <i class="mdi mdi-call mdi-lg"></i>
-                <small>{{ passage.etablissementInfos.telephoneFixe }}</small>
-                {% if passage.etablissementInfos.telephoneFixe and passage.etablissementInfos.telephonePortable %}
+                <small>{{ passage.etablissement.telephoneFixe }}</small>
+                {% if passage.etablissement.telephoneFixe and passage.etablissement.telephonePortable %}
                     /
                 {% endif %}
-                <small>{{ passage.etablissementInfos.telephonePortable }}</small>
-            </div>
-        {% endif %}
+                <small>{{ passage.etablissement.telephonePortable }}</small>
+            {% endif %}
+        </div>
     </div>
     <div class="row" style="margin-top:10px;">
-        <div class="col-sm-5 text-left">
+        <div class="col-sm-3 text-left">
             <span class="label" style="background-color: {{ techBgColor }};color: {{ techColor }};"><small>{{ techIdentite }}</small></span>
         </div>
-        <div class="col-sm-2 text-center">
-            <i class="mdi mdi-schedule mdi-lg"></i>
-            <small>01h</small>
+        <div class="col-sm-6 text-center">
+            {% if(passagePec and passagePec.duree) %}
+                <small>Préc.&nbsp;à&nbsp;{{passagePec.dateDebut | date("H") }}h{{passagePec.dateDebut | date("i") }}</small>
+                <i class="mdi mdi-schedule mdi-lg"></i>
+                <small>{{ passagePec.duree }}</small>
+            {% endif %}
         </div>
-        <div class="col-sm-5 text-right">
+        <div class="col-sm-3 text-right">
             <div data-url="{{ urlPlanif }}" class="btn btn-link calendar_lien" >
                 <i class="mdi mdi-date-range mdi-lg"></i>
-                <small>{{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</small>
+                {{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
             </div>
         </div>
     </div>

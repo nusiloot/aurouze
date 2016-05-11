@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-class ProduitType extends AbstractType {
+class ProduitPassageType extends AbstractType {
 	
 	protected $dm;
 	
@@ -27,8 +27,7 @@ class ProduitType extends AbstractType {
 	{
 		$builder
 		->add('identifiant', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getProduits()), "attr" => array("class" => "form-control select2 select2-simple","placeholder" => 'Choisir un produit')))
-		->add('nbTotalContrat', TextType::class, array('label' => ' ', "attr" => array("class" => "text-right")))
-                ->add('nbPremierPassage', TextType::class, array('label' => ' ', "attr" => array("class" => "text-right")))
+		->add('nbUtilisePassage', TextType::class, array('label' => ' ', "attr" => array("class" => "text-right")))
 		;
 	}
 	

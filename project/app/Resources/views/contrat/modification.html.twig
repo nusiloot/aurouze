@@ -19,11 +19,14 @@
 
 {% block _contrat_produits_entry_row %}
     <div class="row form-group dynamic-collection-item">
-        <div class="col-xs-7">
+        <div class="col-xs-5">
             {{ form_widget(form.identifiant) }}
         </div>
         <div class="col-xs-2 text-right">
             {{ form_widget(form.nbTotalContrat) }}
+        </div>
+        <div class="col-xs-2 text-right">
+            {{ form_widget(form.nbPremierPassage) }}
         </div>
         <div class="col-xs-1 text-right">
             <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
@@ -117,11 +120,14 @@
             <div class="panel-heading"><strong>Produits</strong></div>
             <div class="panel-body col-xs-offset-2">
                 <div class="row">
-                    <div class="col-xs-7">
+                    <div class="col-xs-5">
                         <label class="control-label">Produit :</label>
                     </div>
                     <div class="col-xs-2 text-center">
-                        <label class="control-label">Quantité :</label>
+                        <label class="control-label">Qté total :</label>
+                    </div>
+                    <div class="col-xs-2 text-center">
+                        <label class="control-label">Qté 1er passage :</label>
                     </div>
                 </div>
                 {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}

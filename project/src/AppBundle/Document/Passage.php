@@ -136,6 +136,16 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $typePassage;
 
+    /**
+     *  @MongoDB\Collection
+     */
+    protected $nettoyages;
+
+    /**
+     *  @MongoDB\Collection
+     */
+    protected $applications;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
@@ -143,6 +153,8 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         $this->produits = new ArrayCollection();
         $this->mouvement_declenchable = false;
         $this->mouvement_declenche = false;
+        $this->nettoyages = array();
+        $this->applications = array();
     }
 
     public function getNbProduitsContrat($identifiant) {
@@ -839,4 +851,47 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return false;
     }
 
+    /**
+     * Set nettoyages
+     *
+     * @param collection $nettoyages
+     * @return self
+     */
+    public function setNettoyages($nettoyages)
+    {
+        $this->nettoyages = $nettoyages;
+        return $this;
+    }
+
+    /**
+     * Get nettoyages
+     *
+     * @return collection $nettoyages
+     */
+    public function getNettoyages()
+    {
+        return $this->nettoyages;
+    }
+
+    /**
+     * Set applications
+     *
+     * @param collection $applications
+     * @return self
+     */
+    public function setApplications($applications)
+    {
+        $this->applications = $applications;
+        return $this;
+    }
+
+    /**
+     * Get applications
+     *
+     * @return collection $applications
+     */
+    public function getApplications()
+    {
+        return $this->applications;
+    }
 }
