@@ -20,9 +20,9 @@
         <tbody>
         {% for mouvement in mouvements %}
             <tr>
-                <td>{{ mouvement.origineDocument.id }}</td>
+                <td>{{ mouvement.document.id }}</td>
                 <td>{{ mouvement.libelle }}</td>
-                <td class="text-right">{{ mouvement.prix }} €</td>
+                <td class="text-right">{{ mouvement.prixUnitaire }} €</td>
             </tr>
         {% endfor %}
         </tbody>

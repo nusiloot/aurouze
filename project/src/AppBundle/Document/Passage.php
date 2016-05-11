@@ -258,11 +258,10 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
                 return;
             }
             if (boolval($this->getDateRealise())) {
-                $this->setStatut(PassageManager::STATUT_REALISE);                
+                $this->setStatut(PassageManager::STATUT_REALISE);
             }
         }
     }
-
 
     public function getIntitule() {
 
@@ -857,8 +856,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @param collection $nettoyages
      * @return self
      */
-    public function setNettoyages($nettoyages)
-    {
+    public function setNettoyages($nettoyages) {
         $this->nettoyages = $nettoyages;
         return $this;
     }
@@ -868,8 +866,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      *
      * @return collection $nettoyages
      */
-    public function getNettoyages()
-    {
+    public function getNettoyages() {
         return $this->nettoyages;
     }
 
@@ -879,8 +876,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @param collection $applications
      * @return self
      */
-    public function setApplications($applications)
-    {
+    public function setApplications($applications) {
         $this->applications = $applications;
         return $this;
     }
@@ -890,8 +886,27 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      *
      * @return collection $applications
      */
-    public function getApplications()
-    {
+    public function getApplications() {
         return $this->applications;
     }
+
+    public function getPrevious() {
+
+        $passagesEtablissement = $this->getContrat()->getPassagesEtablissementNode($this->getEtablissement());
+        $previousPassage = null;
+        $founded = false;
+        foreach ($passagesEtablissement->getPassagesSorted() as $key => $passageEtb) {
+            if ($founded) {
+                return $previousPassage;
+            }
+
+            if ($this->getId() == $passageEtb->getId()) {
+                $founded = true;
+            } else {
+                $previousPassage = $passageEtb;
+            }
+        }
+        return null;
+    }
+
 }
