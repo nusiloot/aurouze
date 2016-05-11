@@ -57,10 +57,7 @@
                         <li class="{%if (_menu_active == 'passage') %}active{% endif %}">
                             <a href="{% if(app.request.get('etablissement') and _menu_active != 'passage') %}{{ path('passage_etablissement', { id: app.request.get('etablissement').id }) }}{% else %}{{ path('passage') }}{% endif %}">Passages / Planification</a>
                         </li>
-
-
                         <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}">Factures</a></li>
-
                     </ul>
                     <ul class="nav navbar-nav pull-right">
                         <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}"><span class="glyphicon glyphicon-calendar"></span> Calendrier</a></li>
