@@ -124,6 +124,23 @@ class Facture implements DocumentSocieteInterface {
         }
     }
 
+    public function isPaye() {
+
+        return false;
+    }
+
+    public function getOrigines() {
+        $origines = array();
+        foreach($this->getLignes() as $ligne) {
+            if(!$ligne->getOrigineDocument()) {
+                continue;
+            }
+            $origines[$ligne->getOrigineDocument()->getId()] = $ligne->getOrigineDocument();
+        }
+
+        return $origines;
+    }
+
     /**
      * Add ligne
      *
