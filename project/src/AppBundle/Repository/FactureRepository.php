@@ -12,4 +12,11 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
  */
 class FactureRepository extends DocumentRepository
 {
+	public function findAllByContrat($contrat) {
+	
+		return $this->createQueryBuilder()
+             ->field('lignes.origineDocument.$id')->equals($contrat->getId())
+             ->getQuery()
+             ->execute();
+	}
 }
