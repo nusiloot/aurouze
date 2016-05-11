@@ -127,6 +127,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $mouvement_declenche;
 
     /**
+     * @MongoDB\Boolean
+     */
+    protected $imprime;
+
+    /**
      * @MongoDB\String
      */
     protected $identifiantReprise;
@@ -155,6 +160,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         $this->mouvement_declenche = false;
         $this->nettoyages = array();
         $this->applications = array();
+        $this->imprime = false;
     }
 
     public function getNbProduitsContrat($identifiant) {
@@ -349,6 +355,9 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return self
      */
     public function setDateDebut($dateDebut) {
+        if ($this->dateDebut && $dateDebut != $this->dateDebut) {
+            $this->setImprime(false);
+        }
         $this->dateDebut = $dateDebut;
         return $this;
     }
@@ -369,6 +378,9 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return self
      */
     public function setDateFin($dateFin) {
+        if ($this->dateFin && $dateFin != $this->dateFin) {
+            $this->setImprime(false);
+        }
         $this->dateFin = $dateFin;
         return $this;
     }
@@ -627,6 +639,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
                 return;
             }
         }
+        $this->setImprime(false);
         $this->techniciens[] = $technicien;
     }
 
@@ -650,6 +663,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
     public function removeAllTechniciens() {
         $this->techniciens = new ArrayCollection();
+        $this->setImprime(false);
     }
 
     /**
@@ -907,6 +921,30 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
             }
         }
         return null;
+    }
+
+    public function isImprime() {
+        return $this->getImprime();
+    }
+    
+    /**
+     * Set imprime
+     *
+     * @param boolean $imprime
+     * @return self
+     */
+    public function setImprime($imprime) {
+        $this->imprime = $imprime;
+        return $this;
+    }
+
+    /**
+     * Get imprime
+     *
+     * @return boolean $imprime
+     */
+    public function getImprime() {
+        return $this->imprime;
     }
 
 }
