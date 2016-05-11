@@ -52,7 +52,7 @@ class Produit {
      * @MongoDB\Float
      */
     protected $nbUtilisePassage;
-    
+
     /**
      * @MongoDB\Float
      */
@@ -71,7 +71,7 @@ class Produit {
      */
     public function setNom($nom) {
         $this->nom = $nom;
-        
+
         return $this;
     }
 
@@ -207,6 +207,10 @@ class Produit {
      * @return int $nbUtilisePassage
      */
     public function getNbUtilisePassage() {
+        if($this->nbUtilisePassage === 0) {
+
+            return null;
+        }
         return $this->nbUtilisePassage;
     }
 
