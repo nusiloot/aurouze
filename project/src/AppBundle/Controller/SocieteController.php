@@ -78,7 +78,6 @@ class SocieteController extends Controller {
     		if ($isNew && $form->get("generer")->getData()) {
     			 $etablissement = new Etablissement();
     			 $etablissement->setSociete($societe);
-    			 $etablissement->setRaisonSociale($societe->getRaisonSociale());
     			 $etablissement->setNom($societe->getRaisonSociale());
     			 $etablissement->setType($societe->getType());
     			 $dm->persist($etablissement);
