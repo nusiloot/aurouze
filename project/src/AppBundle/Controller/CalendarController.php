@@ -198,9 +198,9 @@ class CalendarController extends Controller {
             if (!$passageTech->getDateFin()) {
                 continue;
             }
-            $title = $passageTech->getEtablissementInfos()->getNom() . " ". $passageTech->getEtablissementInfos()->getAdresse()->getCommune()." (" . $passageTech->getEtablissementInfos()->getAdresse()->getCodePostal() . ") ";
+            $title = $passageTech->getIntitule();
             if($passageTech->isImprime()){
-                $title.= "*";
+                $title.= ' *';
             }
             $passageArr = array('id' => $passageTech->getId(),
                 'title' => $title,
@@ -233,6 +233,7 @@ class CalendarController extends Controller {
             'method' => 'POST',
             'attr' => array('id' => 'eventForm')
         ));
+        
         if (!$passage->isRealise()) {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {

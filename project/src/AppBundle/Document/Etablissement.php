@@ -220,6 +220,9 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @return string $nom
      */
     public function getNom() {
+        if(trim($this->getSociete()->getRaisonSociale()) != trim($this->nom)){
+            return $this->getSociete()->getRaisonSociale().' - '.$this->nom;
+        }
         return $this->nom;
     }
 
