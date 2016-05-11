@@ -1,8 +1,9 @@
 {% set _menu_active = 'contrat' %}
 {% extends 'base.html.twig' %}
+{% block title %}Contrats{% endblock title %}
 {% block body %}
     <ol class="breadcrumb">
-        <li><a href="{{ path('contrat') }}">Contrat</a></li>    
-    </ol> 
+        <li><a href="{{ path('contrat') }}">Contrat</a></li>
+    </ol>
     {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
 {% endblock %}

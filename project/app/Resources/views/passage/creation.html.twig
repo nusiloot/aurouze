@@ -1,6 +1,8 @@
 {% set _menu_active = 'etablissement' %}
 {% extends 'base.html.twig' %}
 
+{% block title %}Création passage {{ passage.etablissement.nom }}{% endblock title %}
+
 {% block body %}
     <div class="row">
         <div class="col-xs-12">
