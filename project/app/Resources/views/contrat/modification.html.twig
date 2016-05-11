@@ -3,6 +3,8 @@
 
 {% form_theme form _self %}
 
+{% block title %}{% if (contrat.id ) %}Contrat n°{{ contrat.numeroArchive }}{% else %}Création Contrat{% endif %} {{ societe.raisonSociale }}{% endblock title %}
+
 {% block _contrat_prestations_entry_row %}
     <div class="row form-group dynamic-collection-item">
         <div class="col-xs-7">

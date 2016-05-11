@@ -1,5 +1,6 @@
 {% set _menu_active = 'passage' %}
 {% extends 'base.html.twig' %}
+{% block title %}Passages {{ etablissement.nom }}{% endblock title %}
 {% block body %}
 <ol class="breadcrumb">
             <li><a href="{{ path('passage') }}">Passage</a></li>
@@ -116,6 +117,6 @@
     </div>
     <a href="{{ path('contrat_creation_etablissement', {'id': etablissement.getId()}) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</a>
     <a href="{{ path('passage_creation_rapide', {'id': etablissement.getId()}) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer une intervention rapide</a>
-    
+
 
 {% endblock %}
