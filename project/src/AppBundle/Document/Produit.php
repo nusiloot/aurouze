@@ -54,7 +54,7 @@ class Produit {
     protected $nbUtilisePassage;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Float
      */
     protected $nbPremierPassage;
 
@@ -235,7 +235,6 @@ class Produit {
     }
 
 
-  
 
     /**
      * Set nbTotalContrat
@@ -259,10 +258,12 @@ class Produit {
         return $this->nbTotalContrat;
     }
 
+   
+
     /**
      * Set nbPremierPassage
      *
-     * @param int $nbPremierPassage
+     * @param float $nbPremierPassage
      * @return self
      */
     public function setNbPremierPassage($nbPremierPassage)
@@ -274,7 +275,7 @@ class Produit {
     /**
      * Get nbPremierPassage
      *
-     * @return int $nbPremierPassage
+     * @return float $nbPremierPassage
      */
     public function getNbPremierPassage()
     {
