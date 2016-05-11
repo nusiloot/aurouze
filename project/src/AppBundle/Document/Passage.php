@@ -12,6 +12,7 @@ use AppBundle\Model\DocumentEtablissementInterface;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
+use AppBundle\Document\RendezVous;
 use AppBundle\Manager\ContratManager;
 
 /**

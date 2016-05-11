@@ -45,4 +45,9 @@ class RendezVousManager {
         }
     }
 
+    public function getRepository() {
+
+        return $this->dm->getRepository('AppBundle:RendezVous');
+    }
+
 }

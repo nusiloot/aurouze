@@ -181,27 +181,23 @@ class CalendarController extends Controller {
     public function calendarPopulateAction(Request $request) {
 
         if (!$request->isXmlHttpRequest()) {
-            throw $this->createNotFoundException();
+            //throw $this->createNotFoundException();
         }
         $dm = $this->get('doctrine_mongodb')->getManager();
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
         $periodeStart = $request->get('start');
         $periodeEnd = $request->get('end');
-        $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllPlanifieByPeriodeAndIdentifiantTechnicien($periodeStart, $periodeEnd, $technicien);
+        $rdvs = $dm->getRepository('AppBundle:RendezVous')->findByDateAndParticipant($periodeStart, $periodeEnd, $technicien);
 
-        $passagesCalendar = array();
+        $calendarData = array();
 
-        foreach ($passagesTech as $passageTech) {
-            if (!$passageTech->getDateFin()) {
-                continue;
-            }
-            $passageArr = array('id' => $passageTech->getId(),
-                'title' => $passageTech->getEtablissementInfos()->getNom() . " (" . $passageTech->getEtablissementInfos()->getAdresse()->getCodePostal() . ")",
-                'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
-                'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
+        foreach ($rdvs as $rdv) {
+            $calendarData[] = array('id' => $rdv->getId(),
+                'title' => $rdv->getTitle(),
+                'start' => $rdv->getDateDebut()->format('Y-m-d\TH:i:s'),
+                'end' => $rdv->getDateFin()->format('Y-m-d\TH:i:s'),
                 'backgroundColor' => $technicien->getCouleur(),
                 'textColor' => "black");
-            $passagesCalendar[] = $passageArr;
         }
         $response = new Response(json_encode($passagesCalendar));
         $response->headers->set('Content-Type', 'application/json');
