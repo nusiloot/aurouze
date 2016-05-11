@@ -95,6 +95,11 @@ class Adresse {
         return $this->adresse;
     }
 
+    public function getAdresseFormatee()
+    {
+        return str_replace(", ", "\n", $this->getAdresse());
+    }
+
     /**
      * Set codePostal
      *

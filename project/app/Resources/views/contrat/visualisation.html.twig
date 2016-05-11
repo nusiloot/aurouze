@@ -15,14 +15,13 @@
                 <div class="col-xs-4 text-right" style="padding-top: 30px; ">
                     {%  if (contrat.isEnAttenteAcceptation()) %}
                         <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-warning"><i class="mdi mdi-check-circle"></i>&nbsp;Accepter le contrat</a>
-                    {% else %}
-                    
+                    {% else %}                    
                         <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
                     {% endif %}
                 </div>
             {% else %}
                 <div class="col-xs-4 text-right" style="padding-top: 30px; ">
-                    <a href="{{ path('passage_etablissement', {'id': contrat.getEtablissements().first().getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Retour aux passages</a>
+                      <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-warning">Modification partielle</a>
                 </div>
             {% endif %}
         </div>
