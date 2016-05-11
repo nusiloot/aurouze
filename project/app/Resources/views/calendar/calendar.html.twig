@@ -35,11 +35,11 @@
 
     <div class="row">
         <div class="col-sm-4">
-            <div class="btn-group">
-                <a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                <a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0;" class="btn btn-link">{{ calendarTool.getLibelle() }}</a>
-                <a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
+        	<div class="btn-group">
+                <div class="col-sm-2 text-center"><a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a></div>
+                <div class="col-sm-8 text-center"><a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0; width: " class="btn btn-link">{{ calendarTool.getLibelle() }}</a></div>
+                <div class="col-sm-2 text-center"><a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a></div>
+             </div>
         </div>
         <div class="col-sm-4 text-center">
             {% if passage and not passage.dateFin %}
