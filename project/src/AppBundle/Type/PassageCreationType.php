@@ -51,8 +51,8 @@ class PassageCreationType extends AbstractType
 				'widget' => 'single_text',
 				'format' => 'dd/MM/yyyy'
 			))
-			->add('timeDebut', TextType::class, array('label' => 'Heure debut', 'attr' => array('class' => 'input-timepicker')))
-			->add('timeFin', TextType::class, array('label' => 'Heure fin', 'attr' => array('class' => 'input-timepicker')))
+			->add('timeDebut', TextType::class, array('label' => 'Heure debut', 'attr' => array('class' => 'input-timepicker', 'data-default' => '12:00')))
+			->add('timeFin', TextType::class, array('label' => 'Heure fin', 'attr' => array('class' => 'input-timepicker', 'data-default' => '12:00')))
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success"), ));
         ;
 

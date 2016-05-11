@@ -29,7 +29,7 @@
             window.location.href = url;
         });
     };
-    
+
     $.initSearchActif = function () {
         $('form input[type="checkbox"][data-search-actif="1"]').each(function () {
 
@@ -104,12 +104,16 @@
     }
 
     $.initTimePicker = function () {
-        $('.input-timepicker').timepicker({
-            format: 'HH:ii p',
-            autoclose: true,
-            showMeridian: false,
-            startView: 1,
-            maxView: 1, defaultTime: '01:00'
+        $('.input-timepicker').each(function () {
+           var defaultTiming = ($(this).attr('data-default'))? $(this).attr('data-default') : '01:00';
+            $(this).timepicker({
+                format: 'HH:ii p',
+                autoclose: true,
+                showMeridian: false,
+                startView: 1,
+                maxView: 1,
+                defaultTime: ""+defaultTiming
+            });
         });
     }
 
