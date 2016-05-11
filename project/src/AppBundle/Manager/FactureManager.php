@@ -60,6 +60,7 @@ class FactureManager {
         }
 
         $facture->update();
+        $facture->facturerMouvements();
 
         return $facture;
     }
