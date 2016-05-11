@@ -23,6 +23,11 @@
         <li><a href="{{ path('passage_edition',{ 'id' : passage.id }) }}">&nbsp;<small>{{ passage.dateDebut | localizeddate('full', 'none') | capitalize }}</small></a></li>
     </ol>
     <h1>Rapport de passage</h1>
+    {% if passage.mouvementDeclenche %}
+    <p class="bg-success" style="padding: 15px;"><span class="glyphicon glyphicon-exclamation-sign"></span> Un mouvement de facture a été déclenché pour ce passage.</p>
+    {% elseif passage.mouvementDeclenchable %}
+    <p class="bg-warning" style="padding: 15px;"><span class="glyphicon glyphicon-exclamation-sign"></span> La saisie de ce rapport de passage entraine le déclenchement d'un mouvement de facture.</p>
+    {% endif %}
     {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
     
     <div class="panel panel-default">

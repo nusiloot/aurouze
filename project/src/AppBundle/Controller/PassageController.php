@@ -143,12 +143,22 @@ class PassageController extends Controller {
 
             $dm->persist($nextPassage);
         }
+        
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        
+
+
+        if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
+        	if ($contrat->generateMouvement($passage)) {
+        		$passage->setMouvementDeclenche(true);
+        	}
+        }
+        
         $passage->setDateRealise($passage->getDateDebut());
         $dm->persist($passage);
         $dm->flush();
 
         $contratIsFini = true;
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
         foreach ($passage->getContrat()->getContratPassages() as $contratPassages) {
             foreach ($contratPassages->getPassages() as $passage) {
                 if (!$passage->isAnnule() && !$passage->isRealise()) {
@@ -160,6 +170,7 @@ class PassageController extends Controller {
         if ($contratIsFini) {
             $contrat->setStatut(ContratManager::STATUT_FINI);
         }
+        
         $dm->persist($contrat);
         $dm->flush();
 

@@ -443,7 +443,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getDuree() {
         return $this->duree;
     }
-    
+
     /**
      * Set dureeGarantie
      *
@@ -519,7 +519,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getDureePassage() {
         return $this->dureePassage;
     }
-    
+
     public function getDureePassageFormat()
     {
     	$minute = $this->getDureePassage();
@@ -648,21 +648,31 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getNbFacturesRestantes() {
-
-        return 1;
+        return $this->getNbFactures() - count($this->getMouvements());
     }
 
-    public function generateMouvement() {
+    public function generateMouvement($origineDocumentGeneration = null) {
         if ($this->getPrixRestant() <= 0 || $this->getNbFacturesRestantes() <= 0) {
-            return;
+            return null;
         }
         $mouvement = new Mouvement();
-        $mouvement->setPrix(round($this->getPrixRestant() / $this->getNbFacturesRestantes(), 2));
+        $mouvement->setIdentifiant(uniqid());
+        $mouvement->setPrixUnitaire(round($this->getPrixRestant() / $this->getNbFacturesRestantes(), 2));
+        $mouvement->setQuantite(1);
+        $mouvement->setTauxTaxe($this->getTva());
         $mouvement->setFacturable(true);
         $mouvement->setFacture(false);
-        $mouvement->setLibelle(sprintf("Facture %s/%s - Proposition n° %s du %s au %s", 1, 2, "0000000000", $this->getDateDebut()->format('m/Y'), $this->getDateFin()->format('m/Y')));
+        $mouvement->setSociete($this->getSociete());
+        $mouvement->setLibelle(sprintf("Facture %s/%s - Proposition n° %s du %s au %s", count($this->getMouvements()) + 1, $this->getNbFactures(), $this->getNumeroArchive(), $this->getDateDebut()->format('m/Y'), $this->getDateFin()->format('m/Y')));
+
+        $mouvement->setDocument($this);
+        if($origineDocumentGeneration) {
+            $mouvement->setOrigineDocumentGeneration($origineDocumentGeneration);
+        }
 
         $this->addMouvement($mouvement);
+
+        return $mouvement;
     }
 
     public function getPrevisionnel($dateDebut = null) {
@@ -764,7 +774,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return ContratManager::$statuts_libelles[$this->getStatut()];
     }
-    
+
     public function getStatutLibelleLong() {
         return ContratManager::$statuts_libelles_long[$this->getStatut()];
     }
@@ -782,7 +792,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return $contratPassages[$etablissement->getId()];
     }
-    
+
     public static function cmpContrat($a, $b)
     {
     	$statutsPositions = ContratManager::$statuts_positions;
