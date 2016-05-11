@@ -191,7 +191,6 @@ class ContratManager implements MouvementManagerInterface {
 
         foreach ($contrats as $contrat) {
             foreach ($contrat->getMouvements() as $mouvement) {
-                $mouvement->setOrigineDocument($contrat);
                 $mouvements[] = $mouvement;
             }
         }

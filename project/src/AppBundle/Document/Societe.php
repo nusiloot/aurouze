@@ -4,9 +4,12 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\EtablissementManager;
+use Doctrine\Bundle\MongoDBBundle\Validator\Constraints as AssertMongo;
+use Symfony\Component\Validator\Constraints as AssertDoctrine;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\SocieteRepository")
+ * @AssertMongo\Unique(fields="codeComptable", errorPath="codeComptable", ignoreNull=true, message="Le code comptable existe déjà")   
  */
 class Societe {
 

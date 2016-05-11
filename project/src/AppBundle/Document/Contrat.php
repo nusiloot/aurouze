@@ -158,7 +158,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $prixHt;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Mouvement", strategy="set")
+     * @MongoDB\EmbedMany(targetDocument="Mouvement")
      */
     protected $mouvements;
 
@@ -648,8 +648,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getNbFacturesRestantes() {
-
-        return 1;
+        return $this->getNbFactures() - count($this->getMouvements());
     }
 
     public function generateMouvement($origineDocumentGeneration = null) {
@@ -657,7 +656,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             return null;
         }
         $mouvement = new Mouvement();
-        $mouvment->setIdentifiant(uniqid());
+        $mouvement->setIdentifiant(uniqid());
         $mouvement->setPrixUnitaire(round($this->getPrixRestant() / $this->getNbFacturesRestantes(), 2));
         $mouvement->setQuantite(1);
         $mouvement->setTauxTaxe($this->getTva());
@@ -1231,7 +1230,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function addMouvement(\AppBundle\Document\Mouvement $mouvement)
     {
-        $this->mouvements[$mouvement->getIdentifiant()] = $mouvement;
+        $this->mouvements[] = $mouvement;
     }
 
     /**
