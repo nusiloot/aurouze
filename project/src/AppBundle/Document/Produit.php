@@ -44,12 +44,12 @@ class Produit {
     protected $conditionnement;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Float
      */
     protected $nbTotalContrat;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Float
      */
     protected $nbUtilisePassage;
     
@@ -188,25 +188,7 @@ class Produit {
         return $this->conditionnement;
     }
 
-    /**
-     * Set nbTotalContrat
-     *
-     * @param int $nbTotalContrat
-     * @return self
-     */
-    public function setNbTotalContrat($nbTotalContrat) {
-        $this->nbTotalContrat = $nbTotalContrat;
-        return $this;
-    }
-
-    /**
-     * Get nbTotalContrat
-     *
-     * @return int $nbTotalContrat
-     */
-    public function getNbTotalContrat() {
-        return $this->nbTotalContrat;
-    }
+   
 
     /**
      * Set nbUtilisePassage
@@ -248,6 +230,30 @@ class Produit {
         return $this->statut;
     }
 
+
+  
+
+    /**
+     * Set nbTotalContrat
+     *
+     * @param float $nbTotalContrat
+     * @return self
+     */
+    public function setNbTotalContrat($nbTotalContrat)
+    {
+        $this->nbTotalContrat = $nbTotalContrat;
+        return $this;
+    }
+
+    /**
+     * Get nbTotalContrat
+     *
+     * @return float $nbTotalContrat
+     */
+    public function getNbTotalContrat()
+    {
+        return $this->nbTotalContrat;
+    }
 
     /**
      * Set nbPremierPassage
