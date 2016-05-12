@@ -130,7 +130,7 @@ Sanction en cas de non respect des modalités ci-dessus :<br />
         </div>
         <div class="col-xs-6">
             <p>
-            Facture n° du {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY") }} <br />
+            Facture n° {{ facture.numeroFacture }} du {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY") }} <br />
             Client : {{ facture.destinataire.nom }} ({{ facture.destinataire.codeComptable }})
             </p>
         </div>
