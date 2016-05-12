@@ -13,6 +13,7 @@ use AppBundle\Document\RendezVous;
 use AppBundle\Document\CompteInfos;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\PassageCreationType;
+use AppBundle\Type\RendezVousType;
 
 class CalendarController extends Controller {
 
@@ -189,12 +190,7 @@ class CalendarController extends Controller {
         $calendarData = array();
 
         foreach ($rdvs as $rdv) {
-            $calendarData[] = array('id' => $rdv->getId(),
-                'title' => $rdv->getTitre(),
-                'start' => $rdv->getDateDebut()->format('Y-m-d\TH:i:s'),
-                'end' => $rdv->getDateFin()->format('Y-m-d\TH:i:s'),
-                'backgroundColor' => $technicien->getCouleur(),
-                'textColor' => "black");
+            $calendarData[] = $rdv->getEventJson($technicien->getCouleur());
         }
 
         $response = new Response(json_encode($calendarData));
@@ -204,23 +200,21 @@ class CalendarController extends Controller {
     }
 
     /**
-     * @Route("/calendar/read", name="calendarRead", options={"expose" = "true"})
+     * @Route("/calendar/read", name="calendarRead")
      */
     public function calendarReadAction(Request $request) {
-
-        if (!$request->isXmlHttpRequest()) {
-            throw $this->createNotFoundException();
-        }
-
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('id'));
         $technicien = $request->get('technicien');
+        $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
 
-        $form = $this->createForm(new PassageCreationType($dm), $passage, array(
-            'action' => $this->generateUrl('calendarRead', array('id' => $request->get('id'), 'technicien' => $request->get('technicien'))),
+        $form = $this->createForm(new RendezVousType($dm), $rdv, array(
+            'action' => "",
             'method' => 'POST',
             'attr' => array('id' => 'eventForm')
         ));
+
+        return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form));
+
 
         if (!$passage->isRealise()) {
             $form->handleRequest($request);

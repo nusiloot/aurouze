@@ -74,13 +74,11 @@ $(function () {
         ],
         eventClick: function (event) {
             console.log(event);
-            $.post(
-                    $('#calendrier').data('urlRead'), {
-                id: event.id,
-                light: 0
+            $.get(
+                $('#calendrier').data('urlRead'), {
+                id: event.id
             }, function (response) {
-                $('#modal-title').text(event.title);
-                $('#modal-body').html(response);
+                $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
                 $.callbackEventForm();
             }

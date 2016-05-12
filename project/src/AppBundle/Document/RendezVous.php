@@ -58,14 +58,57 @@ class RendezVous {
 
     public function getEventJson($backgroundColor) {
         $event = new \stdClass();
-        $event->title = $this->getTitre();
+        $event->id = $this->getId();
+        $event->title = $this->getTitre().$this->getPassage()->getStatut();
         $event->start = $this->getDateDebut()->format('c');
         $event->end = $this->getDateFin()->format('c');
-        $event->textColor = "black";
-        $event->backgroundColor = $backgroundColor;
-        $event->borderColor = "#ff0000";
+        $event->textColor = $this->getTextColor();
+        $event->backgroundColor =  $this->getStatusColor();
+        $event->borderColor = $this->getBorderColor();
 
         return $event;
+    }
+
+    public function getBorderColor() {
+        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+
+            return "#bce8f1";
+        }
+
+        if($this->getPassage() && $this->getPassage()->isRealise()) {
+
+            return "#d6e9c6";
+        }
+
+        return '#000';
+    }
+
+    public function getTextColor() {
+        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+
+            return "#31708f";
+        }
+
+        if($this->getPassage() && $this->getPassage()->isRealise()) {
+
+            return "#3c763d";
+        }
+
+        return '#000';
+    }
+
+    public function getStatusColor() {
+        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+
+            return "#d9edf7";
+        }
+
+        if($this->getPassage() && $this->getPassage()->isRealise()) {
+
+            return "#dff0d8";
+        }
+
+        return '#fff';
     }
 
     public function pushToPassage() {
