@@ -4,6 +4,8 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Model\DocumentSocieteInterface;
+use AppBundle\Manager\FactureManager;
+use AppBundle\Manager\ContratManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\FactureRepository")
@@ -526,5 +528,42 @@ class Facture implements DocumentSocieteInterface {
     		}
     	}
     	return $tva;
+    }
+    
+    public function getDateReglement() {
+    	$frequence = null;
+    	foreach ($this->getLignes() as $ligne) {
+    		if ($ligne->isOrigineContrat()) {
+	    		if (!$frequence) {
+	    			$frequence = $ligne->getOrigineDocument()->getFrequencePaiement();
+	    		}
+	    		if ($frequence != $ligne->getOrigineDocument()->getFrequencePaiement()) {
+	    			throw new \Exception("Fréquence de paiement différente dans les lignes de facture.");
+	    		}
+    		}
+    	}
+    	$date = $this->getDateFacturation();
+    	$date = ($date)? $date : $this->getDateEmission();
+    	$date = ($date)? $date : new \DateTime();
+    	switch ($frequence) {
+    		case ContratManager::FREQUENCE_30J : 
+    			$date->modify('+30 day');
+    			break;
+    		case ContratManager::FREQUENCE_30JMOIS : 
+    			$date->modify('+30 day')->modify('last day of');
+    			break;
+    		case ContratManager::FREQUENCE_45JMOIS : 
+    			$date->modify('+45 day')->modify('last day of');
+    			break;
+    		case ContratManager::FREQUENCE_60J : 
+    			$date->modify('+60 day');
+    			break;
+    		case ContratManager::FREQUENCE_60JMOIS : 
+    			$date->modify('+60 day')->modify('last day of');
+    			break;
+    		default:
+    			$date->modify('+'.FactureManager::DEFAUT_FREQUENCE_JOURS.' day');
+    	}
+    	return $date;
     }
 }

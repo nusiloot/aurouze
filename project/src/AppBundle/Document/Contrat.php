@@ -192,6 +192,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     protected $referenceClient;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $frequencePaiement;
+
     public function __construct() {
         $this->etablissements = new ArrayCollection();
         $this->prestations = new ArrayCollection();
@@ -1325,4 +1330,26 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->reconduit;
     }
 
+
+    /**
+     * Set frequencePaiement
+     *
+     * @param string $frequencePaiement
+     * @return self
+     */
+    public function setFrequencePaiement($frequencePaiement)
+    {
+        $this->frequencePaiement = $frequencePaiement;
+        return $this;
+    }
+
+    /**
+     * Get frequencePaiement
+     *
+     * @return string $frequencePaiement
+     */
+    public function getFrequencePaiement()
+    {
+        return $this->frequencePaiement;
+    }
 }
