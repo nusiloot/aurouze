@@ -25,6 +25,8 @@ class EtablissementManager {
     protected $dm;
     protected $osmAdresse;
 
+    const SECTEUR_PARIS = "PARIS";
+    const SECTEUR_SEINE_ET_MARNE = "SEINE_ET_MARNE";
     const TYPE_ETB_BOULANGERIE = "BOULANGERIE";
     const TYPE_ETB_RESTAURANT = "RESTAURANT";
     const TYPE_ETB_ADMINISTRATION = "ADMINISTRATION";
@@ -67,6 +69,14 @@ class EtablissementManager {
         self::TYPE_ETB_AUTRE => "place",
         self::TYPE_ETB_HOTEL => "local-hotel",
         self::TYPE_ETB_NON_SPECIFIE => "do-not-disturb");
+    public static $secteurs_departements = array(
+        self::SECTEUR_PARIS => array('75'),
+        self::SECTEUR_SEINE_ET_MARNE => array('77', '95', '89', '91', '45', '28')
+    );
+    public static $secteurs = array(
+        self::SECTEUR_PARIS => "Paris",
+        self::SECTEUR_SEINE_ET_MARNE => " Seine et Marne"
+    );
 
     function __construct(DocumentManager $dm, OSMAdresses $osmAdresse) {
         $this->dm = $dm;
@@ -90,6 +100,23 @@ class EtablissementManager {
 
     public function getOSMAdresse() {
         return $this->osmAdresse;
+    }
+
+    public function getAutreSecteurNom($secteur) {
+        return self::$secteurs[$this->getAutreSecteur($secteur)];
+    }
+
+    public function getAutreSecteur($secteur) {
+        $autreSecteur = null;
+        if ($secteur == EtablissementManager::SECTEUR_PARIS) {
+            $autreSecteur = EtablissementManager::SECTEUR_SEINE_ET_MARNE;
+        } elseif ($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE) {
+            $autreSecteur = EtablissementManager::SECTEUR_PARIS;
+        }
+        return $autreSecteur;
+    }
+    public function secteursNom($secteur) {
+        return self::$secteurs[$secteur];
     }
 
 }

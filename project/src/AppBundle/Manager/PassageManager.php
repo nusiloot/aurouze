@@ -94,9 +94,26 @@ class PassageManager {
             if ($founded) {
                 break;
             }
-            if ($key == $passage->getId()) {
+            if ($key == $passage->getId() && $passage->isSousContrat()) {
                 $founded = true;
             }
+        }
+        return $nextPassage;
+    }
+    
+    public function updateNextPassageAPlannifier($passage){
+        $nextPassage = $this->getNextPassageFromPassage($passage);
+        if ($nextPassage && $nextPassage->isEnAttente()) {
+            $nextPassage->setDateDebut($nextPassage->getDatePrevision());
+            $nextPassage->copyTechnicienFromPassage($passage);
+        }
+        return $nextPassage;
+    }
+    
+    public function updateNextPassageEnAttente($passage) {
+        $nextPassage = $this->getNextPassageFromPassage($passage);
+        if ($nextPassage && $nextPassage->isAPlanifie()) {
+            $nextPassage->setDateDebut(null);
         }
         return $nextPassage;
     }
