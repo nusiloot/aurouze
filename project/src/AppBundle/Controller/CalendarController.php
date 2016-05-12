@@ -197,8 +197,8 @@ class CalendarController extends Controller {
         foreach ($passagesTech as $passageTech) {
             if (!$passageTech->getDateFin()) {
                 continue;
-            }
-            $title = $passageTech->getIntitule();
+            }            
+            $title = $passageTech->getEtablissement()->getNom() . " ". $passageTech->getEtablissement()->getAdresse()->getCommune()." (" . $passageTech->getEtablissement()->getAdresse()->getCodePostal() . ") ";
             if($passageTech->isImprime()){
                 $title.= ' *';
             }
