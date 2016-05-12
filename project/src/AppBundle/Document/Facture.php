@@ -113,8 +113,8 @@ class Facture implements DocumentSocieteInterface {
 
         $destinataire->setNom($societe->getRaisonSociale());
         $destinataire->setAdresse($societe->getAdresse()->getAdresseFormatee());
-        $destinataire->setCodePostal($societe->getAdresse()->getAdresse());
-        $destinataire->setCommune($societe->getAdresse()->getAdresse());
+        $destinataire->setCodePostal($societe->getAdresse()->getCodePostal());
+        $destinataire->setCommune($societe->getAdresse()->getCommune());
         $destinataire->setCodeComptable($societe->getCodeComptable());
     }
 
@@ -513,5 +513,18 @@ class Facture implements DocumentSocieteInterface {
     public function getDateLimitePaiement()
     {
         return $this->dateLimitePaiement;
+    }
+    
+    public function getTva() {
+    	$tva = 0;
+    	foreach ($this->getLignes() as $ligne) {
+    		if (!$tva) {
+    			$tva = $ligne->getTauxTaxe();
+    		}
+    		if ($tva != $ligne->getTauxTaxe()) {
+    			throw new \Exception("TVA différente dans les lignes de facture.");
+    		}
+    	}
+    	return $tva;
     }
 }

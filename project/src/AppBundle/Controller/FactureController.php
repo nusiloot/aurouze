@@ -92,10 +92,12 @@ class FactureController extends Controller {
     public function societeGenerationAction(Request $request, Societe $societe) {
         $fm = $this->get('facture.manager');
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $date = new \DateTime($request->get('dateFacturation', date('d/m/Y')));
 
         $mouvements = $fm->getMouvementsBySociete($societe);
 
         $facture = $fm->create($societe, $mouvements, new \DateTime());
+        $facture->setDateFacturation($date);
         $dm->persist($facture);
         $dm->flush();
 
@@ -124,7 +126,7 @@ class FactureController extends Controller {
                 200,
                 array(
                     'Content-Type'          => 'application/pdf',
-                    'Content-Disposition'   => 'attachment; filename="file.pdf"'
+    					'Content-Disposition'   => 'attachment; filename="facture-'.$facture->getNumeroFacture().'.pdf"'
                 )
         );
     }

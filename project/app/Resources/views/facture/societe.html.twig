@@ -9,7 +9,22 @@
 
 
 
-    <h3>Mouvements à facturer <a {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} class="pull-right btn btn-primary" href="{{ path('facture_societe_generation', { 'id': societe.id })}}">Facturer</a></h3>
+    <h3>
+    	Mouvements à facturer 
+    	<div class="col-xs-6 pull-right text-right">
+	    	<form action="{{ path('facture_societe_generation', { 'id': societe.id })}}" method="GET" class="form-inline">
+	    		<div class="form-group">
+		    		<div class="input-group">
+		    			<input {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} data-provide="datepicker" class="form-control datepicker" type="text" value="{{ "now"|date("d/m/Y") }}" data-date-format="dd/mm/yyyy" required="required" name="dateFacturation" />
+		    			<div class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</div>
+					</div>
+				</div>
+				<button {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} class="btn btn-primary btn" type="submit">Facturer</button>
+	    	</form>
+    	</div>
+    </h3>
     {% if(mouvements | length > 0) %}
     <table class="table table-bordered">
         <thead>
