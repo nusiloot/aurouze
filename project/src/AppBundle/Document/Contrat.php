@@ -1130,7 +1130,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isReconductible() {
-        return ($this->isEnCours() || $this->isFini()) && $this->isTypeReconductionTacite() && !$this->getReconduit();
+        return ($this->isEnCours() || $this->isFini()) && !$this->getReconduit();
     }
 
     public function isTypeReconductionTacite() {
