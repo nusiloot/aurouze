@@ -7,7 +7,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\RendezVous") @HasLifecycleCallbacks
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\RendezVousRepository") @HasLifecycleCallbacks
  */
 class RendezVous {
 
@@ -54,6 +54,38 @@ class RendezVous {
     public function __construct()
     {
         $this->participants = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    public function getEventJson($backgroundColor) {
+        $event = new \stdClass();
+        $event->title = $this->getTitre();
+        $event->start = $this->getDateDebut()->format('c');
+        $event->end = $this->getDateFin()->format('c');
+        $event->textColor = "black";
+        $event->backgroundColor = $backgroundColor;
+        $event->borderColor = "#ff0000";
+
+        return $event;
+    }
+
+    public function pushToPassage() {
+        if(!$this->getPassage()) {
+
+            return;
+        }
+
+        $this->getPassage()->setDateDebut($this->getDateDebut());
+        $this->getPassage()->setDateFin($this->getDateFin());
+    }
+
+    /** @MongoDB\PreUpdate */
+    public function preUpdate() {
+        $this->pushToPassage();
+    }
+
+    /** @MongoDB\PrePersist */
+    public function prePersist() {
+        $this->pushToPassage();
     }
 
     /**

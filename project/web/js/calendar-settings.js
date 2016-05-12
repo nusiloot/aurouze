@@ -15,8 +15,8 @@ $(function () {
         $(this).click(function () {
             var id = $(this).data('identifiant');
             var title = $.trim($(this).data('title'));
-            $.post(
-                    $('#calendrier').data('urlRead'), {
+            $.get(
+            $('#calendrier').data('urlRead'), {
                 id: id,
                 light: 0
             }, function (response) {
@@ -66,7 +66,7 @@ $(function () {
         eventSources: [
             {
                 url: $('#calendrier').data('urlPopulate'),
-                type: 'POST',
+                type: 'GET',
                 data: {
                     title: 1,
                 }
@@ -89,7 +89,7 @@ $(function () {
         eventReceive: function (event) {
             $('#retour_technicien_btn').removeClass('hidden');
             $.post(
-                    $('#calendrier').data('urlUpdate'), {
+                $('#calendrier').data('urlAdd'), {
                 id: null,
                 start: event.start.format(),
                 end: event.end.format()

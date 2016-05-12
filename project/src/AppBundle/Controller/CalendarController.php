@@ -3,11 +3,13 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Tool\CalendarDateTool;
 use AppBundle\Document\Compte;
+use AppBundle\Document\RendezVous;
 use AppBundle\Document\CompteInfos;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\PassageCreationType;
@@ -131,50 +133,42 @@ class CalendarController extends Controller {
     }
 
     /**
+     * @Route("/calendar/add", name="calendarAdd", options={"expose" = "true"})
+     */
+    public function calendarAddAction(Request $request) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $rvm = $this->get('rendezvous.manager');
+
+        $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
+
+        $rdv = $rvm->createFromPassage($passage, new \DateTime($request->get('start')),  new \DateTime($request->get('end')));
+        $dm->persist($rdv);
+        $dm->flush();
+
+        $response = new Response(json_encode($rdv->getEventJson($technicien->getCouleur())));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+    }
+
+    /**
      * @Route("/calendar/update", name="calendarUpdate", options={"expose" = "true"})
      */
     public function calendarUpdateAction(Request $request) {
-
-        if (!$request->isXmlHttpRequest()) {
-            throw $this->createNotFoundException();
-        }
-
-        $error = false;
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $id = ($request->get('id')) ? $request->get('id') : $request->get('passage');
-        $technicien = $request->get('technicien');
 
-        $newRdv = !$request->get('id');
+        $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
+        $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
 
-        $passageToMove = $dm->getRepository('AppBundle:Passage')->findOneById($id);
+        $rdv->setDateDebut(new \DateTime($request->get('start')));
+        $rdv->setDateFin(new \DateTime($request->get('end')));
 
-        $start = $request->get('start');
-        $end = $request->get('end');
-
-        if ($error) {
-            throw new \Exception();
-        }
-        $tech = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
-        $event = array('id' => $passageToMove->getId(),
-            'title' => $passageToMove->getIntitule(),
-            'start' => $start,
-            'end' => $end,
-            'backgroundColor' => ($tech) ? $tech->getCouleur() : Compte::COULEUR_DEFAUT,
-            'textColor' => "black"
-        );
-
-        if ($tech && $newRdv) {
-            $passageToMove->removeAllTechniciens($tech);
-            $passageToMove->addTechnicien($tech);
-        }
-        $passageToMove->setDateDebut($start);
-        $passageToMove->setDateFin($end);
-        $dm->persist($passageToMove);
         $dm->flush();
 
-        $response = new Response(json_encode($event));
-
+        $response = new Response(json_encode($rdv->getEventJson($technicien->getCouleur())));
         $response->headers->set('Content-Type', 'application/json');
+
         return $response;
     }
 
@@ -196,14 +190,16 @@ class CalendarController extends Controller {
 
         foreach ($rdvs as $rdv) {
             $calendarData[] = array('id' => $rdv->getId(),
-                'title' => $rdv->getTitle(),
+                'title' => $rdv->getTitre(),
                 'start' => $rdv->getDateDebut()->format('Y-m-d\TH:i:s'),
                 'end' => $rdv->getDateFin()->format('Y-m-d\TH:i:s'),
                 'backgroundColor' => $technicien->getCouleur(),
                 'textColor' => "black");
         }
-        $response = new Response(json_encode($passagesCalendar));
+
+        $response = new Response(json_encode($calendarData));
         $response->headers->set('Content-Type', 'application/json');
+
         return $response;
     }
 

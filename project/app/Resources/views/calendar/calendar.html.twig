@@ -87,6 +87,7 @@
                 data-view="{{ calendarTool.getViewJs() }}"
                 data-goto-date="{{ calendarTool.getDateDebut('Y-m-d') }}"
                 data-url-populate="{{ path('calendarPopulate', {'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
+                data-url-add="{{path('calendarAdd', {'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
                 data-url-read="{{path('calendarRead', {'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
                 data-url-update="{{path('calendarUpdate', {'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
                 data-url-prev="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemainePrecedente('Y-m-d')}) }}"

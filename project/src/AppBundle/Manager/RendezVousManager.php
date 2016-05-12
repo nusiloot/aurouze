@@ -13,15 +13,16 @@ class RendezVousManager {
         $this->dm = $dm;
     }
 
-    function createOrUpdateFromPassage(Passage $passage) {
+    function createFromPassage(Passage $passage, \DateTime $dateDebut, \DateTime $dateFin) {
         $rdv = $passage->getRendezVous();
 
-        if(!$rdv) {
-            $rdv = new RendezVous();
-            $rdv->setPassage($passage);
-            $this->dm->persist($rdv);
-            $passage->setRendezVous($rdv);
+        if($rdv) {
+
+            throw new \Exception('Le rendez vous est déjà créé');
         }
+
+        $rdv = new RendezVous();
+        $rdv->setPassage($passage);
 
         $rdv->setTitre(sprintf("%s (%s %s)",
                 $passage->getEtablissementInfos()->getNom(),
@@ -31,8 +32,7 @@ class RendezVousManager {
         $rdv->setDescription(sprintf("%s\nContrat n°%s\nTraitement : %s",
                 $passage->getLibelle(),
                 $passage->getContrat()->getNumeroArchive(),
-                implode(", ", $passage->getPrestations()->toArray());
-        ));
+                implode(", ", $passage->getPrestations()->toArray())));
 
         $rdv->setLieu(sprintf("%s %s %s",
                 $passage->getEtablissementInfos()->getAdresse()->getAdresse(),
@@ -43,6 +43,13 @@ class RendezVousManager {
         foreach($passage->getTechniciens() as $technicien) {
             $rdv->addParticipant($technicien);
         }
+
+        $passage->setRendezVous($rdv);
+
+        $rdv->setDateDebut($dateDebut);
+        $rdv->setDateFin($dateFin);
+
+        return $rdv;
     }
 
     public function getRepository() {

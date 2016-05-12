@@ -8,8 +8,8 @@ use AppBundle\Document\RendezVous;
 class RendezVousRepository extends DocumentRepository
 {
     public function findByDateAndParticipant($startDate, $endDate, $participant) {
-        $mongoStartDate = new MongoDate(strtotime($startDate." 00:00:00"));
-        $mongoEndDate = new MongoDate(strtotime($endDate." 23:59:59"));
+        $mongoStartDate = new \MongoDate(strtotime($startDate." 00:00:00"));
+        $mongoEndDate = new \MongoDate(strtotime($endDate." 23:59:59"));
         $query = $this->createQueryBuilder('RendezVous')
                 ->field('dateDebut')->gte($mongoStartDate)
                 ->field('dateDebut')->lte($mongoEndDate)

@@ -37,6 +37,10 @@ services:
         class: AppBundle\Manager\ContratManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
 
+    rendezvous.manager:
+        class: AppBundle\Manager\RendezVousManager
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
+
     passage.importer:
         class: AppBundle\Import\PassageCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @passage.manager, @etablissement.manager, @compte.manager, @contrat.manager]
@@ -84,11 +88,11 @@ services:
     configurationProduit.importer:
         class: AppBundle\Import\ConfigurationProduitCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager]
-        
+
     contratPrestation.importer:
         class: AppBundle\Import\ContratPrestationCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager]
-        
+
     contact.importer:
         class: AppBundle\Import\ContactCsvImporter
-        arguments: [@doctrine_mongodb.odm.default_document_manager]    
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
