@@ -122,13 +122,17 @@ class FactureController extends Controller {
         }
 
         return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()),
                 200,
                 array(
                     'Content-Type'          => 'application/pdf',
     					'Content-Disposition'   => 'attachment; filename="facture-'.$facture->getNumeroFacture().'.pdf"'
                 )
         );
+    }
+
+    public function getPdfGenerationOptions() {
+        return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4);
     }
 
 }
