@@ -121,6 +121,26 @@ class RendezVous {
         $this->getPassage()->setDateFin($this->getDateFin());
     }
 
+    public function setTimeDebut($time) {
+        $dateTime = $this->getDateDebut();
+        $this->setDateDebut(new \DateTime($dateTime->format('Y-m-d') . 'T' . $time . ':00'));
+    }
+
+    public function setTimeFin($time) {
+        $dateTime = $this->getDateFin();
+        $this->setDateFin(new \DateTime($dateTime->format('Y-m-d') . 'T' . $time . ':00'));
+    }
+
+    public function getTimeDebut() {
+        $dateTime = $this->getDateDebut();
+        return ($dateTime) ? $dateTime->format('H:i') : null;
+    }
+
+    public function getTimeFin() {
+        $dateTime = $this->getDateFin();
+        return ($dateTime) ? $dateTime->format('H:i') : null;
+    }
+
     /** @MongoDB\PreUpdate */
     public function preUpdate() {
         $this->pushToPassage();

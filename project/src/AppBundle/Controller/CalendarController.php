@@ -213,7 +213,7 @@ class CalendarController extends Controller {
             'attr' => array('id' => 'eventForm')
         ));
 
-        return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form));
+        return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
 
 
         if (!$passage->isRealise()) {
