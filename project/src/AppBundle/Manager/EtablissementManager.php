@@ -74,8 +74,8 @@ class EtablissementManager {
         self::SECTEUR_SEINE_ET_MARNE => array('77', '95', '89', '91', '45', '28')
     );
     public static $secteurs = array(
-        self::SECTEUR_PARIS => "Aurouze Paris",
-        self::SECTEUR_SEINE_ET_MARNE => "Aurouze Seine et Marne"
+        self::SECTEUR_PARIS => "Paris",
+        self::SECTEUR_SEINE_ET_MARNE => " Seine et Marne"
     );
 
     function __construct(DocumentManager $dm, OSMAdresses $osmAdresse) {
@@ -114,6 +114,9 @@ class EtablissementManager {
             $autreSecteur = EtablissementManager::SECTEUR_PARIS;
         }
         return $autreSecteur;
+    }
+    public function secteursNom($secteur) {
+        return self::$secteurs[$secteur];
     }
 
 }
