@@ -14,6 +14,8 @@ class FactureManager {
     protected $dm;
     protected $mm;
     protected $parameters;
+    
+    const DEFAUT_FREQUENCE_JOURS = 10;
 
     function __construct(DocumentManager $dm, MouvementManager $mm, $parameters) {
         $this->dm = $dm;

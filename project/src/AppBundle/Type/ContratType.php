@@ -94,6 +94,15 @@ class ContratType extends AbstractType {
                     $duration = explode(':', $submittedDescription);
                     return $duration[0] * 60 + $duration[1];
                 }));
+                
+                $builder->add('frequencePaiement', ChoiceType::class, array(
+                		'label' => 'Fréquence de paiement : ',
+                		'choices' => $this->getFrequences(),
+                		'expanded' => false,
+                		'multiple' => false,
+                		'required' => false,
+                		'attr' => array("class" => "select2 select2-simple"),
+                ));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
@@ -124,6 +133,11 @@ class ContratType extends AbstractType {
 
     public function getProduits() {
         return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getProduits()->toArray();
+    }
+
+    public function getFrequences() {
+    	$tags = $this->dm->getRepository('AppBundle:Contrat')->findAllFrequences();
+    	return array_merge(array(null => null), $tags);
     }
 
 }

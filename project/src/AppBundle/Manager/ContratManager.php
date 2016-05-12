@@ -32,6 +32,13 @@ class ContratManager implements MouvementManagerInterface {
     const MOYEN_PIGEONS = 'MOYEN_PIGEONS';
     const MOYEN_BOIS = 'MOYEN_BOIS';
     const MOYEN_VO = 'MOYEN_VO';
+    
+    const FREQUENCE_RECEPTION = 'RECEPTION';
+    const FREQUENCE_30J = '30J';
+    const FREQUENCE_30JMOIS = '30JMOIS';
+    const FREQUENCE_45JMOIS = '45JMOIS';
+    const FREQUENCE_60J = '60J';
+    const FREQUENCE_60JMOIS = '60JMOIS';
 
     public static $moyens_contrat_libelles = array(
         self::MOYEN_3D => '3D',
@@ -85,6 +92,14 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_FINI => 4,
         self::STATUT_RESILIE => 5,
         self::STATUT_ANNULE => 6    		
+    );
+    public static $frequences = array(
+    	self::FREQUENCE_RECEPTION => 'A reception',
+    	self::FREQUENCE_30J => '30 jours',
+    	self::FREQUENCE_30JMOIS => '30 jours fin de mois',
+    	self::FREQUENCE_45JMOIS => '45 jours fin de mois',
+    	self::FREQUENCE_60J => '60 jours',
+    	self::FREQUENCE_60JMOIS => '60 jours fin de mois'
     );
     protected $dm;
 
