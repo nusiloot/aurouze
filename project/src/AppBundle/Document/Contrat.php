@@ -797,10 +797,17 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $pa = ($a->getStatut()) ? $statutsPositions[$a->getStatut()] : 99;
         $pb = ($b->getStatut()) ? $statutsPositions[$b->getStatut()] : 99;
         if ($pa == $pb) {
-            return 0;
+            $paDate = ($a->getDateDebut()) ? $a->getDateDebut() : $a->getDateCreation();
+            $pbDate = ($b->getDateDebut()) ? $b->getDateDebut() : $b->getDateCreation();
+            if ($paDate->format('Ymd') == $pbDate->format('Ymd')) {
+                return 0;
+            } else {
+                return ($paDate->format('Ymd') < $pbDate->format('Ymd')) ? +1 : -1;
+            }
         }
         return ($pa > $pb) ? +1 : -1;
     }
+
 
     public function getPassages(Etablissement $etablissement) {
         if (!isset($this->contratPassages[$etablissement->getId()])) {
@@ -1117,11 +1124,14 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function reconduire() {
         $contrat = clone $this;
         $contrat->removeId();
+        if (!$contrat->isKeepNumeroArchivage()) {
+            $contrat->setNumeroArchive(null);
+        }
         $contrat->setDateAcceptation(null);
         $contrat->setDateFin(null);
         $contrat->setDateDebut(null);
         $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
-        
+
         $contrat->setDateCreation(new \DateTime());
         $contrat->contratPassages = null;
         $contrat->setReconduit(false);
@@ -1136,6 +1146,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function isTypeReconductionTacite() {
 
         return ($this->getTypeContrat() == ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE);
+    }
+
+    public function isTypeRenouvelableSurProposition() {
+
+        return ($this->getTypeContrat() == ContratManager::TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION);
+    }
+
+    public function isKeepNumeroArchivage() {
+        return $this->isTypeReconductionTacite() || $this->isTypeRenouvelableSurProposition();
     }
 
     /**
@@ -1273,10 +1292,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getMouvements() {
         return $this->mouvements;
     }
-    
-    public function cleanMouvements()
-    {
-    	$this->mouvements = new ArrayCollection();
+
+    public function cleanMouvements() {
+        $this->mouvements = new ArrayCollection();
     }
 
     /**
