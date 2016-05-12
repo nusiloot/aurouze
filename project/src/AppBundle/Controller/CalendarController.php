@@ -11,6 +11,7 @@ use AppBundle\Document\Compte;
 use AppBundle\Document\CompteInfos;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\PassageCreationType;
+use AppBundle\Manager\PassageManager;
 
 class CalendarController extends Controller {
 
@@ -170,6 +171,12 @@ class CalendarController extends Controller {
         $passageToMove->setDateDebut($start);
         $passageToMove->setDateFin($end);
         $dm->persist($passageToMove);
+        $passageManager = new PassageManager($dm);
+
+        $nextPassage = $passageManager->updateNextPassageAPlannifier($passageToMove);
+        if ($nextPassage) {
+            $dm->persist($nextPassage);
+        }
         $dm->flush();
 
         $response = new Response(json_encode($event));
@@ -197,9 +204,9 @@ class CalendarController extends Controller {
         foreach ($passagesTech as $passageTech) {
             if (!$passageTech->getDateFin()) {
                 continue;
-            }            
-            $title = $passageTech->getEtablissement()->getNom() . " ". $passageTech->getEtablissement()->getAdresse()->getCommune()." (" . $passageTech->getEtablissement()->getAdresse()->getCodePostal() . ") ";
-            if($passageTech->isImprime()){
+            }
+            $title = $passageTech->getEtablissement()->getNom() . " " . $passageTech->getEtablissement()->getAdresse()->getCommune() . " (" . $passageTech->getEtablissement()->getAdresse()->getCodePostal() . ") ";
+            if ($passageTech->isImprime()) {
                 $title.= ' *';
             }
             $passageArr = array('id' => $passageTech->getId(),
@@ -233,7 +240,7 @@ class CalendarController extends Controller {
             'method' => 'POST',
             'attr' => array('id' => 'eventForm')
         ));
-        
+
         if (!$passage->isRealise()) {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
@@ -258,6 +265,13 @@ class CalendarController extends Controller {
 
         if (!$passageToDelete->isRealise()) {
             $passageToDelete->setDateFin(null);
+            $passageManager = new PassageManager($dm);
+
+            $nextPassage = $passageManager->updateNextPassageEnAttente($passageToDelete);
+            if ($nextPassage) {
+                $dm->persist($nextPassage);
+            }
+            $dm->flush();
             $dm->persist($passageToDelete);
             $dm->flush();
         }

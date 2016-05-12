@@ -136,11 +136,8 @@ class PassageController extends Controller {
 
         $passageManager = new PassageManager($dm);
 
-        $nextPassage = $passageManager->getNextPassageFromPassage($passage);
+        $nextPassage = $passageManager->updateNextPassageAPlannifier($passage);
         if ($nextPassage) {
-            $nextPassage->setDateDebut($nextPassage->getDatePrevision());
-            $nextPassage->copyTechnicienFromPassage($passage);
-
             $dm->persist($nextPassage);
         }
 
