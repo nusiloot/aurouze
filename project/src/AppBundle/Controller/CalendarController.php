@@ -221,6 +221,7 @@ class CalendarController extends Controller {
             'method' => 'POST',
             'attr' => array('id' => 'eventForm')
         ));
+
         if (!$passage->isRealise()) {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {

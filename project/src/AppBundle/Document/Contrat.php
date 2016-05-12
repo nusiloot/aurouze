@@ -492,9 +492,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 }
             }
             if ($nbPassagesEtb && count($nbPassagesEtb)) {
-            	$this->setNbPassages(max($nbPassagesEtb));
+                $this->setNbPassages(max($nbPassagesEtb));
             } else {
-            	$this->setNbPassages(0);
+                $this->setNbPassages(0);
             }
         }
         return $this->nbPassages;
@@ -520,12 +520,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->dureePassage;
     }
 
-    public function getDureePassageFormat()
-    {
-    	$minute = $this->getDureePassage();
-    	$heure = intval(abs($minute / 60));
-    	$minute = $minute - ($heure * 60);
-    	return sprintf("%02dh%02d", $heure, $minute);
+    public function getDureePassageFormat() {
+        $minute = $this->getDureePassage();
+        $heure = intval(abs($minute / 60));
+        $minute = $minute - ($heure * 60);
+        return sprintf("%02dh%02d", $heure, $minute);
     }
 
     /**
@@ -666,7 +665,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $mouvement->setLibelle(sprintf("Facture %s/%s - Proposition n° %s du %s au %s", count($this->getMouvements()) + 1, $this->getNbFactures(), $this->getNumeroArchive(), $this->getDateDebut()->format('m/Y'), $this->getDateFin()->format('m/Y')));
 
         $mouvement->setDocument($this);
-        if($origineDocumentGeneration) {
+        if ($origineDocumentGeneration) {
             $mouvement->setOrigineDocumentGeneration($origineDocumentGeneration);
         }
 
@@ -793,16 +792,22 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $contratPassages[$etablissement->getId()];
     }
 
-    public static function cmpContrat($a, $b)
-    {
-    	$statutsPositions = ContratManager::$statuts_positions;
-    	$pa = ($a->getStatut())? $statutsPositions[$a->getStatut()] : 99;
-    	$pb = ($b->getStatut())? $statutsPositions[$b->getStatut()] : 99;
-    	if ($pa == $pb) {
-    		return 0;
-    	}
-    	return ($pa > $pb) ? +1 : -1;
+    public static function cmpContrat($a, $b) {
+        $statutsPositions = ContratManager::$statuts_positions;
+        $pa = ($a->getStatut()) ? $statutsPositions[$a->getStatut()] : 99;
+        $pb = ($b->getStatut()) ? $statutsPositions[$b->getStatut()] : 99;
+        if ($pa == $pb) {
+            $paDate = ($a->getDateDebut()) ? $a->getDateDebut() : $a->getDateCreation();
+            $pbDate = ($b->getDateDebut()) ? $b->getDateDebut() : $b->getDateCreation();
+            if ($paDate->format('Ymd') == $pbDate->format('Ymd')) {
+                return 0;
+            } else {
+                return ($paDate->format('Ymd') < $pbDate->format('Ymd')) ? +1 : -1;
+            }
+        }
+        return ($pa > $pb) ? +1 : -1;
     }
+
 
     public function getPassages(Etablissement $etablissement) {
         if (!isset($this->contratPassages[$etablissement->getId()])) {
@@ -923,7 +928,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getContratPassages() {
         return $this->contratPassages;
     }
-
 
     public function reInitContratPassages() {
         $this->contratPassages = array();
@@ -1060,13 +1064,13 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isModifiable() {
-        if($this->isEnAttenteAcceptation() || $this->isBrouillon()){
+        if ($this->isEnAttenteAcceptation() || $this->isBrouillon()) {
             return true;
         }
-        if($this->isEnCours() || $this->isAVenir()){
+        if ($this->isEnCours() || $this->isAVenir()) {
             foreach ($this->getContratPassages() as $contratPassage) {
                 foreach ($contratPassage->getPassages() as $p) {
-                    if($p->isPlanifie() || $p->isRealise() || $p->isAnnule()){
+                    if ($p->isPlanifie() || $p->isRealise() || $p->isAnnule()) {
                         return false;
                     }
                 }
@@ -1076,10 +1080,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return false;
     }
 
-
     /*
      * Fonction à retiré => un contrat ne doit pas être resilié sous forme de statut mais sous forme de type
      */
+
     public function isResilie() {
 
         return ($this->statut == ContratManager::STATUT_RESILIE);
@@ -1094,7 +1098,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return ($this->statut == ContratManager::STATUT_BROUILLON);
     }
 
-     public function isEnCours() {
+    public function isEnCours() {
         return ($this->statut == ContratManager::STATUT_EN_COURS);
     }
 
@@ -1111,6 +1115,46 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function isFini() {
 
         return ($this->statut == ContratManager::STATUT_FINI);
+    }
+
+    public function removeId() {
+        $this->id = null;
+    }
+
+    public function reconduire() {
+        $contrat = clone $this;
+        $contrat->removeId();
+        if (!$contrat->isKeepNumeroArchivage()) {
+            $contrat->setNumeroArchive(null);
+        }
+        $contrat->setDateAcceptation(null);
+        $contrat->setDateFin(null);
+        $contrat->setDateDebut(null);
+        $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+
+        $contrat->setDateCreation(new \DateTime());
+        $contrat->contratPassages = null;
+        $contrat->setReconduit(false);
+
+        return $contrat;
+    }
+
+    public function isReconductible() {
+        return ($this->isEnCours() || $this->isFini()) && !$this->getReconduit();
+    }
+
+    public function isTypeReconductionTacite() {
+
+        return ($this->getTypeContrat() == ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE);
+    }
+
+    public function isTypeRenouvelableSurProposition() {
+
+        return ($this->getTypeContrat() == ContratManager::TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION);
+    }
+
+    public function isKeepNumeroArchivage() {
+        return $this->isTypeReconductionTacite() || $this->isTypeRenouvelableSurProposition();
     }
 
     /**
@@ -1153,14 +1197,12 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->markdown;
     }
 
-    public function isTacite()
-    {
-    	return $this->getTypeContrat() == ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE;
+    public function isTacite() {
+        return $this->getTypeContrat() == ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE;
     }
 
-    public function getTva()
-    {
-    	return ($this->getTvaReduite())? 0.1 : 0.2;
+    public function getTva() {
+        return ($this->getTvaReduite()) ? 0.1 : 0.2;
     }
 
     /**
@@ -1228,8 +1270,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      *
      * @param AppBundle\Document\Mouvement $mouvement
      */
-    public function addMouvement(\AppBundle\Document\Mouvement $mouvement)
-    {
+    public function addMouvement(\AppBundle\Document\Mouvement $mouvement) {
         $this->mouvements[] = $mouvement;
     }
 
@@ -1238,8 +1279,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      *
      * @param AppBundle\Document\Mouvement $mouvement
      */
-    public function removeMouvement(\AppBundle\Document\Mouvement $mouvement)
-    {
+    public function removeMouvement(\AppBundle\Document\Mouvement $mouvement) {
         $this->mouvements->removeElement($mouvement);
     }
 
@@ -1247,12 +1287,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      * Get mouvements
      *
      * @return \Doctrine\Common\Collections\Collection $mouvements
+     * @return self
      */
-    public function getMouvements()
-    {
+    public function getMouvements() {
         return $this->mouvements;
     }
 
+    public function cleanMouvements() {
+        $this->mouvements = new ArrayCollection();
+    }
 
     /**
      * Set reconduit
@@ -1260,8 +1303,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      * @param boolean $reconduit
      * @return self
      */
-    public function setReconduit($reconduit)
-    {
+    public function setReconduit($reconduit) {
         $this->reconduit = $reconduit;
         return $this;
     }
@@ -1271,8 +1313,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      *
      * @return boolean $reconduit
      */
-    public function getReconduit()
-    {
+    public function getReconduit() {
         return $this->reconduit;
     }
+
 }

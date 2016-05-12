@@ -9,7 +9,7 @@
 
 
 
-    <h3>Mouvements à facturer <a {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} class="pull-right btn btn-primary" href="{#{ path('facture_societe_generation', { 'id': societe.id })}#}">Facturer</a></h3>
+    <h3>Mouvements à facturer <a {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} class="pull-right btn btn-primary" href="{{ path('facture_societe_generation', { 'id': societe.id })}}">Facturer</a></h3>
     {% if(mouvements | length > 0) %}
     <table class="table table-bordered">
         <thead>

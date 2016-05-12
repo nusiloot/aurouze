@@ -51,8 +51,8 @@ class ContratController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $contrats = $this->get('contrat.manager')->getRepository()->findBy(array('societe' => $societe->getId()), array('dateDebut' => 'DESC'));
-
         usort($contrats, array("AppBundle\Document\Contrat", "cmpContrat"));
+
 
         $formSociete = $this->createForm(SocieteChoiceType::class, array('societes' => $societe->getIdentifiant(), 'societe' => $societe), array(
             'action' => $this->generateUrl('contrat_societe_choice'),
@@ -113,7 +113,7 @@ class ContratController extends Controller {
         return $this->render('contrat/modification.html.twig', array('contrat' => $contrat, 'form' => $form->createView(), 'societe' => $contrat->getSociete()));
     }
 
-     /**
+    /**
      * @Route("/contrat/{id}/acceptation", name="contrat_acceptation")
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
@@ -151,7 +151,25 @@ class ContratController extends Controller {
                 return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
             }
         }
-        return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat, 'form' => $form->createView(), 'societe' => $contrat->getSociete()));
+        $factures = $dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
+        return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat, 'factures' => $factures, 'form' => $form->createView(), 'societe' => $contrat->getSociete()));
+    }
+
+    /**
+     * @Route("/contrat/{id}/reconduction", name="contrat_reconduction")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function reconductionAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        if ($contrat->isReconductible()) {
+            $contratReconduit = $contrat->reconduire();
+            $dm->persist($contratReconduit);
+            $contrat->setReconduit(true);
+            $dm->flush();
+            return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));
+        } else {
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
+        }
     }
 
     /**
@@ -160,7 +178,7 @@ class ContratController extends Controller {
      */
     public function visualisationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         $factures = $dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
 
         return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat, 'factures' => $factures, 'societe' => $contrat->getSociete()));
@@ -250,40 +268,38 @@ class ContratController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
 
-    	$contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
-    	$dm->persist($contrat);
-    	$dm->flush();
+        $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
+        $dm->persist($contrat);
+        $dm->flush();
 
-    	$header =  $this->renderView('contrat/pdf-header.html.twig', array(
-    			'contrat' => $contrat
-    	));
-    	$footer =  $this->renderView('contrat/pdf-footer.html.twig', array(
-    			'contrat' => $contrat
-    	));
-    	$html =  $this->renderView('contrat/pdf.html.twig', array(
-    			'contrat' => $contrat
-    	));
-    	if($request->get('output') == 'html') {
+        $header = $this->renderView('contrat/pdf-header.html.twig', array(
+            'contrat' => $contrat
+        ));
+        $footer = $this->renderView('contrat/pdf-footer.html.twig', array(
+            'contrat' => $contrat
+        ));
+        $html = $this->renderView('contrat/pdf.html.twig', array(
+            'contrat' => $contrat
+        ));
+        if ($request->get('output') == 'html') {
 
-    		return new Response($html, 200);
-    	}
+            return new Response($html, 200);
+        }
 
-    	return new Response(
-    			$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
-    						'footer-html' => $footer,
-    						'header-html' => $header,
-    						'margin-right'  => 0,
-    						'margin-left'   => 0,
-    						'margin-top'   => 38,
-    						'margin-bottom'   => 38,
-    						'page-size' => "A4"
-    			)),
-    			200,
-    			array(
-    					'Content-Type'          => 'application/pdf',
-    					'Content-Disposition'   => 'attachment; filename="contrat-'.$contrat->getNumeroArchive().'.pdf"'
-    			)
-    			);
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+                    'footer-html' => $footer,
+                    'header-html' => $header,
+                    'margin-right' => 0,
+                    'margin-left' => 0,
+                    'margin-top' => 38,
+                    'margin-bottom' => 38,
+                    'page-size' => "A4"
+                )), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="contrat-' . $contrat->getNumeroArchive() . '.pdf"'
+                )
+        );
     }
 
 }

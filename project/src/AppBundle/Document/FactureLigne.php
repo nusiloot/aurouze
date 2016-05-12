@@ -86,8 +86,13 @@ class FactureLigne {
 
             return null;
         }
-
-        return $this->getOrigineDocument()->getMouvements()->get($this->getOrigineMouvement());
+		$mvts = $this->getOrigineDocument()->getMouvements();
+		foreach ($mvts as $mvt) {
+			if ($mvt->getIdentifiant() == $this->getOrigineMouvement()) {
+				return $mvt;
+			}
+		}
+        throw new \Exception("Mouvement non trouvé");
     }
 
     /**
