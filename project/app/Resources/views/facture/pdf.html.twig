@@ -2,7 +2,7 @@
 
 {% block body %}
 <div class="row">
-    <div class="col-xs-7">
+    <div class="col-xs-6">
         <br />
         <p>
             <span class="lead">{{ facture.emetteur.nom }}</span><br />
@@ -14,11 +14,13 @@
             Fax: {{ facture.emetteur.fax }}
         </p>
     </div>
-    <div class="col-xs-5">
+    <div class="col-xs-6">
         <div class="text-right">
         <h3>FACTURE N°&nbsp;{{ facture.numeroFacture }}</h3>
         <span>Du {{ facture.dateFacturation  | localizeddate("medium", "none", null, null, "d/MM/YYYY") }}</span>
         </div>
+        <br />
+        <br />
         <br />
         <br />
         <br />
@@ -30,6 +32,8 @@
         </p>
     </div>
 </div>
+<br />
+<br />
 <br />
 <br />
 <table class="table table-bordered table-condensed" style="border-bottom: 0 !important; border-right: 0 !important;  border-left: 0 !important;">
@@ -48,8 +52,8 @@
                 {% if(ligne.libelle) %}{{ ligne.libelle }}<br />{% endif %}
                 {% if ligne.origineContrat %}
                 <small>
-                	{% if ligne.origineDocument.referenceClient %}
-                    <small>Votre Réf CDE {{ ligne.origineDocument.referenceClient }}</small><br />
+                	{% if ligne.origineDocument.numeroArchive %}
+                    <small>Votre Réf CDE {{ ligne.origineDocument.numeroArchive }}{% if ligne.origineDocument.referenceClient %} ({{ ligne.origineDocument.referenceClient }}){% endif %}</small><br />
                     {% endif %}
                     <small>
                     Prestations :

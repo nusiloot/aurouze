@@ -1,7 +1,7 @@
 PARIS, le {{ contrat.dateCreation|date("d/m/Y") }}
 
->{{ contrat.societe.raisonSociale }}
->{{ contrat.societe.adresse.adresse }}
+>{{ contrat.societe.raisonSociale }}  
+>{{ contrat.societe.adresse.adresseFormatee | nl2br }}  
 >{{ contrat.societe.adresse.codePostal }} {{ contrat.societe.adresse.commune }}
 
 # PROPOSITION DE PREVENTION ET LUTTE CONTRE LES NUISIBLES ET PARASITES
@@ -21,7 +21,7 @@ et
 ```
 
 {{ contrat.societe.raisonSociale|trim }}
-{{ contrat.societe.adresse.adresseFormatee|trim }}
+{{ contrat.societe.adresse.adresseFormatee }}
 {{ contrat.societe.adresse.codePostal|trim }} {{ contrat.societe.adresse.commune|trim }}
 
 ```
@@ -35,7 +35,7 @@ et
 ## Dans le{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}locaux{% else %}local{% endif %} situé{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}aux adresses{% else %}à l'adresse{% endif %}
 
 {% for etablissement in contrat.etablissements %}
-{{  etablissement.raisonSociale|trim }} / {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}
+{{  etablissement.raisonSociale|trim }} / {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}  
 {% endfor %}
 
 ## Nomenclature des locaux à traiter
@@ -48,7 +48,7 @@ et
 {% endif %}
 ## Nombre prévisionnel d'interventions par type de prestation
 {% for prestation in contrat.prestations %}
-{{  prestation.nbPassages }} passage{% if prestation.nbPassages > 1 %}s{% endif %} concernant : {{  prestation.nom|trim }}
+{{  prestation.nbPassages }} passage{% if prestation.nbPassages > 1 %}s{% endif %} concernant : {{  prestation.nom|trim }}  
 {% endfor %}
 
 ## Moyens de mise en œuvre
@@ -87,7 +87,7 @@ Nos prestations sont exécutées par un personnel qualifié. Le matériel et l'o
 Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accordée pour la durée de la proposition{% else %}de {{ contrat.dureeGarantie }} mois est accordée{% endif %} pour {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %}&nbsp;:
 
 {% for prestation in contrat.prestations %}
-{{  prestation.nom|trim }}
+{{  prestation.nom|trim }}  
 {% endfor %}
 
 {% endif %}
@@ -103,8 +103,8 @@ Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{%
 | TTC                                                       | {{ ((1+contrat.tva) * contrat.prixHt)|number_format(2, ',', ' ') }}€ |
 
 
-Devis valable {{ contrat.duree }} mois à compter de la date d'édition.
-Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% endif %}.
+Devis valable {{ contrat.duree }} mois à compter de la date d'édition.  
+Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% endif %}.  
 Délai de paiement des factures : A réception
 
 ## Responsabilité civile
