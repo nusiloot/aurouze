@@ -253,6 +253,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function setTypeContrat($typeContrat) {
         $this->typeContrat = $typeContrat;
+        if ($typeContrat == ContratManager::TYPE_CONTRAT_ANNULE) {
+            $this->setStatut(ContratManager::STATUT_FINI);
+        }
         return $this;
     }
 
@@ -784,7 +787,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getStatutCouleur() {
-
+        if($this->isAnnule()){
+            return ContratManager::$statuts_couleurs[$this->getTypeContrat()];
+        }
         return ContratManager::$statuts_couleurs[$this->getStatut()];
     }
 
@@ -812,7 +817,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
         return ($pa > $pb) ? +1 : -1;
     }
-
 
     public function getPassages(Etablissement $etablissement) {
         if (!isset($this->contratPassages[$etablissement->getId()])) {
@@ -1083,6 +1087,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             return true;
         }
         return false;
+    }
+
+    public function isAnnulable() {
+        return (($this->isEnCours() || $this->isAVenir() || $this->isFini()) && !$this->isAnnule());
     }
 
     /*

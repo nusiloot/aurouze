@@ -16,6 +16,7 @@ use AppBundle\Type\ContratMarkdownType;
 use AppBundle\Type\ContratGeneratorType;
 use AppBundle\Type\ContratAcceptationType;
 use AppBundle\Manager\ContratManager;
+use AppBundle\Manager\PassageManager;
 use Knp\Snappy\Pdf;
 
 class ContratController extends Controller {
@@ -164,6 +165,29 @@ class ContratController extends Controller {
         if ($contrat->isReconductible()) {
             $contratReconduit = $contrat->reconduire();
             $dm->persist($contratReconduit);
+            $contrat->setReconduit(true);
+            $dm->flush();
+            return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));
+        } else {
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
+        }
+    }
+
+    /**
+     * @Route("/contrat/{id}/annulation", name="contrat_annulation")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function annulationAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        if ($contrat->isAnnulable()) {
+            $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
+            foreach ($contrat->getContratPassages() as $contratPassage) {
+                foreach ($contratPassage->getPassages() as $passage) {
+                    if (!$passage->isRealise() && !$passage->isAnnule()) {
+                        $passage->setStatut(PassageManager::STATUT_ANNULE);
+                    }
+                }
+            }
             $contrat->setReconduit(true);
             $dm->flush();
             return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));

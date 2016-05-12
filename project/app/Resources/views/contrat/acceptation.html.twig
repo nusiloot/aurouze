@@ -6,14 +6,20 @@
         <ol class="breadcrumb">
             <li><a href="{{ path('contrat') }}">Contrat</a></li>
             <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
-            <li><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a></li>
+            <li>
+                {%  if (contrat.isModifiable()) %}
+                    <a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a>
+                {% else %}
+                     <a href="{{ path('contrat_acceptation',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a>
+                {% endif %}
+            </li>
         </ol>
         <h1>
             Contrat {{ contrat.getStatutLibelleLong }}
             <small>n° {{ contrat.numeroArchive }}</small>
             {%  if (contrat.isModifiable()) %}
                 <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
-            {%  endif %}
+            {%  endif %}   
         </h1>
 
         {{ form_start(form) }}
