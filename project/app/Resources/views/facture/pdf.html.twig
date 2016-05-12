@@ -17,7 +17,7 @@
     <div class="col-xs-6">
         <div class="text-right">
         <h3>FACTURE N°&nbsp;{{ facture.numeroFacture }}</h3>
-        <span>Du {{ facture.dateFacturation  | localizeddate("medium", "none", null, null, "d/MM/YYYY") }}</span>
+        <span>Du {{ facture.dateFacturation|date("d/m/Y") }}</span>
         </div>
         <br />
         <br />
@@ -108,7 +108,7 @@
 <p class="well" style="padding: 5px; margin-bottom: 0;">
 <small>
 La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l’obligation de vous indiquer :<br />
-Date de règlement : voir mention sur facture<br />
+Date de règlement : {{ facture.dateReglement|date("d/m/Y") }}<br />
 Mode de règlement : par chèque ou virement<br />
 Application du taux minimum de pénalités de retard : trois fois le taux d’intérêt légal en vigueur (art. L. 441-6 du C.Cce)<br />
 Indemnité forfaitaire pour frais de recouvrement : 40 euros (art. D. 441-5 du C.Cce)<br />
@@ -134,7 +134,7 @@ Sanction en cas de non respect des modalités ci-dessus :<br />
         </div>
         <div class="col-xs-6">
             <p>
-            Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY") }} <br />
+            Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }} <br />
             Client : {{ facture.destinataire.nom }} ({{ facture.destinataire.codeComptable }})
             </p>
         </div>
