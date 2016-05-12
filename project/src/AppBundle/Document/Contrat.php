@@ -1268,9 +1268,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      * Get mouvements
      *
      * @return \Doctrine\Common\Collections\Collection $mouvements
+     * @return self
      */
     public function getMouvements() {
         return $this->mouvements;
+    }
+    
+    public function cleanMouvements()
+    {
+    	$this->mouvements = new ArrayCollection();
     }
 
     /**
