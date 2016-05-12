@@ -48,7 +48,9 @@
                 {% if(ligne.libelle) %}{{ ligne.libelle }}<br />{% endif %}
                 {% if ligne.origineContrat %}
                 <small>
-                    <small>Votre Réf CDE 00000000000</small><br />
+                	{% if ligne.origineDocument.referenceClient %}
+                    <small>Votre Réf CDE {{ ligne.origineDocument.referenceClient }}</small><br />
+                    {% endif %}
                     <small>
                     Prestations :
                     <ul class="list-unstyled" style="padding-left: 10px; margin-bottom: 0">

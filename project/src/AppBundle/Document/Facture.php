@@ -113,8 +113,8 @@ class Facture implements DocumentSocieteInterface {
 
         $destinataire->setNom($societe->getRaisonSociale());
         $destinataire->setAdresse($societe->getAdresse()->getAdresseFormatee());
-        $destinataire->setCodePostal($societe->getAdresse()->getAdresse());
-        $destinataire->setCommune($societe->getAdresse()->getAdresse());
+        $destinataire->setCodePostal($societe->getAdresse()->getCodePostal());
+        $destinataire->setCommune($societe->getAdresse()->getCommune());
         $destinataire->setCodeComptable($societe->getCodeComptable());
     }
 
