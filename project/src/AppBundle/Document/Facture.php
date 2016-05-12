@@ -514,4 +514,17 @@ class Facture implements DocumentSocieteInterface {
     {
         return $this->dateLimitePaiement;
     }
+    
+    public function getTva() {
+    	$tva = 0;
+    	foreach ($this->getLignes() as $ligne) {
+    		if (!$tva) {
+    			$tva = $ligne->getTauxTaxe();
+    		}
+    		if ($tva != $ligne->getTauxTaxe()) {
+    			throw new \Exception("TVA différente dans les lignes de facture.");
+    		}
+    	}
+    	return $tva;
+    }
 }

@@ -25,6 +25,25 @@ class FactureGenerator extends AbstractIdGenerator
 
         $document->setIdentifiant(sprintf("%s-%s-%04d", $document->getSociete()->getIdentifiant(), $document->getDateEmission()->format('Ymd'), $result['value']['factureIncrement']));
 
-        return sprintf("%s-%s", "FACTURE", $document->getIdentifiant());
+        $id = sprintf("%s-%s", "FACTURE", $document->getIdentifiant());
+        
+        if($document->getNumeroFacture()) {
+        
+        	return $id;
+        }
+        
+        $annee = $document->getDateFacturation()->format('Y');
+        
+        $command = array();
+        $command['findandmodify'] = 'doctrine_increment_ids';
+        $command['query'] = array('_id' => "FactureArchive");
+        $command['update'] = array('$inc' => array($annee => 1));
+        $command['upsert'] = true;
+        $command['new'] = true;
+        $result = $db->command($command);
+        
+        $document->setNumeroFacture(sprintf("%s%04d", $annee, $result['value'][$annee]));
+        
+        return $id;
     }
 }
