@@ -91,6 +91,7 @@
                 data-url-update="{{path('calendarUpdate', {'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
                 data-url-prev="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemainePrecedente('Y-m-d')}) }}"
                 data-url-next="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemaineSuivante('Y-m-d')}) }}"
+                data-url-date="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': '-d', 'mode': 'JOUR'}) }}"
                 >
             </div>
         </div>
