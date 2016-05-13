@@ -23,7 +23,7 @@ use AppBundle\Manager\EtablissementManager;
 class PassageController extends Controller {
 
     /**
-     * @Route("/passage/{secteur}", name="passage" , defaults={"secteur" = "PARIS"})
+     * @Route("/passage/{secteur}/visualisation", name="passage" , defaults={"secteur" = "PARIS"})
      */
     public function indexAction(Request $request,$secteur) {
         
