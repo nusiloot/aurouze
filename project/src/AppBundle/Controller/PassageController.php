@@ -165,8 +165,8 @@ class PassageController extends Controller {
 
         $contratIsFini = true;
         foreach ($passage->getContrat()->getContratPassages() as $contratPassages) {
-            foreach ($contratPassages->getPassages() as $passage) {
-                if (!$passage->isAnnule() && !$passage->isRealise()) {
+            foreach ($contratPassages->getPassages() as $p) {
+                if (!$p->isAnnule() && !$p->isRealise()) {
                     $contratIsFini = false;
                     break;
                 }
@@ -178,10 +178,12 @@ class PassageController extends Controller {
 
         $dm->persist($contrat);
         $dm->flush();
-
-
-
-        return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
+        
+		if ($passage->getMouvementDeclenchable()) {
+			return $this->redirectToRoute('facture_societe', array('id' => $passage->getSociete()->getId()));
+		} else {
+        	return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
+		}
     }
 
     public function getPdfGenerationOptions() {

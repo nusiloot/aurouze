@@ -82,7 +82,7 @@
                 </div>
             </div>
         </div>
-    {% if passage.mouvementDeclenchable %}
+    {% if passage.mouvementDeclenchable and not passage.mouvementDeclenche %}
     <p class="bg-warning" style="padding: 15px;"><span class="glyphicon glyphicon-exclamation-sign"></span> La saisie de ce rapport de passage entraine le déclenchement d'un mouvement de facture.</p>
     {% endif %}
 	<div class="text-right">
