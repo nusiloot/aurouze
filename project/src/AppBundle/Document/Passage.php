@@ -90,6 +90,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /**
      * @MongoDB\String
      */
+    protected $commentaire;
+
+    /**
+     * @MongoDB\String
+     */
     protected $description;
 
     /**
@@ -974,5 +979,27 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getRendezVous()
     {
         return $this->rendezVous;
+    }
+
+    /**
+     * Set commentaire
+     *
+     * @param string $commentaire
+     * @return self
+     */
+    public function setCommentaire($commentaire)
+    {
+        $this->commentaire = $commentaire;
+        return $this;
+    }
+
+    /**
+     * Get commentaire
+     *
+     * @return string $commentaire
+     */
+    public function getCommentaire()
+    {
+        return $this->commentaire;
     }
 }

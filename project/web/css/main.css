@@ -41,7 +41,7 @@ body {
 }
 
 .fc-today{
-   background-color: #eeeeee;
+   background-color: transparent !important;
 }
 
 .fc-agendaWeek-view .fc-event .fc-time {

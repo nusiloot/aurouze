@@ -52,6 +52,9 @@ $(function () {
                 icon: 'right-single-arrow'
             }
         },
+        dayRender: function (date, cell) {
+            cell.css("background-color", "transparent");
+        },
         header: false,
         lang: 'fr',
         timeFormat: 'H:mm',
@@ -79,6 +82,9 @@ $(function () {
             }, function (response) {
                 $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
+                $('#modal-calendrier-infos').on('hidden.bs.modal', function (e) {
+
+                }
                 $.callbackEventForm();
             }
             );

@@ -29,10 +29,7 @@ class RendezVousManager {
                 $passage->getEtablissementInfos()->getAdresse()->getCodePostal(), $passage->getEtablissementInfos()->getAdresse()->getCommune()
         ));
 
-        $rdv->setDescription(sprintf("%s\nContrat n°%s\nTraitement : %s",
-                $passage->getLibelle(),
-                $passage->getContrat()->getNumeroArchive(),
-                implode(", ", $passage->getPrestations()->toArray())));
+        $rdv->setDescription($passage->getCommentaire());
 
         $rdv->setLieu(sprintf("%s %s %s",
                 $passage->getEtablissementInfos()->getAdresse()->getAdresse(),
