@@ -11,7 +11,7 @@
             {{ facture.emetteur.codePostal }}, {{ facture.emetteur.commune }}<br />
             {% endif %}
             Tél : {{ facture.emetteur.telephone }}<br />
-            Fax: {{ facture.emetteur.fax }}
+            E-mail: {{ facture.emetteur.email }}
         </p>
     </div>
     <div class="col-xs-6">
@@ -22,8 +22,7 @@
         <br />
         <br />
         <br />
-        <br />
-        <br />
+		<br />
         <br />
         <p>
             {{ facture.destinataire.nom }}<br />
@@ -32,6 +31,7 @@
         </p>
     </div>
 </div>
+<br />
 <br />
 <br />
 <br />
@@ -56,12 +56,11 @@
                     <small>Votre Réf CDE {{ ligne.origineDocument.numeroArchive }}{% if ligne.origineDocument.referenceClient %} ({{ ligne.origineDocument.referenceClient }}){% endif %}</small><br />
                     {% endif %}
                     <small>
-                    Prestations :
+                    Prestation{% if ligne.origineDocument.prestations|length > 1 %}s{% endif %} :
                     <ul class="list-unstyled" style="padding-left: 10px; margin-bottom: 0">
-                        <li>- Dératisation de rats</li>
-                        <li>- Dératisation de surmulots</li>
-                        <li>- Dératisation de souris</li>
-                        <li>- Désinsectisation de blattes germaniques</li>
+                    	{% for prestation in ligne.origineDocument.prestations %}
+                        <li>- {{ prestation.nom }}</li>
+                        {% endfor %}
                     </ul>
                     Lieu{% if(ligne.origineDocument.contratPassages | length > 1) %}x{% endif %} d'application{% if(ligne.origineDocument.contratPassages | length > 1) %}s{% endif %} :
                         <ul class="list-unstyled" style="padding-left: 10px;">
@@ -106,11 +105,9 @@
 
 <small>
 <p class="well" style="padding: 5px; margin-bottom: 0;">
-<small>
-La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l’obligation de vous indiquer :<br />
-Date de règlement : {{ facture.dateReglement|date("d/m/Y") }}<br />
-Mode de règlement : par chèque ou virement<br />
-Application du taux minimum de pénalités de retard : trois fois le taux d’intérêt légal en vigueur (art. L. 441-6 du C.Cce)<br />
+<small style="font-size: 60%;">
+La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l'obligation de vous indiquer :<br />
+Application du taux minimum de pénalités de retard : trois fois le taux d'intérêt légal en vigueur (art. L. 441-6 du C.Cce)<br />
 Indemnité forfaitaire pour frais de recouvrement : 40 euros (art. D. 441-5 du C.Cce)<br />
 Sanction en cas de non respect des modalités ci-dessus :<br />
  - amende de 75 000 euros pour les personnes physiques / 375 000 euros pour les personnes morales.
@@ -139,8 +136,9 @@ Sanction en cas de non respect des modalités ci-dessus :<br />
             </p>
         </div>
         <div class="col-xs-6 text-right">
-            <p class="lead">
-            Montant dû : {{ facture.montantTTC|number_format(2, ',', ' ')  }} €
+            <p>
+            <span class="lead">Montant dû : {{ facture.montantTTC|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
+            <small>Date limite de règlement : {{ facture.dateReglement|date("d/m/Y") }}</small>
             </p>
         </div>
     </div>
