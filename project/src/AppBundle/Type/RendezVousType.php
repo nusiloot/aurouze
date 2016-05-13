@@ -33,8 +33,6 @@ class RendezVousType extends AbstractType {
         $builder
             ->add('titre', TextType::class, array('attr' => array('placeholder' => "Titre de l'évenement")))
             ->add('description', TextareaType::class, array('attr' => array('rows' => 2)))
-            ->add('timeDebut', TextType::class, array('label' => 'Heure debut', 'attr' => array('class' => 'input-timepicker', 'data-default' => '12:00')))
-			->add('timeFin', TextType::class, array('label' => 'Heure fin', 'attr' => array('class' => 'input-timepicker', 'data-default' => '12:00')))
             ->add('save', SubmitType::class, array('label' => 'Modifier', "attr" => array("class" => "btn btn-success")));
         ;
 
@@ -55,7 +53,9 @@ class RendezVousType extends AbstractType {
             ),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy'
-        ));
+        ))
+        ->add('timeDebut', TextType::class, array('label' => 'Heure debut', 'attr' => array('class' => 'input-timepicker', 'data-default' => '12:00')))
+        ->add('timeFin', TextType::class, array('label' => 'Heure fin', 'attr' => array('class' => 'input-timepicker', 'data-default' => '12:00')));
 
         $builder->add('participants', DocumentType::class, array(
             	'choices' => $this->getParticipants(),

@@ -208,24 +208,21 @@ class CalendarController extends Controller {
         $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
 
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
-            'action' => "",
+            'action' => $this->generateUrl('calendarRead', array('id' => $rdv->getId())),
             'method' => 'POST',
             'attr' => array('id' => 'eventForm')
         ));
 
-        return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
+        $form->handleRequest($request);
 
+        if ($rdv->getPassage()->isRealise() || !$form->isSubmitted() || !$form->isValid()) {
 
-        if (!$passage->isRealise()) {
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                $passage = $form->getData();
-                $dm->persist($passage);
-                $dm->flush();
-                return new Response(json_encode(array("success" => true)));
-            }
+            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
         }
-        return $this->render('calendar/calendarModal.html.twig', array('form' => $form->createView(), 'passage' => $passage, 'technicien' => $technicien, 'light' => $request->get('light')));
+
+        $dm->flush();
+
+        return new Response(json_encode(array("success" => true)));
     }
 
     /**

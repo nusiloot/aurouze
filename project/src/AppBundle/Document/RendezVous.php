@@ -70,9 +70,14 @@ class RendezVous {
     }
 
     public function getBorderColor() {
-        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime()) {
 
             return "#bce8f1";
+        }
+
+        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+
+            return "#faebcc";
         }
 
         if($this->getPassage() && $this->getPassage()->isRealise()) {
@@ -84,9 +89,14 @@ class RendezVous {
     }
 
     public function getTextColor() {
-        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime()) {
 
             return "#31708f";
+        }
+
+        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+
+            return "#8a6d3b";
         }
 
         if($this->getPassage() && $this->getPassage()->isRealise()) {
@@ -98,9 +108,14 @@ class RendezVous {
     }
 
     public function getStatusColor() {
-        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime()) {
 
             return "#d9edf7";
+        }
+
+        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+
+            return "#fcf8e3";
         }
 
         if($this->getPassage() && $this->getPassage()->isRealise()) {
@@ -115,6 +130,12 @@ class RendezVous {
         if(!$this->getPassage()) {
 
             return;
+        }
+
+        $this->getPassage()->removeAllTechniciens();
+
+        foreach($this->getParticipants() as $participant) {
+            $this->getPassage()->addTechnicien($participant);
         }
 
         $this->getPassage()->setDateDebut($this->getDateDebut());
