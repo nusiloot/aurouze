@@ -105,7 +105,7 @@
 
     $.initTimePicker = function () {
         $('.input-timepicker').each(function () {
-            var defaultTiming = ($(this).attr('data-default'))? $(this).attr('data-default') : '01:00';
+            var defaultTiming = ($(this).attr('data-default'))? $(this).attr('data-default') : '';
             $(this).timepicker({
                 format: 'HH:ii p',
                 autoclose: true,
