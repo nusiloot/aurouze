@@ -17,8 +17,7 @@ $(function () {
             var title = $.trim($(this).data('title'));
             $.get(
             $('#calendrier').data('urlRead'), {
-                id: id,
-                light: 0
+                id: id
             }, function (response) {
                 $('#modal-title').text(title);
                 $('#modal-body').html(response);

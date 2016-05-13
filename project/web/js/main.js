@@ -272,7 +272,6 @@
         }
     });
     $.initModalPassage = function () {
-
         $('#modal-passage').on('show.bs.modal', function (event) {
             var link = $(event.relatedTarget) // Button that triggered the modal
             $(this).find('.modal-body').load(link.attr('href'), function () {

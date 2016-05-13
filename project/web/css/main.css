@@ -40,6 +40,10 @@ body {
     height: 1.8em;
 }
 
+.fc-today{
+   background-color: #eeeeee;
+}
+
 .fc-agendaWeek-view .fc-event .fc-time {
     display: none;
 }
