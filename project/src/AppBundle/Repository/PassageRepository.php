@@ -125,7 +125,7 @@ class PassageRepository extends DocumentRepository {
         $q->field('statut')->equals(PassageManager::STATUT_A_PLANIFIER)
                         ->field('datePrevision')->lte($mongoEndDate);
         foreach ($dpts as $dpt) {
-            $q->addOr($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex('/' . $dpt . '.*/i')));
+            $q->addOr($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex('/^' . $dpt . '.*/i')));
         }
         $query = $q->sort('datePrevision', 'asc')->getQuery();
 
