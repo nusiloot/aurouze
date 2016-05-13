@@ -161,20 +161,7 @@ class PassageController extends Controller {
 
         $passage->setDateRealise($passage->getDateDebut());
         $dm->persist($passage);
-        $dm->flush();
-
-        $contratIsFini = true;
-        foreach ($passage->getContrat()->getContratPassages() as $contratPassages) {
-            foreach ($contratPassages->getPassages() as $p) {
-                if (!$p->isAnnule() && !$p->isRealise()) {
-                    $contratIsFini = false;
-                    break;
-                }
-            }
-        }
-        if ($contratIsFini) {
-            $contrat->setStatut(ContratManager::STATUT_FINI);
-        }
+    
 
         $dm->persist($contrat);
         $dm->flush();
