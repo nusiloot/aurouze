@@ -20,7 +20,7 @@
                     {% endif %}
                     {%  if (contrat.isAnnulable()) %}
                         <a href="{{ path('contrat_annulation', {'id': contrat.getId()}) }}" class="pull-right btn btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir annuller le contrat n° '+{{ contrat.numeroArchive }}+'?');">Annuler</a>
-                    {%  endif %}   
+                    {%  endif %}
                     {%  if (contrat.isEnAttenteAcceptation() or contrat.isBrouillon()) %}
                         <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir supprimer le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
                     {%  endif %}
@@ -35,13 +35,16 @@
             </div>
         {% else %}
             <div class="col-xs-4 text-right" style="padding-top: 30px; ">
+                <div class="btn-group">
                 {%  if (contrat.isReconductible) %}
                     <a href="{{ path('contrat_reconduction', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de vouloir reconduire le contrat n° '+{{ contrat.numeroArchive }}+'?');">Reconduire</a>
                 {% endif %}
                 {%  if (contrat.isAnnulable()) %}
                     <a href="{{ path('contrat_annulation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir annuller le contrat n° '+{{ contrat.numeroArchive }}+'?');">Annuler</a>
-                {%  endif %}   
+                {%  endif %}
+                <a class="btn btn-sm btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
                 <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning">Modification partielle</a>
+                </div>
             </div>
         {% endif %}
     </div>
