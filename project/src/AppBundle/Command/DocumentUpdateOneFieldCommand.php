@@ -69,7 +69,7 @@ class DocumentUpdateOneFieldCommand extends ContainerAwareCommand {
             }
             $docToChange = $allDocsArray[$idReprise];
             if ($ligne[self::CSV_FIELD_TO_CHANGE]) {
-                $docToChange->$setFonctionName($ligne[self::CSV_FIELD_TO_CHANGE]);
+                $docToChange->$setFonctionName(\AppBundle\Manager\ContratManager::$frequencesImport[$ligne[self::CSV_FIELD_TO_CHANGE]]);
                 $output->writeln(sprintf("\n<comment>Mis à jour du contrat %s : '%s' va être assigné à %s</comment>",$docToChange->getId(), $fieldName, $ligne[self::CSV_FIELD_TO_CHANGE]));                    
             }
             $cptTotal++;

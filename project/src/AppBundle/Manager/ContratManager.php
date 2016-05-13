@@ -99,6 +99,13 @@ class ContratManager implements MouvementManagerInterface {
     	self::FREQUENCE_45JMOIS => '45 jours fin de mois',
     	self::FREQUENCE_60J => '60 jours'
     );
+    public static $frequencesImport = array(
+    	"2" => self::FREQUENCE_RECEPTION,
+    	"7" => self::FREQUENCE_30J,
+    	"3" => self::FREQUENCE_30JMOIS ,
+    	"6" => self::FREQUENCE_45JMOIS ,
+    	"9" => self::FREQUENCE_60J 
+    );
     protected $dm;
 
     function __construct(DocumentManager $dm) {
