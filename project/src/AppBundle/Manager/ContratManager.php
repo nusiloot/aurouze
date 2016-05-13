@@ -38,7 +38,6 @@ class ContratManager implements MouvementManagerInterface {
     const FREQUENCE_30JMOIS = '30JMOIS';
     const FREQUENCE_45JMOIS = '45JMOIS';
     const FREQUENCE_60J = '60J';
-    const FREQUENCE_60JMOIS = '60JMOIS';
 
     public static $moyens_contrat_libelles = array(
         self::MOYEN_3D => '3D',
@@ -98,8 +97,7 @@ class ContratManager implements MouvementManagerInterface {
     	self::FREQUENCE_30J => '30 jours',
     	self::FREQUENCE_30JMOIS => '30 jours fin de mois',
     	self::FREQUENCE_45JMOIS => '45 jours fin de mois',
-    	self::FREQUENCE_60J => '60 jours',
-    	self::FREQUENCE_60JMOIS => '60 jours fin de mois'
+    	self::FREQUENCE_60J => '60 jours'
     );
     protected $dm;
 

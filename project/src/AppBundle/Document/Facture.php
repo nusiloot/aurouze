@@ -558,9 +558,6 @@ class Facture implements DocumentSocieteInterface {
     		case ContratManager::FREQUENCE_60J : 
     			$date->modify('+60 day');
     			break;
-    		case ContratManager::FREQUENCE_60JMOIS : 
-    			$date->modify('+60 day')->modify('last day of');
-    			break;
     		default:
     			$date->modify('+'.FactureManager::DEFAUT_FREQUENCE_JOURS.' day');
     	}
