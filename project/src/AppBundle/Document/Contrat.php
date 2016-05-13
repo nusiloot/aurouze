@@ -787,7 +787,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getStatutCouleur() {
-        if($this->isAnnule()){
+        if ($this->isAnnule()) {
             return ContratManager::$statuts_couleurs[$this->getTypeContrat()];
         }
         return ContratManager::$statuts_couleurs[$this->getStatut()];
@@ -1140,12 +1140,23 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         if (!$contrat->isKeepNumeroArchivage()) {
             $contrat->setNumeroArchive(null);
         }
-        $contrat->setDateAcceptation(null);
-        $contrat->setDateFin(null);
-        $contrat->setDateDebut(null);
-        $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+        $dateDebut = clone $contrat->getDateDebut();
+        $dateAcceptation = clone $contrat->getDateDebut();
+        $nbMois = $contrat->getDuree();
+
+        $dateDebut = $dateDebut->modify("+" . $nbMois . " month");
+        $dateAcceptation = $dateAcceptation->modify("+" . $nbMois . " month");
+        $contrat->setDateAcceptation($dateAcceptation);
+        $contrat->setDateDebut($dateDebut);
 
         $contrat->setDateCreation(new \DateTime());
+        $contrat->setDateFin(null);
+        if ((new \DateTime())->format('Ymd') > $dateDebut->format('Ymd')) {
+            $contrat->setStatut(ContratManager::STATUT_A_VENIR);
+        } else {
+            $contrat->setStatut(ContratManager::STATUT_EN_COURS);
+        }
+
         $contrat->contratPassages = null;
         $contrat->setReconduit(false);
 
@@ -1330,15 +1341,13 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->reconduit;
     }
 
-
     /**
      * Set frequencePaiement
      *
      * @param string $frequencePaiement
      * @return self
      */
-    public function setFrequencePaiement($frequencePaiement)
-    {
+    public function setFrequencePaiement($frequencePaiement) {
         $this->frequencePaiement = $frequencePaiement;
         return $this;
     }
@@ -1348,8 +1357,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      *
      * @return string $frequencePaiement
      */
-    public function getFrequencePaiement()
-    {
+    public function getFrequencePaiement() {
         return $this->frequencePaiement;
     }
+
 }
