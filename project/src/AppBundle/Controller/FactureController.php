@@ -92,7 +92,7 @@ class FactureController extends Controller {
     public function societeGenerationAction(Request $request, Societe $societe) {
         $fm = $this->get('facture.manager');
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $date = new \DateTime($request->get('dateFacturation', date('d/m/Y')));
+        $date = \DateTime::createFromFormat('d/m/Y', $request->get('dateFacturation', date('d/m/Y')));
 
         $mouvements = $fm->getMouvementsBySociete($societe);
 
