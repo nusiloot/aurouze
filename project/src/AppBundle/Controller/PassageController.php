@@ -25,8 +25,8 @@ class PassageController extends Controller {
     /**
      * @Route("/passage/{secteur}/visualisation", name="passage" , defaults={"secteur" = "PARIS"})
      */
-    public function indexAction(Request $request,$secteur) {
-        
+    public function indexAction(Request $request, $secteur) {
+
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
             'method' => 'GET',
@@ -36,14 +36,14 @@ class PassageController extends Controller {
         $passages = $passageManager->getRepository()->findToPlan($secteur);
         $moisPassagesArray = $passageManager->getRepository()->getNbPassagesToPlanPerMonth($secteur);
         $geojson = $this->buildGeoJson($passages);
-        
-        return $this->render('passage/index.html.twig', array('passages' => $passages, 
-            'formEtablissement' => $formEtablissement->createView(),
-            'geojson' => $geojson,
-            'moisPassagesArray' => $moisPassagesArray, 
-            'passageManager' => $passageManager,
-            'etablissementManager' => $this->get('etablissement.manager'),
-            'secteur' => $secteur));
+
+        return $this->render('passage/index.html.twig', array('passages' => $passages,
+                    'formEtablissement' => $formEtablissement->createView(),
+                    'geojson' => $geojson,
+                    'moisPassagesArray' => $moisPassagesArray,
+                    'passageManager' => $passageManager,
+                    'etablissementManager' => $this->get('etablissement.manager'),
+                    'secteur' => $secteur));
     }
 
     /**
@@ -178,12 +178,12 @@ class PassageController extends Controller {
 
         $dm->persist($contrat);
         $dm->flush();
-        
-		if ($passage->getMouvementDeclenchable()) {
-			return $this->redirectToRoute('facture_societe', array('id' => $passage->getSociete()->getId()));
-		} else {
-        	return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
-		}
+
+        if ($passage->getMouvementDeclenchable()) {
+            return $this->redirectToRoute('facture_societe', array('id' => $passage->getSociete()->getId()));
+        } else {
+            return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
+        }
     }
 
     public function getPdfGenerationOptions() {
@@ -411,14 +411,19 @@ class PassageController extends Controller {
             $parameters = $request->get('interventionRapide');
             $newContrat->setTypeContrat(ContratManager::TYPE_CONTRAT_PONCTUEL);
             $dateDebut = clone $newContrat->getDateDebut();
-            $newContrat->setDateFin($dateDebut->modify("+" . $newContrat->getDuree() . " month"));
+            $newContrat->setDateAcceptation($dateDebut);
+            $newContrat->setStatut(ContratManager::STATUT_EN_COURS);
+
+            $dateFin = $dateDebut->modify("+" . $newContrat->getDuree() . " month");
+            $newContrat->setDateFin($dateFin);
             $newContrat->setDureeGarantie(0);
-            $newContrat->setPrixHt(null);
             $newContrat->setTvaReduite(false);
             $dm->persist($newContrat);
 
             $newPassage = new Passage();
             $newPassage->setEtablissement($etablissement);
+            $newPassage->setContrat($newContrat);
+            $newPassage->setTypePassage(PassageManager::TYPE_PASSAGE_CONTRAT);
             $newPassage->setDatePrevision($newContrat->getDateDebut());
             foreach ($parameters['prestations'] as $prestationParam) {
                 $prestationIdentifiant = $prestationParam['identifiant'];
@@ -433,7 +438,7 @@ class PassageController extends Controller {
             $newPassage->setMouvementDeclenchable(true);
             $newPassage->addTechnicien($newContrat->getTechnicien());
             $newContrat->addPassage($etablissement, $newPassage);
-            $newContrat->setStatut(ContratManager::STATUT_BROUILLON);
+
             $dm->persist($newPassage);
             $dm->flush();
             return $this->redirectToRoute('calendar', array('passage' => $newPassage->getId(),
