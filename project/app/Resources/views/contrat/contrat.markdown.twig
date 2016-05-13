@@ -10,8 +10,8 @@ entre
 
 ```
 
-Ets AUROUZE Julien
-8, rue des Halles
+Ets AUROUZE Julien  
+8, rue des Halles  
 75001 PARIS
 
 ```
@@ -20,8 +20,8 @@ et
 
 ```
 
-{{ contrat.societe.raisonSociale|trim }}
-{{ contrat.societe.adresse.adresseFormatee }}
+{{ contrat.societe.raisonSociale|trim }}  
+{{ contrat.societe.adresse.adresseFormatee }}  
 {{ contrat.societe.adresse.codePostal|trim }} {{ contrat.societe.adresse.commune|trim }}
 
 ```
@@ -29,13 +29,13 @@ et
 ## Cette proposition a pour but d'effectuer {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %}
 
 {% for prestation in contrat.prestations %}
-{{  prestation.nom|trim }}
+{{  prestation.nom|trim }}  
 {% endfor %}
 
 ## Dans le{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}locaux{% else %}local{% endif %} situé{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}aux adresses{% else %}à l'adresse{% endif %}
 
 {% for etablissement in contrat.etablissements %}
-{{  etablissement.raisonSociale|trim }} / {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}  
+{{  etablissement.raisonSociale|trim }} / {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}    
 {% endfor %}
 
 ## Nomenclature des locaux à traiter
@@ -80,7 +80,7 @@ Pour l'exécution de la prestation, le client s'engage à nous fournir l'eau et 
 Pour l'exécution de la prestation, le client s'engage à nous fournir l'électricité et l'eau en quantité suffisante, la place nécessaire au stationnement des moyens et le libre accès aux parties à traiter. Le nettoyage et le lavage sera effectué avec du matériel type haute pression et des détergents appropriés et homologués à cette prestation. Les fiches techniques et sécurités des produits employés vous seront fournies sur demande.
 {% endif %}
 ## Engagement d'exécution de nos prestations
-Nos prestations sont exécutées par un personnel qualifié. Le matériel et l'outillage sont adaptés et en quantité suffisante pour la bonne exécution des prestations mentionnées et conformes à la législation en vigueur.
+Nos prestations sont exécutées par un personnel qualifié et certifié Certibiocide. Le matériel et l'outillage sont adaptés et en quantité suffisante pour la bonne exécution des prestations mentionnées et conformes à la législation en vigueur.
 
 {% if contrat.dureeGarantie %}
 ## Garantie
@@ -108,11 +108,7 @@ Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% en
 Délai de paiement des factures : A réception
 
 ## Responsabilité civile
-La société Ets AUROUZE Julien est assurée en responsabilité civile pour les dommages causés aux tiers du fait de son activité auprès de la compagnie GAN EUROCOURTAGE par la police n° RC 86.560.041.
-
-
-## Conditions générales
-Voir annexe ou au verso.
+La société Ets AUROUZE Julien est assurée en responsabilité civile pour les dommages causés aux tiers du fait de son activité auprès de la compagnie ALLIANZ EUROCOURTAGE par la police n° RC 86.560.041.
 ___
 
 **Ets AUROUZE Julien**
@@ -145,6 +141,10 @@ ___
 
 ```
 
-Fait en double exemplaire.
-Un exemplaire à conserver.
+Fait en double exemplaire.  
+Un exemplaire à conserver.  
 Un exemplaire à nous retourner.
+
+
+## Conditions générales
+Voir annexe.
