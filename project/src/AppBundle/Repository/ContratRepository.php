@@ -23,6 +23,7 @@ class ContratRepository extends DocumentRepository {
     public function findContratMouvements($societe, $isFacturable, $isFacture) {
         return $this->createQueryBuilder()
              ->select('mouvements')
+             ->field('mouvements.societe')->equals($societe->getId())
              ->field('mouvements.facturable')->equals($isFacturable)
              ->field('mouvements.facture')->equals($isFacture)
              ->getQuery()
@@ -39,7 +40,7 @@ class ContratRepository extends DocumentRepository {
              ->field('commercial')->equals($compte->getId())
              ->getQuery()->execute()->count();
     }
-    
+
     public function findAllFrequences() {
     	return ContratManager::$frequences;
     }
