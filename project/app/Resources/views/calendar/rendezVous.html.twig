@@ -3,28 +3,33 @@
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <span class="col-xs-2 text-center">
-                {% if (rdv.passage.planifie) %}
+                {% if (rdv.passage and rdv.passage.planifie) %}
                     <button style="margin-bottom: 10px;" class="btn btn-md btn-block btn-warning">Planifié<br /></button>
                     {% if rdv.passage.imprime %}
                         <span><span class="glyphicon glyphicon-print"></span> Bon Imprimé</span>
                     {% endif %}
-                {% elseif (rdv.passage.realise) %}
+                {% elseif (rdv.passage and rdv.passage.realise) %}
                 <button class="btn btn-md btn-block btn-success">{{
                     rdv.passage.getStatutLibelle() }}</button>
+                {% else %}
+                <button class="btn btn-md btn-block">Libre</button>
                 {% endif %}
-
             </span>
-            <h3 style="" class="modal-title col-xs-9">
-                    {{ rdv.titre }}<br /><small><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ rdv.passage.dateDebut | localizeddate('full', 'none') | capitalize }} à {{ rdv.passage.dateDebut | date('H') }}:{{ rdv.passage.dateDebut | date('i') }}
-                        pendant <span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ rdv.passage.duree }}</span></small>
-            </h3>
+            {% if(rdv.id) %}
+                <h3 class="modal-title col-xs-9">
+                    {{ rdv.titre }}<br /><small><i class="mdi mdi-today mdi-lg"></i>&nbsp;{{ rdv.dateDebut | localizeddate('full', 'none') | capitalize }} à {{ rdv.dateDebut | date('H') }}:{{ rdv.dateDebut | date('i') }}{% if(rdv.passage) %}
+                        pendant <span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ rdv.passage.duree }}{% endif %}</span></small>
+                </h3>
+            {% else %}
+                <h3 class="modal-title col-xs-9">Ajout d'un RDV</h3>
+            {% endif %}
         </div>
         {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
         <div class="modal-body">
             {% if(rdv.passage) %}
             <div class="form-group" style="margin-bottom: 0">
                 <label class="control-label col-xs-2">Contrat</label>
-                <div class="col-xs-4">
+                <div class="col-xs-10">
                     <p class="form-control-static">
                         <a href="{{ path('contrat_visualisation', {'id': rdv.passage.contrat.id })}}">N° {{ rdv.passage.contrat.numeroArchive }} ({{ rdv.passage.contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}
                         {% if(rdv.passage.contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != rdv.passage.contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ rdv.passage.contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }})
@@ -45,10 +50,10 @@
                 <label class="control-label col-xs-2">Lieu</label>
                 <div class="col-xs-10">
                     <p class="form-control-static">
-                    {{ rdv.passage.etablissementInfos.nom }},
+                    <a href="{{ path('societe_visualisation', {'id': rdv.passage.etablissement.societe.id })}}">{{ rdv.passage.etablissement.societe.raisonSociale }}, {{ rdv.passage.etablissementInfos.nom }},
                     {{ rdv.passage.etablissementInfos.adresse.adresse }}
                     {{ rdv.passage.etablissementInfos.adresse.codePostal }}
-                    {{ rdv.passage.etablissementInfos.adresse.commune }}</p>
+                    {{ rdv.passage.etablissementInfos.adresse.commune }}</a></p>
                 </div>
             </div>
             <div class="form-group" style="margin-bottom: 0">
@@ -67,6 +72,7 @@
                     </p>
                </div>
            </div>
+           {% if rdv.passage and rdv.passage.realise %}
            <div class="form-group" style="margin-bottom: 0">
                <label class="control-label col-xs-2">Technicien</label>
                <div class="col-xs-10">
@@ -86,24 +92,25 @@
                </div>
            </div>
            {% endif %}
-           <div class="{% if rdv.passage.realise %}hidden{% endif %}">
-               <hr style="margin-top: 0;" />
-               <div class="form-group">
-                   {{ form_label(form.dateFin, "Techniciens", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
-                   <div class="col-xs-10">
-                   {{ form_widget(form.participants) }}
-                   </div>
-               </div>
+           <hr style="margin-top: 0;" />
+           {% endif %}
+           <div class="{% if rdv.passage and rdv.passage.realise %}hidden{% endif %}">
                {% if form.titre is defined %}
-               <hr />
             	<div class="form-group">
                     {{ form_errors(form.titre) }}
             	    {{ form_label(form.titre, "Titre", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
                     <div class="col-xs-10">
-        	           {{ form_widget(form.titre) }}
+        	           {{ form_widget(form.titre, {'attr': {'autofocus': 'autofocus'}}) }}
                     </div>
                 </div>
                 {% endif %}
+                <hr />
+                <div class="form-group">
+                    {{ form_label(form.dateFin, "Techniciens", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                    <div class="col-xs-10">
+                    {{ form_widget(form.participants) }}
+                    </div>
+                </div>
                 <hr />
                 <div class="form-group">
                     {{ form_errors(form.dateDebut) }}
@@ -150,20 +157,24 @@
         <div class="modal-footer">
             <div class="row">
                 <div class="col-xs-2 text-left">
-                    <button type="button" class="btn btn-block btn-default" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-block btn-default" data-dismiss="modal">{% if rdv.id %}Fermer{% else %}Annuler{% endif %}</button>
                 </div>
                 <div class="col-xs-8 text-center">
                     <div class="btn-group">
+                        {% if rdv.id %}
                         <a class="btn btn-sm btn-default text-danger" href=""><span class="text-danger"><span class="glyphicon glyphicon-trash"></span> Supprimer le RDV</span></a>
+                        {% endif %}
+                        {% if (rdv.passage ) %}
                         <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_bon', { id: rdv.passage.id })}}"><span class="glyphicon glyphicon-print"></span> Bon de passage</a>
                         <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_mission', { id: rdv.passage.id })}}"><span class="glyphicon glyphicon-print"></span> Fiche de suivi client</a>
                         <a class="btn btn-sm btn-default" href=""><span class="glyphicon glyphicon-pencil"></span> Rapport de visite</a>
+                        {% endif %}
                     </div>
                 </div>
-                <div class="col-xs-2 text-right {% if rdv.passage.realise %}hidden{% endif %}">
-                    {{ form_widget(form.save, {'attr': {'class': 'btn btn-success btn-block'}}) }}
+                <div class="col-xs-2 text-right {% if rdv.passage and rdv.passage.realise %}hidden{% endif %}">
+                    <button data-loading-text="En cours ..." autocomplete="off" class="btn btn-primary btn-block" type="submit">{% if rdv.id %}Modifier{% else %}Ajouter{% endif %}</button>
                 </div>
-                {% if rdv.passage.realise %}
+                {% if rdv.passage and rdv.passage.realise %}
                 <div class="col-xs-2 text-right">
                     <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_mission', { id: rdv.passage.id })}}"><i class="mdi mdi-today mdi-lg"></i> Modifier le RDV</a>
                 </div>

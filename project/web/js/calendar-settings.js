@@ -75,7 +75,6 @@ $(function () {
             }
         ],
         eventClick: function (event) {
-            console.log(event);
             $.get(
                 $('#calendrier').data('urlRead'), {
                 id: event.id
@@ -83,9 +82,22 @@ $(function () {
                 $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
                 $('#modal-calendrier-infos').on('hidden.bs.modal', function (e) {
-
-                }
+                    //$('#calendrier').fullCalendar('refetchEvents');
+                });
                 $.callbackEventForm();
+            }
+            );
+        },
+        dayClick: function(date, jsEvent, view) {
+            $.get(
+                $('#calendrier').data('urlAddLibre'), {'start': date.format()}
+             , function (response) {
+                $('#modal-calendrier-infos').html(response);
+                $('#modal-calendrier-infos').on('shown.bs.modal', function() {
+                    $('#modal-calendrier-infos').find('[autofocus="autofocus"]').focus();
+                    $.callbackEventForm();
+                });
+                $('#modal-calendrier-infos').modal();
             }
             );
         },

@@ -32,8 +32,7 @@ class RendezVousType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('titre', TextType::class, array('attr' => array('placeholder' => "Titre de l'évenement")))
-            ->add('description', TextareaType::class, array('attr' => array('rows' => 2)))
-            ->add('save', SubmitType::class, array('label' => 'Modifier', "attr" => array("class" => "btn btn-success")));
+            ->add('description', TextareaType::class, array('required' => false, 'attr' => array('rows' => 2)))
         ;
 
         $builder->add('dateDebut', DateType::class, array(

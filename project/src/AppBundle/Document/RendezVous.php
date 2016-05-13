@@ -59,7 +59,7 @@ class RendezVous {
     public function getEventJson($backgroundColor) {
         $event = new \stdClass();
         $event->id = $this->getId();
-        $event->title = $this->getTitre().$this->getPassage()->getStatut();
+        $event->title = $this->getTitre();
         $event->start = $this->getDateDebut()->format('c');
         $event->end = $this->getDateFin()->format('c');
         $event->textColor = $this->getTextColor();
@@ -85,7 +85,7 @@ class RendezVous {
             return "#d6e9c6";
         }
 
-        return '#000';
+        return '#e1e1e8';
     }
 
     public function getTextColor() {
@@ -104,7 +104,7 @@ class RendezVous {
             return "#3c763d";
         }
 
-        return '#000';
+        return '#333';
     }
 
     public function getStatusColor() {
@@ -123,7 +123,7 @@ class RendezVous {
             return "#dff0d8";
         }
 
-        return '#fff';
+        return '#f7f7f9';
     }
 
     public function pushToPassage() {

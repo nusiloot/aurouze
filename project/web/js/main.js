@@ -146,6 +146,7 @@
 
     $.initFormEventAjax = function () {
         $('#eventForm').submit(function () {
+            $('#modal-calendrier-infos').find('button[type="submit"]').button('loading');
             var form = $(this);
             var request = $.ajax({
                 type: form.attr('method'),
@@ -157,12 +158,13 @@
                     $.parseJSON(msg);
                     location.reload();
                 } catch (e) {
-                    $('#modal-body').html(msg);
+                    $('#modal-calendrier-infos').html(msg);
                     $.callbackEventForm();
                 }
             });
             request.fail(function (jqXHR, textStatus) {
-                $('#modal-body').html(jqXHR.responseText());
+                $('#modal-calendrier-infos').html(jqXHR.responseText);
+                $.callbackEventForm();
                 $.callbackDynamicCollection();
             });
             return false;

@@ -134,16 +134,17 @@ class CalendarController extends Controller {
     }
 
     /**
-     * @Route("/calendar/add", name="calendarAdd", options={"expose" = "true"})
+     * @Route("/calendar/add/passage", name="calendarAdd", options={"expose" = "true"})
      */
     public function calendarAddAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $rvm = $this->get('rendezvous.manager');
 
         $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        $rdv = $rvm->createFromPassage($passage, new \DateTime($request->get('start')),  new \DateTime($request->get('end')));
+
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
 
-        $rdv = $rvm->createFromPassage($passage, new \DateTime($request->get('start')),  new \DateTime($request->get('end')));
         $dm->persist($rdv);
         $dm->flush();
 
@@ -151,6 +152,40 @@ class CalendarController extends Controller {
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
+    }
+
+    /**
+     * @Route("/calendar/add/libre", name="calendarAddLibre", options={"expose" = "true"})
+     */
+    public function calendarAddLibreAction(Request $request) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $rdv = new RendezVous();
+        $rdv->setDateDebut(new \DateTime($request->get('start')));
+        $dateFin = clone $rdv->getDateDebut();
+        $dateFin = $dateFin->modify("+1 hour");
+        $rdv->setDateFin($dateFin);
+        if($request->get('technicien')) {
+            $rdv->addParticipant($dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien')));
+        }
+
+        $form = $this->createForm(new RendezVousType($dm), $rdv, array(
+            'action' => $this->generateUrl('calendarAddLibre'),
+            'method' => 'POST',
+            'attr' => array('id' => 'eventForm')
+        ));
+
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+
+            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
+        }
+
+        $dm->persist($rdv);
+        $dm->flush();
+
+        return new Response(json_encode(array("success" => true)));
     }
 
     /**
@@ -205,7 +240,11 @@ class CalendarController extends Controller {
     public function calendarReadAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $technicien = $request->get('technicien');
-        $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
+        if(!$request->get('id')) {
+            $rdv = new RendezVous();
+        } else {
+            $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
+        }
 
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
             'action' => $this->generateUrl('calendarRead', array('id' => $rdv->getId())),
@@ -215,7 +254,7 @@ class CalendarController extends Controller {
 
         $form->handleRequest($request);
 
-        if ($rdv->getPassage()->isRealise() || !$form->isSubmitted() || !$form->isValid()) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
 
             return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
         }
