@@ -268,6 +268,9 @@ class CalendarController extends Controller {
             $passageManager = new PassageManager($dm);
 
             $nextPassage = $passageManager->updateNextPassageEnAttente($passageToDelete);
+            if ($passageToDelete->isAPlanifie()) {
+                $passageToDelete->setDateDebut(null);
+            }
             if ($nextPassage) {
                 $dm->persist($nextPassage);
             }
