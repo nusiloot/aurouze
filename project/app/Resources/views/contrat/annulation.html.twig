@@ -1,0 +1,56 @@
+{% set _menu_active = 'contrat' %}
+{% extends 'base.html.twig' %}
+{% block title %}Contrat n°{{ contrat.numeroArchive }} {{ societe.raisonSociale }}{% endblock title %}
+{% block body %}
+    <div id="wrapper">
+        <ol class="breadcrumb">
+            <li><a href="{{ path('contrat') }}">Contrat</a></li>
+            <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+            <li>
+                {%  if (contrat.isModifiable()) %}
+                    <a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a>
+                {% else %}
+                    <a href="{{ path('contrat_annulation',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a>
+                {% endif %}
+            </li>
+        </ol>
+        <h1>
+            Annulation du contrat {{ contrat.getStatutLibelleLong }}
+            <small>n° {{ contrat.numeroArchive }}</small>            
+        </h1>
+
+        {{ form_start(form) }}
+
+        <div class="row">
+            <div class="form-group col-xs-6">
+
+            </div>
+            <div class="form-group col-xs-6">
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    {{ form_label(form.dateResiliation) }}
+                    {{ form_errors(form.dateResiliation) }}
+                    <div class="input-group">
+                        {{ form_widget(form.dateResiliation) }}
+                        <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    {{ form_label(form.commentaireResiliation) }}
+                    {{ form_errors(form.commentaireResiliation) }}
+                    {{ form_widget(form.commentaireResiliation) }}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+
+{% endblock %}

@@ -16,7 +16,9 @@ use AppBundle\Type\ContratMarkdownType;
 use AppBundle\Type\ContratGeneratorType;
 use AppBundle\Type\ContratAcceptationType;
 use AppBundle\Manager\ContratManager;
+use AppBundle\Manager\PassageManager;
 use Knp\Snappy\Pdf;
+use AppBundle\Type\ContratAnnulationType;
 
 class ContratController extends Controller {
 
@@ -164,12 +166,50 @@ class ContratController extends Controller {
         if ($contrat->isReconductible()) {
             $contratReconduit = $contrat->reconduire();
             $dm->persist($contratReconduit);
+            $this->get('contrat.manager')->generateAllPassagesForContrat($contratReconduit);
             $contrat->setReconduit(true);
             $dm->flush();
             return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));
         } else {
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
+    }
+
+    /**
+     * @Route("/contrat/{id}/annulation", name="contrat_annulation")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function annulationAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        if (!$contrat->isAnnulable()) {
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
+        }
+        $form = $this->createForm(new ContratAnnulationType($dm, $contrat), $contrat, array(
+            'action' => $this->generateUrl('contrat_annulation', array('id' => $contrat->getId())),
+            'method' => 'POST',
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $contrat = $form->getData();
+            $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
+            foreach ($contrat->getContratPassages() as $contratPassage) {
+                foreach ($contratPassage->getPassages() as $passage) {
+                    if (!$passage->isRealise() && !$passage->isAnnule() && ($passage->getDatePrevision()->format('Ymd') > $contrat->getDateResiliation()->format('Ymd'))) {
+                        $passage->setStatut(PassageManager::STATUT_ANNULE);
+                    }
+                }
+            }
+            $commentaire = "";
+            if($contrat->getCommentaire()){
+               $commentaire.= $contrat->getCommentaire()."\n";
+            }
+            $commentaire.= $form['commentaireResiliation']->getData();
+            $contrat->setCommentaire($commentaire);
+            $contrat->setReconduit(true);
+            $dm->flush();
+            return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));
+        }
+        return $this->render('contrat/annulation.html.twig', array('form' => $form->createView(), 'contrat' => $contrat, 'societe' => $contrat->getSociete()));
     }
 
     /**

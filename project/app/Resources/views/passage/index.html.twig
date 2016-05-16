@@ -3,15 +3,22 @@
 {% block title %}Passages{% endblock title %}
 {% block body %}
 
-    {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
-
     <div class="row">
         <div class="col-xs-12">
-            <h3>Liste des passages à planifier {% for moisPassage in moisPassagesArray %}<small>{{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM") | capitalize }}</small>&nbsp;<span class="badge">{{ moisPassage.nb }}</span>&nbsp;&nbsp;{% endfor %}</h3>
+            {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+        </div>
+
+    </div>  
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Liste des passages à planifier pour {{ etablissementManager.secteursNom(secteur) }}<br/>{% for moisPassage in moisPassagesArray %}<small>{{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM") | capitalize }}</small>&nbsp;<span class="badge">{{ moisPassage.nb }}</span>&nbsp;&nbsp;{% endfor %}</h3>
             <div class="form-horizontal">
                 <div class="form-group">
-                    <div class="col-xs-12">
+                    <div class="col-xs-9">
                         <select mulitple="multiple" data-placeholder="Filtrer la liste en saisissant un techinicien, un code postal, ..." data-hamzastyle-container="#liste_passage" class="hamzastyle form-control select2"></select>
+                    </div>
+                    <div class="col-xs-3 text-right">
+                        <a class="btn btn-default" href="{{ path('passage', {'secteur' : etablissementManager.getAutreSecteur(secteur)})}}">{{ etablissementManager.getAutreSecteurNom(secteur) }}</a>
                     </div>
                 </div>
             </div>

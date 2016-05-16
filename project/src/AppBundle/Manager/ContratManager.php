@@ -22,7 +22,7 @@ class ContratManager implements MouvementManagerInterface {
     const STATUT_FINI = "FINI";
     const STATUT_RESILIE = "RESILIE"; // statut à retirer = ce n'est pas un statut mais un type!!
     const STATUT_ANNULE = "ANNULE";
-    
+
     const TYPE_CONTRAT_RECONDUCTION_TACITE = 'RECONDUCTION_TACITE';
     const TYPE_CONTRAT_PONCTUEL = 'PONCTUEL';
     const TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION = 'RENOUVELABLE_SUR_PROPOSITION';
@@ -32,6 +32,12 @@ class ContratManager implements MouvementManagerInterface {
     const MOYEN_PIGEONS = 'MOYEN_PIGEONS';
     const MOYEN_BOIS = 'MOYEN_BOIS';
     const MOYEN_VO = 'MOYEN_VO';
+
+    const FREQUENCE_RECEPTION = 'RECEPTION';
+    const FREQUENCE_30J = '30J';
+    const FREQUENCE_30JMOIS = '30JMOIS';
+    const FREQUENCE_45JMOIS = '45JMOIS';
+    const FREQUENCE_60J = '60J';
 
     public static $moyens_contrat_libelles = array(
         self::MOYEN_3D => '3D',
@@ -59,7 +65,7 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_RESILIE => 'Résilié',
         self::STATUT_ANNULE => 'Annulé'
     );
-    
+
     public static $statuts_libelles_long = array(
         self::STATUT_BROUILLON => 'en brouillon',
         self::STATUT_EN_ATTENTE_ACCEPTATION => "en attente d'acceptation",
@@ -84,7 +90,21 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_A_VENIR => 3,
         self::STATUT_FINI => 4,
         self::STATUT_RESILIE => 5,
-        self::STATUT_ANNULE => 6    		
+        self::STATUT_ANNULE => 6
+    );
+    public static $frequences = array(
+    	self::FREQUENCE_RECEPTION => 'A reception',
+    	self::FREQUENCE_30J => '30 jours',
+    	self::FREQUENCE_30JMOIS => '30 jours fin de mois',
+    	self::FREQUENCE_45JMOIS => '45 jours fin de mois',
+    	self::FREQUENCE_60J => '60 jours'
+    );
+    public static $frequencesImport = array(
+    	"2" => self::FREQUENCE_RECEPTION,
+    	"7" => self::FREQUENCE_30J,
+    	"3" => self::FREQUENCE_30JMOIS ,
+    	"6" => self::FREQUENCE_45JMOIS ,
+    	"9" => self::FREQUENCE_60J 
     );
     protected $dm;
 
@@ -191,6 +211,10 @@ class ContratManager implements MouvementManagerInterface {
 
         foreach ($contrats as $contrat) {
             foreach ($contrat->getMouvements() as $mouvement) {
+                if($mouvement->getFacturable() != $isFaturable || $mouvement->getFacture() !=  $isFacture) {
+                    continue;
+                }
+                
                 $mouvements[] = $mouvement;
             }
         }

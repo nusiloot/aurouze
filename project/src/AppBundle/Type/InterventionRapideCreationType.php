@@ -11,7 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use AppBundle\Type\PrestationType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
 class InterventionRapideCreationType extends AbstractType {
@@ -56,7 +57,9 @@ class InterventionRapideCreationType extends AbstractType {
                     'expanded' => false,
                     'multiple' => false,
                     "attr" => array("class" => "select2 select2-simple")))
+                ->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2, 'required' => false))
                 ->add('duree', TextType::class, array('label' => 'Durée du contrat :'))
+                
                 ->add('save', SubmitType::class, array('label' => 'Planifier le passage', "attr" => array("class" => "btn btn-success pull-right")));
     }
 

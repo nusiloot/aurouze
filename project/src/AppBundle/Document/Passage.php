@@ -162,6 +162,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $applications;
 
+    /**
+     *  @MongoDB\Date
+     */
+    protected $duree;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
@@ -216,18 +221,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
     public function getDescriptionTransformed() {
         return str_replace('\n', "\n", $this->description);
-    }
-
-    public function getDuree() {
-        if (!$this->dateFin || !$this->dateDebut) {
-            return null;
-        }
-        $interval = $this->dateFin->diff($this->dateDebut);
-        return $interval->format('%Hh%I');
-    }
-
-    public function setDuree($duree) {
-
     }
 
     public function isRealise() {
@@ -981,6 +974,35 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->rendezVous;
     }
 
+   /**
+    * Get duree
+    *
+    * @return date $duree
+    */
+    public function getDuree() {
+       if (!$this->duree) {
+           if (!$this->dateFin || !$this->dateDebut) {
+               return null;
+           }
+           $interval = $this->dateFin->diff($this->dateDebut);
+           return $interval->format('%Hh%I');
+       }
+
+       return $this->duree->format('H').'h'.$this->duree->format('i');
+    }
+
+   /**
+    * Set duree
+    *
+    * @param date $duree
+    * @return self
+    */
+   public function setDuree($duree) {
+       $this->duree = $duree;
+
+       return $this;
+   }
+
     /**
      * Set commentaire
      *
@@ -1002,4 +1024,5 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     {
         return $this->commentaire;
     }
+
 }

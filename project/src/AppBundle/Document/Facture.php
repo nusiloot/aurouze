@@ -4,6 +4,8 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Model\DocumentSocieteInterface;
+use AppBundle\Manager\FactureManager;
+use AppBundle\Manager\ContratManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\FactureRepository")
@@ -113,8 +115,8 @@ class Facture implements DocumentSocieteInterface {
 
         $destinataire->setNom($societe->getRaisonSociale());
         $destinataire->setAdresse($societe->getAdresse()->getAdresseFormatee());
-        $destinataire->setCodePostal($societe->getAdresse()->getAdresse());
-        $destinataire->setCommune($societe->getAdresse()->getAdresse());
+        $destinataire->setCodePostal($societe->getAdresse()->getCodePostal());
+        $destinataire->setCommune($societe->getAdresse()->getCommune());
         $destinataire->setCodeComptable($societe->getCodeComptable());
     }
 
@@ -513,5 +515,52 @@ class Facture implements DocumentSocieteInterface {
     public function getDateLimitePaiement()
     {
         return $this->dateLimitePaiement;
+    }
+    
+    public function getTva() {
+    	$tva = 0;
+    	foreach ($this->getLignes() as $ligne) {
+    		if (!$tva) {
+    			$tva = $ligne->getTauxTaxe();
+    		}
+    		if ($tva != $ligne->getTauxTaxe()) {
+    			throw new \Exception("TVA différente dans les lignes de facture.");
+    		}
+    	}
+    	return $tva;
+    }
+    
+    public function getDateReglement() {
+    	$frequence = null;
+    	foreach ($this->getLignes() as $ligne) {
+    		if ($ligne->isOrigineContrat()) {
+	    		if (!$frequence) {
+	    			$frequence = $ligne->getOrigineDocument()->getFrequencePaiement();
+	    		}
+	    		if ($frequence != $ligne->getOrigineDocument()->getFrequencePaiement()) {
+	    			throw new \Exception("Fréquence de paiement différente dans les lignes de facture.");
+	    		}
+    		}
+    	}
+    	$date = $this->getDateFacturation();
+    	$date = ($date)? $date : $this->getDateEmission();
+    	$date = ($date)? $date : new \DateTime();
+    	switch ($frequence) {
+    		case ContratManager::FREQUENCE_30J : 
+    			$date->modify('+30 day');
+    			break;
+    		case ContratManager::FREQUENCE_30JMOIS : 
+    			$date->modify('+30 day')->modify('last day of');
+    			break;
+    		case ContratManager::FREQUENCE_45JMOIS : 
+    			$date->modify('+45 day')->modify('last day of');
+    			break;
+    		case ContratManager::FREQUENCE_60J : 
+    			$date->modify('+60 day');
+    			break;
+    		default:
+    			$date->modify('+'.FactureManager::DEFAUT_FREQUENCE_JOURS.' day');
+    	}
+    	return $date;
     }
 }

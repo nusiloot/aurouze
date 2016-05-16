@@ -21,7 +21,24 @@
         $.initDeplanifierLink();
         $.initSearchActif();
         $.initListingPassage();
+        $.initLinkCalendar();
     });
+
+    $.initLinkCalendar = function () {
+    	$('#calendrier .fc-day-header').each(function() {
+    		if ($(this).data('date')) {
+	    		var content = '<a href="'+($('#calendrier').data('url-date')).replace('-d', $(this).data('date'))+'">' + $(this).text() + '</a>';
+	    		$(this).html(content);
+    		}
+    	});
+    	$('#calendrier .fc-day-number').each(function() {
+    		if ($(this).data('date')) {
+	    		var content = '<a href="'+($('#calendrier').data('url-date')).replace('-d', $(this).data('date'))+'">' + $(this).text() + '</a>';
+	    		$(this).html(content);
+    		}
+    	});
+    };
+    
     $.initListingPassage = function () {
         $('.calendar_lien').click(function (event) {
             event.preventDefault();
@@ -105,7 +122,7 @@
 
     $.initTimePicker = function () {
         $('.input-timepicker').each(function () {
-            var defaultTiming = ($(this).attr('data-default'))? $(this).attr('data-default') : '01:00';
+            var defaultTiming = ($(this).attr('data-default'))? $(this).attr('data-default') : '';
             $(this).timepicker({
                 format: 'HH:ii p',
                 autoclose: true,

@@ -192,6 +192,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     protected $referenceClient;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $frequencePaiement;
+
     public function __construct() {
         $this->etablissements = new ArrayCollection();
         $this->prestations = new ArrayCollection();
@@ -248,6 +253,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function setTypeContrat($typeContrat) {
         $this->typeContrat = $typeContrat;
+        if ($typeContrat == ContratManager::TYPE_CONTRAT_ANNULE) {
+            $this->setStatut(ContratManager::STATUT_FINI);
+        }
         return $this;
     }
 
@@ -779,7 +787,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getStatutCouleur() {
-
+        if ($this->isAnnule()) {
+            return ContratManager::$statuts_couleurs[$this->getTypeContrat()];
+        }
         return ContratManager::$statuts_couleurs[$this->getStatut()];
     }
 
@@ -807,7 +817,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
         return ($pa > $pb) ? +1 : -1;
     }
-
 
     public function getPassages(Etablissement $etablissement) {
         if (!isset($this->contratPassages[$etablissement->getId()])) {
@@ -1080,6 +1089,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return false;
     }
 
+    public function isAnnulable() {
+        return (($this->isEnCours() || $this->isAVenir() || $this->isFini()) && !$this->isAnnule());
+    }
+
     /*
      * Fonction à retiré => un contrat ne doit pas être resilié sous forme de statut mais sous forme de type
      */
@@ -1127,12 +1140,23 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         if (!$contrat->isKeepNumeroArchivage()) {
             $contrat->setNumeroArchive(null);
         }
-        $contrat->setDateAcceptation(null);
-        $contrat->setDateFin(null);
-        $contrat->setDateDebut(null);
-        $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+        $dateDebut = clone $contrat->getDateDebut();
+        $dateAcceptation = clone $contrat->getDateDebut();
+        $nbMois = $contrat->getDuree();
+
+        $dateDebut = $dateDebut->modify("+" . $nbMois . " month");
+        $dateAcceptation = $dateAcceptation->modify("+" . $nbMois . " month");
+        $contrat->setDateAcceptation($dateAcceptation);
+        $contrat->setDateDebut($dateDebut);
 
         $contrat->setDateCreation(new \DateTime());
+        $contrat->setDateFin(null);
+        if ((new \DateTime())->format('Ymd') > $dateDebut->format('Ymd')) {
+            $contrat->setStatut(ContratManager::STATUT_A_VENIR);
+        } else {
+            $contrat->setStatut(ContratManager::STATUT_EN_COURS);
+        }
+
         $contrat->contratPassages = null;
         $contrat->setReconduit(false);
 
@@ -1315,6 +1339,26 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getReconduit() {
         return $this->reconduit;
+    }
+
+    /**
+     * Set frequencePaiement
+     *
+     * @param string $frequencePaiement
+     * @return self
+     */
+    public function setFrequencePaiement($frequencePaiement) {
+        $this->frequencePaiement = $frequencePaiement;
+        return $this;
+    }
+
+    /**
+     * Get frequencePaiement
+     *
+     * @return string $frequencePaiement
+     */
+    public function getFrequencePaiement() {
+        return $this->frequencePaiement;
     }
 
 }

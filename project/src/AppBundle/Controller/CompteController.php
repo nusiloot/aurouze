@@ -41,6 +41,7 @@ class CompteController extends Controller {
 
             $compte = new Compte($societe);
             $compte->setSociete($societe);
+            $compte->setActif(true);
             $dm->persist($compte);
         }
 

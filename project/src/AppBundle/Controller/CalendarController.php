@@ -146,6 +146,8 @@ class CalendarController extends Controller {
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
 
         $dm->persist($rdv);
+
+        $passageManager->updateNextPassageAPlannifier($rdv->getPassage());
         $dm->flush();
 
         $response = new Response(json_encode($rdv->getEventJson($technicien->getCouleur())));
@@ -159,6 +161,7 @@ class CalendarController extends Controller {
      */
     public function calendarAddLibreAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $pm = $this->get('passage.manager')->getManager();
 
         $rdv = new RendezVous();
         $rdv->setDateDebut(new \DateTime($request->get('start')));
@@ -182,7 +185,6 @@ class CalendarController extends Controller {
             return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
         }
 
-        $dm->persist($rdv);
         $dm->flush();
 
         return new Response(json_encode(array("success" => true)));
@@ -213,9 +215,6 @@ class CalendarController extends Controller {
      */
     public function calendarPopulateAction(Request $request) {
 
-        if (!$request->isXmlHttpRequest()) {
-            //throw $this->createNotFoundException();
-        }
         $dm = $this->get('doctrine_mongodb')->getManager();
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
         $periodeStart = $request->get('start');
@@ -276,6 +275,16 @@ class CalendarController extends Controller {
 
         if (!$passageToDelete->isRealise()) {
             $passageToDelete->setDateFin(null);
+            $passageManager = new PassageManager($dm);
+
+            $nextPassage = $passageManager->updateNextPassageEnAttente($passageToDelete);
+            if ($passageToDelete->isAPlanifie()) {
+                $passageToDelete->setDateDebut(null);
+            }
+            if ($nextPassage) {
+                $dm->persist($nextPassage);
+            }
+            $dm->flush();
             $dm->persist($passageToDelete);
             $dm->flush();
         }

@@ -55,7 +55,7 @@ class PassageManager {
             $passage->addPrestation($prestation);
         }
         $previousPassage = null;
-        foreach ($contrat->getPassagesEtablissementNode($etablissement)->getPassagesSorted(true) as $p) {           
+        foreach ($contrat->getPassagesEtablissementNode($etablissement)->getPassagesSorted(true) as $p) {
             if (($p->getId() != $passage->getId()) && count($p->getTechniciens())) {
                 $previousPassage = $p;
                 break;
@@ -82,21 +82,60 @@ class PassageManager {
         return $this->dm->getRepository('AppBundle:Passage');
     }
 
-    public function getNextPassageFromPassage($passage) {
-        $contrat = $passage->getContrat();
+    public function getNextPassageFromPassageInList($passage, $passagesList, $return_self = true) {
 
-        $etablissement = $passage->getEtablissement();
-        $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
         $nextPassage = null;
         $founded = false;
-        foreach ($passagesEtablissement->getPassagesSorted() as $key => $passageEtb) {
+        foreach ($passagesList as $key => $passageEtb) {
             $nextPassage = $passageEtb;
             if ($founded) {
-                break;
+                if (!$return_self) {
+                    return $nextPassage;
+                } else {
+                    break;
+                }
             }
-            if ($key == $passage->getId()) {
+
+            if ($passageEtb->getId() == $passage->getId() && $passage->isSousContrat()) {
                 $founded = true;
             }
+        }
+        if (!$return_self) {
+            return null;
+        } else {
+            return $nextPassage;
+        }
+    }
+
+    public function getNextPassageFromPassage($passage, $withInterContrat = false) {
+        if (!$withInterContrat) {
+            $contrat = $passage->getContrat();
+            $passagesEtablissement = $contrat->getPassagesEtablissementNode($passage->getEtablissement());
+            return $this->getNextPassageFromPassageInList($passage, $passagesEtablissement->getPassagesSorted());
+        } else {
+            $passagesByNumeroArchiveContrat = $this->getPassagesByNumeroArchiveContrat($passage);
+            $passagesByNumeroArchiveEtablissement = $passagesByNumeroArchiveContrat[$passage->getEtablissement()->getId()];
+            return $this->getNextPassageFromPassageInList($passage, $passagesByNumeroArchiveEtablissement,false);
+        }
+        return null;
+    }
+
+    public function updateNextPassageAPlannifier($passage) {
+        $nextPassage = $this->getNextPassageFromPassage($passage, true);
+        while ($nextPassage && !$nextPassage->isEnAttente()) {
+            $nextPassage = $this->getNextPassageFromPassage($nextPassage, true);
+        }
+        if ($nextPassage) {
+            $nextPassage->setDateDebut($nextPassage->getDatePrevision());
+            $nextPassage->copyTechnicienFromPassage($passage);
+        }
+        return $nextPassage;
+    }
+
+    public function updateNextPassageEnAttente($passage) {
+        $nextPassage = $this->getNextPassageFromPassage($passage);
+        if ($nextPassage && $nextPassage->isAPlanifie()) {
+            $nextPassage->setDateDebut(null);
         }
         return $nextPassage;
     }
@@ -121,7 +160,7 @@ class PassageManager {
         return $this->getRepository()->countPassagesByTechnicien($compte);
     }
 
-    public function getPassagesByNumeroArchiveContrat(Passage $passage) {
+    public function getPassagesByNumeroArchiveContrat(Passage $passage, $reverse = false) {
         $contratsByNumero = $this->dm->getRepository('AppBundle:Contrat')->findByNumeroArchive($passage->getContrat()->getNumeroArchive());
         $passagesByNumero = array();
         foreach ($contratsByNumero as $contrat) {
@@ -131,10 +170,18 @@ class PassageManager {
                     $passagesByNumero[$idEtb] = array();
                 }
                 foreach ($contratPassages->getPassages() as $passage) {
-                    $passagesByNumero[$idEtb][$passage->getDatePrevision()->format('Y-m-d')] = $passage;
+                    $passagesByNumero[$idEtb][$passage->getDatePrevision()->format('Ymd')] = $passage;
                 }
-                ksort($passagesByNumero[$idEtb]);
             }
+        }
+        foreach ($passagesByNumero as $idEtb => $passagesByNumeroAndEtb) {
+            $passages = $passagesByNumeroAndEtb;
+            if ($reverse) {
+                krsort($passages);
+            } else {
+                ksort($passages);
+            }
+            $passagesByNumero[$idEtb] = $passages;
         }
         return $passagesByNumero;
     }

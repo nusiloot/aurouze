@@ -36,7 +36,7 @@
                     {{ form_errors(form.technicien) }}
                     {{ form_widget(form.technicien) }}
                 </div>
-                <div class="form-group col-xs-3">
+                <div class="form-group col-xs-2">
                     {{ form_label(form.dateDebut) }}
                     {{ form_errors(form.dateDebut) }}
                     <div class="input-group">
@@ -45,7 +45,7 @@
                     </div>
                 </div>
 
-                <div class="form-group col-xs-3">
+                <div class="form-group col-xs-2">
                     {{ form_label(form.duree) }}
                     {{ form_errors(form.duree) }}
                     <div class="input-group ">
@@ -54,6 +54,16 @@
                     </div>
 
                 </div>
+                <div class="form-group col-xs-2">
+                    {{ form_label(form.prixHt) }}
+                    {{ form_errors(form.prixHt) }} 
+                    <div class="input-group ">
+                        {{ form_widget(form.prixHt) }} <div class="input-group-addon">€</div>
+
+                    </div>
+
+                </div>
+
             </div>
 
             <div class="panel panel-default">
