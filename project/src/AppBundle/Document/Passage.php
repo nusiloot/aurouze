@@ -12,6 +12,7 @@ use AppBundle\Model\DocumentEtablissementInterface;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
+use AppBundle\Document\RendezVous;
 use AppBundle\Manager\ContratManager;
 
 /**
@@ -89,6 +90,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /**
      * @MongoDB\String
      */
+    protected $commentaire;
+
+    /**
+     * @MongoDB\String
+     */
     protected $description;
 
     /**
@@ -140,6 +146,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @MongoDB\String
      */
     protected $typePassage;
+
+    /**
+    * @MongoDB\ReferenceOne(targetDocument="RendezVous", simple=true)
+     */
+    protected $rendezVous;
 
     /**
      *  @MongoDB\Collection
@@ -885,6 +896,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function setApplications($applications) {
         $this->applications = $applications;
+
         return $this;
     }
 
@@ -941,30 +953,76 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     /**
-     * Set duree
+     * Set rendezVous
      *
-     * @param date $duree
+     * @param AppBundle\Document\RendezVous $rendezVous
      * @return self
      */
-    public function setDuree($duree) {
-        $this->duree = $duree;
+    public function setRendezVous(\AppBundle\Document\RendezVous $rendezVous)
+    {
+        $this->rendezVous = $rendezVous;
         return $this;
     }
 
     /**
-     * Get duree
+     * Get rendezVous
      *
-     * @return date $duree
+     * @return AppBundle\Document\RendezVous $rendezVous
      */
-    public function getDuree() {
-        if (!$this->duree) {
-            if (!$this->dateFin || !$this->dateDebut) {
-                return null;
-            }
-            $interval = $this->dateFin->diff($this->dateDebut);
-            return $interval->format('%Hh%I');
-        }
-        
-        return $this->duree->format('H').'h'.$this->duree->format('i');
+    public function getRendezVous()
+    {
+        return $this->rendezVous;
     }
+
+   /**
+    * Get duree
+    *
+    * @return date $duree
+    */
+    public function getDuree() {
+       if (!$this->duree) {
+           if (!$this->dateFin || !$this->dateDebut) {
+               return null;
+           }
+           $interval = $this->dateFin->diff($this->dateDebut);
+           return $interval->format('%Hh%I');
+       }
+
+       return $this->duree->format('H').'h'.$this->duree->format('i');
+    }
+
+   /**
+    * Set duree
+    *
+    * @param date $duree
+    * @return self
+    */
+   public function setDuree($duree) {
+       $this->duree = $duree;
+
+       return $this;
+   }
+
+    /**
+     * Set commentaire
+     *
+     * @param string $commentaire
+     * @return self
+     */
+    public function setCommentaire($commentaire)
+    {
+        $this->commentaire = $commentaire;
+        return $this;
+    }
+
+    /**
+     * Get commentaire
+     *
+     * @return string $commentaire
+     */
+    public function getCommentaire()
+    {
+        return $this->commentaire;
+    }
+
 }

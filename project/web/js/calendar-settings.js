@@ -13,15 +13,12 @@ $(function () {
             revertDuration: 0
         });
         $(this).click(function () {
-            var id = $(this).data('identifiant');
-            var title = $.trim($(this).data('title'));
-            $.post(
-                    $('#calendrier').data('urlRead'), {
-                id: id,
-                light: 0
+            var passage = $(this).data('passage');
+            $.get(
+            $('#calendrier').data('urlRead'), {
+                passage: passage
             }, function (response) {
-                $('#modal-title').text(title);
-                $('#modal-body').html(response);
+                $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
                 $.callbackEventForm();
             }
@@ -36,7 +33,7 @@ $(function () {
     $('#calendrier').fullCalendar({
         minTime: '06:00:00',
         maxTime: '19:00:00',
-        height: 705,
+        height: 703,
         customButtons: {
             prevButton: {
                 text: '',
@@ -53,6 +50,9 @@ $(function () {
                 icon: 'right-single-arrow'
             }
         },
+        dayRender: function (date, cell) {
+            cell.css("background-color", "transparent");
+        },
         header: false,
         lang: 'fr',
         timeFormat: 'H:mm',
@@ -66,30 +66,42 @@ $(function () {
         eventSources: [
             {
                 url: $('#calendrier').data('urlPopulate'),
-                type: 'POST',
+                type: 'GET',
                 data: {
                     title: 1,
                 }
             }
         ],
         eventClick: function (event) {
-            console.log(event);
-            $.post(
-                    $('#calendrier').data('urlRead'), {
-                id: event.id,
-                light: 0
+            $.get(
+                $('#calendrier').data('urlRead'), {
+                id: event.id
             }, function (response) {
-                $('#modal-title').text(event.title);
-                $('#modal-body').html(response);
+                $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
                 $.callbackEventForm();
+            }
+            );
+        },
+        dayClick: function(date, jsEvent, view) {
+            $.get(
+                $('#calendrier').data('urlAddLibre'), {'start': date.format()}
+             , function (response) {
+                 console.log(response);
+                 console.log($('#modal-calendrier-infos'));
+                $('#modal-calendrier-infos').html(response);
+                $('#modal-calendrier-infos').on('shown.bs.modal', function() {
+                    $('#modal-calendrier-infos').find('[autofocus="autofocus"]').focus();
+                    $.callbackEventForm();
+                });
+                $('#modal-calendrier-infos').modal();
             }
             );
         },
         eventReceive: function (event) {
             $('#retour_technicien_btn').removeClass('hidden');
             $.post(
-                    $('#calendrier').data('urlUpdate'), {
+                $('#calendrier').data('urlAdd'), {
                 id: null,
                 start: event.start.format(),
                 end: event.end.format()

@@ -166,6 +166,7 @@ class ContratController extends Controller {
         if ($contrat->isReconductible()) {
             $contratReconduit = $contrat->reconduire();
             $dm->persist($contratReconduit);
+            $this->get('contrat.manager')->generateAllPassagesForContrat($contratReconduit);
             $contrat->setReconduit(true);
             $dm->flush();
             return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));

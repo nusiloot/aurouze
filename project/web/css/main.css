@@ -5,36 +5,24 @@ body {
 #ajax_notifications {
     position: fixed;
     width: 100%;
-    top: 0;
+    top: -10px;
     z-index: 1199;
 }
 
 #ajax_form_progress_notification, #ajax_form_error_notification {
+    margin: 0 auto;
     display: none;
-    margin: 2px auto;
-    color: #fff;
-    padding: 5px;
-    text-align: center;
-    // .opacite(0.9);
+    padding-bottom: 10px;
 }
 
 #ajax_form_progress_notification {
-    background: #114C8D;
     z-index: 1200;
-    width: 150px;
+    width: 200px;
 }
 
 #ajax_form_error_notification {
     z-index: 1201;
-    background: #900000;
-    width: 400px;
-    a
-    {
-        color: #fff;
-        text-decoration : underline;
-    }
-
-    a:hover { text-decoration : none; }
+    width: 730px;
 }
 
 .tooltip {
@@ -43,8 +31,8 @@ body {
 }
 
 .fc-event {
-    border: 1px solid #fff;
-    padding: 2px 9px;
+    /*border: 1px solid #fff*/;
+    padding: 2px 4px;
     border-radius: 6px;
 }
 
@@ -52,9 +40,14 @@ body {
     height: 1.8em;
 }
 
+.fc-today{
+   background-color: transparent !important;
+}
+
 .fc-agendaWeek-view .fc-event .fc-time {
     display: none;
 }
+
 .panel-heading .checkbox {
     margin: 0;
 

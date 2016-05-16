@@ -31,8 +31,8 @@
 		</div>
 		<div class="col-xs-3">
 			<a data-toggle="modal" data-remote="false"
-				data-target="#modal-passage"
-				href="{{path('calendarRead', { 'id': passage.id })}}"> {% if
+				data-target="#modal-calendrier-infos"
+				href="{{path('passage_visualisation', { 'id': passage.id })}}"> {% if
 				(passage.enAttente) %} {{ passage.datePrevision | localizeddate("medium",
 				"none", null, null, "MMMM YYYY") | capitalize }} {% elseif
 				(passage.APlanifie) %} {{ passage.dateDebut | localizeddate("medium", "none",

@@ -20,7 +20,7 @@ class PassageType extends AbstractType
     public function __construct(DocumentManager $documentManager) {
         $this->dm = $documentManager;
     }
-    
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -33,6 +33,13 @@ class PassageType extends AbstractType
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success")));
         ;
 
+        /*$builder->add('techniciens', DocumentType::class, array(
+            	'choices' => $this->getTechniciens(),
+                'class' => 'AppBundle\Document\Compte',
+        		'expanded' => false,
+        		'multiple' => true,
+        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")
+        ));*/
 
         $builder->add('produits', CollectionType::class, array(
             'entry_type' => new ProduitPassageType($this->dm),
@@ -41,7 +48,7 @@ class PassageType extends AbstractType
             'delete_empty' => true,
             'label' => '',
         ));
-        
+
         $builder->add('nettoyages', ChoiceType::class, array(
         		'label' => 'Nettoyage : ',
         		'choices' => $this->getNettoyages(),
@@ -51,7 +58,7 @@ class PassageType extends AbstractType
         		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "data-tags" => "true"),
         ));
         $builder->get('nettoyages')->resetViewTransformers();
-        
+
         $builder->add('applications', ChoiceType::class, array(
         		'label' => 'Respect des applications : ',
         		'choices' => $this->getApplications(),
@@ -79,6 +86,10 @@ class PassageType extends AbstractType
     public function getName()
     {
         return 'passage';
+    }
+
+    public function getTechniciens() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
     }
 
     public function getNettoyages() {

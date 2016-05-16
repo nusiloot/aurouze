@@ -39,16 +39,20 @@
     <div class="row">
         <div class="col-sm-4">
         	<div class="btn-group">
-                <div class="col-sm-2 text-center"><a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a></div>
-                <div class="col-sm-8 text-center"><a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0; width: " class="btn btn-link">{{ calendarTool.getLibelle() }}</a></div>
-                <div class="col-sm-2 text-center"><a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a></div>
-             </div>
+                <div class="row">
+                    <div class="col-sm-2 text-left"><a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a></div>
+                    <div class="col-sm-8 text-center"><a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0; width: " class="btn btn-link">{{ calendarTool.getLibelle() }}</a></div>
+                    <div class="col-sm-2 text-center"><a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a></div>
+                </div>
+            </div>
         </div>
         <div class="col-sm-4 text-center">
             {% if passage and not passage.dateFin %}
                 <div id="fc-events">
-                    <div class="event" style="display: inline-block; background: {{ technicienObj.getCouleur() }}; padding: 5px; border-radius: 4px; cursor: move;" data-identifiant="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.etablissementInfos.nom }} ({{ passage.etablissementInfos.adresse.codePostal }})">
-                        <span class="mdi mdi-today mdi-lg" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }} <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
+                    <div class="event" data-passage="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.etablissementInfos.nom }} ({{ passage.etablissementInfos.adresse.codePostal }})">
+                        <span class="btn btn-info">
+                            <span class="mdi mdi-today mdi-lg" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }} <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
+                        </span>
                     </div>
                 </div>
                 <div class="hidden" id="retour_technicien_btn" >
@@ -87,25 +91,16 @@
                 data-view="{{ calendarTool.getViewJs() }}"
                 data-goto-date="{{ calendarTool.getDateDebut('Y-m-d') }}"
                 data-url-populate="{{ path('calendarPopulate', {'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
-                data-url-read="{{path('calendarRead', {'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
+                data-url-add="{{path('calendarAdd', {'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
+                data-url-add-libre="{{path('calendarAddLibre', {'technicien': technicien})}}"
+                data-url-read="{{ path('calendarRead') }}"
                 data-url-update="{{path('calendarUpdate', {'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
                 data-url-prev="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemainePrecedente('Y-m-d')}) }}"
                 data-url-next="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemaineSuivante('Y-m-d')}) }}"
+                data-url-date="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': '-d', 'mode': 'JOUR'}) }}"
                 >
             </div>
         </div>
     </div>
-
-	<div class="modal fade" id="modal-calendrier-infos" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-				<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="modal-title"></h4>
-				</div>
-				<div class="modal-body" id="modal-body"></div>
-		</div>
-		</div>
-	</div>
 
 {% endblock %}

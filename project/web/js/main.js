@@ -21,7 +21,24 @@
         $.initDeplanifierLink();
         $.initSearchActif();
         $.initListingPassage();
+        $.initLinkCalendar();
     });
+
+    $.initLinkCalendar = function () {
+    	$('#calendrier .fc-day-header').each(function() {
+    		if ($(this).data('date')) {
+	    		var content = '<a href="'+($('#calendrier').data('url-date')).replace('-d', $(this).data('date'))+'">' + $(this).text() + '</a>';
+	    		$(this).html(content);
+    		}
+    	});
+    	$('#calendrier .fc-day-number').each(function() {
+    		if ($(this).data('date')) {
+	    		var content = '<a href="'+($('#calendrier').data('url-date')).replace('-d', $(this).data('date'))+'">' + $(this).text() + '</a>';
+	    		$(this).html(content);
+    		}
+    	});
+    };
+
     $.initListingPassage = function () {
         $('.calendar_lien').click(function (event) {
             event.preventDefault();
@@ -105,7 +122,7 @@
 
     $.initTimePicker = function () {
         $('.input-timepicker').each(function () {
-            var defaultTiming = ($(this).attr('data-default'))? $(this).attr('data-default') : '01:00';
+            var defaultTiming = ($(this).attr('data-default'))? $(this).attr('data-default') : '';
             $(this).timepicker({
                 format: 'HH:ii p',
                 autoclose: true,
@@ -146,6 +163,7 @@
 
     $.initFormEventAjax = function () {
         $('#eventForm').submit(function () {
+            $('#modal-calendrier-infos').find('button[type="submit"]').button('loading');
             var form = $(this);
             var request = $.ajax({
                 type: form.attr('method'),
@@ -157,12 +175,13 @@
                     $.parseJSON(msg);
                     location.reload();
                 } catch (e) {
-                    $('#modal-body').html(msg);
+                    $('#modal-calendrier-infos').html(msg);
                     $.callbackEventForm();
                 }
             });
             request.fail(function (jqXHR, textStatus) {
-                $('#modal-body').html(jqXHR.responseText());
+                $('#modal-calendrier-infos').html(jqXHR.responseText);
+                $.callbackEventForm();
                 $.callbackDynamicCollection();
             });
             return false;
@@ -272,12 +291,14 @@
         }
     });
     $.initModalPassage = function () {
-
-        $('#modal-passage').on('show.bs.modal', function (event) {
-            var link = $(event.relatedTarget) // Button that triggered the modal
-            $(this).find('.modal-body').load(link.attr('href'), function () {
-                $.callbackEventForm();
-            });
+        $('#modal-calendrier-infos').on('show.bs.modal', function (event) {
+            var link = $(event.relatedTarget);
+            if(link.length) {
+                $('#modal-calendrier-infos').html("");
+                $('#modal-calendrier-infos').load(link.attr('href'), function () {
+                    $.callbackEventForm();
+                });
+            }
         })
     }
 
