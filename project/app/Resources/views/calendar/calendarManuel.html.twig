@@ -27,14 +27,16 @@
     <div class="row">
         <div class="col-sm-4">
             <div class="btn-group">
-                <a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                <a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0;" class="btn btn-link">{{ calendarTool.getLibelle() }}</a>
-                <a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                <div class="row">
+                <div class="col-sm-2 text-left"><a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a></div>
+                <div class="col-sm-8 text-center"><a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0; width: " class="btn btn-link">{{ calendarTool.getLibelle() }}</a></div>
+                <div class="col-sm-2 text-center"><a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a></div>
+                </div>
             </div>
         </div>
-        <div class="col-sm-5 text-center">
+        <div class="col-sm-4 text-center">
 	</div>
-	<div class="col-sm-3 text-right">
+	<div class="col-sm-4 text-right">
 	</div>
 </div>
 <div class="row" style="margin-top: 10px;">
@@ -120,7 +122,7 @@
 																	<div class="fc-event-container">
 																		{% set index = 0 %}
 																		{% for technicien, events in eventDate %}
-                                                                            <a data-toggle="tooltip" title="{{ techniciens["COMPTE-"~technicien].identite }}" style="
+                                                                            <a style="
                                                                                 display:inline-block;
                                                                                 top: -10px;
                                                                                 border-radius: 0;
