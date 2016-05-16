@@ -92,6 +92,11 @@ class RendezVous {
             return "#d6e9c6";
         }
 
+        if($this->getPassage() && $this->getPassage()->isAnnule()) {
+
+            return "#ebccd1";
+        }
+
         return '#e1e1e8';
     }
 
@@ -109,6 +114,11 @@ class RendezVous {
         if($this->getPassage() && $this->getPassage()->isRealise()) {
 
             return "#3c763d";
+        }
+
+        if($this->getPassage() && $this->getPassage()->isAnnule()) {
+
+            return "#a94442";
         }
 
         return '#333';
@@ -130,7 +140,24 @@ class RendezVous {
             return "#dff0d8";
         }
 
+        if($this->getPassage() && $this->getPassage()->isAnnule()) {
+
+            return "#f2dede";
+        }
+
         return '#f7f7f9';
+    }
+
+    public function getParticipantsIds() {
+        $participants = array();
+
+        foreach ($this->getParticipants() as $participant) {
+            $participants[] = $participant->getId();
+        }
+
+        sort($participants);
+
+        return $participants;
     }
 
     public function pushToPassage() {
@@ -139,10 +166,12 @@ class RendezVous {
             return;
         }
 
-        $this->getPassage()->removeAllTechniciens();
+        if(count(array_diff($this->getParticipantsIds(), $this->getPassage()->getTechniciensIds())) > 0 || count(array_diff($this->getPassage()->getTechniciensIds(), $this->getParticipantsIds())) > 0) {
+            $this->getPassage()->removeAllTechniciens();
 
-        foreach($this->getParticipants() as $participant) {
-            $this->getPassage()->addTechnicien($participant);
+            foreach($this->getParticipants() as $participant) {
+                $this->getPassage()->addTechnicien($participant);
+            }
         }
 
         $this->getPassage()->setDateDebut($this->getDateDebut());
