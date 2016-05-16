@@ -36,6 +36,10 @@ class RendezVous {
     /**
      * @MongoDB\Date
      * @Assert\NotBlank()
+     * @Assert\Expression(
+     *     "this.getDateDebut() <= this.getDateFin()",
+     *     message="La date de fin doit être supérieur à la date de début"
+     * )
      */
     protected $dateFin;
 
@@ -163,6 +167,11 @@ class RendezVous {
     public function getTimeFin() {
         $dateTime = $this->getDateFin();
         return ($dateTime) ? $dateTime->format('H:i') : null;
+    }
+
+    public function getDuree() {
+
+        return $this->getDateFin()->diff($this->getDateDebut())->format('%Hh%I');
     }
 
     /** @MongoDB\PreFlush */

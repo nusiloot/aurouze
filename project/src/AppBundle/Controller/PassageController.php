@@ -124,6 +124,19 @@ class PassageController extends Controller {
     }
 
     /**
+     * @Route("/passage/visualisation/{id}", name="passage_visualisation")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function visualisationAction(Request $request, Passage $passage) {
+
+        if($passage->getRendezVous()) {
+            return $this->redirectToRoute('calendarRead', array('id' => $passage->getRendezVous()->getId()));
+        }
+
+        return $this->forward('AppBundle:Calendar:calendarRead', array('passage' => $passage->getId()));
+    }
+
+    /**
      * @Route("/passage/edition/{id}", name="passage_edition")
      * @ParamConverter("passage", class="AppBundle:Passage")
      */
@@ -151,8 +164,6 @@ class PassageController extends Controller {
 
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
 
-
-
         if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
             if ($contrat->generateMouvement($passage)) {
                 $passage->setMouvementDeclenche(true);
@@ -161,7 +172,7 @@ class PassageController extends Controller {
 
         $passage->setDateRealise($passage->getDateDebut());
         $dm->persist($passage);
-    
+
 
         $dm->persist($contrat);
         $dm->flush();
@@ -308,7 +319,6 @@ class PassageController extends Controller {
 
             return new Response($html, 200);
         }
-
 
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(

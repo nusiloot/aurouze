@@ -13,14 +13,12 @@ $(function () {
             revertDuration: 0
         });
         $(this).click(function () {
-            var id = $(this).data('identifiant');
-            var title = $.trim($(this).data('title'));
+            var passage = $(this).data('passage');
             $.get(
             $('#calendrier').data('urlRead'), {
-                id: id
+                passage: passage
             }, function (response) {
-                $('#modal-title').text(title);
-                $('#modal-body').html(response);
+                $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
                 $.callbackEventForm();
             }
@@ -35,7 +33,7 @@ $(function () {
     $('#calendrier').fullCalendar({
         minTime: '06:00:00',
         maxTime: '19:00:00',
-        height: 705,
+        height: 703,
         customButtons: {
             prevButton: {
                 text: '',
@@ -81,9 +79,6 @@ $(function () {
             }, function (response) {
                 $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
-                $('#modal-calendrier-infos').on('hidden.bs.modal', function (e) {
-                    //$('#calendrier').fullCalendar('refetchEvents');
-                });
                 $.callbackEventForm();
             }
             );
@@ -92,6 +87,8 @@ $(function () {
             $.get(
                 $('#calendrier').data('urlAddLibre'), {'start': date.format()}
              , function (response) {
+                 console.log(response);
+                 console.log($('#modal-calendrier-infos'));
                 $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').on('shown.bs.modal', function() {
                     $('#modal-calendrier-infos').find('[autofocus="autofocus"]').focus();

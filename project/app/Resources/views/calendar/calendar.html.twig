@@ -49,9 +49,9 @@
         <div class="col-sm-4 text-center">
             {% if passage and not passage.dateFin %}
                 <div id="fc-events">
-                    <div class="event" data-identifiant="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.etablissementInfos.nom }} ({{ passage.etablissementInfos.adresse.codePostal }})">
-                        <span class="btn btn-default">
-                        <span class="mdi mdi-today mdi-lg" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }} <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
+                    <div class="event" data-passage="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.etablissementInfos.nom }} ({{ passage.etablissementInfos.adresse.codePostal }})">
+                        <span class="btn btn-info">
+                            <span class="mdi mdi-today mdi-lg" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }} <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
                         </span>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                 data-url-populate="{{ path('calendarPopulate', {'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
                 data-url-add="{{path('calendarAdd', {'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
                 data-url-add-libre="{{path('calendarAddLibre', {'technicien': technicien})}}"
-                data-url-read="{{path('calendarRead', {'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
+                data-url-read="{{ path('calendarRead') }}"
                 data-url-update="{{path('calendarUpdate', {'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
                 data-url-prev="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemainePrecedente('Y-m-d')}) }}"
                 data-url-next="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemaineSuivante('Y-m-d')}) }}"
@@ -102,8 +102,5 @@
             </div>
         </div>
     </div>
-
-	<div class="modal" id="modal-calendrier-infos" tabindex="-1" role="dialog">
-	</div>
 
 {% endblock %}

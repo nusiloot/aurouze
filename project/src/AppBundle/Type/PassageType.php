@@ -33,13 +33,13 @@ class PassageType extends AbstractType
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success")));
         ;
 
-        $builder->add('techniciens', DocumentType::class, array(
+        /*$builder->add('techniciens', DocumentType::class, array(
             	'choices' => $this->getTechniciens(),
                 'class' => 'AppBundle\Document\Compte',
         		'expanded' => false,
         		'multiple' => true,
         		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")
-        ));
+        ));*/
 
         $builder->add('produits', CollectionType::class, array(
             'entry_type' => new ProduitPassageType($this->dm),
@@ -86,6 +86,10 @@ class PassageType extends AbstractType
     public function getName()
     {
         return 'passage';
+    }
+
+    public function getTechniciens() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
     }
 
     public function getNettoyages() {

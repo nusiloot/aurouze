@@ -18,4 +18,15 @@ class RendezVousRepository extends DocumentRepository
                 ->getQuery();
         return $query->execute();
     }
+
+    public function findByDate($startDate, $endDate) {
+        $mongoStartDate = new \MongoDate(strtotime($startDate." 00:00:00"));
+        $mongoEndDate = new \MongoDate(strtotime($endDate." 23:59:59"));
+        $query = $this->createQueryBuilder('RendezVous')
+                ->field('dateDebut')->gte($mongoStartDate)
+                ->field('dateDebut')->lte($mongoEndDate)
+                ->sort('dateDebut', 'asc')
+                ->getQuery();
+        return $query->execute();
+    }
 }

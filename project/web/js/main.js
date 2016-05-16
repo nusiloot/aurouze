@@ -38,7 +38,7 @@
     		}
     	});
     };
-    
+
     $.initListingPassage = function () {
         $('.calendar_lien').click(function (event) {
             event.preventDefault();
@@ -291,11 +291,14 @@
         }
     });
     $.initModalPassage = function () {
-        $('#modal-passage').on('show.bs.modal', function (event) {
-            var link = $(event.relatedTarget) // Button that triggered the modal
-            $(this).find('.modal-body').load(link.attr('href'), function () {
-                $.callbackEventForm();
-            });
+        $('#modal-calendrier-infos').on('show.bs.modal', function (event) {
+            var link = $(event.relatedTarget);
+            if(link.length) {
+                $('#modal-calendrier-infos').html("");
+                $('#modal-calendrier-infos').load(link.attr('href'), function () {
+                    $.callbackEventForm();
+                });
+            }
         })
     }
 

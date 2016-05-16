@@ -52,7 +52,22 @@
 												<tr>
 													<th class="fc-axis fc-widget-header" style="width: 17px;"></th>
 													{% for date, eventDate in eventsDates %}
-													<th data-date="{{ date }}" class="fc-day-header fc-widget-header fc-mon">{{ calendarTool.getShortLibelleJour(date|date("N")) }} {{ date|date("j") }}/{{ date|date("n") }}</th>
+													<th data-date="{{ date }}" class="fc-day-header fc-widget-header fc-mon">{{ calendarTool.getShortLibelleJour(date|date("N")) }} {{ date|date("j") }}/{{ date|date("n") }}
+                                                    <br />
+                                                    {% for technicien, events in eventDate %}<a href="" data-toggle="tooltip" title="{{ techniciens["COMPTE-"~technicien].identite }}" style="
+                                                        display:inline-block;
+                                                        margin-right: 1px;
+                                                        border-radius: 0;
+                                                        padding: 2px 8px 2px 2px;
+                                                        text-align: center;
+                                                        border: 0;
+                                                        background-color: {{ techniciens["COMPTE-"~technicien].couleur }};
+                                                        color: #fff;
+                                                        width: {{ ((100 / nbTechniciens))|round(0, 'floor') - 5 }}%;"
+                                                        class="fc-time-grid-event fc-v-event fc-event fc-start fc-end">
+                                                        <strong>{{ techniciens["COMPTE-"~technicien].prenom | slice(0,2) | upper }}</strong>
+                                                    </a>{% endfor %}
+                                                    </th>
 													{% endfor %}
 												</tr>
 											</thead>
@@ -64,7 +79,7 @@
 						<tbody class="fc-body">
 							<tr>
 								<td class="fc-widget-content">
-									<div class="fc-time-grid-container" style="height: 687px; overflow: hidden;">
+									<div class="fc-time-grid-container" style="height: 680px; overflow: hidden;">
 										<div class="fc-time-grid">
 											<div class="fc-bg">
 												<table>
@@ -105,15 +120,29 @@
 																	<div class="fc-event-container">
 																		{% set index = 0 %}
 																		{% for technicien, events in eventDate %}
+                                                                            <a data-toggle="tooltip" title="{{ techniciens["COMPTE-"~technicien].identite }}" style="
+                                                                                display:inline-block;
+                                                                                top: -10px;
+                                                                                border-radius: 0;
+                                                                                bottom: -800px;
+                                                                                left: {{ ((100 / nbTechniciens) * index)|round(0, 'floor') }}%;
+                                                                                background-color: {{ techniciens["COMPTE-"~technicien].couleur }};
+                                                                                border: 0;
+                                                                                opacity: 0.2;
+                                                                                padding: 0 5px;
+                                                                                width: {{ ((100 / nbTechniciens))|round(0, 'floor') - 5 }}%;"
+                                                                                class="fc-time-grid-event fc-v-event fc-event fc-start fc-end">
+                                                                            </a>
 																			{% for event in events %}
 																			<a style="cursor: pointer;
 																				background-color: {{ event.backgroundColor }};
+                                                                                border: 1px dotted #fff;
 																				color: {{ event.textColor }};
 																				z-index: {{ index }};
 																				top: {{ event.coefStart * 22}}px;
 																				bottom: -{{ event.coefEnd * 22}}px;
 																				left: {{ ((100 / nbTechniciens) * index)|round(0, 'floor') }}%;
-																				width: {{ ((100 / nbTechniciens))|round(0, 'floor') -11 }}%;"
+																				width: {{ ((100 / nbTechniciens))|round(0, 'floor') - 5 }}%;"
 																				class="fc-time-grid-event fc-v-event fc-event fc-start fc-end"
 																				nb="{{ eventDate|keys|length }}" data-toggle="tooltip" data-original-title="{{ event.resume }}" >
 																			</a>
@@ -141,6 +170,6 @@
 	</div>
 </div>
 	<script type="text/javascript">
-	    setTimeout(function () { document.location.reload();}, 20 * 1000);
+	    //setTimeout(function () { document.location.reload();}, 20 * 1000);
 	</script>
 {% endblock %}

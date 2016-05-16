@@ -30,11 +30,12 @@ class RendezVousType extends AbstractType {
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder
-            ->add('titre', TextType::class, array('attr' => array('placeholder' => "Titre de l'évenement")))
-            ->add('description', TextareaType::class, array('required' => false, 'attr' => array('rows' => 2)))
-        ;
 
+        if($options['rdv_libre']) {
+            $builder->add('titre', TextType::class, array('attr' => array('placeholder' => "Titre de l'évenement")));
+        }
+
+        $builder->add('description', TextareaType::class, array('required' => false, 'attr' => array('rows' => 2)));
         $builder->add('dateDebut', DateType::class, array(
             "attr" => array(
                     'class' => 'input-inline datepicker',
@@ -71,7 +72,8 @@ class RendezVousType extends AbstractType {
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Document\RendezVous'
+            'data_class' => 'AppBundle\Document\RendezVous',
+            'rdv_libre' => false
         ));
     }
 

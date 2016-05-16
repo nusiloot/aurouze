@@ -42,6 +42,7 @@ class CalendarController extends Controller {
         if ($passage) {
             $etablissement = $passage->getEtablissement();
         }
+
         return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement, 'date' => $date, 'mode' => $request->get('mode')));
     }
 
@@ -60,61 +61,53 @@ class CalendarController extends Controller {
         $periodeStart = $calendarTool->getDateDebutSemaine('Y-m-d');
         $periodeEnd = $calendarTool->getDateFinSemaine('Y-m-d');
 
-        $passagesTech = $dm->getRepository('AppBundle:Passage')->findAllPlanifieByPeriode($periodeStart, $periodeEnd);
+        $rdvs = $dm->getRepository('AppBundle:RendezVous')->findByDate($periodeStart, $periodeEnd);
 
         $eventsDates = array();
-
-        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
-
         while (strtotime($periodeStart) < strtotime($periodeEnd)) {
             $eventsDates[$periodeStart] = array();
             $periodeStart = date("Y-m-d", strtotime("+1 day", strtotime($periodeStart)));
         }
 
+        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
+
         $passagesCalendar = array();
         $index = 0;
-        foreach ($passagesTech as $passageTech) {
-            foreach ($passageTech->getTechniciens() as $technicien) {
-                if (!$passageTech->getDateFin()) {
+        foreach ($rdvs as $rdv) {
+            foreach ($rdv->getParticipants() as $compte) {
+                if (!$rdv->getDateFin()) {
                     continue;
                 }
 
-                if (!isset($passagesCalendar[$technicien->getIdentifiant()])) {
-                    $passagesCalendar[$technicien->getIdentifiant()] = array();
+                if (!isset($passagesCalendar[$compte->getIdentifiant()])) {
+                    $passagesCalendar[$compte->getIdentifiant()] = array();
                     $index = 0;
                 }
 
-                if (isset($passagesCalendar[$technicien->getIdentifiant()]) && isset($passagesCalendar[$technicien->getIdentifiant()][($index - 1)]) && $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['end'] >= $passageTech->getDateDebut()->format('Y-m-d\TH:i:s')) {
-                    $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['end'] = $passageTech->getDateFin()->format('Y-m-d\TH:i:s');
-                    $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-                    $passagesCalendar[$technicien->getIdentifiant()][($index - 1)]['coefEnd'] = round($diffFin / 30, 2);
+                if (isset($passagesCalendar[$compte->getIdentifiant()]) && isset($passagesCalendar[$compte->getIdentifiant()][($index - 1)]) && $passagesCalendar[$compte->getIdentifiant()][($index - 1)]['end'] >= $rdv->getDateDebut()->format('Y-m-d\TH:i:s')) {
+                    $passagesCalendar[$compte->getIdentifiant()][($index - 1)]['end'] = $rdv->getDateFin()->format('Y-m-d\TH:i:s');
+                    $diffFin = (strtotime($rdv->getDateFin()->format('Y-m-d H:i:s')) - strtotime($rdv->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
+                    $passagesCalendar[$compte->getIdentifiant()][($index - 1)]['coefEnd'] = round($diffFin / 30, 2);
                     continue;
                 }
 
 
-                $dateDebut = new \DateTime($passageTech->getDateDebut()->format('Y-m-d') . 'T06:00:00');
-                $diffDebut = (strtotime($passageTech->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-                $diffFin = (strtotime($passageTech->getDateFin()->format('Y-m-d H:i:s')) - strtotime($passageTech->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-
-                $tech = $dm->getRepository('AppBundle:Compte')->findOneById($technicien->getId());
-
-                $resumePassage = $passageTech->getEtablissement()->getNom() . " (" . $passageTech->getEtablissementInfos()->getAdresse()->getCodePostal() . ")\n";
-                foreach ($passageTech->getPrestations() as $p) {
-                    //$resumePassage.=$p->getNomToString() . " ";
-                }
+                $dateDebut = new \DateTime($rdv->getDateDebut()->format('Y-m-d') . 'T06:00:00');
+                $diffDebut = (strtotime($rdv->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($rdv->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
+                $diffFin = (strtotime($rdv->getDateFin()->format('Y-m-d H:i:s')) - strtotime($rdv->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
 
                 $passageArr = array(
-                    'start' => $passageTech->getDateDebut()->format('Y-m-d\TH:i:s'),
-                    'end' => $passageTech->getDateFin()->format('Y-m-d\TH:i:s'),
-                    'backgroundColor' => ($tech) ? $tech->getCouleur() : Compte::COULEUR_DEFAUT,
-                    'textColor' => "black",
+                    'start' => $rdv->getDateDebut()->format('Y-m-d\TH:i:s'),
+                    'end' => $rdv->getDateFin()->format('Y-m-d\TH:i:s'),
+                    'backgroundColor' => $compte->getCouleur(),
+                    'textColor' => $rdv->getTextColor(),
                     'coefStart' => round($diffDebut / 30, 1),
                     'coefEnd' => round($diffFin / 30, 2),
-                    'resume' => $resumePassage,
+                    'resume' => $rdv->getTitre(),
                 );
                 $index++;
 
-                $passagesCalendar[$technicien->getIdentifiant()][] = $passageArr;
+                $passagesCalendar[$compte->getIdentifiant()][] = $passageArr;
             }
         }
 
@@ -179,7 +172,8 @@ class CalendarController extends Controller {
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
             'action' => $this->generateUrl('calendarAddLibre'),
             'method' => 'POST',
-            'attr' => array('id' => 'eventForm')
+            'attr' => array('id' => 'eventForm'),
+            'rdv_libre' => true
         ));
 
         $form->handleRequest($request);
@@ -188,6 +182,8 @@ class CalendarController extends Controller {
 
             return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
         }
+
+        $dm->persist($rdv);
 
         $dm->flush();
 
@@ -243,15 +239,28 @@ class CalendarController extends Controller {
      */
     public function calendarReadAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $rvm = $this->get('rendezvous.manager');
         $technicien = $request->get('technicien');
-        if(!$request->get('id')) {
-            $rdv = new RendezVous();
-        } else {
+        if($request->get('passage') && !$request->get('id')) {
+            $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+            $rdv = $rvm->createFromPassage($passage);
+        } elseif($request->get('id')) {
             $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
         }
 
+        if(!$rdv) {
+            throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("Le rendez-vous \"%s\" n'a pas été trouvé", $request->get('id')));
+        }
+
+        $edition = (!$rdv->getPassage() || (!$rdv->getPassage()->isRealise()));
+
+        if(!$edition) {
+
+            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv));
+        }
+
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
-            'action' => $this->generateUrl('calendarRead', array('id' => $rdv->getId())),
+            'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'passage' => ($rdv->getPassage()) ? $rdv->getPassage()->getId() : null)),
             'method' => 'POST',
             'attr' => array('id' => 'eventForm')
         ));
@@ -261,6 +270,10 @@ class CalendarController extends Controller {
         if (!$form->isSubmitted() || !$form->isValid()) {
 
             return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
+        }
+
+        if(!$rdv->getId()) {
+            $dm->persist($rdv);
         }
 
         $dm->flush();
