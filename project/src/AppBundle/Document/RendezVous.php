@@ -5,6 +5,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\RendezVousRepository") @HasLifecycleCallbacks
@@ -28,11 +29,13 @@ class RendezVous {
 
     /**
      * @MongoDB\Date
+     * @Assert\NotBlank()
      */
     protected $dateDebut;
 
     /**
      * @MongoDB\Date
+     * @Assert\NotBlank()
      */
     protected $dateFin;
 
@@ -162,13 +165,8 @@ class RendezVous {
         return ($dateTime) ? $dateTime->format('H:i') : null;
     }
 
-    /** @MongoDB\PreUpdate */
-    public function preUpdate() {
-        $this->pushToPassage();
-    }
-
-    /** @MongoDB\PrePersist */
-    public function prePersist() {
+    /** @MongoDB\PreFlush */
+    public function preFlush() {
         $this->pushToPassage();
     }
 

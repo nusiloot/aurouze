@@ -138,16 +138,21 @@ class CalendarController extends Controller {
      */
     public function calendarAddAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $pm = $this->get('passage.manager');
         $rvm = $this->get('rendezvous.manager');
 
         $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
-        $rdv = $rvm->createFromPassage($passage, new \DateTime($request->get('start')),  new \DateTime($request->get('end')));
 
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
+        $rdv = $rvm->createFromPassage($passage);
+
+        $rdv->setDateDebut(new \DateTime($request->get('start')));
+        $rdv->setDateFin(new \DateTime($request->get('end')));
+        $rdv->removeAllParticipants();
+        $rdv->addParticipant($technicien);
 
         $dm->persist($rdv);
-
-        $passageManager->updateNextPassageAPlannifier($rdv->getPassage());
+        $pm->updateNextPassageAPlannifier($rdv->getPassage());
         $dm->flush();
 
         $response = new Response(json_encode($rdv->getEventJson($technicien->getCouleur())));
@@ -161,7 +166,6 @@ class CalendarController extends Controller {
      */
     public function calendarAddLibreAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $pm = $this->get('passage.manager')->getManager();
 
         $rdv = new RendezVous();
         $rdv->setDateDebut(new \DateTime($request->get('start')));
@@ -195,6 +199,7 @@ class CalendarController extends Controller {
      */
     public function calendarUpdateAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $rvm = $this->get('rendezvous.manager');
 
         $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));

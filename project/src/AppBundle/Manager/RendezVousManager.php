@@ -9,11 +9,11 @@ use AppBundle\Document\RendezVous;
 class RendezVousManager {
     protected $dm;
 
-    function __construct(DocumentManager $dm) {
+    public function __construct(DocumentManager $dm) {
         $this->dm = $dm;
     }
 
-    function createFromPassage(Passage $passage, \DateTime $dateDebut, \DateTime $dateFin) {
+    public function createFromPassage(Passage $passage) {
         $rdv = $passage->getRendezVous();
 
         if($rdv) {
@@ -43,8 +43,10 @@ class RendezVousManager {
 
         $passage->setRendezVous($rdv);
 
-        $rdv->setDateDebut($dateDebut);
-        $rdv->setDateFin($dateFin);
+        if($passage->getDateDebut() && $passage->getDateFin()) {
+            $rdv->setDateDebut($passage->getDateDebut());
+            $rdv->setDateFin($passage->getDateFin());
+        }
 
         return $rdv;
     }
