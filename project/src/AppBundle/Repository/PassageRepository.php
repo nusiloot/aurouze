@@ -12,6 +12,7 @@ use AppBundle\Manager\PassageManager;
  */
 use MongoDate as MongoDate;
 use AppBundle\Manager\EtablissementManager;
+use AppBundle\Document\Contrat;
 
 class PassageRepository extends DocumentRepository {
 
@@ -41,13 +42,21 @@ class PassageRepository extends DocumentRepository {
         return $query->execute();
     }
 
-    public function findHistoriqueByEtablissementAndPrestations($etablissement, $prestations = array(), $limit = 2) {
+    public function findHistoriqueByEtablissementAndPrestationsAndNumeroContrat(Contrat $contrat, $etablissement, $prestations = array(), $limit = 2) {
         $passagesHistorique = array();
 
+        $contratsNumArchive = $this->dm->getRepository('AppBundle:Contrat')->findByNumeroArchive($contrat->getNumeroArchive());
+        $contratsNumArchiveArray = array();
+        foreach ($contratsNumArchive as $contratNumArchive) {
+            $contratsNumArchiveArray[$contratNumArchive->getId()] = $contratNumArchive->getId();
+        }
         foreach ($prestations as $prestation) {
-            $passages = $this->findBy(array('etablissement' => $etablissement->getId(), 'statut' => PassageManager::STATUT_REALISE, 'prestations.identifiant' => $prestation->getIdentifiant()), array('dateDebut' => 'DESC'), $limit);
-            foreach ($passages as $passage) {
-                $passagesHistorique[$passage->getDateDebut()->format('YmdHi') . "_" . $passage->getId()] = $passage;
+            $passages = array();
+            foreach ($contratsNumArchiveArray as $idContrat) {
+                $passages = array_merge($passages, $this->findBy(array('contrat' => $idContrat, 'etablissement' => $etablissement->getId(), 'statut' => PassageManager::STATUT_REALISE, 'prestations.identifiant' => $prestation->getIdentifiant()), array('dateDebut' => 'DESC'), $limit));
+                foreach ($passages as $passage) {
+                    $passagesHistorique[$passage->getDateDebut()->format('YmdHi') . "_" . $passage->getId()] = $passage;
+                }
             }
         }
 
@@ -123,7 +132,7 @@ class PassageRepository extends DocumentRepository {
         $q = $this->createQueryBuilder();
 
         $q->field('statut')->equals(PassageManager::STATUT_A_PLANIFIER)
-                        ->field('datePrevision')->lte($mongoEndDate);
+                ->field('datePrevision')->lte($mongoEndDate);
         foreach ($dpts as $dpt) {
             $q->addOr($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex('/^' . $dpt . '.*/i')));
         }

@@ -208,6 +208,16 @@ class RendezVous {
         $this->pushToPassage();
     }
 
+    /** @MongoDB\PreRemove */
+    public function preRemove()
+    {
+        if(!$this->getPassage()) {
+            return;
+        }
+        $this->getPassage()->deplanifier();
+        $this->removePassage();
+    }
+
     /**
      * Get id
      *
@@ -374,6 +384,14 @@ class RendezVous {
         return $this;
     }
 
+    public function removePassage()
+    {
+        $this->passage = null;
+        unset($this->passage);
+        
+        return $this;
+    }
+
     /**
      * Get passage
      *
@@ -383,4 +401,5 @@ class RendezVous {
     {
         return $this->passage;
     }
+
 }

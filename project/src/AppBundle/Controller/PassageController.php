@@ -265,7 +265,7 @@ class PassageController extends Controller {
     public function pdfMissionAction(Request $request, Passage $passage) {
         $pm = $this->get('passage.manager');
 
-        $passagesHistory = $pm->getRepository()->findHistoriqueByEtablissementAndPrestations($passage->getEtablissement(), $passage->getPrestations());
+        $passagesHistory = $pm->getRepository()->findHistoriqueByEtablissementAndPrestationsAndNumeroContrat($passage->getContrat(),$passage->getEtablissement(), $passage->getPrestations());
 
         $filename = sprintf("suivi_client_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getTechniciens()->first()->getIdentite())));
 
@@ -307,7 +307,7 @@ class PassageController extends Controller {
         $passagesHistories = array();
 
         foreach ($passages as $passage) {
-            $passagesHistories[$passage->getId()] = $pm->getRepository()->findHistoriqueByEtablissementAndPrestations($passage->getEtablissement(), $passage->getPrestations());
+            $passagesHistories[$passage->getId()] = $pm->getRepository()->findHistoriqueByEtablissementAndPrestationsAndNumeroContrat($passage->getContrat(),$passage->getEtablissement(), $passage->getPrestations());
         }
 
         $html = $this->renderView('passage/pdfMissionsMassif.html.twig', array(
@@ -444,47 +444,6 @@ class PassageController extends Controller {
         }
 
         return $this->render('passage/creationRapide.html.twig', array('etablissement' => $etablissement, 'contrat' => $newContrat, 'form' => $form->createView()));
-    }
-
-    /**
-     * @Route("/passage/deplanifier/{id}", name="passage_deplanifier")
-     * @ParamConverter("passage", class="AppBundle:Passage")
-     */
-    public function deplanifierAction(Request $request, Passage $passage) {
-
-        if (!$request->isXmlHttpRequest()) {
-            throw $this->createNotFoundException();
-        }
-        $dm = $this->get('doctrine_mongodb')->getManager();
-
-        if ($passage->isRealise()) {
-            $aplanifier = false;
-            $contrat = $passage->getContrat();
-            foreach ($contrat->getPassages($passage->getEtablissement()) as $pass) {
-                if ($pass->isAPlanifie() && $pass->getDateDebut() > $passage->getDateDebut()) {
-                    $aplanifier = true;
-                    $pass->setDateDebut(null);
-                    $pass->setStatut(PassageManager::STATUT_EN_ATTENTE);
-                    $dm->persist($passage);
-                    $dm->flush();
-                }
-            }
-            $passage->setDateFin(null);
-            $passage->setDateRealise(null);
-            if ($aplanifier) {
-                $passage->setStatut(PassageManager::STATUT_A_PLANIFIER);
-            } else {
-                $pass->setDateDebut(null);
-                $pass->setStatut(PassageManager::STATUT_EN_ATTENTE);
-            }
-            if ($contrat->isFini()) {
-                $contrat->setStatut(ContratManager::STATUT_EN_COURS);
-            }
-            $dm->persist($passage);
-            $dm->flush();
-            return new Response(json_encode(array("success" => true)));
-        }
-        return new Response(json_encode(array("success" => false)));
     }
 
 }
