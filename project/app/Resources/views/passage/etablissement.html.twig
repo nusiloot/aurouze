@@ -77,7 +77,7 @@
                                <span class="pull-right">{% if(contrat.dureeGarantie) %} Garantie {{ contrat.dureeGarantie }} mois{% else %}Aucune garantie{% endif %}&nbsp;&nbsp;&nbsp;</span>
                             </h4>
                         </div>
-                        <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(not contrat.isEnCours) %}out{% else%}in{% endif %} list-group">
+                        <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(not passagesEtablissement.hasEnCoursPassages) %} out {% else%} in {% endif %} list-group">
                            <div class="list-group-item {% if(contrat.isAnnule) %} list-group-item-danger
                              {% elseif(contrat.isFini) %}list-group-item-success
                              {% elseif(contrat.isBrouillon or contrat.isEnAttenteAcceptation) %} list-group-item-warning {% endif %}
