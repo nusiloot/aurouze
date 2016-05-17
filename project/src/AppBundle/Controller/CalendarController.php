@@ -262,7 +262,8 @@ class CalendarController extends Controller {
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
             'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'passage' => ($rdv->getPassage()) ? $rdv->getPassage()->getId() : null)),
             'method' => 'POST',
-            'attr' => array('id' => 'eventForm')
+            'attr' => array('id' => 'eventForm'),
+            'rdv_libre' => !$rdv->getPassage(),
         ));
 
         $form->handleRequest($request);
