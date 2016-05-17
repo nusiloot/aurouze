@@ -145,6 +145,7 @@ class CalendarController extends Controller {
         $rdv->addParticipant($technicien);
 
         $dm->persist($rdv);
+        $rdv->pushToPassage();
         $pm->updateNextPassageAPlannifier($rdv->getPassage());
         $dm->flush();
 
@@ -239,7 +240,9 @@ class CalendarController extends Controller {
      */
     public function calendarReadAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $pm = $this->get('passage.manager');
         $rvm = $this->get('rendezvous.manager');
+
         $technicien = $request->get('technicien');
         if($request->get('passage') && !$request->get('id')) {
             $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
@@ -262,7 +265,8 @@ class CalendarController extends Controller {
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
             'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'passage' => ($rdv->getPassage()) ? $rdv->getPassage()->getId() : null)),
             'method' => 'POST',
-            'attr' => array('id' => 'eventForm')
+            'attr' => array('id' => 'eventForm'),
+            'rdv_libre' => !$rdv->getPassage(),
         ));
 
         $form->handleRequest($request);
@@ -274,6 +278,10 @@ class CalendarController extends Controller {
 
         if(!$rdv->getId()) {
             $dm->persist($rdv);
+            if($rdv->getPassage()) {
+                $rdv->pushToPassage();
+                $pm->updateNextPassageAPlannifier($rdv->getPassage());
+            }
         }
 
         $dm->flush();
