@@ -23,32 +23,40 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use AppBundle\Manager\ContratManager;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class ContratUpdateMvtsCommand extends ContainerAwareCommand {
+class FactureUpdateLignesCommand extends ContainerAwareCommand {
 
     protected $dm;
 
     protected function configure() {
         $this
-                ->setName('update:contrat-update-mvts')
-                ->setDescription('Contrat update mvts');
+                ->setName('update:facture-update-lignes')
+                ->setDescription('Facture update lignes');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
 
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
         
-        $allContrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
+        $allFactures = $this->dm->getRepository('AppBundle:Facture')->findAll();
         
         $cptTotal = 0;
         $i = 0;
         $progress = new ProgressBar($output, 100);
         $progress->start();
-        $nb = count($allContrats);
-        foreach ($allContrats as $contrat) {
-        	if (count($contrat->getMouvements()) > 0) {
-	        	foreach ($contrat->getMouvements() as $contratMvt) {
-	        		$contratMvt->setTauxTaxe($contrat->getTva());
+        $nb = count($allFactures);
+        foreach ($allFactures as $facture) {
+        	if (count($facture->getLignes()) > 0) {
+	        	foreach ($facture->getLignes() as $factureLigne) {
+	        		try {
+	        			$mvt = $factureLigne->getMouvement();
+	        		} catch (\Exception $e) {
+	        			continue;
+	        		}
+	        		if ($mvt) {
+	        			$factureLigne->pullFromMouvement($mvt);
+	        		}
 	        	}
+	        	$facture->update();
 	        	$cptTotal++;
 	        	if ($cptTotal % ($nb / 100) == 0) {
 	        		$progress->advance();
