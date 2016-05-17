@@ -265,7 +265,7 @@ class PassageController extends Controller {
     public function pdfMissionAction(Request $request, Passage $passage) {
         $pm = $this->get('passage.manager');
 
-        $passagesHistory = $pm->getRepository()->findHistoriqueByEtablissementAndPrestations($passage->getEtablissement(), $passage->getPrestations());
+        $passagesHistory = $pm->getRepository()->findHistoriqueByEtablissementAndPrestationsAndNumeroContrat($passage->getContrat(),$passage->getEtablissement(), $passage->getPrestations());
 
         $filename = sprintf("suivi_client_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getTechniciens()->first()->getIdentite())));
 
@@ -307,7 +307,7 @@ class PassageController extends Controller {
         $passagesHistories = array();
 
         foreach ($passages as $passage) {
-            $passagesHistories[$passage->getId()] = $pm->getRepository()->findHistoriqueByEtablissementAndPrestations($passage->getEtablissement(), $passage->getPrestations());
+            $passagesHistories[$passage->getId()] = $pm->getRepository()->findHistoriqueByEtablissementAndPrestationsAndNumeroContrat($passage->getContrat(),$passage->getEtablissement(), $passage->getPrestations());
         }
 
         $html = $this->renderView('passage/pdfMissionsMassif.html.twig', array(
