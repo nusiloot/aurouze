@@ -27,13 +27,12 @@ class OSMAdresses {
         if (!preg_match('/^http.*\./', $this->url)) {
             return false;
         }
-        $fullAdresse = $adresseTrim . " " . $document->getCommune() . " " . $document->getCodePostal().', FRANCE';
+        $fullAdresse = $adresseTrim . "&commune=" . $document->getCommune() . "&codepostal=" . $document->getCodePostal().', FRANCE';
         $url = $this->url . '?q=' . urlencode($fullAdresse);
 
         $file = file_get_contents($url);
 
         $result = json_decode($file);
-
         if (!count($result)) {
             return "Adresse non trouvée : $fullAdresse";
         }

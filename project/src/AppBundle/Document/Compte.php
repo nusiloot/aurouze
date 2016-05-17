@@ -7,6 +7,7 @@ use AppBundle\Manager\CompteManager;
 use AppBundle\Model\DocumentSocieteInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Manager\ContratManager;
+use AppBundle\Document\Adresse;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\CompteRepository")
@@ -408,7 +409,7 @@ class Compte implements DocumentSocieteInterface {
      * @param AppBundle\Document\Adresse $adresse
      * @return self
      */
-    public function setAdresse(\AppBundle\Document\Adresse $adresse) {
+    public function setAdresse(Adresse $adresse) {
         $this->adresse = $adresse;
         return $this;
     }
