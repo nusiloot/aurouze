@@ -108,7 +108,7 @@ class Facture implements DocumentSocieteInterface {
             $montantTaxe = $montantTaxe + $ligne->getMontantTaxe();
         }
         $this->setMontantHT(round($montant, 2));
-        $this->setMontantTTC(round($montantTaxe, 2));
+        $this->setMontantTTC(round($montant + $montantTaxe, 2));
     }
 
     public function storeDestinataire() {
