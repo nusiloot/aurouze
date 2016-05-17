@@ -70,7 +70,7 @@ class EtablissementManager {
         self::TYPE_ETB_HOTEL => "local-hotel",
         self::TYPE_ETB_NON_SPECIFIE => "do-not-disturb");
     public static $secteurs_departements = array(
-        self::SECTEUR_PARIS => array('75'),
+        self::SECTEUR_PARIS => array('75','94'),
         self::SECTEUR_SEINE_ET_MARNE => array('77', '95', '89', '91', '45', '28')
     );
     public static $secteurs = array(

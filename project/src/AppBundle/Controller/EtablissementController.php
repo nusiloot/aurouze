@@ -14,7 +14,6 @@ use AppBundle\Type\EtablissementType;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Societe;
 
-
 class EtablissementController extends Controller {
 
     /**
@@ -63,24 +62,26 @@ class EtablissementController extends Controller {
      */
     public function modificationAction(Request $request, $societe, $id) {
 
-    	$dm = $this->get('doctrine_mongodb')->getManager();
-    	$etablissement = ($id)? $this->get('etablissement.manager')->getRepository()->find($id) : new Etablissement();
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $etablissement = ($id) ? $this->get('etablissement.manager')->getRepository()->find($id) : new Etablissement();
 
-    	$etablissement->setSociete($societe);
+        $etablissement->setSociete($societe);
 
-    	$form = $this->createForm(new EtablissementType($this->container, $dm), $etablissement, array(
-    			'action' => $this->generateUrl('etablissement_modification', array('societe' => $societe->getId(), 'id' => $id)),
-    			'method' => 'POST',
-    	));
-    	$form->handleRequest($request);
-    	if ($form->isSubmitted() && $form->isValid()) {
-    		$etablissement = $form->getData();
-    		$dm->persist($etablissement);
-    		$dm->flush();
-    		return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
-    	}
+        $form = $this->createForm(new EtablissementType($this->container, $dm), $etablissement, array(
+            'action' => $this->generateUrl('etablissement_modification', array('societe' => $societe->getId(), 'id' => $id)),
+            'method' => 'POST',
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $etablissement = $form->getData();
+            $this->get('etablissement.manager')->getOSMAdresse()->calculCoordonnees($etablissement->getAdresse());
+            
+            $dm->persist($etablissement);
+            $dm->flush();
+            return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
+        }
 
-    	return $this->render('etablissement/modification.html.twig', array('societe' => $societe, 'form' => $form->createView(), 'etablissement' => $etablissement));
+        return $this->render('etablissement/modification.html.twig', array('societe' => $societe, 'form' => $form->createView(), 'etablissement' => $etablissement));
     }
 
 }

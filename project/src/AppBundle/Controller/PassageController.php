@@ -355,8 +355,8 @@ class PassageController extends Controller {
                     $firstTechnicien = $technicien;
                     break;
                 }
-                $etbInfos = $document->getEtablissementInfos();
-                $coordinates = $document->getEtablissementInfos()->getAdresse()->getCoordonnees();
+                $etbInfos = $document->getEtablissement();
+                $coordinates = $document->getEtablissement()->getAdresse()->getCoordonnees();
                 $feature->properties->color = 'black';
                 $feature->properties->colorText = 'white';
                 if (!is_null($firstTechnicien)) {

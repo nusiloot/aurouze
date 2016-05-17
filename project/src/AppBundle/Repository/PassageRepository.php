@@ -122,7 +122,7 @@ class PassageRepository extends DocumentRepository {
     }
 
     public function findToPlan($secteur = EtablissementManager::SECTEUR_PARIS) {
-        $dpts = EtablissementManager::$secteurs_departements[$secteur];
+        $dpts = EtablissementManager::$secteurs_departements[EtablissementManager::SECTEUR_SEINE_ET_MARNE];
         $date = new \DateTime();
         $twoMonth = clone $date;
         $twoMonth->modify("+1 month");
@@ -133,8 +133,19 @@ class PassageRepository extends DocumentRepository {
 
         $q->field('statut')->equals(PassageManager::STATUT_A_PLANIFIER)
                 ->field('datePrevision')->lte($mongoEndDate);
-        foreach ($dpts as $dpt) {
-            $q->addOr($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex('/^' . $dpt . '.*/i')));
+        $regex = '';
+        $dptReg = '';
+        foreach ($dpts as $i => $dpt) {
+            $dptReg .= $dpt;
+            if ($i < count($dpts) - 1) {
+                $dptReg .= '|';
+            }
+        }
+            $regex .= '/^(' . $dptReg . ')/i';
+        if ($secteur == EtablissementManager::SECTEUR_PARIS) {  
+           $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->operator('$not', new \MongoRegex($regex)));
+        } else {
+           $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex($regex)));
         }
         $query = $q->sort('datePrevision', 'asc')->getQuery();
 
