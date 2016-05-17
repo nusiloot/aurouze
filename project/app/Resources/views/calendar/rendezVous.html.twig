@@ -118,8 +118,10 @@
                {% endif %}
            {% endif %}
            {% if (form is defined) %}
+              {% if rdv.passage %}
               <hr style="margin-top: 0;" />
-               {% if form.titre is defined %}
+              {% endif %}
+              {% if form.titre is defined %}
                    <div class="form-group">
                         {{ form_errors(form.titre) }}
                 	    {{ form_label(form.titre, "Titre", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
