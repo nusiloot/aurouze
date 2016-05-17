@@ -24,7 +24,7 @@
         <li><a href="{{ path('passage_etablissement',{ 'id' : passage.etablissement.id }) }}">&nbsp;{{ passage.etablissement.nom }}&nbsp;<small>{{passage.etablissement.adresse.intitule }}</small></a></li>
         <li><a href="{{ path('passage_edition',{ 'id' : passage.id }) }}">&nbsp;<small>{{ passage.dateDebut | localizeddate('full', 'none') | capitalize }}</small></a></li>
     </ol>
-    <h1>Rapport de passage</h1>
+    <h2>Rapport du passage n° {{ passage.numeroArchive }}</h2>
     {% if passage.mouvementDeclenche %}
     <p class="bg-success" style="padding: 15px;"><span class="glyphicon glyphicon-exclamation-sign"></span> Un mouvement de facture a été déclenché pour ce passage.</p>
     {% endif %}
