@@ -58,7 +58,7 @@
                     <div class="col-xs-10">
                          <p class="form-control-static">
                         <a title="Voir les passages" href="{{ path('passage_etablissement', {'id': rdv.passage.etablissement.id })}}">{{ rdv.passage.libelle }}, prévu en {{ rdv.passage.datePrevision | localizeddate("medium",
-            				"none", null, null, "MMMM YYYY") }}</a>
+            				"none", null, null, "MMMM YYYY") }} (n° {{ rdv.passage.numeroArchive }})</a>
                          </p>
                     </div>
                 </div>
