@@ -265,6 +265,21 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         $this->updateStatut();
     }
 
+    public function deplanifier() {
+        if($this->isEnAttente()) {
+            return null;
+        }
+
+        $this->setDateDebut($this->getDatePrevision());
+        $this->setDateFin(null);
+        if($this->isRealise()) {
+            $this->setDateRealise(null);
+        }
+        $this->removeRendezVous();
+
+        $this->updateStatut();
+    }
+
     public function updateStatut() {
         if (!$this->isAnnule()) {
             if ($this->getDatePrevision() && !boolval($this->getDateFin()) && !boolval($this->getDateDebut()) && !boolval($this->getDateRealise())) {
@@ -973,6 +988,14 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function setRendezVous(\AppBundle\Document\RendezVous $rendezVous)
     {
         $this->rendezVous = $rendezVous;
+        return $this;
+    }
+
+    public function removeRendezVous()
+    {
+        $this->rendezVous = null;
+        unset($this->rendezVous);
+        
         return $this;
     }
 

@@ -257,13 +257,13 @@ class CalendarController extends Controller {
 
         $edition = (!$rdv->getPassage() || (!$rdv->getPassage()->isRealise()));
 
-        if(!$edition) {
+        if(!$edition && !$request->get('forceEdition', false)) {
 
             return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv));
         }
 
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
-            'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'passage' => ($rdv->getPassage()) ? $rdv->getPassage()->getId() : null)),
+            'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'passage' => ($rdv->getPassage()) ? $rdv->getPassage()->getId() : null, "forceEdition" => true)),
             'method' => 'POST',
             'attr' => array('id' => 'eventForm'),
             'rdv_libre' => !$rdv->getPassage(),
@@ -290,35 +290,23 @@ class CalendarController extends Controller {
     }
 
     /**
-     * @Route("/calendar/delete", name="calendarDelete", options={"expose" = "true"})
+     * @Route("/calendar/delete/{id}", name="calendarDelete")
+     * @ParamConverter("rdv", class="AppBundle:RendezVous")
      */
-    public function calendarDeleteAction(Request $request) {
-
+    public function calendarDeleteAction(Request $request, RendezVous $rdv) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $passageToDelete = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
-        $etablissement = $passageToDelete->getEtablissement()->getId();
+        $pm = $this->get('passage.manager');
         $technicien = $request->get('technicien');
 
-        if (!$passageToDelete->isRealise()) {
-            $passageToDelete->setDateFin(null);
-            $passageManager = new PassageManager($dm);
+        if($rdv->getPassage()) {
+            $pm->updateNextPassageEnAttente($rdv->getPassage());
+        }
 
-            $nextPassage = $passageManager->updateNextPassageEnAttente($passageToDelete);
-            if ($passageToDelete->isAPlanifie()) {
-                $passageToDelete->setDateDebut(null);
-            }
-            if ($nextPassage) {
-                $dm->persist($nextPassage);
-            }
-            $dm->flush();
-            $dm->persist($passageToDelete);
-            $dm->flush();
-        }
-        if ($technicien) {
-            return $this->redirect($this->generateUrl('calendar', array('passage' => $request->get('passage'), 'technicien' => $technicien)));
-        } else {
-            return $this->redirect($this->generateUrl('passage_etablissement', array('id' => $etablissement)));
-        }
+        $dm->remove($rdv);
+
+        $dm->flush();
+
+        return $this->redirect($this->generateUrl('calendarManuel'));
     }
 
 }

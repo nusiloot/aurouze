@@ -95,7 +95,7 @@
         <tr>
             <td style="border: 0 !important;"></td>
             <td colspan="2">TVA {{ (facture.tva * 100)|number_format(2, ',', ' ') }}%</td>
-            <td colspan="2" class="text-right">{{ facture.montantTaxe }} €</td>
+            <td colspan="2" class="text-right">{{ facture.montantTaxe|number_format(2, ',', ' ') }} €</td>
         </tr>
         <tr>
             <td style="border: 0 !important;"></td>

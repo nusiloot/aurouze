@@ -100,13 +100,15 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function update() {
+    	$montant = 0;
+    	$montantTaxe = 0;
         foreach($this->getLignes() as $ligne) {
             $ligne->update();
-            $this->setMontantHT($this->getMontantHT() + $ligne->getMontantHT());
-            $this->setMontantTaxe($this->getMontantTaxe() + $ligne->getMontantTaxe());
+            $montant = $montant + $ligne->getMontantHT();
+            $montantTaxe = $montantTaxe + $ligne->getMontantTaxe();
         }
-        $this->setMontantHT(round($this->getMontantHT(), 2));
-        $this->setMontantTTC(round($this->getMontantHT() + $this->getMontantTaxe()));
+        $this->setMontantHT(round($montant, 2));
+        $this->setMontantTTC(round($montant + $montantTaxe, 2));
     }
 
     public function storeDestinataire() {
