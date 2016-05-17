@@ -257,13 +257,13 @@ class CalendarController extends Controller {
 
         $edition = (!$rdv->getPassage() || (!$rdv->getPassage()->isRealise()));
 
-        if(!$edition) {
+        if(!$edition && !$request->get('forceEdition', false)) {
 
             return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv));
         }
 
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
-            'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'passage' => ($rdv->getPassage()) ? $rdv->getPassage()->getId() : null)),
+            'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'passage' => ($rdv->getPassage()) ? $rdv->getPassage()->getId() : null, "forceEdition" => true)),
             'method' => 'POST',
             'attr' => array('id' => 'eventForm'),
             'rdv_libre' => !$rdv->getPassage(),
@@ -303,7 +303,7 @@ class CalendarController extends Controller {
         }
 
         $dm->remove($rdv);
-        
+
         $dm->flush();
 
         return $this->redirect($this->generateUrl('calendarManuel'));

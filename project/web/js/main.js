@@ -18,7 +18,7 @@
         $.initCollapseCheckbox();
         $.initTextSelector();
         $.initLinkInPanels();
-        $.initDeplanifierLink();
+        $.initRdvLink();
         $.initSearchActif();
         $.initListingPassage();
         $.initLinkCalendar();
@@ -58,12 +58,19 @@
         });
     }
 
-    $.initDeplanifierLink = function () {
-        $('.deplanifier-link').click(function (e) {
+    $.initRdvLink = function () {
+        $('.rdv-deplanifier-link').click(function (e) {
             e.preventDefault();
             var link = $(this).attr('href');
             $.post(link, function (data) {
                 document.location.reload();
+            });
+        });
+
+        $('.rdv-modifier-link').click(function (e) {
+            e.preventDefault();
+            $('#modal-calendrier-infos').load($(this).attr('href'), function () {
+                $.callbackEventForm();
             });
         });
     }
@@ -135,8 +142,6 @@
     }
 
     $.initDynamicCollection = function () {
-
-
         var addLink = $('.dynamic-collection-add');
         $('.dynamic-collection-item').on('click', '.dynamic-collection-remove', function (e) {
             e.preventDefault();
@@ -201,7 +206,7 @@
         $.initDatePicker();
         $.initTimePicker();
         $.initFormEventAjax();
-        $.initDeplanifierLink();
+        $.initRdvLink();
     }
 
     $.initTooltips = function () {
