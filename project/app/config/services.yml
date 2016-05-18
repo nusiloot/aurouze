@@ -29,14 +29,15 @@ services:
         class: AppBundle\Import\EtablissementCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @societe.manager, @etablissement.manager]
 
-    passage.manager:
-        class: AppBundle\Manager\PassageManager
-        arguments: [@doctrine_mongodb.odm.default_document_manager]
 
     contrat.manager:
         class: AppBundle\Manager\ContratManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
 
+    passage.manager:
+        class: AppBundle\Manager\PassageManager
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager]
+        
     rendezvous.manager:
         class: AppBundle\Manager\RendezVousManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]

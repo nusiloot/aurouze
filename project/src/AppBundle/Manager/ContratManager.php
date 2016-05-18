@@ -231,5 +231,32 @@ class ContratManager implements MouvementManagerInterface {
     public function getNbContratWithCompteForCommercial($compte) {
         return $this->getRepository()->countContratByCommercial($compte);
     }
+    
+      public function getPassagesByNumeroArchiveContrat(Contrat $contrat, $reverse = false) {
+        $contratsByNumero = $this->getRepository()->findByNumeroArchive($contrat->getNumeroArchive());
+        $passagesByNumero = array();
+        foreach ($contratsByNumero as $contrat) {
+            foreach ($contrat->getContratPassages() as $contratPassages) {
+                $idEtb = $contratPassages->getEtablissement()->getId();
+                if (!array_key_exists($idEtb, $passagesByNumero)) {
+                    $passagesByNumero[$idEtb] = array();
+                }
+                foreach ($contratPassages->getPassages() as $passage) {
+                    $passagesByNumero[$idEtb][$passage->getDatePrevision()->format('Ymd')] = $passage;
+                }
+            }
+        }
+        foreach ($passagesByNumero as $idEtb => $passagesByNumeroAndEtb) {
+            $passages = $passagesByNumeroAndEtb;
+            if ($reverse) {
+                krsort($passages);
+            } else {
+                ksort($passages);
+            }
+            $passagesByNumero[$idEtb] = $passages;
+        }
+        return $passagesByNumero;
+    }
+
 
 }

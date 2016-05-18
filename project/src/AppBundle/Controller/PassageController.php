@@ -167,7 +167,7 @@ class PassageController extends Controller {
             return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
         }
 
-        $passageManager = new PassageManager($dm);
+        $passageManager = $this->get('passage.manager');
 
         $nextPassage = $passageManager->updateNextPassageAPlannifier($passage);
         if ($nextPassage) {
