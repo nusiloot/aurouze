@@ -200,7 +200,7 @@
                                 <a class="btn btn-sm btn-default" href="{{ path('passage_edition', {'id': rdv.passage.id })}}"><span class="glyphicon glyphicon-pencil"></span> Rapport de visite</a>
                             {% endif %}
                             {% if (rdv.passage and not rdv.id) %}
-                                <a href="{{ path('passage_annulation',{ 'id': rdv.passage.id }) }}" class="btn btn-sm  btn-default text-danger" onclick="return confirm('Êtes vous sûr de vouloir passer ce passage en annuler ?')">Annuler le passage</a>
+                                <a href="{{ path('passage_annulation',{ 'id': rdv.passage.id }) }}" class="btn btn-sm btn-default text-danger" onclick="return confirm('Êtes vous sûr de vouloir passer ce passage en annuler ?')"><span class="text-danger">Annuler le passage</span></a>
                             {% endif %}
                         </div>
                     </div>

@@ -174,6 +174,7 @@ class RendezVous {
             }
         }
 
+        $this->getPassage()->setCommentaire($this->getDescription());
         $this->getPassage()->setDateDebut($this->getDateDebut());
         $this->getPassage()->setDateFin($this->getDateFin());
     }
@@ -388,7 +389,7 @@ class RendezVous {
     {
         $this->passage = null;
         unset($this->passage);
-        
+
         return $this;
     }
 
