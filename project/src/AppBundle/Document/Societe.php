@@ -9,7 +9,6 @@ use Symfony\Component\Validator\Constraints as AssertDoctrine;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\SocieteRepository")
- * @AssertMongo\Unique(fields="codeComptable", errorPath="codeComptable", ignoreNull=true, message="Le code comptable existe déjà")   
  */
 class Societe {
 
