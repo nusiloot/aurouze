@@ -56,6 +56,7 @@ class PassageController extends Controller {
         $rvm = $this->get('rendezvous.manager');
 
         $passage = $this->get('passage.manager')->create($etablissement, $contrat);
+        $passage->setDatePrevision(new \DateTime());
 
         $form = $this->createForm(new PassageCreationType($dm), $passage, array(
             'action' => $this->generateUrl('passage_creation', array('id_etablissement' => $etablissement->getId(), 'id_contrat' => $contrat->getId())),
