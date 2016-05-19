@@ -21,8 +21,12 @@
             </p>
             {% if etablissement.commentaire %}
                 <p>
-                    Informations complémentaires : {{ etablissement.commentaire }} <a href="{{ path('etablissement_modification', {'societe': etablissement.getSociete().getId(),'id': etablissement.getId()}) }}"><small>(Modifier)</small></a>
+                    Commentaire : {{ etablissement.commentaire }} <a href="{{ path('etablissement_modification', {'societe': etablissement.getSociete().getId(),'id': etablissement.getId()}) }}"><small>(Modifier)</small></a>
                 </p>
+            {% else %}
+            <p>
+                <a href="{{ path('etablissement_modification', {'societe': etablissement.getSociete().getId(),'id': etablissement.getId()}) }}"><small>Ajouter un commentaire</small></a>
+            </p>
             {% endif %}
         </div>
         <div class="col-xs-4">
