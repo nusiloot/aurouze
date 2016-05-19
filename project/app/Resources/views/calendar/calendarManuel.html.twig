@@ -35,9 +35,16 @@
             </div>
         </div>
         <div class="col-sm-4 text-center">
-	</div>
-	<div class="col-sm-4 text-right">
-	</div>
+            {% if passage and not passage.rendezvous %}
+                <div class="event" data-passage="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.etablissementInfos.nom }} ({{ passage.etablissementInfos.adresse.codePostal }})">
+                    <span class="btn btn-info disabled">
+                        <span class="mdi mdi-today mdi-lg" aria-hidden="true"></span>&nbsp;{{ passage.etablissementInfos.nom }} <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
+                    </span>
+                </div>
+            {% endif %}
+        </div>
+    	<div class="col-sm-4 text-right">
+    	</div>
 </div>
 <div class="row" style="margin-top: 10px;">
 	<div class="col-sm-12">

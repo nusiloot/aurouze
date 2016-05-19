@@ -47,7 +47,7 @@
             </div>
         </div>
         <div class="col-sm-4 text-center">
-            {% if passage and not passage.dateFin %}
+            {% if passage and not passage.rendezvous %}
                 <div id="fc-events">
                     <div class="event" data-passage="{{ passage.id }}" data-duration="{{ passage.dureePrevisionnelle }}" data-title="{{ passage.etablissementInfos.nom }} ({{ passage.etablissementInfos.adresse.codePostal }})">
                         <span class="btn btn-info">
