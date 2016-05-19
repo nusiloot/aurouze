@@ -53,6 +53,7 @@ class PassageController extends Controller {
      */
     public function creationAction(Request $request, Etablissement $etablissement, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $rvm = $this->get('rendezvous.manager');
 
         $passage = $this->get('passage.manager')->create($etablissement, $contrat);
 
@@ -66,8 +67,14 @@ class PassageController extends Controller {
             $passage->setDatePrevision($passage->getDateDebut());
             $dm->persist($passage);
             $contrat->addPassage($etablissement, $passage);
-            $dm->persist($contrat);
+
+            if($passage->getDateDebut() && $passage->getDateFin()) {
+                $rdv = $rvm->createFromPassage($passage);
+                $dm->persist($rdv);
+            }
+
             $dm->flush();
+            
             return $this->redirectToRoute('passage_etablissement', array('id' => $etablissement->getId()));
         }
 
