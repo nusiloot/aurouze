@@ -3,6 +3,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PaiementsRepository") 
@@ -38,7 +39,9 @@ class Paiements {
 
     public function __construct()
     {
-        $this->paiement = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->paiement = new ArrayCollection();
+        $this->imprime = false;
+        
     }
     
     /**

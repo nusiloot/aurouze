@@ -10,7 +10,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 class Paiement {
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Facture", simple=true)
+     * @MongoDB\ReferenceOne(targetDocument="Facture", inversedBy="paiements", simple=true)
      */
     protected $facture;
 
@@ -44,6 +44,12 @@ class Paiement {
      */
     protected $versementComptable;
 
+    public function __construct()
+    {
+        $this->versementComptable = false;
+        
+    }
+    
     /**
      * Set facture
      *

@@ -17,18 +17,8 @@ class PaiementsGenerator extends AbstractIdGenerator
             
             return "PAIEMENTS-".$document->getIdentifiant();
         }
-
-        $date = $document->getDateCreation()->format('Y-m-d');
         
-        $command = array();
-        $command['findandmodify'] = 'doctrine_increment_ids';
-        $command['query'] = array('_id' => "Paiments");
-        $command['update'] = array('$inc' => array($date => 1));
-        $command['upsert'] = true;
-        $command['new'] = true;
-        $result = $db->command($command);
-        
-        $document->setIdentifiant(sprintf("%s-%04d", $document->getDateCreation()->format('Ymd'), $result['value'][$date]));
+        $document->setIdentifiant(sprintf("%s", $document->getDateCreation()->format('YmdHi')));
         
         return "PAIEMENTS-".$document->getIdentifiant();
     }
