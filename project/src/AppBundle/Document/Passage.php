@@ -258,6 +258,9 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /** @MongoDB\PreUpdate */
     public function preUpdate() {
         $this->updateStatut();
+        if($this->getStatut() != PassageManager::STATUT_REALISE) {
+            $this->pullEtablissementInfos();
+        }
     }
 
     /** @MongoDB\PrePersist */
@@ -995,7 +998,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     {
         $this->rendezVous = null;
         unset($this->rendezVous);
-        
+
         return $this;
     }
 

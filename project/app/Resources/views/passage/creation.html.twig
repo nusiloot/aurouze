@@ -5,67 +5,62 @@
 
 {% block body %}
     <div class="row">
-        <div class="col-xs-12">
-            <h3>Création du passage <small class="text-muted">{{ passage.identifiant }}</small></h3>
-            <p>Etablissement : {{ passage.intitule }}</p>
-            <p>Contrat : </p>
+        <div class="col-xs-12 form-horizontal">
+
+            <ol class="breadcrumb">
+                <li><a href="{{ path('passage') }}">Passage</a></li>
+                <li><a href="{{ path('passage_etablissement',{ 'id' : passage.etablissement.id }) }}">{{ passage.etablissement.nom }}&nbsp;<small>{{passage.etablissement.adresse.intitule }}</small></a></li>
+                <li><a href="">Création d'un passage</a></li>
+            </ol>
 
             {{ form_start(form) }}
 
-                {{ form_row(form.typePassage ) }}
-
-                <div class="row">
-		            <div class="form-group col-xs-8">
-		                {{ form_label(form.dateDebut) }}
-		                {{ form_errors(form.dateDebut) }}
-		                <div class="input-group">
-		                    {{ form_widget(form.dateDebut) }}
-		                    <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-		                </div>
-		            </div>
-		            <div class="col-xs-4 bootstrap-timepicker timepicker">
-		                {{ form_label(form.timeDebut) }}
-                        {{ form_errors(form.timeDebut) }}
-                        <div class="input-group">
-                            {{ form_widget(form.timeDebut) }}
-                            <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Création d'un passage pour le contrat n° {{ passage.contrat.numeroArchive }}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+    	                {{ form_errors(form.typePassage) }}
+                        {{ form_label(form.typePassage, "Type de passage", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-4">
+    	                    {{ form_widget(form.typePassage, {'attr': {'autofocus': 'autofocus'}}) }}
                         </div>
-                    </div>
-	            </div>
-	            <div class="row">
-		            <div class="form-group col-xs-8">
-		                {{ form_label(form.dateFin) }}
-		                {{ form_errors(form.dateFin) }}
-		                <div class="input-group">
-		                    {{ form_widget(form.dateFin) }}
-		                    <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-		                </div>
-		            </div>
-		            <div class="col-xs-4 bootstrap-timepicker timepicker">
-		                {{ form_label(form.timeFin) }}
-                        {{ form_errors(form.timeFin) }}
-                        <div class="input-group">
-                            {{ form_widget(form.timeFin) }}
-                            <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+    	            </div>
+
+    	            <div class="form-group">
+    	                {{ form_errors(form.datePrevision) }}
+                        {{ form_label(form.datePrevision, "Date de prévision", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-4">
+        	                <div class="input-group">
+        	                    {{ form_widget(form.datePrevision) }}
+        	                    <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+        	                </div>
                         </div>
-                    </div>
-	        	</div>
+    	            </div>
 
-                <div class="panel panel-default">
-            		<div class="panel-heading"><strong>Techniciens</strong></div>
-            		<div class="panel-body">
-                		{{ form_widget(form.techniciens) }}
-					</div>
-				</div>
+                    <div class="form-group">
+    	                {{ form_errors(form.techniciens) }}
+                        {{ form_label(form.techniciens, "Techniciens", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-10">
+    	                    {{ form_widget(form.techniciens) }}
+                        </div>
+    	            </div>
 
-                <div class="panel panel-default">
-            		<div class="panel-heading"><strong>Prestations</strong></div>
-            		<div class="panel-body">
-                		{{ form_widget(form.prestations) }}
-					</div>
-				</div>
-
-            {{ form_widget(form.save) }}
+                    <div class="form-group">
+    	                {{ form_errors(form.prestations) }}
+                        {{ form_label(form.prestations, "Prestations", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-10">
+    	                    {{ form_widget(form.prestations) }}
+                        </div>
+    	            </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 text-right">
+                    <button type="submit" class="btn btn-primary">Créer et planifer le passage</button>
+                </div>
+            </div>
         	{{ form_end(form) }}
         </div>
     </div>

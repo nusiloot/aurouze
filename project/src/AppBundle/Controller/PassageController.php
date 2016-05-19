@@ -53,8 +53,10 @@ class PassageController extends Controller {
      */
     public function creationAction(Request $request, Etablissement $etablissement, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $rvm = $this->get('rendezvous.manager');
 
         $passage = $this->get('passage.manager')->create($etablissement, $contrat);
+        $passage->setDatePrevision(new \DateTime());
 
         $form = $this->createForm(new PassageCreationType($dm), $passage, array(
             'action' => $this->generateUrl('passage_creation', array('id_etablissement' => $etablissement->getId(), 'id_contrat' => $contrat->getId())),
@@ -62,16 +64,29 @@ class PassageController extends Controller {
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $passage = $form->getData();
-            $passage->setDatePrevision($passage->getDateDebut());
+            $passage->setDateDebut($passage->getDatePrevision());
             $dm->persist($passage);
             $contrat->addPassage($etablissement, $passage);
-            $dm->persist($contrat);
+
             $dm->flush();
-            return $this->redirectToRoute('passage_etablissement', array('id' => $etablissement->getId()));
+
+            return $this->redirectToRoute('passage_planifier', array('passage' => $passage->getId()));
         }
 
         return $this->render('passage/creation.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+    }
+
+    /**
+     * @Route("/passage/{passage}/planifier", name="passage_planifier")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function planifierAction(Request $request, Passage $passage) {
+        if(!count($passage->getTechniciens())) {
+
+            return $this->redirectToRoute('calendarManuel', array('passage' => $passage->getId()));
+        }
+
+        return $this->redirectToRoute('calendar', array('passage' => $passage->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
     }
 
     /**
