@@ -24,8 +24,11 @@
     </div>
 </div>
 <br />
-<br />
-<p><strong>Traitement :</strong> {% for prestation in passage.prestations %}
+{% if(passage.commentaire) %}
+<p><strong>Informations :</strong> {{ passage.commentaire }}</p>
+{% endif %}
+<p>
+    <strong>Traitement :</strong> {% for prestation in passage.prestations %}
     <span class="btn btn-default">{{ prestation.nomToString }}</span>
 {% endfor %}
 <br />
