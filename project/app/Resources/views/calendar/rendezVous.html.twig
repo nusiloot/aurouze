@@ -4,214 +4,217 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <span class="col-xs-2 text-center">
                 {% if (rdv.passage and rdv.passage.annule) %}
-                <button class="btn btn-md btn-block btn-danger">{{
+                    <button class="btn btn-md btn-block btn-danger">{{
             rdv.passage.getStatutLibelle() }}</button>
-                {% elseif (rdv.passage and rdv.passage.enAttente) %}
+                    {% elseif (rdv.passage and rdv.passage.enAttente) %}
                     <button class="btn btn-md btn-block btn-default">{{
                 rdv.passage.getStatutLibelle() }}</button>
-                {% elseif (rdv.passage and rdv.passage.aPlanifie) %}
+                    {% elseif (rdv.passage and rdv.passage.aPlanifie) %}
                     <button class="btn btn-md btn-block btn-primary">{{
                     rdv.passage.getStatutLibelle() }}</button>
-                {% elseif (rdv.passage and rdv.passage.planifie) %}
+                    {% elseif (rdv.passage and rdv.passage.planifie) %}
                     <button style="margin-bottom: 10px;" class="btn btn-md btn-block btn-warning">Planifié<br /></button>
-                    {% if rdv.passage.imprime %}
+                        {% if rdv.passage.imprime %}
                         <span><span class="glyphicon glyphicon-print"></span> Bon Imprimé</span>
                     {% endif %}
                 {% elseif (rdv.passage and rdv.passage.realise) %}
-                <button class="btn btn-md btn-block btn-success">{{
+                    <button class="btn btn-md btn-block btn-success">{{
                     rdv.passage.getStatutLibelle() }}</button>
-                {% else %}
-                <button class="btn btn-md btn-block">Libre</button>
+                    {% else %}
+                    <button class="btn btn-md btn-block">Libre</button>
                 {% endif %}
             </span>
             {% if(rdv.passage) %}
                 <h3 class="modal-title col-xs-9">
                     {{ rdv.titre }}
                     {% if(rdv.id) %}
-                    <br /><small><i class="mdi mdi-today mdi-lg"></i> <a title="Voir sur le calendrier" href='{% if (rdv.participants | length >= 1) %}{{ path('calendar', {'date': rdv.dateDebut | date('Y-m-d'), 'technicien': rdv.participants.first.id}) }}{% else %}{{ path('calendarManuel', {'date': rdv.dateDebut | date('Y-m-d')}) }}{% endif %}'>
-                    {{ rdv.dateDebut | localizeddate('full', 'none') | capitalize }} de {{ rdv.dateDebut | date('H') }}:{{ rdv.dateDebut | date('i') }} à {{ rdv.dateFin | date('H') }}:{{ rdv.dateFin | date('i') }}</span></a>{% if(rdv.duree) %}
-                        <span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ rdv.passage.duree }}{% endif %}</small>
-                    {% endif %}
-                </h3>
-            {% else %}
-                <h3 class="modal-title col-xs-9">Ajout d'un RDV</h3>
-            {% endif %}
-        </div>
-        {% if (form is defined) %}
-        {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
-        {% endif %}
-        <div class="modal-body form-horizontal">
-            {% if(rdv.passage) %}
-                <div class="form-group" style="margin-bottom: 0">
-                    <label class="control-label col-xs-2">Contrat</label>
-                    <div class="col-xs-10">
-                        <p class="form-control-static">
-                            <a title="Voir le contrat" href="{{ path('contrat_visualisation', {'id': rdv.passage.contrat.id })}}">N° {{ rdv.passage.contrat.numeroArchive }} ({{ rdv.passage.contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}
-                            {% if(rdv.passage.contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != rdv.passage.contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ rdv.passage.contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }})
+                        <br /><small><i class="mdi mdi-today mdi-lg"></i> <a title="Voir sur le calendrier" href='{% if (rdv.participants | length >= 1) %}{{ path('calendar', {'date': rdv.dateDebut | date('Y-m-d'), 'technicien': rdv.participants.first.id}) }}{% else %}{{ path('calendarManuel', {'date': rdv.dateDebut | date('Y-m-d')}) }}{% endif %}'>
+                                {{ rdv.dateDebut | localizeddate('full', 'none') | capitalize }} de {{ rdv.dateDebut | date('H') }}:{{ rdv.dateDebut | date('i') }} à {{ rdv.dateFin | date('H') }}:{{ rdv.dateFin | date('i') }}</span></a>{% if(rdv.duree) %}
+                                <span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ rdv.passage.duree }}{% endif %}</small>
                             {% endif %}
-                            </a>
-                        </p>
-                    </div>
-                </div>
-                <div class="form-group" style="margin-bottom: 0">
-                    <label class="control-label col-xs-2">Passage</label>
-                    <div class="col-xs-10">
-                         <p class="form-control-static">
-                        <a title="Voir les passages" href="{{ path('passage_etablissement', {'id': rdv.passage.etablissement.id })}}">{{ rdv.passage.libelle }}, prévu en {{ rdv.passage.datePrevision | localizeddate("medium",
-            				"none", null, null, "MMMM YYYY") }} (n° {{ rdv.passage.numeroArchive }})</a>
-                         </p>
-                    </div>
-                </div>
-                <div class="form-group" style="margin-bottom: 0">
-                    <label class="control-label col-xs-2">Lieu</label>
-                    <div class="col-xs-10">
-                        <p class="form-control-static">
-                        <a title="Voir la société" href="{{ path('societe_visualisation', {'id': rdv.passage.etablissement.societe.id })}}">{% if rdv.passage.etablissement.societe.raisonSociale != rdv.passage.etablissementInfos.nom %}{{ rdv.passage.etablissement.societe.raisonSociale }}, {% endif %}{{ rdv.passage.etablissementInfos.nom }},
-                        {{ rdv.passage.etablissementInfos.adresse.adresse }}
-                        {{ rdv.passage.etablissementInfos.adresse.codePostal }}
-                        {{ rdv.passage.etablissementInfos.adresse.commune }}</a></p>
-                    </div>
-                </div>
-                <div class="form-group" style="margin-bottom: 0">
-                    <label class="control-label col-xs-2">Prestations</label>
-                    <div class="col-xs-10">
-                        <p class="form-control-static">
-                            {% for prestation in rdv.passage.prestations %}
-                                {% if(prestation.wordToPicto) %}
-                                <span class="step size-24" title="{{  prestation.nomToString }}"
-                                    data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
-                                    style="cursor: pointer;">&nbsp;</i></span>
-                                {% else %} <span
-                                    class="label label-xs label-primary">{{ prestation.nomToString }}</span>
-                                {% endif %}
-                            {% endfor %}
-                        </p>
-                   </div>
-               </div>
-               {% if rdv.passage and rdv.passage.realise and form is not defined %}
-                   <div class="form-group" style="margin-bottom: 0">
-                       <label class="control-label col-xs-2">Technicien</label>
-                       <div class="col-xs-10">
-                           <p class="form-control-static">
-                               {% for tech in rdv.passage.techniciens %}
-                                    {{ tech.identite }}
-                               {% endfor %}
-                           </p>
-                       </div>
-                   </div>
-                   <div class="form-group" style="margin-bottom: 0">
-                       <label class="control-label col-xs-2">Durée effective</label>
-                       <div class="col-xs-10">
-                           <p class="form-control-static">
-                               {{ rdv.passage.duree }}
-                           </p>
-                       </div>
-                   </div>
-                   <div class="form-group" style="margin-bottom: 0">
-                       <label class="control-label col-xs-2">Rapport de visite</label>
-                       <div class="col-xs-10">
-                           <p class="form-control-static">
-                               {{ rdv.passage.description | nl2br }}
-                           </p>
-                       </div>
-                   </div>
-               {% endif %}
-           {% endif %}
-           {% if (form is defined) %}
-              {% if rdv.passage %}
-              <hr style="margin-top: 0;" />
-              {% endif %}
-              {% if form.titre is defined %}
-                   <div class="form-group">
-                        {{ form_errors(form.titre) }}
-                	    {{ form_label(form.titre, "Titre", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                    </h3>
+                {% else %}
+                    <h3 class="modal-title col-xs-9">Ajout d'un RDV</h3>
+                {% endif %}
+            </div>
+            {% if (form is defined) %}
+                {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+            {% endif %}
+            <div class="modal-body form-horizontal">
+                {% if(rdv.passage) %}
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label class="control-label col-xs-2">Contrat</label>
                         <div class="col-xs-10">
-            	           {{ form_widget(form.titre, {'attr': {'autofocus': 'autofocus'}}) }}
+                            <p class="form-control-static">
+                                <a title="Voir le contrat" href="{{ path('contrat_visualisation', {'id': rdv.passage.contrat.id })}}">N° {{ rdv.passage.contrat.numeroArchive }} ({{ rdv.passage.contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}
+                                    {% if(rdv.passage.contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != rdv.passage.contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ rdv.passage.contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }})
+                                    {% endif %}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label class="control-label col-xs-2">Passage</label>
+                        <div class="col-xs-10">
+                            <p class="form-control-static">
+                                <a title="Voir les passages" href="{{ path('passage_etablissement', {'id': rdv.passage.etablissement.id })}}">{{ rdv.passage.libelle }}, prévu en {{ rdv.passage.datePrevision | localizeddate("medium",
+            				"none", null, null, "MMMM YYYY") }} (n° {{ rdv.passage.numeroArchive }})</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label class="control-label col-xs-2">Lieu</label>
+                        <div class="col-xs-10">
+                            <p class="form-control-static">
+                                <a title="Voir la société" href="{{ path('societe_visualisation', {'id': rdv.passage.etablissement.societe.id })}}">{% if rdv.passage.etablissement.societe.raisonSociale != rdv.passage.etablissementInfos.nom %}{{ rdv.passage.etablissement.societe.raisonSociale }}, {% endif %}{{ rdv.passage.etablissementInfos.nom }},
+                                    {{ rdv.passage.etablissementInfos.adresse.adresse }}
+                                    {{ rdv.passage.etablissementInfos.adresse.codePostal }}
+                                    {{ rdv.passage.etablissementInfos.adresse.commune }}</a></p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label class="control-label col-xs-2">Prestations</label>
+                        <div class="col-xs-10">
+                            <p class="form-control-static">
+                                {% for prestation in rdv.passage.prestations %}
+                                    {% if(prestation.wordToPicto) %}
+                                        <span class="step size-24" title="{{  prestation.nomToString }}"
+                                              data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
+                                                                  style="cursor: pointer;">&nbsp;</i></span>
+                                    {% else %} <span
+                                            class="label label-xs label-primary">{{ prestation.nomToString }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                    {% if rdv.passage and rdv.passage.realise and form is not defined %}
+                        <div class="form-group" style="margin-bottom: 0">
+                            <label class="control-label col-xs-2">Technicien</label>
+                            <div class="col-xs-10">
+                                <p class="form-control-static">
+                                    {% for tech in rdv.passage.techniciens %}
+                                        {{ tech.identite }}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0">
+                            <label class="control-label col-xs-2">Durée effective</label>
+                            <div class="col-xs-10">
+                                <p class="form-control-static">
+                                    {{ rdv.passage.duree }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0">
+                            <label class="control-label col-xs-2">Rapport de visite</label>
+                            <div class="col-xs-10">
+                                <p class="form-control-static">
+                                    {{ rdv.passage.description | nl2br }}
+                                </p>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                {% if (form is defined) %}
+                    {% if rdv.passage %}
+                        <hr style="margin-top: 0;" />
+                    {% endif %}
+                    {% if form.titre is defined %}
+                        <div class="form-group">
+                            {{ form_errors(form.titre) }}
+                            {{ form_label(form.titre, "Titre", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                            <div class="col-xs-10">
+                                {{ form_widget(form.titre, {'attr': {'autofocus': 'autofocus'}}) }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="form-group">
+                        {{ form_label(form.dateFin, "Techniciens", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-10">
+                            {{ form_widget(form.participants) }}
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                        {{ form_errors(form.dateDebut) }}
+                        {{ form_label(form.dateDebut, "Du", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-7">
+                            <div class="input-group">
+                                {{ form_widget(form.dateDebut) }}
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 bootstrap-timepicker timepicker">
+                            <div class="input-group">
+                                {{ form_widget(form.timeDebut) }}
+                                <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form_errors(form.dateFin) }}
+                        {{ form_label(form.dateFin, "Au", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-7">
+                            <div class="input-group">
+                                {{ form_widget(form.dateFin) }}
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 bootstrap-timepicker timepicker">
+                            <div class="input-group">
+                                {{ form_widget(form.timeFin) }}
+                                <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div style="opacity: 0.6" class="form-group">
+                        {{ form_errors(form.description) }}
+                        {{ form_label(form.description, "Commentaire", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-10">
+                            {{ form_widget(form.description) }}
                         </div>
                     </div>
                 {% endif %}
-                <div class="form-group">
-                    {{ form_label(form.dateFin, "Techniciens", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
-                    <div class="col-xs-10">
-                    {{ form_widget(form.participants) }}
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-xs-2 text-left">
+                        <button type="button" class="btn btn-block btn-default" data-dismiss="modal">{% if rdv.id or form is not defined %}Fermer{% else %}Annuler{% endif %}</button>
                     </div>
-                </div>
-                <hr />
-                <div class="form-group">
-                    {{ form_errors(form.dateDebut) }}
-                    {{ form_label(form.dateDebut, "Du", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
-                    <div class="col-xs-7">
-                	    <div class="input-group">
-                	        {{ form_widget(form.dateDebut) }}
-                	        <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                	    </div>
+                    <div class="col-xs-8 text-center">
+                        <div class="btn-group">
+                            {% if rdv.id and form is defined %}
+                                <a class="btn btn-sm btn-default text-danger rdv-deplanifier-link" onclick="return confirm('Êtes vous sûr de vouloir supprimer ce rendez-vous ?')" href="{{ path('calendarDelete', {'id': rdv.id }) }}"><span class="text-danger"><span class="glyphicon glyphicon-trash"></span> Supprimer le RDV</span></a>
+                            {% endif %}
+                            {% if (rdv.id and rdv.passage and form is defined) %}
+                                <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_bon', { id: rdv.passage.id })}}"><span class="glyphicon glyphicon-print"></span> Bon de passage</a>
+                                <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_mission', { id: rdv.passage.id })}}"><span class="glyphicon glyphicon-print"></span> Fiche de suivi client</a>
+                            {% endif %}
+                            {% if (rdv.id and rdv.passage and rdv.passage.realise and form is not defined) %}
+                                <a class="btn btn-sm btn-default rdv-modifier-link" href="{{ path('calendarRead', {'id': rdv.id, 'forceEdition': true}) }}"><span class="glyphicon glyphicon-calendar"></span> Modifier le RDV</a>
+                            {% endif %}
+                            {% if (rdv.id and rdv.passage) %}
+                                <a class="btn btn-sm btn-default" href="{{ path('passage_edition', {'id': rdv.passage.id })}}"><span class="glyphicon glyphicon-pencil"></span> Rapport de visite</a>
+                            {% endif %}
+                            {% if (rdv.passage and not rdv.id) %}
+                                <a href="{{ path('passage_annulation',{ 'id': rdv.passage.id }) }}" class="btn btn-sm  btn-default text-danger" onclick="return confirm('Êtes vous sûr de vouloir passer ce passage en annuler ?')">Annuler le passage</a>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="col-xs-3 bootstrap-timepicker timepicker">
-                        <div class="input-group">
-                		    {{ form_widget(form.timeDebut) }}
-                		    <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
-                		</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    {{ form_errors(form.dateFin) }}
-                    {{ form_label(form.dateFin, "Au", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
-                    <div class="col-xs-7">
-                	    <div class="input-group">
-                	        {{ form_widget(form.dateFin) }}
-                	        <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                	    </div>
-                    </div>
-                    <div class="col-xs-3 bootstrap-timepicker timepicker">
-                        <div class="input-group">
-                		    {{ form_widget(form.timeFin) }}
-                		    <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
-                		</div>
-                    </div>
-                </div>
-                <hr />
-                <div style="opacity: 0.6" class="form-group">
-                    {{ form_errors(form.description) }}
-            	    {{ form_label(form.description, "Commentaire", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
-                    <div class="col-xs-10">
-            	           {{ form_widget(form.description) }}
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-        <div class="modal-footer">
-            <div class="row">
-                <div class="col-xs-2 text-left">
-                    <button type="button" class="btn btn-block btn-default" data-dismiss="modal">{% if rdv.id or form is not defined %}Fermer{% else %}Annuler{% endif %}</button>
-                </div>
-                <div class="col-xs-8 text-center">
-                    <div class="btn-group">
+                    <div class="col-xs-2 text-right">
                         {% if rdv.id and form is defined %}
-                        <a class="btn btn-sm btn-default text-danger rdv-deplanifier-link" onclick="return confirm('Êtes vous sûr de vouloir supprimer ce rendez-vous ?')" href="{{ path('calendarDelete', {'id': rdv.id }) }}"><span class="text-danger"><span class="glyphicon glyphicon-trash"></span> Supprimer le RDV</span></a>
-                        {% endif %}
-                        {% if (rdv.id and rdv.passage and form is defined) %}
-                        <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_bon', { id: rdv.passage.id })}}"><span class="glyphicon glyphicon-print"></span> Bon de passage</a>
-                        <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_mission', { id: rdv.passage.id })}}"><span class="glyphicon glyphicon-print"></span> Fiche de suivi client</a>
-                        {% endif %}
-                        {% if (rdv.id and rdv.passage and rdv.passage.realise and form is not defined) %}
-                            <a class="btn btn-sm btn-default rdv-modifier-link" href="{{ path('calendarRead', {'id': rdv.id, 'forceEdition': true}) }}"><span class="glyphicon glyphicon-calendar"></span> Modifier le RDV</a>
-                        {% endif %}
-                        {% if (rdv.id and rdv.passage) %}
-                        <a class="btn btn-sm btn-default" href="{{ path('passage_edition', {'id': rdv.passage.id })}}"><span class="glyphicon glyphicon-pencil"></span> Rapport de visite</a>
+                            <button data-loading-text="En cours ..." autocomplete="off" class="btn btn-primary btn-block" type="submit">Modifier</button>
+                        {% elseif form is defined %}
+                            <button data-loading-text="En cours ..." autocomplete="off" class="btn btn-primary btn-block" type="submit">{% if(rdv.passage) %}Ajouter le RDV{% else %}Ajouter le RDV{% endif %}</button>
                         {% endif %}
                     </div>
-                </div>
-                <div class="col-xs-2 text-right">
-                    {% if rdv.id and form is defined %}
-                    <button data-loading-text="En cours ..." autocomplete="off" class="btn btn-primary btn-block" type="submit">Modifier</button>
-                    {% elseif form is defined %}
-                    <button data-loading-text="En cours ..." autocomplete="off" class="btn btn-primary btn-block" type="submit">{% if(rdv.passage) %}Ajouter le RDV{% else %}Ajouter le RDV{% endif %}</button>
-                    {% endif %}
                 </div>
             </div>
+            {% if (form is defined) %}
+                {{ form_end(form) }}
+            {% endif %}
         </div>
-        {% if (form is defined) %}
-        {{ form_end(form) }}
-        {% endif %}
     </div>
-</div>

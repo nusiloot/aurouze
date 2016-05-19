@@ -190,18 +190,22 @@ class ContratController extends Controller {
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $contrat = $form->getData();
+            $contratForm = $form->getData();
             $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
-            foreach ($contrat->getContratPassages() as $contratPassage) {
-                foreach ($contratPassage->getPassages() as $passage) {
+            $passageList = $this->get('contrat.manager')->getPassagesByNumeroArchiveContrat($contrat);
+
+            foreach ($passageList as $etb => $passagesByEtb) {
+                foreach ($passagesByEtb as $id => $passage) {
                     if (!$passage->isRealise() && !$passage->isAnnule() && ($passage->getDatePrevision()->format('Ymd') > $contrat->getDateResiliation()->format('Ymd'))) {
                         $passage->setStatut(PassageManager::STATUT_ANNULE);
+                        $passage->getContrat()->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
                     }
                 }
             }
+
             $commentaire = "";
-            if($contrat->getCommentaire()){
-               $commentaire.= $contrat->getCommentaire()."\n";
+            if ($contratForm->getCommentaire()) {
+                $commentaire.= $contrat->getCommentaire() . "\n";
             }
             $commentaire.= $form['commentaireResiliation']->getData();
             $contrat->setCommentaire($commentaire);

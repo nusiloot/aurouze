@@ -21,8 +21,8 @@ class CompteController extends Controller {
     public function comptesAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $comptes = $dm->getRepository('AppBundle:Compte')->findAllUtilisateurs();
-        $contratManager = new ContratManager($dm);
-        $passageManager = new PassageManager($dm);
+        $contratManager = $this->get('compte.manager');
+        $passageManager =$this->get('passage.manager');
         return $this->render('compte/listing.html.twig', array('comptes' => $comptes, 'contratManager' => $contratManager, 'passageManager' => $passageManager));
     }
 

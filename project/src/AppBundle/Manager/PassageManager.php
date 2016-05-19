@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Passage;
+use AppBundle\Manager\ContratManager;
 
 class PassageManager {
 
@@ -39,9 +40,11 @@ class PassageManager {
         'Déplacés'
     );
     protected $dm;
+    protected $cm;
 
-    function __construct(DocumentManager $dm) {
+    function __construct(DocumentManager $dm, ContratManager $cm) {
         $this->dm = $dm;
+        $this->cm = $cm;
     }
 
     function create(Etablissement $etablissement, Contrat $contrat) {
@@ -161,29 +164,7 @@ class PassageManager {
     }
 
     public function getPassagesByNumeroArchiveContrat(Passage $passage, $reverse = false) {
-        $contratsByNumero = $this->dm->getRepository('AppBundle:Contrat')->findByNumeroArchive($passage->getContrat()->getNumeroArchive());
-        $passagesByNumero = array();
-        foreach ($contratsByNumero as $contrat) {
-            foreach ($contrat->getContratPassages() as $contratPassages) {
-                $idEtb = $contratPassages->getEtablissement()->getId();
-                if (!array_key_exists($idEtb, $passagesByNumero)) {
-                    $passagesByNumero[$idEtb] = array();
-                }
-                foreach ($contratPassages->getPassages() as $passage) {
-                    $passagesByNumero[$idEtb][$passage->getDatePrevision()->format('Ymd')] = $passage;
-                }
-            }
-        }
-        foreach ($passagesByNumero as $idEtb => $passagesByNumeroAndEtb) {
-            $passages = $passagesByNumeroAndEtb;
-            if ($reverse) {
-                krsort($passages);
-            } else {
-                ksort($passages);
-            }
-            $passagesByNumero[$idEtb] = $passages;
-        }
-        return $passagesByNumero;
+       return $this->cm->getPassagesByNumeroArchiveContrat($passage->getContrat(),$reverse);       
     }
 
     public function passagePrecedent(Passage $passage) {

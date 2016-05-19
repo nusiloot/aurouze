@@ -130,5 +130,13 @@ class ContratPassages {
         }
         return $passagesSorted;
     }
+    public function hasEnCoursPassages() {
+        foreach ($this->getPassagesSorted() as $passage) {
+            if(!$passage->isRealise() && !$passage->isAnnule() && !$passage->isEnAttente()){
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

@@ -2,15 +2,15 @@
 {% set techColor = "" %}
 {% set techBgColor = "" %}
 {% set techIdentite = "" %}
-{% set dptKeyWord = (passage.etablissementInfos.adresse.codePostal | slice(0, 2))? "departement "~passage.etablissementInfos.adresse.codePostal | slice(0, 2) : "" %}
+{% set dptKeyWord = (passage.etablissement.adresse.codePostal | slice(0, 2))? "departement "~passage.etablissement.adresse.codePostal | slice(0, 2) : "" %}
 {% if(passage.techniciens | length == 0) %}
-    {% set words = [dptKeyWord, "sans technicien", passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom]|json_encode() %}
+    {% set words = [dptKeyWord, "sans technicien", passage.etablissement.adresse.codePostal, passage.etablissement.adresse.commune, passage.etablissement.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissement.nom]|json_encode() %}
     {% set techColor = 'white' %}
     {% set techBgColor = 'black' %}
     {% set techIdentite = "sans technicien" %}
     {% set urlPlanif = path('calendarManuel') %}
 {% else %}
-    {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal, passage.etablissementInfos.adresse.commune, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom]|json_encode() %}
+    {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissement.adresse.codePostal, passage.etablissement.adresse.commune, passage.etablissement.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissement.nom]|json_encode() %}
     {% set techColor = passage.techniciens[0].couleurText %}
     {% set techBgColor = passage.techniciens[0].couleur %}
     {% set techIdentite = passage.techniciens[0].identite %}
@@ -23,9 +23,9 @@
         <div class="col-sm-12">
             <div class="row">
                 <div class="col-sm-9">
-                    <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
-                    <strong>{{ passage.etablissementInfos.nom|capitalize }}</strong>
-                    <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
+                    <i class="mdi mdi-{{ passage.etablissement.icon }} mdi-lg"></i>
+                    <strong>{{ passage.etablissement.nom|capitalize }}</strong>
+                    <small>{{ passage.etablissement.adresse.codePostal }} {{ passage.etablissement.adresse.commune }}</small>
                 </div>
                 <div class="col-sm-3 text-right">
                     {% for prestation in passage.prestations %}
