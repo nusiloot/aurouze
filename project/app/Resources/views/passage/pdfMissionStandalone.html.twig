@@ -4,9 +4,9 @@
 <hr style="border-color: #ddd; margin-bottom: 40px;" />
 <div class="row">
     <div class="col-xs-6">
-        <h3 style="margin-top: 0;">{{ passage.etablissementInfos.nom }}</h3>
-        {{ passage.etablissementInfos.adresse.adresseFormatee }}<br />
-        {{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}
+        <h3 style="margin-top: 0;">{{ passage.etablissement.nom }}</h3>
+        {{ passage.etablissement.adresse.adresseFormatee }}<br />
+        {{ passage.etablissement.adresse.codePostal }} {{ passage.etablissement.adresse.commune }}
     </div>
     <div class="col-xs-6">
         {% if (passage.etablissement.societe.contactCoordonnee.telephoneFixe) %}
