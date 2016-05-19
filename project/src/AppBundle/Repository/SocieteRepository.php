@@ -17,7 +17,7 @@ class SocieteRepository extends DocumentRepository {
         $terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $queryString)));
         $results = null;
         foreach ($terms as $term) {
-            if (strlen($term) < 3) {
+            if (strlen($term) < 2) {
                 continue;
             }
             $q = $this->createQueryBuilder();
