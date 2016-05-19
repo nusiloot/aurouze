@@ -60,6 +60,10 @@ class PassageRepository extends DocumentRepository {
             }
         }
 
+        krsort($passagesHistorique);
+
+        $passagesHistorique = array_slice($passagesHistorique, 0, 2);
+
         return $passagesHistorique;
     }
 
@@ -142,7 +146,7 @@ class PassageRepository extends DocumentRepository {
             }
         }
             $regex .= '/^(' . $dptReg . ')/i';
-        if ($secteur == EtablissementManager::SECTEUR_PARIS) {  
+        if ($secteur == EtablissementManager::SECTEUR_PARIS) {
            $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->operator('$not', new \MongoRegex($regex)));
         } else {
            $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex($regex)));
