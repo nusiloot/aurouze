@@ -68,7 +68,7 @@
 				href="{{ path('passage_edition', { id: passage.id })}}">Modifier le
 				rapport</a> {% elseif passage.aPlanifie %}
 				{% if passage.techniciens|length > 0 %}
-					<a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : passage.id,'technicien' : (passage.techniciens | first).id, 'date' : passage.datedebut|date('d-m-Y')})}}">Planifier</a>
+					<a class="btn btn-sm btn-block btn-primary" href="{{path('calendar', {'passage' : passage.id,'technicien' : (passage.techniciens | first).id})}}">Planifier</a>
 				{% else %}
 					<a class="btn btn-sm btn-block btn-primary" href="{{path('calendarManuel', {'passage' : passage.id, 'date' : passage.datedebut|date('d-m-Y')})}}">Planifier</a>
 				{% endif %}

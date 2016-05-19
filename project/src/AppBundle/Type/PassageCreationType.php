@@ -32,8 +32,8 @@ class PassageCreationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('typePassage', ChoiceType::class, array('label' => 'Type de passage :', 'choices' => array_merge(array('' => ''), PassageManager::$typesPassageLibelles), "attr" => array("class" => "select2 select2-simple")))
-            ->add('dateDebut', DateType::class, array(
+            ->add('typePassage', ChoiceType::class, array('label' => 'Type de passage :', 'choices' => array_merge(array("" => ""), PassageManager::$typesPassageLibelles), "attr" => array("class" => "select2 select2-simple", "data-placeholder" => "Sélectionner un type")))
+            ->add('datePrevision', DateType::class, array(
 				"attr" => array(
 						'class' => 'input-inline datepicker',
         				'data-provide' => 'datepicker',
@@ -42,19 +42,6 @@ class PassageCreationType extends AbstractType
 				'widget' => 'single_text',
 				'format' => 'dd/MM/yyyy'
 			))
-            ->add('dateFin', DateType::class, array(
-				"attr" => array(
-						'class' => 'input-inline datepicker',
-        				'data-provide' => 'datepicker',
-        				'data-date-format' => 'dd/mm/yyyy'
-				),
-            	'required' => false,
-				'widget' => 'single_text',
-				'format' => 'dd/MM/yyyy'
-			))
-			->add('timeDebut', TextType::class, array('label' => 'Heure debut', 'attr' => array('class' => 'input-timepicker', 'data-default' => '12:00')))
-			->add('timeFin', TextType::class, array('required' => false, 'label' => 'Heure fin', 'attr' => array('class' => 'input-timepicker', 'data-default' => null)))
-            ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success"), ));
         ;
 
         $builder->add('techniciens', DocumentType::class, array(

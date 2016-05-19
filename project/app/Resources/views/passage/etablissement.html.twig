@@ -2,10 +2,10 @@
 {% extends 'base.html.twig' %}
 {% block title %}Passages {{ etablissement.nom }}{% endblock title %}
 {% block body %}
-<ol class="breadcrumb">
-            <li><a href="{{ path('passage') }}">Passage</a></li>
-            <li><a href="{{ path('passage_etablissement',{ 'id' : etablissement.id }) }}">&nbsp;{{ etablissement.nom }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></a></li>
-        </ol>
+    <ol class="breadcrumb">
+        <li><a href="{{ path('passage') }}">Passage</a></li>
+        <li><a href="{{ path('passage_etablissement',{ 'id' : etablissement.id }) }}">&nbsp;{{ etablissement.nom }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></a></li>
+    </ol>
     {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
 
     <div class="row" style="margin-top: 10px; height: 130px;">

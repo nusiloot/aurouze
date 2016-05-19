@@ -63,19 +63,13 @@ class PassageController extends Controller {
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $passage = $form->getData();
-            $passage->setDatePrevision($passage->getDateDebut());
+            $passage->setDateDebut($passage->getDatePrevision());
             $dm->persist($passage);
             $contrat->addPassage($etablissement, $passage);
 
-            if($passage->getDateDebut() && $passage->getDateFin()) {
-                $rdv = $rvm->createFromPassage($passage);
-                $dm->persist($rdv);
-            }
-
             $dm->flush();
-            
-            return $this->redirectToRoute('passage_etablissement', array('id' => $etablissement->getId()));
+
+            return $this->redirectToRoute('calendar', array('passage' => $passage->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
         }
 
         return $this->render('passage/creation.html.twig', array('passage' => $passage, 'form' => $form->createView()));
