@@ -70,10 +70,23 @@ class PassageController extends Controller {
 
             $dm->flush();
 
-            return $this->redirectToRoute('calendar', array('passage' => $passage->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
+            return $this->redirectToRoute('passage_planifier', array('passage' => $passage->getId()));
         }
 
         return $this->render('passage/creation.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+    }
+
+    /**
+     * @Route("/passage/{passage}/planifier", name="passage_planifier")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function planifierAction(Request $request, Passage $passage) {
+        if(!count($passage->getTechniciens())) {
+
+            return $this->redirectToRoute('calendarManuel', array('passage' => $passage->getId()));
+        }
+
+        return $this->redirectToRoute('calendar', array('passage' => $passage->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
     }
 
     /**
