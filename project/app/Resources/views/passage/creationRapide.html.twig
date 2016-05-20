@@ -4,7 +4,7 @@
 {% form_theme form _self %}
 
 {% block _interventionRapide_prestations_entry_row %}
-    <div class="row form-group dynamic-collection-item">
+    <div class="form-group dynamic-collection-item">
         <div class="col-xs-9">
             {{ form_widget(form.identifiant) }}
         </div>
@@ -19,65 +19,77 @@
 
 {% block body %}
     <div class="row">
-        <div class="col-xs-12">
-            <h3>Création d'un contrat rapide et d'un passage</h3>
-            <h4>Etablissement : {{ etablissement.intitule }}</h4>
+        <div class="col-xs-12 form-horizontal">
+
+            <ol class="breadcrumb">
+                <li><a href="{{ path('passage') }}">Passage</a></li>
+                <li><a href="{{ path('passage_etablissement',{ 'id' : etablissement.id }) }}">{{ etablissement.nom }}&nbsp;<small>{{ etablissement.adresse.intitule }}</small></a></li>
+                <li><a href="">Création d'un contrat en intervention rapide (Bon bleu)</a></li>
+            </ol>
 
             {{ form_start(form) }}
 
-            <div class="row">
-                <div class="form-group col-xs-3">
-                    {{ form_label(form.commercial) }}
-                    {{ form_errors(form.commercial) }}
-                    {{ form_widget(form.commercial) }}
-                </div>
-                <div class="form-group col-xs-3">
-                    {{ form_label(form.technicien) }}
-                    {{ form_errors(form.technicien) }}
-                    {{ form_widget(form.technicien) }}
-                </div>
-                <div class="form-group col-xs-2">
-                    {{ form_label(form.dateDebut) }}
-                    {{ form_errors(form.dateDebut) }}
-                    <div class="input-group">
-                        {{ form_widget(form.dateDebut) }}
-                        <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                    </div>
-                </div>
-
-                <div class="form-group col-xs-2">
-                    {{ form_label(form.duree) }}
-                    {{ form_errors(form.duree) }}
-                    <div class="input-group ">
-                        {{ form_widget(form.duree) }}
-                        <div class="input-group-addon">mois</div>
-                    </div>
-
-                </div>
-                <div class="form-group col-xs-2">
-                    {{ form_label(form.prixHt) }}
-                    {{ form_errors(form.prixHt) }} 
-                    <div class="input-group ">
-                        {{ form_widget(form.prixHt) }} <div class="input-group-addon">€</div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
             <div class="panel panel-default">
-                <div class="panel-heading"><strong>Prestations</strong></div>
+                <div class="panel-heading">
+                    <h3 class="panel-title">Création d'un contrat en intervention rapide (Bon bleu)</h3>
+                </div>
                 <div class="panel-body">
-                    {{ form_widget(form.prestations, { 'attr': {'class': 'dynamic-collection'} }) }}
-                    <div class="row form-group">
-                        <div class="col-xs-12 text-right">
-                            <a href="javascript:void(0);" data-collection-target="#interventionRapide_prestations" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+                    <div class="form-group">
+    	                {{ form_errors(form.commercial) }}
+                        {{ form_label(form.commercial, "Commercial", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-4">
+    	                    {{ form_widget(form.commercial, {'attr': {'autofocus': 'autofocus'}}) }}
                         </div>
-                    </div>
+    	            </div>
+                    <div class="form-group">
+    	                {{ form_errors(form.technicien) }}
+                        {{ form_label(form.technicien, "Technicien", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-4">
+    	                    {{ form_widget(form.technicien) }}
+                        </div>
+    	            </div>
+                    <div class="form-group">
+    	                {{ form_errors(form.technicien) }}
+                        {{ form_label(form.technicien, "Prix HT", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-3">
+                            <div class="input-group ">
+                                {{ form_widget(form.prixHt) }} <div class="input-group-addon">€ HT</div>
+                            </div>
+                        </div>
+    	            </div>
+                    <div class="form-group">
+    	                {{ form_errors(form.dateDebut) }}
+                        {{ form_label(form.dateDebut, "Date du passage", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-4">
+        	                <div class="input-group">
+        	                    {{ form_widget(form.dateDebut) }}
+        	                    <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+        	                </div>
+                        </div>
+    	            </div>
+                    <div class="form-group">
+    	                {{ form_errors(form.uniquePrestations) }}
+                        {{ form_label(form.uniquePrestations, "Prestations", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-9">
+    	                    {{ form_widget(form.uniquePrestations) }}
+                        </div>
+    	            </div>
+                    <div class="form-group">
+    	                {{ form_errors(form.referenceClient) }}
+                        {{ form_label(form.referenceClient, "Numéro de commande", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        <div class="col-xs-4">
+                                {{ form_widget(form.referenceClient) }}
+                        </div>
+    	            </div>
                 </div>
             </div>
-            {{ form_widget(form.save) }}
+
+            <div class="row">
+                <div class="col-xs-12 text-right">
+                    <button type="submit" class="btn btn-primary">Créer le contrat et saisir le rapport de visite</button>
+                </div>
+            </div>
+
             {{ form_end(form) }}
         </div>
     </div>
