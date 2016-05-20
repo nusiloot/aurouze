@@ -119,7 +119,13 @@
             {% endfor %}
         </div>
     </div>
-    <a href="{{ path('contrat_creation_etablissement', {'id': etablissement.getId()}) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</a>
-    <a href="{{ path('passage_creation_rapide', {'id': etablissement.getId()}) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer une intervention rapide (Bon bleu)</a>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <div class="btn-group">
+                <a href="{{ path('contrat_creation_etablissement', {'id': etablissement.getId()}) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</a>
+                <a href="{{ path('passage_creation_rapide', {'id': etablissement.getId()}) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer une intervention rapide (Bon bleu)</a>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
