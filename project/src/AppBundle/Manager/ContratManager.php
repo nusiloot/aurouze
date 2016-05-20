@@ -104,15 +104,15 @@ class ContratManager implements MouvementManagerInterface {
     	"7" => self::FREQUENCE_30J,
     	"3" => self::FREQUENCE_30JMOIS ,
     	"6" => self::FREQUENCE_45JMOIS ,
-    	"9" => self::FREQUENCE_60J 
+    	"9" => self::FREQUENCE_60J
     );
     protected $dm;
 
-    function __construct(DocumentManager $dm) {
+    public function __construct(DocumentManager $dm) {
         $this->dm = $dm;
     }
 
-    function createBySociete(Societe $societe, \DateTime $dateCreation = null, Etablissement $etablissement = null) {
+    public function createBySociete(Societe $societe, \DateTime $dateCreation = null, Etablissement $etablissement = null) {
         if (!$dateCreation) {
             $dateCreation = new \DateTime();
         }
@@ -128,6 +128,20 @@ class ContratManager implements MouvementManagerInterface {
         } else {
             $contrat->addEtablissement($societe->getEtablissements()->first());
         }
+
+        return $contrat;
+    }
+
+    public function createInterventionRapide(Etablissement $etablissement) {
+        $contrat = $this->createBySociete($etablissement->getSociete(), new \DateTime(), $etablissement);
+        $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_PONCTUEL);
+        $contrat->setDuree(1);
+        $contrat->setDureePassage(60);
+        $contrat->setNbFactures(1);
+        $contrat->setDureeGarantie(0);
+        $contrat->setFrequencePaiement(self::FREQUENCE_RECEPTION);
+        $contrat->setTvaReduite(false);
+        $contrat->setNomenclature("Intervention rapide (Bon bleu)");
 
         return $contrat;
     }
@@ -214,7 +228,7 @@ class ContratManager implements MouvementManagerInterface {
                 if($mouvement->getFacturable() != $isFaturable || $mouvement->getFacture() !=  $isFacture) {
                     continue;
                 }
-                
+
                 $mouvements[] = $mouvement;
             }
         }
@@ -231,7 +245,7 @@ class ContratManager implements MouvementManagerInterface {
     public function getNbContratWithCompteForCommercial($compte) {
         return $this->getRepository()->countContratByCommercial($compte);
     }
-    
+
       public function getPassagesByNumeroArchiveContrat(Contrat $contrat, $reverse = false) {
         $contratsByNumero = $this->getRepository()->findByNumeroArchive($contrat->getNumeroArchive());
         $passagesByNumero = array();

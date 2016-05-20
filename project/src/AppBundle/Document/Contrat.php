@@ -320,6 +320,30 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->prestations;
     }
 
+
+    public function getUniquePrestations() {
+        $prestations = array();
+
+        foreach($this->getPrestations() as $prestation) {
+            $prestations[$prestation->getIdentifiant()] = $prestation->getNom();
+        }
+
+        return $prestations;
+    }
+
+    public function setUniquePrestations($prestationsIdentifiant) {
+        $this->prestations = new ArrayCollection();
+
+        foreach($prestationsIdentifiant as $identifiant) {
+            $prestation = new Prestation();
+            $prestation->setIdentifiant($identifiant);
+            $prestation->setNbPassages(1);
+            $this->addPrestation($prestation);
+        }
+
+        return $this;
+    }
+
     /**
      * Add produit
      *
@@ -824,6 +848,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
 
         return $this->contratPassages[$etablissement->getId()]->getPassagesSorted();
+    }
+
+    public function getUniquePassage() {
+        if($this->getNbPassages() != 1 || count($this->getEtablissements()) > 1) {
+
+            throw new \Exception("Il y a plusieurs passage pour ce contrat");
+        }
+
+        return $this->getContratPassages()->first()->getPassages()->first();
     }
 
     /**

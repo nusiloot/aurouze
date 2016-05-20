@@ -101,7 +101,7 @@
                                     </div>
                                     <div class="col-xs-2">
                                         {% if contrat.commentaire %}
-                                            <div title="{{ contrat.commentaire | nl2br }}" data-html="true" data-toggle="tooltip"><a href="{{ path('contrat_acceptation',{id : contrat.id}) }}">Commentaire&nbsp;<small>(modifier)</small></a></div>
+                                            <div title="{{ contrat.commentaire | nl2br }}" data-html="true" data-toggle="tooltip"><a href="{{ path('contrat_acceptation',{id : contrat.id}) }}">Voir&nbsp; commentaire&nbsp;<small>(mod.)</small></a></div>
                                         {% else %}
                                             <small><em class="text-muted">Aucun commentaire</em> <a href="{{ path('contrat_acceptation',{id : contrat.id}) }}">(Ajouter)</a></small>
                                         {% endif %}
@@ -120,6 +120,6 @@
         </div>
     </div>
     <a href="{{ path('contrat_creation_etablissement', {'id': etablissement.getId()}) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer un nouveau contrat</a>
-    <a href="{{ path('passage_creation_rapide', {'id': etablissement.getId()}) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer une intervention rapide</a>
+    <a href="{{ path('passage_creation_rapide', {'id': etablissement.getId()}) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Créer une intervention rapide (Bon bleu)</a>
 
 {% endblock %}

@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -28,7 +29,21 @@ class InterventionRapideCreationType extends AbstractType {
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('dateDebut', DateType::class, array(
+        $builder->add('commercial', DocumentType::class, array(
+                    "choices" => array_merge(array('' => ''), $this->getCommerciaux()),
+                    'label' => 'Commercial :',
+                    'class' => 'AppBundle\Document\Compte',
+                    'expanded' => false,
+                    'multiple' => false,
+                    "attr" => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner un commercial")))
+                ->add('technicien', DocumentType::class, array(
+                    "choices" => array_merge(array('' => ''), $this->getTechniciens()),
+                    'label' => 'Technicien :',
+                    'class' => 'AppBundle\Document\Compte',
+                    'expanded' => false,
+                    'multiple' => false,
+                    "attr" => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner un technicien")))
+                ->add('dateDebut', DateType::class, array(
                     'label' => 'Date début :',
                     "attr" => array(
                         'class' => 'input-inline datepicker',
@@ -37,30 +52,14 @@ class InterventionRapideCreationType extends AbstractType {
                     ),
                     'widget' => 'single_text',
                     'format' => 'dd/MM/yyyy'))
-                ->add('technicien', DocumentType::class, array(
-                    "choices" => array_merge(array('' => ''), $this->getTechniciens()),
-                    'label' => 'Technicien :',
-                    'class' => 'AppBundle\Document\Compte',
-                    'expanded' => false,
-                    'multiple' => false,
-                    "attr" => array("class" => "select2 select2-simple")))
-                ->add('prestations', CollectionType::class, array(
-                    'entry_type' => new PrestationType($this->dm),
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'delete_empty' => true,
-                    'label' => ''))
-                ->add('commercial', DocumentType::class, array(
-                    "choices" => array_merge(array('' => ''), $this->getCommerciaux()),
-                    'label' => 'Commercial :',
-                    'class' => 'AppBundle\Document\Compte',
-                    'expanded' => false,
-                    'multiple' => false,
-                    "attr" => array("class" => "select2 select2-simple")))
                 ->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2, 'required' => false))
-                ->add('duree', TextType::class, array('label' => 'Durée du contrat :'))
-                
-                ->add('save', SubmitType::class, array('label' => 'Planifier le passage', "attr" => array("class" => "btn btn-success pull-right")));
+                ->add('uniquePrestations', ChoiceType::class, array(
+                    		'choices' => $this->getPrestations(),
+        	        		'expanded' => false,
+        	        		'multiple' => true,
+                			'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")))
+                ->add('referenceClient', TextType::class, array('label' => 'Numéro de commande :', 'required' => false, 'attr' => array('placeholder' => 'Référence commande du client')));
+
     }
 
     /**
@@ -85,6 +84,11 @@ class InterventionRapideCreationType extends AbstractType {
 
     public function getTechniciens() {
         return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
+    }
+
+    public function getPrestations()
+    {
+    	return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
     }
 
 }
