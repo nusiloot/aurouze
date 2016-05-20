@@ -55,6 +55,7 @@ $(function () {
         },
         header: false,
         lang: 'fr',
+        defaultDate: $('#calendrier').data('gotoDate'),
         timeFormat: 'H:mm',
         allDaySlot: false,
         eventBackgroundColor: "#fff",
@@ -131,5 +132,4 @@ $(function () {
             });
         },
     });
-    $('#calendrier').fullCalendar('gotoDate', $('#calendrier').data('gotoDate'));
 });
