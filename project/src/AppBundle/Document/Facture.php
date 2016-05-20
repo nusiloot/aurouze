@@ -91,6 +91,11 @@ class Facture implements DocumentSocieteInterface {
     * @MongoDB\String
     */
     protected $avoir;
+    
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Paiement", mappedBy="facture")
+     */
+    protected $paiements;
 
     public function __construct()
     {
@@ -565,5 +570,35 @@ class Facture implements DocumentSocieteInterface {
     			$date->modify('+'.FactureManager::DEFAUT_FREQUENCE_JOURS.' day');
     	}
     	return $date;
+    }
+
+    /**
+     * Add paiement
+     *
+     * @param AppBundle\Document\Paiement $paiement
+     */
+    public function addPaiement(\AppBundle\Document\Paiement $paiement)
+    {
+        $this->paiements[] = $paiement;
+    }
+
+    /**
+     * Remove paiement
+     *
+     * @param AppBundle\Document\Paiement $paiement
+     */
+    public function removePaiement(\AppBundle\Document\Paiement $paiement)
+    {
+        $this->paiements->removeElement($paiement);
+    }
+
+    /**
+     * Get paiements
+     *
+     * @return \Doctrine\Common\Collections\Collection $paiements
+     */
+    public function getPaiements()
+    {
+        return $this->paiements;
     }
 }

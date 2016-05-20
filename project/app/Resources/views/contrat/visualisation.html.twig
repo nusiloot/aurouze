@@ -26,9 +26,9 @@
                     {%  endif %}
                     <a class="btn btn-sm btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
                     {%  if (contrat.isEnAttenteAcceptation()) %}
-                        <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><i class="mdi mdi-check-circle"></i>&nbsp;Accepter le contrat</a>
+                        <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><i class="mdi mdi-check-circle"></i>&nbsp;Accepter / Modifier le contrat</a>
                     {% else %}
-                        <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
+                        <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier le contrat</a>
                     {% endif %}
 
                 </div>
