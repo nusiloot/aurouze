@@ -18,7 +18,7 @@
             Contrat {{ contrat.getStatutLibelleLong }}
             <small>n° {{ contrat.numeroArchive }}</small>
             {%  if (contrat.isModifiable()) %}
-                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
+                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="pull-right btn btn-sm btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier le contrat</a>
             {%  endif %}   
         </h1>
 
