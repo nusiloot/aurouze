@@ -415,62 +415,34 @@ class PassageController extends Controller {
      */
     public function creationRapideAction(Request $request, Etablissement $etablissement) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $cm = $this->get('contrat.manager');
+        $contrat = $cm->createInterventionRapide($etablissement);
 
-        $newContrat = new Contrat();
-        $newContrat->setSociete($etablissement->getSociete());
-        $newContrat->setDateCreation(new \DateTime());
-        $prestation = new Prestation();
-        $prestation->setNbPassages(1);
-        $newContrat->setDuree("1");
-        $newContrat->addPrestation($prestation);
         $configurationPrestationArray = $dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
 
-        $form = $this->createForm(new InterventionRapideCreationType($dm), $newContrat, array(
+        $form = $this->createForm(new InterventionRapideCreationType($dm), $contrat, array(
             'action' => $this->generateUrl('passage_creation_rapide', array('id' => $etablissement->getId())),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $parameters = $request->get('interventionRapide');
-            $newContrat->setTypeContrat(ContratManager::TYPE_CONTRAT_PONCTUEL);
-            $dateDebut = clone $newContrat->getDateDebut();
-            $newContrat->setDateAcceptation($dateDebut);
-            $newContrat->setStatut(ContratManager::STATUT_EN_COURS);
-
-            $dateFin = $dateDebut->modify("+" . $newContrat->getDuree() . " month");
-            $newContrat->setDateFin($dateFin);
-            $newContrat->setDureeGarantie(0);
-            $newContrat->setTvaReduite(false);
-            $dm->persist($newContrat);
-
-            $newPassage = new Passage();
-            $newPassage->setEtablissement($etablissement);
-            $newPassage->setContrat($newContrat);
-            $newPassage->setTypePassage(PassageManager::TYPE_PASSAGE_CONTRAT);
-            $newPassage->setDatePrevision($newContrat->getDateDebut());
-            foreach ($parameters['prestations'] as $prestationParam) {
-                $prestationIdentifiant = $prestationParam['identifiant'];
-                $prestation = clone $configurationPrestationArray[$prestationIdentifiant];
-                $prestation->setNbPassages($prestationParam['nbPassages']);
-
-                $newContrat->addPrestation($prestation);
-                $prestationPassage = clone $prestation;
-                $prestationPassage->setNbPassages(null);
-                $newPassage->addPrestation($prestationPassage);
-            }
-            $newPassage->setMouvementDeclenchable(true);
-            $newPassage->addTechnicien($newContrat->getTechnicien());
-            $newContrat->addPassage($etablissement, $newPassage);
-
-            $dm->persist($newPassage);
+            $contrat->setDateAcceptation($contrat->getDateDebut());
+            $contrat->updateObject();
+            $contrat->updatePrestations($dm);
+            $dateFin = $contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month");
+            $contrat->setDateFin($dateFin);
+            $dm->persist($contrat);
+            $cm->generateAllPassagesForContrat($contrat);
+            $contrat->setStatut(ContratManager::STATUT_EN_COURS);
+            $passage = $contrat->getUniquePassage();
+            $passage->setDateFin(clone $passage->getDateDebut());
             $dm->flush();
-            return $this->redirectToRoute('calendar', array('passage' => $newPassage->getId(),
-                        'technicien' => $newContrat->getTechnicien()->getId(),
-                        'calendrier' => $newContrat->getDateDebut()->format('Y-m-d')));
+
+            return $this->redirectToRoute('passage_edition', array('id' => $contrat->getUniquePassage()->getId()));
         }
 
-        return $this->render('passage/creationRapide.html.twig', array('etablissement' => $etablissement, 'contrat' => $newContrat, 'form' => $form->createView()));
+        return $this->render('passage/creationRapide.html.twig', array('etablissement' => $etablissement, 'contrat' => $contrat, 'form' => $form->createView()));
     }
 
 }

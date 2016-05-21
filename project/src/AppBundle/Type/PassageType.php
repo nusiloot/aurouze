@@ -28,18 +28,10 @@ class PassageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('description', TextareaType::class, array('label' => 'Constat* :',"attr" => array("class" => "form-control", "rows" => 10)))
+            ->add('description', TextareaType::class, array('label' => 'Constat :', 'required' => false, "attr" => array("class" => "form-control", "rows" => 10)))
             ->add('duree', TextType::class, array('label' => 'Durée effective du passage* :', 'attr' => array('class' => 'input-timepicker')))
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success")));
         ;
-
-        /*$builder->add('techniciens', DocumentType::class, array(
-            	'choices' => $this->getTechniciens(),
-                'class' => 'AppBundle\Document\Compte',
-        		'expanded' => false,
-        		'multiple' => true,
-        		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")
-        ));*/
 
         $builder->add('produits', CollectionType::class, array(
             'entry_type' => new ProduitPassageType($this->dm),

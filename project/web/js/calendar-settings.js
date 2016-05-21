@@ -55,13 +55,14 @@ $(function () {
         },
         header: false,
         lang: 'fr',
+        defaultDate: $('#calendrier').data('gotoDate'),
         timeFormat: 'H:mm',
         allDaySlot: false,
         eventBackgroundColor: "#fff",
         editable: true,
         droppable: true,
         slotEventOverlap: false,
-        hiddenDays: [0,6],
+        weekends:  $('#calendrier').data('weekends'),
         defaultView: $('#calendrier').data('view'),
         eventSources: [
             {
@@ -87,8 +88,6 @@ $(function () {
             $.get(
                 $('#calendrier').data('urlAddLibre'), {'start': date.format()}
              , function (response) {
-                 console.log(response);
-                 console.log($('#modal-calendrier-infos'));
                 $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').on('shown.bs.modal', function() {
                     $('#modal-calendrier-infos').find('[autofocus="autofocus"]').focus();
@@ -133,5 +132,4 @@ $(function () {
             });
         },
     });
-    $('#calendrier').fullCalendar('gotoDate', $('#calendrier').data('gotoDate'));
 });

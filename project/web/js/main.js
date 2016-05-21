@@ -7,6 +7,7 @@
         $.initSelect2();
         $.initSelect2Ajax();
         $.initTooltips();
+        $.initHamzaStyle();
         $.initQueryHash();
         $.initDynamicCollection();
         $.initDatePicker();
@@ -22,6 +23,7 @@
         $.initSearchActif();
         $.initListingPassage();
         $.initLinkCalendar();
+        $.initMap();
     });
 
     $.initLinkCalendar = function () {
@@ -295,6 +297,7 @@
             $(this).parents('form').submit();
         }
     });
+
     $.initModalPassage = function () {
         $('#modal-calendrier-infos').on('show.bs.modal', function (event) {
             var link = $(event.relatedTarget);
@@ -307,39 +310,43 @@
         })
     }
 
-    $('.hamzastyle').each(function () {
-        var select2 = $(this);
-        var words = [];
-        $('.hamzastyle-item').each(function () {
-            words = words.concat(JSON.parse($(this).attr('data-words')));
-        });
-        var words = unique(words.sort());
-        var data = [];
-        for (key in words) {
-            if (words[key] + "") {
-                data.push({id: words[key] + "", text: (words[key] + "")});
+    $.initHamzaStyle = function () {
+        $('.hamzastyle').each(function () {
+            var select2 = $(this);
+            var words = [];
+            $('.hamzastyle-item').each(function () {
+                words = words.concat(JSON.parse($(this).attr('data-words')));
+            });
+            var words = unique(words.sort());
+            var data = [];
+            for (key in words) {
+                if (words[key] + "") {
+                    data.push({id: words[key] + "", text: (words[key] + "")});
+                }
             }
-        }
 
-        select2.select2({
-            theme: 'bootstrap',
-            multiple: true,
-            data: data
-        })
-    });
-    $(document).find('.hamzastyle').on("change", function (e) {
-        var select2Data = $(this).select2("data");
-        var selectedWords = [];
-        for (key in select2Data) {
-            selectedWords.push(select2Data[key].text);
-        }
+            select2.select2({
+                theme: 'bootstrap',
+                multiple: true,
+                data: data
+            })
+        });
 
-        if (!selectedWords.length) {
-            document.location.hash = "";
-        } else {
-            document.location.hash = encodeURI("#filtre=" + JSON.stringify(selectedWords));
-        }
-    });
+        $(document).find('.hamzastyle').on("change", function (e) {
+            var select2Data = $(this).select2("data");
+            var selectedWords = [];
+            for (key in select2Data) {
+                selectedWords.push(select2Data[key].text);
+            }
+
+            if (!selectedWords.length) {
+                document.location.hash = "";
+            } else {
+                document.location.hash = encodeURI("#filtre=" + JSON.stringify(selectedWords));
+            }
+        });
+    }
+
     $.initQueryHash = function () {
         $(window).on('hashchange', function () {
             if ($(document).find('.hamzastyle').length) {
@@ -382,6 +389,115 @@
         });
         if (location.hash) {
             $(window).trigger('hashchange');
+        }
+    }
+
+    $.initMap = function() {
+        if ($('#map').length) {
+            var lat = 48.8593829;
+            var lon = 2.347227;
+            if ($('#map').attr('data-lat') && $('#map').attr('data-lon')) {
+                lat = $('#map').data('lat');
+                lon = $('#map').data('lon');
+            }
+
+            var map = L.map('map').setView([lat, lon], 2);
+
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            var geojson = JSON.parse($('#map').attr('data-geojson'));
+            var markers = [];
+            var hoverTimeout = null;
+
+            L.geoJson(geojson,
+                    {
+                        onEachFeature: function (feature, layer) {
+                            if ($('#liste_passage').length) {
+                                layer.on('mouseover', function (e) {
+                                    $('.leaflet-marker-icon').css('opacity', '0.5');
+                                    $(e.target._icon).css('opacity', '1');
+                                    e.target.setZIndexOffset(1001);
+                                    if (hoverTimeout) {
+                                        clearTimeout(hoverTimeout);
+                                    }
+                                    hoverTimeout = setTimeout(function () {
+                                        $('#liste_passage .list-group-item').blur();
+                                        var element = $('#' + e.target.feature.properties._id);
+                                        var list = $('#liste_passage');
+                                        list.scrollTop(0);
+                                        list.scrollTop(element.position().top - (list.height() / 2) + (element.height()));
+                                        element.focus();
+                                    }, 400);
+                                });
+                                layer.on('mouseout', function (e) {
+                                    if (hoverTimeout) {
+                                        clearTimeout(hoverTimeout);
+                                    }
+                                    e.target.setZIndexOffset(900);
+                                    $('#' + e.target.feature.properties._id).blur();
+                                    $('.leaflet-marker-icon').css('opacity', '1');
+                                });
+
+                                layer.on('click', function (e) {
+                                    document.location.href = $('#' + e.target.feature.properties._id).attr('href');
+                                });
+                            }
+                        },
+                        pointToLayer: function (feature, latlng) {
+                            var marker = L.marker(latlng, {icon: L.ExtraMarkers.icon({
+                                    icon: feature.properties.icon,
+                                    markerColor: feature.properties.color,
+                                    iconColor: feature.properties.colorText,
+                                    shape: 'circle',
+                                    prefix: 'mdi',
+                                    svg: true
+                                })});
+                            markers[feature.properties._id] = marker;
+                            return marker;
+                        }
+                    }
+            ).addTo(map);
+
+            var markersArr = [];
+            for (id in markers) {
+                var latlng = markers[id]._latlng;
+                markersArr.push(latlng);
+            }
+            var bounds = new L.LatLngBounds(markersArr);
+
+            map.fitBounds(bounds);
+
+            $('#liste_passage .list-group-item').hover(function () {
+                var marker = markers[$(this).attr('id')];
+                $('.leaflet-marker-icon').css('opacity', '0.3');
+                $(marker._icon).css('opacity', '1');
+                marker.setZIndexOffset(1001);
+            }, function () {
+                var marker = markers[$(this).attr('id')];
+                marker.setZIndexOffset(900);
+                $('.leaflet-marker-icon').css('opacity', '1');
+            });
+
+            $(window).on('hashchange', function () {
+                $('#liste_passage .list-group-item').each(function () {
+                    if (!$(this).is(':visible')) {
+                        var marker = markers[$(this).attr('id')];
+                        $(marker._icon).css('opacity', '0');
+                        $(marker._icon).addClass('hidden');
+                        $(marker._shadow).addClass('hidden');
+                        marker.setZIndexOffset(1001);
+                    } else {
+                        var marker = markers[$(this).attr('id')];
+                        $(marker._icon).css('opacity', '1');
+                        $(marker._icon).removeClass('hidden');
+                        $(marker._shadow).removeClass('hidden');
+                        marker.setZIndexOffset(900);
+                    }
+
+                });
+            });
         }
     }
 

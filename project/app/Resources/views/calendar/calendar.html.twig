@@ -88,6 +88,7 @@
         <div class="col-sm-12">
             <div
                 id="calendrier"
+                data-weekends="{{ calendarTool.getMode() == "JOUR" ? "true": "false" }}"
                 data-view="{{ calendarTool.getViewJs() }}"
                 data-goto-date="{{ calendarTool.getDateDebut('Y-m-d') }}"
                 data-url-populate="{{ path('calendarPopulate', {'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"

@@ -6,6 +6,7 @@ class CalendarDateTool
 	const MODE_DAY = 'JOUR';
 	const MODE_WEEK = 'SEMAINE';
 	const MODE_MONTH = 'MOIS';
+	const NB_DAY_IN_WEEK = 5;
 
 	protected $date;
 	protected $mode;
@@ -112,7 +113,7 @@ class CalendarDateTool
 	public function getDateFinSemaine($format = null)
 	{
 		$ds = clone $this->date;
-		$ds->modify('+'.(6 - $ds->format('N')).' day');
+		$ds->modify('+'.(self::NB_DAY_IN_WEEK - $ds->format('N')).' day');
 		return ($format)? $ds->format($format) : $ds;
 	}
 
