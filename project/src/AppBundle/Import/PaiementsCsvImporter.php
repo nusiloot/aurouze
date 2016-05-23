@@ -89,7 +89,7 @@ class PaiementsCsvImporter {
                     $output->writeln(sprintf("<comment> Facture %s, paiement %s : dates %s (paiement) != %s (banque) Bizar</comment>", $data[self::CSV_FACTURE_ID], $data[self::CSV_PAIEMENT_ID], $data[self::CSV_PAIEMENT_DATE], $data[self::CSV_DATE_PIECE_BANQUE]));
                 }
             }
-            $idDocPaiements = 'PAIEMENTS-' . (new \DateTime($data[self::CSV_PAIEMENT_DATE]))->format('YmdHi');
+            $idDocPaiements = 'PAIEMENTS-' . (new \DateTime($data[self::CSV_PAIEMENT_DATE]))->format('Ymd');
             $paiements = $this->pm->getRepository()->findOneById($idDocPaiements);
             if (!$paiements) {
                 $paiements = $this->dm->getUnitOfWork()->tryGetById($idDocPaiements, $this->pm->getRepository()->getClassMetadata());
