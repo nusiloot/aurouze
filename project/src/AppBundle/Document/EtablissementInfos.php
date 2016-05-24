@@ -124,7 +124,7 @@ class EtablissementInfos implements EtablissementInfosInterface {
     }
 
     public function pull(EtablissementInfosInterface $etablissementFrom) {
-        $this->setNom($etablissementFrom->getNom());
+        $this->setNom($etablissementFrom->getNom(false));
         $this->setAdresse(clone $etablissementFrom->getAdresse());
         $this->setType($etablissementFrom->getType());
     }
