@@ -207,8 +207,8 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         return $this->nom;
     }
 
-    public function setSimpleNom() {
-        $this->nom = $nom;
+    public function setSimpleNom($simpleNom) {
+        $this->nom = $simpleNom;
         return $this;
     }
 
