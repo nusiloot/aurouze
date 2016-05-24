@@ -71,7 +71,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @MongoDB\String
      */
     protected $commentaire;
-    
+
     /**
      * @MongoDB\Boolean
      */
@@ -94,19 +94,19 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     }
 
     public function getSameAdresse() {
-    	return $this->isSameAdresseThanSociete();
+        return $this->isSameAdresseThanSociete();
     }
 
     public function setSameAdresse($value) {
-    	return $this;
+        return $this;
     }
 
     public function getSameContact() {
-    	return $this->isSameContactCoordonneeThanSociete();
+        return $this->isSameContactCoordonneeThanSociete();
     }
 
     public function setSameContact($value) {
-    	return $this;
+        return $this;
     }
 
     public function isSameAdresseThanSociete() {
@@ -120,10 +120,10 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     }
 
     public function pullInfosFromSociete() {
-        if($this->isSameAdresseThanSociete()) {
+        if ($this->isSameAdresseThanSociete()) {
             $this->getAdresse()->copyFrom($this->getSociete()->getAdresse());
         }
-        if($this->isSameContactCoordonneeThanSociete()) {
+        if ($this->isSameContactCoordonneeThanSociete()) {
             $this->getContactCoordonnee()->copyFrom($this->getSociete()->getContactCoordonnee());
         }
     }
@@ -178,7 +178,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function getContrats() {
         return $this->contrats;
     }
-    
+
     public function getRaisonSociale() {
         return $this->getSociete()->getRaisonSociale();
     }
@@ -203,6 +203,15 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         return $this->commentaire;
     }
 
+    public function getSimpleNom() {
+        return $this->nom;
+    }
+
+    public function setSimpleNom() {
+        $this->nom = $nom;
+        return $this;
+    }
+
     /**
      * Set setNom
      *
@@ -220,8 +229,8 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @return string $nom
      */
     public function getNom($includeRaisonSociale = true) {
-        if($includeRaisonSociale && (trim($this->getSociete()->getRaisonSociale()) != trim($this->nom))){
-            return $this->getSociete()->getRaisonSociale().' - '.$this->nom;
+        if ($includeRaisonSociale && (trim($this->getSociete()->getRaisonSociale()) != trim($this->nom))) {
+            return $this->getSociete()->getRaisonSociale() . ' - ' . $this->nom;
         }
         return $this->nom;
     }
@@ -267,40 +276,39 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     }
 
     public function getTelephoneFixe() {
-        if(!$this->getContactCoordonnee()){
+        if (!$this->getContactCoordonnee()) {
             return null;
         }
         return $this->getContactCoordonnee()->getTelephoneFixe();
     }
 
     public function getTelephonePortable() {
-        if(!$this->getContactCoordonnee()){
+        if (!$this->getContactCoordonnee()) {
             return null;
         }
         return $this->getContactCoordonnee()->getTelephoneMobile();
     }
 
     public function getFax() {
-        if(!$this->getContactCoordonnee()){
+        if (!$this->getContactCoordonnee()) {
             return null;
         }
         return $this->getContactCoordonnee()->getFax();
     }
 
     public function getEmail() {
-        if(!$this->getContactCoordonnee()){
+        if (!$this->getContactCoordonnee()) {
             return null;
         }
         return $this->getContactCoordonnee()->getEmail();
     }
 
-     public function getSiteInternet() {
-        if(!$this->getContactCoordonnee()){
+    public function getSiteInternet() {
+        if (!$this->getContactCoordonnee()) {
             return null;
         }
         return $this->getContactCoordonnee()->getSiteInternet();
     }
-
 
     public function getIcon() {
 
@@ -410,16 +418,13 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         return $this->numeroPassageIncrement;
     }
 
-
-
     /**
      * Set actif
      *
      * @param boolean $actif
      * @return self
      */
-    public function setActif($actif)
-    {
+    public function setActif($actif) {
         $this->actif = $actif;
         return $this;
     }
@@ -429,8 +434,8 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return boolean $actif
      */
-    public function getActif()
-    {
+    public function getActif() {
         return $this->actif;
     }
+
 }
