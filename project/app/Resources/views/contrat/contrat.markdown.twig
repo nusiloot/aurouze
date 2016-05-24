@@ -35,7 +35,7 @@ et
 ## Dans le{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}locaux{% else %}local{% endif %} situé{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}aux adresses{% else %}à l'adresse{% endif %}
 
 {% for etablissement in contrat.etablissements %}
-{{  etablissement.raisonSociale|trim }} / {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}    
+{{  etablissement.nom|trim }} {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}    
 {% endfor %}
 
 ## Nomenclature des locaux à traiter

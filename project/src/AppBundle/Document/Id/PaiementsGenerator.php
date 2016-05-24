@@ -18,7 +18,7 @@ class PaiementsGenerator extends AbstractIdGenerator
             return "PAIEMENTS-".$document->getIdentifiant();
         }
         
-        $document->setIdentifiant(sprintf("%s", $document->getDateCreation()->format('YmdHi')));
+        $document->setIdentifiant(sprintf("%s", $document->getDateCreation()->format('Ymd')));
         
         return "PAIEMENTS-".$document->getIdentifiant();
     }

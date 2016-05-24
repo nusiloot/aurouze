@@ -30,20 +30,22 @@ class PaiementsCsvImporter {
     protected $fm;
     protected $debug = false;
 
-    const CSV_REGLEMENT_ID = 0;
-    const CSV_PAIEMENT_ID = 1;
-    const CSV_FACTURE_ID = 2;
-    const CSV_PAIEMENT_DATE = 3;
-    const CSV_TYPE_REGLEMENT = 4;
-    const CSV_MOYEN_PAIEMENT = 5;
-    const CSV_MONTANT = 6;
-    const CSV_PAIEMENT_DATECREATION = 7;
-    const CSV_REF_REMISE_CHEQUE = 12;
+    const CSV_REF_REMISE_CHEQUE = 0;
+    const CSV_REGLEMENT_ID = 1;
+    const CSV_PAIEMENT_ID = 2;
+    const CSV_FACTURE_ID = 3;
+    const CSV_PAIEMENT_DATE = 4;
+    const CSV_TYPE_REGLEMENT = 5;
+    const CSV_MOYEN_PAIEMENT = 6;
+    const CSV_MONTANT = 7;
+    const CSV_PAIEMENT_DATECREATION = 8;
+//    const CSV_REF_REMISE_CHEQUE = 12;
     const CSV_LIBELLE = 13;
     const CSV_MOYEN_PAIEMENT_PIECE = 14; //DEVRAI ETRE == à CSV_MOYEN_PAIEMENT
     const CSV_DATE_PIECE_BANQUE = 15; //DEVRAI ETRE == CSV_PAIEMENT_DATE
     const CSV_MONTANT_PIECE_BANQUE = 16; //DEVRAI ETRE == CSV_MONTANT
     const CSV_DATECREATION_PIECE_BANQUE = 17; //DEVRAI ETRE == CSV_PAIEMENT_DATECREATION
+    const CSV_DATE_REMISE_CHEQUE = 22;
 
     public function __construct(DocumentManager $dm, PaiementsManager $pm, FactureManager $fm) {
         $this->dm = $dm;
@@ -87,7 +89,7 @@ class PaiementsCsvImporter {
                     $output->writeln(sprintf("<comment> Facture %s, paiement %s : dates %s (paiement) != %s (banque) Bizar</comment>", $data[self::CSV_FACTURE_ID], $data[self::CSV_PAIEMENT_ID], $data[self::CSV_PAIEMENT_DATE], $data[self::CSV_DATE_PIECE_BANQUE]));
                 }
             }
-            $idDocPaiements = 'PAIEMENTS-' . (new \DateTime($data[self::CSV_PAIEMENT_DATE]))->format('YmdHi');
+            $idDocPaiements = 'PAIEMENTS-' . (new \DateTime($data[self::CSV_PAIEMENT_DATE]))->format('Ymd');
             $paiements = $this->pm->getRepository()->findOneById($idDocPaiements);
             if (!$paiements) {
                 $paiements = $this->dm->getUnitOfWork()->tryGetById($idDocPaiements, $this->pm->getRepository()->getClassMetadata());
@@ -98,7 +100,7 @@ class PaiementsCsvImporter {
             }
 
             $paiement = new Paiement();
-            $paiement->setFacture($facture);
+
             $index_moyen_paiement = "";
             $index_type_regl = "";
             $index_type_regl.= $data[self::CSV_TYPE_REGLEMENT];
@@ -111,6 +113,14 @@ class PaiementsCsvImporter {
             } else {
                 $paiement->setDatePaiement(new \DateTime($data[self::CSV_PAIEMENT_DATE]));
                 $index_moyen_paiement.=$data[self::CSV_MOYEN_PAIEMENT];
+            }
+            $paiement->setFacture($facture);
+
+            if (array_key_exists(self::CSV_DATE_REMISE_CHEQUE, $data) && $data[self::CSV_REF_REMISE_CHEQUE]) {
+                if ($data[self::CSV_DATE_REMISE_CHEQUE]) {
+                    $output->writeln(sprintf("<comment> %s : Ajout de la date de remise de cheque : %s </comment>", $data[self::CSV_PAIEMENT_ID], $data[self::CSV_DATE_REMISE_CHEQUE]));
+                    $paiement->setDatePaiement(new \DateTime($data[self::CSV_DATE_REMISE_CHEQUE]));
+                }
             }
 
             if (!array_key_exists($index_moyen_paiement, PaiementsManager::$moyens_paiement_index)) {
