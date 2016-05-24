@@ -1,0 +1,65 @@
+{% set _menu_active = 'paiements' %}
+{% extends 'base.html.twig' %}
+{% block title %}Modification {{ paiements.id }}{% endblock title %}
+
+{% form_theme form _self %}
+
+
+{% block _paiements_paiement_entry_row %}
+    <div class="row form-group dynamic-collection-item" id="paiements">
+        <div class="col-xs-3">
+            {{ form_widget(form.moyenPaiement) }}
+        </div> 
+        <div class="col-xs-3">
+            {{ form_widget(form.libelle) }}
+        </div>
+        <div class="col-xs-3">
+            {{ form_widget(form.montant) }}
+        </div>
+        <div class="col-xs-2 text-right">
+            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        {#        <li><a href="{{ path('paiements') }}">Paiements</a></li>#}
+        {#        <li><a href="{{ path('paiements_visualisation',{ 'id' : paiements.id }) }}">&nbsp;{{ paiements.id }}</a></li>#}
+        <li><small>Modification</small></li>        
+    </ol>
+
+    <div id="wrapper">
+        <h1>Modification {{ paiements.id }}</h1>
+        {{ form_start(form) }}
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Informations</strong><div class="pull-right"></div></div>
+            <div class="panel-body col-xs-offset-2">
+                <div class="row">
+                    <div class="col-xs-10">
+                        {{ form_row(form.dateCreation) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Paiements</strong></div>
+            <div class="panel-body col-xs-offset-2">
+                 {{ form_widget(form.paiement, { 'attr': {'class': 'dynamic-collection'} }) }}
+                <div class="row form-group">
+                    <div class="col-xs-12 text-right">
+                        <a href="javascript:void(0);" data-collection-target="#paiements" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                {{ form_widget(form.save) }}
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

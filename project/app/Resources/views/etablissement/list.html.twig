@@ -6,7 +6,7 @@
                     <div class="list-group-item">
                         <a class="btn btn-xs btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}">Modifier</a>
                         <h4 style="margin-top: 0;margin-bottom: 0;" >
-                            <a href="{{ path('passage_etablissement', {'id': etablissement.id }) }}"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.nom }}</a>
+                            <a href="{{ path('passage_etablissement', {'id': etablissement.id }) }}"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.getNom(false) }}</a>
                             <span class="text-muted">{{ etablissement.adresse.adresse }}</span>
                             {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}
                             {% if not etablissement.actif %}<span class="btn btn-xs btn-danger">Suspendu</span>{% endif %}
