@@ -22,20 +22,7 @@
     </div>
 </div>
 
-<h1 class="text-center">
-    {{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small> <small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
-</h1>
 
-<br/>
-
-<div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title">Lieux de passage : </h3></div>
-    <ul class="list-group">
-        {% for etablissement in contrat.getEtablissements %}
-            <li class="list-group-item"><span><a href="{{ path('passage_etablissement', { 'id': etablissement.id }) }}">{{ etablissement.intitule }}</a></span></li>
-        {% endfor %}
-    </ul>
-</div>
 
 {%  if(contrat.isEnAttenteAcceptation()) %}
     {{ include('contrat/contrat_previsionnel.html.twig', { 'contrat': contrat ,'form' : (form is defined)? form : null}) }}

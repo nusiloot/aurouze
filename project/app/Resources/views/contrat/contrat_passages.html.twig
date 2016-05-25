@@ -1,3 +1,53 @@
+<h1 class="text-center">
+    {% if(form is defined and not form is null and not contrat.hasMouvements())%}
+
+        <div class="row">
+            <div class="col-xs-6 text-right">
+                <div class="row  ">
+                    <div class="col-xs-8">
+                        {{ form_errors(form.prixHt) }}
+                        <small>{{ form_label(form.prixHt) }}</small>
+                    </div>
+                    <div class="col-xs-4 text-right">
+                        <div class="input-group" style="padding-top: 10px;">
+                            {{ form_widget(form.prixHt) }} <div class="input-group-addon">€</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6 text-left">
+                <div class="row">
+                    <div class="col-xs-2 text-left">
+                        {{ form_errors(form.nbFactures) }}
+                        <small>{{ form_label(form.nbFactures) }}</small>
+                    </div>
+                    <div class="col-xs-3 text-left">
+                        <div style="padding-top: 10px;">
+                            {{ form_widget(form.nbFactures) }}
+                        </div>
+                    </div>
+                    <small class="col-xs-3" style="padding-top: 12px;">&nbsp;facture(s)</small>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        {{ contrat.getPrixHt()}}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small> <small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
+    {% endif %}
+
+</h1>
+<br/>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Lieux de passage : </h3></div>
+    <ul class="list-group">
+        {% for etablissement in contrat.getEtablissements %}
+            <li class="list-group-item"><span><a href="{{ path('passage_etablissement', { 'id': etablissement.id }) }}">{{ etablissement.intitule }}</a></span></li>
+                    {% endfor %}
+    </ul>
+</div>
+
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Nomenclature</h3></div>
     <div class="panel-body">
@@ -14,21 +64,21 @@
         <strong>Interventions</strong> (Acceptation du contrat le {{ contrat.dateAcceptation | date("d/m/y")}})  <span class='pull-right'>Date de début : <strong>{{ contrat.dateDebut | date("d/m/Y")}}</strong></span>
     </div>
 
-    	<div id="contrat-{{ contrat.id }}-passages" class="list-group">
-            {% if(contrat.contratPassages | length) %}
-                {% set firstEtbPassages = contrat.contratPassages | first %}
-                {{ include('passage/listingPassages.html.twig', { 'passages': firstEtbPassages.getPassagesDateSorted(true) }) }}
-                <div class="modal fade" id="modal-passage" tabindex="-1" role="dialog">
-                	<div class="modal-dialog modal-lg" role="document">
-                		<div class="modal-content">
-                			<div class="modal-header">
-                				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                				<h4 class="modal-title" id="modal-title"></h4>
-                			</div>
-                			<div class="modal-body" id="modal-body"></div>
-                		</div>
-                	</div>
+    <div id="contrat-{{ contrat.id }}-passages" class="list-group">
+        {% if(contrat.contratPassages | length) %}
+            {% set firstEtbPassages = contrat.contratPassages | first %}
+            {{ include('passage/listingPassages.html.twig', { 'passages': firstEtbPassages.getPassagesDateSorted(true) }) }}
+            <div class="modal fade" id="modal-passage" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="modal-title"></h4>
+                        </div>
+                        <div class="modal-body" id="modal-body"></div>
+                    </div>
                 </div>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
+    </div>
 </div>

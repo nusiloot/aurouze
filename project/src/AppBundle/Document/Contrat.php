@@ -320,11 +320,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->prestations;
     }
 
-
     public function getUniquePrestations() {
         $prestations = array();
 
-        foreach($this->getPrestations() as $prestation) {
+        foreach ($this->getPrestations() as $prestation) {
             $prestations[$prestation->getIdentifiant()] = $prestation->getNom();
         }
 
@@ -334,7 +333,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function setUniquePrestations($prestationsIdentifiant) {
         $this->prestations = new ArrayCollection();
 
-        foreach($prestationsIdentifiant as $identifiant) {
+        foreach ($prestationsIdentifiant as $identifiant) {
             $prestation = new Prestation();
             $prestation->setIdentifiant($identifiant);
             $prestation->setNbPassages(1);
@@ -706,6 +705,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $mouvement;
     }
 
+    public function hasMouvements() {
+        return boolval(count($this->getMouvements()));
+    }
+
     public function getPrevisionnel($dateDebut = null) {
         if (!$dateDebut) {
             $dateDebut = new \DateTime();
@@ -730,7 +733,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
         $monthInterval = (floatval($dureeContratMois) / floatval($maxNbPrestations));
         $nb_month = intval($monthInterval);
-        $dateLastPassage = $dateDebut;
+        $dateLastPassage = clone $dateDebut;
         $passagesDatesArray[$dateLastPassage->format('Y-m-d')] = new \stdClass();
         $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations = array();
 
@@ -851,7 +854,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getUniquePassage() {
-        if($this->getNbPassages() != 1 || count($this->getEtablissements()) > 1) {
+        if ($this->getNbPassages() != 1 || count($this->getEtablissements()) > 1) {
 
             throw new \Exception("Il y a plusieurs passage pour ce contrat");
         }
@@ -1220,7 +1223,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isReconductible() {
-        if(!$this->isTypeReconductionTacite()) {
+        if (!$this->isTypeReconductionTacite()) {
 
             return false;
         }
