@@ -158,6 +158,19 @@ class ContratController extends Controller {
     }
 
     /**
+     * @Route("/contrat/{id}/copie", name="contrat_copie")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function copieAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contratReconduit = $contrat->copier();
+        $dm->persist($contratReconduit);
+        $dm->flush();
+
+        return $this->redirectToRoute('contrat_acceptation', array('id' => $contratReconduit->getId()));
+    }
+
+    /**
      * @Route("/contrat/{id}/reconduction", name="contrat_reconduction")
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
@@ -171,7 +184,7 @@ class ContratController extends Controller {
             $dm->flush();
             return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));
         } else {
-            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contratReconduit->getId()));
         }
     }
 

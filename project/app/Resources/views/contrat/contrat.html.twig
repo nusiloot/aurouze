@@ -23,7 +23,7 @@
 </div>
 
 <h1 class="text-center">
-    {{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small> <small>en {{ contrat.nbFactures }} factures</small>
+    {{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small> <small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
 </h1>
 
 <br/>
