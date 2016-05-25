@@ -193,7 +193,7 @@ class Compte implements DocumentSocieteInterface {
         $identite.= ($this->getNom()) ? $this->getNom() . ' ' : '';
         return $identite;
     }
-
+    
     /**
      * Set couleur
      *
@@ -257,9 +257,9 @@ class Compte implements DocumentSocieteInterface {
         return $this->hasTag(CompteManager::TYPE_AUTRE);
     }
 
-    public function getInituleCourt() {
+    public function getIdentiteCourt() {
 
-        return $this->getPrenom();
+        return $this->getPrenom().' '. substr(ucfirst($this->getNom()),0,1).'.';
     }
 
     public function __toString() {

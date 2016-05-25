@@ -213,7 +213,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         $techniciens = array();
 
         foreach ($this->getTechniciens() as $technicien) {
-            $techniciens[$technicien->getId()] = $technicien->getIdentite();
+            $techniciens[$technicien->getId()] = $technicien->getIdentiteCourt();
         }
 
         return $techniciens;
