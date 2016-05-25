@@ -7,6 +7,10 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    kernel.listener.response_listener:
+        class: AppBundle\Response\ResponseListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
     app.param_converter:
         class: AppBundle\Request\AppParamConverter
@@ -32,7 +36,7 @@ services:
     paiements.importer:
         class: AppBundle\Import\PaiementsCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @paiements.manager, @facture.manager]
-        
+
     contrat.manager:
         class: AppBundle\Manager\ContratManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
@@ -40,7 +44,7 @@ services:
     passage.manager:
         class: AppBundle\Manager\PassageManager
         arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager]
-        
+
     rendezvous.manager:
         class: AppBundle\Manager\RendezVousManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
@@ -52,7 +56,7 @@ services:
     paiements.manager:
         class: AppBundle\Manager\PaiementsManager
         arguments: [@doctrine_mongodb.odm.default_document_manager, @facture.manager]
-        
+
     societe.importer:
         class: AppBundle\Import\SocieteCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @societe.manager]
