@@ -9,50 +9,34 @@
         <li><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a></li>
     </ol>
     <div class="row">
-        <div class="col-xs-6">
-            <h1>Contrat {{ contrat.getStatutLibelleLong }}&nbsp;<small>n° {{ contrat.getNumeroArchive() }}</small></h1>
+        <div class="col-xs-7">
+            <h2>Contrat {{ contrat.getStatutLibelleLong }}&nbsp;<small>n° {{ contrat.getNumeroArchive() }}</small></h2>
         </div>
-        {%  if (contrat.isModifiable()) %}
-            <div class="col-xs-6 text-right" style="padding-top: 30px; ">
-                <div class="btn-group">
-                    {%  if (contrat.isCopiable) %}
-                        <a href="{{ path('contrat_copie', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de créer un nouveau contrat avec les infos de ce contrat ?');"><span class="glyphicon glyphicon-duplicate"></span> Dupliquer</a>
-                    {% endif %}
-                    {%  if (contrat.isReconductible) %}
-                        <a href="{{ path('contrat_reconduction', {'id': contrat.getId()}) }}" class="btn btn-sm btn-info" onclick="return confirm('Êtes-vous sûre de vouloir reconduire le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-log-in"></span> Reconduire</a>
-                    {% endif %}
-                    {%  if (contrat.isAnnulable()) %}
-                        <a href="{{ path('contrat_annulation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir annuler le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span> Annuler</a>
-                    {%  endif %}
-                    {%  if (contrat.isEnAttenteAcceptation() or contrat.isBrouillon()) %}
-                        <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir supprimer le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
-                    {%  endif %}
-                    <a class="btn btn-sm btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon-eye-open"></span> Visualiser</a>
-                    {%  if (contrat.isEnAttenteAcceptation()) %}
-                        <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><i class="mdi mdi-check-circle"></i>&nbsp;Accepter / Modifier le contrat</a>
-                    {% else %}
-                        <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier le contrat</a>
-                    {% endif %}
-
-                </div>
-            </div>
-        {% else %}
-            <div class="col-xs-6 text-right" style="padding-top: 30px; ">
-                <div class="btn-group">
-                {%  if (contrat.isCopiable) %}
-                    <a href="{{ path('contrat_copie', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de créer un nouveau contrat avec les infos de ce contrat ?');"><span class="glyphicon glyphicon-duplicate"></span> Dupliquer</a>
-                {% endif %}
+        <div class="col-xs-5 text-right" style="padding-top: 30px; ">
+            <div class="btn-group">
                 {%  if (contrat.isReconductible) %}
                     <a href="{{ path('contrat_reconduction', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de vouloir reconduire le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-log-in"></span> Reconduire</a>
                 {% endif %}
+                {%  if (contrat.isCopiable) %}
+                    <a href="{{ path('contrat_copie', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de créer un nouveau contrat avec les infos de ce contrat ?');"><span class="glyphicon glyphicon-duplicate"></span> Dupliquer</a>
+                {% endif %}
+
                 {%  if (contrat.isAnnulable()) %}
                     <a href="{{ path('contrat_annulation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir annuler le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span> Annuler</a>
                 {%  endif %}
-                <a class="btn btn-sm btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon-eye-open"></span> Visualiser</a>
-                <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><span class="glyphicon glyphicon-pencil"></span> Modification partielle</a>
-                </div>
+                {%  if (contrat.isEnAttenteAcceptation() or contrat.isBrouillon()) %}
+                    <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir supprimer le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
+                {%  endif %}
+                <a class="btn btn-sm btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon glyphicon-file"></span> Visualiser</a>
+                {%  if (contrat.isEnAttenteAcceptation()) %}
+                    <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><i class="mdi mdi-check-circle"></i>&nbsp;Accepter / Modifier</a>
+                {%  elseif (contrat.isModifiable()) %}
+                    <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
+                {% else %}
+                    <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
+                {% endif %}
             </div>
-        {% endif %}
+        </div>
     </div>
     {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
 
