@@ -1167,9 +1167,29 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $this->id = null;
     }
 
+    public function copier() {
+        $contrat = clone $this;
+        $contrat->removeId();
+        $contrat->setNumeroArchive(null);
+        $contrat->setIdentifiant(null);
+        $contrat->setReferenceClient(null);
+        $contrat->setDateAcceptation(null);
+        $contrat->setDateDebut(null);
+        $contrat->setDateFin(null);
+        $contrat->setDateCreation(new \DateTime());
+        $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+        $contrat->contratPassages = array();
+        $contrat->cleanMouvements();
+        $contrat->setReconduit(false);
+        $contrat->updateObject();
+
+        return $contrat;
+    }
+
     public function reconduire() {
         $contrat = clone $this;
         $contrat->removeId();
+        $contrat->setIdentifiant(null);
         if (!$contrat->isKeepNumeroArchivage()) {
             $contrat->setNumeroArchive(null);
         }
@@ -1190,14 +1210,27 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             $contrat->setStatut(ContratManager::STATUT_EN_COURS);
         }
 
-        $contrat->contratPassages = null;
+        $contrat->contratPassages = array();
+        $contrat->cleanMouvements();
         $contrat->setReconduit(false);
+
+        $contrat->updateObject();
 
         return $contrat;
     }
 
     public function isReconductible() {
+        if(!$this->isTypeReconductionTacite()) {
+
+            return false;
+        }
+
         return ($this->isEnCours() || $this->isFini()) && !$this->getReconduit();
+    }
+
+    public function isCopiable() {
+
+        return ($this->isEnCours() || $this->isFini());
     }
 
     public function isTypeReconductionTacite() {
@@ -1392,6 +1425,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getFrequencePaiement() {
         return $this->frequencePaiement;
+    }
+
+    public function getFrequencePaiementLibelle() {
+
+        return ContratManager::$frequences[$this->frequencePaiement];
     }
 
 }
