@@ -138,7 +138,6 @@ class ContratManager implements MouvementManagerInterface {
         $contrat->setDureeGarantie(0);
         $contrat->setFrequencePaiement(self::FREQUENCE_RECEPTION);
         $contrat->setTvaReduite(false);
-        $contrat->setNomenclature("Intervention rapide (Bon bleu)");
 
         return $contrat;
     }
