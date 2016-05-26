@@ -174,6 +174,7 @@ class ContratManager implements MouvementManagerInterface {
         $date_debut = clone $contrat->getDateDebut();
         $passagesArray = $contrat->getPrevisionnel($date_debut);
         ksort($passagesArray);
+        $firstEtb = true;
         foreach ($contrat->getEtablissements() as $etablissement) {
             $cpt = 0;
             foreach ($passagesArray as $datePassage => $passageInfos) {
@@ -187,9 +188,9 @@ class ContratManager implements MouvementManagerInterface {
                 if (!$cpt) {
                     $passage->setDateDebut($datePrevision);
                 }
-
-                $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
-
+                if ($firstEtb) {
+                    $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
+                }
 
                 $passage->setContrat($contrat);
                 $passage->setTypePassage(PassageManager::TYPE_PASSAGE_CONTRAT);
@@ -212,6 +213,7 @@ class ContratManager implements MouvementManagerInterface {
                 }
                 $cpt++;
             }
+            $firstEtb = false;
         }
         $this->dm->flush();
     }
@@ -227,7 +229,7 @@ class ContratManager implements MouvementManagerInterface {
                 $newDateWithMvtDeclenchable[] = false;
             }
         }
-       
+
         foreach ($contrat->getContratPassages() as $contratPassage) {
             $num_passage = 0;
             foreach ($contratPassage->getPassagesSorted() as $passage) {
@@ -241,6 +243,7 @@ class ContratManager implements MouvementManagerInterface {
                     $this->dm->persist($passage);
                 }
             }
+            break;
         }
         $this->dm->flush();
     }
