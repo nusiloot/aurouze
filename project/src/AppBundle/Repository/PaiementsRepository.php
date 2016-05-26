@@ -8,5 +8,15 @@ use AppBundle\Manager\PaiementsManager;
 class PaiementsRepository extends DocumentRepository {
 
  
+    
+    public function findPaiementsByFacture($facture){   
+        return $this->createQueryBuilder()
+             ->select('paiement')
+             ->field('paiement.facture')
+             ->equals($facture->getId())
+             ->getQuery()
+             ->getIterator();
+    }
+    
 
 }
