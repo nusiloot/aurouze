@@ -27,7 +27,7 @@
                 {% for tech in techniciens %}
                     <li role="presentation"{% if tech.getId() == technicien %} class="active"{% endif %}>
                         <a href="{{ path('calendar',{'technicien': tech.getId(), 'passage': ((passage) ? passage.id : null), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" role="tab" style="color: {{ tech.getCouleur() }};">
-                            <i class="mdi mdi-face mdi-lg"></i> <strong>{{ tech.getInituleCourt() }}</strong>
+                            <i class="mdi mdi-face mdi-lg"></i> <strong>{% autoescape false %}{{ tech.getIdentiteCourt() | replace({' ' : '&nbsp;'})  }}{% endautoescape %}</strong>
                         </a>
                     </li>
                     {% set i=loop.index %}
