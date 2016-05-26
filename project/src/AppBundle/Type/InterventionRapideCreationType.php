@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -52,12 +53,14 @@ class InterventionRapideCreationType extends AbstractType {
                     ),
                     'widget' => 'single_text',
                     'format' => 'dd/MM/yyyy'))
-                ->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2, 'required' => false))
+                ->add('prixHt', NumberType::class, array('label' => 'Prix HT', 'scale' => 2, 'required' => false))
+                ->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false))
                 ->add('uniquePrestations', ChoiceType::class, array(
                     		'choices' => $this->getPrestations(),
         	        		'expanded' => false,
         	        		'multiple' => true,
                 			'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")))
+                ->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature', 'required' => false, "attr" => array("class" => "form-control", "rows" => 2)))
                 ->add('referenceClient', TextType::class, array('label' => 'Numéro de commande :', 'required' => false, 'attr' => array('placeholder' => 'Référence commande du client')));
 
     }
