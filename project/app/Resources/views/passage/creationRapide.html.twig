@@ -36,30 +36,34 @@
                 <div class="panel-body">
                     <div class="form-group">
     	                {{ form_errors(form.commercial) }}
-                        {{ form_label(form.commercial, "Commercial", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        {{ form_label(form.commercial, "Commercial", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
                         <div class="col-xs-4">
     	                    {{ form_widget(form.commercial, {'attr': {'autofocus': 'autofocus'}}) }}
                         </div>
     	            </div>
                     <div class="form-group">
     	                {{ form_errors(form.technicien) }}
-                        {{ form_label(form.technicien, "Technicien", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        {{ form_label(form.technicien, "Technicien", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
                         <div class="col-xs-4">
     	                    {{ form_widget(form.technicien) }}
                         </div>
     	            </div>
                     <div class="form-group">
-    	                {{ form_errors(form.technicien) }}
-                        {{ form_label(form.technicien, "Prix HT", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+    	                {{ form_errors(form.prixHt) }}
+                        {{ form_errors(form.tvaReduite) }}
+                        {{ form_label(form.prixHt, "Prix HT", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
                         <div class="col-xs-3">
                             <div class="input-group ">
                                 {{ form_widget(form.prixHt) }} <div class="input-group-addon">€ HT</div>
                             </div>
                         </div>
+                        <div class="col-xs-3">
+                            {{ form_widget(form.tvaReduite) }}
+                        </div>
     	            </div>
                     <div class="form-group">
     	                {{ form_errors(form.dateDebut) }}
-                        {{ form_label(form.dateDebut, "Date du passage", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        {{ form_label(form.dateDebut, "Date du passage", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
                         <div class="col-xs-4">
         	                <div class="input-group">
         	                    {{ form_widget(form.dateDebut) }}
@@ -69,14 +73,21 @@
     	            </div>
                     <div class="form-group">
     	                {{ form_errors(form.uniquePrestations) }}
-                        {{ form_label(form.uniquePrestations, "Prestations", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        {{ form_label(form.uniquePrestations, "Prestations", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
                         <div class="col-xs-9">
     	                    {{ form_widget(form.uniquePrestations) }}
                         </div>
     	            </div>
                     <div class="form-group">
+    	                {{ form_errors(form.nomenclature) }}
+                        {{ form_label(form.nomenclature, "Nomenclature", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
+                        <div class="col-xs-10">
+                                {{ form_widget(form.nomenclature) }}
+                        </div>
+    	            </div>
+                    <div class="form-group">
     	                {{ form_errors(form.referenceClient) }}
-                        {{ form_label(form.referenceClient, "Numéro de commande", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                        {{ form_label(form.referenceClient, "Numéro de commande", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
                         <div class="col-xs-4">
                                 {{ form_widget(form.referenceClient) }}
                         </div>
