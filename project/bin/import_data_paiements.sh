@@ -38,6 +38,6 @@ cat $DATA_DIR/tblRemiseCheque.csv | tr -d "\r" | sort -t ';' -k 1,1 | sed -r 's/
 
 join -a 1 -t ';' -1 13 -2 1 $DATA_DIR/paiementsClean.csv $DATA_DIR/cheques.clean.csv > $DATA_DIR/paiements.csv
 
-echo -e "\n\nImport des types de prestations\n"
+echo -e "\n\nImport des types de paiements\n"
 
 php app/console importer:csv paiements.importer $DATA_DIR/paiements.csv -vvv

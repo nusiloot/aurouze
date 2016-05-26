@@ -22,7 +22,6 @@ class ContratManager implements MouvementManagerInterface {
     const STATUT_FINI = "FINI";
     const STATUT_RESILIE = "RESILIE"; // statut à retirer = ce n'est pas un statut mais un type!!
     const STATUT_ANNULE = "ANNULE";
-
     const TYPE_CONTRAT_RECONDUCTION_TACITE = 'RECONDUCTION_TACITE';
     const TYPE_CONTRAT_PONCTUEL = 'PONCTUEL';
     const TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION = 'RENOUVELABLE_SUR_PROPOSITION';
@@ -32,7 +31,6 @@ class ContratManager implements MouvementManagerInterface {
     const MOYEN_PIGEONS = 'MOYEN_PIGEONS';
     const MOYEN_BOIS = 'MOYEN_BOIS';
     const MOYEN_VO = 'MOYEN_VO';
-
     const FREQUENCE_RECEPTION = 'RECEPTION';
     const FREQUENCE_30J = '30J';
     const FREQUENCE_30JMOIS = '30JMOIS';
@@ -65,7 +63,6 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_RESILIE => 'Résilié',
         self::STATUT_ANNULE => 'Annulé'
     );
-
     public static $statuts_libelles_long = array(
         self::STATUT_BROUILLON => 'en brouillon',
         self::STATUT_EN_ATTENTE_ACCEPTATION => "en attente d'acceptation",
@@ -93,18 +90,18 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_ANNULE => 6
     );
     public static $frequences = array(
-    	self::FREQUENCE_RECEPTION => 'A reception',
-    	self::FREQUENCE_30J => '30 jours',
-    	self::FREQUENCE_30JMOIS => '30 jours fin de mois',
-    	self::FREQUENCE_45JMOIS => '45 jours fin de mois',
-    	self::FREQUENCE_60J => '60 jours'
+        self::FREQUENCE_RECEPTION => 'A reception',
+        self::FREQUENCE_30J => '30 jours',
+        self::FREQUENCE_30JMOIS => '30 jours fin de mois',
+        self::FREQUENCE_45JMOIS => '45 jours fin de mois',
+        self::FREQUENCE_60J => '60 jours'
     );
     public static $frequencesImport = array(
-    	"2" => self::FREQUENCE_RECEPTION,
-    	"7" => self::FREQUENCE_30J,
-    	"3" => self::FREQUENCE_30JMOIS ,
-    	"6" => self::FREQUENCE_45JMOIS ,
-    	"9" => self::FREQUENCE_60J
+        "2" => self::FREQUENCE_RECEPTION,
+        "7" => self::FREQUENCE_30J,
+        "3" => self::FREQUENCE_30JMOIS,
+        "6" => self::FREQUENCE_45JMOIS,
+        "9" => self::FREQUENCE_60J
     );
     protected $dm;
 
@@ -218,13 +215,42 @@ class ContratManager implements MouvementManagerInterface {
         $this->dm->flush();
     }
 
+    public function updateNbFactureForContrat($contrat) {
+        $passagesDatesArray = $contrat->getPrevisionnel($contrat->getDateDebut());
+        ksort($passagesDatesArray);
+        $newDateWithMvtDeclenchable = array();
+        foreach ($passagesDatesArray as $datePrev => $passagePrev) {
+            if ($passagePrev->mouvement_declenchable) {
+                $newDateWithMvtDeclenchable[] = true;
+            } else {
+                $newDateWithMvtDeclenchable[] = false;
+            }
+        }
+       
+        foreach ($contrat->getContratPassages() as $contratPassage) {
+            $num_passage = 0;
+            foreach ($contratPassage->getPassagesSorted() as $passage) {
+                if ($passage->isSousContrat() && isset($newDateWithMvtDeclenchable[$num_passage])) {
+                    if ($newDateWithMvtDeclenchable[$num_passage]) {
+                        $passage->setMouvementDeclenchable(true);
+                    } else {
+                        $passage->setMouvementDeclenchable(false);
+                    }
+                    $num_passage++;
+                    $this->dm->persist($passage);
+                }
+            }
+        }
+        $this->dm->flush();
+    }
+
     public function getMouvementsBySociete(Societe $societe, $isFaturable, $isFacture) {
         $contrats = $this->getRepository()->findContratMouvements($societe, $isFaturable, $isFacture);
         $mouvements = array();
 
         foreach ($contrats as $contrat) {
             foreach ($contrat->getMouvements() as $mouvement) {
-                if($mouvement->getFacturable() != $isFaturable || $mouvement->getFacture() !=  $isFacture) {
+                if ($mouvement->getFacturable() != $isFaturable || $mouvement->getFacture() != $isFacture) {
                     continue;
                 }
 
@@ -245,7 +271,7 @@ class ContratManager implements MouvementManagerInterface {
         return $this->getRepository()->countContratByCommercial($compte);
     }
 
-      public function getPassagesByNumeroArchiveContrat(Contrat $contrat, $reverse = false) {
+    public function getPassagesByNumeroArchiveContrat(Contrat $contrat, $reverse = false) {
         $contratsByNumero = $this->getRepository()->findByNumeroArchive($contrat->getNumeroArchive());
         $passagesByNumero = array();
         foreach ($contratsByNumero as $contrat) {
@@ -270,6 +296,5 @@ class ContratManager implements MouvementManagerInterface {
         }
         return $passagesByNumero;
     }
-
 
 }

@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Compte;
@@ -32,6 +33,7 @@ class ContratAcceptationType extends AbstractType {
         $readonly = array();
         $datePicker = array();
         $required = array();
+
         if (!$this->contrat->isModifiable()) {
             $readonly = array('readonly' => 'readonly');
         } else {
@@ -39,11 +41,16 @@ class ContratAcceptationType extends AbstractType {
                 'data-provide' => 'datepicker');
         }
         if (!$this->contrat->isEnAttenteAcceptation() && !$this->contrat->isBrouillon()) {
+            if (!$this->contrat->hasMouvements()) {
+                $builder->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2, "attr" => array("class" => "form-control col-xs-2 text-right ")));
+                $builder->add('nbFactures', NumberType::class, array('label' => 'en ',"attr" => array("class" => "form-control col-xs-2 text-right ")));
+            }
             $builder->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature* :', "attr" => array("class" => "form-control", "rows" => 6)));
         }
         if ($this->contrat->isEnAttenteAcceptation()) {
             $required = array('required' => false);
         }
+
 
         $builder->add('dateDebut', DateType::class, array_merge($required, array(
             "attr" => array_merge($datePicker, array(
@@ -80,7 +87,7 @@ class ContratAcceptationType extends AbstractType {
         $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "required" => false, "attr" => array("class" => "form-control", "rows" => 12)));
         $builder->add('referenceClient', TextType::class, array('label' => 'Numéro de commande :', 'required' => false));
 
-        
+
         $builder->add('save', SubmitType::class, array('label' => ($this->contrat->isEnAttenteAcceptation()) ? 'Acceptation du contrat' : 'Modification du contrat', "attr" => array("class" => "btn btn-success pull-right")));
     }
 
