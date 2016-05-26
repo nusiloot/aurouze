@@ -7,8 +7,6 @@
 
     {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
 
-
-
     <h3>
     	Mouvements à facturer
     	<div class="col-xs-6 pull-right text-right">
@@ -48,7 +46,7 @@
     <p class="text-muted"><i>Aucun mouvement</i></p>
     {% endif %}
 
-    <h3>Liste des Factures</h3>
+    <h3>Liste des Factures <a href="{{ path('facture_libre', { 'societe': societe.id })}}" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-plus"></span> Créer une facture libre</a></h3>
     <table class="table table-bordered">
         <thead>
             <tr>

@@ -10,6 +10,13 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class FactureType extends AbstractType
 {
+
+    protected $cm = null;
+
+    public function __construct($cm) {
+        $this->cm = $cm;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -18,7 +25,7 @@ class FactureType extends AbstractType
     {
         $builder
             ->add('lignes', CollectionType::class, array(
-                'entry_type' => new FactureLigneType(),
+                'entry_type' => new FactureLigneType($this->cm),
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,

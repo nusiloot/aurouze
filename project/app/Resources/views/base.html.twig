@@ -59,7 +59,7 @@
                         </li>
                         <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}">Factures</a></li>
                         <li class="{%if (_menu_active == 'paiements') %}active{% endif %}"><a href="{{ path('paiements_modification', { id: 'PAIEMENTS-20130318' }) }}">Paiements</a></li>
-                    
+
                     </ul>
                     <ul class="nav navbar-nav pull-right">
                         <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}"><span class="glyphicon glyphicon-calendar"></span> Calendrier</a></li>
@@ -93,6 +93,7 @@
         <script type="text/javascript" src="{{ asset('/component/select2/js/i18n/fr.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/leaflet/leaflet.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/leaflet-extra-markers/js/leaflet.extra-markers.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/typeahead/typeahead.bundle.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/calendar-settings.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/main.js') }}"></script>

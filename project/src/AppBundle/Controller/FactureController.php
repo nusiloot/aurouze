@@ -34,14 +34,27 @@ class FactureController extends Controller {
         return $this->render('facture/index.html.twig', array('formSociete' => $formSociete->createView()));
     }
 
-    public function editionAction(Request $request) {
+    /**
+     * @Route("/societe/{societe}/libre", name="facture_libre")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+    public function libreAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $cm = $this->get('configuration.manager');
 
         $facture = new Facture();
-        $facture->setId('FACTURE');
-        $facture->addLigne(new FactureLigne());
+        $factureLigne = new FactureLigne();
+        $factureLigne->setTauxTaxe(0.2);
 
-        $form = $this->createForm(new FactureType(), $facture, array(
+        $facture->addLigne($factureLigne);
+
+
+        $produitsSuggestion = array();
+        foreach($cm->getConfiguration()->getProduits() as $produit) {
+            $produitsSuggestion[] = array("libelle" => $produit->getNom(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
+        }
+
+        $form = $this->createForm(new FactureType($cm), $facture, array(
             'action' => $this->generateUrl('facture'),
             'method' => 'POST',
         ));
@@ -50,13 +63,13 @@ class FactureController extends Controller {
 
         if (!$form->isSubmitted() || !$form->isValid()) {
 
-            return $this->render('facture/index.html.twig', array('form' => $form->createView()));
+            return $this->render('facture/libre.html.twig', array('form' => $form->createView(), 'produitsSuggestion' => $produitsSuggestion));
         }
 
         $dm->persist($facture);
         $dm->flush();
 
-        return $this->redirectTo('facture/index.html.twig', array('form' => $form->createView()));
+        return $this->redirectTo('facture/libre.html.twig', array('form' => $form->createView()));
     }
 
     /**
