@@ -10,16 +10,19 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class FactureType extends AbstractType
 {
 
     protected $dm = null;
     protected $cm = null;
+    protected $devis = false;
 
-    public function __construct($dm, $cm) {
+    public function __construct($dm, $cm, $devis = false) {
         $this->dm = $dm;
         $this->cm = $cm;
+        $this->devis = $devis;
     }
 
     /**
@@ -29,15 +32,6 @@ class FactureType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('dateFacturation', DateType::class, array(
-            'label' => 'Date de facturation',
-            "attr" => array(
-                'class' => 'input-inline datepicker',
-                'data-provide' => 'datepicker',
-                'data-date-format' => 'dd/mm/yyyy'
-            ),
-            'widget' => 'single_text',
-            'format' => 'dd/MM/yyyy'))
             ->add('lignes', CollectionType::class, array(
                 'entry_type' => new FactureLigneType($this->cm),
                 'allow_add' => true,
@@ -53,7 +47,32 @@ class FactureType extends AbstractType
                     'required' => false,
                     'attr' => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner une fréquence de paiement"),
             ))
+            ->add('description', TextareaType::class, array('label' => 'Informations complémentaires :', 'required' => false, "attr" => array("class" => "form-control", "rows" => 3)))
         ;
+
+        if($this->devis) {
+            $builder->add('dateDevis', DateType::class, array(
+            'label' => 'Date du devis',
+            "attr" => array(
+                'class' => 'input-inline datepicker',
+                'data-provide' => 'datepicker',
+                'data-date-format' => 'dd/mm/yyyy'
+            ),
+            'widget' => 'single_text',
+            'format' => 'dd/MM/yyyy'
+            ));
+        } else {
+            $builder->add('dateFacturation', DateType::class, array(
+            'label' => 'Date de facturation',
+            "attr" => array(
+                'class' => 'input-inline datepicker',
+                'data-provide' => 'datepicker',
+                'data-date-format' => 'dd/mm/yyyy'
+            ),
+            'widget' => 'single_text',
+            'format' => 'dd/MM/yyyy'
+            ));
+        }
     }
 
     /**

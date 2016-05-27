@@ -35,29 +35,46 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/societe/{societe}/libre", name="facture_libre")
+     * @Route("/societe/{societe}/creation/{type}", name="facture_creation")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function libreAction(Request $request, Societe $societe) {
+    public function creationAction(Request $request, Societe $societe, $type) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $cm = $this->get('configuration.manager');
+        $fm = $this->get('facture.manager');
 
-        $facture = new Facture();
-        $facture->setDateEmission(new \DateTime());
-        $facture->setDateFacturation(new \DateTime());
+        if($request->get('id')) {
+            $facture = $fm->getRepository()->findOneById($request->get('id'));
+        }
+
+        if($request->get('id') && !$facture) {
+
+            throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("La facture %s n'a pas été trouvé", $request->get('id')));
+        }
+
+        if(!isset($facture)) {
+            $facture = new Facture();
+            $factureLigne = new FactureLigne();
+            $factureLigne->setTauxTaxe(0.2);
+            $facture->addLigne($factureLigne);
+        }
+
         $facture->setSociete($societe);
-        $factureLigne = new FactureLigne();
-        $factureLigne->setTauxTaxe(0.2);
+        $facture->setDateEmission(new \DateTime());
 
-        $facture->addLigne($factureLigne);
+        if($type == "devis" && !$facture->getDateDevis()) {
+            $facture->setDateDevis(new \DateTime());
+        } elseif(!$facture->getDateFacturation()) {
+            $facture->setDateFacturation(new \DateTime());
+        }
 
         $produitsSuggestion = array();
         foreach($cm->getConfiguration()->getProduits() as $produit) {
             $produitsSuggestion[] = array("libelle" => $produit->getNom(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
         }
 
-        $form = $this->createForm(new FactureType($dm, $cm), $facture, array(
-            'action' => $this->generateUrl('facture_libre', array('societe' => $societe->getId())),
+        $form = $this->createForm(new FactureType($dm, $cm, $facture->isDevis()), $facture, array(
+            'action' => "",
             'method' => 'POST',
         ));
 
@@ -69,7 +86,12 @@ class FactureController extends Controller {
         }
 
         $facture->update();
-        
+
+        if($request->get('previsualiser')) {
+
+            return $this->pdfAction($request, $facture);
+        }
+
         $dm->persist($facture);
         $dm->flush();
 
