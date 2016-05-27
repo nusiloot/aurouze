@@ -16,8 +16,13 @@
     </div>
     <div class="col-xs-6">
         <div class="text-right">
-        <h3>FACTURE N°&nbsp;{{ facture.numeroFacture }}</h3>
+        {% if facture.isDevis %}
+        <h3>DEVIS {% if(facture.numeroDevis) %}N°&nbsp;{{ facture.numeroDevis }}{% else %}BROUILLON{% endif %}</h3>
+        <span>Du {{ facture.dateDevis|date("d/m/Y") }}</span>
+        {% else %}
+        <h3>FACTURE {% if(facture.numeroFacture) %}N°&nbsp;{{ facture.numeroFacture }}{% else %}BROUILLON{% endif %}</h3>
         <span>Du {{ facture.dateFacturation|date("d/m/Y") }}</span>
+        {% endif %}
         </div>
         <br />
         <br />
@@ -105,7 +110,14 @@
     </tfoot>
 </table>
 
+{% if (facture.description) %}
+<p>
+    {{ facture.description }}
+</p>
+{% endif %}
+
 <small>
+{% if(not facture.isDevis) %}
 <p class="well" style="padding: 5px; margin-bottom: 0;">
 <small style="font-size: 60%;">
 La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l'obligation de vous indiquer :<br />
@@ -114,6 +126,7 @@ Indemnité forfaitaire pour frais de recouvrement : 40 euros (art. D. 441-5 du 
 Sanction en cas de non respect des modalités ci-dessus :<br />
  - amende de 75 000 euros pour les personnes physiques / 375 000 euros pour les personnes morales.
 </small>
+{% endif %}
 </p>
 <p class="text-center">
     <small>
@@ -125,7 +138,7 @@ Sanction en cas de non respect des modalités ci-dessus :<br />
     </small>
 </p>
 </small>
-
+{% if(not facture.isDevis) %}
 <div style="border-top: 1px dashed #ccc; margin-top: 20px;">
     <div class="row">
         <div class="col-xs-12 text-center">
@@ -145,4 +158,5 @@ Sanction en cas de non respect des modalités ci-dessus :<br />
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}

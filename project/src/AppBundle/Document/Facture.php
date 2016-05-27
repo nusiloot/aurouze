@@ -46,6 +46,11 @@ class Facture implements DocumentSocieteInterface {
     /**
      * @MongoDB\Date
      */
+    protected $dateDevis;
+
+    /**
+     * @MongoDB\Date
+     */
     protected $datePaiement;
 
     /**
@@ -92,6 +97,11 @@ class Facture implements DocumentSocieteInterface {
      * @MongoDB\String
      */
     protected $numeroFacture;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $numeroDevis;
 
     /**
      * @MongoDB\String
@@ -530,16 +540,7 @@ class Facture implements DocumentSocieteInterface {
 
     public function getDateReglement() {
     	$frequence = $this->getFrequencePaiement();
-    	/*foreach ($this->getLignes() as $ligne) {
-    		if ($ligne->isOrigineContrat()) {
-	    		if (!$frequence) {
-	    			$frequence = $ligne->getOrigineDocument()->getFrequencePaiement();
-	    		}
-	    		if ($frequence != $ligne->getOrigineDocument()->getFrequencePaiement()) {
-	    			throw new \Exception("Fréquence de paiement différente dans les lignes de facture.");
-	    		}
-    		}
-    	}*/
+
     	$date = $this->getDateFacturation();
     	$date = ($date)? $date : $this->getDateEmission();
     	$date = ($date)? $date : new \DateTime();
@@ -569,6 +570,11 @@ class Facture implements DocumentSocieteInterface {
     */
    public function getFrequencePaiement()
    {
+       if ($this->frequencePaiement) {
+
+           return $this->frequencePaiement;
+       }
+
        if (!$this->frequencePaiement) {
            foreach ($this->getLignes() as $ligne) {
                if ($ligne->isOrigineContrat() && $ligne->getOrigineDocument()->getFrequencePaiement()) {
@@ -583,8 +589,6 @@ class Facture implements DocumentSocieteInterface {
 
            return ContratManager::FREQUENCE_RECEPTION;
        }
-
-       return $this->frequencePaiement;
    }
 
    /**
@@ -596,6 +600,8 @@ class Facture implements DocumentSocieteInterface {
    public function setFrequencePaiement($frequencePaiement)
    {
        $this->frequencePaiement = $frequencePaiement;
+
+       return $this;
    }
 
     /**
@@ -696,4 +702,58 @@ class Facture implements DocumentSocieteInterface {
          return $this->cloture;
     }
 
+
+    /**
+     * Set dateDevis
+     *
+     * @param date $dateDevis
+     * @return self
+     */
+    public function setDateDevis($dateDevis)
+    {
+        $this->dateDevis = $dateDevis;
+        return $this;
+    }
+
+    /**
+     * Get dateDevis
+     *
+     * @return date $dateDevis
+     */
+    public function getDateDevis()
+    {
+        return $this->dateDevis;
+    }
+
+    public function isDevis() {
+
+        return $this->getDateDevis() && !$this->isFacture();
+    }
+
+    public function isFacture() {
+
+        return ($this->getDateFacturation() || $this->getNumeroFacture());
+    }
+
+    /**
+     * Set numeroDevis
+     *
+     * @param string $numeroDevis
+     * @return self
+     */
+    public function setNumeroDevis($numeroDevis)
+    {
+        $this->numeroDevis = $numeroDevis;
+        return $this;
+    }
+
+    /**
+     * Get numeroDevis
+     *
+     * @return string $numeroDevis
+     */
+    public function getNumeroDevis()
+    {
+        return $this->numeroDevis;
+    }
 }

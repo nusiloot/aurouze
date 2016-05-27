@@ -46,22 +46,23 @@
     <p class="text-muted"><i>Aucun mouvement</i></p>
     {% endif %}
 
-    <h3>Liste des Factures <div class="btn-group pull-right"><a href="{{ path('facture_libre', { 'societe': societe.id })}}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer une facture</a></div></h3>
-    <table class="table table-bordered">
+    <h3>Liste des Factures et Devis <div class="btn-group pull-right"><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis' })}}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer un devis</a><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture' })}}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer une facture</a></div></h3>
+    <table class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th class="col-xs-2">Date</th>
                 <th class="col-xs-2">Document</th>
                 <th class="col-xs-4">Contenu</th>
-                <th class="col-xs-2 text-right">Montant TTC</th>
-                <th class="col-xs-2 text-right">Montant Payé</th>
+                <th class="col-xs-1 text-right">Montant&nbsp;TTC</th>
+                <th class="col-xs-1 text-right">Montant&nbsp;payé</th>
+                <th class="col-xs-2 text-right"></th>
             </tr>
         </thead>
         <tbody>
         {% for facture in factures %}
             <tr class="{{ (facture.paye) ? "success" : "" }}">
-                <td>{{ facture.dateFacturation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}</td>
-                <td><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span> Facture n° {{ facture.numeroFacture }}</a></td>
+                <td>{{ ((facture.isDevis) ? facture.dateDevis : facture.dateFacturation) | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</td>
+                <td><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span> {% if facture.isDevis %}Devis n° {{ facture.numeroDevis }}{% else %}Facture n° {{ facture.numeroFacture }}{% endif %}</a></td>
                 <td>
                     <a data-toggle="tooltip" title="{% for ligne in facture.lignes %}{{ (ligne.libelle) ? ligne.libelle~"\n" : "Aucun" }}{% endfor %}" href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.lignes | length}} ligne(s)</a>
                     {% for origine in facture.origines %}
@@ -69,7 +70,17 @@
                     {% endfor %}
                 </td>
                 <td class="text-right">{{ "%0.2f" | format(facture.montantTTC)  }}&nbsp;€</td>
-                <td class="text-right"><span class="text-muted">{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€</span></td>
+                <td class="text-right {% if facture.isDevis %}active{% endif %}">{% if facture.isFacture %}<span class="text-muted">{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€</span>{% endif %}</td>
+                <td class="text-right">
+                    <div class="btn-group">
+                        {% if facture.isDevis %}
+                            <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-warning btn-xs">Créer la facture</a>
+                        {% else %}
+                            <a href="" class="btn btn-default btn-xs">Regénerer</a>
+                            <a href="" class="btn btn-default btn-xs">Avoir</a>
+                        {% endif %}
+                    </div>
+                </td>
             </tr>
         {% endfor %}
         </tbody>

@@ -31,15 +31,16 @@
     <ol class="breadcrumb">
         <li><a href="{{ path('facture') }}">Facture</a></li>
         <li><a href="{{ path('facture_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
-        <li><a href="">Création d'une facture</a></li>
+        <li><a href="">{% if(facture.isDevis) %}Création d'un devis{% else %}Création d'une facture{% endif %}</a></li>
     </ol>
 
     <div id="factureLibre" class="form-horizontal" data-produits="{{ produitsSuggestion | json_encode }}">
         {{ form_start(form) }}
-        <h3 style="margin-bottom: 30px;">Création d'une facture</h3>
-
+        <h3>{% if(facture.isDevis) %}Création d'un devis{% else %}Création d'une facture{% endif %}</h3>
+        <hr />
         <div class="row">
             <div class="col-xs-5">
+                {% if (form.dateFacturation is defined) %}
                 <div class="form-group">
                     {{ form_errors(form.dateFacturation) }}
                     {{ form_label(form.dateFacturation, "Date de facturation", {'label_attr': {'class': 'col-xs-5 control-label'}}) }}
@@ -50,6 +51,19 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
+                {% if (form.dateDevis is defined) %}
+                <div class="form-group">
+                    {{ form_errors(form.dateDevis) }}
+                    {{ form_label(form.dateDevis, "Date du devis", {'label_attr': {'class': 'col-xs-5 control-label'}}) }}
+                    <div class="col-xs-7">
+                        <div class="input-group">
+                            {{ form_widget(form.dateDevis) }}
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
 
                 <div class="form-group">
                     {{ form_errors(form.frequencePaiement) }}
@@ -83,14 +97,22 @@
                 <th colspan="5" class="text-right"><a href="javascript:void(0);" data-collection-target="#facture_lignes_collection"  class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a></th>
             </tfoot>
         </table>
+        <div class="form-group">
+            {{ form_errors(form.description) }}
+            {{ form_label(form.description, "Informations complémentaires", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
+            <div class="col-xs-10">
+                {{ form_widget(form.description) }}
+            </div>
+        </div>
+        <hr />
         <div class="row form-group">
             <div class="col-xs-4 text-right">
             </div>
             <div class="col-xs-4 text-center">
-                <button type="submit" name="previsualiser" value="previsualiser" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Prévisualiser</button>
+                <button type="submit" name="previsualiser" value="previsualiser" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Prévisualiser {% if(facture.isDevis) %}le devis{% else %}la facture{% endif %}</button>
             </div>
             <div class="col-xs-4 text-right">
-                <button type="submit" class="btn btn-success">Générer la facture</button>
+                <button type="submit" class="btn btn-success">{% if(facture.isDevis) %}Générer le devis{% else %}Générer la facture{% endif %}</button>
             </div>
         </div>
         {{ form_end(form) }}
