@@ -7,7 +7,13 @@
         <li><a href="{{ path('paiements_liste') }}">Paiements</a></li>
 
     </ol>
+    <div class="btn-group">
+        <a onclick="return confirm('Êtes-vous sûre de vouloir faire l\'export compatble facture ?');" class="btn btn-sm btn-default" href="/app_dev.php/contrat/CONTRAT-003889-20151104-0001/copie"><span class="glyphicon glyphicon-usd"></span> Export comptable factures</a>
 
+        <a onclick="return confirm('Êtes-vous sûre de vouloir faire l\'export compatble paiements ?');" class="btn btn-sm btn-default" href="{{ path('paiements_export_comtable') }}"><span class="glyphicon glyphicon-th-list"></span>  Export comptable paiements</a>
+    </div> 
+    <a class="btn btn-sm btn-default pull-right" href="{{ path('paiements_nouveau') }}" style="margin-bottom: 10px;"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Créer une nouvelle saisie</strong></a>    
+    <br/>
     <div id="wrapper">
         <h1>Liste des 10 dernières campagnes de paiements</h1>
 

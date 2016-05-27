@@ -72,6 +72,11 @@ class Facture implements DocumentSocieteInterface {
      * @MongoDB\Float
      */
     protected $montantPaye;
+    
+    /**
+     * @MongoDB\Float
+     */
+    protected $montantAPayer;
 
     /**
      * @MongoDB\EmbedMany(targetDocument="FactureLigne")
@@ -627,7 +632,7 @@ class Facture implements DocumentSocieteInterface {
 
     public function __toString()
     {
-    	return "N°".$this->getNumeroFacture()." ".$this->getDestinataire()->getNom()." (".$this->getMontantTTC()."€ TTC)";
+    	return "N°".$this->getNumeroFacture()." ".$this->getDestinataire()->getNom()." (".$this->getMontantAPayer()."€ / ".$this->getMontantTTC()."€ TTC)";
     }
 
     /**
@@ -638,7 +643,7 @@ class Facture implements DocumentSocieteInterface {
      */
     public function setMontantPaye($montantPaye) {
         $this->montantPaye = $montantPaye;
-
+        $this->updateRestantAPayer();
         return $this;
     }
 
@@ -660,6 +665,7 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function updateMontantPaye($output = null) {
+        $this->setMontantPaye(0.0);
         foreach ($this->getPaiements() as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
                 if ($paiement->getFacture()->getId() == $this->getId()) {
@@ -695,5 +701,31 @@ class Facture implements DocumentSocieteInterface {
     public function isCloture() {
          return $this->cloture;
     }
+    
+    public function updateRestantAPayer() {
+        $this->setMontantAPayer(round($this->getMontantTTC() - $this->getMontantPaye(),2));
+    }
 
+
+    /**
+     * Set montantAPayer
+     *
+     * @param float $montantAPayer
+     * @return self
+     */
+    public function setMontantAPayer($montantAPayer)
+    {
+        $this->montantAPayer = $montantAPayer;
+        return $this;
+    }
+
+    /**
+     * Get montantAPayer
+     *
+     * @return float $montantAPayer
+     */
+    public function getMontantAPayer()
+    {
+        return $this->montantAPayer;
+    }
 }

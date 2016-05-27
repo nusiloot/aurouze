@@ -80,5 +80,29 @@ class PaiementsController extends Controller {
 
         return $this->render('paiements/nouveau.html.twig', array('form' => $form->createView()));
     }
+    
+     /**
+     * @Route("/paiements/export-comptable", name="paiements_export_comtable")
+     */
+    public function exportComptableAction(Request $request) {
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $paiements = new Paiements();
+
+        $form = $this->createForm(new PaiementsType($this->container, $dm), $paiements, array(
+            'action' => $this->generateUrl('paiements_nouveau'),
+            'method' => 'POST',
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $paiements = $form->getData();
+
+            $dm->persist($paiements);
+            $dm->flush();
+            return $this->redirectToRoute('paiements_modification', array('id' => $paiements->getId()));
+        }
+
+        return $this->render('paiements/nouveau.html.twig', array('form' => $form->createView()));
+    }
 
 }
