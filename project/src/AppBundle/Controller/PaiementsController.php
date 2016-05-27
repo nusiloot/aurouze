@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\PaiementsType;
 use AppBundle\Document\Paiements;
 use AppBundle\Document\Societe;
@@ -83,26 +84,65 @@ class PaiementsController extends Controller {
     
      /**
      * @Route("/paiements/export-comptable", name="paiements_export_comtable")
+     * @ParamConverter("paiements", class="AppBundle:Paiements")
      */
-    public function exportComptableAction(Request $request) {
+    public function exportComptableAction(Request $request,Paiements $paiements) {
 
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $paiements = new Paiements();
+       $dm = $this->get('doctrine_mongodb')->getManager();
+       $pm = $this->get('paiements.manager');
 
-        $form = $this->createForm(new PaiementsType($this->container, $dm), $paiements, array(
-            'action' => $this->generateUrl('paiements_nouveau'),
-            'method' => 'POST',
+        $html = $this->renderView('paiements/pdfBanque.html.twig', array(
+            'paiements' => $paiements,
+            'parameters' => $pm->getParameters(),
         ));
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $paiements = $form->getData();
+        
+       
+        $filename = sprintf("banque_paiements_%s.pdf", $paiements->getDateCreation()->format("Y-m-d_H:i"));
 
-            $dm->persist($paiements);
-            $dm->flush();
-            return $this->redirectToRoute('paiements_modification', array('id' => $paiements->getId()));
+        if ($request->get('output') == 'html') {
+
+            return new Response($html, 200);
         }
 
-        return $this->render('paiements/nouveau.html.twig', array('form' => $form->createView()));
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+                )
+        );
+    }
+    
+     /**
+     * @Route("/paiements/{id}/banque", name="paiements_export_banque")
+     * @ParamConverter("paiements", class="AppBundle:Paiements")
+     */
+    public function pdfBanqueAction(Request $request,Paiements $paiements) {
+
+       $dm = $this->get('doctrine_mongodb')->getManager();
+       $pm = $this->get('paiements.manager');
+        $html = $this->renderView('paiements/pdfBanque.html.twig', array(
+            'paiements' => $paiements,
+            'parameters' => $pm->getParameters(),
+        ));
+        
+       
+        $filename = sprintf("banque_paiements_%s.pdf", $paiements->getDateCreation()->format("Y-m-d_H:i"));
+
+        if ($request->get('output') == 'html') {
+
+            return new Response($html, 200);
+        }
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+                )
+        );
+    }
+    
+      public function getPdfGenerationOptions() {
+        return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4, 'zoom' => 1);
     }
 
 }

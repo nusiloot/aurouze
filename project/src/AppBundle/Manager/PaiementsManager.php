@@ -9,6 +9,7 @@ class PaiementsManager {
 
     protected $dm;
     protected $fm;
+    protected $parameters;
 
     const TYPE_REGLEMENT_FACTURE = 'FACTURE';
     const TYPE_REGLEMENT_ACCOMPTE_COMMANDE = 'ACCOMPTE_COMMANDE';
@@ -56,9 +57,10 @@ class PaiementsManager {
         "5" => self::MOYEN_PAIEMENT_CB,
         "6" => self::MOYEN_PAIEMENT_REGULARISATION_COMPTABLE);
 
-    function __construct(DocumentManager $dm, FactureManager $fm) {
+    function __construct(DocumentManager $dm, FactureManager $fm,$parameters) {
         $this->dm = $dm;
         $this->fm = $fm;
+        $this->parameters = $parameters;
     }
 
     public function getRepository() {
@@ -66,6 +68,11 @@ class PaiementsManager {
         return $this->dm->getRepository('AppBundle:Paiements');
     }
 
+    
+    public function getParameters() {
+
+        return $this->parameters;
+    }
     
     public function createByDateCreation(\DateTime $dateCreation){
         $paiements = new Paiements();
