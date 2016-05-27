@@ -1,0 +1,68 @@
+{% set _menu_active = 'paiements' %}
+{% extends 'base.html.twig' %}
+{% block title %}Liste des paiements de {{ societe.raisonSociale }}{% endblock title %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paiements_liste') }}">Paiements</a></li>
+        <li><a href="{{ path('paiements_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+    </ol>
+
+    <div id="wrapper">
+        <h1>Liste des paiements {{ societe.raisonSociale }}</h1>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="col-xs-2">Date</th>
+                    <th class="col-xs-1 text-right">Nombre</th>
+                    <th class="col-xs-7">
+                        <div class="row">
+                            <div class="col-xs-6">          
+                                <div class="row">
+                                    <div class="col-xs-8 text-right">Type Règlement</div>
+                                    <div class="col-xs-4 text-left">Moyen</div>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">Libelle</div>
+                            <div class="col-xs-2 text-right">Montant</div>
+                        </div>
+                    </th>
+                    <th class="col-xs-2 text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for paiements in paiementsDocs %}
+                    <tr class="">
+                        <th class="col-xs-2"><a href="{{ path('paiements_modification', {'id': paiements.id })}}">{{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}</a></th>
+                        <th class="col-xs-1 text-right">{{ paiements.paiementBySociete(societe) | length }}</th>
+                        <th class="col-xs-7">
+                            {% for paiement in paiements.paiementBySociete(societe) %}
+                                <div class="row">
+                                    <div class="col-xs-6">          
+                                        <div class="row">
+                                            <div class="col-xs-8 text-right">
+                                                {{ paiement.typeReglementLibelle }}
+                                            </div>
+                                            <div class="col-xs-4  text-left">          
+                                                {{ paiement.getMoyenPaiementLibelle() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4"> 
+                                        {% if(paiement.libelle) %}{{ paiement.libelle }}{% endif %}
+                                    </div>
+                                    <div class="col-xs-2 text-right">
+                                        {{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </th>
+                        <th class="col-xs-2 text-right" rowspan="{{ paiements.paiementBySociete(societe) | length }}">{{ paiements.getTotalBySociete(societe) | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</th>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}

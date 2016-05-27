@@ -3,7 +3,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
-use AppBundle\Manager\PaiementsManager;
+use AppBundle\Document\Societe;
 
 class PaiementsRepository extends DocumentRepository {
 
@@ -27,6 +27,14 @@ class PaiementsRepository extends DocumentRepository {
              ->execute();
         
         
+    }
+    
+    public function getBySociete(Societe $societe) {
+        return $this->createQueryBuilder()
+             ->field('paiement.facture')->equals(new \MongoRegex('/^FACTURE-' .$societe->getIdentifiant(). '.*/i'))
+             ->sort('dateCreation','desc')
+             ->getQuery()
+             ->execute();
     }
 
 }

@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Type\PaiementsType;
 use AppBundle\Document\Paiements;
+use AppBundle\Document\Societe;
 
 class PaiementsController extends Controller {
 
@@ -19,6 +20,17 @@ class PaiementsController extends Controller {
         $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(10);
 
         return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs));
+    }
+    
+     /**
+     * @Route("/paiements/societe/{id}", name="paiements_societe")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+    public function societeAction(Request $request,  Societe $societe) {
+
+        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getBySociete($societe);
+
+        return $this->render('paiements/societe.html.twig', array('paiementsDocs' => $paiementsDocs,'societe' => $societe));
     }
 
     /**
