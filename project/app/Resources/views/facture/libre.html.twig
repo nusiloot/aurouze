@@ -106,7 +106,8 @@
         </div>
         <hr />
         <div class="row form-group">
-            <div class="col-xs-4 text-right">
+            <div class="col-xs-4 text-left">
+                <a class="btn btn-default" href="{{ path('facture_societe',{ 'id' : societe.id }) }}">Annuler</a>
             </div>
             <div class="col-xs-4 text-center">
                 <button type="submit" name="previsualiser" value="previsualiser" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Prévisualiser {% if(facture.isDevis) %}le devis{% else %}la facture{% endif %}</button>
