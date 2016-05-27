@@ -39,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-12">
+                <div class="col-sm-12" style="min-height: 21px; margin-top:10px;">
             {% if passage.etablissement.telephoneFixe or passage.etablissement.telephonePortable %}
                 <i class="mdi mdi-call mdi-lg"></i>
                 <small>{{ passage.etablissement.telephoneFixe }}</small>
@@ -48,6 +48,10 @@
                 {% endif %}
                 <small>{{ passage.etablissement.telephonePortable }}</small>
             {% endif %}
+            <span style="cursor: help;" title="{{ passage.libelle }}"
+                  data-toggle="tooltip"
+                  class="pull-right badge {% if(passage.isGarantie) %}badge-warning{% elseif(passage.isControle)%}badge-warning{% else %}badge-default{% endif %} {% if(passage.mouvementDeclenchable) %}badge-inverse{% endif %} btn-xs">{{
+						passage.getNumeroPassage() }}</span>
         </div>
     </div>
     <div class="row" style="margin-top:10px;">
@@ -64,7 +68,7 @@
         <div class="col-sm-3 text-right">
             <div data-url="{{ urlPlanif }}" class="btn btn-link calendar_lien" >
                 <i class="mdi mdi-date-range mdi-lg"></i>
-                {{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                {{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}
             </div>
         </div>
     </div>

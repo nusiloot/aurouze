@@ -3,6 +3,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use AppBundle\Manager\CompteManager;
 use AppBundle\Model\DocumentSocieteInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -10,7 +11,7 @@ use AppBundle\Manager\ContratManager;
 use AppBundle\Document\Adresse;
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\CompteRepository")
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\CompteRepository") @HasLifecycleCallbacks
  */
 class Compte implements DocumentSocieteInterface {
 

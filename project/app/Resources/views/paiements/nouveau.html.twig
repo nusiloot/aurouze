@@ -1,6 +1,6 @@
 {% set _menu_active = 'paiements' %}
 {% extends 'base.html.twig' %}
-{% block title %}Modification des paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% endblock title %}
+{% block title %}Nouveau{% endblock title %}
 
 {% form_theme form _self %}
 
@@ -8,21 +8,17 @@
 {% block _paiements_paiement_entry_row %}
     <div class="row form-group dynamic-collection-item" class="paiements" style="margin-left: 0px; margin-right: 0px; position:relative;">
 	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
-                {{ form_errors(form.typeReglement) }}
 	            {{ form_widget(form.typeReglement) }}
 	        </div> 
 	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
-                {{ form_errors(form.moyenPaiement) }}
 	            {{ form_widget(form.moyenPaiement) }}
 	        </div> 
-	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
-                {{ form_errors(form.libelle) }}
-	            {{ form_widget(form.libelle) }}
-	        </div>
 	        <div class="col-xs-3" style="padding-left : 5px; padding-right: 5px;">
-                {{ form_errors(form.facture) }}
 				{{ form_widget(form.facture, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher une facture', 'data-url' : path('facture_search'), 'aria-hidden': true } }) }}
 	        </div> 
+	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
+	            {{ form_widget(form.libelle) }}
+	        </div>
 	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
 	            
                         <div class="form-group">
@@ -34,7 +30,6 @@
                         </div>
 	        </div> 
 	        <div class="col-xs-1" style="padding-left : 5px; padding-right: 5px;">
-                {{ form_errors(form.montant) }}
 	            {{ form_widget(form.montant) }}
 	        </div>
 	        <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove pull-right" style="position: absolute;"><span class="glyphicon glyphicon-remove"></span></button>
@@ -44,13 +39,13 @@
 
 {% block body %}
     <ol class="breadcrumb">
-                <li><a href="{{ path('paiements_liste') }}">Paiements</a></li>
+        {#        <li><a href="{{ path('paiements') }}">Paiements</a></li>#}
         {#        <li><a href="{{ path('paiements_visualisation',{ 'id' : paiements.id }) }}">&nbsp;{{ paiements.id }}</a></li>#}
-        <li><a href="{{ path('paiements_modification', {'id': paiements.id }) }}"><small>Modification paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</small></a></li>        
+        <li><small>Nouveau</small></li>        
     </ol>
 
     <div id="wrapper">
-        <h1>Modification des paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</h1>
+        <h1>Nouveau</h1>
         {{ form_start(form) }}
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Informations</strong><div class="pull-right"></div></div>

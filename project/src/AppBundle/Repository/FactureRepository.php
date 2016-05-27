@@ -19,4 +19,34 @@ class FactureRepository extends DocumentRepository
              ->getQuery()
              ->execute();
 	}
+	
+	public function findByTerms($queryString) {
+        $terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $queryString)));
+        $results = null;
+        foreach ($terms as $term) {
+            if (strlen($term) < 2) {
+                continue;
+            }
+            $q = $this->createQueryBuilder();
+            $q
+                    ->addOr($q->expr()->field('destinataire.nom')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
+                    ->addOr($q->expr()->field('numeroFacture')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
+                    ->addOr($q->expr()->field('montantHT')->equals(new \MongoRegex('/.*' . $term . '.*/i')));
+
+            $factures = $q->limit(1000)->getQuery()->execute();
+
+            $currentResults = array();
+            foreach ($factures as $facture) {
+                $currentResults[$facture->getId()] = $facture->__toString();
+            }
+
+            if (!is_null($results)) {
+                $results = array_intersect_assoc($results, $currentResults);
+            } else {
+                $results = $currentResults;
+            }
+        }
+
+        return is_null($results) ? array() : $results;
+    }
 }
