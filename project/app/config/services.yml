@@ -93,6 +93,10 @@ services:
         class: AppBundle\Import\CompteCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager]
 
+    configuration.manager:
+        class: AppBundle\Manager\ConfigurationManager
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
+
     configurationPrestation.importer:
         class: AppBundle\Import\ConfigurationPrestationCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager]

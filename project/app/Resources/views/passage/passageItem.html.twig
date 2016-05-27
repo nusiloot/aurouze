@@ -4,13 +4,13 @@
 {% set techIdentite = "" %}
 {% set dptKeyWord = (passage.etablissement.adresse.codePostal | slice(0, 2))? "departement "~passage.etablissement.adresse.codePostal | slice(0, 2) : "" %}
 {% if(passage.techniciens | length == 0) %}
-    {% set words = [dptKeyWord, "sans technicien", passage.etablissement.adresse.codePostal, passage.etablissement.adresse.commune, passage.etablissement.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissement.nom]|json_encode() %}
+    {% set words = [dptKeyWord, "sans technicien", passage.etablissement.adresse.codePostal, passage.etablissement.adresse.commune, passage.etablissement.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissement.nom]|json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
     {% set techColor = 'white' %}
     {% set techBgColor = 'black' %}
     {% set techIdentite = "sans technicien" %}
     {% set urlPlanif = path('calendarManuel') %}
 {% else %}
-    {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissement.adresse.codePostal, passage.etablissement.adresse.commune, passage.etablissement.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissement.nom]|json_encode() %}
+    {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissement.adresse.codePostal, passage.etablissement.adresse.commune, passage.etablissement.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissement.nom]|json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
     {% set techColor = passage.techniciens[0].couleurText %}
     {% set techBgColor = passage.techniciens[0].couleur %}
     {% set techIdentite = passage.techniciens[0].identite %}
