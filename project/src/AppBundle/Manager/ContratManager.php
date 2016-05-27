@@ -300,4 +300,20 @@ class ContratManager implements MouvementManagerInterface {
         return $passagesByNumero;
     }
 
+    public function getAllFactureForContrat($contrat) {
+        return $this->dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
+    }
+
+    public function isContratEnRetardPaiement($contrat) {
+        $factures = $this->getAllFactureForContrat($contrat);
+        foreach ($factures as $facture) {
+            if (!$facture->isCloture()) {
+                if ($facture->getDateLimitePaiement()->format('Ymd') < (new \DateTime())->format('Ymd')) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

@@ -154,7 +154,7 @@ class ContratController extends Controller {
                 return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
             }
         }
-        $factures = $dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
+        $factures = $contratManager->getAllFactureForContrat($contrat);
         return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat, 'factures' => $factures, 'form' => $form->createView(), 'societe' => $contrat->getSociete()));
     }
 

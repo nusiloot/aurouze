@@ -6,9 +6,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Manager\FactureManager;
 use AppBundle\Manager\ContratManager;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks; 
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\FactureRepository")
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\FactureRepository") @HasLifecycleCallbacks
  */
 class Facture implements DocumentSocieteInterface {
 
@@ -102,11 +103,26 @@ class Facture implements DocumentSocieteInterface {
      */
     protected $paiements;
 
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $cloture;
+
     public function __construct() {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->emetteur = new FactureSoussigne();
         $this->destinataire = new FactureSoussigne();
         $this->paiements = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->cloture = false;
+    }
+
+    /** @MongoDB\PreUpdate */
+    public function preUpdate() {
+        if ($this->getMontantTTC() == $this->getMontantPaye()) {
+            $this->cloture = true;
+        } else {
+            $this->cloture = false;
+        }
     }
 
     public function update() {
@@ -600,13 +616,37 @@ class Facture implements DocumentSocieteInterface {
         foreach ($this->getPaiements() as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
                 if ($paiement->getFacture()->getId() == $this->getId()) {
-                    if($output){
-                        $output->writeln(sprintf("<comment>Ajout d'un paiement de %s euros HT pour facture d'id %s </comment>", $paiement->getMontant(), $this->getId()));               
+                    if ($output) {
+                        $output->writeln(sprintf("<comment>Ajout d'un paiement de %s euros HT pour facture d'id %s </comment>", $paiement->getMontant(), $this->getId()));
                     }
                     $this->ajoutMontantPaye($paiement->getMontant());
                 }
             }
         }
+    }
+
+    /**
+     * Set cloture
+     *
+     * @param boolean $cloture
+     * @return self
+     */
+    public function setCloture($cloture) {
+        $this->cloture = $cloture;
+        return $this;
+    }
+
+    /**
+     * Get cloture
+     *
+     * @return boolean $cloture
+     */
+    public function getCloture() {
+        return $this->cloture;
+    }
+    
+    public function isCloture() {
+         return $this->cloture;
     }
 
 }

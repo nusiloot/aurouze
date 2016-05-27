@@ -1434,5 +1434,5 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return ContratManager::$frequences[$this->frequencePaiement];
     }
-
+     
 }
