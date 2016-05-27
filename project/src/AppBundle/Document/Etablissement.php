@@ -315,9 +315,9 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         return EtablissementManager::$type_icon[$this->getType()];
     }
 
-    public function getIntitule() {
+    public function getIntitule($includeRaisonSociale = true) {
 
-        return $this->getNom() . ' ' . $this->getAdresse()->getIntitule() . ' (' . $this->identifiant . ')';
+        return $this->getNom($includeRaisonSociale) . ' ' . $this->getAdresse()->getIntitule() . ' (' . $this->identifiant . ')';
     }
 
     /**

@@ -41,3 +41,8 @@ join -a 1 -t ';' -1 13 -2 1 $DATA_DIR/paiementsClean.csv $DATA_DIR/cheques.clean
 echo -e "\n\nImport des types de paiements\n"
 
 php app/console importer:csv paiements.importer $DATA_DIR/paiements.csv -vvv
+
+
+php app/console update:facture-update-montantfacture -vvv
+
+

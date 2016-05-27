@@ -138,7 +138,6 @@ class ContratManager implements MouvementManagerInterface {
         $contrat->setDureeGarantie(0);
         $contrat->setFrequencePaiement(self::FREQUENCE_RECEPTION);
         $contrat->setTvaReduite(false);
-        $contrat->setNomenclature("Intervention rapide (Bon bleu)");
 
         return $contrat;
     }
@@ -174,6 +173,7 @@ class ContratManager implements MouvementManagerInterface {
         $date_debut = clone $contrat->getDateDebut();
         $passagesArray = $contrat->getPrevisionnel($date_debut);
         ksort($passagesArray);
+        $firstEtb = true;
         foreach ($contrat->getEtablissements() as $etablissement) {
             $cpt = 0;
             foreach ($passagesArray as $datePassage => $passageInfos) {
@@ -187,9 +187,9 @@ class ContratManager implements MouvementManagerInterface {
                 if (!$cpt) {
                     $passage->setDateDebut($datePrevision);
                 }
-
-                $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
-
+                if ($firstEtb) {
+                    $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
+                }
 
                 $passage->setContrat($contrat);
                 $passage->setTypePassage(PassageManager::TYPE_PASSAGE_CONTRAT);
@@ -212,6 +212,7 @@ class ContratManager implements MouvementManagerInterface {
                 }
                 $cpt++;
             }
+            $firstEtb = false;
         }
         $this->dm->flush();
     }
@@ -227,7 +228,7 @@ class ContratManager implements MouvementManagerInterface {
                 $newDateWithMvtDeclenchable[] = false;
             }
         }
-       
+
         foreach ($contrat->getContratPassages() as $contratPassage) {
             $num_passage = 0;
             foreach ($contratPassage->getPassagesSorted() as $passage) {
@@ -241,6 +242,7 @@ class ContratManager implements MouvementManagerInterface {
                     $this->dm->persist($passage);
                 }
             }
+            break;
         }
         $this->dm->flush();
     }
@@ -296,6 +298,22 @@ class ContratManager implements MouvementManagerInterface {
             $passagesByNumero[$idEtb] = $passages;
         }
         return $passagesByNumero;
+    }
+
+    public function getAllFactureForContrat($contrat) {
+        return $this->dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
+    }
+
+    public function isContratEnRetardPaiement($contrat) {
+        $factures = $this->getAllFactureForContrat($contrat);
+        foreach ($factures as $facture) {
+            if (!$facture->isCloture()) {
+                if ($facture->getDateLimitePaiement()->format('Ymd') < (new \DateTime())->format('Ymd')) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
