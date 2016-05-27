@@ -1,0 +1,48 @@
+{% set _menu_active = 'paiements' %}
+{% extends 'base.html.twig' %}
+{% block title %}Liste des 10 dernières campagnes de paiements{% endblock title %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paiements_liste') }}">Paiements</a></li>
+
+    </ol>
+
+    <div id="wrapper">
+        <h1>Liste des 10 dernières campagnes de paiements</h1>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="col-xs-2">Date</th>
+                    <th class="col-xs-1 text-right">Nombre</th>
+                    <th class="col-xs-7">Societes</th>
+                    <th class="col-xs-2 text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for paiements in paiementsDocs %}
+                    <tr class="">
+                        <th class="col-xs-2"><a href="{{ path('paiements_modification', {'id': paiements.id })}}">{{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}</a></th>
+                        <th class="col-xs-1 text-right">{{ paiements.paiement | length }}</th>
+                        <th class="col-xs-7">
+                            {% for paiement in paiements.paiement %}
+                                <div class="row">
+                                    <div class="col-xs-10">
+                                        <a title="Voir la société" href="{{ path('societe_visualisation', {'id': paiement.facture.societe.id })}}">
+                                            {{ paiement.facture.societe.raisonSociale }}</a>
+                                    </div>
+                                    <div class="col-xs-2 text-right">
+                                        {{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </th>
+                        <th class="col-xs-2 text-right">{{ paiements.getMontantTotal | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</th>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}

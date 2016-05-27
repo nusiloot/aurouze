@@ -18,5 +18,15 @@ class PaiementsRepository extends DocumentRepository {
              ->getIterator();
     }
     
+    
+    public function getLastPaiements($nbLimit) {
+       return $this->createQueryBuilder()
+             ->sort('dateCreation','desc')
+             ->limit($nbLimit)
+             ->getQuery()
+             ->execute();
+        
+        
+    }
 
 }

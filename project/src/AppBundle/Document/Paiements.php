@@ -149,4 +149,12 @@ class Paiements {
     {
         return $this->imprime;
     }
+    
+    public function getMontantTotal() {
+        $montantTotal = 0;
+        foreach ($this->getPaiement() as $paiement) {
+            $montantTotal+=$paiement->getMontant();
+        }
+        return $montantTotal;
+    }
 }
