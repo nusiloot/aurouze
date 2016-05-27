@@ -24,7 +24,7 @@
         $.initListingPassage();
         $.initLinkCalendar();
         $.initMap();
-        $.initFactureLibre();
+        $.initTypeheadFacture();
     });
 
     $.initLinkCalendar = function () {
@@ -201,6 +201,7 @@
         $.initSelect2Ajax();
         $.initDatePicker();
         $.initTimePicker();
+        $.initTypeheadFacture();
     }
 
     $.callbackEventForm = function () {
@@ -299,12 +300,11 @@
         }
     });
 
-    $.initFactureLibre = function() {
+    $.initTypeheadFacture = function() {
         if(!$('#factureLibre').length) {
             return ;
         }
         var produits = $('#factureLibre').data('produits');
-        console.log(produits);
 
         var produitsSource = new Bloodhound({
           datumTokenizer: Bloodhound.tokenizers.obj.whitespace('libelle'),
@@ -312,29 +312,29 @@
           local: produits
         });
 
-        $('.typeahead').typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 1
+        $('td > .typeahead').typeahead({
+             hint: true,
+             highlight: true,
+             minLength: 1
         },
         {
-          limit: 10,
-          name: 'produits',
-          display: 'libelle',
-          source: produitsSource,
-          templates: {
-            suggestion: function(e) { console.log(e); return $("<div>"+e.libelle+" <small class='text-muted'>à "+e.prix+" €</small></div>"); }
-          }
+              limit: 10,
+              name: 'produits',
+              display: 'libelle',
+              source: produitsSource,
+              templates: {
+                suggestion: function(e) { return $("<div>"+e.libelle+" <small class='text-muted'>à "+e.prix+" €</small></div>"); }
+              }
         });
 
         $('.typeahead').bind('typeahead:select', function(ev, suggestion) {
             $(this).parents(".dynamic-collection-item").find('.prix-unitaire').val(suggestion.prix);
         });
+    }
 
-        $("#factureLibre").on("change", ".choix-produit", function (e) {
-            var prix = produits[$(this).val()];
-            $(this).parents(".dynamic-collection-item").find('.prix-unitaire').val(prix);
-        });
+    $.initFactureLibre = function() {
+
+
     }
 
     $.initModalPassage = function () {
@@ -404,7 +404,7 @@
 
                 $(document).find('.hamzastyle').val(select2Data).trigger("change");
                 $(document).find('.hamzastyle-item').each(function () {
-                    var words = $(this).attr('data-words');
+                    var words = JSON.parse($(this).attr('data-words'));
                     var find = true;
                     for (key in filtres) {
                         var word = filtres[key];

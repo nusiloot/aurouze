@@ -91,11 +91,16 @@ class Facture implements DocumentSocieteInterface {
     * @MongoDB\String
     */
     protected $avoir;
-    
+
     /**
      * @MongoDB\ReferenceMany(targetDocument="Paiement", mappedBy="facture")
      */
     protected $paiements;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $frequencePaiement;
 
     public function __construct()
     {
@@ -524,7 +529,7 @@ class Facture implements DocumentSocieteInterface {
     {
         return $this->dateLimitePaiement;
     }
-    
+
     public function getTva() {
     	$tva = 0;
     	foreach ($this->getLignes() as $ligne) {
@@ -537,10 +542,10 @@ class Facture implements DocumentSocieteInterface {
     	}
     	return $tva;
     }
-    
+
     public function getDateReglement() {
-    	$frequence = null;
-    	foreach ($this->getLignes() as $ligne) {
+    	$frequence = $this->getFrequencePaiement();
+    	/*foreach ($this->getLignes() as $ligne) {
     		if ($ligne->isOrigineContrat()) {
 	    		if (!$frequence) {
 	    			$frequence = $ligne->getOrigineDocument()->getFrequencePaiement();
@@ -549,21 +554,21 @@ class Facture implements DocumentSocieteInterface {
 	    			throw new \Exception("Fréquence de paiement différente dans les lignes de facture.");
 	    		}
     		}
-    	}
+    	}*/
     	$date = $this->getDateFacturation();
     	$date = ($date)? $date : $this->getDateEmission();
     	$date = ($date)? $date : new \DateTime();
     	switch ($frequence) {
-    		case ContratManager::FREQUENCE_30J : 
+    		case ContratManager::FREQUENCE_30J :
     			$date->modify('+30 day');
     			break;
-    		case ContratManager::FREQUENCE_30JMOIS : 
+    		case ContratManager::FREQUENCE_30JMOIS :
     			$date->modify('+30 day')->modify('last day of');
     			break;
-    		case ContratManager::FREQUENCE_45JMOIS : 
+    		case ContratManager::FREQUENCE_45JMOIS :
     			$date->modify('+45 day')->modify('last day of');
     			break;
-    		case ContratManager::FREQUENCE_60J : 
+    		case ContratManager::FREQUENCE_60J :
     			$date->modify('+60 day');
     			break;
     		default:
@@ -601,4 +606,42 @@ class Facture implements DocumentSocieteInterface {
     {
         return $this->paiements;
     }
+
+    /**
+     * Set frequencePaiement
+     *
+     * @param string $frequencePaiement
+     * @return self
+     */
+    public function setFrequencePaiement($frequencePaiement)
+    {
+        $this->frequencePaiement = $frequencePaiement;
+        return $this;
+    }
+
+    /**
+     * Get frequencePaiement
+     *
+     * @return string $frequencePaiement
+     */
+    public function getFrequencePaiement()
+    {
+        if (!$this->frequencePaiement) {
+            foreach ($this->getLignes() as $ligne) {
+        		if ($ligne->isOrigineContrat() && $ligne->getOrigineDocument()->getFrequencePaiement()) {
+
+                    return $ligne->getOrigineDocument()->getFrequencePaiement();
+                }
+
+        	}
+        }
+
+        if(!$this->frequencePaiement) {
+
+            return ContratManager::FREQUENCE_RECEPTION;
+        }
+
+        return $this->frequencePaiement;
+    }
+
 }
