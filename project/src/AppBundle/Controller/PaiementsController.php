@@ -22,16 +22,16 @@ class PaiementsController extends Controller {
 
         return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs));
     }
-    
-     /**
+
+    /**
      * @Route("/paiements/societe/{id}", name="paiements_societe")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function societeAction(Request $request,  Societe $societe) {
+    public function societeAction(Request $request, Societe $societe) {
 
         $paiementsDocs = $this->get('paiements.manager')->getRepository()->getBySociete($societe);
 
-        return $this->render('paiements/societe.html.twig', array('paiementsDocs' => $paiementsDocs,'societe' => $societe));
+        return $this->render('paiements/societe.html.twig', array('paiementsDocs' => $paiementsDocs, 'societe' => $societe));
     }
 
     /**
@@ -81,23 +81,22 @@ class PaiementsController extends Controller {
 
         return $this->render('paiements/nouveau.html.twig', array('form' => $form->createView()));
     }
-    
-     /**
+
+    /**
      * @Route("/paiements/export-comptable", name="paiements_export_comtable")
-     * @ParamConverter("paiements", class="AppBundle:Paiements")
      */
-    public function exportComptableAction(Request $request,Paiements $paiements) {
+    public function exportComptableAction(Request $request) {
 
-       $dm = $this->get('doctrine_mongodb')->getManager();
-       $pm = $this->get('paiements.manager');
-
-        $html = $this->renderView('paiements/pdfBanque.html.twig', array(
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $pm = $this->get('paiements.manager');
+        $paiements = array();
+        $html = $this->renderView('paiements/exportPaiements.html.twig', array(
             'paiements' => $paiements,
             'parameters' => $pm->getParameters(),
         ));
-        
-       
-        $filename = sprintf("banque_paiements_%s.pdf", $paiements->getDateCreation()->format("Y-m-d_H:i"));
+
+
+        $filename = sprintf("export_paiements_%s.csv", $paiements->getDateCreation()->format("Y-m-d"));
 
         if ($request->get('output') == 'html') {
 
@@ -111,22 +110,22 @@ class PaiementsController extends Controller {
                 )
         );
     }
-    
-     /**
+
+    /**
      * @Route("/paiements/{id}/banque", name="paiements_export_banque")
      * @ParamConverter("paiements", class="AppBundle:Paiements")
      */
-    public function pdfBanqueAction(Request $request,Paiements $paiements) {
+    public function pdfBanqueAction(Request $request, Paiements $paiements) {
 
-       $dm = $this->get('doctrine_mongodb')->getManager();
-       $pm = $this->get('paiements.manager');
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $pm = $this->get('paiements.manager');
         $html = $this->renderView('paiements/pdfBanque.html.twig', array(
             'paiements' => $paiements,
             'parameters' => $pm->getParameters(),
         ));
-        
-       
-        $filename = sprintf("banque_paiements_%s.pdf", $paiements->getDateCreation()->format("Y-m-d_H:i"));
+
+
+        $filename = sprintf("banque_paiements_%s.pdf", $paiements->getDateCreation()->format("Y-m-d"));
 
         if ($request->get('output') == 'html') {
 
@@ -140,8 +139,8 @@ class PaiementsController extends Controller {
                 )
         );
     }
-    
-      public function getPdfGenerationOptions() {
+
+    public function getPdfGenerationOptions() {
         return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4, 'zoom' => 1);
     }
 
