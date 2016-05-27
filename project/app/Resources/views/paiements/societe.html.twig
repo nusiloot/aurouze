@@ -58,7 +58,7 @@
                                 </div>
                             {% endfor %}
                         </th>
-                        <th class="col-xs-2 text-right" rowspan="{{ paiements.paiementBySociete(societe) | length }}">{{ paiements.getTotalBySociete(societe) | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</th>
+                        <th class="col-xs-2 text-right" >{{ paiements.getTotalBySociete(societe) | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</th>
                     </tr>
                 {% endfor %}
             </tbody>
