@@ -52,7 +52,7 @@ class FactureController extends Controller {
             throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("La facture %s n'a pas été trouvé", $request->get('id')));
         }
 
-        if(!$facture) {
+        if(!isset($facture)) {
             $facture = new Facture();
             $factureLigne = new FactureLigne();
             $factureLigne->setTauxTaxe(0.2);

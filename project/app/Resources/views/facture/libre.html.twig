@@ -36,7 +36,7 @@
 
     <div id="factureLibre" class="form-horizontal" data-produits="{{ produitsSuggestion | json_encode }}">
         {{ form_start(form) }}
-        <h3>{% if(facture.isDevis) %}Création d'un devis{% else %}Création d'une facture{% endif %}</h3>
+        <h3>{% if(not facture.id and facture.isDevis) %}Création d'un devis{% elseif(facture.id and facture.numeroDevis) %}Transformation du devis n° {{ facture.numeroDevis }} en facture{% else %}Création d'une facture{% endif %}</h3>
         <hr />
         <div class="row">
             <div class="col-xs-5">
