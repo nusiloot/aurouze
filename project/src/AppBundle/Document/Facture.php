@@ -584,6 +584,13 @@ class Facture implements DocumentSocieteInterface {
         return $this->paiements;
     }
 
+    
+    public function __toString()
+    {
+    	return "N°".$this->getNumeroFacture()." ".$this->getDestinataire()->getNom()." (".$this->getMontantTTC()."€ TTC)";
+    }
+
+
     /**
      * Set montantPaye
      *
@@ -648,5 +655,6 @@ class Facture implements DocumentSocieteInterface {
     public function isCloture() {
          return $this->cloture;
     }
+
 
 }

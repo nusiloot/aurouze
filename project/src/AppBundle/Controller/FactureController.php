@@ -135,4 +135,28 @@ class FactureController extends Controller {
         return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4);
     }
 
+    /**
+     * @Route("/facture/rechercher", name="facture_search")
+     */
+     public function factureSearchAction(Request $request) {
+         $dm = $this->get('doctrine_mongodb')->getManager();
+         $response = new Response();
+         $facturesResult = array();
+         $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term')),  $facturesResult);
+         $data = json_encode($facturesResult);
+         $response->headers->set('Content-Type', 'application/json');
+         $response->setContent($data);
+         return $response;
+     }
+
+    public function contructSearchResult($criterias, &$result) {
+
+        foreach ($criterias as $id => $nom) {
+            $newResult = new \stdClass();
+            $newResult->id = $id;
+            $newResult->text = $nom;
+            $result[] = $newResult;
+        }
+    }
+
 }

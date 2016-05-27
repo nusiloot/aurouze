@@ -21,7 +21,7 @@ class PaiementsManager {
     const MOYEN_PAIEMENT_ESPECE = 'ESPECE';
     const MOYEN_PAIEMENT_TRAITE = 'TRAITE';
     const MOYEN_PAIEMENT_CB = 'CB';
-    const MOYEN_PAIEMENT_REGULARISATION_COMPTABLE = 'CB';
+    const MOYEN_PAIEMENT_REGULARISATION_COMPTABLE = 'REGUL_COMPTA';
 
     public static $types_reglements_libelles = array(
         self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
@@ -30,6 +30,10 @@ class PaiementsManager {
         self::TYPE_REGLEMENT_REGULARISATION_AVOIR => "Régularisation par avoir",
         self::TYPE_REGLEMENT_PERTE => "Perte",
         self::TYPE_REGLEMENT_GAIN => "Gain");
+    public static $nouveau_types_reglements_libelles = array(
+    		self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
+    		self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",
+    		self::TYPE_REGLEMENT_REGULARISATION => "Règlement de régularisation");
     public static $types_reglements_index = array(
         "1" => self::TYPE_REGLEMENT_FACTURE,
         "2" => self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE,
