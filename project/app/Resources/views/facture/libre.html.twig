@@ -29,8 +29,8 @@
 {% block body %}
 
     <ol class="breadcrumb">
-        <li><a href="{{ path('contrat') }}">Facture</a></li>
-        <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+        <li><a href="{{ path('facture') }}">Facture</a></li>
+        <li><a href="{{ path('facture_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
         <li><a href="">Création d'une facture</a></li>
     </ol>
 
@@ -84,8 +84,13 @@
             </tfoot>
         </table>
         <div class="row form-group">
-            <div class="col-xs-12 text-right">
-                <button type="submit" class="btn btn-success">Créer la facture</button>
+            <div class="col-xs-4 text-right">
+            </div>
+            <div class="col-xs-4 text-center">
+                <button type="submit" name="previsualiser" value="previsualiser" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Prévisualiser</button>
+            </div>
+            <div class="col-xs-4 text-right">
+                <button type="submit" class="btn btn-success">Générer la facture</button>
             </div>
         </div>
         {{ form_end(form) }}

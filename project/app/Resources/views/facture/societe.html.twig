@@ -46,13 +46,13 @@
     <p class="text-muted"><i>Aucun mouvement</i></p>
     {% endif %}
 
-    <h3>Liste des Factures <a href="{{ path('facture_libre', { 'societe': societe.id })}}" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-plus"></span> Créer une facture libre</a></h3>
+    <h3>Liste des Factures <div class="btn-group pull-right"><a href="{{ path('facture_libre', { 'societe': societe.id })}}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer une facture</a></div></h3>
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th class="col-xs-2">Date</th>
-                <th class="col-xs-1">Numéro</th>
-                <th class="col-xs-5">Contenu</th>
+                <th class="col-xs-2">Document</th>
+                <th class="col-xs-4">Contenu</th>
                 <th class="col-xs-2 text-right">Montant TTC</th>
                 <th class="col-xs-2 text-right">Montant Payé</th>
             </tr>
@@ -61,11 +61,11 @@
         {% for facture in factures %}
             <tr class="{{ (facture.paye) ? "success" : "" }}">
                 <td>{{ facture.dateFacturation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}</td>
-                <td><a href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.numeroFacture }}</a></td>
+                <td><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span> Facture n° {{ facture.numeroFacture }}</a></td>
                 <td>
                     <a data-toggle="tooltip" title="{% for ligne in facture.lignes %}{{ (ligne.libelle) ? ligne.libelle~"\n" : "Aucun" }}{% endfor %}" href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.lignes | length}} ligne(s)</a>
                     {% for origine in facture.origines %}
-                        : <a href="{{ path('contrat_visualisation', {'id': origine.id })}}">Contrat n° {{ origine.numeroArchive }}</a>
+                        - <a href="{{ path('contrat_visualisation', {'id': origine.id })}}">Contrat n° {{ origine.numeroArchive }}</a>
                     {% endfor %}
                 </td>
                 <td class="text-right">{{ "%0.2f" | format(facture.montantTTC)  }}&nbsp;€</td>

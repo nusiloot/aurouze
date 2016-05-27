@@ -69,7 +69,13 @@ class FactureController extends Controller {
         }
 
         $facture->update();
-        
+
+        if($request->get('previsualiser')) {
+
+            return $this->pdfAction($request, $facture);
+            exit;
+        }
+
         $dm->persist($facture);
         $dm->flush();
 
