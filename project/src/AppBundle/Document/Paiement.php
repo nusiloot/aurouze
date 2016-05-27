@@ -44,12 +44,15 @@ class Paiement {
      */
     protected $versementComptable;
 
-    public function __construct()
-    {
+    /**
+     * @MongoDB\String
+     */
+    protected $identifiantReprise;
+
+    public function __construct() {
         $this->versementComptable = false;
-        
     }
-    
+
     /**
      * Set facture
      *
@@ -170,15 +173,13 @@ class Paiement {
         return $this->versementComptable;
     }
 
-
     /**
      * Set typeReglement
      *
      * @param string $typeReglement
      * @return self
      */
-    public function setTypeReglement($typeReglement)
-    {
+    public function setTypeReglement($typeReglement) {
         $this->typeReglement = $typeReglement;
         return $this;
     }
@@ -188,8 +189,30 @@ class Paiement {
      *
      * @return string $typeReglement
      */
-    public function getTypeReglement()
-    {
+    public function getTypeReglement() {
         return $this->typeReglement;
+    }
+
+
+    /**
+     * Set identifiantReprise
+     *
+     * @param string $identifiantReprise
+     * @return self
+     */
+    public function setIdentifiantReprise($identifiantReprise)
+    {
+        $this->identifiantReprise = $identifiantReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantReprise
+     *
+     * @return string $identifiantReprise
+     */
+    public function getIdentifiantReprise()
+    {
+        return $this->identifiantReprise;
     }
 }

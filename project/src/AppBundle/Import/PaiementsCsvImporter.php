@@ -65,7 +65,7 @@ class PaiementsCsvImporter {
         $cptTotal = 0;
 
         foreach ($csv as $data) {
-
+            
             $cptTotal++;
             if ($cptTotal % (count($csv) / 100) == 0) {
                 $progress->advance();
@@ -100,6 +100,8 @@ class PaiementsCsvImporter {
             }
 
             $paiement = new Paiement();
+            
+            $paiement->setIdentifiantReprise($data[self::CSV_PAIEMENT_ID]);
 
             $index_moyen_paiement = "";
             $index_type_regl = "";
