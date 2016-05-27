@@ -14,7 +14,7 @@
             <h3>Liste des passages à planifier pour {{ etablissementManager.secteursNom(secteur) }}
                 <br/>
                 {% for moisPassage in moisPassagesArray %}
-                    <a href='{{ path('passage') }}#filtre=["{{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM") | capitalize}} {{ moisPassage.date | date("Y") }}"]' >
+                    <a href='{{ path('passage',{"secteur" : secteur}) }}#filtre=["{{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM") | capitalize}} {{ moisPassage.date | date("Y") }}"]' >
                         <small>{{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM") | capitalize }}</small></a>&nbsp;<span class="badge">{{ moisPassage.nb }}</span>&nbsp;&nbsp;
                 {% endfor %}
             </h3>

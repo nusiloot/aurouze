@@ -3,6 +3,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Manager\PaiementsManager;
 
 /**
  * @MongoDB\EmbeddedDocument
@@ -214,5 +215,19 @@ class Paiement {
     public function getIdentifiantReprise()
     {
         return $this->identifiantReprise;
+    }
+    
+    public function getMoyenPaiementLibelle() {
+        if(!$this->getMoyenPaiement()){
+            return $this->getMoyenPaiement();
+        }
+        return PaiementsManager::$moyens_paiement_libelles[$this->getMoyenPaiement()];
+    }
+    
+    public function getTypeReglementLibelle() {
+        if(!$this->getTypeReglement()){
+            return $this->getTypeReglement();
+        }
+        return PaiementsManager::$types_reglements_libelles[$this->getTypeReglement()];
     }
 }

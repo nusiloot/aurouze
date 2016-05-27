@@ -157,4 +157,23 @@ class Paiements {
         }
         return $montantTotal;
     }
+    
+    public function getPaiementBySociete($societe) {
+        $paiementBySoc = array();
+        foreach ($this->getPaiement() as $paiement) {
+            if($paiement->getFacture()->getSociete() == $societe){
+                $paiementBySoc[] =$paiement;
+            }
+        }
+        return $paiementBySoc;
+    }
+    
+    public function getTotalBySociete($societe) {
+        $montantTotal = 0;
+        foreach ($this->getPaiementBySociete($societe) as $paiement) {
+            $montantTotal+=$paiement->getMontant();
+        }
+        return $montantTotal;
+    }    
+    
 }
