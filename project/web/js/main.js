@@ -323,7 +323,13 @@
               display: 'libelle',
               source: produitsSource,
               templates: {
-                suggestion: function(e) { return $("<div>"+e.libelle+" <small class='text-muted'>à "+e.prix+" €</small></div>"); }
+                suggestion: function(e) {
+                    var libelle = e.libelle+"<span class='text-muted'> à "+e.prix+" €</span>";
+                    if(e.conditionnement) {
+                        libelle += "<small> ("+e.conditionnement+")</small>";
+                    }
+                    return $("<div>"+libelle+"</div>");
+                }
               }
         });
 

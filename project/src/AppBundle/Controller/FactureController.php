@@ -53,7 +53,7 @@ class FactureController extends Controller {
         }
 
         if(!isset($facture)) {
-            $facture = new Facture();
+            $facture = $fm->createVierge($societe);
             $factureLigne = new FactureLigne();
             $factureLigne->setTauxTaxe(0.2);
             $facture->addLigne($factureLigne);
@@ -70,7 +70,7 @@ class FactureController extends Controller {
 
         $produitsSuggestion = array();
         foreach($cm->getConfiguration()->getProduits() as $produit) {
-            $produitsSuggestion[] = array("libelle" => $produit->getNom(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
+            $produitsSuggestion[] = array("libelle" => $produit->getNom(), "conditionnement" => $produit->getConditionnement(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
         }
 
         $form = $this->createForm(new FactureType($dm, $cm, $facture->isDevis()), $facture, array(

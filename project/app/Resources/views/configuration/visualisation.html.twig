@@ -33,8 +33,8 @@
                         <td>Nom</td>
                         <td>Conditionnement</td>
                         <td>Prix d'achat HT</td>
-                        <td>Prix de vente HT</td>
                         <td>Prix prestation HT</td>
+                        <td>Prix de vente HT</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,8 +43,8 @@
                         <td>{{ produit.nom }}</td>
                         <td>{{ produit.conditionnement }}</td>
                         <td class="text-right">{{ produit.prixHt | number_format(2, '.', ' ') }}</td>
-                        <td class="text-right">{{ produit.prixVente| number_format(2, '.', ' ') }}</td>
                         <td class="text-right">{{ produit.prixPrestation| number_format(2, '.', ' ') }}</td>
+                        <td class="text-right">{{ produit.prixVente| number_format(2, '.', ' ') }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
