@@ -64,7 +64,7 @@ class CalendarController extends Controller {
         $rdvs = $dm->getRepository('AppBundle:RendezVous')->findByDate($periodeStart, $periodeEnd);
 
         $eventsDates = array();
-        while (strtotime($periodeStart) < strtotime($periodeEnd)) {
+        while (strtotime($periodeStart) <= strtotime($periodeEnd)) {
             $eventsDates[$periodeStart] = array();
             $periodeStart = date("Y-m-d", strtotime("+1 day", strtotime($periodeStart)));
         }
@@ -84,17 +84,10 @@ class CalendarController extends Controller {
                     $index = 0;
                 }
 
-                if (isset($passagesCalendar[$compte->getIdentifiant()]) && isset($passagesCalendar[$compte->getIdentifiant()][($index - 1)]) && $passagesCalendar[$compte->getIdentifiant()][($index - 1)]['end'] >= $rdv->getDateDebut()->format('Y-m-d\TH:i:s')) {
-                    $passagesCalendar[$compte->getIdentifiant()][($index - 1)]['end'] = $rdv->getDateFin()->format('Y-m-d\TH:i:s');
-                    $diffFin = (strtotime($rdv->getDateFin()->format('Y-m-d H:i:s')) - strtotime($rdv->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-                    $passagesCalendar[$compte->getIdentifiant()][($index - 1)]['coefEnd'] = round($diffFin / 30, 2);
-                    continue;
-                }
-
 
                 $dateDebut = new \DateTime($rdv->getDateDebut()->format('Y-m-d') . 'T06:00:00');
-                $diffDebut = (strtotime($rdv->getDateDebut()->format('Y-m-d H:i:s')) - strtotime($rdv->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
-                $diffFin = (strtotime($rdv->getDateFin()->format('Y-m-d H:i:s')) - strtotime($rdv->getDateDebut()->format('Y-m-d') . ' 06:00:00')) / 60;
+                $diffDebut = (strtotime($rdv->getDateDebut()->format('Y-m-dTH:i:s')) - strtotime($rdv->getDateDebut()->format('Y-m-d') . 'T06:00:00')) / 60;
+                $diffFin = (strtotime($rdv->getDateFin()->format('Y-m-dTH:i:s')) - strtotime($rdv->getDateDebut()->format('Y-m-d') . 'T06:00:00')) / 60;
 
                 $passageArr = array(
                     'start' => $rdv->getDateDebut()->format('Y-m-d\TH:i:s'),
@@ -102,8 +95,9 @@ class CalendarController extends Controller {
                     'backgroundColor' => $compte->getCouleur(),
                     'textColor' => $rdv->getTextColor(),
                     'coefStart' => round($diffDebut / 30, 1),
-                    'coefEnd' => round($diffFin / 30, 2),
+                    'coefEnd' => round($diffFin / 30, 1),
                     'resume' => $rdv->getTitre(),
+                    'id' => $rdv->getId()
                 );
                 $index++;
 
