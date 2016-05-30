@@ -15,7 +15,7 @@
                     </div>
                 {% endfor %}
 
-            </div>     
+            </div>
         </div>
         <br/>
 
@@ -27,17 +27,28 @@
         <br/>  <br/>
         <div class="panel panel-default" style="margin-bottom: 0;">
             <div class="panel-heading">Liste des Produits </div>
-
-            <div class="panel-body">
-                {% for produit in configuration.produits %}
-                    <div class="row form-group">
-                        <div class="col-xs-12 text-left">
-                            {{ produit.nom }} <small class="text-muted">{{ produit.prixHt }}&nbsp;€&nbsp;HT</small>
-                        </div>
-                    </div>
-                {% endfor %}
-
-            </div>     
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>Nom</td>
+                        <td>Conditionnement</td>
+                        <td>Prix d'achat HT</td>
+                        <td>Prix prestation HT</td>
+                        <td>Prix de vente HT</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produit in configuration.produits %}
+                    <tr>
+                        <td>{{ produit.nom }}</td>
+                        <td>{{ produit.conditionnement }}</td>
+                        <td class="text-right">{{ produit.prixHt | number_format(2, '.', ' ') }}</td>
+                        <td class="text-right">{{ produit.prixPrestation| number_format(2, '.', ' ') }}</td>
+                        <td class="text-right">{{ produit.prixVente| number_format(2, '.', ' ') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
         <br/>
         <div class="row">
@@ -48,7 +59,6 @@
         <br/>  <br/>
         <div class="panel panel-default" style="margin-bottom: 0;">
             <div class="panel-heading">Liste des Provenances </div>
-
             <div class="panel-body">
                 {% for provenance in configuration.provenances %}
                     <div class="row form-group">
@@ -58,7 +68,7 @@
                     </div>
                 {% endfor %}
 
-            </div>     
+            </div>
         </div>
         <br/>
         <div class="row">
