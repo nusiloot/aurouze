@@ -79,6 +79,11 @@ class Facture implements DocumentSocieteInterface {
     protected $montantPaye;
 
     /**
+     * @MongoDB\Float
+     */
+    protected $montantAPayer;
+
+    /**
      * @MongoDB\EmbedMany(targetDocument="FactureLigne")
      */
     protected $lignes;
@@ -539,70 +544,67 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function getDateReglement() {
-    	$frequence = $this->getFrequencePaiement();
+        $frequence = $this->getFrequencePaiement();
 
-    	$date = $this->getDateFacturation();
-    	$date = ($date)? $date : $this->getDateEmission();
-    	$date = ($date)? $date : new \DateTime();
-    	switch ($frequence) {
-    		case ContratManager::FREQUENCE_30J :
-    			$date->modify('+30 day');
-    			break;
-    		case ContratManager::FREQUENCE_30JMOIS :
-    			$date->modify('+30 day')->modify('last day of');
-    			break;
-    		case ContratManager::FREQUENCE_45JMOIS :
-    			$date->modify('+45 day')->modify('last day of');
-    			break;
-    		case ContratManager::FREQUENCE_60J :
-    			$date->modify('+60 day');
-    			break;
-    		default:
-    			$date->modify('+'.FactureManager::DEFAUT_FREQUENCE_JOURS.' day');
-    	}
-    	return $date;
+        $date = $this->getDateFacturation();
+        $date = ($date) ? $date : $this->getDateEmission();
+        $date = ($date) ? $date : new \DateTime();
+        switch ($frequence) {
+            case ContratManager::FREQUENCE_30J :
+                $date->modify('+30 day');
+                break;
+            case ContratManager::FREQUENCE_30JMOIS :
+                $date->modify('+30 day')->modify('last day of');
+                break;
+            case ContratManager::FREQUENCE_45JMOIS :
+                $date->modify('+45 day')->modify('last day of');
+                break;
+            case ContratManager::FREQUENCE_60J :
+                $date->modify('+60 day');
+                break;
+            default:
+                $date->modify('+' . FactureManager::DEFAUT_FREQUENCE_JOURS . ' day');
+        }
+        return $date;
     }
 
     /**
-    * Get frequencePaiement
-    *
-    * @return string $frequencePaiement
-    */
-   public function getFrequencePaiement()
-   {
-       if ($this->frequencePaiement) {
+     * Get frequencePaiement
+     *
+     * @return string $frequencePaiement
+     */
+    public function getFrequencePaiement() {
+        if ($this->frequencePaiement) {
 
-           return $this->frequencePaiement;
-       }
+            return $this->frequencePaiement;
+        }
 
-       if (!$this->frequencePaiement) {
-           foreach ($this->getLignes() as $ligne) {
-               if ($ligne->isOrigineContrat() && $ligne->getOrigineDocument()->getFrequencePaiement()) {
+        if (!$this->frequencePaiement) {
+            foreach ($this->getLignes() as $ligne) {
+                if ($ligne->isOrigineContrat() && $ligne->getOrigineDocument()->getFrequencePaiement()) {
 
-                   return $ligne->getOrigineDocument()->getFrequencePaiement();
-               }
+                    return $ligne->getOrigineDocument()->getFrequencePaiement();
+                }
+            }
+        }
 
-           }
-       }
+        if (!$this->frequencePaiement) {
 
-       if(!$this->frequencePaiement) {
+            return ContratManager::FREQUENCE_RECEPTION;
+        }
+    }
 
-           return ContratManager::FREQUENCE_RECEPTION;
-       }
-   }
+    /**
+     * Set frequencePaiement
+     *
+     * @param string $frequencePaiement
+     * @return self
+     */
+    public function setFrequencePaiement($frequencePaiement) {
+        $this->frequencePaiement = $frequencePaiement;
 
-   /**
-    * Set frequencePaiement
-    *
-    * @param string $frequencePaiement
-    * @return self
-    */
-   public function setFrequencePaiement($frequencePaiement)
-   {
-       $this->frequencePaiement = $frequencePaiement;
-
-       return $this;
-   }
+        return $this;
+    }
 
     /**
      * Add paiement
@@ -631,9 +633,8 @@ class Facture implements DocumentSocieteInterface {
         return $this->paiements;
     }
 
-    public function __toString()
-    {
-    	return "N°".$this->getNumeroFacture()." ".$this->getDestinataire()->getNom()." (".$this->getMontantTTC()."€ TTC)";
+    public function __toString() {
+        return "N°" . $this->getNumeroFacture() . " " . $this->getDestinataire()->getNom() . " (" . $this->getMontantAPayer() . "€ / " . $this->getMontantTTC() . "€ TTC)";
     }
 
     /**
@@ -644,7 +645,7 @@ class Facture implements DocumentSocieteInterface {
      */
     public function setMontantPaye($montantPaye) {
         $this->montantPaye = $montantPaye;
-
+        $this->updateRestantAPayer();
         return $this;
     }
 
@@ -666,6 +667,7 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function updateMontantPaye($output = null) {
+        $this->setMontantPaye(0.0);
         foreach ($this->getPaiements() as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
                 if ($paiement->getFacture()->getId() == $this->getId()) {
@@ -699,29 +701,50 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function isCloture() {
-         return $this->cloture;
+        return $this->cloture;
     }
 
+    public function updateRestantAPayer() {
+        $this->setMontantAPayer(round($this->getMontantTTC() - $this->getMontantPaye(), 2));
+    }
 
     /**
-     * Set dateDevis
+     * Set montantAPayer
      *
-     * @param date $dateDevis
+     * @param float $montantAPayer
      * @return self
      */
-    public function setDateDevis($dateDevis)
-    {
-        $this->dateDevis = $dateDevis;
+    public function setMontantAPayer($montantAPayer) {
+        $this->montantAPayer = $montantAPayer;
         return $this;
     }
 
     /**
-     * Get dateDevis
+     * Get montantAPayer
+     *
+     * @return float $montantAPayer
+     */
+    public function getMontantAPayer() {
+        return $this->montantAPayer;
+    }
+
+    /* Set dateDevis
+     *
+     * @param date $dateDevis
+     * @return self
+     */
+
+    public function setDateDevis($dateDevis) {
+        $this->dateDevis = $dateDevis;
+        return $this;
+    }
+
+    /* Get dateDevis
      *
      * @return date $dateDevis
      */
-    public function getDateDevis()
-    {
+
+    public function getDateDevis() {
         return $this->dateDevis;
     }
 
@@ -741,8 +764,7 @@ class Facture implements DocumentSocieteInterface {
      * @param string $numeroDevis
      * @return self
      */
-    public function setNumeroDevis($numeroDevis)
-    {
+    public function setNumeroDevis($numeroDevis) {
         $this->numeroDevis = $numeroDevis;
         return $this;
     }
@@ -752,8 +774,8 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return string $numeroDevis
      */
-    public function getNumeroDevis()
-    {
+    public function getNumeroDevis() {
         return $this->numeroDevis;
     }
+
 }
