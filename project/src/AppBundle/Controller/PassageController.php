@@ -139,7 +139,8 @@ class PassageController extends Controller {
      */
     public function etablissementAction(Request $request, Etablissement $etablissement) {
 
-        $contrats = $this->get('contrat.manager')->getRepository()->findByEtablissement($etablissement);
+        $contratManager = $this->get('contrat.manager');
+        $contrats = $contratManager->getRepository()->findByEtablissement($etablissement);
 
         $geojson = $this->buildGeoJson(array($etablissement));
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, array('etablissements' => $etablissement->getIdentifiant(), 'etablissement' => $etablissement), array(
@@ -147,7 +148,7 @@ class PassageController extends Controller {
             'method' => 'POST',
         ));
 
-        return $this->render('passage/etablissement.html.twig', array('etablissement' => $etablissement, 'contrats' => $contrats, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson));
+        return $this->render('passage/etablissement.html.twig', array('etablissement' => $etablissement, 'contrats' => $contrats, 'formEtablissement' => $formEtablissement->createView(), 'geojson' => $geojson,'contratManager' => $contratManager));
     }
 
     /**

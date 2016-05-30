@@ -53,6 +53,9 @@ class FactureLigne {
      */
     protected $origineMouvement;
 
+    public function __construct() {
+    }
+
     public function update() {
         $this->montantHT = round($this->getQuantite() * $this->getPrixUnitaire(), 2);
         $this->montantTaxe = round($this->getMontantHT() * $this->getTauxTaxe(), 2);

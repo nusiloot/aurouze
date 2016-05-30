@@ -9,6 +9,7 @@ class PaiementsManager {
 
     protected $dm;
     protected $fm;
+    protected $parameters;
 
     const TYPE_REGLEMENT_FACTURE = 'FACTURE';
     const TYPE_REGLEMENT_ACCOMPTE_COMMANDE = 'ACCOMPTE_COMMANDE';
@@ -21,7 +22,7 @@ class PaiementsManager {
     const MOYEN_PAIEMENT_ESPECE = 'ESPECE';
     const MOYEN_PAIEMENT_TRAITE = 'TRAITE';
     const MOYEN_PAIEMENT_CB = 'CB';
-    const MOYEN_PAIEMENT_REGULARISATION_COMPTABLE = 'CB';
+    const MOYEN_PAIEMENT_REGULARISATION_COMPTABLE = 'REGUL_COMPTA';
 
     public static $types_reglements_libelles = array(
         self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
@@ -30,6 +31,10 @@ class PaiementsManager {
         self::TYPE_REGLEMENT_REGULARISATION_AVOIR => "Régularisation par avoir",
         self::TYPE_REGLEMENT_PERTE => "Perte",
         self::TYPE_REGLEMENT_GAIN => "Gain");
+    public static $nouveau_types_reglements_libelles = array(
+    		self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
+    		self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",
+    		self::TYPE_REGLEMENT_REGULARISATION => "Règlement de régularisation");
     public static $types_reglements_index = array(
         "1" => self::TYPE_REGLEMENT_FACTURE,
         "2" => self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE,
@@ -52,9 +57,10 @@ class PaiementsManager {
         "5" => self::MOYEN_PAIEMENT_CB,
         "6" => self::MOYEN_PAIEMENT_REGULARISATION_COMPTABLE);
 
-    function __construct(DocumentManager $dm, FactureManager $fm) {
+    function __construct(DocumentManager $dm, FactureManager $fm,$parameters) {
         $this->dm = $dm;
         $this->fm = $fm;
+        $this->parameters = $parameters;
     }
 
     public function getRepository() {
@@ -62,6 +68,11 @@ class PaiementsManager {
         return $this->dm->getRepository('AppBundle:Paiements');
     }
 
+    
+    public function getParameters() {
+
+        return $this->parameters;
+    }
     
     public function createByDateCreation(\DateTime $dateCreation){
         $paiements = new Paiements();

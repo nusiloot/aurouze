@@ -6,9 +6,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Manager\FactureManager;
 use AppBundle\Manager\ContratManager;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\FactureRepository")
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\FactureRepository") @HasLifecycleCallbacks
  */
 class Facture implements DocumentSocieteInterface {
 
@@ -45,6 +46,11 @@ class Facture implements DocumentSocieteInterface {
     /**
      * @MongoDB\Date
      */
+    protected $dateDevis;
+
+    /**
+     * @MongoDB\Date
+     */
     protected $datePaiement;
 
     /**
@@ -68,6 +74,16 @@ class Facture implements DocumentSocieteInterface {
     protected $montantTaxe;
 
     /**
+     * @MongoDB\Float
+     */
+    protected $montantPaye;
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $montantAPayer;
+
+    /**
      * @MongoDB\EmbedMany(targetDocument="FactureLigne")
      */
     protected $lignes;
@@ -78,36 +94,61 @@ class Facture implements DocumentSocieteInterface {
     protected $identifiantReprise;
 
     /**
-    * @MongoDB\String
-    */
-   protected $description;
+     * @MongoDB\String
+     */
+    protected $description;
 
-     /**
+    /**
      * @MongoDB\String
      */
     protected $numeroFacture;
 
     /**
-    * @MongoDB\String
-    */
-    protected $avoir;
-    
+     * @MongoDB\String
+     */
+    protected $numeroDevis;
+
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Paiement", mappedBy="facture")
+     * @MongoDB\String
+     */
+    protected $avoir;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Paiements", mappedBy="paiement.facture", simple=true, repositoryMethod="findPaiementsByFacture")
      */
     protected $paiements;
 
-    public function __construct()
-    {
+    /**
+     * @MongoDB\String
+     */
+    protected $frequencePaiement;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $cloture;
+
+    public function __construct() {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->emetteur = new FactureSoussigne();
         $this->destinataire = new FactureSoussigne();
+        $this->paiements = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->cloture = false;
+    }
+
+    /** @MongoDB\PreUpdate */
+    public function preUpdate() {
+        if ($this->getMontantTTC() == $this->getMontantPaye()) {
+            $this->cloture = true;
+        } else {
+            $this->cloture = false;
+        }
     }
 
     public function update() {
-    	$montant = 0;
-    	$montantTaxe = 0;
-        foreach($this->getLignes() as $ligne) {
+        $montant = 0;
+        $montantTaxe = 0;
+        foreach ($this->getLignes() as $ligne) {
             $ligne->update();
             $montant = $montant + $ligne->getMontantHT();
             $montantTaxe = $montantTaxe + $ligne->getMontantTaxe();
@@ -129,7 +170,7 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function facturerMouvements() {
-        foreach($this->getLignes() as $ligne) {
+        foreach ($this->getLignes() as $ligne) {
             $ligne->facturerMouvement();
         }
     }
@@ -141,8 +182,8 @@ class Facture implements DocumentSocieteInterface {
 
     public function getOrigines() {
         $origines = array();
-        foreach($this->getLignes() as $ligne) {
-            if(!$ligne->getOrigineDocument()) {
+        foreach ($this->getLignes() as $ligne) {
+            if (!$ligne->getOrigineDocument()) {
                 continue;
             }
             $origines[$ligne->getOrigineDocument()->getId()] = $ligne->getOrigineDocument();
@@ -156,8 +197,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @param AppBundle\Document\FactureLigne $ligne
      */
-    public function addLigne(\AppBundle\Document\FactureLigne $ligne)
-    {
+    public function addLigne(\AppBundle\Document\FactureLigne $ligne) {
         $this->lignes[] = $ligne;
     }
 
@@ -166,8 +206,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @param AppBundle\Document\FactureLigne $ligne
      */
-    public function removeLigne(\AppBundle\Document\FactureLigne $ligne)
-    {
+    public function removeLigne(\AppBundle\Document\FactureLigne $ligne) {
         $this->lignes->removeElement($ligne);
     }
 
@@ -176,8 +215,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return \Doctrine\Common\Collections\Collection $lignes
      */
-    public function getLignes()
-    {
+    public function getLignes() {
         return $this->lignes;
     }
 
@@ -187,8 +225,7 @@ class Facture implements DocumentSocieteInterface {
      * @param float $montantHT
      * @return self
      */
-    public function setMontantHT($montantHT)
-    {
+    public function setMontantHT($montantHT) {
         $this->montantHT = $montantHT;
         return $this;
     }
@@ -198,8 +235,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return float $montantHT
      */
-    public function getMontantHT()
-    {
+    public function getMontantHT() {
         return $this->montantHT;
     }
 
@@ -209,8 +245,7 @@ class Facture implements DocumentSocieteInterface {
      * @param float $montantTTC
      * @return self
      */
-    public function setMontantTTC($montantTTC)
-    {
+    public function setMontantTTC($montantTTC) {
         $this->montantTTC = $montantTTC;
         return $this;
     }
@@ -220,11 +255,9 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return float $montantTTC
      */
-    public function getMontantTTC()
-    {
+    public function getMontantTTC() {
         return $this->montantTTC;
     }
-
 
     /**
      * Set montantTaxe
@@ -232,8 +265,7 @@ class Facture implements DocumentSocieteInterface {
      * @param float $montantTaxe
      * @return self
      */
-    public function setMontantTaxe($montantTaxe)
-    {
+    public function setMontantTaxe($montantTaxe) {
         $this->montantTaxe = $montantTaxe;
         return $this;
     }
@@ -243,8 +275,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return float $montantTaxe
      */
-    public function getMontantTaxe()
-    {
+    public function getMontantTaxe() {
         return $this->montantTaxe;
     }
 
@@ -254,8 +285,7 @@ class Facture implements DocumentSocieteInterface {
      * @param date $dateEmission
      * @return self
      */
-    public function setDateEmission($dateEmission)
-    {
+    public function setDateEmission($dateEmission) {
         $this->dateEmission = $dateEmission;
         return $this;
     }
@@ -265,8 +295,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return date $dateEmission
      */
-    public function getDateEmission()
-    {
+    public function getDateEmission() {
         return $this->dateEmission;
     }
 
@@ -276,8 +305,7 @@ class Facture implements DocumentSocieteInterface {
      * @param date $dateFacturation
      * @return self
      */
-    public function setDateFacturation($dateFacturation)
-    {
+    public function setDateFacturation($dateFacturation) {
         $this->dateFacturation = $dateFacturation;
         return $this;
     }
@@ -287,8 +315,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return date $dateFacturation
      */
-    public function getDateFacturation()
-    {
+    public function getDateFacturation() {
         return $this->dateFacturation;
     }
 
@@ -298,8 +325,7 @@ class Facture implements DocumentSocieteInterface {
      * @param date $datePaiement
      * @return self
      */
-    public function setDatePaiement($datePaiement)
-    {
+    public function setDatePaiement($datePaiement) {
         $this->datePaiement = $datePaiement;
         return $this;
     }
@@ -309,8 +335,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return date $datePaiement
      */
-    public function getDatePaiement()
-    {
+    public function getDatePaiement() {
         return $this->datePaiement;
     }
 
@@ -320,8 +345,7 @@ class Facture implements DocumentSocieteInterface {
      * @param AppBundle\Document\Societe $societe
      * @return self
      */
-    public function setSociete(\AppBundle\Document\Societe $societe)
-    {
+    public function setSociete(\AppBundle\Document\Societe $societe) {
         $this->societe = $societe;
         $this->storeDestinataire();
 
@@ -333,8 +357,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return AppBundle\Document\Societe $societe
      */
-    public function getSociete()
-    {
+    public function getSociete() {
         return $this->societe;
     }
 
@@ -343,8 +366,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return string $id
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -354,8 +376,7 @@ class Facture implements DocumentSocieteInterface {
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant)
-    {
+    public function setIdentifiant($identifiant) {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -365,11 +386,9 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant()
-    {
+    public function getIdentifiant() {
         return $this->identifiant;
     }
-
 
     /**
      * Set emetteur
@@ -377,8 +396,7 @@ class Facture implements DocumentSocieteInterface {
      * @param AppBundle\Document\FactureSoussigne $emetteur
      * @return self
      */
-    public function setEmetteur(\AppBundle\Document\FactureSoussigne $emetteur)
-    {
+    public function setEmetteur(\AppBundle\Document\FactureSoussigne $emetteur) {
         $this->emetteur = $emetteur;
         return $this;
     }
@@ -388,8 +406,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return AppBundle\Document\FactureSoussigne $emetteur
      */
-    public function getEmetteur()
-    {
+    public function getEmetteur() {
         return $this->emetteur;
     }
 
@@ -399,8 +416,7 @@ class Facture implements DocumentSocieteInterface {
      * @param AppBundle\Document\FactureSoussigne $destinataire
      * @return self
      */
-    public function setDestinataire(\AppBundle\Document\FactureSoussigne $destinataire)
-    {
+    public function setDestinataire(\AppBundle\Document\FactureSoussigne $destinataire) {
         $this->destinataire = $destinataire;
         return $this;
     }
@@ -410,8 +426,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return AppBundle\Document\FactureSoussigne $destinataire
      */
-    public function getDestinataire()
-    {
+    public function getDestinataire() {
         return $this->destinataire;
     }
 
@@ -421,8 +436,7 @@ class Facture implements DocumentSocieteInterface {
      * @param string $identifiantReprise
      * @return self
      */
-    public function setIdentifiantReprise($identifiantReprise)
-    {
+    public function setIdentifiantReprise($identifiantReprise) {
         $this->identifiantReprise = $identifiantReprise;
         return $this;
     }
@@ -432,8 +446,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return string $identifiantReprise
      */
-    public function getIdentifiantReprise()
-    {
+    public function getIdentifiantReprise() {
         return $this->identifiantReprise;
     }
 
@@ -443,8 +456,7 @@ class Facture implements DocumentSocieteInterface {
      * @param string $numeroFacture
      * @return self
      */
-    public function setNumeroFacture($numeroFacture)
-    {
+    public function setNumeroFacture($numeroFacture) {
         $this->numeroFacture = $numeroFacture;
         return $this;
     }
@@ -454,8 +466,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return string $numeroFacture
      */
-    public function getNumeroFacture()
-    {
+    public function getNumeroFacture() {
         return $this->numeroFacture;
     }
 
@@ -465,8 +476,7 @@ class Facture implements DocumentSocieteInterface {
      * @param string $description
      * @return self
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) {
         $this->description = $description;
         return $this;
     }
@@ -476,8 +486,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return string $description
      */
-    public function getDescription()
-    {
+    public function getDescription() {
         return $this->description;
     }
 
@@ -487,8 +496,7 @@ class Facture implements DocumentSocieteInterface {
      * @param string $avoir
      * @return self
      */
-    public function setAvoir($avoir)
-    {
+    public function setAvoir($avoir) {
         $this->avoir = $avoir;
         return $this;
     }
@@ -498,8 +506,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return string $avoir
      */
-    public function getAvoir()
-    {
+    public function getAvoir() {
         return $this->avoir;
     }
 
@@ -509,8 +516,7 @@ class Facture implements DocumentSocieteInterface {
      * @param date $dateLimitePaiement
      * @return self
      */
-    public function setDateLimitePaiement($dateLimitePaiement)
-    {
+    public function setDateLimitePaiement($dateLimitePaiement) {
         $this->dateLimitePaiement = $dateLimitePaiement;
         return $this;
     }
@@ -520,56 +526,84 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return date $dateLimitePaiement
      */
-    public function getDateLimitePaiement()
-    {
+    public function getDateLimitePaiement() {
         return $this->dateLimitePaiement;
     }
-    
+
     public function getTva() {
-    	$tva = 0;
-    	foreach ($this->getLignes() as $ligne) {
-    		if (!$tva) {
-    			$tva = $ligne->getTauxTaxe();
-    		}
-    		if ($tva != $ligne->getTauxTaxe()) {
-    			throw new \Exception("TVA différente dans les lignes de facture.");
-    		}
-    	}
-    	return $tva;
+        $tva = 0;
+        foreach ($this->getLignes() as $ligne) {
+            if (!$tva) {
+                $tva = $ligne->getTauxTaxe();
+            }
+            if ($tva != $ligne->getTauxTaxe()) {
+                throw new \Exception("TVA différente dans les lignes de facture.");
+            }
+        }
+        return $tva;
     }
-    
+
     public function getDateReglement() {
-    	$frequence = null;
-    	foreach ($this->getLignes() as $ligne) {
-    		if ($ligne->isOrigineContrat()) {
-	    		if (!$frequence) {
-	    			$frequence = $ligne->getOrigineDocument()->getFrequencePaiement();
-	    		}
-	    		if ($frequence != $ligne->getOrigineDocument()->getFrequencePaiement()) {
-	    			throw new \Exception("Fréquence de paiement différente dans les lignes de facture.");
-	    		}
-    		}
-    	}
-    	$date = $this->getDateFacturation();
-    	$date = ($date)? $date : $this->getDateEmission();
-    	$date = ($date)? $date : new \DateTime();
-    	switch ($frequence) {
-    		case ContratManager::FREQUENCE_30J : 
-    			$date->modify('+30 day');
-    			break;
-    		case ContratManager::FREQUENCE_30JMOIS : 
-    			$date->modify('+30 day')->modify('last day of');
-    			break;
-    		case ContratManager::FREQUENCE_45JMOIS : 
-    			$date->modify('+45 day')->modify('last day of');
-    			break;
-    		case ContratManager::FREQUENCE_60J : 
-    			$date->modify('+60 day');
-    			break;
-    		default:
-    			$date->modify('+'.FactureManager::DEFAUT_FREQUENCE_JOURS.' day');
-    	}
-    	return $date;
+        $frequence = $this->getFrequencePaiement();
+
+        $date = $this->getDateFacturation();
+        $date = ($date) ? $date : $this->getDateEmission();
+        $date = ($date) ? $date : new \DateTime();
+        switch ($frequence) {
+            case ContratManager::FREQUENCE_30J :
+                $date->modify('+30 day');
+                break;
+            case ContratManager::FREQUENCE_30JMOIS :
+                $date->modify('+30 day')->modify('last day of');
+                break;
+            case ContratManager::FREQUENCE_45JMOIS :
+                $date->modify('+45 day')->modify('last day of');
+                break;
+            case ContratManager::FREQUENCE_60J :
+                $date->modify('+60 day');
+                break;
+            default:
+                $date->modify('+' . FactureManager::DEFAUT_FREQUENCE_JOURS . ' day');
+        }
+        return $date;
+    }
+
+    /**
+     * Get frequencePaiement
+     *
+     * @return string $frequencePaiement
+     */
+    public function getFrequencePaiement() {
+        if ($this->frequencePaiement) {
+
+            return $this->frequencePaiement;
+        }
+
+        if (!$this->frequencePaiement) {
+            foreach ($this->getLignes() as $ligne) {
+                if ($ligne->isOrigineContrat() && $ligne->getOrigineDocument()->getFrequencePaiement()) {
+
+                    return $ligne->getOrigineDocument()->getFrequencePaiement();
+                }
+            }
+        }
+
+        if (!$this->frequencePaiement) {
+
+            return ContratManager::FREQUENCE_RECEPTION;
+        }
+    }
+
+    /**
+     * Set frequencePaiement
+     *
+     * @param string $frequencePaiement
+     * @return self
+     */
+    public function setFrequencePaiement($frequencePaiement) {
+        $this->frequencePaiement = $frequencePaiement;
+
+        return $this;
     }
 
     /**
@@ -577,8 +611,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @param AppBundle\Document\Paiement $paiement
      */
-    public function addPaiement(\AppBundle\Document\Paiement $paiement)
-    {
+    public function addPaiement(\AppBundle\Document\Paiement $paiement) {
         $this->paiements[] = $paiement;
     }
 
@@ -587,8 +620,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @param AppBundle\Document\Paiement $paiement
      */
-    public function removePaiement(\AppBundle\Document\Paiement $paiement)
-    {
+    public function removePaiement(\AppBundle\Document\Paiement $paiement) {
         $this->paiements->removeElement($paiement);
     }
 
@@ -597,8 +629,153 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return \Doctrine\Common\Collections\Collection $paiements
      */
-    public function getPaiements()
-    {
+    public function getPaiements() {
         return $this->paiements;
     }
+
+    public function __toString() {
+        return "N°" . $this->getNumeroFacture() . " " . $this->getDestinataire()->getNom() . " (" . $this->getMontantAPayer() . "€ / " . $this->getMontantTTC() . "€ TTC)";
+    }
+
+    /**
+     * Set montantPaye
+     *
+     * @param float $montantPaye
+     * @return self
+     */
+    public function setMontantPaye($montantPaye) {
+        $this->montantPaye = $montantPaye;
+        $this->updateRestantAPayer();
+        return $this;
+    }
+
+    /**
+     * Get montantPaye
+     *
+     * @return float $montantPaye
+     */
+    public function getMontantPaye() {
+        if (!$this->montantPaye) {
+            return 0.0;
+        }
+        return $this->montantPaye;
+    }
+
+    public function ajoutMontantPaye($montant) {
+        $this->setMontantPaye($this->getMontantPaye() + $montant);
+        return $this;
+    }
+
+    public function updateMontantPaye($output = null) {
+        $this->setMontantPaye(0.0);
+        foreach ($this->getPaiements() as $paiements) {
+            foreach ($paiements->getPaiement() as $paiement) {
+                if ($paiement->getFacture()->getId() == $this->getId()) {
+                    if ($output) {
+                        $output->writeln(sprintf("<comment>Ajout d'un paiement de %s euros HT pour facture d'id %s </comment>", $paiement->getMontant(), $this->getId()));
+                    }
+                    $this->ajoutMontantPaye($paiement->getMontant());
+                }
+            }
+        }
+    }
+
+    /**
+     * Set cloture
+     *
+     * @param boolean $cloture
+     * @return self
+     */
+    public function setCloture($cloture) {
+        $this->cloture = $cloture;
+        return $this;
+    }
+
+    /**
+     * Get cloture
+     *
+     * @return boolean $cloture
+     */
+    public function getCloture() {
+        return $this->cloture;
+    }
+
+    public function isCloture() {
+        return $this->cloture;
+    }
+
+    public function updateRestantAPayer() {
+        $this->setMontantAPayer(round($this->getMontantTTC() - $this->getMontantPaye(), 2));
+    }
+
+    /**
+     * Set montantAPayer
+     *
+     * @param float $montantAPayer
+     * @return self
+     */
+    public function setMontantAPayer($montantAPayer) {
+        $this->montantAPayer = $montantAPayer;
+        return $this;
+    }
+
+    /**
+     * Get montantAPayer
+     *
+     * @return float $montantAPayer
+     */
+    public function getMontantAPayer() {
+        return $this->montantAPayer;
+    }
+
+    /* Set dateDevis
+     *
+     * @param date $dateDevis
+     * @return self
+     */
+
+    public function setDateDevis($dateDevis) {
+        $this->dateDevis = $dateDevis;
+        return $this;
+    }
+
+    /* Get dateDevis
+     *
+     * @return date $dateDevis
+     */
+
+    public function getDateDevis() {
+        return $this->dateDevis;
+    }
+
+    public function isDevis() {
+
+        return $this->getDateDevis() && !$this->isFacture();
+    }
+
+    public function isFacture() {
+
+        return ($this->getDateFacturation() || $this->getNumeroFacture());
+    }
+
+    /**
+     * Set numeroDevis
+     *
+     * @param string $numeroDevis
+     * @return self
+     */
+    public function setNumeroDevis($numeroDevis) {
+        $this->numeroDevis = $numeroDevis;
+        return $this;
+    }
+
+    /**
+     * Get numeroDevis
+     *
+     * @return string $numeroDevis
+     */
+    public function getNumeroDevis() {
+        return $this->numeroDevis;
+    }
+
 }

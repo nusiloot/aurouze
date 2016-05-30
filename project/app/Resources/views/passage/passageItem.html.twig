@@ -4,13 +4,13 @@
 {% set techIdentite = "" %}
 {% set dptKeyWord = (passage.etablissement.adresse.codePostal | slice(0, 2))? "departement "~passage.etablissement.adresse.codePostal | slice(0, 2) : "" %}
 {% if(passage.techniciens | length == 0) %}
-    {% set words = [dptKeyWord, "sans technicien", passage.etablissement.adresse.codePostal, passage.etablissement.adresse.commune, passage.etablissement.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissement.nom]|json_encode() %}
+    {% set words = [dptKeyWord, "sans technicien", passage.etablissement.adresse.codePostal, passage.etablissement.adresse.commune, passage.etablissement.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissement.nom]|json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
     {% set techColor = 'white' %}
     {% set techBgColor = 'black' %}
     {% set techIdentite = "sans technicien" %}
     {% set urlPlanif = path('calendarManuel') %}
 {% else %}
-    {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissement.adresse.codePostal, passage.etablissement.adresse.commune, passage.etablissement.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissement.nom]|json_encode() %}
+    {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissement.adresse.codePostal, passage.etablissement.adresse.commune, passage.etablissement.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissement.nom]|json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
     {% set techColor = passage.techniciens[0].couleurText %}
     {% set techBgColor = passage.techniciens[0].couleur %}
     {% set techIdentite = passage.techniciens[0].identite %}
@@ -39,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-12">
+                <div class="col-sm-12" style="min-height: 21px; margin-top:10px;">
             {% if passage.etablissement.telephoneFixe or passage.etablissement.telephonePortable %}
                 <i class="mdi mdi-call mdi-lg"></i>
                 <small>{{ passage.etablissement.telephoneFixe }}</small>
@@ -48,6 +48,10 @@
                 {% endif %}
                 <small>{{ passage.etablissement.telephonePortable }}</small>
             {% endif %}
+            <span style="cursor: help;" title="{{ passage.libelle }}"
+                  data-toggle="tooltip"
+                  class="pull-right badge {% if(passage.isGarantie) %}badge-warning{% elseif(passage.isControle)%}badge-warning{% else %}badge-default{% endif %} {% if(passage.mouvementDeclenchable) %}badge-inverse{% endif %} btn-xs">{{
+						passage.getNumeroPassage() }}</span>
         </div>
     </div>
     <div class="row" style="margin-top:10px;">
@@ -64,7 +68,7 @@
         <div class="col-sm-3 text-right">
             <div data-url="{{ urlPlanif }}" class="btn btn-link calendar_lien" >
                 <i class="mdi mdi-date-range mdi-lg"></i>
-                {{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                {{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}
             </div>
         </div>
     </div>

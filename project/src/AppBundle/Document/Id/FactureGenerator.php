@@ -26,14 +26,44 @@ class FactureGenerator extends AbstractIdGenerator
         $document->setIdentifiant(sprintf("%s-%s-%04d", $document->getSociete()->getIdentifiant(), $document->getDateEmission()->format('Ymd'), $result['value']['factureIncrement']));
 
         $id = sprintf("%s-%s", "FACTURE", $document->getIdentifiant());
-        
+
         if($document->getNumeroFacture()) {
-        
+
         	return $id;
         }
-        
+
+        if($document->isDevis()) {
+            $this->generateNumeroDevis($db, $document);
+        } else {
+            $this->generateNumeroFacture($db, $document);
+        }
+
+        return $id;
+    }
+
+    public function generateNumeroDevis($db, $document) {
+        if($document->getNumeroDevis()) {
+            return;
+        }
+
+        $command = array();
+        $command['findandmodify'] = 'doctrine_increment_ids';
+        $command['query'] = array('_id' => "DevisArchive");
+        $command['update'] = array('$inc' => array('current_id' => 1));
+        $command['upsert'] = true;
+        $command['new'] = true;
+        $result = $db->command($command);
+
+        $document->setNumeroDevis($result['value']['current_id']);
+    }
+
+    public function generateNumeroFacture($db, $document) {
+        if($document->getNumeroFacture()) {
+            return;
+        }
+
         $annee = $document->getDateFacturation()->format('Y');
-        
+
         $command = array();
         $command['findandmodify'] = 'doctrine_increment_ids';
         $command['query'] = array('_id' => "FactureArchive");
@@ -41,9 +71,7 @@ class FactureGenerator extends AbstractIdGenerator
         $command['upsert'] = true;
         $command['new'] = true;
         $result = $db->command($command);
-        
+
         $document->setNumeroFacture(sprintf("%s%04d", $annee, $result['value'][$annee]));
-        
-        return $id;
     }
 }

@@ -34,15 +34,47 @@ class FactureController extends Controller {
         return $this->render('facture/index.html.twig', array('formSociete' => $formSociete->createView()));
     }
 
-    public function editionAction(Request $request) {
+    /**
+     * @Route("/societe/{societe}/creation/{type}", name="facture_creation")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+    public function creationAction(Request $request, Societe $societe, $type) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $cm = $this->get('configuration.manager');
+        $fm = $this->get('facture.manager');
 
-        $facture = new Facture();
-        $facture->setId('FACTURE');
-        $facture->addLigne(new FactureLigne());
+        if($request->get('id')) {
+            $facture = $fm->getRepository()->findOneById($request->get('id'));
+        }
 
-        $form = $this->createForm(new FactureType(), $facture, array(
-            'action' => $this->generateUrl('facture'),
+        if($request->get('id') && !$facture) {
+
+            throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("La facture %s n'a pas été trouvé", $request->get('id')));
+        }
+
+        if(!isset($facture)) {
+            $facture = new Facture();
+            $factureLigne = new FactureLigne();
+            $factureLigne->setTauxTaxe(0.2);
+            $facture->addLigne($factureLigne);
+        }
+
+        $facture->setSociete($societe);
+        $facture->setDateEmission(new \DateTime());
+
+        if($type == "devis" && !$facture->getDateDevis()) {
+            $facture->setDateDevis(new \DateTime());
+        } elseif(!$facture->getDateFacturation()) {
+            $facture->setDateFacturation(new \DateTime());
+        }
+
+        $produitsSuggestion = array();
+        foreach($cm->getConfiguration()->getProduits() as $produit) {
+            $produitsSuggestion[] = array("libelle" => $produit->getNom(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
+        }
+
+        $form = $this->createForm(new FactureType($dm, $cm, $facture->isDevis()), $facture, array(
+            'action' => "",
             'method' => 'POST',
         ));
 
@@ -50,13 +82,20 @@ class FactureController extends Controller {
 
         if (!$form->isSubmitted() || !$form->isValid()) {
 
-            return $this->render('facture/index.html.twig', array('form' => $form->createView()));
+            return $this->render('facture/libre.html.twig', array('form' => $form->createView(), 'produitsSuggestion' => $produitsSuggestion, 'societe' => $societe, 'facture' => $facture));
+        }
+
+        $facture->update();
+
+        if($request->get('previsualiser')) {
+
+            return $this->pdfAction($request, $facture);
         }
 
         $dm->persist($facture);
         $dm->flush();
 
-        return $this->redirectTo('facture/index.html.twig', array('form' => $form->createView()));
+        return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
     }
 
     /**
@@ -133,6 +172,30 @@ class FactureController extends Controller {
 
     public function getPdfGenerationOptions() {
         return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4);
+    }
+
+    /**
+     * @Route("/facture/rechercher", name="facture_search")
+     */
+     public function factureSearchAction(Request $request) {
+         $dm = $this->get('doctrine_mongodb')->getManager();
+         $response = new Response();
+         $facturesResult = array();
+         $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term')),  $facturesResult);
+         $data = json_encode($facturesResult);
+         $response->headers->set('Content-Type', 'application/json');
+         $response->setContent($data);
+         return $response;
+     }
+
+    public function contructSearchResult($criterias, &$result) {
+
+        foreach ($criterias as $id => $nom) {
+            $newResult = new \stdClass();
+            $newResult->id = $id;
+            $newResult->text = $nom;
+            $result[] = $newResult;
+        }
     }
 
 }

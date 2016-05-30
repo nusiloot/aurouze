@@ -133,7 +133,7 @@ class Configuration {
         }
         return $prestationsType;
     }
-    
+
     public function getProduitsArray() {
         $produitsType = array();
         foreach ($this->getProduits() as $produit) {
@@ -141,7 +141,6 @@ class Configuration {
         }
         return $produitsType;
     }
-
 
     /**
      * Add provenance
