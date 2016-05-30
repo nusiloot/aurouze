@@ -1435,4 +1435,29 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return ContratManager::$frequences[$this->frequencePaiement];
     }
      
+    public function isSousGarantie()
+    {
+    	if ($mois = $this->getDureeGarantie()) {
+    		if ($dateDebut = $this->getDateDebut()) {
+    			$now = new \DateTime();
+    			$dateDebut->modify("+$mois month");
+    			return ($dateDebut->format('Ymd') >= $now->format('Ymd'))? true : false;
+    		}
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public function getDateExpirationGarantie() {
+		$mois = ($this->getDureeGarantie()) ? $this->getDureeGarantie() : 0;
+    	if ($this->getDateDebut()) {
+    		$date = $this->getDateDebut();
+    	} elseif ($this->getDateAcceptation()) {
+    		$date = $this->getDateAcceptation();
+    	} else {
+    		$date = $this->getDateCreation();
+    	}
+    	$date->modify("+$mois month");
+    	return $date;
+    }
 }
