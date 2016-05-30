@@ -22,7 +22,7 @@
                 {% endif %}
 
                 {%  if (contrat.isAnnulable()) %}
-                    <a href="{{ path('contrat_annulation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir annuler le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span> Annuler</a>
+                    <a href="{{ path('contrat_annulation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir résilier le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span> Résilier</a>
                 {%  endif %}
                 {%  if (contrat.isEnAttenteAcceptation() or contrat.isBrouillon()) %}
                     <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir supprimer le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
