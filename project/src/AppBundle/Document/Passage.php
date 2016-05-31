@@ -309,7 +309,9 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function getDureePrevisionnelle() {
-
+		if ($this->getContrat()->getDureePassage()) {
+			return str_replace('h', ':', $this->getContrat()->getDureePassageFormat());
+		}
         return '01:00';
     }
 
