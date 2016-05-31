@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
+use AppBundle\Tool\RechercheTool;
 
 /**
  * FactureRepository
@@ -36,7 +37,7 @@ class FactureRepository extends DocumentRepository {
                 $q->addOr($q->expr()->field('montantTTC')->lt($nbSup)->gt($nbInf))
                   ->addOr($q->expr()->field('montantAPayer')->lt($nbSup)->gt($nbInf));
             } else {
-                $q->addOr($q->expr()->field('destinataire.nom')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
+                $q->addOr($q->expr()->field('destinataire.nom')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')))
                         ->addOr($q->expr()->field('numeroFacture')->equals(new \MongoRegex('/.*' . $term . '.*/i')));
             }
             $factures = $q->limit(1000)->getQuery()->execute();

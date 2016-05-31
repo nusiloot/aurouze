@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
+use AppBundle\Tool\RechercheTool;
 
 /**
  * EtablissementRepository
@@ -36,10 +37,10 @@ class EtablissementRepository extends DocumentRepository {
             $q = $this->createQueryBuilder();
             $etablissements = $q
                   ->addOr($q->expr()->field('identifiant')->equals(new \MongoRegex('/.*'.$term.'.*/i')))
-                  ->addOr($q->expr()->field('nom')->equals(new \MongoRegex('/.*'.$term.'.*/i')))
-                  ->addOr($q->expr()->field('adresse.adresse')->equals(new \MongoRegex('/.*'.$term.'.*/i')))
+                  ->addOr($q->expr()->field('nom')->equals(new \MongoRegex('/.*'.RechercheTool::getCorrespondances($term).'.*/i')))
+                  ->addOr($q->expr()->field('adresse.adresse')->equals(new \MongoRegex('/.*'.RechercheTool::getCorrespondances($term).'.*/i')))
                   ->addOr($q->expr()->field('adresse.codePostal')->equals(new \MongoRegex('/.*'.$term.'.*/i')))
-                  ->addOr($q->expr()->field('adresse.commune')->equals(new \MongoRegex('/.*'.$term.'.*/i')))
+                  ->addOr($q->expr()->field('adresse.commune')->equals(new \MongoRegex('/.*'.RechercheTool::getCorrespondances($term).'.*/i')))
                   ->field('actif')->equals(true)
                   ->limit(1000)
                   ->getQuery()->execute();
