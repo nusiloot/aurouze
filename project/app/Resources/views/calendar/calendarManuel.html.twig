@@ -129,9 +129,24 @@
 																	<div class="fc-event-container">
 																		{% set index = 0 %}
 																		{% for technicien, events in eventDate %}
+																			{% for event in events %}
+																			<a style="cursor: pointer;
+																				background-color: {{ event.backgroundColor }};
+                                                                                border: 1px dotted #fff;
+																				color: {{ event.textColor }};
+																				z-index: {{ index + 1 }};
+																				top: {{ (event.coefStart * 26) + 1 }}px;
+																				bottom: -{{ (event.coefEnd * 26) + 3 }}px;
+																				left: {{ ((100 / nbTechniciens) * index)|round(0, 'floor') }}%;
+																				width: {{ ((100 / nbTechniciens))|round(0, 'floor') - 5 }}%;"
+																				class="fc-time-grid-event fc-v-event fc-event fc-start fc-end"
+																				nb="{{ eventDate|keys|length }}" data-toggle="modal" data-remote="false" data-target="#modal-calendrier-infos" href="{{path('calendarRead', { 'id': event.id })}}" data-original-title="{{ event.resume }}" >
+																			</a>
+																			{% endfor %}
                                                                             <a style="
                                                                                 display:inline-block;
                                                                                 top: -10px;
+																				z-index: {{ index - 1 }};
                                                                                 border-radius: 0;
                                                                                 bottom: -800px;
                                                                                 left: {{ ((100 / nbTechniciens) * index)|round(0, 'floor') }}%;
@@ -142,20 +157,6 @@
                                                                                 width: {{ ((100 / nbTechniciens))|round(0, 'floor') - 5 }}%;"
                                                                                 class="fc-time-grid-event fc-v-event fc-event fc-start fc-end">
                                                                             </a>
-																			{% for event in events %}
-																			<a style="cursor: pointer;
-																				background-color: {{ event.backgroundColor }};
-                                                                                border: 1px dotted #fff;
-																				color: {{ event.textColor }};
-																				z-index: {{ index }};
-																				top: {{ (event.coefStart * 26) + 1 }}px;
-																				bottom: -{{ (event.coefEnd * 26) + 3 }}px;
-																				left: {{ ((100 / nbTechniciens) * index)|round(0, 'floor') }}%;
-																				width: {{ ((100 / nbTechniciens))|round(0, 'floor') - 5 }}%;"
-																				class="fc-time-grid-event fc-v-event fc-event fc-start fc-end"
-																				nb="{{ eventDate|keys|length }}" data-toggle="modal" data-remote="false" data-target="#modal-calendrier-infos" href="{{path('calendarRead', { 'id': event.id })}}" data-original-title="{{ event.resume }}" >
-																			</a>
-																			{% endfor %}
 																			{% set index = index + 1 %}
 																		{% endfor %}
 																	</div>

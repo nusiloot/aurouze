@@ -85,7 +85,7 @@ class CalendarController extends Controller {
                 }
 
 
-                $dateDebut = new \DateTime($rdv->getDateDebut()->format('Y-m-d') . 'T06:00:00');
+                $dateDebut = new \DateTime($rdv->getDateDebut()->format('Y-m-d') . ' 06:00:00');
                 $diffDebut = (strtotime($rdv->getDateDebut()->format('Y-m-dTH:i:s')) - strtotime($rdv->getDateDebut()->format('Y-m-d') . 'T06:00:00')) / 60;
                 $diffFin = (strtotime($rdv->getDateFin()->format('Y-m-dTH:i:s')) - strtotime($rdv->getDateDebut()->format('Y-m-d') . 'T06:00:00')) / 60;
 
@@ -97,7 +97,9 @@ class CalendarController extends Controller {
                     'coefStart' => round($diffDebut / 30, 1),
                     'coefEnd' => round($diffFin / 30, 1),
                     'resume' => $rdv->getTitre(),
-                    'id' => $rdv->getId()
+                    'id' => $rdv->getId(),
+                    'debut' => $rdv->getDateDebut()->format('Y-m-d'),
+                    'fin' => $rdv->getDateFin()->format('Y-m-d'),
                 );
                 $index++;
 
@@ -112,6 +114,15 @@ class CalendarController extends Controller {
                     foreach ($passagesCalendar[$technicien->getIdentifiant()] as $p) {
                         if (preg_match("/^$date/", $p['start'])) {
                             $eventsDates[$date][$technicien->getIdentifiant()][] = $p;
+                        } elseif ($date >= $p['debut'] && $date <= $p['fin']) {
+                        	$p['coefStart'] = 0;
+                        	if (preg_match("/^$date/", $p['end'])) {
+                        		$diffFin = (strtotime($p['end']) - strtotime($date . 'T06:00:00')) / 60;
+                        	} else {
+                        		$diffFin = (strtotime($date . 'T18:00:00') - strtotime($date . 'T06:00:00')) / 60;
+                        	}
+                        	$p['coefEnd'] = round($diffFin / 30, 1);
+                        	$eventsDates[$date][$technicien->getIdentifiant()][] = $p;
                         }
                     }
                 }
