@@ -165,12 +165,22 @@ class FactureController extends Controller {
             return new Response($html, 200);
         }
 
+        if($facture->getNumeroDevis()) {
+            $filename = "devis_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateDevis()->format('Ymd')."_N".$facture->getNumeroDevis().".pdf";
+        } elseif($facture->getNumeroFacture()) {
+            $filename = "facture_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateFacturation()->format('Ymd')."_N".$facture->getNumeroFacture().".pdf";
+        } elseif($facture->isDevis()) {
+            $filename = "devis_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateDevis()->format('Ymd')."_brouillon.pdf";
+        } else {
+            $filename = "facture_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateFacturation()->format('Ymd')."_brouillon.pdf";
+        }
+
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()),
                 200,
                 array(
                     'Content-Type'          => 'application/pdf',
-    					'Content-Disposition'   => 'attachment; filename="facture-'.$facture->getNumeroFacture().'.pdf"'
+    				'Content-Disposition'   => 'attachment; filename="'.$filename.'"',
                 )
         );
     }

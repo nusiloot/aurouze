@@ -8,8 +8,22 @@
         <title>{% block title %}Aurouze{% endblock title %}</title>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-        
-        {% block stylesheets %}{% endblock %}
+
+        {% block stylesheets %}
+            <style>
+                .well {
+                    border-color: #333;
+                }
+
+                .btn.btn-default {
+                    border-color: #333;
+                }
+
+                .table.table-bordered, .table.table-bordered tr td, .table.table-bordered tr th {
+                    border-color: #333 !important;
+                }
+            </style>
+        {% endblock %}
     </head>
     <body>
         <div class="container">
