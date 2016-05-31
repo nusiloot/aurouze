@@ -92,7 +92,12 @@ class FactureController extends Controller {
             return $this->pdfAction($request, $facture);
         }
 
-        $dm->persist($facture);
+        if(!$facture->getId()) {
+            $dm->persist($facture);
+        } elseif($facture->isFacture() && !$facture->getNumeroFacture()) {
+            $fm->getRepository()->getClassMetadata()->idGenerator->generateNumeroFacture($dm, $facture);
+        }
+
         $dm->flush();
 
         return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
