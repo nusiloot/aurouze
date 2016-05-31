@@ -36,7 +36,7 @@
                                 <div class="row">
                                     <div class="col-xs-10">
                                         <a title="Voir la société" href="{{ path('societe_visualisation', {'id': paiement.facture.societe.id })}}">
-                                            {{ paiement.facture.societe.raisonSociale }}</a>
+                                            {% if paiement.facture.societe.raisonSociale | length > 45 %}{{ paiement.facture.societe.raisonSociale | slice(0, 45)~"..." }}{%else%}{{ paiement.facture.societe.raisonSociale }}{%endif%}</a>&nbsp(Facture n°{{ paiement.facture.numeroFacture }})
                                     </div>
                                     <div class="col-xs-2 text-right">
                                         {{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;

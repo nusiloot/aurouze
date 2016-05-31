@@ -43,16 +43,16 @@ class FactureController extends Controller {
         $cm = $this->get('configuration.manager');
         $fm = $this->get('facture.manager');
 
-        if($request->get('id')) {
+        if ($request->get('id')) {
             $facture = $fm->getRepository()->findOneById($request->get('id'));
         }
 
-        if($request->get('id') && !$facture) {
+        if ($request->get('id') && !$facture) {
 
             throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("La facture %s n'a pas été trouvé", $request->get('id')));
         }
 
-        if(!isset($facture)) {
+        if (!isset($facture)) {
             $facture = $fm->createVierge($societe);
             $factureLigne = new FactureLigne();
             $factureLigne->setTauxTaxe(0.2);
@@ -62,14 +62,14 @@ class FactureController extends Controller {
         $facture->setSociete($societe);
         $facture->setDateEmission(new \DateTime());
 
-        if($type == "devis" && !$facture->getDateDevis()) {
+        if ($type == "devis" && !$facture->getDateDevis()) {
             $facture->setDateDevis(new \DateTime());
-        } elseif(!$facture->getDateFacturation()) {
+        } elseif (!$facture->getDateFacturation()) {
             $facture->setDateFacturation(new \DateTime());
         }
 
         $produitsSuggestion = array();
-        foreach($cm->getConfiguration()->getProduits() as $produit) {
+        foreach ($cm->getConfiguration()->getProduits() as $produit) {
             $produitsSuggestion[] = array("libelle" => $produit->getNom(), "conditionnement" => $produit->getConditionnement(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
         }
 
@@ -87,14 +87,14 @@ class FactureController extends Controller {
 
         $facture->update();
 
-        if($request->get('previsualiser')) {
+        if ($request->get('previsualiser')) {
 
             return $this->pdfAction($request, $facture);
         }
 
-        if(!$facture->getId()) {
+        if (!$facture->getId()) {
             $dm->persist($facture);
-        } elseif($facture->isFacture() && !$facture->getNumeroFacture()) {
+        } elseif ($facture->isFacture() && !$facture->getNumeroFacture()) {
             $fm->getRepository()->getClassMetadata()->idGenerator->generateNumeroFacture($dm, $facture);
         }
 
@@ -156,31 +156,29 @@ class FactureController extends Controller {
         $fm = $this->get('facture.manager');
 
         $html = $this->renderView('facture/pdf.html.twig', array(
-                'facture' => $facture,
-                'parameters' => $fm->getParameters(),
-            ));
+            'facture' => $facture,
+            'parameters' => $fm->getParameters(),
+        ));
 
-        if($request->get('output') == 'html') {
+        if ($request->get('output') == 'html') {
 
             return new Response($html, 200);
         }
 
-        if($facture->isDevis() && $facture->getNumeroDevis()) {
-            $filename = "devis_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateDevis()->format('Ymd')."_N".$facture->getNumeroDevis().".pdf";
-        } elseif($facture->isFacture() && $facture->getNumeroFacture()) {
-            $filename = "facture_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateFacturation()->format('Ymd')."_N".$facture->getNumeroFacture().".pdf";
-        } elseif($facture->isDevis()) {
-            $filename = "devis_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateDevis()->format('Ymd')."_brouillon.pdf";
+        if ($facture->isDevis() && $facture->getNumeroDevis()) {
+            $filename = "devis_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateDevis()->format('Ymd') . "_N" . $facture->getNumeroDevis() . ".pdf";
+        } elseif ($facture->isFacture() && $facture->getNumeroFacture()) {
+            $filename = "facture_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateFacturation()->format('Ymd') . "_N" . $facture->getNumeroFacture() . ".pdf";
+        } elseif ($facture->isDevis()) {
+            $filename = "devis_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateDevis()->format('Ymd') . "_brouillon.pdf";
         } else {
-            $filename = "facture_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateFacturation()->format('Ymd')."_brouillon.pdf";
+            $filename = "facture_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateFacturation()->format('Ymd') . "_brouillon.pdf";
         }
 
         return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()),
-                200,
-                array(
-                    'Content-Type'          => 'application/pdf',
-    				'Content-Disposition'   => 'attachment; filename="'.$filename.'"',
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
                 )
         );
     }
@@ -192,16 +190,16 @@ class FactureController extends Controller {
     /**
      * @Route("/facture/rechercher", name="facture_search")
      */
-     public function factureSearchAction(Request $request) {
-         $dm = $this->get('doctrine_mongodb')->getManager();
-         $response = new Response();
-         $facturesResult = array();
-         $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term')),  $facturesResult);
-         $data = json_encode($facturesResult);
-         $response->headers->set('Content-Type', 'application/json');
-         $response->setContent($data);
-         return $response;
-     }
+    public function factureSearchAction(Request $request) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $response = new Response();
+        $facturesResult = array();
+        $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term')), $facturesResult);
+        $data = json_encode($facturesResult);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setContent($data);
+        return $response;
+    }
 
     public function contructSearchResult($criterias, &$result) {
 

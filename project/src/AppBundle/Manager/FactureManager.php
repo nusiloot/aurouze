@@ -91,4 +91,4 @@ class FactureManager {
 
         return $this->mm->getMouvements(true, false);
     }
-}
+    }
