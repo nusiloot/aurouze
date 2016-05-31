@@ -165,9 +165,9 @@ class FactureController extends Controller {
             return new Response($html, 200);
         }
 
-        if($facture->getNumeroDevis()) {
+        if($facture->isDevis() && $facture->getNumeroDevis()) {
             $filename = "devis_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateDevis()->format('Ymd')."_N".$facture->getNumeroDevis().".pdf";
-        } elseif($facture->getNumeroFacture()) {
+        } elseif($facture->isFacture() && $facture->getNumeroFacture()) {
             $filename = "facture_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateFacturation()->format('Ymd')."_N".$facture->getNumeroFacture().".pdf";
         } elseif($facture->isDevis()) {
             $filename = "devis_".$facture->getSociete()->getIdentifiant()."_".$facture->getDateDevis()->format('Ymd')."_brouillon.pdf";
