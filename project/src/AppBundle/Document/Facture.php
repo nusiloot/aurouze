@@ -801,5 +801,28 @@ class Facture implements DocumentSocieteInterface {
     public function isAvoir() {
         return $this->getAvoir() || $this->getMontantTTC() <= 0;
     }
+    
+    public function cloturer() {
+        $this->setMontantPaye($this->getMontantTTC());
+    }
+    
+    public function decloturer() {
+        $this->updateMontantPaye();
+    }
+    public function isDecloturable() {
+       return $this->getMontantPayeCalcule() != $this->getMontantTTC();
+    }
+    
+    public function getMontantPayeCalcule() {
+        $sommeMontantPayeCalcule = 0.0;
+        foreach ($this->getPaiements() as $paiements) {
+            foreach ($paiements->getPaiement() as $paiement) {
+                if ($paiement->getFacture()->getId() == $this->getId()) {
+                    $sommeMontantPayeCalcule+=$paiement->getMontant();
+                }
+            }
+        }
+        return $sommeMontantPayeCalcule;
+    }
 
 }

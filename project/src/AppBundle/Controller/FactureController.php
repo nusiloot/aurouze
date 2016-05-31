@@ -149,6 +149,34 @@ class FactureController extends Controller {
     }
 
     /**
+     * @Route("/cloturer/{id}/{factureId}", name="facture_cloturer")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+    public function cloturerAction(Request $request, Societe $societe, $factureId) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        $facture = $this->get('facture.manager')->getRepository()->findOneById($factureId);
+        $facture->cloturer();
+        $dm->persist($facture);
+        $dm->flush();
+        return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
+    }
+    
+      /**
+     * @Route("/decloturer/{id}/{factureId}", name="facture_decloturer")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+    public function decloturerAction(Request $request, Societe $societe, $factureId) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        $facture = $this->get('facture.manager')->getRepository()->findOneById($factureId);
+        $facture->decloturer();
+        $dm->persist($facture);
+        $dm->flush();
+        return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
+    }
+
+    /**
      * @Route("/pdf/{id}", name="facture_pdf")
      * @ParamConverter("etablissement", class="AppBundle:Facture")
      */
