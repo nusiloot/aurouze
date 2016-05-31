@@ -21,7 +21,7 @@
         <span>Du {{ facture.dateDevis|date("d/m/Y") }}</span>
         <br /><br />
         {% else %}
-        <h3>FACTURE {% if(facture.numeroFacture) %}N°&nbsp;{{ facture.numeroFacture }}{% else %}BROUILLON{% endif %}</h3>
+        <h3>{%if(facture.isAvoir)%}AVOIR{%else%}FACTURE{%endif%} {% if(facture.numeroFacture) %}N°&nbsp;{{ facture.numeroFacture }}{% else %}BROUILLON{% endif %}</h3>
         <span>Du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
         {% if (facture.numeroDevis) %}
         À partir du devis n° {{ facture.numeroDevis }}

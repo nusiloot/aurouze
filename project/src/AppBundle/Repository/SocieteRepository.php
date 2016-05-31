@@ -4,6 +4,7 @@ namespace AppBundle\Repository;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use AppBundle\Document\Societe;
+use AppBundle\Tool\RechercheTool;
 
 /**
  * SocieteRepository
@@ -23,10 +24,10 @@ class SocieteRepository extends DocumentRepository {
             $q = $this->createQueryBuilder();
             $q
                     ->addOr($q->expr()->field('identifiant')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
-                    ->addOr($q->expr()->field('raisonSociale')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
-                    ->addOr($q->expr()->field('adresse.adresse')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
+                    ->addOr($q->expr()->field('raisonSociale')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')))
+                    ->addOr($q->expr()->field('adresse.adresse')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')))
                     ->addOr($q->expr()->field('adresse.codePostal')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
-                    ->addOr($q->expr()->field('adresse.commune')->equals(new \MongoRegex('/.*' . $term . '.*/i')));
+                    ->addOr($q->expr()->field('adresse.commune')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')));
             if (!$withNonActif) {
                 $q->field('actif')->equals(true);
             }

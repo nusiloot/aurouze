@@ -8,42 +8,42 @@
     {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
 
     <h3>
-    	Mouvements à facturer
-    	<div class="col-xs-6 pull-right text-right">
-	    	<form action="{{ path('facture_societe_generation', { 'id': societe.id })}}" method="GET" class="form-inline">
-	    		<div class="form-group">
-		    		<div class="input-group">
-		    			<input {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} data-provide="datepicker" class="form-control datepicker" type="text" value="{{ "now"|date("d/m/Y") }}" data-date-format="dd/mm/yyyy" required="required" name="dateFacturation" />
-		    			<div class="input-group-addon">
-							<span class="glyphicon glyphicon-calendar"></span>
-						</div>
-					</div>
-				</div>
-				<button {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} class="btn btn-primary btn" type="submit">Facturer</button>
-	    	</form>
-    	</div>
+        Mouvements à facturer
+        <div class="col-xs-6 pull-right text-right">
+            <form action="{{ path('facture_societe_generation', { 'id': societe.id })}}" method="GET" class="form-inline">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} data-provide="datepicker" class="form-control datepicker" type="text" value="{{ "now"|date("d/m/Y") }}" data-date-format="dd/mm/yyyy" required="required" name="dateFacturation" />
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </div>
+                    </div>
+                </div>
+                <button {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} class="btn btn-primary btn" type="submit">Facturer</button>
+            </form>
+        </div>
     </h3>
     {% if(mouvements | length > 0) %}
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Document d'origine</th>
-                <th>Intitulé</th>
-                <th class="text-right">Montant HT</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for mouvement in mouvements %}
-            <tr>
-                <td><a href="{{ path('contrat_visualisation', {'id': mouvement.document.id })}}">Contrat n° {{ mouvement.document.numeroArchive }}</a></td>
-                <td>{{ mouvement.libelle }}</td>
-                <td class="text-right">{{ mouvement.prixUnitaire }} €</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Document d'origine</th>
+                    <th>Intitulé</th>
+                    <th class="text-right">Montant HT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mouvement in mouvements %}
+                    <tr>
+                        <td><a href="{{ path('contrat_visualisation', {'id': mouvement.document.id })}}">Contrat n° {{ mouvement.document.numeroArchive }}</a></td>
+                        <td>{{ mouvement.libelle }}</td>
+                        <td class="text-right">{{ mouvement.prixUnitaire }} €</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
-    <p class="text-muted"><i>Aucun mouvement</i></p>
+        <p class="text-muted"><i>Aucun mouvement</i></p>
     {% endif %}
 
     <h3>Liste des Factures et Devis <div class="btn-group pull-right"><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis' })}}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer un devis</a><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture' })}}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer une facture</a></div></h3>
@@ -59,31 +59,41 @@
             </tr>
         </thead>
         <tbody>
-        {% for facture in factures %}
-            <tr class="{{ (facture.paye) ? "success" : "" }}">
-                <td>{{ ((facture.isDevis) ? facture.dateDevis : facture.dateFacturation) | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</td>
-                <td><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span> {% if facture.isDevis %}Devis n° {{ facture.numeroDevis }}{% else %}Facture n° {{ facture.numeroFacture }}{% endif %}</a></td>
-                <td>
-                    <a data-toggle="tooltip" title="{% for ligne in facture.lignes %}{{ (ligne.libelle) ? ligne.libelle~"\n" : "Aucun" }}{% endfor %}" href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.lignes | length}} ligne(s)</a>
-                    {% for origine in facture.origines %}
-                        - <a href="{{ path('contrat_visualisation', {'id': origine.id })}}">Contrat n° {{ origine.numeroArchive }}</a>
-                    {% endfor %}
-                </td>
-                <td class="text-right">{{ "%0.2f" | format(facture.montantTTC)  }}&nbsp;€</td>
-                <td class="text-right {% if facture.isDevis %}active{% endif %}">{% if facture.isFacture %}<span class="text-muted">{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€</span>{% endif %}</td>
-                <td class="text-right">
-                    <div class="btn-group">
-                        {% if facture.isDevis %}
-                            <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-warning btn-xs">Créer la facture</a>
-                        {% else %}
-                            <a href="" class="btn btn-default btn-xs">Regénerer</a>
-                            <a href="" class="btn btn-default btn-xs">Faire un avoir</a>
-                        {% endif %}
-                    </div>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            {% for facture in factures %}
+                <tr class="{% if(facture.paye or facture.isAvoir) %} success 
+                    {% elseif(facture.isEnRetardPaiement()) %} danger {% endif %}">
+                            <td>{{ ((facture.isDevis) ? facture.dateDevis : facture.dateFacturation) | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</td>
+                            <td><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span> {% if facture.isDevis %}Devis n° {{ facture.numeroDevis }}{% elseif(facture.isAvoir) %}Avoir n° {{ facture.numeroFacture }}{% else %}Facture n° {{ facture.numeroFacture }}{% endif %}</a></td>
+                            <td>
+                                <a data-toggle="tooltip" title="{% for ligne in facture.lignes %}{{ (ligne.libelle) ? ligne.libelle~"\n" : "Aucun" }}{% endfor %}" href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.lignes | length}} ligne(s)</a>
+                                {% for origine in facture.origines %}
+                                    - <a href="{{ path('contrat_visualisation', {'id': origine.id })}}">Contrat n° {{ origine.numeroArchive }}</a>
+                                {% endfor %}
+                            </td>
+                            <td class="text-right">{{ "%0.2f" | format(facture.montantTTC)  }}&nbsp;€</td>
+                            <td class="text-right {% if facture.isDevis %}active{% endif %}">{% if facture.isFacture %}<span class="text-muted">{% if(facture.isAvoir) %}-{%else%}{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€{% endif %}</span>{% endif %}</td>
+                            <td class="text-left">
+                                <div class="btn-group">
+                                    {% if facture.isDevis %}
+                                        <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-warning btn-xs">Créer la facture</a>
+                                    {% else %}
+                                        <a href="" class="btn btn-default btn-xs">&nbsp;<span class="glyphicon glyphicon-repeat" data-toggle="tooltip" title="Regénerer"></span></a>
+                                            {% if(not facture.isAvoir) %}
+                                            <a href="" class="btn btn-default btn-xs">Faire un avoir</a>
+                                            {% if(not facture.iscloture) %}
+                                                <a onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Cloturer</a>
+                                            {% endif %}
+                                            {% if(facture.iscloture and facture.isDecloturable) %}
+                                                <a onclick="return confirm('Êtes vous sûr de vouloir décloturer cette facture ?')" href="{{ path('facture_decloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Déclot.</a>
 
-{% endblock %}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                    {% endblock %}

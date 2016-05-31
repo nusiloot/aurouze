@@ -127,8 +127,13 @@ class PassageController extends Controller {
      */
     public function annulationAction(Request $request, Passage $passage) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $pm = $this->get('passage.manager');
+        $statut = $passage->getStatut();
         $passage->setStatut(PassageManager::STATUT_ANNULE);
         $dm->persist($passage);
+        if ($statut == PassageManager::STATUT_A_PLANIFIER) {
+        	$pm->updateNextPassageAPlannifier($passage);
+        }
         $dm->flush();
         return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
     }
@@ -256,10 +261,10 @@ class PassageController extends Controller {
 
         if ($request->get('technicien')) {
             $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
-            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien);
+            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien, true);
             $filename = sprintf("bons_passage_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
         } else {
-            $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'));
+            $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'), true);
             $filename = sprintf("bons_passage_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'));
         }
 

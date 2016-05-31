@@ -42,6 +42,7 @@ class PaiementsController extends Controller {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
 
+        $facturesIds = $paiements->getFacturesArrayIds();
         $form = $this->createForm(new PaiementsType($this->container, $dm), $paiements, array(
             'action' => $this->generateUrl('paiements_modification', array('id' => $paiements->getId())),
             'method' => 'POST',
@@ -52,6 +53,18 @@ class PaiementsController extends Controller {
 
             $dm->persist($paiements);
             $dm->flush();
+            
+            $facturesIds = array_merge($facturesIds,$paiements->getFacturesArrayIds());
+            
+            array_unique($facturesIds);
+            
+            foreach ($facturesIds as $factureId) {
+               $facture = $dm->getRepository('AppBundle:Facture')->findOneById($factureId);
+               $facture->updateMontantPaye();
+               $dm->persist($facture);
+               $dm->flush();
+            }
+            
             return $this->redirectToRoute('paiements_modification', array('id' => $paiements->getId()));
         }
 
@@ -87,28 +100,30 @@ class PaiementsController extends Controller {
      */
     public function exportComptableAction(Request $request) {
 
+      // $response = new StreamedResponse();
         $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('paiements.manager');
-        $paiements = array();
-        $html = $this->renderView('paiements/exportPaiements.html.twig', array(
-            'paiements' => $paiements,
-            'parameters' => $pm->getParameters(),
-        ));
+        $paiementsForCsv = $pm->getPaiementsForCsv();
 
-
-        $filename = sprintf("export_paiements_%s.csv", $paiements->getDateCreation()->format("Y-m-d"));
-
-        if ($request->get('output') == 'html') {
-
-            return new Response($html, 200);
+        $filename = sprintf("export_paiements_%s.csv", (new \DateTime())->format("Y-m-d"));
+        $handle = fopen('php://memory', 'r+');
+        foreach ($paiementsForCsv as $paiement) {
+            fputcsv($handle, $paiement);
         }
+ 
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
 
-        return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
-                )
-        );
+
+
+        $response = new Response($content, 200, array(
+            'Content-Type' => 'application/force-download',
+            'Content-Disposition' => 'attachment; filename=' . $filename,
+        ));
+        $response->setCharset('UTF-8');
+
+        return $response;
     }
 
     /**

@@ -179,7 +179,7 @@ class Facture implements DocumentSocieteInterface {
 
     public function isPaye() {
 
-        return false;
+        return $this->isCloture();
     }
 
     public function getOrigines() {
@@ -529,7 +529,7 @@ class Facture implements DocumentSocieteInterface {
      * @return date $dateLimitePaiement
      */
     public function getDateLimitePaiement() {
-        if(is_null($this->dateLimitePaiement)) {
+        if (is_null($this->dateLimitePaiement)) {
 
             return clone $this->calculDateLimitePaiement();
         }
@@ -789,6 +789,40 @@ class Facture implements DocumentSocieteInterface {
      */
     public function getNumeroDevis() {
         return $this->numeroDevis;
+    }
+
+    public function isEnRetardPaiement() {
+        if (!$this->isCloture() && ($this->getDateLimitePaiement()->format('Ymd') < (new \DateTime())->format('Ymd'))) {
+            return true;
+        }
+        return false;
+    }
+    
+    public function isAvoir() {
+        return $this->getAvoir() || $this->getMontantTTC() <= 0;
+    }
+    
+    public function cloturer() {
+        $this->setMontantPaye($this->getMontantTTC());
+    }
+    
+    public function decloturer() {
+        $this->updateMontantPaye();
+    }
+    public function isDecloturable() {
+       return $this->getMontantPayeCalcule() != $this->getMontantTTC();
+    }
+    
+    public function getMontantPayeCalcule() {
+        $sommeMontantPayeCalcule = 0.0;
+        foreach ($this->getPaiements() as $paiements) {
+            foreach ($paiements->getPaiement() as $paiement) {
+                if ($paiement->getFacture()->getId() == $this->getId()) {
+                    $sommeMontantPayeCalcule+=$paiement->getMontant();
+                }
+            }
+        }
+        return $sommeMontantPayeCalcule;
     }
 
 }
