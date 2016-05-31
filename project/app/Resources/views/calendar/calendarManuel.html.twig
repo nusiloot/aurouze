@@ -63,7 +63,7 @@
 													{% for date, eventDate in eventsDates %}
 													<th data-date="{{ date }}" class="fc-day-header fc-widget-header fc-mon">{{ calendarTool.getShortLibelleJour(date|date("N")) }} {{ date|date("j") }}/{{ date|date("n") }}
                                                     <br />
-                                                    {% for technicien, events in eventDate %}<a href="" data-toggle="tooltip" title="{{ techniciens["COMPTE-"~technicien].identite }}" style="
+                                                    {% for technicien, events in eventDate %}<a href="{{ path('calendar',{'technicien': techniciens["COMPTE-"~technicien].id, 'passage': ((passage) ? passage.id : null), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" data-toggle="tooltip" title="{{ techniciens["COMPTE-"~technicien].identite }}" style="
                                                         display:inline-block;
                                                         margin-right: 1px;
                                                         border-radius: 0;
@@ -148,12 +148,12 @@
                                                                                 border: 1px dotted #fff;
 																				color: {{ event.textColor }};
 																				z-index: {{ index }};
-																				top: {{ event.coefStart * 22}}px;
-																				bottom: -{{ event.coefEnd * 22}}px;
+																				top: {{ (event.coefStart * 26) + 1 }}px;
+																				bottom: -{{ (event.coefEnd * 26) + 3 }}px;
 																				left: {{ ((100 / nbTechniciens) * index)|round(0, 'floor') }}%;
 																				width: {{ ((100 / nbTechniciens))|round(0, 'floor') - 5 }}%;"
 																				class="fc-time-grid-event fc-v-event fc-event fc-start fc-end"
-																				nb="{{ eventDate|keys|length }}" data-toggle="tooltip" data-original-title="{{ event.resume }}" >
+																				nb="{{ eventDate|keys|length }}" data-toggle="modal" data-remote="false" data-target="#modal-calendrier-infos" href="{{path('calendarRead', { 'id': event.id })}}" data-original-title="{{ event.resume }}" >
 																			</a>
 																			{% endfor %}
 																			{% set index = index + 1 %}

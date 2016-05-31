@@ -1,3 +1,6 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
 <h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Paiements du {{ paiements.dateCreation | localizeddate("full", "none") }}</strong>
 </h2>
 
@@ -9,11 +12,11 @@
         <table style="font-size: 14px;" >
             <thead>
                 <tr style="border-color: #ddd; border: 1px solid;">
-                    <th >Date</th>
+                    <th style=" width: 100px;" >Date</th>
                     <th style=" width: 180px;">Type Règlement</th>
                     <th style=" width: 100px;" >Moyen</th>
                     <th style=" width: 270px;" >Libelle</th>
-                    <th  style=" width: 70px;" >Montant</th>
+                    <th  style=" width: 100px; text-align: right;" >Montant</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,7 +29,7 @@
                         <td style="border-color: #ddd; border: 1px solid;" class="col-xs-3"> 
                             {% if(paiement.libelle) %}{{ paiement.libelle }}{% endif %}
                         </td>
-                        <td style="border-color: #ddd; border: 1px solid;">{{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</td>
+                        <td style="border-color: #ddd; border: 1px solid; text-align: right;">{{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</td>
 
                     </tr>
                 {% endfor %}
@@ -42,4 +45,4 @@
         </table>
     </div>
 </div>
-
+{% endblock %}
