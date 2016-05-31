@@ -84,7 +84,7 @@
                                                 <a onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Cloturer</a>
                                             {% endif %}
                                             {% if(facture.iscloture and facture.isDecloturable) %}
-                                                <a onclick="return confirm('Êtes vous sûr de vouloir décloturer cette facture ?')" href="{{ path('facture_decloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Décloturer</a>
+                                                <a onclick="return confirm('Êtes vous sûr de vouloir décloturer cette facture ?')" href="{{ path('facture_decloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Déclot.</a>
 
                                             {% endif %}
                                         {% endif %}
