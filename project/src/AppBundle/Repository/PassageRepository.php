@@ -16,7 +16,7 @@ use AppBundle\Document\Contrat;
 
 class PassageRepository extends DocumentRepository {
 
-    public function findAllPlanifieByPeriodeAndIdentifiantTechnicien($startDate, $endDate, $technicien) {
+    public function findAllPlanifieByPeriodeAndIdentifiantTechnicien($startDate, $endDate, $technicien, $onlyNonImprime = false) {
         $mongoStartDate = new MongoDate(strtotime($startDate . " 00:00:00"));
         $mongoEndDate = new MongoDate(strtotime($endDate . " 23:59:59"));
         $query = $this->createQueryBuilder('Passage')
@@ -24,12 +24,16 @@ class PassageRepository extends DocumentRepository {
                 ->field('dateDebut')->lte($mongoEndDate)
                 ->field('dateFin')->gte($mongoStartDate)
                 ->field('techniciens')->equals($technicien->getId())
-                ->sort('dateDebut', 'asc')
-                ->getQuery();
+                ->sort('dateDebut', 'asc');
+        if ($onlyNonImprime) {
+        	$query->field('imprime')->equals(false);
+        }
+        $query = $query->getQuery();
+        
         return $query->execute();
     }
 
-    public function findAllPlanifieByPeriode($startDate, $endDate) {
+    public function findAllPlanifieByPeriode($startDate, $endDate, $onlyNonImprime = false) {
         $mongoStartDate = new MongoDate(strtotime($startDate));
         $mongoEndDate = new MongoDate(strtotime($endDate));
         $query = $this->createQueryBuilder('Passage')
@@ -37,8 +41,11 @@ class PassageRepository extends DocumentRepository {
                 ->field('dateDebut')->lte($mongoEndDate)
                 ->field('dateFin')->gte($mongoStartDate)
                 ->sort('technicien', 'desc')
-                ->sort('dateDebut', 'asc')
-                ->getQuery();
+                ->sort('dateDebut', 'asc');
+        if ($onlyNonImprime) {
+        	$query->field('imprime')->equals(false);
+        }
+        $query = $query->getQuery();
         return $query->execute();
     }
 
