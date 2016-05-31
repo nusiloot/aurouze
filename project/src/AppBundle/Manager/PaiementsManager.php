@@ -24,6 +24,16 @@ class PaiementsManager {
     const MOYEN_PAIEMENT_CB = 'CB';
     const MOYEN_PAIEMENT_REGULARISATION_COMPTABLE = 'REGUL_COMPTA';
 
+    const EXPORT_DATE_PAIEMENT = 0;
+    const EXPORT_CODE_COMPTABLE_TRONQ = 1;
+    const EXPORT_VR_PRIX = 2;
+    const EXPORT_FACTURE_NUM_RAISON_SOCIALE = 3;
+    const EXPORT_PRIX = 4;
+    const EXPORT_EMPTY = 5;    
+    const EXPORT_CODE_COMPTABLE = 6;
+    const EXPORT_FACTURE_NUM = 7;
+    
+    
     public static $types_reglements_libelles = array(
         self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
         self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",
@@ -32,9 +42,9 @@ class PaiementsManager {
         self::TYPE_REGLEMENT_PERTE => "Perte",
         self::TYPE_REGLEMENT_GAIN => "Gain");
     public static $nouveau_types_reglements_libelles = array(
-    		self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
-    		self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",
-    		self::TYPE_REGLEMENT_REGULARISATION => "Règlement de régularisation");
+        self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
+        self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",
+        self::TYPE_REGLEMENT_REGULARISATION => "Règlement de régularisation");
     public static $types_reglements_index = array(
         "1" => self::TYPE_REGLEMENT_FACTURE,
         "2" => self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE,
@@ -57,7 +67,10 @@ class PaiementsManager {
         "5" => self::MOYEN_PAIEMENT_CB,
         "6" => self::MOYEN_PAIEMENT_REGULARISATION_COMPTABLE);
 
-    function __construct(DocumentManager $dm, FactureManager $fm,$parameters) {
+
+
+    
+    function __construct(DocumentManager $dm, FactureManager $fm, $parameters) {
         $this->dm = $dm;
         $this->fm = $fm;
         $this->parameters = $parameters;
@@ -68,16 +81,39 @@ class PaiementsManager {
         return $this->dm->getRepository('AppBundle:Paiements');
     }
 
-    
     public function getParameters() {
 
         return $this->parameters;
     }
-    
-    public function createByDateCreation(\DateTime $dateCreation){
+
+    public function createByDateCreation(\DateTime $dateCreation) {
         $paiements = new Paiements();
         $paiements->setDateCreation($dateCreation);
         return $paiements;
     }
-   
+
+    public function getPaiementsForCsv() {
+        $date = new \DateTime();
+        $paiementsObjs = $this->getRepository()->findByDate($date);
+        
+        $paiementsArray = array();
+        foreach ($paiementsObjs as $paiements) {
+            foreach ($paiements->getPaiement() as $paiement) {
+                $paiementArr = array();
+                $paiementArr[self::EXPORT_DATE_PAIEMENT] = $paiement->getDatePaiement()->format('d/m/Y');
+                $paiementArr[self::EXPORT_CODE_COMPTABLE] = substr($paiement->getFacture()->getSociete()->getCodeComptable(),0,8);
+                $paiementArr[self::EXPORT_VR_PRIX] = $paiement->getMontant();
+                $paiementArr[self::EXPORT_FACTURE_NUM_RAISON_SOCIALE] = $paiement->getFacture()->getNumeroFacture()." ".$paiement->getFacture()->getSociete()->getRaisonSociale();
+                $paiementArr[self::EXPORT_PRIX] = $paiement->getMontant()." €";
+                $paiementArr[self::EXPORT_EMPTY] = "";
+                $paiementArr[self::EXPORT_CODE_COMPTABLE] = $paiement->getFacture()->getSociete()->getCodeComptable();
+                $paiementArr[self::EXPORT_FACTURE_NUM] = $paiement->getFacture()->getSociete()->getCodeComptable();
+                $paiementArr[] = $paiement->getMontant();
+                
+                $paiementsArray[] = $paiementArr;
+            }
+        }
+        return $paiementsArray;
+    }
+
 }
