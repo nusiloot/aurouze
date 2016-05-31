@@ -90,7 +90,7 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_ANNULE => 6
     );
     public static $frequences = array(
-        self::FREQUENCE_RECEPTION => 'A reception',
+        self::FREQUENCE_RECEPTION => 'À réception',
         self::FREQUENCE_30J => '30 jours',
         self::FREQUENCE_30JMOIS => '30 jours fin de mois',
         self::FREQUENCE_45JMOIS => '45 jours fin de mois',

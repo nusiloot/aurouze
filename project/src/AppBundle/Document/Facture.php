@@ -156,6 +156,8 @@ class Facture implements DocumentSocieteInterface {
         $this->setMontantHT(round($montant, 2));
         $this->setMontantTaxe(round($montantTaxe, 2));
         $this->setMontantTTC(round($montant + $montantTaxe, 2));
+
+        $this->setDateLimitePaiement($this->getDateReglement());
     }
 
     public function storeDestinataire() {
@@ -527,6 +529,11 @@ class Facture implements DocumentSocieteInterface {
      * @return date $dateLimitePaiement
      */
     public function getDateLimitePaiement() {
+        if(is_null($this->dateLimitePaiement)) {
+
+            return $this->getDateReglement();
+        }
+
         return $this->dateLimitePaiement;
     }
 
@@ -565,7 +572,13 @@ class Facture implements DocumentSocieteInterface {
             default:
                 $date->modify('+' . FactureManager::DEFAUT_FREQUENCE_JOURS . ' day');
         }
+
         return $date;
+    }
+
+    public function getFrequencePaiementLibelle() {
+
+        return ContratManager::$frequences[$this->getFrequencePaiement()];
     }
 
     /**
