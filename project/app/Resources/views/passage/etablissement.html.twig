@@ -78,7 +78,7 @@
 
                                 {% endfor %}
                                 <span class="pull-right"><span class="glyphicon glyphicon-chevron-down"></span></span>
-                               <span class="pull-right">{% if(contrat.dureeGarantie) %} Garantie {{ contrat.dureeGarantie }} mois{% else %}Aucune garantie{% endif %}&nbsp;&nbsp;&nbsp;</span>
+                               <span class="pull-right"><div title="Garantie initiale de {{ contrat.dureeGarantie }} mois<br />(expire le {{ contrat.dateExpirationGarantie|date("d/m/Y") }})" data-html="true" data-toggle="tooltip">{% if(contrat.isSousGarantie) %}Garantie{% else %}<s>Garantie</s>{% endif %}&nbsp;&nbsp;&nbsp;</div></span>
                                 <span class="pull-right">{% if(contratManager.isContratEnRetardPaiement(contrat)) %}<span class="glyphicon glyphicon-warning-sign" title="En retard de paiement" data-html="true" data-toggle="tooltip"></span>{% endif %}&nbsp;&nbsp;&nbsp;</span>
                             </h4>
                         </div>
@@ -98,7 +98,7 @@
                                         <a href="" title="{{ contrat.nomenclature | nl2br }}" data-html="true" data-toggle="tooltip">Voir la nomenclature</a>
                                     </div>
                                     <div class="col-xs-1">
-                                        <small>{% if(contrat.dureePassage) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ contrat.dureePassage }}min</span>{% endif %}</small>
+                                        <small>{% if(contrat.dureePassage) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ contrat.getHumanDureePassage }}</span>{% endif %}</small>
                                     </div>
                                     <div class="col-xs-2">
                                         {% if contrat.commentaire %}

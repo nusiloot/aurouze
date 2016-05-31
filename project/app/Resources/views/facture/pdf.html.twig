@@ -19,12 +19,17 @@
         {% if facture.isDevis %}
         <h3>DEVIS {% if(facture.numeroDevis) %}N°&nbsp;{{ facture.numeroDevis }}{% else %}BROUILLON{% endif %}</h3>
         <span>Du {{ facture.dateDevis|date("d/m/Y") }}</span>
+        <br /><br />
         {% else %}
         <h3>FACTURE {% if(facture.numeroFacture) %}N°&nbsp;{{ facture.numeroFacture }}{% else %}BROUILLON{% endif %}</h3>
-        <span>Du {{ facture.dateFacturation|date("d/m/Y") }}</span>
+        <span>Du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
+        {% if (facture.numeroDevis) %}
+        À partir du devis n° {{ facture.numeroDevis }}
+        {% else %}
+        <br /><br />
+        {% endif %}
         {% endif %}
         </div>
-        <br />
         <br />
         <br />
 		<br />
@@ -112,7 +117,7 @@
 
 {% if (facture.description) %}
 <p>
-    {{ facture.description }}
+    {{ facture.description  | nl2br }}
 </p>
 {% endif %}
 

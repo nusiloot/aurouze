@@ -14,7 +14,7 @@ class FactureManager {
     protected $dm;
     protected $mm;
     protected $parameters;
-    
+
     const DEFAUT_FREQUENCE_JOURS = 10;
 
     function __construct(DocumentManager $dm, MouvementManager $mm, $parameters) {
@@ -36,6 +36,21 @@ class FactureManager {
     public function findBySociete(Societe $societe) {
 
         return $this->getRepository()->findBy(array('societe' => $societe->getId()), array('dateEmission' => 'desc'));
+    }
+
+    public function createVierge(Societe $societe) {
+        $facture = new Facture();
+        $facture->setSociete($societe);
+        $facture->setDateEmission(new \DateTime());
+        $facture->getEmetteur()->setNom($this->parameters['emetteur']['nom']);
+        $facture->getEmetteur()->setAdresse($this->parameters['emetteur']['adresse']);
+        $facture->getEmetteur()->setCodePostal($this->parameters['emetteur']['code_postal']);
+        $facture->getEmetteur()->setCommune($this->parameters['emetteur']['commune']);
+        $facture->getEmetteur()->setTelephone($this->parameters['emetteur']['telephone']);
+        $facture->getEmetteur()->setFax($this->parameters['emetteur']['fax']);
+        $facture->getEmetteur()->setEmail($this->parameters['emetteur']['email']);
+
+        return $facture;
     }
 
     public function create(Societe $societe, $mouvements, $dateFacturation) {
