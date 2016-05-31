@@ -13,7 +13,7 @@ class RendezVousRepository extends DocumentRepository
 
         $query = $this->createQueryBuilder('RendezVous');
         $query->addOr($query->expr()->field('dateDebut')->gte($mongoStartDate)->field('dateDebut')->lte($mongoEndDate));
-        $query->addOr($query->expr()->field('dateFin')->gte($mongoStartDate)->field('dateFin')->lte($mongoEndDate));
+        $query->addOr($query->expr()->field('dateFin')->gte($mongoStartDate));
         $query->field('participants')->equals($participant->getId())
                 ->sort('dateDebut', 'asc');
 
@@ -26,7 +26,7 @@ class RendezVousRepository extends DocumentRepository
         
         $query = $this->createQueryBuilder('RendezVous');
         $query->addOr($query->expr()->field('dateDebut')->gte($mongoStartDate)->field('dateDebut')->lte($mongoEndDate));
-        $query->addOr($query->expr()->field('dateFin')->gte($mongoStartDate)->field('dateFin')->lte($mongoEndDate));
+        $query->addOr($query->expr()->field('dateFin')->gte($mongoStartDate));
         $query->sort('dateDebut', 'asc');
 
         return $query->getQuery()->execute();
