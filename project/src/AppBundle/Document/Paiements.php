@@ -28,7 +28,7 @@ class Paiements {
     protected $dateCreation;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Paiement", strategy="set")
+     * @MongoDB\EmbedMany(targetDocument="Paiement")
      */
     protected $paiement;
 
@@ -175,5 +175,13 @@ class Paiements {
         }
         return $montantTotal;
     }    
+ 
+    public function getFacturesArrayIds(){
+        $factureArrayIds = array();
+        foreach ($this->getPaiement() as $paiement) {
+            $factureArrayIds[] = $paiement->getFacture()->getId();
+        }
+        return $factureArrayIds;
+    }
     
 }
