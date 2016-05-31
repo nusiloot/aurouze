@@ -46,7 +46,7 @@ class SocieteType extends AbstractType {
                 ->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
                 ->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'));
         if ($this->isNew) {
-            $builder->add('generer', CheckboxType::class, array('label' => 'Générer l\'établissement lié, à partir des données de la société', 'required' => false, 'empty_data' => null, 'mapped' => false, 'data' => true));
+            $builder->add('generer', CheckboxType::class, array('label' => 'Générer l\'établissement lié, à partir des données de la société', 'required' => false, 'empty_data' => null, 'mapped' => false, 'data' => false));
         }
 
 

@@ -33,18 +33,21 @@ class FactureGenerator extends AbstractIdGenerator
         }
 
         if($document->isDevis()) {
-            $this->generateNumeroDevis($db, $document);
+            $this->generateNumeroDevis($dm, $document);
         } else {
-            $this->generateNumeroFacture($db, $document);
+            $this->generateNumeroFacture($dm, $document);
         }
 
         return $id;
     }
 
-    public function generateNumeroDevis($db, $document) {
+    public function generateNumeroDevis(DocumentManager $dm, $document) {
         if($document->getNumeroDevis()) {
             return;
         }
+
+        $className = get_class($document);
+        $db = $dm->getDocumentDatabase($className);
 
         $command = array();
         $command['findandmodify'] = 'doctrine_increment_ids';
@@ -57,10 +60,13 @@ class FactureGenerator extends AbstractIdGenerator
         $document->setNumeroDevis($result['value']['current_id']);
     }
 
-    public function generateNumeroFacture($db, $document) {
+    public function generateNumeroFacture(DocumentManager $dm, $document) {
         if($document->getNumeroFacture()) {
             return;
         }
+        
+        $className = get_class($document);
+        $db = $dm->getDocumentDatabase($className);
 
         $annee = $document->getDateFacturation()->format('Y');
 

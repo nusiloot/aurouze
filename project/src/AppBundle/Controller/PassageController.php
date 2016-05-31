@@ -127,8 +127,13 @@ class PassageController extends Controller {
      */
     public function annulationAction(Request $request, Passage $passage) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $pm = $this->get('passage.manager');
+        $statut = $passage->getStatut();
         $passage->setStatut(PassageManager::STATUT_ANNULE);
         $dm->persist($passage);
+        if ($statut == PassageManager::STATUT_A_PLANIFIER) {
+        	$pm->updateNextPassageAPlannifier($passage);
+        }
         $dm->flush();
         return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
     }
