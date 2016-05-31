@@ -157,7 +157,7 @@ class Facture implements DocumentSocieteInterface {
         $this->setMontantTaxe(round($montantTaxe, 2));
         $this->setMontantTTC(round($montant + $montantTaxe, 2));
 
-        $this->setDateLimitePaiement($this->getDateReglement());
+        $this->setDateLimitePaiement($this->calculDateLimitePaiement());
     }
 
     public function storeDestinataire() {
@@ -531,7 +531,7 @@ class Facture implements DocumentSocieteInterface {
     public function getDateLimitePaiement() {
         if(is_null($this->dateLimitePaiement)) {
 
-            return $this->getDateReglement();
+            return clone $this->calculDateLimitePaiement();
         }
 
         return $this->dateLimitePaiement;
@@ -550,11 +550,11 @@ class Facture implements DocumentSocieteInterface {
         return $tva;
     }
 
-    public function getDateReglement() {
+    public function calculDateLimitePaiement() {
         $frequence = $this->getFrequencePaiement();
 
-        $date = $this->getDateFacturation();
-        $date = ($date) ? $date : $this->getDateEmission();
+        $date = clone $this->getDateFacturation();
+        $date = ($date) ? $date : clone $this->getDateEmission();
         $date = ($date) ? $date : new \DateTime();
         switch ($frequence) {
             case ContratManager::FREQUENCE_30J :
