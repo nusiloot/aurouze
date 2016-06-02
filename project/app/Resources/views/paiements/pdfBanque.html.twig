@@ -43,37 +43,37 @@
             <table style="font-size: 14px;" >
                 <thead>
                     <tr style="border-color: #ddd; border: 1px solid;">
-                        <th colspan="5" >&nbsp;Pièce</th>
+                        <th colspan="4"  style=" width: 750px; border-color: #ddd; border: 1px solid;" >&nbsp;Pièce</th>
                     </tr>
                     <tr style="border-color: #ddd; border: 1px solid;">
-                        <th style=" width: 100px;" >&nbsp;Date</th>
-                        <th style=" width: 180px;">&nbsp;Type Règlement</th>
-                        <th style=" width: 100px;" >&nbsp;Moyen</th>
-                        <th style=" width: 270px;" >&nbsp;Libelle</th>
-                        <th  style=" width: 100px; text-align: right;" >Montant&nbsp;</th>
+                        <th style=" width: 200px;" >&nbsp;Date</th>
+                        <th style=" width: 330px;">&nbsp;Facture</th>
+                        <th style=" width: 320px;" >&nbsp;Libelle</th>
+                        <th  style=" width: 200px; text-align: right; border-color: #ddd; border: 1px solid;" >Montant&nbsp;</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for paiement in paiements.paiement %}
+                        {% if paiement.moyenPaiement == 'CHEQUE' %}
                         <tr style="border-color: #ddd; border: 1px solid;">
                             <td style="border-color: #ddd; border: 1px solid;">&nbsp;{{ paiements.dateCreation | date("d/m/Y") }}</td>
-                            <td style="border-color: #ddd; border: 1px solid;">&nbsp;{{ paiement.typeReglementLibelle }}</td>
-                            <td style="border-color: #ddd; border: 1px solid;">&nbsp;{{ paiement.getMoyenPaiementLibelle() }}</td>
-
-                            <td style="border-color: #ddd; border: 1px solid; text-align: left;" class="col-xs-3"> 
+                            <td style="border-color: #ddd; border: 1px solid;">&nbsp;{{ paiement.typeReglementLibelle }} n° {{ paiement.facture.numeroFacture }}</td>
+                            
+                            <td style="border-color: #ddd; border: 1px solid; text-align: left;" > 
                                 {% if(paiement.libelle) %}&nbsp;{{ paiement.libelle }}{% endif %}
                             </td>
                             <td style="border-color: #ddd; border: 1px solid; text-align: right;">{{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</td>
 
                         </tr>
+                        {% endif %}
                     {% endfor %}
                     <tr>
                         <td colspan="5"></td>
                     </tr>
                     <tr style="border-color: #ddd; border: 1px solid;">
-                        <td style="border-color: #ddd; border: 1px solid; text-align: left;" colspan="4"><strong>&nbsp;TOTAL</strong></td>
+                        <td style="border-color: #ddd; border: 1px solid; text-align: left;" colspan="3"><strong>&nbsp;TOTAL</strong></td>
 
-                        <td style="border-color: #ddd; border: 1px solid; text-align: right;" >{{ paiements.getMontantTotal() | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</td>
+                        <td style="border-color: #ddd; border: 1px solid; text-align: right;" >{{ paiements.getMontantTotalByMoyenPaiement('CHEQUE') | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</td>
                     </tr>
                 </tbody>
             </table>
@@ -85,7 +85,7 @@
             <div class="text-left">
                 <strong>Nombre de chèque : {{ paiements.paiement | length }}</strong>
                 <br />
-                <strong>Total des montants : {{ paiements.getMontantTotal() | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</strong>
+                <strong>Total des montants : {{ paiements.getMontantTotalByMoyenPaiement('CHEQUE') | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</strong>
                 <br />
                 <br />
                 Banque : <strong>{{ parameters.banque.nom }}</strong>

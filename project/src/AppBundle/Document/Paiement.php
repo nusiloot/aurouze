@@ -230,4 +230,8 @@ class Paiement {
         }
         return PaiementsManager::$types_reglements_libelles[$this->getTypeReglement()];
     }
+    
+    public function isCheque() {
+        return $this->getMoyenPaiement() == PaiementsManager::MOYEN_PAIEMENT_CHEQUE;
+    }
 }
