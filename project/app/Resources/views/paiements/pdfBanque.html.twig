@@ -29,11 +29,7 @@
             <br />            
         </div>
     </div>
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />    
+    <br /> 
     <h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Paiements du {{ paiements.dateCreation | localizeddate("full", "none") }}</strong>
     </h2>
 
@@ -57,7 +53,7 @@
                         {% if paiement.moyenPaiement == 'CHEQUE' %}
                         <tr style="border-color: #ddd; border: 1px solid;">
                             <td style="border-color: #ddd; border: 1px solid;">&nbsp;{{ paiements.dateCreation | date("d/m/Y") }}</td>
-                            <td style="border-color: #ddd; border: 1px solid;">&nbsp;{{ paiement.typeReglementLibelle }} n° {{ paiement.facture.numeroFacture }}</td>
+                            <td style="border-color: #ddd; border: 1px solid;">&nbsp;Facture n° {{ paiement.facture.numeroFacture }}</td>
                             
                             <td style="border-color: #ddd; border: 1px solid; text-align: left;" > 
                                 {% if(paiement.libelle) %}&nbsp;{{ paiement.libelle }}{% endif %}
