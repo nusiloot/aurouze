@@ -34,19 +34,12 @@ parameters:
             infos: ""
             banque: ""
             virement: ""
-
-    paiements:
-        emetteur:
+            numero_compte: ""
+        banque:
             nom: ""
             adresse: ""
             code_postal: ""
             commune: ""
-            telephone: ""
-            fax: ""
-            email: ""
-            infos: ""
-            banque: ""
-            virement: ""
 
     knp_snappy_pdfbinary: xvfb-run wkhtmltopdf
     knp_snappy_imagebinary: xvfb-run wkhtmltoimage
