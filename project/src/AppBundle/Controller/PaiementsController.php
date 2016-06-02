@@ -132,7 +132,7 @@ class PaiementsController extends Controller {
      */
     public function pdfBanqueAction(Request $request, Paiements $paiements) {
 
-        $dm = $this->get('doctrine_mongodb')->getManager();
+        
         $pm = $this->get('paiements.manager');
         $html = $this->renderView('paiements/pdfBanque.html.twig', array(
             'paiements' => $paiements,

@@ -39,7 +39,8 @@ class PaiementType extends AbstractType {
     	->add('moyenPaiement', ChoiceType::class, array('label' => 'Moyen de paiement', 'choices' => array_merge(array(null => null), PaiementsManager::$moyens_paiement_libelles), "attr" => array("class" => "select2 select2-simple")))
     	->add('typeReglement', ChoiceType::class, array('label' => 'Type de paiement', 'choices' => array_merge(array(null => null), PaiementsManager::$nouveau_types_reglements_libelles), "attr" => array("class" => "select2 select2-simple")))
     	->add('libelle', TextType::class, array('label' => 'Libellé'))
-    	->add('montant', NumberType::class, array('label' => 'Montant', 'scale' => 2))
+    	->add('montant', NumberType::class, array('label' => 'Montant', 'scale' => 2,"attr" => array(
+    					'class' => 'nombreSomme')))
     	->add('datePaiement', DateType::class, array(
     			'label' => 'Date de paiement',
     			"attr" => array(

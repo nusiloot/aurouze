@@ -37,20 +37,17 @@ class Paiements {
      */
     protected $imprime;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->paiement = new ArrayCollection();
         $this->imprime = false;
-        
     }
-    
+
     /**
      * Get id
      *
      * @return string $id
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -60,8 +57,7 @@ class Paiements {
      * @param string $identifiant
      * @return self
      */
-    public function setIdentifiant($identifiant)
-    {
+    public function setIdentifiant($identifiant) {
         $this->identifiant = $identifiant;
         return $this;
     }
@@ -71,8 +67,7 @@ class Paiements {
      *
      * @return string $identifiant
      */
-    public function getIdentifiant()
-    {
+    public function getIdentifiant() {
         return $this->identifiant;
     }
 
@@ -82,8 +77,7 @@ class Paiements {
      * @param date $dateCreation
      * @return self
      */
-    public function setDateCreation($dateCreation)
-    {
+    public function setDateCreation($dateCreation) {
         $this->dateCreation = $dateCreation;
         return $this;
     }
@@ -93,8 +87,7 @@ class Paiements {
      *
      * @return date $dateCreation
      */
-    public function getDateCreation()
-    {
+    public function getDateCreation() {
         return $this->dateCreation;
     }
 
@@ -103,8 +96,7 @@ class Paiements {
      *
      * @param AppBundle\Document\Paiement $paiement
      */
-    public function addPaiement(\AppBundle\Document\Paiement $paiement)
-    {
+    public function addPaiement(\AppBundle\Document\Paiement $paiement) {
         $this->paiement[] = $paiement;
     }
 
@@ -113,8 +105,7 @@ class Paiements {
      *
      * @param AppBundle\Document\Paiement $paiement
      */
-    public function removePaiement(\AppBundle\Document\Paiement $paiement)
-    {
+    public function removePaiement(\AppBundle\Document\Paiement $paiement) {
         $this->paiement->removeElement($paiement);
     }
 
@@ -123,8 +114,7 @@ class Paiements {
      *
      * @return \Doctrine\Common\Collections\Collection $paiement
      */
-    public function getPaiement()
-    {
+    public function getPaiement() {
         return $this->paiement;
     }
 
@@ -134,8 +124,7 @@ class Paiements {
      * @param boolean $imprime
      * @return self
      */
-    public function setImprime($imprime)
-    {
+    public function setImprime($imprime) {
         $this->imprime = $imprime;
         return $this;
     }
@@ -145,11 +134,10 @@ class Paiements {
      *
      * @return boolean $imprime
      */
-    public function getImprime()
-    {
+    public function getImprime() {
         return $this->imprime;
     }
-    
+
     public function getMontantTotal() {
         $montantTotal = 0;
         foreach ($this->getPaiement() as $paiement) {
@@ -157,31 +145,41 @@ class Paiements {
         }
         return $montantTotal;
     }
-    
+
+    public function getMontantTotalByMoyenPaiement($moyen_paiement) {
+        $montantTotal = 0;
+        foreach ($this->getPaiement() as $paiement) {
+            if($moyen_paiement == $paiement->getMoyenPaiement()) {
+                $montantTotal+=$paiement->getMontant();
+            }
+        }
+        return $montantTotal;
+    }
+
     public function getPaiementBySociete($societe) {
         $paiementBySoc = array();
         foreach ($this->getPaiement() as $paiement) {
-            if($paiement->getFacture()->getSociete() == $societe){
-                $paiementBySoc[] =$paiement;
+            if ($paiement->getFacture()->getSociete() == $societe) {
+                $paiementBySoc[] = $paiement;
             }
         }
         return $paiementBySoc;
     }
-    
+
     public function getTotalBySociete($societe) {
         $montantTotal = 0;
         foreach ($this->getPaiementBySociete($societe) as $paiement) {
             $montantTotal+=$paiement->getMontant();
         }
         return $montantTotal;
-    }    
- 
-    public function getFacturesArrayIds(){
+    }
+
+    public function getFacturesArrayIds() {
         $factureArrayIds = array();
         foreach ($this->getPaiement() as $paiement) {
             $factureArrayIds[] = $paiement->getFacture()->getId();
         }
         return $factureArrayIds;
     }
-    
+
 }

@@ -25,21 +25,34 @@
         $.initLinkCalendar();
         $.initMap();
         $.initTypeheadFacture();
+        $.initSomme();
     });
 
+    $.initSomme = function () {
+        $('.nombreSomme').blur(function () {
+            var total = 0.0;
+            $('.nombreSomme').each(function () {
+                if ($(this).val() && $(this).val()!= "") {
+                    total += parseFloat($(this).val().replace(',', '.'));
+                }
+            });
+            var totalToPrint = total.toFixed(2).toString().replace('.', ',');
+            $(".sommeTotal").html(totalToPrint);
+        });
+    }
     $.initLinkCalendar = function () {
-    	$('#calendrier .fc-day-header').each(function() {
-    		if ($(this).data('date')) {
-	    		var content = '<a href="'+($('#calendrier').data('url-date')).replace('-d', $(this).data('date'))+'">' + $(this).text() + '</a>';
-	    		$(this).html(content);
-    		}
-    	});
-    	$('#calendrier .fc-day-number').each(function() {
-    		if ($(this).data('date')) {
-	    		var content = '<a href="'+($('#calendrier').data('url-date')).replace('-d', $(this).data('date'))+'">' + $(this).text() + '</a>';
-	    		$(this).html(content);
-    		}
-    	});
+        $('#calendrier .fc-day-header').each(function () {
+            if ($(this).data('date')) {
+                var content = '<a href="' + ($('#calendrier').data('url-date')).replace('-d', $(this).data('date')) + '">' + $(this).text() + '</a>';
+                $(this).html(content);
+            }
+        });
+        $('#calendrier .fc-day-number').each(function () {
+            if ($(this).data('date')) {
+                var content = '<a href="' + ($('#calendrier').data('url-date')).replace('-d', $(this).data('date')) + '">' + $(this).text() + '</a>';
+                $(this).html(content);
+            }
+        });
     };
 
     $.initListingPassage = function () {
@@ -132,14 +145,14 @@
 
     $.initTimePicker = function () {
         $('.input-timepicker').each(function () {
-            var defaultTiming = ($(this).attr('data-default'))? $(this).attr('data-default') : '';
+            var defaultTiming = ($(this).attr('data-default')) ? $(this).attr('data-default') : '';
             $(this).timepicker({
                 format: 'HH:ii p',
                 autoclose: true,
                 showMeridian: false,
                 startView: 1,
                 maxView: 1,
-                defaultTime: ""+defaultTiming
+                defaultTime: "" + defaultTiming
             });
         });
     }
@@ -300,45 +313,45 @@
         }
     });
 
-    $.initTypeheadFacture = function() {
-        if(!$('#factureLibre').length) {
-            return ;
+    $.initTypeheadFacture = function () {
+        if (!$('#factureLibre').length) {
+            return;
         }
         var produits = $('#factureLibre').data('produits');
 
         var produitsSource = new Bloodhound({
-          datumTokenizer: Bloodhound.tokenizers.obj.whitespace('libelle'),
-          queryTokenizer: Bloodhound.tokenizers.whitespace,
-          local: produits
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('libelle'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            local: produits
         });
 
         $('td > .typeahead').typeahead({
-             hint: true,
-             highlight: true,
-             minLength: 1
+            hint: true,
+            highlight: true,
+            minLength: 1
         },
         {
-              limit: 10,
-              name: 'produits',
-              display: 'libelle',
-              source: produitsSource,
-              templates: {
-                suggestion: function(e) {
-                    var libelle = e.libelle+"<span class='text-muted'> à "+e.prix+" €</span>";
-                    if(e.conditionnement) {
-                        libelle += "<small> ("+e.conditionnement+")</small>";
+            limit: 10,
+            name: 'produits',
+            display: 'libelle',
+            source: produitsSource,
+            templates: {
+                suggestion: function (e) {
+                    var libelle = e.libelle + "<span class='text-muted'> à " + e.prix + " €</span>";
+                    if (e.conditionnement) {
+                        libelle += "<small> (" + e.conditionnement + ")</small>";
                     }
-                    return $("<div>"+libelle+"</div>");
+                    return $("<div>" + libelle + "</div>");
                 }
-              }
+            }
         });
 
-        $('.typeahead').bind('typeahead:select', function(ev, suggestion) {
+        $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
             $(this).parents(".dynamic-collection-item").find('.prix-unitaire').val(suggestion.prix);
         });
     }
 
-    $.initFactureLibre = function() {
+    $.initFactureLibre = function () {
 
 
     }
@@ -346,7 +359,7 @@
     $.initModalPassage = function () {
         $('#modal-calendrier-infos').on('show.bs.modal', function (event) {
             var link = $(event.relatedTarget);
-            if(link.length) {
+            if (link.length) {
                 $('#modal-calendrier-infos').html("");
                 $('#modal-calendrier-infos').load(link.attr('href'), function () {
                     $.callbackEventForm();
@@ -437,7 +450,7 @@
         }
     }
 
-    $.initMap = function() {
+    $.initMap = function () {
         if ($('#map').length) {
             var lat = 48.8593829;
             var lon = 2.347227;
