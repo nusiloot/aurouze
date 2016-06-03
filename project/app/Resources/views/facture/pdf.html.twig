@@ -32,8 +32,6 @@
         </div>
         <br />
         <br />
-		<br />
-        <br />
         <p>
         	<small>
             {{ facture.destinataire.nomFormatee | nl2br }}<br />
@@ -43,9 +41,6 @@
         </p>
     </div>
 </div>
-<br />
-<br />
-<br />
 <br />
 <br />
 <table class="table table-bordered table-condensed" style="border-bottom: 0 !important; border-right: 0 !important;  border-left: 0 !important;">
@@ -92,21 +87,28 @@
     </tbody>
     <tfoot class="lead">
         <tr>
-            <td style="height: 25px; border: 0 !important;"></td>
-            <td colspan="4" style="height: 20px; border-left: 0 !important; border-right: 0 !important;"></td>
+            <td style="height: 15px; border: 0 !important;"></td>
+            <td colspan="4" style="height: 15px; border-left: 0 !important; border-right: 0 !important;"></td>
         </tr>
         <tr>
-            <td style="border: 0 !important;"></td>
+            <td rowspan="3" style="border: 0 !important; padding: 0;">{% if(not facture.isDevis) %}
+            <p class="well" style="padding: 5px; margin-bottom: 0; line-height: 10px; width: 92%;">
+            <small><small style="font-size: 60%;">
+            La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l'obligation de vous indiquer :<br />
+            Application du taux minimum de pénalités de retard : trois fois le taux d'intérêt légal en vigueur (art. L. 441-6 du C.Cce)<br />
+            Indemnité forfaitaire pour frais de recouvrement : 40 euros (art. D. 441-5 du C.Cce)<br />
+            Sanction en cas de non respect des modalités ci-dessus :<br />
+             - amende de 75 000 euros pour les personnes physiques / 375 000 euros pour les personnes morales.
+         </small></small></p>
+            {% endif %}</td>
             <td colspan="2">Total HT</td>
             <td colspan="2" class="text-right">{{ facture.montantHT|number_format(2, ',', ' ')  }} €</td>
         </tr>
         <tr>
-            <td style="border: 0 !important;"></td>
             <td colspan="2">TVA {{ (facture.tva * 100)|number_format(2, ',', ' ') }}%</td>
             <td colspan="2" class="text-right">{{ facture.montantTaxe|number_format(2, ',', ' ') }} €</td>
         </tr>
         <tr>
-            <td style="border: 0 !important;"></td>
             <td colspan="2">Total TTC</td>
             <td colspan="2" class="text-right">{{ facture.montantTTC|number_format(2, ',', ' ')  }} €</td>
         </tr>
@@ -126,20 +128,8 @@ Condition de réglement : {{ facture.frequencePaiementLibelle }}
 {% endif %}
 
 <small>
-{% if(not facture.isDevis) %}
-<p class="well" style="padding: 5px; margin-bottom: 0;">
-<small style="font-size: 60%;">
-La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l'obligation de vous indiquer :<br />
-Application du taux minimum de pénalités de retard : trois fois le taux d'intérêt légal en vigueur (art. L. 441-6 du C.Cce)<br />
-Indemnité forfaitaire pour frais de recouvrement : 40 euros (art. D. 441-5 du C.Cce)<br />
-Sanction en cas de non respect des modalités ci-dessus :<br />
- - amende de 75 000 euros pour les personnes physiques / 375 000 euros pour les personnes morales.
-</small>
-{% endif %}
-</p>
-<p class="text-center">
+<p class="text-center" style="line-height: 13px;">
     <small>
-    <br />
     {{ parameters.emetteur.infos }}<br />
     {{ parameters.emetteur.banque }}<br />
     {{ parameters.emetteur.virement }}<br />
@@ -148,20 +138,20 @@ Sanction en cas de non respect des modalités ci-dessus :<br />
 </p>
 </small>
 {% if(not facture.isDevis) %}
-<div style="border-top: 1px dashed #ccc; margin-top: 20px;">
+<div style="border-top: 1px dashed #ccc; margin-top: 15px;">
     <div class="row">
         <div class="col-xs-12 text-center">
             <small><small><small>Coupon à joindre avec votre règlement</small></small></small>
         </div>
         <div class="col-xs-6">
             <p>
-            Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }} <br />
-            Client : {{ facture.destinataire.raisonSociale }} ({{ facture.destinataire.codeComptable }})
+            <span class="lead" style="font-size: 15px;">Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
+            <small>Client : {{ facture.destinataire.raisonSociale }} ({{ facture.destinataire.codeComptable }})</small>
             </p>
         </div>
         <div class="col-xs-6 text-right">
             <p>
-            <span class="lead">Montant dû : {{ facture.montantTTC|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
+            <span class="lead" style="font-size: 15px;">Montant dû : {{ facture.montantTTC|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
             <small>Date limite de règlement : {{ facture.dateLimitePaiement|date("d/m/Y") }}</small>
             </p>
         </div>

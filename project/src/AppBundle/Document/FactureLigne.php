@@ -350,9 +350,9 @@ class FactureLigne {
     {
         if(!$this->referenceClient && $this->isOrigineContrat() && $this->getOrigineDocument()->getReferenceClient()) {
 
-            return $this->getOrigineDocument->getReferenceClient();
+            return $this->getOrigineDocument()->getReferenceClient();
         }
-        
+
         return $this->referenceClient;
     }
 }
