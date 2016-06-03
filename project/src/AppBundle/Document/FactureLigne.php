@@ -53,6 +53,11 @@ class FactureLigne {
      */
     protected $origineMouvement;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $referenceClient;
+
     public function __construct() {
     }
 
@@ -73,6 +78,11 @@ class FactureLigne {
         $this->setTauxTaxe($mouvement->getTauxTaxe());
         $this->setOrigineDocument($mouvement->getDocument());
         $this->setOrigineMouvement($mouvement->getIdentifiant());
+
+        $this->setReferenceClient(null);
+        if($this->isOrigineContrat() && $this->getOrigineDocument()->getReferenceClient()) {
+            $this->setReferenceClient($this->getOrigineDocument()->getReferenceClient());
+        }
     }
 
     public function facturerMouvement() {
@@ -295,5 +305,49 @@ class FactureLigne {
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set refClient
+     *
+     * @param string $refClient
+     * @return self
+     */
+    public function setRefClient($refClient)
+    {
+        $this->refClient = $refClient;
+        return $this;
+    }
+
+    /**
+     * Get refClient
+     *
+     * @return string $refClient
+     */
+    public function getRefClient()
+    {
+        return $this->refClient;
+    }
+
+    /**
+     * Set referenceClient
+     *
+     * @param string $referenceClient
+     * @return self
+     */
+    public function setReferenceClient($referenceClient)
+    {
+        $this->referenceClient = $referenceClient;
+        return $this;
+    }
+
+    /**
+     * Get referenceClient
+     *
+     * @return string $referenceClient
+     */
+    public function getReferenceClient()
+    {
+        return $this->referenceClient;
     }
 }
