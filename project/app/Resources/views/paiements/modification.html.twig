@@ -41,18 +41,24 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
-                            {{ form_errors(form.montant) }}
-                            {{ form_widget(form.montant) }}
-                        </div>
-                         <div class="col-xs-1" style="padding-left : 5px; padding-right: -1px;">
-                           {{ form_errors(form.factureMontantTTC) }}
-                           {{ form_widget(form.factureMontantTTC) }}
+                          <div class="col-xs-4">
+                          <div class="row">
+                            <div class="col-xs-5" style="padding-left : 5px; padding-right: 5px;">
+                                {{ form_errors(form.montant) }}
+                                {{ form_widget(form.montant) }}
+                            </div>
+                             <div class="col-xs-3" style="padding-left : 5px; padding-right: -1px; padding-top: 8px; text-right">
 
-                         </div>
-                        <div class="col-xs-1" style="padding-left : 5px; padding-right: 15px;">
-                            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove pull-right" style=""><span class="glyphicon glyphicon-remove"></span></button>
-                        </div>
+                               {{ form_errors(form.factureMontantTTC) }}
+                               {{ form_widget(form.factureMontantTTC) }}
+                               <strong>{{ form.factureMontantTTC.vars.value }}</strong>
+                             </div>
+                            <div class="col-xs-3" style="padding-left : 5px; padding-right: 15px;">
+                                <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove pull-right" style=""><span class="glyphicon glyphicon-remove"></span></button>
+                            </div>
+                          </div>
+                          </div>
+
                     </div>
                 </div>
             </div>
@@ -76,13 +82,18 @@
         <br/>
         <h1>Modification des paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</h1>
         {{ form_start(form) }}
-        {% if(not paiements.dateCreation) %}
+        {% if( not paiements.dateCreation or not paiements.numeroRemise) %}
             <div class="panel panel-default">
                 <div class="panel-heading"><strong>Informations</strong><div class="pull-right"></div></div>
                 <div class="panel-body col-xs-offset-2">
                     <div class="row">
-                        <div class="col-xs-10">
-                            {{ form_row(form.dateCreation) }}
+                      <div class="col-xs-8">
+                        {{ form_label(form.numeroRemise) }}
+                        {{ form_widget(form.numeroRemise) }}
+                      </div>
+                        <div class="col-xs-4">
+                          {{ form_label(form.dateCreation) }}
+                            {{ form_widget(form.dateCreation) }}
                         </div>
                     </div>
                 </div>

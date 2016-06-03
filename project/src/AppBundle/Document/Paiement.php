@@ -50,6 +50,9 @@ class Paiement {
      */
     protected $identifiantReprise;
 
+
+    protected $factureMontantTTC;
+
     public function __construct() {
         $this->versementComptable = false;
     }
@@ -216,22 +219,31 @@ class Paiement {
     {
         return $this->identifiantReprise;
     }
-    
+
     public function getMoyenPaiementLibelle() {
         if(!$this->getMoyenPaiement()){
             return $this->getMoyenPaiement();
         }
         return PaiementsManager::$moyens_paiement_libelles[$this->getMoyenPaiement()];
     }
-    
+
     public function getTypeReglementLibelle() {
         if(!$this->getTypeReglement()){
             return $this->getTypeReglement();
         }
         return PaiementsManager::$types_reglements_libelles[$this->getTypeReglement()];
     }
-    
+
     public function isCheque() {
         return $this->getMoyenPaiement() == PaiementsManager::MOYEN_PAIEMENT_CHEQUE;
     }
+
+    public function setFactureMontantTTC($factureMontantTTC) {
+        $this->factureMontantTTC = $factureMontantTTC;
+        return $this;
+    }
+    public function getFactureMontantTTC() {
+        return $this->factureMontantTTC ;
+    }
+
 }

@@ -33,6 +33,11 @@ class Paiements {
     protected $paiement;
 
     /**
+     * @MongoDB\String
+     */
+    protected $numeroRemise;
+
+    /**
      * @MongoDB\Boolean
      */
     protected $imprime;
@@ -186,4 +191,26 @@ class Paiements {
         return $factureArray;
     }
 
+
+    /**
+     * Set numeroRemise
+     *
+     * @param string $numeroRemise
+     * @return self
+     */
+    public function setNumeroRemise($numeroRemise)
+    {
+        $this->numeroRemise = $numeroRemise;
+        return $this;
+    }
+
+    /**
+     * Get numeroRemise
+     *
+     * @return string $numeroRemise
+     */
+    public function getNumeroRemise()
+    {
+        return $this->numeroRemise;
+    }
 }
