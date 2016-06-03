@@ -1,48 +1,111 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
-<h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Paiements du {{ paiements.dateCreation | localizeddate("full", "none") }}</strong>
-</h2>
+    <div class="row">
+        <div class="col-xs-6">
+            <br />
+            <p>
+                <span class="lead">{{ parameters.emetteur.nom }}</span><br />
+                {{ parameters.emetteur.adresse }}<br />
+                {{ parameters.emetteur.code_postal }} {{ parameters.emetteur.commune }}<br />
+                Tél. : {{ parameters.emetteur.telephone }}<br />
+                Fax : {{ parameters.emetteur.fax }}
+            </p>
+        </div>
+        <div class="col-xs-6">
+            <div class="text-left">
 
-<hr style="border-color: #ddd; margin-bottom: 30px;" />
-<div class="row">
-
-
-    <div class="col-xs-12"  >
-        <table style="font-size: 14px;" >
-            <thead>
-                <tr style="border-color: #ddd; border: 1px solid;">
-                    <th style=" width: 100px;" >Date</th>
-                    <th style=" width: 180px;">Type Règlement</th>
-                    <th style=" width: 100px;" >Moyen</th>
-                    <th style=" width: 270px;" >Libelle</th>
-                    <th  style=" width: 100px; text-align: right;" >Montant</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for paiement in paiements.paiement %}
-                    <tr style="border-color: #ddd; border: 1px solid;">
-                        <td style="border-color: #ddd; border: 1px solid;">{{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}</td>
-                        <td style="border-color: #ddd; border: 1px solid;">{{ paiement.typeReglementLibelle }}</td>
-                        <td style="border-color: #ddd; border: 1px solid;">{{ paiement.getMoyenPaiementLibelle() }}</td>
-
-                        <td style="border-color: #ddd; border: 1px solid;" class="col-xs-3"> 
-                            {% if(paiement.libelle) %}{{ paiement.libelle }}{% endif %}
-                        </td>
-                        <td style="border-color: #ddd; border: 1px solid; text-align: right;">{{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</td>
-
-                    </tr>
-                {% endfor %}
-                 <tr>
-                     <td colspan="5"></td>
-                </tr>
-                <tr style="border-color: #ddd; border: 1px solid;">
-                    <td style="border-color: #ddd; border: 1px solid;" class="text-right" colspan="4"><strong>TOTAL</strong></td>
-                  
-                    <td style="border-color: #ddd; border: 1px solid;" >{{ paiements.getMontantTotal() | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</td>
-                </tr>
-            </tbody>
-        </table>
+                <h3>Remise de chèques </h3>
+                <strong>N° XXXX du {{ paiements.dateCreation | date("d/m/Y") }} </strong>
+                <br />
+                <br />
+                <br />
+                <br />
+                <strong>{{ parameters.banque.nom }}</strong><br />
+                {{ parameters.banque.adresse }}<br />
+                {{ parameters.banque.code_postal }} {{ parameters.banque.commune }}<br />
+            </div>
+            <br />
+            <br />            
+        </div>
     </div>
-</div>
+    <br /> 
+    <h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Paiements du {{ paiements.dateCreation | localizeddate("full", "none") }}</strong>
+    </h2>
+
+    
+    <div class="row">
+        <div class="col-xs-12"  >
+            <table style="font-size: 14px;" >
+                <thead>
+                    <tr style="border-color: #ddd; border: 1px solid;">
+                        <th colspan="4"  style=" width: 750px; border-color: #ddd; border: 1px solid;" >&nbsp;Pièce</th>
+                    </tr>
+                    <tr style="border-color: #ddd; border: 1px solid;">
+                        <th style=" width: 200px;" >&nbsp;Date</th>
+                        <th style=" width: 330px;">&nbsp;Facture</th>
+                        <th style=" width: 320px;" >&nbsp;Libelle</th>
+                        <th  style=" width: 200px; text-align: right; border-color: #ddd; border: 1px solid;" >Montant&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paiement in paiements.paiement %}
+                        {% if paiement.moyenPaiement == 'CHEQUE' %}
+                        <tr style="border-color: #ddd; border: 1px solid;">
+                            <td style="border-color: #ddd; border: 1px solid;">&nbsp;{{ paiements.dateCreation | date("d/m/Y") }}</td>
+                            <td style="border-color: #ddd; border: 1px solid;">&nbsp;Facture n° {{ paiement.facture.numeroFacture }}</td>
+                            
+                            <td style="border-color: #ddd; border: 1px solid; text-align: left;" > 
+                                {% if(paiement.libelle) %}&nbsp;{{ paiement.libelle }}{% endif %}
+                            </td>
+                            <td style="border-color: #ddd; border: 1px solid; text-align: right;">{{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</td>
+
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                    <tr>
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr style="border-color: #ddd; border: 1px solid;">
+                        <td style="border-color: #ddd; border: 1px solid; text-align: left;" colspan="3"><strong>&nbsp;TOTAL</strong></td>
+
+                        <td style="border-color: #ddd; border: 1px solid; text-align: right;" >{{ paiements.getMontantTotalByMoyenPaiement('CHEQUE') | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12"  >
+            <br />   
+            <div class="text-left">
+                <strong>Nombre de chèque : {{ paiements.paiement | length }}</strong>
+                <br />
+                <strong>Total des montants : {{ paiements.getMontantTotalByMoyenPaiement('CHEQUE') | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</strong>
+                <br />
+                <br />
+                Banque : <strong>{{ parameters.banque.nom }}</strong>
+                <br />
+                A déposer sur le compte : <strong>{{ parameters.emetteur.numero_compte }}</strong>
+                <br />
+                Titulaire du compte : <strong>{{ parameters.emetteur.nom | upper }}</strong>               
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12"  >
+            <hr style="border-color: #ddd; margin-bottom: 30px;" />
+            
+            <div class="text-center">
+                <strong>{{ parameters.emetteur.infos  }}</strong>
+                <br />
+                <strong>{{ parameters.emetteur.banque }}</strong>
+                <br />                
+                <strong>{{ parameters.emetteur.virement  }}</strong>
+                <br />
+                Agrément du Ministère de l'Agriculture A.I.F. 00131           
+            </div>
+            <hr style="border-color: #ddd; margin-bottom: 30px;" />
+        </div>
+    </div>
 {% endblock %}
