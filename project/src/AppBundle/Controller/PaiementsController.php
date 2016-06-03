@@ -43,6 +43,7 @@ class PaiementsController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $facturesIds = $paiements->getFacturesArrayIds();
+        $facturesArray = $paiements->getFacturesArray();
         $form = $this->createForm(new PaiementsType($this->container, $dm), $paiements, array(
             'action' => $this->generateUrl('paiements_modification', array('id' => $paiements->getId())),
             'method' => 'POST',
@@ -53,22 +54,22 @@ class PaiementsController extends Controller {
 
             $dm->persist($paiements);
             $dm->flush();
-            
+
             $facturesIds = array_merge($facturesIds,$paiements->getFacturesArrayIds());
-            
+
             array_unique($facturesIds);
-            
+
             foreach ($facturesIds as $factureId) {
                $facture = $dm->getRepository('AppBundle:Facture')->findOneById($factureId);
                $facture->updateMontantPaye();
                $dm->persist($facture);
                $dm->flush();
             }
-            
+
             return $this->redirectToRoute('paiements_modification', array('id' => $paiements->getId()));
         }
 
-        return $this->render('paiements/modification.html.twig', array('paiements' => $paiements, 'form' => $form->createView()));
+        return $this->render('paiements/modification.html.twig', array('paiements' => $paiements, 'form' => $form->createView(), 'facturesArray' => $facturesArray));
     }
 
     /**
@@ -110,7 +111,7 @@ class PaiementsController extends Controller {
         foreach ($paiementsForCsv as $paiement) {
             fputcsv($handle, $paiement);
         }
- 
+
         rewind($handle);
         $content = stream_get_contents($handle);
         fclose($handle);
@@ -132,10 +133,21 @@ class PaiementsController extends Controller {
      */
     public function pdfBanqueAction(Request $request, Paiements $paiements) {
 
-        
+
         $pm = $this->get('paiements.manager');
+        $paiementsLists = array();
+        $page = 0;
+        foreach ($paiements->getPaiement() as $key => $paiement) {
+          if($key % 30 == 0){
+            $page++;
+            $paiementsLists[$page] = array();
+          }
+          $paiementsLists[$page][] = $paiement;
+        }
+
         $html = $this->renderView('paiements/pdfBanque.html.twig', array(
             'paiements' => $paiements,
+            'paiementsLists' => $paiementsLists,
             'parameters' => $pm->getParameters(),
         ));
 
