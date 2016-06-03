@@ -552,8 +552,10 @@ class Facture implements DocumentSocieteInterface {
 
     public function calculDateLimitePaiement() {
         $frequence = $this->getFrequencePaiement();
-
-        $date = clone $this->getDateFacturation();
+        $date = null;
+        if($this->getDateFacturation()) {
+            $date = clone $this->getDateFacturation();
+        }
         $date = ($date) ? $date : clone $this->getDateEmission();
         $date = ($date) ? $date : new \DateTime();
         switch ($frequence) {
@@ -797,22 +799,22 @@ class Facture implements DocumentSocieteInterface {
         }
         return false;
     }
-    
+
     public function isAvoir() {
         return $this->getAvoir() || $this->getMontantTTC() <= 0;
     }
-    
+
     public function cloturer() {
         $this->setMontantPaye($this->getMontantTTC());
     }
-    
+
     public function decloturer() {
         $this->updateMontantPaye();
     }
     public function isDecloturable() {
        return $this->getMontantPayeCalcule() != $this->getMontantTTC();
     }
-    
+
     public function getMontantPayeCalcule() {
         $sommeMontantPayeCalcule = 0.0;
         foreach ($this->getPaiements() as $paiements) {
