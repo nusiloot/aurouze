@@ -27,6 +27,7 @@ class PaiementsType extends AbstractType {
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
+    //  var_dump($options['data']->getFacture()->getId()); exit;
         $builder->add('dateCreation', DateType::class, array(
             'label' => 'Date création :',
             "attr" => array(

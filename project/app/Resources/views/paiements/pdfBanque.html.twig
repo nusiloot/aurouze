@@ -12,6 +12,7 @@
                 Fax : {{ parameters.emetteur.fax }}
             </p>
         </div>
+
         <div class="col-xs-6">
             <div class="text-left">
 
@@ -26,16 +27,18 @@
                 {{ parameters.banque.code_postal }} {{ parameters.banque.commune }}<br />
             </div>
             <br />
-            <br />            
+            <br />
         </div>
     </div>
-    <br /> 
+    <br />
     <h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Paiements du {{ paiements.dateCreation | localizeddate("full", "none") }}</strong>
     </h2>
 
-    
-    <div class="row">
-        <div class="col-xs-12"  >
+
+
+           {% for paiementsPage in paiementsLists %}
+           <div class="row">
+               <div class="col-xs-12"  >
             <table style="font-size: 14px;" >
                 <thead>
                     <tr style="border-color: #ddd; border: 1px solid;">
@@ -49,13 +52,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for paiement in paiements.paiement %}
+
+                    {% for paiement in paiementsPage %}
                         {% if paiement.moyenPaiement == 'CHEQUE' %}
                         <tr style="border-color: #ddd; border: 1px solid;">
                             <td style="border-color: #ddd; border: 1px solid;">&nbsp;{{ paiements.dateCreation | date("d/m/Y") }}</td>
                             <td style="border-color: #ddd; border: 1px solid;">&nbsp;Facture n° {{ paiement.facture.numeroFacture }}</td>
-                            
-                            <td style="border-color: #ddd; border: 1px solid; text-align: left;" > 
+
+                            <td style="border-color: #ddd; border: 1px solid; text-align: left;" >
                                 {% if(paiement.libelle) %}&nbsp;{{ paiement.libelle }}{% endif %}
                             </td>
                             <td style="border-color: #ddd; border: 1px solid; text-align: right;">{{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</td>
@@ -63,6 +67,7 @@
                         </tr>
                         {% endif %}
                     {% endfor %}
+                    {% if loop.last %}
                     <tr>
                         <td colspan="5"></td>
                     </tr>
@@ -71,13 +76,21 @@
 
                         <td style="border-color: #ddd; border: 1px solid; text-align: right;" >{{ paiements.getMontantTotalByMoyenPaiement('CHEQUE') | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</td>
                     </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>
     </div>
+    {% if not loop.last %}
+    <div style="page-break-after: always;"></div>
+    <br/>
+    <br/>
+    <br/>
+    {% endif %}
+    {% endfor %}
     <div class="row">
         <div class="col-xs-12"  >
-            <br />   
+            <br />
             <div class="text-left">
                 <strong>Nombre de chèque : {{ paiements.paiement | length }}</strong>
                 <br />
@@ -88,22 +101,22 @@
                 <br />
                 A déposer sur le compte : <strong>{{ parameters.emetteur.numero_compte }}</strong>
                 <br />
-                Titulaire du compte : <strong>{{ parameters.emetteur.nom | upper }}</strong>               
+                Titulaire du compte : <strong>{{ parameters.emetteur.nom | upper }}</strong>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-12"  >
             <hr style="border-color: #ddd; margin-bottom: 30px;" />
-            
+
             <div class="text-center">
                 <strong>{{ parameters.emetteur.infos  }}</strong>
                 <br />
                 <strong>{{ parameters.emetteur.banque }}</strong>
-                <br />                
+                <br />
                 <strong>{{ parameters.emetteur.virement  }}</strong>
                 <br />
-                Agrément du Ministère de l'Agriculture A.I.F. 00131           
+                Agrément du Ministère de l'Agriculture A.I.F. 00131
             </div>
             <hr style="border-color: #ddd; margin-bottom: 30px;" />
         </div>

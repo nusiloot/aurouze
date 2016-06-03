@@ -6,7 +6,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\PaiementsRepository") 
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\PaiementsRepository")
  */
 class Paiements {
 
@@ -175,11 +175,15 @@ class Paiements {
     }
 
     public function getFacturesArrayIds() {
-        $factureArrayIds = array();
+        return array_keys($this->getFacturesArray());
+    }
+
+    public function getFacturesArray() {
+        $factureArray = array();
         foreach ($this->getPaiement() as $paiement) {
-            $factureArrayIds[] = $paiement->getFacture()->getId();
+            $factureArray[$paiement->getFacture()->getId()] = $paiement->getFacture();
         }
-        return $factureArrayIds;
+        return $factureArray;
     }
 
 }
