@@ -43,7 +43,6 @@
 </div>
 <br />
 <br />
-<br />
 <table class="table table-bordered table-condensed" style="border-bottom: 0 !important; border-right: 0 !important;  border-left: 0 !important;">
     <thead>
         <tr>
@@ -88,8 +87,8 @@
     </tbody>
     <tfoot class="lead">
         <tr>
-            <td style="height: 20px; border: 0 !important;"></td>
-            <td colspan="4" style="height: 20px; border-left: 0 !important; border-right: 0 !important;"></td>
+            <td style="height: 15px; border: 0 !important;"></td>
+            <td colspan="4" style="height: 15px; border-left: 0 !important; border-right: 0 !important;"></td>
         </tr>
         <tr>
             <td rowspan="3" style="border: 0 !important; padding: 0;">{% if(not facture.isDevis) %}
@@ -129,9 +128,8 @@ Condition de réglement : {{ facture.frequencePaiementLibelle }}
 {% endif %}
 
 <small>
-<p class="text-center">
-    <small style="line-height: 12px;">
-    <br />
+<p class="text-center" style="line-height: 13px;">
+    <small>
     {{ parameters.emetteur.infos }}<br />
     {{ parameters.emetteur.banque }}<br />
     {{ parameters.emetteur.virement }}<br />
@@ -140,20 +138,20 @@ Condition de réglement : {{ facture.frequencePaiementLibelle }}
 </p>
 </small>
 {% if(not facture.isDevis) %}
-<div style="border-top: 1px dashed #ccc; margin-top: 20px;">
+<div style="border-top: 1px dashed #ccc; margin-top: 15px;">
     <div class="row">
         <div class="col-xs-12 text-center">
             <small><small><small>Coupon à joindre avec votre règlement</small></small></small>
         </div>
         <div class="col-xs-6">
             <p>
-            Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }} <br />
-            Client : {{ facture.destinataire.raisonSociale }} ({{ facture.destinataire.codeComptable }})
+            <span class="lead" style="font-size: 15px;">Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
+            <small>Client : {{ facture.destinataire.raisonSociale }} ({{ facture.destinataire.codeComptable }})</small>
             </p>
         </div>
         <div class="col-xs-6 text-right">
             <p>
-            <span class="lead">Montant dû : {{ facture.montantTTC|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
+            <span class="lead" style="font-size: 15px;">Montant dû : {{ facture.montantTTC|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
             <small>Date limite de règlement : {{ facture.dateLimitePaiement|date("d/m/Y") }}</small>
             </p>
         </div>
