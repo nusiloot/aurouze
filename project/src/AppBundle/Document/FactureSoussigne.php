@@ -18,6 +18,11 @@ class FactureSoussigne  {
     /**
      * @MongoDB\String
      */
+    protected $raisonSociale;
+
+    /**
+     * @MongoDB\String
+     */
     protected $adresse;
 
     /**
@@ -64,6 +69,9 @@ class FactureSoussigne  {
      */
     public function setNom($nom)
     {
+        if(!$this->getRaisonSociale()) {
+            $this->setRaisonSociale($nom);
+        }
         $this->nom = $nom;
         return $this;
     }
@@ -76,6 +84,11 @@ class FactureSoussigne  {
     public function getNom()
     {
         return $this->nom;
+    }
+
+    public function getNomFormatee()
+    {
+        return str_replace(", ", "\n", $this->getNom());
     }
 
     /**
@@ -257,5 +270,32 @@ class FactureSoussigne  {
     public function getCommune()
     {
         return $this->commune;
+    }
+
+    /**
+     * Set raisonSociale
+     *
+     * @param string $raisonSociale
+     * @return self
+     */
+    public function setRaisonSociale($raisonSociale)
+    {
+        $this->raisonSociale = $raisonSociale;
+        return $this;
+    }
+
+    /**
+     * Get raisonSociale
+     *
+     * @return string $raisonSociale
+     */
+    public function getRaisonSociale()
+    {
+        if(!$this->raisonSociale) {
+
+            return $this->getNom();
+        }
+
+        return $this->raisonSociale;
     }
 }

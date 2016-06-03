@@ -156,7 +156,7 @@ class Facture implements DocumentSocieteInterface {
         $this->setMontantHT(round($montant, 2));
         $this->setMontantTaxe(round($montantTaxe, 2));
         $this->setMontantTTC(round($montant + $montantTaxe, 2));
-
+        $this->storeDestinataire();
         $this->setDateLimitePaiement($this->calculDateLimitePaiement());
     }
 
@@ -164,7 +164,14 @@ class Facture implements DocumentSocieteInterface {
         $societe = $this->getSociete();
         $destinataire = $this->getDestinataire();
 
-        $destinataire->setNom($societe->getRaisonSociale());
+        $nom = $societe->getRaisonSociale();
+
+        if($this->getContrat() && $this->getContrat()->getFactureDestinataire()) {
+            $nom = $this->getContrat()->getFactureDestinataire();
+        }
+
+        $destinataire->setRaisonSociale($societe->getRaisonSociale());
+        $destinataire->setNom($nom);
         $destinataire->setAdresse($societe->getAdresse()->getAdresseFormatee());
         $destinataire->setCodePostal($societe->getAdresse()->getCodePostal());
         $destinataire->setCommune($societe->getAdresse()->getCommune());
@@ -180,6 +187,15 @@ class Facture implements DocumentSocieteInterface {
     public function isPaye() {
 
         return $this->isCloture();
+    }
+
+    public function getContrat() {
+        foreach($this->getLignes() as $ligne) {
+            if($ligne->isOrigineContrat()) {
+
+                return $ligne->getOrigineDocument();
+            }
+        }
     }
 
     public function getOrigines() {

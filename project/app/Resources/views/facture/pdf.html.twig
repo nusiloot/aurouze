@@ -36,8 +36,8 @@
         <br />
         <p>
         	<small>
-            {{ facture.destinataire.nom }}<br />
-            {{ facture.destinataire.adresseFormatee }}<br />
+            {{ facture.destinataire.nomFormatee | nl2br }}<br />
+            {{ facture.destinataire.adresseFormatee | nl2br }}<br />
             {{ facture.destinataire.codePostal }} {{ facture.destinataire.commune }}<br />
             </small>
         </p>
@@ -156,7 +156,7 @@ Sanction en cas de non respect des modalités ci-dessus :<br />
         <div class="col-xs-6">
             <p>
             Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }} <br />
-            Client : {{ facture.destinataire.nom }} ({{ facture.destinataire.codeComptable }})
+            Client : {{ facture.destinataire.raisonSociale }} ({{ facture.destinataire.codeComptable }})
             </p>
         </div>
         <div class="col-xs-6 text-right">
