@@ -64,9 +64,7 @@
                 {% if(ligne.libelle) %}{{ ligne.libelle }}<br />{% endif %}
                 {% if ligne.origineContrat %}
                 <small>
-                	{% if ligne.origineDocument.numeroArchive %}
-                    <small>Votre Réf CDE {{ ligne.origineDocument.numeroArchive }}{% if ligne.origineDocument.referenceClient %} ({{ ligne.origineDocument.referenceClient }}){% endif %}</small><br />
-                    {% endif %}
+                    {% if ligne.origineDocument.referenceClient %}<small>Votre Réf CDE {{ ligne.origineDocument.referenceClient }}</small><br />{% endif %}
                     <small>
                     Prestation{% if ligne.origineDocument.prestations|length > 1 %}s{% endif %} :
                     <ul class="list-unstyled" style="padding-left: 10px; margin-bottom: 0">
