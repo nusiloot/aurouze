@@ -62,7 +62,7 @@
         <tr>
             <td>
                 {% if(ligne.libelle) %}{{ ligne.libelle }}<br />{% endif %}
-                {% if ligne.origineDocument.referenceClient %}<small><small>Votre Réf CDE : {{ ligne.origineDocument.referenceClient }}</small><br /></small>{% endif %}
+                {% if ligne.referenceClient %}<small><small>Votre Réf CDE : {{ ligne.referenceClient }}</small><br /></small>{% endif %}
                 {% if ligne.origineContrat %}
                 <small>
                     <small>
