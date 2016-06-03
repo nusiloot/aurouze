@@ -19,7 +19,7 @@
             <small>n° {{ contrat.numeroArchive }}</small>
             {%  if (contrat.isModifiable()) %}
                 <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="pull-right btn btn-sm btn-warning"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier le contrat</a>
-            {%  endif %}   
+            {%  endif %}
         </h1>
 
         {{ form_start(form) }}
@@ -61,6 +61,13 @@
                             {{ form_label(form.referenceClient) }}
                             {{ form_errors(form.referenceClient) }}
                             {{ form_widget(form.referenceClient) }}
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            {{ form_label(form.factureDestinataire) }}
+                            {{ form_errors(form.factureDestinataire) }}
+                            {{ form_widget(form.factureDestinataire, { 'attr': {'placeholder': societe.raisonSociale }}) }}
                         </div>
                     </div>
                     <div class="col-xs-12">

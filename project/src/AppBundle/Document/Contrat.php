@@ -195,6 +195,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     /**
      * @MongoDB\String
      */
+    protected $factureDestinataire;
+
+    /**
+     * @MongoDB\String
+     */
     protected $frequencePaiement;
 
     public function __construct() {
@@ -1434,7 +1439,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return ContratManager::$frequences[$this->frequencePaiement];
     }
-     
+
     public function isSousGarantie()
     {
     	if ($mois = $this->getDureeGarantie()) {
@@ -1447,7 +1452,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	}
     	return false;
     }
-    
+
     public function getDateExpirationGarantie() {
 		$mois = ($this->getDureeGarantie()) ? $this->getDureeGarantie() : 0;
     	if ($this->getDateDebut()) {
@@ -1459,5 +1464,27 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	}
     	$date->modify("+$mois month");
     	return $date;
+    }
+
+    /**
+     * Set factureDestinataire
+     *
+     * @param string $factureDestinataire
+     * @return self
+     */
+    public function setFactureDestinataire($factureDestinataire)
+    {
+        $this->factureDestinataire = $factureDestinataire;
+        return $this;
+    }
+
+    /**
+     * Get factureDestinataire
+     *
+     * @return string $factureDestinataire
+     */
+    public function getFactureDestinataire()
+    {
+        return $this->factureDestinataire;
     }
 }
