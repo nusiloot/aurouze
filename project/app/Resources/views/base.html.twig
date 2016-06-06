@@ -59,12 +59,12 @@
                         </li>
                         <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}">Factures</a></li>
                         <li class="{%if (_menu_active == 'paiements') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'paiements') %}{{ path('paiements_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('paiements_liste') }}{% endif %}">Paiements</a></li>
-                    
+
                     </ul>
                     <ul class="nav navbar-nav pull-right">
                         <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}"><span class="glyphicon glyphicon-calendar"></span> Calendrier</a></li>
-                        <!--<li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog"></span></a></li>
-                        <li class="{%if (_menu_active == 'compte') %}active{% endif %}"><a href="{{ path('comptes') }}"><span class="glyphicon glyphicon-user"></span></a></li>-->
+                        <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog"></span></a></li>
+                        <!--<li class="{%if (_menu_active == 'compte') %}active{% endif %}"><a href="{{ path('comptes') }}"><span class="glyphicon glyphicon-user"></span></a></li>-->
                     </ul>
                 </div>
             </div>

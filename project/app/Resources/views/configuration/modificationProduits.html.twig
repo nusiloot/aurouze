@@ -8,29 +8,64 @@
 
 {% block _configuration_produits_entry_row %}
     <div class="row form-group dynamic-collection-item" id="configuration_produits">
-        <div class="col-xs-6">
+        <div class="col-xs-3">
             {{ form_widget(form.nom) }}
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-3">
+            {{ form_widget(form.conditionnement) }}
+        </div>
+         <div class="col-xs-6">
+              <div class="row">
+        <div class="col-xs-3">
 			{{ form_errors(form.prixHt) }}
-			<div class="input-group">
 				{{ form_widget(form.prixHt) }}
-				<div class="input-group-addon">€ HT</div>
-			</div>
-        </div>
-        <div class="col-xs-2 text-right">
-            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
-        </div>
+  </div>
+      <div class="col-xs-3">
+    {{ form_errors(form.prixPrestation) }}
+      {{ form_widget(form.prixPrestation) }}
+  </div>
+    <div class="col-xs-3">
+  {{ form_errors(form.prixVente) }}
+    {{ form_widget(form.prixVente) }}
+</div>
+<div class="col-xs-3 text-right">
+  <div class="pull-left">{{ form_row(form.actif) }}</div>
+  <!-- <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button> -->
+</div>
+</div>
+</div>
+
     </div>
 {% endblock %}
 
 {% block body %}
     <div id="wrapper">
-       
+
         {{ form_start(form) }}
         <div class="panel panel-default" style="margin-bottom: 0;">
-            <div class="panel-heading">Produits </div>
-
+            <div class="panel-heading">
+              <div class="row">
+              <div class="col-xs-3">
+                  Nom du produit
+              </div>
+              <div class="col-xs-3">
+                  Conditionnement
+              </div>
+              <div class="col-xs-6">
+              <div class="row">
+              <div class="col-xs-3">
+          Prix d'achat
+            </div>
+            <div class="col-xs-3">
+          Prix prestation
+            </div>
+            <div class="col-xs-3">
+            Prix de vente
+            </div>
+          </div>
+            </div>
+            </div>
+  </div>
             <div class="panel-body">
                 {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
                 <div class="row form-group">
@@ -39,7 +74,7 @@
                     </div>
                 </div>
 
-            </div>     
+            </div>
         </div> <br/>
         {{ form_end(form) }}
         <br/> <br/>
