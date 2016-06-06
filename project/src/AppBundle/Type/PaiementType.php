@@ -38,24 +38,27 @@ class PaiementType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
+
     	$builder->add('moyenPaiement', ChoiceType::class, array('label' => 'Moyen de paiement', 'choices' => array_merge(array(null => null), PaiementsManager::$moyens_paiement_libelles), "attr" => array("class" => "select2 select2-simple")))
     	->add('typeReglement', ChoiceType::class, array('label' => 'Type de paiement', 'choices' => array_merge(array(null => null), PaiementsManager::$nouveau_types_reglements_libelles), "attr" => array("class" => "select2 select2-simple")))
-    	->add('libelle', TextType::class, array('label' => 'Libellé'))
-    	->add('montant', NumberType::class, array('label' => 'Montant', 'scale' => 2,"attr" => array(
+    	->add('libelle', TextType::class, array('label' => 'Libellé',"attr" => array("placeholder" => 'Libellé')))
+    	->add('montant', NumberType::class, array('label' => 'Montant', 'scale' => 2,"attr" => array("placeholder" => 'Montant',
     					'class' => 'nombreSomme')))
-              ->add('factureMontantTTC', NumberType::class, array('label' => 'Montant', 'scale' => 2, 'mapped' => false, 'data' => 9, "attr" => array(
+      ->add('factureMontantTTC', HiddenType::class, array('label' => 'Montant',  'mapped' => true,  "attr" => array(
                       'class' => 'factureMontantTTC')))
     	->add('datePaiement', DateType::class, array(
     			'label' => 'Date de paiement',
     			"attr" => array(
     					'class' => 'input-inline datepicker',
     					'data-provide' => 'datepicker',
-    					'data-date-format' => 'dd/mm/yyyy'
+    					'data-date-format' => 'dd/mm/yyyy',
+              "placeholder" => 'Date de paiement'
     			),
     			'widget' => 'single_text',
     			'format' => 'dd/MM/yyyy'));
     	$builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
     	$builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
+
     }
 
     protected function addElement(FormInterface $form, Facture $facture = null)
@@ -84,8 +87,15 @@ class PaiementType extends AbstractType {
     	$document = $event->getData();
     	$facture = ($document && $document->getFacture())? $document->getFacture() : null;
     	$this->addElement($form, $facture);
+      if($facture){
+      $this->factureMontantTTC = $facture->getMontantTTC();
+      $document->setFactureMontantTTC($this->factureMontantTTC);
+      }
     }
 
+    public function getDocument(){
+      return $this->getData();
+    }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
