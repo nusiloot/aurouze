@@ -39,7 +39,7 @@ class PaiementsType extends AbstractType {
             ),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy'))
-            ->add('numeroRemise', TextType::class, array('label' => 'Numéro remise de chèque',"attr" => array("placeholder" => 'Numéro remise de chèque')));
+            ->add('numeroRemise', TextType::class, array('label' => 'Numéro remise de chèque',"required" => false,"attr" => array("placeholder" => 'Numéro remise de chèque')));
 
         $builder->add('paiement', CollectionType::class, array(
         'entry_type' => new PaiementType($this->container, $this->dm),
