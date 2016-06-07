@@ -2,7 +2,7 @@
     {% if(form is defined and not form is null and not contrat.hasMouvements())%}
 
         <div class="row">
-            <div class="col-xs-6 text-right">
+            <div class="col-xs-5 text-right">
                 <div class="row  ">
                     <div class="col-xs-8">
                         {{ form_errors(form.prixHt) }}
@@ -16,7 +16,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xs-6 text-left">
+            <div class="col-xs-3 text-left">
                 <div class="row">
                     <div class="col-xs-2 text-left">
                         {{ form_errors(form.nbFactures) }}
@@ -28,6 +28,17 @@
                         </div>
                     </div>
                     <small class="col-xs-3" style="padding-top: 12px;">&nbsp;facture(s)</small>
+                </div>
+            </div>
+            <div class="col-xs-4 text-left">
+                <div class="row">
+                    <div class="col-xs-12 text-left">
+                        <div style="margin-top:-8px">
+                          {{ form_errors(form.tvaReduite) }}
+                            {{ form_widget(form.tvaReduite) }}
+                            {{ form_label(form.tvaReduite) }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

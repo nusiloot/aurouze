@@ -95,7 +95,7 @@
         <div class="col-xs-12"  >
             <br />
             <div class="text-left">
-                <strong>Nombre de chèque : {{ paiements.paiement | length }}</strong>
+                <strong>Nombre de chèque : {{ paiements.getPaiementUniqueParLibelle | length }}</strong>
                 <br />
                 <strong>Total des montants : {{ paiements.getMontantTotalByMoyenPaiement('CHEQUE') | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</strong>
                 <br />
