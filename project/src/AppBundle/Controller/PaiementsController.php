@@ -137,12 +137,14 @@ class PaiementsController extends Controller {
         $pm = $this->get('paiements.manager');
         $paiementsLists = array();
         $page = 0;
-        foreach ($paiements->getPaiement() as $key => $paiement) {
-          if($key % 30 == 0){
+        $cpt = 0;
+        foreach ($paiements->getPaiementUniqueParLibelle() as $paiement) {
+          if($cpt % 30 == 0){
             $page++;
             $paiementsLists[$page] = array();
           }
           $paiementsLists[$page][] = $paiement;
+          $cpt++;
         }
 
         $html = $this->renderView('paiements/pdfBanque.html.twig', array(
