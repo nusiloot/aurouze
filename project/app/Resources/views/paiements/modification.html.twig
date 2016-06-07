@@ -82,7 +82,7 @@
         <br/>
         <h1>Modification des paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</h1>
         {{ form_start(form) }}
-        {% if( not paiements.dateCreation or not paiements.numeroRemise) %}
+
             <div class="panel panel-default">
                 <div class="panel-heading"><strong>Informations</strong><div class="pull-right"></div></div>
                 <div class="panel-body col-xs-offset-2">
@@ -98,7 +98,6 @@
                     </div>
                 </div>
             </div>
-        {% endif %}
         <div>
             {{ form_widget(form.paiement, { 'attr': {'class': 'dynamic-collection'} }) }}
             <div class="row form-group">
