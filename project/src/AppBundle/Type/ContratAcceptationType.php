@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Compte;
@@ -44,6 +45,7 @@ class ContratAcceptationType extends AbstractType {
             if (!$this->contrat->hasMouvements()) {
                 $builder->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2, "attr" => array("class" => "form-control col-xs-2 text-right ")));
                 $builder->add('nbFactures', NumberType::class, array('label' => 'en ',"attr" => array("class" => "form-control col-xs-2 text-right ")));
+                $builder->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false, 'label_attr' => array('class' => 'small')));
             }
             $builder->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature* :', "attr" => array("class" => "form-control", "rows" => 6)));
         }
