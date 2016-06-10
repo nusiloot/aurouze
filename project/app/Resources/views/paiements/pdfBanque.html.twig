@@ -35,7 +35,7 @@
     </h2>
 
 
-
+           {% set nb_lignes = 0 %}
            {% for paiementsPage in paiementsLists %}
            <div class="row">
                <div class="col-xs-12"  >
@@ -68,6 +68,7 @@
                               <td style="border-color: #ddd; border: 1px solid; text-align: right;">{{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</td>
                             {% endif %}
                         </tr>
+                        {% set nb_lignes = nb_lignes + 1 %}
                         {% endif %}
                     {% endfor %}
                     {% if loop.last %}
@@ -95,7 +96,7 @@
         <div class="col-xs-12"  >
             <br />
             <div class="text-left">
-                <strong>Nombre de chèque : {{ paiements.getPaiementUniqueParLibelle | length }}</strong>
+                <strong>Nombre de chèque : {{ nb_lignes }}</strong>
                 <br />
                 <strong>Total des montants : {{ paiements.getMontantTotalByMoyenPaiement('CHEQUE') | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</strong>
                 <br />
