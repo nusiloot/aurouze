@@ -97,7 +97,7 @@ class PaiementsController extends Controller {
     }
 
     /**
-     * @Route("/paiements/export-comptable", name="paiements_export_comtable")
+     * @Route("/paiements/export-comptable", name="paiements_export_comptable")
      */
     public function exportComptableAction(Request $request) {
 
@@ -116,7 +116,7 @@ class PaiementsController extends Controller {
         rewind($handle);
         $content = stream_get_contents($handle);
         fclose($handle);
-        
+
         $response = new Response($content, 200, array(
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename=' . $filename,
