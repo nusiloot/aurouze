@@ -380,7 +380,7 @@ class Societe {
 
             $etablissements[$etablissement->getId()] = $etablissement;
         }
-        
+
         return $etablissements;
     }
 
@@ -391,6 +391,20 @@ class Societe {
      */
     public function getComptes() {
         return $this->comptes;
+    }
+
+    public function getComptesByStatut($statut) {
+        $comptes = array();
+
+        foreach($this->getComptes() as $compte) {
+            if($compte->getActif() != $statut) {
+                continue;
+            }
+
+            $comptes[$compte->getId()] = $compte;
+        }
+
+        return $comptes;
     }
 
     public function getIcon() {

@@ -31,6 +31,11 @@ class Compte implements DocumentSocieteInterface {
     /**
      * @MongoDB\String
      */
+    protected $fonction;
+
+    /**
+     * @MongoDB\String
+     */
     protected $nom;
 
     /**
@@ -194,7 +199,7 @@ class Compte implements DocumentSocieteInterface {
         $identite.= ($this->getNom()) ? $this->getNom() . ' ' : '';
         return $identite;
     }
-    
+
     /**
      * Set couleur
      *
@@ -532,4 +537,26 @@ class Compte implements DocumentSocieteInterface {
         return $this->titre;
     }
 
+
+    /**
+     * Set fonction
+     *
+     * @param string $fonction
+     * @return self
+     */
+    public function setFonction($fonction)
+    {
+        $this->fonction = $fonction;
+        return $this;
+    }
+
+    /**
+     * Get fonction
+     *
+     * @return string $fonction
+     */
+    public function getFonction()
+    {
+        return $this->fonction;
+    }
 }

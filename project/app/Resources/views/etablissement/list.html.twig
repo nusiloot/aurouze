@@ -1,40 +1,37 @@
-<div class="row">
-    {% for etablissement in etablissements %}
-        <div class="col-xs-12">
-            <div style="{% if not etablissement.actif %}opacity: 0.5{% endif %}" class="panel panel-default">
-                <div class="list-group">
-                    <div class="list-group-item">
-                        <a class="btn btn-xs btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}">Modifier</a>
-                        <h4 style="margin-top: 0;margin-bottom: 0;" >
-                            <a href="{{ path('passage_etablissement', {'id': etablissement.id }) }}"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> {{ etablissement.getNom(false) }}</a>
-                            <span class="text-muted">{{ etablissement.adresse.adresse }}</span>
-                            {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}
-                            {% if not etablissement.actif %}<span class="btn btn-xs btn-danger">Suspendu</span>{% endif %}
-                        </h4>
-                    </div>
-                    {% if(not etablissement.sameContactCoordonneeThanSociete) %}
-                        <div class="list-group-item text-center">
-                            {%if(etablissement.contactCoordonnee.telephoneFixe is defined and etablissement.contactCoordonnee.telephoneFixe)%}
-                                <i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneFixe }}&nbsp;
-                            {%endif%}
-                            {%if(etablissement.contactCoordonnee.telephoneMobile is defined and etablissement.contactCoordonnee.telephoneMobile)%}
-                                <i class="glyphicon glyphicon-phone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneMobile }}&nbsp;
-                            {%endif%}
-                            {%if(etablissement.contactCoordonnee.fax is defined and etablissement.contactCoordonnee.fax)%}
-                                <i class="glyphicon glyphicon-print"></i>&nbsp;{{ etablissement.contactCoordonnee.fax }}&nbsp;
-                            {%endif%}&nbsp;
-                            {%if(etablissement.contactCoordonnee.email is defined and etablissement.contactCoordonnee.email)%}
-                                <i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ etablissement.contactCoordonnee.email }}&nbsp;
-                            {%endif%}
-                            {%if(etablissement.contactCoordonnee.siteInternet is defined and etablissement.contactCoordonnee.siteInternet)%}
-                                <i class="glyphicon glyphicon-globe"></i>&nbsp;{{ etablissement.contactCoordonnee.siteInternet }}&nbsp;
-                            {%endif%}&nbsp;
-                        </div>
-                    {% endif %}
-                    {% if(not etablissement.sameContactCoordonneeThanSociete) %}
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-</div>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th class="col-xs-3">Nom</th>
+            <th class="col-xs-4">Adresse</th>
+            <th class="col-xs-3">Commune</th>
+            <th class="col-xs-2">Contact</th>
+    </thead>
+    <tbody>
+        {% for etablissement in etablissements %}
+        <tr>
+            <td><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> <a href="{{ path('passage_etablissement', {'id': etablissement.id }) }}">{{ etablissement.getNom(false) }}</a> <a class="btn btn-xs btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a></td>
+            <td>{{ etablissement.adresse.adresse }}</td>
+            <td>{{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}</td>
+            <td>{% if(not etablissement.sameContactCoordonneeThanSociete) %}{% if(etablissement.contactCoordonnee.telephoneFixe is defined and etablissement.contactCoordonnee.telephoneFixe)%}
+                <a href="callto:{{ etablissement.contactCoordonnee.telephoneFixe }}"><i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneFixe }}</a><br />
+            {% endif %}
+            {% if(etablissement.contactCoordonnee.telephoneMobile is defined and etablissement.contactCoordonnee.telephoneMobile)%}
+                <a href="callto:{{ etablissement.contactCoordonnee.telephoneMobile }}"><i class="glyphicon glyphicon-earphone"><i class="glyphicon glyphicon-phone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneMobile }}</a><br />
+            {% endif %}
+            {% if(etablissement.contactCoordonnee.fax is defined and etablissement.contactCoordonnee.fax)%}
+                <a href="callto:{{ etablissement.contactCoordonnee.fax }}"><i class="glyphicon glyphicon-print"></i>&nbsp;{{ etablissement.contactCoordonnee.fax }}</a><br />
+            {% endif %}&nbsp;
+            {% if(etablissement.contactCoordonnee.email is defined and etablissement.contactCoordonnee.email)%}
+                <a href="mailto:{{ etablissement.contactCoordonnee.email }}"><i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ etablissement.contactCoordonnee.email }}</a><br />
+            {% endif %}
+            {% if(etablissement.contactCoordonnee.siteInternet is defined and etablissement.contactCoordonnee.siteInternet)%}
+                <a href="{{ etablissement.contactCoordonnee.siteInternet }}"><i class="glyphicon glyphicon-globe"></i>&nbsp;{{ etablissement.contactCoordonnee.siteInternet }}</a><br />
+            {% endif %}
+            {% else %}
+                <em class="text-muted">Même que la société</em>
+            {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
