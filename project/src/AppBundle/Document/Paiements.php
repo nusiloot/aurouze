@@ -143,6 +143,26 @@ class Paiements {
         return $this->imprime;
     }
 
+    public function getPaiementUniqueParLibelle(){
+      $paiementsUnique = array();
+
+      foreach ($this->getPaiement() as $paiement) {
+        if(!$paiement->getLibelle() || $paiement->getLibelle() == ""){
+          $key = md5(microtime().rand());
+          $paiementsUnique[$key] = $paiement;
+        }else{
+          $key = $paiement->getMoyenPaiement().$paiement->getLibelle();
+          if(!array_key_exists($key,$paiementsUnique)){
+            $paiementsUnique[$key] = $paiement;
+            $paiementsUnique[$key]->setMontantTemporaire($paiement->getMontant());
+          }else{
+            $paiementsUnique[$key]->addMontantTemporaire($paiement->getMontant());
+          }
+        }
+      }
+      return $paiementsUnique;
+    }
+
     public function getMontantTotal() {
         $montantTotal = 0;
         foreach ($this->getPaiement() as $paiement) {

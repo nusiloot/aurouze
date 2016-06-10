@@ -53,6 +53,8 @@ class Paiement {
 
     protected $factureMontantTTC;
 
+    protected $montantTemporaire;
+
     public function __construct() {
         $this->versementComptable = false;
     }
@@ -218,6 +220,21 @@ class Paiement {
     public function getIdentifiantReprise()
     {
         return $this->identifiantReprise;
+    }
+
+
+    public function setMontantTemporaire($montantTemporaire) {
+        $this->montantTemporaire = $montantTemporaire;
+        return $this;
+    }
+
+    public function getMontantTemporaire() {
+       return  $this->montantTemporaire;
+    }
+
+    public function addMontantTemporaire($montantTemporaire) {
+      $this->setMontantTemporaire($this->getMontantTemporaire() + $montantTemporaire);
+      return $this;
     }
 
     public function getMoyenPaiementLibelle() {

@@ -188,7 +188,7 @@ class Produit {
         return $this->conditionnement;
     }
 
-   
+
 
     /**
      * Set nbUtilisePassage
@@ -258,7 +258,7 @@ class Produit {
         return $this->nbTotalContrat;
     }
 
-   
+
 
     /**
      * Set nbPremierPassage
@@ -280,5 +280,22 @@ class Produit {
     public function getNbPremierPassage()
     {
         return $this->nbPremierPassage;
+    }
+
+    public function isActif(){
+      return $this->getStatut() == self::PRODUIT_ACTIF;
+    }
+
+    public function getActif(){
+      return $this->isActif();
+    }
+
+    public function setActif($actif){
+      if($actif){
+        $this->setStatut(self::PRODUIT_ACTIF);
+      }else{
+         $this->setStatut(self::PRODUIT_INACTIF);
+      }
+      return $this;
     }
 }

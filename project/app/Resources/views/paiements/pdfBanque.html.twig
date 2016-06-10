@@ -17,7 +17,7 @@
             <div class="text-left">
 
                 <h3>Remise de chèques </h3>
-                <strong>N° XXXX du {{ paiements.dateCreation | date("d/m/Y") }} </strong>
+                <strong>N° {{ paiements.numeroRemise }} du {{ paiements.dateCreation | date("d/m/Y") }} </strong>
                 <br />
                 <br />
                 <br />
@@ -62,8 +62,11 @@
                             <td style="border-color: #ddd; border: 1px solid; text-align: left;" >
                                 {% if(paiement.libelle) %}&nbsp;{{ paiement.libelle }}{% endif %}
                             </td>
-                            <td style="border-color: #ddd; border: 1px solid; text-align: right;">{{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</td>
-
+                            {% if paiement.montantTemporaire %}
+                              <td style="border-color: #ddd; border: 1px solid; text-align: right;">{{ paiement.montantTemporaire | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</td>
+                            {% else %}
+                              <td style="border-color: #ddd; border: 1px solid; text-align: right;">{{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;</td>
+                            {% endif %}
                         </tr>
                         {% set nb_lignes = nb_lignes + 1 %}
                         {% endif %}
