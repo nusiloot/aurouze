@@ -11,6 +11,9 @@
     <div class="row" style="margin-top: 10px; height: 130px;">
         <div class="col-xs-8">
             <h3 style="margin-top: 5px;"><i style="cursor: default;" class="mdi mdi-{{ etablissement.icon }} mdi-lg" title="{{ etablissement.type }}" data-toggle="tooltip" ></i> {{ etablissement.nom }} <small class="text-muted">({{ etablissement.raisonSociale }})</small></h3>
+            <p>
+                {{ etablissement.adresse.adresse }} {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}
+            </p>
             <p class="lead">
                 {% if etablissement.contactCoordonnee.telephoneFixe %}
                     {{ etablissement.contactCoordonnee.telephoneFixe }}
