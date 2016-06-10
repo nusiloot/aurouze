@@ -108,6 +108,7 @@ class PaiementsController extends Controller {
 
         $filename = sprintf("export_paiements_%s.csv", (new \DateTime())->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
+
         foreach ($paiementsForCsv as $paiement) {
             fputcsv($handle, $paiement);
         }
@@ -115,11 +116,9 @@ class PaiementsController extends Controller {
         rewind($handle);
         $content = stream_get_contents($handle);
         fclose($handle);
-
-
-
+        
         $response = new Response($content, 200, array(
-            'Content-Type' => 'application/force-download',
+            'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename=' . $filename,
         ));
         $response->setCharset('UTF-8');
