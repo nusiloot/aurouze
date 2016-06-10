@@ -1,20 +1,8 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of EtablissementManager
- *
- * @author mathurin
- */
-
 namespace AppBundle\Manager;
 
-use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
+use Doctrine\ODM\MongoDB\DocumentManager;
 
 class CompteManager {
 
@@ -26,7 +14,7 @@ class CompteManager {
     const TYPE_AUTRE = "AUTRE";
     const TAG_CALENDRIER = "CALENDRIER";
     const TAG_SOUS_TRAITANT = "SOUS-TRAITANT";
-    
+
     const CIVILITE_MONSIEUR = "Monsieur";
     const CIVILITE_MADAME = "Madame";
     const CIVILITE_MADEMOISELLE = "Mademoiselle";
@@ -55,6 +43,13 @@ class CompteManager {
     public function getRepository() {
 
         return $this->dm->getRepository('AppBundle:Compte');
+    }
+
+    public function getAllInterlocuteurs($societe, $withActif = true) {
+        $etablissements = $this->dm->getRepository('AppBundle:Etablissement')->findBy(array('societe' => $societe->getId(), 'actif' => true));
+        $comptes = $this->dm->getRepository('AppBundle:Compte')->findBy(array('societe' => $societe->getId(), 'actif' => true));
+
+        return array_merge(array($societe), $etablissements, $comptes);
     }
 
 }

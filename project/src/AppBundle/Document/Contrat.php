@@ -53,6 +53,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $societe;
 
     /**
+     * @MongoDB\ReferenceOne()
+     */
+    protected $devisInterlocuteur;
+
+    /**
      * @MongoDB\String
      */
     protected $identifiant;
@@ -1486,5 +1491,43 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getFactureDestinataire()
     {
         return $this->factureDestinataire;
+    }
+
+
+    /**
+     * Set devisInterlocuteur
+     *
+     * @param $devisInterlocuteur
+     * @return self
+     */
+    public function setDevisInterlocuteur($devisInterlocuteur)
+    {
+        $this->devisInterlocuteur = $devisInterlocuteur;
+        return $this;
+    }
+
+    /**
+     * Get devisInterlocuteur
+     *
+     * @return $devisInterlocuteur
+     */
+    public function getDevisInterlocuteur()
+    {
+        if(is_null($this->devisInterlocuteur)) {
+
+            return $this->getSociete();
+        }
+
+        return $this->devisInterlocuteur;
+    }
+
+    public function getDevisDestinataire() {
+
+        return $this->getDevisInterlocuteur()->getDestinataire();
+    }
+
+    public function getDevisAdresse() {
+
+        return $this->getDevisInterlocuteur()->getAdresse();
     }
 }

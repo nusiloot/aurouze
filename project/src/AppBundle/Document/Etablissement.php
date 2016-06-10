@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use AppBundle\Model\EtablissementInfosInterface;
 use AppBundle\Model\DocumentSocieteInterface;
+use AppBundle\Model\InterlocuteurInterface;
 use AppBundle\Document\Adresse;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Document\Contrat;
@@ -13,7 +14,7 @@ use AppBundle\Document\Contrat;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository") @HasLifecycleCallbacks
  */
-class Etablissement implements DocumentSocieteInterface, EtablissementInfosInterface {
+class Etablissement implements DocumentSocieteInterface, EtablissementInfosInterface, InterlocuteurInterface {
 
     const PREFIX = "ETABLISSEMENT";
 
@@ -81,6 +82,11 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         $this->adresse = new Adresse();
         $this->contactCoordonnee = new ContactCoordonnee();
         $this->setActif(true);
+    }
+
+    public function getIdentite() {
+
+        return $this->getNom();
     }
 
     /** @MongoDB\PreUpdate */
@@ -313,6 +319,16 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function getIcon() {
 
         return EtablissementManager::$type_icon[$this->getType()];
+    }
+
+    public function getDestinataire() {
+
+        return $this->getNom(true);
+    }
+
+    public function getLibelleComplet() {
+
+        return $this->getDestinataire() . ' ' . $this->getAdresse()->getIntitule();
     }
 
     public function getIntitule($includeRaisonSociale = true) {

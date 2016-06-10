@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use AppBundle\Manager\CompteManager;
 use AppBundle\Model\DocumentSocieteInterface;
+use AppBundle\Model\InterlocuteurInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Manager\ContratManager;
 use AppBundle\Document\Adresse;
@@ -13,7 +14,7 @@ use AppBundle\Document\Adresse;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\CompteRepository") @HasLifecycleCallbacks
  */
-class Compte implements DocumentSocieteInterface {
+class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
 
     const PREFIX = "COMPTE";
     const COULEUR_DEFAUT = 'yellow';
@@ -268,7 +269,18 @@ class Compte implements DocumentSocieteInterface {
         return $this->getPrenom().' '. substr(ucfirst($this->getNom()),0,1).'.';
     }
 
+    public function getDestinataire() {
+
+        return $this->getIdentite();
+    }
+
+    public function getLibelleComplet() {
+
+        return $this->getDestinataire() . ' ' . $this->getAdresse()->getIntitule();
+    }
+
     public function __toString() {
+
         return $this->getIdentite();
     }
 

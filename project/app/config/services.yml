@@ -65,6 +65,10 @@ services:
         class: AppBundle\Manager\SocieteManager
         arguments: [@doctrine_mongodb.odm.default_document_manager]
 
+    interlocuteur.manager:
+        class: AppBundle\Manager\InterlocuteurManager
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
+
     contrat.importer:
         class: AppBundle\Import\ContratCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, @passage.manager, @etablissement.manager, @societe.manager, @compte.manager]
