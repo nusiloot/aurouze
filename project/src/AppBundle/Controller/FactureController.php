@@ -274,8 +274,8 @@ class FactureController extends Controller {
 
       // $response = new StreamedResponse();
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $pm = $this->get('facture.manager');
-        $facturesForCsv = $pm->getFacturesForCsv();
+        $fm = $this->get('facture.manager');
+        $facturesForCsv = $fm->getFacturesForCsv();
 
         $filename = sprintf("export_factures_%s.csv", (new \DateTime())->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
