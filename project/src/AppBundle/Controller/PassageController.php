@@ -26,6 +26,7 @@ class PassageController extends Controller {
      * @Route("/passage/{secteur}/visualisation", name="passage" , defaults={"secteur" = "PARIS"})
      */
     public function indexAction(Request $request, $secteur) {
+        ini_set('memory_limit', '256M');
 
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
             'action' => $this->generateUrl('passage_etablissement_choice'),

@@ -70,7 +70,7 @@
                     Lieu{% if(ligne.origineDocument.contratPassages | length > 1) %}x{% endif %} d'application{% if(ligne.origineDocument.contratPassages | length > 1) %}s{% endif %} :
                         <ul class="list-unstyled" style="padding-left: 10px;">
                             {% for p in ligne.origineDocument.contratPassages %}
-                            <li>- {{ p.etablissement.adresse.adresse }}, {{ p.etablissement.adresse.codePostal }} {{ p.etablissement.adresse.commune }}</li>
+                            <li>- {{ p.etablissement.nom(false) }}, {{ p.etablissement.adresse.adresse }}, {{ p.etablissement.adresse.codePostal }} {{ p.etablissement.adresse.commune }}</li>
                             {% endfor %}
                         </ul>
                     </small>
