@@ -17,6 +17,26 @@ class FactureManager {
 
     const DEFAUT_FREQUENCE_JOURS = 10;
 
+    const EXPORT_DATE = 0 ;
+    const EXPORT_JOURNAL= 1;
+    const EXPORT_COMPTE= 2;
+    const EXPORT_PIECE= 3;
+    const EXPORT_LIBELLE= 4;
+    const EXPORT_DEBIT= 5;
+    const EXPORT_CREDIT= 6;
+    const EXPORT_MONNAIE= 7;
+
+public static $export_factures_libelle = array(
+  self::EXPORT_DATE => "Date",
+   self::EXPORT_JOURNAL=> "Journal",
+   self::EXPORT_COMPTE=> "Compte",
+   self::EXPORT_PIECE=> "Pièce",
+   self::EXPORT_LIBELLE=> "Libellé",
+   self::EXPORT_DEBIT=> "Débit",
+   self::EXPORT_CREDIT=> "Crédit",
+  self::EXPORT_MONNAIE=> "Monnaie"
+);
+
     function __construct(DocumentManager $dm, MouvementManager $mm, $parameters) {
         $this->dm = $dm;
         $this->mm = $mm;
@@ -91,4 +111,29 @@ class FactureManager {
 
         return $this->mm->getMouvements(true, false);
     }
+
+    public function getFacturesForCsv() {
+        $date = new \DateTime();
+        $facturesObjs = $this->getRepository()->findByDate($date);
+
+        $facturesArray = array();
+        $facturesArray[] = self::$export_factures_libelle;
+
+        foreach ($facturesObjs as $facture) {
+                $factureArr = array();
+                $factureArr[self::EXPORT_DATE] = ($facture->getDatePaiement())? $facture->getDatePaiement()->format('d/m/Y') : "TEST";
+                $factureArr[self::EXPORT_JOURNAL] =  "" ;
+                $factureArr[self::EXPORT_COMPTE] = "" ;
+                $factureArr[self::EXPORT_PIECE] =  "" ;
+                $factureArr[self::EXPORT_LIBELLE] =  "" ;
+                $factureArr[self::EXPORT_DEBIT] = "";
+                $factureArr[self::EXPORT_CREDIT] =  "" ;
+                $factureArr[self::EXPORT_MONNAIE] =  "" ; 
+                $facturesArray[] = $factureArr;
+        }
+        return $facturesArray;
+    }
+
+
+
     }

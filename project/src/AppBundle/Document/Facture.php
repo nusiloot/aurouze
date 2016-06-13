@@ -789,6 +789,14 @@ class Facture implements DocumentSocieteInterface {
         return ($this->getDateFacturation() || $this->getNumeroFacture());
     }
 
+    public function removeId() {
+        $this->id = null;
+    }
+    public function removeNumeroFacture() {
+        $this->numeroFacture = null;
+    }
+
+
     /**
      * Set numeroDevis
      *
@@ -817,7 +825,11 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function isAvoir() {
-        return $this->getAvoir() || $this->getMontantTTC() <= 0;
+        return $this->getMontantTTC() <= 0;
+    }
+
+    public function isRedressee() {
+        return boolval($this->getAvoir());
     }
 
     public function cloturer() {
@@ -841,6 +853,18 @@ class Facture implements DocumentSocieteInterface {
             }
         }
         return $sommeMontantPayeCalcule;
+    }
+
+    public function genererAvoir(){
+      $avoir = clone $this;
+      $avoir->removeId();
+      $avoir->removeNumeroFacture();
+      $avoir->setCloture(true);
+      $avoir->setMontantPaye(-1 * $avoir->getMontantTTC());
+      $avoir->setMontantHT(-1 * $avoir->getMontantHT());
+      $avoir->setMontantTaxe(-1 * $avoir->getMontantTaxe());
+      $avoir->setMontantTTC(-1 * $avoir->getMontantTTC());
+      return $avoir;
     }
 
 }

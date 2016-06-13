@@ -60,7 +60,8 @@
         </thead>
         <tbody>
             {% for facture in factures %}
-                <tr class="{% if(facture.paye or facture.isAvoir) %} success 
+                <tr class="{% if(facture.paye or facture.isAvoir) %} success
+                    {% elseif(facture.isRedressee()) %} warning
                     {% elseif(facture.isEnRetardPaiement()) %} danger {% endif %}">
                             <td>{{ ((facture.isDevis) ? facture.dateDevis : facture.dateFacturation) | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</td>
                             <td><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span> {% if facture.isDevis %}Devis n° {{ facture.numeroDevis }}{% elseif(facture.isAvoir) %}Avoir n° {{ facture.numeroFacture }}{% else %}Facture n° {{ facture.numeroFacture }}{% endif %}</a></td>
@@ -71,15 +72,23 @@
                                 {% endfor %}
                             </td>
                             <td class="text-right">{{ "%0.2f" | format(facture.montantTTC)  }}&nbsp;€</td>
-                            <td class="text-right {% if facture.isDevis %}active{% endif %}">{% if facture.isFacture %}<span class="text-muted">{% if(facture.isAvoir) %}-{%else%}{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€{% endif %}</span>{% endif %}</td>
+                            <td class="text-right {% if facture.isDevis %}active{% endif %}">
+                            {% if facture.isFacture %}
+                              {% if(facture.isAvoir) %}<span class="text-muted">-</span>
+                              {% elseif(facture.isRedressee) %}
+                              <span data-toggle="tooltip" title="{{ facture.avoir }}" class="pull-left label label-xs label-warning">R</span>
+                              &nbsp;<span class="text-muted">{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€</span>
+                              {% else %}<span class="text-muted">{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€</span>{% endif %}
+                            {% endif %}
+                          </td>
                             <td class="text-left">
                                 <div class="btn-group">
                                     {% if facture.isDevis %}
                                         <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-warning btn-xs">Créer la facture</a>
                                     {% else %}
-                                        <a href="" class="btn btn-default btn-xs">&nbsp;<span class="glyphicon glyphicon-repeat" data-toggle="tooltip" title="Regénerer"></span></a>
-                                            {% if(not facture.isAvoir) %}
-                                            <a href="" class="btn btn-default btn-xs">Faire un avoir</a>
+                                        <!-- <a href="" class="btn btn-default btn-xs">&nbsp;<span class="glyphicon glyphicon-repeat" data-toggle="tooltip" title="Regénerer"></span></a> -->
+                                            {% if(not facture.isAvoir and not facture.isRedressee) %}
+                                            <a onclick="return confirm('Êtes vous sûr de vouloir faire un avoir sur cette facture ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id })}}" class="btn btn-default btn-xs">Faire un avoir</a>
                                             {% if(not facture.iscloture) %}
                                                 <a onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Cloturer</a>
                                             {% endif %}

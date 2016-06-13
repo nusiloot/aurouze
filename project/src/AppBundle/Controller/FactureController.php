@@ -154,21 +154,47 @@ class FactureController extends Controller {
      */
     public function cloturerAction(Request $request, Societe $societe, $factureId) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         $facture = $this->get('facture.manager')->getRepository()->findOneById($factureId);
         $facture->cloturer();
         $dm->persist($facture);
         $dm->flush();
         return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
     }
-    
-      /**
+
+  /**
+     * @Route("/avoir/{id}/{factureId}", name="facture_avoir")
+   * @ParamConverter("societe", class="AppBundle:Societe")
+   */
+  public function avoirAction(Request $request, Societe $societe, $factureId) {
+      $dm = $this->get('doctrine_mongodb')->getManager();
+
+      $facture = $this->get('facture.manager')->getRepository()->findOneById($factureId);
+      $avoir = $facture->genererAvoir();
+      $dm->persist($avoir);
+      $dm->flush();
+
+      $facture->setAvoir($avoir->getNumeroFacture());
+      $dm->persist($facture);
+      $dm->flush();
+
+      $contrat = $facture->getContrat();
+      $contrat->restaureMouvements($facture);
+
+      $dm->persist($contrat);
+      $dm->flush();
+
+      return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
+  }
+
+
+    /**
      * @Route("/decloturer/{id}/{factureId}", name="facture_decloturer")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
     public function decloturerAction(Request $request, Societe $societe, $factureId) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         $facture = $this->get('facture.manager')->getRepository()->findOneById($factureId);
         $facture->decloturer();
         $dm->persist($facture);
@@ -196,12 +222,12 @@ class FactureController extends Controller {
         if ($facture->isDevis() && $facture->getNumeroDevis()) {
             $filename = "devis_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateDevis()->format('Ymd') . "_N" . $facture->getNumeroDevis() . ".pdf";
         } elseif ($facture->isFacture() && $facture->getNumeroFacture()) {
-            $prefix = ($facture->isAvoir())? 'avoir' : 'facture'; 
+            $prefix = ($facture->isAvoir())? 'avoir' : 'facture';
             $filename = $prefix."_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateFacturation()->format('Ymd') . "_N" . $facture->getNumeroFacture() . ".pdf";
         } elseif ($facture->isDevis()) {
             $filename = "devis_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateDevis()->format('Ymd') . "_brouillon.pdf";
         } else {
-            $prefix = ($facture->isAvoir())? 'avoir' : 'facture'; 
+            $prefix = ($facture->isAvoir())? 'avoir' : 'facture';
             $filename = $prefix."_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateFacturation()->format('Ymd') . "_brouillon.pdf";
         }
 
@@ -239,6 +265,36 @@ class FactureController extends Controller {
             $newResult->text = $nom;
             $result[] = $newResult;
         }
+    }
+
+    /**
+     * @Route("/export-comptable", name="facture_export_comptable")
+     */
+    public function exportComptableAction(Request $request) {
+
+      // $response = new StreamedResponse();
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $pm = $this->get('facture.manager');
+        $facturesForCsv = $pm->getFacturesForCsv();
+
+        $filename = sprintf("export_factures_%s.csv", (new \DateTime())->format("Y-m-d"));
+        $handle = fopen('php://memory', 'r+');
+
+        foreach ($facturesForCsv as $paiement) {
+            fputcsv($handle, $paiement);
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        $response = new Response($content, 200, array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=' . $filename,
+        ));
+        $response->setCharset('UTF-8');
+
+        return $response;
     }
 
 }
