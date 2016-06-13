@@ -276,7 +276,7 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
 
     public function getLibelleComplet() {
 
-        return $this->getDestinataire() . ' ' . $this->getAdresse()->getIntitule();
+        return $this->getDestinataire() . ', ' . $this->getAdresse()->getLibelleComplet();
     }
 
     public function __toString() {
@@ -438,6 +438,10 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
      * @return AppBundle\Document\Adresse $adresse
      */
     public function getAdresse() {
+        if(!$this->adresse || $this->adresse->isEmpty()) {
+
+            return $this->getSociete()->getAdresse();
+        }
         return $this->adresse;
     }
 
