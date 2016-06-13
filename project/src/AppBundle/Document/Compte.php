@@ -440,7 +440,7 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
     public function getAdresse() {
         if(!$this->adresse || $this->adresse->isEmpty()) {
 
-            return $this->getSociete()->getAdresse();
+            return clone $this->getSociete()->getAdresse();
         }
         return $this->adresse;
     }
