@@ -257,9 +257,13 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      *
      * @return Adresse $adresse
      */
-    public function getAdresse() {
-        return $this->adresse;
-    }
+     public function getAdresse() {
+         if(!$this->adresse || $this->adresse->isEmpty()) {
+
+             return clone $this->getSociete()->getAdresse();
+         }
+         return $this->adresse;
+     }
 
     /**
      * Set type

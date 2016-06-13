@@ -2,7 +2,7 @@
     <thead>
         <tr>
             <th class="col-xs-3">Nom</th>
-            <th class="col-xs-4">Adresse</th>
+            <th class="col-xs-3">Adresse</th>
             <th class="col-xs-3">Commune</th>
             <th class="col-xs-2">Contact</th>
     </thead>
@@ -16,7 +16,7 @@
                 <a href="callto:{{ etablissement.contactCoordonnee.telephoneFixe }}"><i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneFixe }}</a><br />
             {% endif %}
             {% if(etablissement.contactCoordonnee.telephoneMobile is defined and etablissement.contactCoordonnee.telephoneMobile)%}
-                <a href="callto:{{ etablissement.contactCoordonnee.telephoneMobile }}"><i class="glyphicon glyphicon-earphone"><i class="glyphicon glyphicon-phone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneMobile }}</a><br />
+                <a href="callto:{{ etablissement.contactCoordonnee.telephoneMobile }}"><i class="glyphicon glyphicon-phone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneMobile }}</a><br />
             {% endif %}
             {% if(etablissement.contactCoordonnee.fax is defined and etablissement.contactCoordonnee.fax)%}
                 <a href="callto:{{ etablissement.contactCoordonnee.fax }}"><i class="glyphicon glyphicon-print"></i>&nbsp;{{ etablissement.contactCoordonnee.fax }}</a><br />

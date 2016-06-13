@@ -132,13 +132,11 @@ class PassageRepository extends DocumentRepository {
         return $techniciens;
     }
 
-    public function findToPlan($secteur = EtablissementManager::SECTEUR_PARIS) {
+    public function findToPlan($secteur = EtablissementManager::SECTEUR_PARIS, \DateTime $dateFin) {
         $dpts = EtablissementManager::$secteurs_departements[EtablissementManager::SECTEUR_SEINE_ET_MARNE];
         $date = new \DateTime();
-        $twoMonth = clone $date;
-        $twoMonth->modify("last day of next month");
 
-        $mongoEndDate = new MongoDate(strtotime($twoMonth->format('Y-m-d')));
+        $mongoEndDate = new MongoDate(strtotime($dateFin->format('Y-m-d')));
 
         $q = $this->createQueryBuilder();
 
@@ -163,8 +161,8 @@ class PassageRepository extends DocumentRepository {
         return $query->execute();
     }
 
-    public function getNbPassagesToPlanPerMonth($secteur = EtablissementManager::SECTEUR_PARIS) {
-        $passages = $this->findToPlan($secteur);
+    public function getNbPassagesToPlanPerMonth($secteur = EtablissementManager::SECTEUR_PARIS, \DateTime $dateFin) {
+        $passages = $this->findToPlan($secteur, $dateFin);
         $result = array();
         foreach ($passages as $passage) {
             $moisAnnee = $passage->getDatePrevision()->format('Ym');
