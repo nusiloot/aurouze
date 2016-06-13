@@ -122,7 +122,7 @@ class Societe implements InterlocuteurInterface {
 
     public function getLibelleComplet() {
 
-        return $this->getDestinataire() . ' ' . $this->getAdresse()->getIntitule();
+        return $this->getDestinataire() . ', ' . $this->getAdresse()->getLibelleComplet();
     }
 
     /**
