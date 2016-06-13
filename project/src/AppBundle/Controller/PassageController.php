@@ -32,9 +32,16 @@ class PassageController extends Controller {
             'method' => 'GET',
         ));
 
+        $dateFin = new \DateTime();
+        $dateFin->modify("last day of next month");
+
+        if($request->get('date')) {
+            $dateFin = new \DateTime($request->get('date'));
+        }
+
         $passageManager = $this->get('passage.manager');
-        $passages = $passageManager->getRepository()->findToPlan($secteur);
-        $moisPassagesArray = $passageManager->getRepository()->getNbPassagesToPlanPerMonth($secteur);
+        $passages = $passageManager->getRepository()->findToPlan($secteur, $dateFin);
+        $moisPassagesArray = $passageManager->getRepository()->getNbPassagesToPlanPerMonth($secteur, $dateFin);
         $geojson = $this->buildGeoJson($passages);
 
         return $this->render('passage/index.html.twig', array('passages' => $passages,
