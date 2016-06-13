@@ -1,0 +1,29 @@
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th class="col-xs-3">Nom</th>
+            <th class="col-xs-4">Adresse</th>
+            <th class="col-xs-3">Commune</th>
+            <th class="col-xs-2">Contact</th>
+    </thead>
+    <tbody>
+        {% for compte in comptes %}
+        <tr>
+            <td><i class="mdi mdi-face mdi-lg"></i> {{ compte.identite }} {% if(compte.fonction) %}<span class="label label-info">{{ compte.fonction }}</span>{% endif %} <a class="btn btn-default btn-xs pull-right" href="{{ path('compte_modification', {'societe': societe.id, 'id': compte.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+</td>
+            <td>{% if(not compte.sameAdresseThanSociete) %}{{ compte.adresse.adresse }}{% else %}<em class="text-muted">Même que la société</em>{% endif %}</td>
+            <td>{% if(not compte.sameAdresseThanSociete) %}{{ compte.adresse.adresse }}{{ compte.adresse.codePostal }} {{ compte.adresse.commune }}{% else %}<em class="text-muted">Même que la société</em>{% endif %}</td>
+            <td>{% if(not compte.sameContactCoordonneeThanSociete) %}
+                {%if(compte.contactCoordonnee.telephoneFixe is defined and compte.contactCoordonnee.telephoneFixe)%}<a href="callto:{{ compte.contactCoordonnee.telephoneFixe }}"><i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ compte.contactCoordonnee.telephoneFixe }}</a><br />{%endif%}
+                {%if(compte.contactCoordonnee.telephoneMobile is defined and compte.contactCoordonnee.telephoneMobile)%}<a href="callto:{{ compte.contactCoordonnee.telephoneMobile }}"><i class="glyphicon glyphicon-phone"></i>&nbsp;{{ compte.contactCoordonnee.telephoneMobile }}</a><br />{%endif%}
+                {%if(compte.contactCoordonnee.fax is defined and compte.contactCoordonnee.fax)%}<a href="callto:{{ compte.contactCoordonnee.fax }}"><i class="glyphicon glyphicon-print"></i>&nbsp;{{ compte.contactCoordonnee.fax }}</a><br />{%endif%}
+                {%if(compte.contactCoordonnee.email is defined and compte.contactCoordonnee.email)%}<a href="mailto:{{ compte.contactCoordonnee.email }}"><i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ compte.contactCoordonnee.email }}</a><br />{%endif%}
+                {%if(compte.contactCoordonnee.siteInternet is defined and compte.contactCoordonnee.siteInternet)%}<a href="{{ compte.contactCoordonnee.siteInternet }}"><i class="glyphicon glyphicon-globe"></i>&nbsp;{{ compte.contactCoordonnee.siteInternet }}</a><br />{%endif%}&nbsp;
+            {% else %}
+                <em class="text-muted">Même que la société</em>
+            {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -20,6 +20,7 @@ use AppBundle\Manager\ContratManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Form\CallbackTransformer;
 use AppBundle\Transformer\EtablissementsTransformer;
+use AppBundle\Transformer\InterlocuteurTransformer;
 use AppBundle\Transformer\ProduitTransformer;
 
 class ContratType extends AbstractType {
@@ -48,7 +49,14 @@ class ContratType extends AbstractType {
                 ->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false, 'label_attr' => array('class' => 'control-label')))
                 ->add('save', SubmitType::class, array('label' => 'Suivant', "attr" => array("class" => "btn btn-success pull-right")));
 
+        $builder->add('devisInterlocuteur', ChoiceType::class, array('label' => 'Adresse du devis* : ',
+            "choices" => $this->getInterlocuteurs($builder),
+            'expanded' => false,
+            'multiple' => false,
+            "attr" => array("class" => "select2 select2-simple")))
+        ;
 
+        $builder->get('devisInterlocuteur')->addModelTransformer(new InterlocuteurTransformer($this->container->get('interlocuteur.manager')));
 
         $builder->add('etablissements', ChoiceType::class, array('label' => 'Lieux de passage* : ',
             'choices' => $this->getEtablissements($builder),
@@ -94,7 +102,7 @@ class ContratType extends AbstractType {
                     $duration = explode(':', $submittedDescription);
                     return $duration[0] * 60 + $duration[1];
                 }));
-                
+
                 $builder->add('frequencePaiement', ChoiceType::class, array(
                 		'label' => 'Fréquence de paiement : ',
                 		'choices' => $this->getFrequences(),
@@ -118,6 +126,16 @@ class ContratType extends AbstractType {
             $etablissementsArray[$etablissement->getId()] = $etablissement->getIntitule();
         }
         return $etablissementsArray;
+    }
+
+    public function getInterlocuteurs($builder) {
+        $interlocuteurs = $this->container->get('interlocuteur.manager')->findAll($builder->getData()->getSociete());
+        $interlocuteursArray = array();
+
+        foreach ($interlocuteurs as $interlocuteur) {
+            $interlocuteursArray[$interlocuteur->getId()] = $interlocuteur->getLibelleComplet();
+        }
+        return $interlocuteursArray;
     }
 
     /**
