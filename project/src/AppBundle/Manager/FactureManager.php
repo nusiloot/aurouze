@@ -140,7 +140,7 @@ public static $export_factures_libelle = array(
 
     public function buildFactureLigne($facture,$typeLigne = self::EXPORT_LIGNE_GENERALE){
     $factureLigne = array();
-    $factureLigne[self::EXPORT_DATE] = ($facture->getDateEmission())? $facture->getDateEmission()->format('d/m/Y') : "????";
+    $factureLigne[self::EXPORT_DATE] = ($facture->getDateEmission())? $facture->getDateFacturation()->format('d/m/Y') : "????";
     $factureLigne[self::EXPORT_JOURNAL] =  "VENTES" ;
     if($typeLigne == self::EXPORT_LIGNE_GENERALE){
         $factureLigne[self::EXPORT_COMPTE] = $facture->getSociete()->getCodeComptable();

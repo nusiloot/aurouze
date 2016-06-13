@@ -281,7 +281,7 @@ class FactureController extends Controller {
         $handle = fopen('php://memory', 'r+');
 
         foreach ($facturesForCsv as $paiement) {
-            fputcsv($handle, $paiement);
+            fputcsv($handle, $paiement,';');
         }
 
         rewind($handle);
