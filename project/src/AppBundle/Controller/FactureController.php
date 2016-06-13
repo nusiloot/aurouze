@@ -268,7 +268,7 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/facture/export-comptable", name="facture_export_comptable")
+     * @Route("/export-comptable", name="facture_export_comptable")
      */
     public function exportComptableAction(Request $request) {
 
@@ -277,10 +277,10 @@ class FactureController extends Controller {
         $pm = $this->get('facture.manager');
         $facturesForCsv = $pm->getFacturesForCsv();
 
-        $filename = sprintf("export_paiements_%s.csv", (new \DateTime())->format("Y-m-d"));
+        $filename = sprintf("export_factures_%s.csv", (new \DateTime())->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
-        foreach ($paiementsForCsv as $paiement) {
+        foreach ($facturesForCsv as $paiement) {
             fputcsv($handle, $paiement);
         }
 

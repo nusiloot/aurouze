@@ -17,6 +17,26 @@ class FactureManager {
 
     const DEFAUT_FREQUENCE_JOURS = 10;
 
+    const EXPORT_DATE = 0 ;
+    const EXPORT_JOURNAL= 1;
+    const EXPORT_COMPTE= 2;
+    const EXPORT_PIECE= 3;
+    const EXPORT_LIBELLE= 4;
+    const EXPORT_DEBIT= 5;
+    const EXPORT_CREDIT= 6;
+    const EXPORT_MONNAIE= 7;
+
+public static $export_factures_libelle = array(
+  self::EXPORT_DATE => "Date",
+   self::EXPORT_JOURNAL=> "Journal",
+   self::EXPORT_COMPTE=> "Compte",
+   self::EXPORT_PIECE=> "Pièce",
+   self::EXPORT_LIBELLE=> "Libellé",
+   self::EXPORT_DEBIT=> "Débit",
+   self::EXPORT_CREDIT=> "Crédit",
+  self::EXPORT_MONNAIE=> "Monnaie"
+);
+
     function __construct(DocumentManager $dm, MouvementManager $mm, $parameters) {
         $this->dm = $dm;
         $this->mm = $mm;
@@ -97,44 +117,19 @@ class FactureManager {
         $facturesObjs = $this->getRepository()->findByDate($date);
 
         $facturesArray = array();
-        $facturesArray[] = self::$export_paiement_libelle;
+        $facturesArray[] = self::$export_factures_libelle;
 
-        foreach ($facturesObjs as $paiements) {
-            foreach ($paiements->getPaiement() as $paiement) {
+        foreach ($facturesObjs as $facture) {
                 $factureArr = array();
-                $factureArr[self::EXPORT_DATE_PAIEMENT] = $paiement->getDatePaiement()->format('d/m/Y');
-                $factureArr[self::EXPORT_CODE_COMPTABLE] = substr($paiement->getFacture()->getSociete()->getCodeComptable(),0,8);
-                $factureArr[self::EXPORT_VR_PRIX] = $paiement->getMontant();
-                $factureArr[self::EXPORT_FACTURE_NUM_RAISON_SOCIALE] = $paiement->getFacture()->getNumeroFacture()." ".$paiement->getFacture()->getSociete()->getRaisonSociale();
-                $factureArr[self::EXPORT_PRIX] = $paiement->getMontant()." €";
-                $factureArr[self::EXPORT_EMPTY] = "";
-                $factureArr[self::EXPORT_CODE_COMPTABLE] = $paiement->getFacture()->getSociete()->getCodeComptable();
-                $factureArr[self::EXPORT_FACTURE_NUM] = $paiement->getFacture()->getSociete()->getCodeComptable();
-
-                $factureArr[self::EXPORT_CLIENT_RAISON_SOCIALE] = $paiement->getFacture()->getSociete()->getRaisonSociale();
-                    $factureArr[self::EXPORT_TVA_7] = "- €";
-                    $factureArr[self::EXPORT_TVA_196] = "- €";
-                    if($paiement->getFacture()->getTva() == 0.1){
-                      $factureArr[self::EXPORT_TVA_10] = $paiement->getFacture()->getMontantTaxe();
-                    }else{
-                      $factureArr[self::EXPORT_TVA_10] = "- €";
-                    }
-                    if($paiement->getFacture()->getTva() == 0.2){
-                      $factureArr[self::EXPORT_TVA_20] = $paiement->getFacture()->getMontantTaxe();
-                    }else{
-                      $factureArr[self::EXPORT_TVA_20] = "- €";
-                    }
-                      $factureArr[self::EXPORT_MODE_REGLEMENT] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
-                      $factureArr[self::EXPORT_TYPE_REGLEMENT] = self::$types_reglements_libelles[$paiement->getTypeReglement()];
-                      $factureArr[self::EXPORT_NUMERO_PIECE_BANQUE] = "";
-                      $factureArr[self::EXPORT_LIBELLE_PIECE_BANQUE] = $paiement->getLibelle();
-                      $factureArr[self::EXPORT_TYPE_PIECE_BANQUE] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
-                      $factureArr[self::EXPORT_MONTANT_PIECE_BANQUE] = $paiement->getMontant();
-                      $factureArr[self::EXPORT_MONTANT_CHEQUE] = " ? pour ? ";
-
-
+                $factureArr[self::EXPORT_DATE] = ($facture->getDatePaiement())? $facture->getDatePaiement()->format('d/m/Y') : "TEST";
+                $factureArr[self::EXPORT_JOURNAL] =  "" ;
+                $factureArr[self::EXPORT_COMPTE] = "" ;
+                $factureArr[self::EXPORT_PIECE] =  "" ;
+                $factureArr[self::EXPORT_LIBELLE] =  "" ;
+                $factureArr[self::EXPORT_DEBIT] = "";
+                $factureArr[self::EXPORT_CREDIT] =  "" ;
+                $factureArr[self::EXPORT_MONNAIE] =  "" ; 
                 $facturesArray[] = $factureArr;
-            }
         }
         return $facturesArray;
     }
