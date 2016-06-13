@@ -867,4 +867,10 @@ class Facture implements DocumentSocieteInterface {
       return $avoir;
     }
 
+
+    public function isEditable() {
+
+        return !$this->isCloture();
+    }
+
 }
