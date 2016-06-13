@@ -300,4 +300,37 @@ class FactureController extends Controller {
         return $response;
     }
 
+    /**
+     * @Route("/export-stats", name="facture_export_stat")
+     */
+    public function exportStatsAction(Request $request) {
+
+      // $response = new StreamedResponse();
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
+        $facturesStatsForCsv = $fm->getStatsForCsv();
+
+
+
+        $filename = sprintf("export_stat_%s.csv", (new \DateTime())->format("Y-m-d"));
+        $handle = fopen('php://memory', 'r+');
+
+        foreach ($facturesStatsForCsv as $paiement) {
+            fputcsv($handle, $paiement,';');
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        $response = new Response($content, 200, array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=' . $filename,
+        ));
+        $response->setCharset('UTF-8');
+
+        return $response;
+    }
+
+
 }
