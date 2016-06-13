@@ -29,7 +29,7 @@ class PassageRepository extends DocumentRepository {
         	$query->field('imprime')->equals(false);
         }
         $query = $query->getQuery();
-        
+
         return $query->execute();
     }
 
@@ -136,7 +136,7 @@ class PassageRepository extends DocumentRepository {
         $dpts = EtablissementManager::$secteurs_departements[EtablissementManager::SECTEUR_SEINE_ET_MARNE];
         $date = new \DateTime();
         $twoMonth = clone $date;
-        $twoMonth->modify("+1 month");
+        $twoMonth->modify("last day of next month");
 
         $mongoEndDate = new MongoDate(strtotime($twoMonth->format('Y-m-d')));
 
