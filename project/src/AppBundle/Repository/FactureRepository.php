@@ -57,4 +57,16 @@ class FactureRepository extends DocumentRepository {
         return is_null($results) ? array() : $results;
     }
 
+    public function findByDate(\DateTime $date) {
+
+        $twoMonthPast = clone $date;
+        $twoMonthPast->modify("-2 month");
+        $q = $this->createQueryBuilder();
+
+        $q->field('dateEmission')->gte($twoMonthPast);
+        $query = $q->getQuery();
+
+        return $query->execute();
+    }
+
 }

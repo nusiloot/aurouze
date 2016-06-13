@@ -29,11 +29,23 @@ class PaiementsManager {
     const EXPORT_VR_PRIX = 2;
     const EXPORT_FACTURE_NUM_RAISON_SOCIALE = 3;
     const EXPORT_PRIX = 4;
-    const EXPORT_EMPTY = 5;    
+    const EXPORT_EMPTY = 5;
     const EXPORT_CODE_COMPTABLE = 6;
     const EXPORT_FACTURE_NUM = 7;
-    
-    
+    const EXPORT_CLIENT_RAISON_SOCIALE = 8;
+    const EXPORT_TVA_7 = 9;
+    const EXPORT_TVA_196 = 10;
+    const EXPORT_TVA_10 = 11;
+    const EXPORT_TVA_20 = 12;
+    const EXPORT_MODE_REGLEMENT = 13;
+    const EXPORT_TYPE_REGLEMENT = 14;
+    const EXPORT_NUMERO_PIECE_BANQUE = 15;
+    const EXPORT_LIBELLE_PIECE_BANQUE = 16;
+    const EXPORT_TYPE_PIECE_BANQUE = 17;
+    const EXPORT_MONTANT_PIECE_BANQUE = 18;
+    const EXPORT_MONTANT_CHEQUE = 19;
+
+
     public static $types_reglements_libelles = array(
         self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
         self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",
@@ -67,9 +79,28 @@ class PaiementsManager {
         "5" => self::MOYEN_PAIEMENT_CB,
         "6" => self::MOYEN_PAIEMENT_REGULARISATION_COMPTABLE);
 
+        public static $export_paiement_libelle = array(
+            self::EXPORT_DATE_PAIEMENT => "Date de la pièce de banque",
+            self::EXPORT_CODE_COMPTABLE => "Code Client tronqué à 8 caractères",
+            self::EXPORT_VR_PRIX => "",
+            self::EXPORT_FACTURE_NUM_RAISON_SOCIALE => "",
+            self::EXPORT_PRIX => "Montant du règlement",
+            self::EXPORT_EMPTY => "",
+            self::EXPORT_CODE_COMPTABLE => "Code Comptable",
+            self::EXPORT_FACTURE_NUM => "N° Facture",
+            self::EXPORT_CLIENT_RAISON_SOCIALE => "Client",
+            self::EXPORT_TVA_7 => "TVA 7%",
+            self::EXPORT_TVA_196 => "TVA 19,6%",
+            self::EXPORT_TVA_10 => "TVA 10%",
+            self::EXPORT_TVA_20 => "TVA 20%",
+            self::EXPORT_MODE_REGLEMENT => "Mode de règlement",
+            self::EXPORT_TYPE_REGLEMENT=> "Type de règlement",
+            self::EXPORT_NUMERO_PIECE_BANQUE => "N° pièce de Banque",
+            self::EXPORT_LIBELLE_PIECE_BANQUE => "Libellé de la pièce de banque",
+            self::EXPORT_TYPE_PIECE_BANQUE => "Type de la pièce de banque",
+            self::EXPORT_MONTANT_PIECE_BANQUE => "Montant de la pièce de banque",
+            self::EXPORT_MONTANT_CHEQUE => "Montant de remise de chèque");
 
-
-    
     function __construct(DocumentManager $dm, FactureManager $fm, $parameters) {
         $this->dm = $dm;
         $this->fm = $fm;
@@ -95,8 +126,10 @@ class PaiementsManager {
     public function getPaiementsForCsv() {
         $date = new \DateTime();
         $paiementsObjs = $this->getRepository()->findByDate($date);
-        
+
         $paiementsArray = array();
+        $paiementsArray[] = self::$export_paiement_libelle;
+
         foreach ($paiementsObjs as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
                 $paiementArr = array();
@@ -108,8 +141,29 @@ class PaiementsManager {
                 $paiementArr[self::EXPORT_EMPTY] = "";
                 $paiementArr[self::EXPORT_CODE_COMPTABLE] = $paiement->getFacture()->getSociete()->getCodeComptable();
                 $paiementArr[self::EXPORT_FACTURE_NUM] = $paiement->getFacture()->getSociete()->getCodeComptable();
-                $paiementArr[] = $paiement->getMontant();
-                
+
+                $paiementArr[self::EXPORT_CLIENT_RAISON_SOCIALE] = $paiement->getFacture()->getSociete()->getRaisonSociale();
+                    $paiementArr[self::EXPORT_TVA_7] = "- €";
+                    $paiementArr[self::EXPORT_TVA_196] = "- €";
+                    if($paiement->getFacture()->getTva() == 0.1){
+                      $paiementArr[self::EXPORT_TVA_10] = $paiement->getFacture()->getMontantTaxe();
+                    }else{
+                      $paiementArr[self::EXPORT_TVA_10] = "- €";
+                    }
+                    if($paiement->getFacture()->getTva() == 0.2){
+                      $paiementArr[self::EXPORT_TVA_20] = $paiement->getFacture()->getMontantTaxe();
+                    }else{
+                      $paiementArr[self::EXPORT_TVA_20] = "- €";
+                    }
+                      $paiementArr[self::EXPORT_MODE_REGLEMENT] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
+                      $paiementArr[self::EXPORT_TYPE_REGLEMENT] = self::$types_reglements_libelles[$paiement->getTypeReglement()];
+                      $paiementArr[self::EXPORT_NUMERO_PIECE_BANQUE] = "";
+                      $paiementArr[self::EXPORT_LIBELLE_PIECE_BANQUE] = $paiement->getLibelle();
+                      $paiementArr[self::EXPORT_TYPE_PIECE_BANQUE] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
+                      $paiementArr[self::EXPORT_MONTANT_PIECE_BANQUE] = $paiement->getMontant();
+                      $paiementArr[self::EXPORT_MONTANT_CHEQUE] = " ? pour ? ";
+
+
                 $paiementsArray[] = $paiementArr;
             }
         }
