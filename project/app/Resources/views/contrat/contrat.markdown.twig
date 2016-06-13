@@ -1,8 +1,8 @@
 PARIS, le {{ contrat.dateCreation|date("d/m/Y") }}
 
->{{ contrat.societe.raisonSociale|trim|raw }}  
->{{ contrat.societe.adresse.adresseFormatee | nl2br|trim|raw }}  
->{{ contrat.societe.adresse.codePostal }} {{ contrat.societe.adresse.commune|trim|raw }}
+>{{ contrat.devisDestinataire|trim|raw }}  
+>{{ contrat.devisAdresse.adresseFormatee | nl2br|trim|raw }}  
+>{{ contrat.devisAdresse.codePostal }} {{ contrat.devisAdresse.commune|trim|raw }}
 
 # PROPOSITION DE PREVENTION ET LUTTE CONTRE LES NUISIBLES ET PARASITES
 
@@ -20,9 +20,9 @@ et
 
 ```
 
-{{ contrat.societe.raisonSociale|trim|raw }}  
-{{ contrat.societe.adresse.adresseFormatee|trim|raw }}  
-{{ contrat.societe.adresse.codePostal|trim }} {{ contrat.societe.adresse.commune|trim|raw }}
+{{ contrat.devisDestinataire|trim|raw }}  
+{{ contrat.devisAdresse.adresseFormatee|trim|raw }}  
+{{ contrat.devisAdresse.codePostal|trim }} {{ contrat.devisAdresse.commune|trim|raw }}
 
 ```
 

@@ -4,13 +4,14 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\EtablissementManager;
+use AppBundle\Model\InterlocuteurInterface;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints as AssertMongo;
 use Symfony\Component\Validator\Constraints as AssertDoctrine;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\SocieteRepository")
  */
-class Societe {
+class Societe implements InterlocuteurInterface {
 
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\SocieteGenerator"})
@@ -112,6 +113,16 @@ class Societe {
         $this->adresse = new Adresse();
         $this->contactCoordonnee = new ContactCoordonnee();
         $this->setActif(true);
+    }
+
+    public function getDestinataire() {
+
+        return $this->getRaisonSociale();
+    }
+
+    public function getLibelleComplet() {
+
+        return $this->getDestinataire() . ' ' . $this->getAdresse()->getIntitule();
     }
 
     /**
@@ -380,7 +391,7 @@ class Societe {
 
             $etablissements[$etablissement->getId()] = $etablissement;
         }
-        
+
         return $etablissements;
     }
 
@@ -391,6 +402,20 @@ class Societe {
      */
     public function getComptes() {
         return $this->comptes;
+    }
+
+    public function getComptesByStatut($statut) {
+        $comptes = array();
+
+        foreach($this->getComptes() as $compte) {
+            if($compte->getActif() != $statut) {
+                continue;
+            }
+
+            $comptes[$compte->getId()] = $compte;
+        }
+
+        return $comptes;
     }
 
     public function getIcon() {

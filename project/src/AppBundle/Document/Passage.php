@@ -738,6 +738,16 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->prestations;
     }
 
+    public function getPrestationsNom() {
+        $prestations = array();
+
+        foreach ($this->getPrestations() as $prestation) {
+            $prestations[] = $prestation->getNom();
+        }
+
+        return $prestations;
+    }
+
     public function setTimeDebut($time) {
         $dateTime = $this->getDateDebut();
         $this->setDateDebut(new \DateTime($dateTime->format('Y-m-d') . 'T' . $time . ':00'));

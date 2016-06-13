@@ -2,11 +2,11 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <ol class="breadcrumb">
-        <li><a href="{{ path('societe') }}">Societe</a></li>    
+        <li><a href="{{ path('societe') }}">Societe</a></li>
         <li><a href="{{ path('societe_visualisation',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
         <li>&nbsp;{{ compte.identite }}</li>
 
-    </ol> 
+    </ol>
     <div class="row">
         <div class="col-xs-12">
             <h3>{{  societe.raisonSociale }} <small class="muted">{{ societe.codeComptable }}</small> <a class="btn btn-sm btn-warning pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}"><strong><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</strong></a></h3>
@@ -20,10 +20,14 @@
                 <div class="panel-heading"><strong>Informations</strong><div class="pull-right">{{ form_row(form.actif) }}</div></div>
                 <div class="panel-body col-xs-offset-2">
                     <div class="row">
+                        <div class="col-xs-6">
+                            {{ form_row(form.fonction) }}
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-xs-3">
                             {{ form_row(form.civilite) }}
                         </div>
-
                         <div class="col-xs-3">
                             {{ form_row(form.prenom) }}
                         </div>
