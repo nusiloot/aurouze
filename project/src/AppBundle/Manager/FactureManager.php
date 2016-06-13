@@ -26,6 +26,16 @@ class FactureManager {
     const EXPORT_CREDIT= 6;
     const EXPORT_MONNAIE= 7;
 
+    const EXPORT_LIGNE_GENERALE = 'generale';
+    const EXPORT_LIGNE_TVA = 'tva';
+    const EXPORT_LIGNE_HT = 'ht';
+
+    const CODE_TVA_20 = "44571200";
+    const CODE_TVA_10 = "44571010";
+
+      const CODE_HT_20 = "70612000";
+      const CODE_HT_10 = "70631000";
+
 public static $export_factures_libelle = array(
   self::EXPORT_DATE => "Date",
    self::EXPORT_JOURNAL=> "Journal",
@@ -114,26 +124,51 @@ public static $export_factures_libelle = array(
 
     public function getFacturesForCsv() {
         $date = new \DateTime();
-        $facturesObjs = $this->getRepository()->findByDate($date);
+        $facturesObjs = $this->getRepository()->exportOneMonthByDate($date);
 
         $facturesArray = array();
         $facturesArray[] = self::$export_factures_libelle;
 
         foreach ($facturesObjs as $facture) {
-                $factureArr = array();
-                $factureArr[self::EXPORT_DATE] = ($facture->getDatePaiement())? $facture->getDatePaiement()->format('d/m/Y') : "TEST";
-                $factureArr[self::EXPORT_JOURNAL] =  "" ;
-                $factureArr[self::EXPORT_COMPTE] = "" ;
-                $factureArr[self::EXPORT_PIECE] =  "" ;
-                $factureArr[self::EXPORT_LIBELLE] =  "" ;
-                $factureArr[self::EXPORT_DEBIT] = "";
-                $factureArr[self::EXPORT_CREDIT] =  "" ;
-                $factureArr[self::EXPORT_MONNAIE] =  "" ; 
-                $facturesArray[] = $factureArr;
+              $facturesArray[] =  $this->buildFactureLigne($facture,self::EXPORT_LIGNE_GENERALE);
+              $facturesArray[] =  $this->buildFactureLigne($facture,self::EXPORT_LIGNE_TVA);
+              $facturesArray[] =  $this->buildFactureLigne($facture,self::EXPORT_LIGNE_HT);
         }
         return $facturesArray;
     }
 
 
+    public function buildFactureLigne($facture,$typeLigne = self::EXPORT_LIGNE_GENERALE){
+    $factureLigne = array();
+    $factureLigne[self::EXPORT_DATE] = ($facture->getDateEmission())? $facture->getDateEmission()->format('d/m/Y') : "????";
+    $factureLigne[self::EXPORT_JOURNAL] =  "VENTES" ;
+    if($typeLigne == self::EXPORT_LIGNE_GENERALE){
+        $factureLigne[self::EXPORT_COMPTE] = $facture->getSociete()->getCodeComptable();
+        $factureLigne[self::EXPORT_DEBIT] = ($facture->isAvoir())? "0" : $facture->getMontantTTC();
+        $factureLigne[self::EXPORT_CREDIT] = ($facture->isAvoir())? $facture->getMontantTTC() : "0";
+    }elseif($typeLigne == self::EXPORT_LIGNE_TVA){
+
+      if($facture->getTva() == 0.2){
+          $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_20;
+      }elseif($facture->getTva() == 0.1){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_10;
+      }
+      $factureLigne[self::EXPORT_DEBIT] = ($facture->isAvoir())? $facture->getMontantTaxe() : "0";
+      $factureLigne[self::EXPORT_CREDIT] =  ($facture->isAvoir())? "0" : $facture->getMontantTaxe();
+    }elseif($typeLigne == self::EXPORT_LIGNE_HT){
+      if($facture->getTva() == 0.2){
+          $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_20;
+      }elseif($facture->getTva() == 0.1){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_10;
+      }
+      $factureLigne[self::EXPORT_DEBIT] = ($facture->isAvoir())? $facture->getMontantHt() : "0";
+      $factureLigne[self::EXPORT_CREDIT] =  ($facture->isAvoir())? "0" : $facture->getMontantHt();
 
     }
+    $factureLigne[self::EXPORT_PIECE] =  $facture->getNumeroFacture();
+    $factureLigne[self::EXPORT_LIBELLE] =  $facture->getSociete()->getRaisonSociale();
+    $factureLigne[self::EXPORT_MONNAIE] =  "E" ;
+    ksort($factureLigne);
+    return $factureLigne;
+  }
+}
