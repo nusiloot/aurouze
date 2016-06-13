@@ -60,11 +60,14 @@ class FactureController extends Controller {
         }
 
         $facture->setSociete($societe);
-        $facture->setDateEmission(new \DateTime());
+
+        if(!$facture->getId()) {
+            $facture->setDateEmission(new \DateTime());
+        }
 
         if ($type == "devis" && !$facture->getDateDevis()) {
             $facture->setDateDevis(new \DateTime());
-        } elseif (!$facture->getDateFacturation()) {
+        } elseif ($type == "facture" && !$facture->getDateFacturation()) {
             $facture->setDateFacturation(new \DateTime());
         }
 
