@@ -121,8 +121,8 @@ public static $export_stats_libelle = array(
     public function create(Societe $societe, $mouvements, $dateFacturation) {
         $facture = new Facture();
         $facture->setSociete($societe);
-        $facture->setDateEmission(new \DateTime());
         $facture->setDateFacturation($dateFacturation);
+        $facture->setDateEmission(new \DateTime());
 
         $facture->getEmetteur()->setNom($this->parameters['emetteur']['nom']);
         $facture->getEmetteur()->setAdresse($this->parameters['emetteur']['adresse']);

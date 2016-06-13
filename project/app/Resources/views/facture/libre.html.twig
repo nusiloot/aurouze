@@ -4,24 +4,25 @@
 {% form_theme form _self %}
 
 {% block _facture_lignes_entry_row %}
+    {% set readOnly = (form.vars.data and form.vars.data.origineDocument) %}
     <tr class="dynamic-collection-item">
         <td>
-            {{ form_widget(form.libelle) }}
+            {{ form_widget(form.libelle, {'attr': {'readonly': (readOnly) ? "readonly": false }}) }}
         </td>
         <td >
-            {{ form_widget(form.quantite) }}
+            {{ form_widget(form.quantite, {'attr': {'readonly': (readOnly) ? "readonly": false }}) }}
         </td>
         <td>
             <div class="input-group">
-                {{ form_widget(form.prixUnitaire, {'attr': {'class': 'text-right prix-unitaire form-control'}}) }}
+                {{ form_widget(form.prixUnitaire, {'attr': {'class': 'text-right prix-unitaire form-control', 'readonly': (readOnly) ? "readonly": false }}) }}
                 <div class="input-group-addon">€ HT</div>
             </div>
         </td>
         <td>
-            {{ form_widget(form.tauxTaxe, {'value' : 0.2, 'attr': {'class': 'text-right form-control'}}) }}
+            {{ form_widget(form.tauxTaxe, {'value' : (form.tauxTaxe.vars.value) ? form.tauxTaxe.vars.value : 0.2, 'attr': {'class': 'text-right form-control'}}) }}
         </td>
         <td style="width: 0;" class="text-right">
-            <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
+            <button {% if (readOnly) %}disabled="disabled"{% endif %} type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
         </td>
     </tr>
 {% endblock %}
@@ -31,12 +32,12 @@
     <ol class="breadcrumb">
         <li><a href="{{ path('facture') }}">Facture</a></li>
         <li><a href="{{ path('facture_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
-        <li><a href="">{% if(facture.isDevis) %}Création d'un devis{% else %}Création d'une facture{% endif %}</a></li>
+        <li><a href="">{% if(facture.isDevis) %}Création d'un devis{% elseif(facture.numeroFacture) %}Modification de la facture n° {{ facture.numeroFacture }}{% else %}Création d'une facture{% endif %}</a></li>
     </ol>
 
     <div id="factureLibre" class="form-horizontal" data-produits="{{ produitsSuggestion | json_encode }}">
         {{ form_start(form) }}
-        <h3>{% if(not facture.id and facture.isDevis) %}Création d'un devis{% elseif(facture.id and facture.numeroDevis) %}Transformation du devis n° {{ facture.numeroDevis }} en facture{% else %}Création d'une facture{% endif %}</h3>
+        <h3>{% if(not facture.id and facture.isDevis) %}Création d'un devis{% elseif(facture.id and not facture.numeroFacture and facture.isFacture) %}Transformation du devis n° {{ facture.numeroDevis }} en facture{% elseif(facture.numeroFacture) %}Modification de la facture n° {{ facture.numeroFacture }}{% elseif(facture.isDevis) %}Modification du devis n° {{ facture.numeroDevis }}{% else %}Création d'une facture{% endif %}</h3>
         <hr />
         <div class="row">
             <div class="col-xs-5">
@@ -113,7 +114,7 @@
                 <button type="submit" name="previsualiser" value="previsualiser" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Prévisualiser {% if(facture.isDevis) %}le devis{% else %}la facture{% endif %}</button>
             </div>
             <div class="col-xs-4 text-right">
-                <button type="submit" class="btn btn-success">{% if(facture.isDevis) %}Générer le devis{% else %}Générer la facture{% endif %}</button>
+                <button type="submit" class="btn btn-success">{% if(facture.isDevis and not facture.numeroDevis) %}Générer le devis{% elseif(facture.numeroFacture) %}Modifier la facture{% elseif(facture.isDevis) %}Modifier le devis{% else %}Générer la facture{% endif %}</button>
             </div>
         </div>
         {{ form_end(form) }}
