@@ -66,20 +66,20 @@ public static $export_factures_libelle = array(
 
 public static $export_stats_libelle = array(
   self::EXPORT_STATS_REPRESENTANT => "Représentant",
-   self::EXPORT_STATS_RECONDUCTION_PREC => "Reconduction tacite (1)",
-   self::EXPORT_STATS_RECONDUCTION => "Reconduction tacite (2)",
-   self::EXPORT_STATS_PONCTUEL_PREC => "Ponctuel (1)",
-   self::EXPORT_STATS_PONCTUEL => "Ponctuel (2)",
-   self::EXPORT_STATS_RENOUVELABLE_PREC => "Renouvelable sur proposition (1)",
-   self::EXPORT_STATS_RENOUVELABLE => "Renouvelable sur proposition (2)",
-  self::EXPORT_STATS_NR_PREC => "NR (1)",
-  self::EXPORT_STATS_NR => "NR (2)",
-  self::EXPORT_STATS_PRODUIT_PREC => "Produits (1)",
-  self::EXPORT_STATS_PRODUIT => "Produits (2)",
-  self::EXPORT_STATS_PRODUIT_PRESTATION_PREC => "Produits prestations (1)",
-  self::EXPORT_STATS_PRODUIT_PRESTATION => "Produits prestations (2)",
-  self::EXPORT_STATS_TOTAL_PREC => "Total (1)",
-  self::EXPORT_STATS_TOTAL => "Total (2)"
+   self::EXPORT_STATS_RECONDUCTION_PREC => "Reconduction tacite (année dernière)",
+   self::EXPORT_STATS_RECONDUCTION => "Reconduction tacite du mois",
+   self::EXPORT_STATS_PONCTUEL_PREC => "Ponctuel (année dernière)",
+   self::EXPORT_STATS_PONCTUEL => "Ponctuel du mois",
+   self::EXPORT_STATS_RENOUVELABLE_PREC => "Renouvelable sur proposition (année dernière)",
+   self::EXPORT_STATS_RENOUVELABLE => "Renouvelable sur proposition du mois",
+  self::EXPORT_STATS_NR_PREC => "NR (année dernière)",
+  self::EXPORT_STATS_NR => "NR du mois",
+  self::EXPORT_STATS_PRODUIT_PREC => "Produits (année dernière)",
+  self::EXPORT_STATS_PRODUIT => "Produits du mois",
+  self::EXPORT_STATS_PRODUIT_PRESTATION_PREC => "Produits prestations (année dernière)",
+  self::EXPORT_STATS_PRODUIT_PRESTATION => "Produits prestations du mois",
+  self::EXPORT_STATS_TOTAL_PREC => "Total (année dernière)",
+  self::EXPORT_STATS_TOTAL => "Total du mois"
 );
 
     function __construct(DocumentManager $dm, MouvementManager $mm, $parameters) {
@@ -160,6 +160,10 @@ public static $export_stats_libelle = array(
     public function getStatsForCsv(){
       $date = new \DateTime();
       $facturesObjs = $this->getRepository()->exportOneMonthByDate($date);
+      $facti = 0;
+      foreach ($facturesObjs as $fact) {
+        $facti += $fact->getMontantHT();
+      }
       $ca_stats = array();
       $ca_stats['ENTETE'] = self::$export_stats_libelle;
       foreach ($facturesObjs as $facture) {
@@ -205,7 +209,7 @@ public static $export_stats_libelle = array(
             }
           }
           $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_PRODUIT_PREC] += $facture->getMontantHT();
-          $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_REPRESENTANT] = "TOTAL";
+          $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_REPRESENTANT] = $facti;
       }else{
         $commercial = ($facture->getContrat()->getCommercial())? $facture->getContrat()->getCommercial()->getId() : "VIDE";
         if(!array_key_exists($commercial,$ca_stats)){
@@ -230,15 +234,26 @@ public static $export_stats_libelle = array(
   }
 
 
+
+    foreach (self::$export_stats_libelle as $key_stat => $libelle_stat) {
+      $total = 0.0;
+      foreach ($ca_stats as $commercial => $stat) {
+        if($key_stat > 0){
+          $total+= $ca_stats[$commercial][$key_stat];
+        }
+      }
+      $ca_stats['PAS DE CONTRAT'][$key_stat] = $total;
+    }
+
     foreach ($ca_stats as $commercial => $stats) {
       ksort($stats);
       foreach ($stats as $key => $stat) {
-        if(is_numeric($key)){
-        $ca_stats['PAS DE CONTRAT'][$key] += $ca_stats[$commercial][$key];
+        if($key && is_numeric($ca_stats[$commercial][$key])){
+        $ca_stats[$commercial][$key] = number_format($ca_stats[$commercial][$key], 2, ',', ' ');
+        }
       }
     }
 
-    }
     return $ca_stats;
   }
 
