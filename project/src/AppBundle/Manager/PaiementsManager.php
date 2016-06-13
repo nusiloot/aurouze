@@ -146,12 +146,12 @@ class PaiementsManager {
                     $paiementArr[self::EXPORT_TVA_7] = "- €";
                     $paiementArr[self::EXPORT_TVA_196] = "- €";
                     if($paiement->getFacture()->getTva() == 0.1){
-                      $paiementArr[self::EXPORT_TVA_10] = $paiement->getFacture()->getMontantTaxe();
+                      $paiementArr[self::EXPORT_TVA_10] = $paiement->getFacture()->getMontantTaxe()." €";
                     }else{
                       $paiementArr[self::EXPORT_TVA_10] = "- €";
                     }
                     if($paiement->getFacture()->getTva() == 0.2){
-                      $paiementArr[self::EXPORT_TVA_20] = $paiement->getFacture()->getMontantTaxe();
+                      $paiementArr[self::EXPORT_TVA_20] = $paiement->getFacture()->getMontantTaxe()." €";
                     }else{
                       $paiementArr[self::EXPORT_TVA_20] = "- €";
                     }
@@ -161,7 +161,7 @@ class PaiementsManager {
                       $paiementArr[self::EXPORT_LIBELLE_PIECE_BANQUE] = $paiement->getLibelle();
                       $paiementArr[self::EXPORT_TYPE_PIECE_BANQUE] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
                       $paiementArr[self::EXPORT_MONTANT_PIECE_BANQUE] = $paiement->getMontant();
-                      $paiementArr[self::EXPORT_MONTANT_CHEQUE] = " ? pour ? ";
+                      $paiementArr[self::EXPORT_MONTANT_CHEQUE] = ($paiement->getMoyenPaiement() == self::MOYEN_PAIEMENT_CHEQUE)? $paiements->getMontantTotalByMoyenPaiement(self::MOYEN_PAIEMENT_CHEQUE) : "";
 
 
                 $paiementsArray[] = $paiementArr;
