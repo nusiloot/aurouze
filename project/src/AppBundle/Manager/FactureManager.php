@@ -170,7 +170,7 @@ public static $export_stats_libelle = array(
                 $ca_stats['PAS DE CONTRAT'][$stats_index] = 0.0;
               }
             }
-            $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_PRODUIT] += $facture->getMontantTTC();
+            $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_PRODUIT] += $facture->getMontantHT();
             $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_REPRESENTANT] = "TOTAL";
         }else{
           $commercial = ($facture->getContrat()->getCommercial())? $facture->getContrat()->getCommercial()->getId() : "VIDE";
@@ -180,18 +180,18 @@ public static $export_stats_libelle = array(
             }
           }
         if($facture->getContrat()->isTypeReconductionTacite()){
-            $ca_stats[$commercial][self::EXPORT_STATS_RECONDUCTION] += $facture->getMontantTTC();
+            $ca_stats[$commercial][self::EXPORT_STATS_RECONDUCTION] += $facture->getMontantHT();
         }elseif($facture->getContrat()->isTypePonctuel()){
-            $ca_stats[$commercial][self::EXPORT_STATS_PONCTUEL] += $facture->getMontantTTC();
+            $ca_stats[$commercial][self::EXPORT_STATS_PONCTUEL] += $facture->getMontantHT();
         }elseif($facture->getContrat()->isTypeRenouvelableSurProposition()){
-            $ca_stats[$commercial][self::EXPORT_STATS_RENOUVELABLE] += $facture->getMontantTTC();
+            $ca_stats[$commercial][self::EXPORT_STATS_RENOUVELABLE] += $facture->getMontantHT();
         }
 
         foreach ($facture->getContrat()->getProduits() as $produit) {
           $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT_PRESTATION] += $produit->getPrixPrestation();
         }
         $ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT] = (!$ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT])? 'VIDE' : $this->dm->getRepository('AppBundle:Compte')->findOneById($commercial)->getIdentite();
-        $ca_stats[$commercial][self::EXPORT_STATS_TOTAL] += $facture->getMontantTTC();
+        $ca_stats[$commercial][self::EXPORT_STATS_TOTAL] += $facture->getMontantHT();
       }
     }
 
@@ -204,7 +204,7 @@ public static $export_stats_libelle = array(
               $ca_stats['PAS DE CONTRAT'][$stats_index] = 0.0;
             }
           }
-          $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_PRODUIT_PREC] += $facture->getMontantTTC();
+          $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_PRODUIT_PREC] += $facture->getMontantHT();
           $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_REPRESENTANT] = "TOTAL";
       }else{
         $commercial = ($facture->getContrat()->getCommercial())? $facture->getContrat()->getCommercial()->getId() : "VIDE";
@@ -214,18 +214,18 @@ public static $export_stats_libelle = array(
           }
         }
       if($facture->getContrat()->isTypeReconductionTacite()){
-          $ca_stats[$commercial][self::EXPORT_STATS_RECONDUCTION_PREC] += $facture->getMontantTTC();
+          $ca_stats[$commercial][self::EXPORT_STATS_RECONDUCTION_PREC] += $facture->getMontantHT();
       }elseif($facture->getContrat()->isTypePonctuel()){
-          $ca_stats[$commercial][self::EXPORT_STATS_PONCTUEL_PREC] += $facture->getMontantTTC();
+          $ca_stats[$commercial][self::EXPORT_STATS_PONCTUEL_PREC] += $facture->getMontantHT();
       }elseif($facture->getContrat()->isTypeRenouvelableSurProposition()){
-          $ca_stats[$commercial][self::EXPORT_STATS_RENOUVELABLE_PREC] += $facture->getMontantTTC();
+          $ca_stats[$commercial][self::EXPORT_STATS_RENOUVELABLE_PREC] += $facture->getMontantHT();
       }
 
       foreach ($facture->getContrat()->getProduits() as $produit) {
         $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT_PRESTATION_PREC] += $produit->getPrixPrestation();
       }
       $ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT] = (!$ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT])? "VIDE" : $this->dm->getRepository('AppBundle:Compte')->findOneById($commercial)->getIdentite();
-      $ca_stats[$commercial][self::EXPORT_STATS_TOTAL_PREC] += $facture->getMontantTTC();
+      $ca_stats[$commercial][self::EXPORT_STATS_TOTAL_PREC] += $facture->getMontantHT();
     }
   }
 
