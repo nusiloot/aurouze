@@ -36,8 +36,8 @@ class CompteType extends AbstractType {
         $builder
                 ->add('fonction', TextType::class, array('label' => 'Fonction :', 'required' => false))
                 ->add('civilite', ChoiceType::class, array('label' => 'Civilite :', 'required' => false, 'choices' => array_merge(array(null => null), CompteManager::$civilites), "attr" => array("class" => "select2 select2-simple")))
-                ->add('nom', TextType::class, array('label' => 'Nom* :'))
-                ->add('prenom', TextType::class, array('label' => 'Prenom* :' ,'required' => false))
+                ->add('nom', TextType::class, array('label' => 'Nom :', 'required' => false))
+                ->add('prenom', TextType::class, array('label' => 'Prenom :' ,'required' => false))
                 ->add('actif', CheckboxType::class, array('label' => ' ', 'required' => false, "attr" => array("class" => "switcher", "data-size" => "mini")))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")))
                 ->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
