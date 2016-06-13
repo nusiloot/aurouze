@@ -1273,6 +1273,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return ($this->getTypeContrat() == ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE);
     }
+    public function isTypePonctuel() {
+
+        return ($this->getTypeContrat() == ContratManager::TYPE_CONTRAT_PONCTUEL);
+    }
 
     public function isTypeRenouvelableSurProposition() {
 
