@@ -124,7 +124,7 @@ class PaiementsManager {
     }
 
     public function getPaiementsForCsv() {
-        $date = new \DateTime();
+        $date = new \DateTime("2016-05-14");
         $paiementsObjs = $this->getRepository()->findByDate($date);
 
         $paiementsArray = array();
@@ -154,11 +154,24 @@ class PaiementsManager {
                     }else{
                       $paiementArr[self::EXPORT_TVA_20] = "";
                     }
-                      $paiementArr[self::EXPORT_MODE_REGLEMENT] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
+                    if(isset(self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()])) {
+                        $paiementArr[self::EXPORT_MODE_REGLEMENT] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
+                    } else {
+                        $paiementArr[self::EXPORT_MODE_REGLEMENT] = "";
+                    }
+                    if(isset(self::$types_reglements_libelles[$paiement->getTypeReglement()])) {
                       $paiementArr[self::EXPORT_TYPE_REGLEMENT] = self::$types_reglements_libelles[$paiement->getTypeReglement()];
+                    } else {
+                      $paiementArr[self::EXPORT_TYPE_REGLEMENT] = "";
+                    }
+
                       $paiementArr[self::EXPORT_NUMERO_PIECE_BANQUE] = "";
                       $paiementArr[self::EXPORT_LIBELLE_PIECE_BANQUE] = $paiement->getLibelle();
-                      $paiementArr[self::EXPORT_TYPE_PIECE_BANQUE] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
+                      if(isset(self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()])) {
+                          $paiementArr[self::EXPORT_TYPE_PIECE_BANQUE] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
+                      } else {
+                          $paiementArr[self::EXPORT_TYPE_PIECE_BANQUE] = "";
+                      }
                       $paiementArr[self::EXPORT_MONTANT_PIECE_BANQUE] = number_format($paiement->getMontant(), 2, ",", "");
                       $paiementArr[self::EXPORT_MONTANT_CHEQUE] = ($paiement->getMoyenPaiement() == self::MOYEN_PAIEMENT_CHEQUE)? $paiements->getMontantTotalByMoyenPaiement(self::MOYEN_PAIEMENT_CHEQUE) : "";
 

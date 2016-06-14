@@ -259,7 +259,7 @@ public static $export_stats_libelle = array(
 
 
     public function getFacturesForCsv() {
-        $date = new \DateTime();
+        $date = new \DateTime("2016-05-14");
         $facturesObjs = $this->getRepository()->exportOneMonthByDate($date);
 
         $facturesArray = array();
@@ -276,7 +276,7 @@ public static $export_stats_libelle = array(
 
     public function buildFactureLigne($facture,$typeLigne = self::EXPORT_LIGNE_GENERALE){
     $factureLigne = array();
-    $factureLigne[self::EXPORT_DATE] = ($facture->getDateEmission())? $facture->getDateFacturation()->format('d/m/Y') : "????";
+    $factureLigne[self::EXPORT_DATE] = $facture->getDateFacturation()->format('d/m/Y');
     $factureLigne[self::EXPORT_JOURNAL] =  "VENTES" ;
     if($typeLigne == self::EXPORT_LIGNE_GENERALE){
         $factureLigne[self::EXPORT_COMPTE] = $facture->getSociete()->getCodeComptable();

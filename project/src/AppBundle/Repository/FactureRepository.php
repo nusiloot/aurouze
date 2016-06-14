@@ -66,7 +66,7 @@ class FactureRepository extends DocumentRepository {
 
         $q = $this->createQueryBuilder();
 
-        $q->field('dateFacturation')->gte($startOfMonth)->lt($endOfMonth)->sort('dateFacturation', 'asc');
+        $q->field('dateFacturation')->gte(new \DateTime("2015-04-01"))->lte(new \DateTime("2015-04-30"))->sort('dateFacturation', 'asc');
         $query = $q->getQuery();
 
         return $query->execute();
