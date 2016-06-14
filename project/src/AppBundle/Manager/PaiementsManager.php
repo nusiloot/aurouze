@@ -134,13 +134,12 @@ class PaiementsManager {
             foreach ($paiements->getPaiement() as $paiement) {
                 $paiementArr = array();
                 $paiementArr[self::EXPORT_DATE_PAIEMENT] = $paiement->getDatePaiement()->format('d/m/Y');
-                $paiementArr[self::EXPORT_CODE_COMPTABLE] = substr($paiement->getFacture()->getSociete()->getCodeComptable(),0,8);
+                $paiementArr[self::EXPORT_CODE_COMPTABLE] = $paiement->getFacture()->getSociete()->getCodeComptable();
                 $paiementArr[self::EXPORT_VR_PRIX] = "";
                 $paiementArr[self::EXPORT_FACTURE_NUM_RAISON_SOCIALE] = $paiement->getFacture()->getNumeroFacture()." ".$paiement->getFacture()->getSociete()->getRaisonSociale();
                 $paiementArr[self::EXPORT_PRIX] = number_format($paiement->getMontant(), 2, ",", "");
                 $paiementArr[self::EXPORT_EMPTY] = "";
-                $paiementArr[self::EXPORT_CODE_COMPTABLE] = $paiement->getFacture()->getSociete()->getCodeComptable();
-                $paiementArr[self::EXPORT_FACTURE_NUM] = $paiement->getFacture()->getSociete()->getCodeComptable();
+                $paiementArr[self::EXPORT_FACTURE_NUM] = $paiement->getFacture()->getNumeroFacture();
 
                 $paiementArr[self::EXPORT_CLIENT_RAISON_SOCIALE] = $paiement->getFacture()->getSociete()->getRaisonSociale();
                     $paiementArr[self::EXPORT_TVA_7] = "";
