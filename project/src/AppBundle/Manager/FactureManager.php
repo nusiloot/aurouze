@@ -160,6 +160,7 @@ public static $export_stats_libelle = array(
 
     public function getStatsForCsv(){
       $date = new \DateTime();
+      $date->modify("-1 month");
       $facturesObjs = $this->getRepository()->exportOneMonthByDate($date);
       $facti = 0;
       foreach ($facturesObjs as $fact) {
@@ -200,7 +201,8 @@ public static $export_stats_libelle = array(
       }
     }
 
-    $facturesLastObjs = $this->getRepository()->exportOneMonthByDate($date->modify("-1 month"));
+    $moinsOneYear = $date->modify("-1 year");
+    $facturesLastObjs = $this->getRepository()->exportOneMonthByDate($moinsOneYear);
     foreach ($facturesLastObjs as $facture) {
       if(!$facture->getContrat()){
           if(!array_key_exists('PAS DE CONTRAT',$ca_stats)){
