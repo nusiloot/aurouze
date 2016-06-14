@@ -33,6 +33,7 @@ class FactureManager {
     const CODE_TVA_20 = "44571200";
     const CODE_TVA_10 = "44571010";
 
+    const CODE_HT_20_PRODUIT = "70732000";
     const CODE_HT_20 = "70612000";
     const CODE_HT_10 = "70631000";
 
@@ -292,9 +293,11 @@ public static $export_stats_libelle = array(
       $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? $facture->getMontantTaxe() : "0", 2, ",", "");
       $factureLigne[self::EXPORT_CREDIT] =  number_format(($facture->isAvoir())? "0" :$facture->getMontantTaxe(), 2, ",", "");
     }elseif($typeLigne == self::EXPORT_LIGNE_HT){
-      if($facture->getTva() == 0.2){
+      if($facture->getTva() == 0.2 && $facture->getContrat()){
           $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_20;
-      }elseif($facture->getTva() == 0.1){
+      } elseif($facture->getTva() == 0.2) {
+          $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_20_PRODUIT;
+      } elseif($facture->getTva() == 0.1){
         $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_10;
       }
       $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? $facture->getMontantHt() : "0", 2, ",", "");
