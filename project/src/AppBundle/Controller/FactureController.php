@@ -143,10 +143,12 @@ class FactureController extends Controller {
 
         $mouvements = $fm->getMouvementsBySociete($societe);
 
-        $facture = $fm->create($societe, $mouvements, new \DateTime());
-        $facture->setDateFacturation($date);
-        $dm->persist($facture);
-        $dm->flush();
+        foreach($mouvements as $mouvement) {
+            $facture = $fm->create($societe, array($mouvement), new \DateTime());
+            $facture->setDateFacturation($date);
+            $dm->persist($facture);
+            $dm->flush();
+        }
 
         return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
     }
