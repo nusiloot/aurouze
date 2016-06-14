@@ -280,8 +280,8 @@ public static $export_stats_libelle = array(
     $factureLigne[self::EXPORT_JOURNAL] =  "VENTES" ;
     if($typeLigne == self::EXPORT_LIGNE_GENERALE){
         $factureLigne[self::EXPORT_COMPTE] = $facture->getSociete()->getCodeComptable();
-        $factureLigne[self::EXPORT_DEBIT] = ($facture->isAvoir())? "0" : $facture->getMontantTTC();
-        $factureLigne[self::EXPORT_CREDIT] = ($facture->isAvoir())? $facture->getMontantTTC() : "0";
+        $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? "0" : $facture->getMontantTTC(), 2, ",", "");
+        $factureLigne[self::EXPORT_CREDIT] = number_format(($facture->isAvoir())? $facture->getMontantTTC(): "0", 2, ",", "");
     }elseif($typeLigne == self::EXPORT_LIGNE_TVA){
 
       if($facture->getTva() == 0.2){
@@ -289,21 +289,21 @@ public static $export_stats_libelle = array(
       }elseif($facture->getTva() == 0.1){
         $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_10;
       }
-      $factureLigne[self::EXPORT_DEBIT] = ($facture->isAvoir())? $facture->getMontantTaxe() : "0";
-      $factureLigne[self::EXPORT_CREDIT] =  ($facture->isAvoir())? "0" : $facture->getMontantTaxe();
+      $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? $facture->getMontantTaxe() : "0", 2, ",", "");
+      $factureLigne[self::EXPORT_CREDIT] =  number_format(($facture->isAvoir())? "0" :$facture->getMontantTaxe(), 2, ",", "");
     }elseif($typeLigne == self::EXPORT_LIGNE_HT){
       if($facture->getTva() == 0.2){
           $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_20;
       }elseif($facture->getTva() == 0.1){
         $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_10;
       }
-      $factureLigne[self::EXPORT_DEBIT] = ($facture->isAvoir())? $facture->getMontantHt() : "0";
-      $factureLigne[self::EXPORT_CREDIT] =  ($facture->isAvoir())? "0" : $facture->getMontantHt();
+      $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? $facture->getMontantHt() : "0", 2, ",", "");
+      $factureLigne[self::EXPORT_CREDIT] =  number_format(($facture->isAvoir())? "0" : $facture->getMontantHt(), 2, ",", "");
 
     }
     $factureLigne[self::EXPORT_PIECE] =  $facture->getNumeroFacture();
     $factureLigne[self::EXPORT_LIBELLE] =  $facture->getSociete()->getRaisonSociale();
-    $factureLigne[self::EXPORT_MONNAIE] =  "E" ;
+    $factureLigne[self::EXPORT_MONNAIE] =  "" ;
     ksort($factureLigne);
     return $factureLigne;
   }
