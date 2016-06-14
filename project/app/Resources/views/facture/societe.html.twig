@@ -9,8 +9,11 @@
 
     <h3>
         Mouvements à facturer
-        <div class="col-xs-6 pull-right text-right">
+        <div class="col-xs-8 pull-right text-right">
             <form action="{{ path('facture_societe_generation', { 'id': societe.id })}}" method="GET" class="form-inline">
+                {% if(mouvements | length > 0) %}
+                <span>{{ mouvements | length }} facture{% if(mouvements | length > 1) %}s{% endif %} à éditer :</span>
+                {% endif %}
                 <div class="form-group">
                     <div class="input-group">
                         <input {% if(mouvements | length == 0) %}disabled="disabled"{% endif %} data-provide="datepicker" class="form-control datepicker" type="text" value="{{ "now"|date("d/m/Y") }}" data-date-format="dd/mm/yyyy" required="required" name="dateFacturation" />
@@ -24,7 +27,7 @@
         </div>
     </h3>
     {% if(mouvements | length > 0) %}
-        <table class="table table-bordered">
+        <table style="margin-top: 20px;" class="table table-bordered">
             <thead>
                 <tr>
                     <th>Document d'origine</th>

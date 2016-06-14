@@ -200,7 +200,7 @@ public static $export_stats_libelle = array(
       }
     }
 
-    $facturesLastObjs = $this->getRepository()->exportOneMonthByDate($date->modify("-1 year"));
+    $facturesLastObjs = $this->getRepository()->exportOneMonthByDate($date->modify("-1 month"));
     foreach ($facturesLastObjs as $facture) {
       if(!$facture->getContrat()){
           if(!array_key_exists('PAS DE CONTRAT',$ca_stats)){
