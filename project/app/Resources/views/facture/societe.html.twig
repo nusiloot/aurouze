@@ -84,17 +84,20 @@
                             <td class="text-left">
                                 <div class="btn-group">
                                     {% if facture.isDevis %}
-                                        <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-warning btn-xs">Créer la facture</a>
+                                        <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis', 'id': facture.id })}}" class="btn btn-default btn-xs">Modifier</a>
+                                        <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-primary btn-xs">Créer la facture</a>
                                     {% else %}
                                         <!-- <a href="" class="btn btn-default btn-xs">&nbsp;<span class="glyphicon glyphicon-repeat" data-toggle="tooltip" title="Regénerer"></span></a> -->
+                                            {% if(facture.numeroFacture and facture.isEditable) %}
+                                                <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-default btn-xs">Modifier</a>
+                                            {% endif %}
                                             {% if(not facture.isAvoir and not facture.isRedressee) %}
-                                            <a onclick="return confirm('Êtes vous sûr de vouloir faire un avoir sur cette facture ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id })}}" class="btn btn-default btn-xs">Faire un avoir</a>
+                                            <a onclick="return confirm('Êtes vous sûr de vouloir faire un avoir sur cette facture ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id })}}" class="btn btn-default btn-xs">Avoir</a>
                                             {% if(not facture.iscloture) %}
                                                 <a onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Cloturer</a>
                                             {% endif %}
                                             {% if(facture.iscloture and facture.isDecloturable) %}
                                                 <a onclick="return confirm('Êtes vous sûr de vouloir décloturer cette facture ?')" href="{{ path('facture_decloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Déclot.</a>
-
                                             {% endif %}
                                         {% endif %}
                                     {% endif %}

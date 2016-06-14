@@ -110,7 +110,7 @@ class PaiementsController extends Controller {
         $handle = fopen('php://memory', 'r+');
 
         foreach ($paiementsForCsv as $paiement) {
-            fputcsv($handle, $paiement);
+            fputcsv($handle, $paiement,';');
         }
 
         rewind($handle);

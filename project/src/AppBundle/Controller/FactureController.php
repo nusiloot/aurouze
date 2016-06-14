@@ -60,11 +60,14 @@ class FactureController extends Controller {
         }
 
         $facture->setSociete($societe);
-        $facture->setDateEmission(new \DateTime());
+
+        if(!$facture->getId()) {
+            $facture->setDateEmission(new \DateTime());
+        }
 
         if ($type == "devis" && !$facture->getDateDevis()) {
             $facture->setDateDevis(new \DateTime());
-        } elseif (!$facture->getDateFacturation()) {
+        } elseif ($type == "facture" && !$facture->getDateFacturation()) {
             $facture->setDateFacturation(new \DateTime());
         }
 
@@ -274,14 +277,14 @@ class FactureController extends Controller {
 
       // $response = new StreamedResponse();
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $pm = $this->get('facture.manager');
-        $facturesForCsv = $pm->getFacturesForCsv();
+        $fm = $this->get('facture.manager');
+        $facturesForCsv = $fm->getFacturesForCsv();
 
         $filename = sprintf("export_factures_%s.csv", (new \DateTime())->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
         foreach ($facturesForCsv as $paiement) {
-            fputcsv($handle, $paiement);
+            fputcsv($handle, $paiement,';');
         }
 
         rewind($handle);
@@ -296,5 +299,38 @@ class FactureController extends Controller {
 
         return $response;
     }
+
+    /**
+     * @Route("/export-stats", name="facture_export_stat")
+     */
+    public function exportStatsAction(Request $request) {
+
+      // $response = new StreamedResponse();
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
+        $facturesStatsForCsv = $fm->getStatsForCsv();
+
+
+
+        $filename = sprintf("export_stat_%s.csv", (new \DateTime())->format("Y-m-d"));
+        $handle = fopen('php://memory', 'r+');
+
+        foreach ($facturesStatsForCsv as $paiement) {
+            fputcsv($handle, $paiement,';');
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        $response = new Response($content, 200, array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=' . $filename,
+        ));
+        $response->setCharset('UTF-8');
+
+        return $response;
+    }
+
 
 }

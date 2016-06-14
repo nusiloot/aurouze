@@ -134,34 +134,33 @@ class PaiementsManager {
             foreach ($paiements->getPaiement() as $paiement) {
                 $paiementArr = array();
                 $paiementArr[self::EXPORT_DATE_PAIEMENT] = $paiement->getDatePaiement()->format('d/m/Y');
-                $paiementArr[self::EXPORT_CODE_COMPTABLE] = substr($paiement->getFacture()->getSociete()->getCodeComptable(),0,8);
-                $paiementArr[self::EXPORT_VR_PRIX] = $paiement->getMontant();
-                $paiementArr[self::EXPORT_FACTURE_NUM_RAISON_SOCIALE] = $paiement->getFacture()->getNumeroFacture()." ".$paiement->getFacture()->getSociete()->getRaisonSociale();
-                $paiementArr[self::EXPORT_PRIX] = $paiement->getMontant()." €";
-                $paiementArr[self::EXPORT_EMPTY] = "";
                 $paiementArr[self::EXPORT_CODE_COMPTABLE] = $paiement->getFacture()->getSociete()->getCodeComptable();
-                $paiementArr[self::EXPORT_FACTURE_NUM] = $paiement->getFacture()->getSociete()->getCodeComptable();
+                $paiementArr[self::EXPORT_VR_PRIX] = "";
+                $paiementArr[self::EXPORT_FACTURE_NUM_RAISON_SOCIALE] = $paiement->getFacture()->getNumeroFacture()." ".$paiement->getFacture()->getSociete()->getRaisonSociale();
+                $paiementArr[self::EXPORT_PRIX] = number_format($paiement->getMontant(), 2, ",", "");
+                $paiementArr[self::EXPORT_EMPTY] = "";
+                $paiementArr[self::EXPORT_FACTURE_NUM] = $paiement->getFacture()->getNumeroFacture();
 
                 $paiementArr[self::EXPORT_CLIENT_RAISON_SOCIALE] = $paiement->getFacture()->getSociete()->getRaisonSociale();
-                    $paiementArr[self::EXPORT_TVA_7] = "- €";
-                    $paiementArr[self::EXPORT_TVA_196] = "- €";
+                    $paiementArr[self::EXPORT_TVA_7] = "";
+                    $paiementArr[self::EXPORT_TVA_196] = "";
                     if($paiement->getFacture()->getTva() == 0.1){
-                      $paiementArr[self::EXPORT_TVA_10] = $paiement->getFacture()->getMontantTaxe();
+                      $paiementArr[self::EXPORT_TVA_10] = number_format($paiement->getFacture()->getMontantTaxe(), 2, ",", "");
                     }else{
-                      $paiementArr[self::EXPORT_TVA_10] = "- €";
+                      $paiementArr[self::EXPORT_TVA_10] = "";
                     }
                     if($paiement->getFacture()->getTva() == 0.2){
-                      $paiementArr[self::EXPORT_TVA_20] = $paiement->getFacture()->getMontantTaxe();
+                      $paiementArr[self::EXPORT_TVA_20] = number_format($paiement->getFacture()->getMontantTaxe(), 2, ",", "");
                     }else{
-                      $paiementArr[self::EXPORT_TVA_20] = "- €";
+                      $paiementArr[self::EXPORT_TVA_20] = "";
                     }
                       $paiementArr[self::EXPORT_MODE_REGLEMENT] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
                       $paiementArr[self::EXPORT_TYPE_REGLEMENT] = self::$types_reglements_libelles[$paiement->getTypeReglement()];
                       $paiementArr[self::EXPORT_NUMERO_PIECE_BANQUE] = "";
                       $paiementArr[self::EXPORT_LIBELLE_PIECE_BANQUE] = $paiement->getLibelle();
                       $paiementArr[self::EXPORT_TYPE_PIECE_BANQUE] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
-                      $paiementArr[self::EXPORT_MONTANT_PIECE_BANQUE] = $paiement->getMontant();
-                      $paiementArr[self::EXPORT_MONTANT_CHEQUE] = " ? pour ? ";
+                      $paiementArr[self::EXPORT_MONTANT_PIECE_BANQUE] = number_format($paiement->getMontant(), 2, ",", "");
+                      $paiementArr[self::EXPORT_MONTANT_CHEQUE] = ($paiement->getMoyenPaiement() == self::MOYEN_PAIEMENT_CHEQUE)? $paiements->getMontantTotalByMoyenPaiement(self::MOYEN_PAIEMENT_CHEQUE) : "";
 
 
                 $paiementsArray[] = $paiementArr;

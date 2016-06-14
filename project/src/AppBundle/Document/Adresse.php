@@ -63,6 +63,11 @@ class Adresse {
         return false;
     }
 
+    public function isEmpty() {
+
+        return (!$this->getAdresse() && !$this->getCommune() && !$this->getCodePostal());
+    }
+
     public function copyFrom(Adresse $adresse) {
         $this->setAdresse($adresse->getAdresse());
         $this->setCommune($adresse->getCommune());
@@ -191,5 +196,10 @@ class Adresse {
     public function getIntitule() {
 
         return sprintf("%s %s %s", $this->getAdresse(), $this->getCodePostal(), $this->getCommune());
+    }
+
+    public function getLibelleComplet() {
+
+        return sprintf("%s, %s %s", $this->getAdresse(), $this->getCodePostal(), $this->getCommune());
     }
 }

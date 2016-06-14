@@ -7,6 +7,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 
 class FactureLigneType extends AbstractType {
 
@@ -25,7 +27,7 @@ class FactureLigneType extends AbstractType {
 			->add('libelle', TextType::class, array("attr" => array("class" => "typeahead form-control", "placeholder" => "Libellé (Produit ou autre)")))
 		    ->add('quantite', TextType::class, array('attr' => array('placeholder' => "Quantité")))
 		    ->add('prixUnitaire', TextType::class, array('attr' => array('placeholder' => "Prix unitaire", "class" => "form-control prix-unitaire")))
-		    ->add('tauxTaxe', TextType::class, array('attr' => array('placeholder' => "Taux de TVA")));
+			->add('tauxTaxe', TextType::class, array('attr' => array('placeholder' => "Taux de TVA")));
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
