@@ -438,7 +438,7 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
      * @return AppBundle\Document\Adresse $adresse
      */
     public function getAdresse() {
-        if(!$this->adresse || $this->adresse->isEmpty()) {
+        if(!$this->adresse) {
 
             return $this->getSociete()->getAdresse();
         }

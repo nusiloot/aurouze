@@ -1,0 +1,50 @@
+{% set _menu_active = '' %}
+{% extends 'base.html.twig' %}
+{% block title %}Recherche avancée{% endblock title %}
+{% block body %}
+
+<h1>Recherche avancée</h1>
+
+<hr />
+
+<form action="{{ path('recherche') }}" method="get" class="form-horizontal">
+	<div class="form-group">
+		<label for="q" class="col-sm-2 control-label">Termes :</label>
+		<div class="col-sm-10">
+			<input type="text" name="q" class="form-control" id="q" />
+		</div>
+	</div>
+	<div class="form-group">
+    	<div class="col-sm-offset-2 col-sm-10">
+			<button type="submit" class="btn btn-default">Chercher</button>
+		</div>
+	</div>
+</form>
+
+<hr />
+
+<h1>{{ result|length }} Résultat{% if result|length > 1 %}s{% endif %} <small>{{ query }}</small></h1>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Type</th>
+			<th>Informations</th>
+			<th></th>
+		</tr>
+	</thead>
+	
+{% for item in result %}
+<tr>
+	<td>{{ item.doc.identifiant }}</td>
+	<td>{{ item.instance }}</td>
+	<td>
+		{% if item.instance == "Compte" %}<i class="glyphicon glyphicon-user"></i>&nbsp;{{ item.doc.libelleComplet }}{% else %}<i class="mdi mdi-{{ item.doc.icon }} mdi-lg"></i>&nbsp;{{ item.doc.libelleComplet }}{% endif %} <small>{{ item.doc.identifiant }}</small><br />
+		{{ item.doc.adresse.adresse }} {{ item.doc.adresse.codePostal }}&nbsp;{{ item.doc.adresse.commune }}
+	</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

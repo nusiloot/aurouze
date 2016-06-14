@@ -5,6 +5,7 @@ namespace AppBundle\Repository;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use AppBundle\Document\Societe;
 use AppBundle\Tool\RechercheTool;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * SocieteRepository
@@ -46,6 +47,19 @@ class SocieteRepository extends DocumentRepository {
         }
 
         return is_null($results) ? array() : $results;
+    }
+    
+    public function findByQuery($q)
+    {
+    	$resultSet = array();
+    	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([
+        	'text' => 'Societe',
+            'search' => $q
+        ]);
+    	foreach ($itemResultSet['results'] as $itemResult) {
+    		$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Societe', $itemResult['obj']), "score" => $itemResult['score'], "instance" => "Societe");
+    	}
+    	return $resultSet;
     }
 
     public function findAllTags() {

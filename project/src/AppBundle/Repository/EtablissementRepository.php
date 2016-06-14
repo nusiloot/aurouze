@@ -59,6 +59,19 @@ class EtablissementRepository extends DocumentRepository {
 
         return is_null($results) ? array() : $results;
     }
+    
+    public function findByQuery($q)
+    {
+    	$resultSet = array();
+    	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Etablissement')->command([
+        	'text' => 'Etablissement',
+            'search' => $q
+        ]);
+    	foreach ($itemResultSet['results'] as $itemResult) {
+    		$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Etablissement', $itemResult['obj']), "score" => $itemResult['score'], "instance" => "Etablissement");
+    	}
+    	return $resultSet;
+    }
 
     public function findAllPostfixByIdentifiantSociete($societe) {
         $etablissements = $this->findAllOrderedByIdentifiantSociete($societe);
