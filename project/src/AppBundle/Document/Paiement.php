@@ -263,4 +263,9 @@ class Paiement {
         return $this->factureMontantTTC ;
     }
 
+    public function getMontantTaxe() {
+
+        return round($this->getMontant() - round($this->getMontant() / (1 + $this->getFacture()->getTva()), 2), 2);
+    }
+
 }
