@@ -45,14 +45,10 @@ class FactureManager {
     const EXPORT_STATS_PONCTUEL = 4 ;
     const EXPORT_STATS_RENOUVELABLE_PREC = 6 ;
     const EXPORT_STATS_RENOUVELABLE = 7;
-    const EXPORT_STATS_NR_PREC = 8;
-    const EXPORT_STATS_NR = 9;
-    const EXPORT_STATS_PRODUIT_PREC = 10;
-    const EXPORT_STATS_PRODUIT= 11;
-    const EXPORT_STATS_PRODUIT_PRESTATION_PREC =12;
-    const EXPORT_STATS_PRODUIT_PRESTATION = 13;
-    const EXPORT_STATS_TOTAL_PREC = 14;
-    const EXPORT_STATS_TOTAL = 15;
+    const EXPORT_STATS_PRODUIT_PREC = 8;
+    const EXPORT_STATS_PRODUIT= 9;
+    const EXPORT_STATS_TOTAL_PREC = 10;
+    const EXPORT_STATS_TOTAL = 11;
 
 public static $export_factures_libelle = array(
   self::EXPORT_DATE => "Date",
@@ -73,12 +69,12 @@ public static $export_stats_libelle = array(
    self::EXPORT_STATS_PONCTUEL => "Ponctuel du mois",
    self::EXPORT_STATS_RENOUVELABLE_PREC => "Renouvelable sur proposition (année dernière)",
    self::EXPORT_STATS_RENOUVELABLE => "Renouvelable sur proposition du mois",
-  self::EXPORT_STATS_NR_PREC => "NR (année dernière)",
-  self::EXPORT_STATS_NR => "NR du mois",
+  // self::EXPORT_STATS_NR_PREC => "NR (année dernière)",
+  // self::EXPORT_STATS_NR => "NR du mois",
   self::EXPORT_STATS_PRODUIT_PREC => "Produits (année dernière)",
   self::EXPORT_STATS_PRODUIT => "Produits du mois",
-  self::EXPORT_STATS_PRODUIT_PRESTATION_PREC => "Produits prestations (année dernière)",
-  self::EXPORT_STATS_PRODUIT_PRESTATION => "Produits prestations du mois",
+  // self::EXPORT_STATS_PRODUIT_PRESTATION_PREC => "Produits prestations (année dernière)",
+  // self::EXPORT_STATS_PRODUIT_PRESTATION => "Produits prestations du mois",
   self::EXPORT_STATS_TOTAL_PREC => "Total (année dernière)",
   self::EXPORT_STATS_TOTAL => "Total du mois"
 );
@@ -160,12 +156,8 @@ public static $export_stats_libelle = array(
 
     public function getStatsForCsv(){
       $date = new \DateTime();
-  //    $date->modify("-1 month");
+      
       $facturesObjs = $this->getRepository()->exportOneMonthByDate($date);
-      $facti = 0;
-      foreach ($facturesObjs as $fact) {
-        $facti += $fact->getMontantHT();
-      }
       $ca_stats = array();
       $ca_stats['ENTETE'] = self::$export_stats_libelle;
       foreach ($facturesObjs as $facture) {
@@ -191,18 +183,18 @@ public static $export_stats_libelle = array(
             $ca_stats[$commercial][self::EXPORT_STATS_PONCTUEL] += $facture->getMontantHT();
         }elseif($facture->getContrat()->isTypeRenouvelableSurProposition()){
             $ca_stats[$commercial][self::EXPORT_STATS_RENOUVELABLE] += $facture->getMontantHT();
+        }elseif($facture->getContrat()->isAnnule()){
+            $ca_stats[$commercial][self::EXPORT_STATS_RECONDUCTION] += $facture->getMontantHT();
         }
 
-        foreach ($facture->getContrat()->getProduits() as $produit) {
-          $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT_PRESTATION] += $produit->getPrixPrestation();
-        }
         $ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT] = (!$ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT])? 'VIDE' : $this->dm->getRepository('AppBundle:Compte')->findOneById($commercial)->getIdentite();
-        $ca_stats[$commercial][self::EXPORT_STATS_TOTAL] += $facture->getMontantHT();
+        // $ca_stats[$commercial][self::EXPORT_STATS_TOTAL] += $facture->getMontantHT();
       }
     }
 
     $moinsOneYear = $date->modify("-1 year");
     $facturesLastObjs = $this->getRepository()->exportOneMonthByDate($moinsOneYear);
+
     foreach ($facturesLastObjs as $facture) {
       if(!$facture->getContrat()){
           if(!array_key_exists('PAS DE CONTRAT',$ca_stats)){
@@ -212,7 +204,7 @@ public static $export_stats_libelle = array(
             }
           }
           $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_PRODUIT_PREC] += $facture->getMontantHT();
-          $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_REPRESENTANT] = $facti;
+          $ca_stats['PAS DE CONTRAT'][self::EXPORT_STATS_REPRESENTANT] = "Total";
       }else{
         $commercial = ($facture->getContrat()->getCommercial())? $facture->getContrat()->getCommercial()->getId() : "VIDE";
         if(!array_key_exists($commercial,$ca_stats)){
@@ -220,23 +212,28 @@ public static $export_stats_libelle = array(
             $ca_stats[$commercial][$stats_index] = 0.0;
           }
         }
+
       if($facture->getContrat()->isTypeReconductionTacite()){
           $ca_stats[$commercial][self::EXPORT_STATS_RECONDUCTION_PREC] += $facture->getMontantHT();
       }elseif($facture->getContrat()->isTypePonctuel()){
           $ca_stats[$commercial][self::EXPORT_STATS_PONCTUEL_PREC] += $facture->getMontantHT();
       }elseif($facture->getContrat()->isTypeRenouvelableSurProposition()){
           $ca_stats[$commercial][self::EXPORT_STATS_RENOUVELABLE_PREC] += $facture->getMontantHT();
+      }elseif($facture->getContrat()->isAnnule()){
+          $ca_stats[$commercial][self::EXPORT_STATS_RECONDUCTION_PREC] += $facture->getMontantHT();
       }
 
-      foreach ($facture->getContrat()->getProduits() as $produit) {
-        $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT_PRESTATION_PREC] += $produit->getPrixPrestation();
-      }
       $ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT] = (!$ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT])? "VIDE" : $this->dm->getRepository('AppBundle:Compte')->findOneById($commercial)->getIdentite();
-      $ca_stats[$commercial][self::EXPORT_STATS_TOTAL_PREC] += $facture->getMontantHT();
+      // $ca_stats[$commercial][self::EXPORT_STATS_TOTAL_PREC] += $facture->getMontantHT();
+      }
     }
-  }
 
-
+    foreach ($ca_stats as $commercial => $stat_row) {
+      if($commercial != 'ENTETE'){
+        $ca_stats[$commercial][self::EXPORT_STATS_TOTAL] =  $ca_stats[$commercial][self::EXPORT_STATS_RECONDUCTION] + $ca_stats[$commercial][self::EXPORT_STATS_PONCTUEL] + $ca_stats[$commercial][self::EXPORT_STATS_RENOUVELABLE] + $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT];
+        $ca_stats[$commercial][self::EXPORT_STATS_TOTAL_PREC] =  $ca_stats[$commercial][self::EXPORT_STATS_RECONDUCTION_PREC] + $ca_stats[$commercial][self::EXPORT_STATS_PONCTUEL_PREC] + $ca_stats[$commercial][self::EXPORT_STATS_RENOUVELABLE_PREC] + $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT_PREC];
+      }
+    }
 
     foreach (self::$export_stats_libelle as $key_stat => $libelle_stat) {
       $total = 0.0;
@@ -257,7 +254,16 @@ public static $export_stats_libelle = array(
       }
     }
 
-    return $ca_stats;
+    $results = array();
+
+    foreach ($ca_stats as $commercial => $stat_row) {
+      if($commercial != 'ENTETE'){
+        $results[$commercial] = $stat_row;
+      }
+    }
+    ksort($results);
+
+    return array_merge(array('ENTETE' => $ca_stats['ENTETE']),$results);
   }
 
 
