@@ -55,6 +55,8 @@ class Paiement {
 
     protected $montantTemporaire;
 
+    protected $factureTemporaire = array();
+
     public function __construct() {
         $this->versementComptable = false;
     }
@@ -236,6 +238,15 @@ class Paiement {
       $this->setMontantTemporaire($this->getMontantTemporaire() + $montantTemporaire);
       return $this;
     }
+
+    public function getFactureTemporaire() {
+       return  $this->factureTemporaire;
+    }
+
+    public function addFactureTemporaire($facture) {
+           return  $this->factureTemporaire = array_merge($this->factureTemporaire,array($facture->getId() => $facture));
+    }
+
 
     public function getMoyenPaiementLibelle() {
         if(!$this->getMoyenPaiement()){

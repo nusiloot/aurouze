@@ -4,7 +4,7 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\Common\Collections\ArrayCollection;
-
+use Behat\Transliterator\Transliterator;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PaiementsRepository")
  */
@@ -149,15 +149,16 @@ class Paiements {
       foreach ($this->getPaiement() as $paiement) {
         if(!$paiement->getLibelle() || $paiement->getLibelle() == ""){
           $key = md5(microtime().rand());
-          $paiementsUnique[$key] = $paiement;
+          $paiementsUnique[$key] = clone $paiement;
         }else{
-          $key = $paiement->getMoyenPaiement().$paiement->getLibelle();
+          $key = Transliterator::urlize($paiement->getMoyenPaiement().'-'.$paiement->getLibelle());
           if(!array_key_exists($key,$paiementsUnique)){
-            $paiementsUnique[$key] = $paiement;
+            $paiementsUnique[$key] = clone $paiement;
             $paiementsUnique[$key]->setMontantTemporaire($paiement->getMontant());
           }else{
             $paiementsUnique[$key]->addMontantTemporaire($paiement->getMontant());
           }
+          $paiementsUnique[$key]->addFactureTemporaire($paiement->getFacture());
         }
       }
       return $paiementsUnique;
