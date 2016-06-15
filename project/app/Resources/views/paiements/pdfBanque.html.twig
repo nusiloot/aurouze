@@ -45,8 +45,8 @@
                         <th colspan="4"  style=" width: 750px; border-color: #ddd; border: 1px solid;" >&nbsp;Pièce</th>
                     </tr>
                     <tr style="border-color: #ddd; border: 1px solid;">
-                        <th style=" width: 200px;" >&nbsp;Date</th>
-                        <th style=" width: 330px;">&nbsp;Facture</th>
+                        <th style=" width: 150px;" >&nbsp;Date</th>
+                        <th style=" width: 380px;">&nbsp;Facture</th>
                         <th style=" width: 320px;" >&nbsp;Libelle</th>
                         <th  style=" width: 200px; text-align: right; border-color: #ddd; border: 1px solid;" >Montant&nbsp;</th>
                     </tr>
@@ -57,8 +57,13 @@
                         {% if paiement.moyenPaiement == 'CHEQUE' %}
                         <tr style="border-color: #ddd; border: 1px solid;">
                             <td style="border-color: #ddd; border: 1px solid;">&nbsp;{{ paiements.dateCreation | date("d/m/Y") }}</td>
-                            <td style="border-color: #ddd; border: 1px solid;">&nbsp;Facture n° {{ paiement.facture.numeroFacture }}</td>
-
+                              {% if paiement.factureTemporaire %}
+                              <td style="border-color: #ddd; border: 1px solid;">
+                                  &nbsp;Factures n° {% for factureTemp in paiement.factureTemporaire %}{{ factureTemp.numeroFacture }}{% if not loop.last %}, {% endif %}{% endfor %}
+                              </td>
+                              {% else %}
+                                <td style="border-color: #ddd; border: 1px solid;">&nbsp;Facture n° {{ paiement.facture.numeroFacture }}</td>
+                              {% endif %}
                             <td style="border-color: #ddd; border: 1px solid; text-align: left;" >
                                 {% if(paiement.libelle) %}&nbsp;{{ paiement.libelle }}{% endif %}
                             </td>
