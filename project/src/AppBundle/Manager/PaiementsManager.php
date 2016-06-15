@@ -145,12 +145,12 @@ class PaiementsManager {
                     $paiementArr[self::EXPORT_TVA_7] = "";
                     $paiementArr[self::EXPORT_TVA_196] = "";
                     if($paiement->getFacture()->getTva() == 0.1){
-                      $paiementArr[self::EXPORT_TVA_10] = number_format($paiement->getFacture()->getMontantTaxe(), 2, ",", "");
+                      $paiementArr[self::EXPORT_TVA_10] = number_format($paiement->getMontantTaxe(), 2, ",", "");
                     }else{
                       $paiementArr[self::EXPORT_TVA_10] = "";
                     }
                     if($paiement->getFacture()->getTva() == 0.2){
-                      $paiementArr[self::EXPORT_TVA_20] = number_format($paiement->getFacture()->getMontantTaxe(), 2, ",", "");
+                      $paiementArr[self::EXPORT_TVA_20] = number_format($paiement->getMontantTaxe(), 2, ",", "");
                     }else{
                       $paiementArr[self::EXPORT_TVA_20] = "";
                     }
