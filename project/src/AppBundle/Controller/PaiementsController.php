@@ -133,6 +133,7 @@ class PaiementsController extends Controller {
     public function pdfBanqueAction(Request $request, Paiements $paiements) {
 
 
+        $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('paiements.manager');
         $paiementsLists = array();
         $page = 0;
@@ -145,6 +146,7 @@ class PaiementsController extends Controller {
           $paiementsLists[$page][] = $paiement;
           $cpt++;
         }
+
 
         $html = $this->renderView('paiements/pdfBanque.html.twig', array(
             'paiements' => $paiements,
@@ -159,6 +161,10 @@ class PaiementsController extends Controller {
 
             return new Response($html, 200);
         }
+
+        $paiements->setImprime(true);
+        $dm->persist($paiements);
+        $dm->flush();
 
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
