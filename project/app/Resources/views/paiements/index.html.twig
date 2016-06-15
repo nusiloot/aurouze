@@ -28,8 +28,20 @@
             </thead>
             <tbody>
                 {% for paiements in paiementsDocs %}
-                    <tr class="">
-                        <th class="col-xs-2"><a href="{{ path('paiements_modification', {'id': paiements.id })}}">{{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}</a></th>
+                    <tr class="" {% if(paiements.isImprime) %} style="opacity:0.7" {% endif %}>
+                        <th class="col-xs-2">
+                          {% if(not paiements.isImprime) %}<a href="{{ path('paiements_modification', {'id': paiements.id })}}">{% endif %}
+                            {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}
+                          {% if(not paiements.isImprime) %}</a>{% endif %}
+                          {% if(paiements.isImprime) %}
+                          <br/>
+                          <br/>
+                          <a class="btn btn-sm btn-default" href="{{ path('paiements_export_banque', {'id': paiements.id }) }}">
+                              <span class="glyphicon glyphicon-print"></span>
+                              Imprimé de {{ paiements.nbPaiementUniqueParMoyen }} chèque(s)
+                          </a>{% endif %}
+                          </a>
+                        </th>
                         <th class="col-xs-1 text-right">{{ paiements.paiement | length }}</th>
                         <th class="col-xs-7">
                             {% for paiement in paiements.paiement %}

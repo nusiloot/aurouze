@@ -5,6 +5,7 @@ namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\Common\Collections\ArrayCollection;
 use Behat\Transliterator\Transliterator;
+use AppBundle\Manager\PaiementsManager;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PaiementsRepository")
  */
@@ -143,6 +144,10 @@ class Paiements {
         return $this->imprime;
     }
 
+    public function isImprime() {
+        return $this->imprime;
+    }
+
     public function getPaiementUniqueParLibelle(){
       $paiementsUnique = array();
 
@@ -162,6 +167,16 @@ class Paiements {
         }
       }
       return $paiementsUnique;
+    }
+
+    public function nbPaiementUniqueParMoyen($moyen = PaiementsManager::MOYEN_PAIEMENT_CHEQUE){
+        $nb = 0;
+        foreach ($this->getPaiementUniqueParLibelle() as $paiement) {
+          if($paiement->getMoyenPaiement() == $moyen){
+            $nb++;
+          }
+        }
+        return $nb;
     }
 
     public function getMontantTotal() {
