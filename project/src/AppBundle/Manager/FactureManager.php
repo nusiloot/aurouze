@@ -160,7 +160,7 @@ public static $export_stats_libelle = array(
 
     public function getStatsForCsv(){
       $date = new \DateTime();
-      $date->modify("-1 month");
+  //    $date->modify("-1 month");
       $facturesObjs = $this->getRepository()->exportOneMonthByDate($date);
       $facti = 0;
       foreach ($facturesObjs as $fact) {
