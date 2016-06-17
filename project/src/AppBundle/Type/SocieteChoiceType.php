@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class SocieteChoiceType extends AbstractType {
 
@@ -21,14 +22,15 @@ class SocieteChoiceType extends AbstractType {
             $defaultChoice = array($options['data']['societe']->getIntitule() => $options['data']['societe']->getIntitule());
         }
         $builder->add('actif', CheckboxType::class, array('label' => 'inclure les sociétés suspendues', 'required' => false, 'empty_data' => null, 'attr'=> array("data-search-actif" => "1")));
-        $builder->add('societes', ChoiceType::class, array("choices" => $defaultChoice,
+        /*$builder->add('societes', ChoiceType::class, array("choices" => $defaultChoice,
             'label' => 'Chercher',
             'expanded' => false,
             'multiple' => false,
             'choices_as_values' => true,
             "attr" => array("class" => "form-control select2")))
 
-        ;
+        ;*/
+        $builder->add('societes', TextType::class, array("attr" => array("class" => "typeahead form-control", "placeholder" => "Rechercher un société")));
     }
 
     /**

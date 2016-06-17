@@ -419,7 +419,7 @@ class Societe implements InterlocuteurInterface {
     }
 
     public function getIcon() {
-        return EtablissementManager::$type_icon[$this->getType()];
+        return 'business';
     }
 
     public function getTypeLibelle() {
@@ -549,5 +549,9 @@ class Societe implements InterlocuteurInterface {
     public function getActif()
     {
         return $this->actif;
+    }
+    
+    public function getSociete() {
+    	return $this;
     }
 }

@@ -130,3 +130,10 @@ body {
 .tt-suggestion p {
   margin: 0;
 }
+
+.searchable_result a {
+	color: #333;
+}
+.searchable_result a:hover {
+	text-decoration: none;
+}

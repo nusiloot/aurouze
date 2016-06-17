@@ -25,6 +25,7 @@
         $.initLinkCalendar();
         $.initMap();
         $.initTypeheadFacture();
+        $.initTypeheadSearchable();
         $.initSomme();
     });
 
@@ -349,6 +350,46 @@
         $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
             $(this).parents(".dynamic-collection-item").find('.prix-unitaire').val(suggestion.prix);
         });
+    }
+    
+    
+
+    $.initTypeheadSearchable = function () {
+        if (!$('#searchable').length) {
+            return;
+        }
+        var url = $('#searchable').data('url');
+        var target = $('#searchable').data('target');
+        var checkbox = $('#searchable').find("input[type=checkbox]");
+        
+        $('#searchable .typeahead').typeahead({
+    	  hint: true,
+    	  highlight: true,
+    	  minLength: 3
+    	},
+    	{
+    	  async: true,
+    	  source: function (query, processSync, processAsync) {
+    	    return $.ajax({
+    	      url: url, 
+    	      type: 'GET',
+    	      data: {q: query, inactif: (checkbox.is(':checked'))? 1 : 0},
+    	      dataType: 'json',
+    	      success: function (json) {
+    	        return processAsync(json);
+    	      }
+    	    });
+    	  },
+          templates: {
+              suggestion: function (e) {
+            	  var result = '<i class="mdi mdi-'+e.icon+' mdi-lg"></i>&nbsp;'+e.libelle+' <small>'+e.instance+'&nbsp;'+e.identifiant+'</small>';
+            	  if (!e.actif) {
+            		  result = result+' <small><label class="label label-xs label-danger">SUSPENDU</label></small>';
+            	  }
+                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+              }
+          }
+    	});
     }
 
     $.initFactureLibre = function () {

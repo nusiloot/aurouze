@@ -47,15 +47,22 @@ class CompteRepository extends DocumentRepository {
         return $utilisateurs;
     }
     
-    public function findByQuery($q)
+    public function findByQuery($q, $inactif = false)
     {
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Compte')->command([
         	'text' => 'Compte',
-            'search' => $q
+            'search' => $q,
+    		'limit' => 50,
+    		'diacriticSensitive' => false
         ]);
-    	foreach ($itemResultSet['results'] as $itemResult) {
-    		$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Compte', $itemResult['obj']), "score" => $itemResult['score'], "instance" => "Compte");
+    	if (isset($itemResultSet['results'])) {
+	    	foreach ($itemResultSet['results'] as $itemResult) {
+	    		if (!$inactif && !$itemResult['obj']['actif']) {
+	    			continue;
+	    		}
+	    		$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Compte', $itemResult['obj']), "score" => $itemResult['score'], "instance" => "Compte");
+	    	}
     	}
     	return $resultSet;
     }

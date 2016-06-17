@@ -49,15 +49,22 @@ class SocieteRepository extends DocumentRepository {
         return is_null($results) ? array() : $results;
     }
     
-    public function findByQuery($q)
+    public function findByQuery($q, $inactif = false)
     {
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([
         	'text' => 'Societe',
-            'search' => $q
+            'search' => $q,
+    		'limit' => 50,
+    		'diacriticSensitive' => false
         ]);
-    	foreach ($itemResultSet['results'] as $itemResult) {
-    		$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Societe', $itemResult['obj']), "score" => $itemResult['score'], "instance" => "Societe");
+    	if (isset($itemResultSet['results'])) {
+	    	foreach ($itemResultSet['results'] as $itemResult) {
+	    		if (!$inactif && !$itemResult['obj']['actif']) {
+	    			continue;
+	    		}
+	    		$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Societe', $itemResult['obj']), "score" => $itemResult['score'], "instance" => "Societe");
+	    	}
     	}
     	return $resultSet;
     }

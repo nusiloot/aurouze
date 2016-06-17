@@ -18,15 +18,32 @@ class SocieteController extends Controller {
     /**
      * @Route("/societe", name="societe")
      */
-    public function indexAction() {
+    public function indexAction(Request $request) {
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
     	$form = $this->createForm(SocieteChoiceType::class, null, array(
-    			'action' => $this->generateUrl('societe_choice'),
-    			'method' => 'POST',
+    			'action' => $this->generateUrl('societe'),
+    			'method' => 'GET',
     	));
+    	$result = array();
+    	$search = false;
+    	$query = false;
+    	$form->handleRequest($request);
+    	if ($form->isSubmitted() && $form->isValid()) {    	
+    		$query = $form->getData()['societes'];   	
+    		$inactif = ($form->getData()['actif'])? true : false;
+    		$search = true;
+    		$result = array_merge($dm->getRepository('AppBundle:Societe')->findByQuery($query, $inactif), $dm->getRepository('AppBundle:Etablissement')->findByQuery($query, $inactif));
+    		$result = array_merge($result, $dm->getRepository('AppBundle:Compte')->findByQuery($query, $inactif));
+    	
+    		usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
+    	}
 
-    	return $this->render('societe/index.html.twig', array('form' => $form->createView()));
+    	return $this->render('societe/index.html.twig', array('form' => $form->createView(), 'result' => $result, 'search' => $search, 'query' => $query));
+    }
+    protected static function cmpContacts($a, $b)
+    {
+    	return ($a['score'] > $b['score']) ? -1 : +1;
     }
 
     /**

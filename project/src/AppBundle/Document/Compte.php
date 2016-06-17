@@ -275,8 +275,8 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
     }
 
     public function getLibelleComplet() {
-
-        return $this->getDestinataire() . ', ' . $this->getAdresse()->getLibelleComplet();
+		
+        return ($this->getAdresse()->isEmpty())?  $this->getDestinataire() : $this->getDestinataire() . ', ' . $this->getAdresse()->getLibelleComplet();
     }
 
     public function __toString() {
@@ -574,5 +574,10 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
     public function getFonction()
     {
         return $this->fonction;
+    }
+    
+    public function getIcon() 
+    {
+    	return 'face';
     }
 }
