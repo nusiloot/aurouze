@@ -38,8 +38,8 @@ class PaiementsRepository extends DocumentRepository {
         $oneMonthPast->modify("-1 month");
         $q = $this->createQueryBuilder();
 
-        $q->field('paiement.datePaiement')->gte(new \DateTime("2015-04-01"));
-        $q->field('paiement.datePaiement')->lte(new \DateTime("2015-04-30"));
+        $q->field('paiement.datePaiement')->gte(new \DateTime("2016-04-01"));
+        $q->field('paiement.datePaiement')->lte(new \DateTime("2016-04-30"));
         $query = $q->getQuery();
 
         return $query->execute();
