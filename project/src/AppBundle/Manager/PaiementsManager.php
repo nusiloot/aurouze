@@ -124,14 +124,21 @@ class PaiementsManager {
     }
 
     public function getPaiementsForCsv() {
-        $date = new \DateTime("2016-05-14");
-        $paiementsObjs = $this->getRepository()->findByDate($date);
+        $dateFrom = new \DateTime("2016-05-01");
+        $dateTo = new \DateTime("2016-05-31");
+        $paiementsObjs = $this->getRepository()->findByDate($dateFrom, $dateTo);
 
         $paiementsArray = array();
         $paiementsArray[] = self::$export_paiement_libelle;
 
         foreach ($paiementsObjs as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
+                if($paiement->getDatePaiement() < $dateFrom) {
+                    continue;
+                }
+                if($paiement->getDatePaiement() > $dateTo) {
+                    continue;
+                }
                 $paiementArr = array();
                 $paiementArr[self::EXPORT_DATE_PAIEMENT] = $paiement->getDatePaiement()->format('d/m/Y');
                 $paiementArr[self::EXPORT_CODE_COMPTABLE] = $paiement->getFacture()->getSociete()->getCodeComptable();
