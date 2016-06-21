@@ -46,9 +46,10 @@
                         <th class="col-xs-7">
                             {% for paiement in paiements.paiement %}
                                 <div class="row">
-                                    <div class="col-xs-10">
+                                    <div class="col-xs-10" style="height: 30px;">
                                         <a title="Voir la société" href="{{ path('societe_visualisation', {'id': paiement.facture.societe.id })}}">
-                                            {% if paiement.facture.societe.raisonSociale | length > 45 %}{{ paiement.facture.societe.raisonSociale | slice(0, 45)~"..." }}{%else%}{{ paiement.facture.societe.raisonSociale }}{%endif%}</a>&nbsp(Facture n°{{ paiement.facture.numeroFacture }})
+                                            {% if paiement.facture.societe.raisonSociale | length > 40 %}{{ paiement.facture.societe.raisonSociale | slice(0, 40)~"..." }}{%else%}{{ paiement.facture.societe.raisonSociale }}{%endif%}</a>&nbsp(Facture n°{{ paiement.facture.numeroFacture }})
+                                            {% if paiement.moyenPaiement == 'CHEQUE' %}&nbsp<span class="label label-warning">Chèque</span>{% endif %}
                                     </div>
                                     <div class="col-xs-2 text-right">
                                         {{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;
@@ -56,7 +57,8 @@
                                 </div>
                             {% endfor %}
                         </th>
-                        <th class="col-xs-2 text-right">{{ paiements.getMontantTotal | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</th>
+                        <th class="col-xs-2 text-right">{{ paiements.getMontantTotal | number_format(2, ',', ' ') }}&nbsp;€&nbsp;<br/>
+                        (Chèques : {{ paiements.getMontantTotalByMoyenPaiement('CHEQUE') | number_format(2, ',', ' ')}}&nbsp;€&nbsp;)</th>
                     </tr>
                 {% endfor %}
             </tbody>

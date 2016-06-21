@@ -18,7 +18,7 @@ class PaiementsController extends Controller {
      */
     public function indexAction(Request $request) {
 
-        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(10);
+        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(20);
 
         return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs));
     }
