@@ -1,7 +1,7 @@
-PARIS, le {{ "now" |date("d/m/Y") }}
+PARIS, le {{ contrat.dateCreation|date("d/m/Y") }}
 
->{{ contrat.devisDestinataire|trim|raw }}
->{{ contrat.devisAdresse.adresseFormatee | nl2br|trim|raw }}
+>{{ contrat.devisDestinataire|trim|raw }}  
+>{{ contrat.devisAdresse.adresseFormatee | nl2br|trim|raw }}  
 >{{ contrat.devisAdresse.codePostal }} {{ contrat.devisAdresse.commune|trim|raw }}
 
 # PROPOSITION DE PREVENTION ET LUTTE CONTRE LES NUISIBLES ET PARASITES

@@ -48,6 +48,18 @@
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Informations</strong></div>
             <div class="panel-body col-xs-offset-2">
+            		<div class="row">
+                    <div class="col-xs-10">
+                        <div class="form-group">
+                            {{ form_label(form.dateCreation) }}
+                            {{ form_errors(form.dateCreation) }}
+                            <div class="input-group">
+                                {{ form_widget(form.dateCreation) }}
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
                 <div class="row">
                     <div class="col-xs-10">
                         {{ form_row(form.devisInterlocuteur) }}
