@@ -51,19 +51,37 @@ class SocieteRepository extends DocumentRepository {
     
     public function findByQuery($q, $inactif = false)
     {
+
+    	/*$query = $this->createQueryBuilder();
+    	$expr = $query->expr()->operator('$text', array(
+    			'$search'   => $q
+    	));
+    	
+    	
+    	
+    	$societes = $query->equals($expr->getQuery())->sortMeta('score', 'textScore')->limit(100)->getQuery()->execute();
+    	foreach ($societes as $key => $societe) {
+    		echo $societe->getLibelleComplet();
+    		echo '<hr />';
+    	}
+    	exit;*/
+    	 
+    	
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([
-        	'text' => 'Societe',
-            'search' => $q,
-    		'limit' => 50,
-    		'diacriticSensitive' => false
+    		'find' => 'Societe',
+    		'filter' => ['$text' => ['$search' => $q]],
+    		'projection' => ['score' => [ '$meta' => "textScore" ]],
+    		'sort' => ['score' => [ '$meta' => "textScore" ]],
+    		'limit' => 50
+    				
         ]);
-    	if (isset($itemResultSet['results'])) {
-	    	foreach ($itemResultSet['results'] as $itemResult) {
-	    		if (!$inactif && !$itemResult['obj']['actif']) {
+    	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
+	    	foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
+	    		if (!$inactif && !$itemResult['actif']) {
 	    			continue;
 	    		}
-	    		$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Societe', $itemResult['obj']), "score" => $itemResult['score'], "instance" => "Societe");
+	    		$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Societe', $itemResult), "score" => $itemResult['score'], "instance" => "Societe");
 	    	}
     	}
     	return $resultSet;
