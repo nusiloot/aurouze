@@ -68,13 +68,6 @@ class ContratAcceptationType extends AbstractType {
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy',
             'label' => 'Date d\'acceptation* :',
-        )))->add('dateCreation', DateType::class, array_merge($required, array(
-            "attr" => array_merge($datePicker, array(
-                'data-date-format' => 'dd/mm/yyyy'
-                    ), $readonly),
-            'widget' => 'single_text',
-            'format' => 'dd/MM/yyyy',
-            'label' => 'Date de création* :',
         )));
 
         $builder->add('technicien', DocumentType::class, array_merge($required, array(
@@ -93,7 +86,7 @@ class ContratAcceptationType extends AbstractType {
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple"))));
 
-        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "required" => false, "attr" => array("class" => "form-control", "rows" => 19)));
+        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "required" => false, "attr" => array("class" => "form-control", "rows" => 15)));
         $builder->add('referenceClient', TextType::class, array('label' => 'Numéro de commande :', 'required' => false));
         $builder->add('factureDestinataire', TextType::class, array('label' => 'Destinataire de la facture (si différent de celui de la société) :', 'required' => false));
 
