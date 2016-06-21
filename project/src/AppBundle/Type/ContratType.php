@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use AppBundle\Type\PrestationType;
@@ -111,6 +112,13 @@ class ContratType extends AbstractType {
                 		'required' => false,
                 		'attr' => array("class" => "select2 select2-simple"),
                 ));
+                
+                $builder->add('dateCreation', DateType::class, array(
+            	"attr" => array('data-date-format' => 'dd/mm/yyyy', 'class' => 'input-inline datepicker', 'data-provide' => 'datepicker'),
+            'widget' => 'single_text',
+            'format' => 'dd/MM/yyyy',
+            'label' => 'Date de création* :',
+        ));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
