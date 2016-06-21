@@ -1,4 +1,4 @@
-PARIS, le {% if contrat.dateAcceptation %}{{ contrat.dateAcceptation|date("d/m/Y") }}{% else %}{{ "now" |date("d/m/Y") }}{% endif %}
+PARIS, le {{ contrat.dateCreation|date("d/m/Y") }}
 
 >{{ contrat.devisDestinataire|trim|raw }}  
 >{{ contrat.devisAdresse.adresseFormatee | nl2br|trim|raw }}  
