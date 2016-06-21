@@ -20,8 +20,8 @@ et
 
 ```
 
-{{ contrat.societe.destinataire|trim|raw }}
-{{ contrat.societe.adresse.adresseFormatee|trim|raw }}
+{{ contrat.societe.destinataire|trim|raw }}  
+{{ contrat.societe.adresse.adresseFormatee|trim|raw }}  
 {{ contrat.societe.adresse.codePostal|trim }} {{ contrat.societe.adresse.commune|trim|raw }}
 
 ```
@@ -29,13 +29,13 @@ et
 ## Cette proposition a pour but d'effectuer {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %}
 
 {% for prestation in contrat.prestations %}
-{{  prestation.nom|trim }}
+{{  prestation.nom|trim }}  
 {% endfor %}
 
 ## Dans le{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}locaux{% else %}local{% endif %} situé{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}aux adresses{% else %}à l'adresse{% endif %}
 
 {% for etablissement in contrat.etablissements %}
-{{  etablissement.getNom(false)|trim }} {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}
+{{  etablissement.getNom(false)|trim }} {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}  
 {% endfor %}
 
 ## Nomenclature des locaux à traiter
@@ -48,7 +48,7 @@ et
 {% endif %}
 ## Nombre prévisionnel d'interventions par type de prestation
 {% for prestation in contrat.prestations %}
-{{  prestation.nbPassages }} passage{% if prestation.nbPassages > 1 %}s{% endif %} concernant : {{  prestation.nom|trim }}
+{{  prestation.nbPassages }} passage{% if prestation.nbPassages > 1 %}s{% endif %} concernant : {{  prestation.nom|trim }}  
 {% endfor %}
 
 ## Moyens de mise en œuvre
@@ -87,7 +87,7 @@ Nos prestations sont exécutées par un personnel qualifié et certifié Certibi
 Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accordée pour la durée de la proposition{% else %}de {{ contrat.dureeGarantie }} mois est accordée{% endif %} pour {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %}&nbsp;:
 
 {% for prestation in contrat.prestations %}
-{{  prestation.nom|trim }}
+{{  prestation.nom|trim }}  
 {% endfor %}
 
 {% endif %}
@@ -141,8 +141,8 @@ ___
 
 ```
 
-Fait en double exemplaire.
-Un exemplaire à conserver.
+Fait en double exemplaire.  
+Un exemplaire à conserver.  
 Un exemplaire à nous retourner.
 
 
