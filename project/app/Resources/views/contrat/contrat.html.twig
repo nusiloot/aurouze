@@ -49,8 +49,8 @@
                     <td class="col-xs-2 text-right">  <strong>{{ produit.nbTotalContrat }}</strong></td>
                     <td class="col-xs-2 text-right">  <strong>{{ produit.nbPremierPassage }}</strong></td>
                     <td class="col-xs-4">{{ produit.nom }} {% if(produit.conditionnement) %}<small class="text-muted">({{ produit.conditionnement }})</small>{% endif %}</td>
-                    <td class="col-xs-2">{{ produit.prixHt }}&nbsp;€&nbsp;HT</span></td>
-                    <td class="col-xs-2">{{ produit.prixPrestation }}&nbsp;€&nbsp;HT</span></td>
+                    <td class="col-xs-2 text-right">{{ "%0.2f" | format(produit.prixHt) }}&nbsp;€&nbsp;HT</span></td>
+                    <td class="col-xs-2 text-right">{{ "%0.2f" | format(produit.prixPrestation) }}&nbsp;€&nbsp;HT</span></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -76,7 +76,7 @@
                 <td>{{ mouvement.libelle }}</td>
                 <td class="text-right">{{ facture.dateFacturation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}</td>
                 <td class="text-center"><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;{{ facture.numeroFacture }}</a></td>
-                <td class="text-right">{{ mouvement.montantHT }} €</td>
+                <td class="text-right">{{ "%0.2f" | format(mouvement.montantHT) }} €</td>
             </tr>
         {% endfor %}
         {% endfor %}
@@ -85,7 +85,7 @@
                 <td>{{ mouvement.libelle }}</td>
                 <td class="text-right"></td>
                 <td class="text-center"><small>En attente</small></td>
-                <td class="text-right">{{ mouvement.prixUnitaire }} €</td>
+                <td class="text-right">{{ "%0.2f" | format(mouvement.prixUnitaire) }} €</td>
             </tr>
         {% endfor %}
         </tbody>

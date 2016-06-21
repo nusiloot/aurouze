@@ -33,6 +33,7 @@
                     <th>Document d'origine</th>
                     <th>Intitulé</th>
                     <th class="text-right">Montant HT</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +41,8 @@
                     <tr>
                         <td><a href="{{ path('contrat_visualisation', {'id': mouvement.document.id })}}">Contrat n° {{ mouvement.document.numeroArchive }}</a></td>
                         <td>{{ mouvement.libelle }}</td>
-                        <td class="text-right">{{ mouvement.prixUnitaire }} €</td>
+                        <td class="text-right">{{ "%0.2f" | format(mouvement.prixUnitaire)  }} €</td>
+                        <td></td>
                     </tr>
                 {% endfor %}
             </tbody>

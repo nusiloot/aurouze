@@ -868,6 +868,9 @@ class Facture implements DocumentSocieteInterface {
       $avoir->setMontantHT(-1 * $avoir->getMontantHT());
       $avoir->setMontantTaxe(-1 * $avoir->getMontantTaxe());
       $avoir->setMontantTTC(-1 * $avoir->getMontantTTC());
+      $avoir->setDateEmission(new \DateTime());
+      $avoir->setDateFacturation(new \DateTime());
+      $avoir->setDateLimitePaiement($avoir->calculDateLimitePaiement());
       return $avoir;
     }
 
