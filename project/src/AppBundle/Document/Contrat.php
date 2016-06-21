@@ -1260,7 +1260,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setReconduit(false);
 
         $contrat->updateObject();
-
         return $contrat;
     }
 
