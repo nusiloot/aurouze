@@ -57,7 +57,7 @@
     </table>
 </div>
 
-{% if(contrat.mouvements | length > 0) %}
+{% if(contrat.mouvements | length > 0 or factures | length > 0) %}
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Facturation</h3></div>
     <table class="table table-bordered table-condensed table-stripped">

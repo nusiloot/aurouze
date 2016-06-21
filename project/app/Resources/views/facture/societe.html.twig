@@ -42,7 +42,7 @@
                         <td><a href="{{ path('contrat_visualisation', {'id': mouvement.document.id })}}">Contrat n° {{ mouvement.document.numeroArchive }}</a></td>
                         <td>{{ mouvement.libelle }}</td>
                         <td class="text-right">{{ "%0.2f" | format(mouvement.prixUnitaire)  }} €</td>
-                        <td class="text-center"><a onclick="return confirm('Êtes vous sûr de vouloir supprimer ce mouvement de facture ?')" href="{{ path('', {}) }}"><span class="text-danger glyphicon glyphicon-remove"></span></a></td>
+                        <td class="text-center"><a onclick="return confirm('Êtes vous sûr de vouloir supprimer ce mouvement de facture ?')" href="{{ path('facture_defacturer', {'id': mouvement.document.id, 'identifiant': mouvement.identifiant}) }}"><span class="text-danger glyphicon glyphicon-remove"></span></a></td>
                     </tr>
                 {% endfor %}
             </tbody>
