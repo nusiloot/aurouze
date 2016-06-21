@@ -35,9 +35,15 @@ parameters:
             banque: ""
             virement: ""
             numero_compte: ""
+            numero_compte_especes: ""
         banque:
             nom: ""
             adresse: ""
+            code_postal: ""
+            commune: ""
+        banqueEspece:
+            nom: ""
+            aresse: ""
             code_postal: ""
             commune: ""
 

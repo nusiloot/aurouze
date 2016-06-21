@@ -148,6 +148,19 @@ class Paiements {
         return $this->imprime;
     }
 
+    public function isRemiseEspece(){
+      if(count($this->getPaiement()) != 1){
+        return false;
+      }
+
+      foreach ($this->getPaiement() as $paiement) {
+        if($paiement->getMoyenPaiement() != PaiementsManager::MOYEN_PAIEMENT_ESPECE){
+          return false;
+        }
+      }
+      return true;
+    }
+
     public function getPaiementUniqueParLibelle(){
       $paiementsUnique = array();
 

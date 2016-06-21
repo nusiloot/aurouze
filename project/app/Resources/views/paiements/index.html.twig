@@ -38,7 +38,12 @@
                           <br/>
                           <a class="btn btn-sm btn-default" href="{{ path('paiements_export_banque', {'id': paiements.id }) }}">
                               <span class="glyphicon glyphicon-print"></span>
+                              {% if(paiements.isRemiseEspece) %}
+                                Imprimé de 1 espèce
+                              {% else %}
                               Imprimé de {{ paiements.nbPaiementUniqueParMoyen }} chèque(s)
+
+                              {% endif %}
                           </a>{% endif %}
                           </a>
                         </th>
