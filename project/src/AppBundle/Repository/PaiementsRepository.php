@@ -32,14 +32,13 @@ class PaiementsRepository extends DocumentRepository {
                         ->execute();
     }
 
-    public function findByDate(\DateTime $date) {
+    public function findByDate(\DateTime $dateFrom,\DateTime $dateTo) {
 
-        $oneMonthPast = clone $date;
-        $oneMonthPast->modify("-1 month");
         $q = $this->createQueryBuilder();
 
-        $q->field('paiement.datePaiement')->gte(new \DateTime("2016-05-01"));
-        $q->field('paiement.datePaiement')->lte(new \DateTime("2016-05-31"));
+        $q->field('paiement.datePaiement')->gte($dateFrom);
+        $q->field('paiement.datePaiement')->lte($dateTo);
+
         $query = $q->getQuery();
 
         return $query->execute();

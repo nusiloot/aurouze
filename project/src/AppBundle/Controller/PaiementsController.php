@@ -114,8 +114,11 @@ class PaiementsController extends Controller {
         }
 
         rewind($handle);
+
         $content = stream_get_contents($handle);
         fclose($handle);
+
+        $content = "\xef\xbb\xbf".$content;
 
         $response = new Response($content, 200, array(
             'Content-Type' => 'text/csv',

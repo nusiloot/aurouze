@@ -124,6 +124,7 @@ class PaiementsManager {
     }
 
     public function getPaiementsForCsv() {
+
         $date = new \DateTime();
         $paiementsObjs = $this->getRepository()->findLastMonthByDate($date);
 
