@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Facture;
 use AppBundle\Document\FactureLigne;
 use AppBundle\Type\FactureType;
+use AppBundle\Document\Contrat;
 use AppBundle\Document\Societe;
 use AppBundle\Type\SocieteChoiceType;
 
@@ -205,6 +206,18 @@ class FactureController extends Controller {
         $dm->persist($facture);
         $dm->flush();
         return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
+    }
+
+
+    /**
+     * @Route("/facturer/{id}/{identifiant}", name="facture_defacturer")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function defacturerAction(Request $request, Contrat $contrat, $identifiant) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+    	$contrat->resetFacturableMouvement($identifiant);
+        $dm->flush();
+        return $this->redirectToRoute('facture_societe', array('id' => $contrat->getSociete()->getId()));
     }
 
     /**

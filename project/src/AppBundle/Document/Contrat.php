@@ -736,6 +736,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
       }
     }
+    
+    public function resetFacturableMouvement($identifiant)
+    {
+    	foreach ($this->getMouvements() as $mouvement) {
+    		if ($identifiant == $mouvement->getIdentifiant()) {
+    			$this->removeMouvement($mouvement);
+    		}
+    	}
+    }
 
 
     public function hasMouvements() {

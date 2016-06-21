@@ -213,7 +213,7 @@ class ContratController extends Controller {
             $contratForm = $form->getData();
             $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
             $passageList = $this->get('contrat.manager')->getPassagesByNumeroArchiveContrat($contrat);
-
+			
             foreach ($passageList as $etb => $passagesByEtb) {
                 foreach ($passagesByEtb as $id => $passage) {
                     if (!$passage->isRealise() && !$passage->isAnnule() && ($passage->getDatePrevision()->format('Ymd') > $contrat->getDateResiliation()->format('Ymd'))) {
@@ -221,6 +221,12 @@ class ContratController extends Controller {
                         $passage->getContrat()->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
                     }
                 }
+            }
+            
+            foreach ($contrat->getMouvements() as $mouvement) {
+            	if (!$mouvement->isFacture()) {
+            		$contrat->removeMouvement($mouvement);
+            	}
             }
 
             $commentaire = "";
