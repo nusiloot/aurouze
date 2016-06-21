@@ -38,9 +38,24 @@ class PaiementsRepository extends DocumentRepository {
 
         $q->field('paiement.datePaiement')->gte($dateFrom);
         $q->field('paiement.datePaiement')->lte($dateTo);
+
         $query = $q->getQuery();
 
         return $query->execute();
     }
 
+
+    public function findLastMonthByDate(\DateTime $date) {
+
+        $oneMonthPast = clone $date;
+        $oneMonthPast->modify("-1 month");
+        $startOfMonth = \DateTime::createFromFormat('Y-m-d', $oneMonthPast->format('Y-m')."-01");
+        $endOfMonth = \DateTime::createFromFormat('Y-m-d', $date->format('Y-m')."-01");
+        $q = $this->createQueryBuilder();
+        $q->field('paiement.datePaiement')->gte($startOfMonth);
+        $q->field('paiement.datePaiement')->lt($endOfMonth);
+        $query = $q->getQuery();
+
+        return $query->execute();
+    }
 }

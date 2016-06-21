@@ -124,23 +124,24 @@ class PaiementsManager {
     }
 
     public function getPaiementsForCsv() {
-        $dateFrom = new \DateTime("2016-05-01");
-        $dateTo = new \DateTime("2016-05-31");
-        $paiementsObjs = $this->getRepository()->findByDate($dateFrom, $dateTo);
+
+        $date = new \DateTime();
+        $paiementsObjs = $this->getRepository()->findLastMonthByDate($date);
+
+        $oneMonthPast = new \DateTime();
+        $oneMonthPast->modify("-1 month");
+        $startOfMonth = \DateTime::createFromFormat('Y-m-d', $oneMonthPast->format('Y-m')."-01");
+        $endOfMonth = \DateTime::createFromFormat('Y-m-d', $date->format('Y-m')."-01");
 
         $paiementsArray = array();
         $paiementsArray[] = self::$export_paiement_libelle;
 
         foreach ($paiementsObjs as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
-                if($paiement->getDatePaiement() < $dateFrom) {
-                    continue;
-                }
-                if($paiement->getDatePaiement() > $dateTo) {
-                    continue;
-                }
+              $paiementDate = $paiement->getDatePaiement();
+              if(($paiementDate  >= $startOfMonth) && ($endOfMonth > $paiementDate)){
                 $paiementArr = array();
-                $paiementArr[self::EXPORT_DATE_PAIEMENT] = $paiement->getDatePaiement()->format('d/m/Y');
+                $paiementArr[self::EXPORT_DATE_PAIEMENT] = $paiementDate->format('d/m/Y');
                 $paiementArr[self::EXPORT_CODE_COMPTABLE] = $paiement->getFacture()->getSociete()->getCodeComptable();
                 $paiementArr[self::EXPORT_VR_PRIX] = "";
                 $paiementArr[self::EXPORT_FACTURE_NUM_RAISON_SOCIALE] = $paiement->getFacture()->getNumeroFacture()." ".$paiement->getFacture()->getSociete()->getRaisonSociale();
@@ -184,6 +185,7 @@ class PaiementsManager {
 
 
                 $paiementsArray[] = $paiementArr;
+              }
             }
         }
         return $paiementsArray;
