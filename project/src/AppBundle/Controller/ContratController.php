@@ -181,17 +181,18 @@ class ContratController extends Controller {
             $etablissements = $contrat->getEtablissements();
             $contratReconduit = $contrat->reconduire();
             $dm->persist($contratReconduit);
+            $dm->flush();
+          //  var_dump($contratReconduit->getId());
             $this->get('contrat.manager')->generateAllPassagesForContrat($contratReconduit,true);
             $dm->persist($contratReconduit);
             $contrat->setReconduit(true);
-            foreach ($etablissements as $etablissement) {
-              $contratReconduit->addEtablissement($etablissement);
-            }
+
             $dm->persist($contratReconduit);
             $dm->flush();
-            return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));
+          //  var_dump($contratReconduit->getId(),$contratReconduit->getEtablissements()->first()->getId()); exit;
+            return $this->redirectToRoute('contrats_societe', array('id' => $contratReconduit->getSociete()->getId()));
         } else {
-            return $this->redirectToRoute('contrat_visualisation', array('id' => $contratReconduit->getId()));
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
     }
 

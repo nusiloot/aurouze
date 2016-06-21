@@ -1229,6 +1229,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         if (!$contrat->isKeepNumeroArchivage()) {
             $contrat->setNumeroArchive(null);
         }
+        foreach ($contrat->getEtablissements() as $etb) {
+          $this->addEtablissement($etb);
+        }
         $dateDebut = clone $contrat->getDateDebut();
         $dateAcceptation = clone $contrat->getDateDebut();
         $nbMois = $contrat->getDuree();
