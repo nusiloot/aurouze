@@ -182,14 +182,12 @@ class ContratController extends Controller {
             $contratReconduit = $contrat->reconduire();
             $dm->persist($contratReconduit);
             $dm->flush();
-          //  var_dump($contratReconduit->getId());
             $this->get('contrat.manager')->generateAllPassagesForContrat($contratReconduit,true);
             $dm->persist($contratReconduit);
             $contrat->setReconduit(true);
 
             $dm->persist($contratReconduit);
             $dm->flush();
-          //  var_dump($contratReconduit->getId(),$contratReconduit->getEtablissements()->first()->getId()); exit;
             return $this->redirectToRoute('contrats_societe', array('id' => $contratReconduit->getSociete()->getId()));
         } else {
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
@@ -214,7 +212,7 @@ class ContratController extends Controller {
             $contratForm = $form->getData();
             $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
             $passageList = $this->get('contrat.manager')->getPassagesByNumeroArchiveContrat($contrat);
-			
+
             foreach ($passageList as $etb => $passagesByEtb) {
                 foreach ($passagesByEtb as $id => $passage) {
                     if (!$passage->isRealise() && !$passage->isAnnule() && ($passage->getDatePrevision()->format('Ymd') > $contrat->getDateResiliation()->format('Ymd'))) {
@@ -223,7 +221,7 @@ class ContratController extends Controller {
                     }
                 }
             }
-            
+
             foreach ($contrat->getMouvements() as $mouvement) {
             	if (!$mouvement->isFacture()) {
             		$contrat->removeMouvement($mouvement);
