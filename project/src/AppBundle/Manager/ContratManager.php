@@ -162,10 +162,9 @@ class ContratManager implements MouvementManagerInterface {
         $contrat->reInitContratPassages();
     }
 
-    public function generateAllPassagesForContrat($contrat,$isReconduction = false) {
-        if(!$isReconduction){
-          $this->removeAllPassagesForContrat($contrat);
-        }
+    public function generateAllPassagesForContrat($contrat) {
+        $this->removeAllPassagesForContrat($contrat);
+              
         $date_debut = $contrat->getDateDebut();
         $date_acceptation = $contrat->getDateAcceptation();
         if (!$date_debut && !$date_acceptation) {

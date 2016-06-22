@@ -130,3 +130,8 @@ body {
 .tt-suggestion p {
   margin: 0;
 }
+
+.show-print {
+	visibility: hidden !important;
+	position: absolute !important;
+}
