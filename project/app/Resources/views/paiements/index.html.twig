@@ -8,10 +8,11 @@
 
     </ol>
     <div class="btn-group">
-        <a onclick="return confirm('Êtes-vous sûre de vouloir faire l\'export comptable facture ?');" class="btn btn-sm btn-default" href="{{ path('facture_export_comptable') }}"><span class="glyphicon glyphicon-usd"></span> Export comptable factures</a>
-
-        <a onclick="return confirm('Êtes-vous sûre de vouloir faire l\'export comptable paiements ?');" class="btn btn-sm btn-default" href="{{ path('paiements_export_comptable') }}"><span class="glyphicon glyphicon-th-list"></span>  Export comptable paiements</a>
+      {% for exportForm in exportForms %}
+        <a data-toggle="modal" data-target="#datechoice{{ exportForm.type }}" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-usd"></span> {{exportForm.libelle}}</a>
+      {% endfor %}
     </div>
+
     <a class="btn btn-sm btn-default pull-right" href="{{ path('paiements_nouveau') }}" style="margin-bottom: 10px;"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Créer une nouvelle saisie</strong></a>
     <br/>
     <div id="wrapper">
@@ -68,6 +69,34 @@
                 {% endfor %}
             </tbody>
         </table>
-
     </div>
+      {% for exportForm in exportForms %}
+<div  id="datechoice{{exportForm.type}}"  class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content">
+            {{ form_start(exportForm.form) }}
+            <div class="modal-header">
+              <h4>Êtes-vous sûre de vouloir faire l'export comptable {{exportForm.type}}?</h4>
+            </div>
+                <div class="modal-body form-horizontal">
+                        <div class="form-group">
+                            {{ form_errors(exportForm.form.date) }}
+                            {{ form_label(exportForm.form.date, "Date de l'export", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                            <div class="col-xs-10">
+                                {{ form_widget(exportForm.form.date) }}
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-xs-12 text-right">
+                                <button class="btn btn-primary" type="submit">Exporter</button>
+                        </div>
+                    </div>
+                </div>
+                    {{ form_end(exportForm.form) }}
+            </div>
+        </div>
+      </div>
+    {% endfor %}
 {% endblock %}
