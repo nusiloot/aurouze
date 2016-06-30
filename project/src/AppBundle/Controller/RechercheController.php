@@ -40,7 +40,27 @@ class RechercheController extends Controller {
         usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
         
 
-        $result = $this->contructSearchResult($result);
+        $result = $this->contructSearchResultSociete($result);
+        
+        $response = new Response(); 
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setContent(json_encode($result));
+        return $response;
+	}
+
+	/**
+	 * @Route("/recherche/contrat", name="recherche_contrat")
+	 */
+	public function contratAction(Request $request) 
+	{
+		$dm = $this->get('doctrine_mongodb')->getManager();
+        $query = $request->get('q');
+        
+        $result = $dm->getRepository('AppBundle:Contrat')->findByQuery($query);
+        usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
+        
+
+        $result = $this->contructSearchResultContrat($result);
         
         $response = new Response(); 
         $response->headers->set('Content-Type', 'application/json');
@@ -55,7 +75,7 @@ class RechercheController extends Controller {
 	
 
 
-    public function contructSearchResult($items) 
+    public function contructSearchResultSociete($items) 
     {
 		$result = array();
         foreach ($items as $item) {
@@ -67,6 +87,28 @@ class RechercheController extends Controller {
             $newResult->libelle = $object->getLibelleComplet();
             $newResult->instance = $item['instance'];
             $newResult->actif = ($object->getActif())? 1 : 0;
+            $result[] = $newResult;
+        }
+        return $result;
+    }
+	
+
+
+    public function contructSearchResultContrat($items) 
+    {
+		$result = array();
+        foreach ($items as $item) {
+        	$object = $item['doc'];
+            $newResult = new \stdClass();
+            $newResult->id = $object->getId();
+            $newResult->libelle = $object->getLibelle();
+            $newResult->statut = $object->getStatutLibelle();
+            $newResult->color = $object->getStatutCouleur();
+            $newResult->identifiant = $object->getNumeroArchive();
+            $newResult->type = $object->getTypeContratLibelle();
+            $newResult->periode = $object->getDateDebut()->format('M Y').'&nbsp;-&nbsp;'.$object->getDateFin()->format('M Y');
+            $newResult->prix = $object->getPrixHt();
+            $newResult->garantie = ($object->getDureeGarantie())? 'Garantie&nbsp;'.$object->getDureeGarantie().'&nbsp;mois' : 'Aucune ganrantie';
             $result[] = $newResult;
         }
         return $result;

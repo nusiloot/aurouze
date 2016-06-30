@@ -43,5 +43,26 @@ class ContratRepository extends DocumentRepository {
     public function findAllFrequences() {
     	return ContratManager::$frequences;
     }
+    
+
+
+    public function findByQuery($q)
+    {
+    	$resultSet = array();
+    	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Contrat')->command([
+    			'find' => 'Contrat',
+    			'filter' => ['$text' => ['$search' => $q]],
+    			'projection' => ['score' => [ '$meta' => "textScore" ]],
+    			'sort' => ['score' => [ '$meta' => "textScore" ]],
+    			'limit' => 50
+    
+    	]);
+    	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
+    		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
+    			$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Contrat', $itemResult), "score" => $itemResult['score']);
+    		}
+    	}
+    	return $resultSet;
+    }
 
 }

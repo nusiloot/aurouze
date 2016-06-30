@@ -359,6 +359,7 @@
             return;
         }
         var url = $('#searchable').data('url');
+        var type = $('#searchable').data('type');
         var target = $('#searchable').data('target');
         var checkbox = $('#searchable').find("input[type=checkbox]");
         
@@ -373,7 +374,7 @@
     	    return $.ajax({
     	      url: url, 
     	      type: 'GET',
-    	      data: {q: query, inactif: (checkbox.is(':checked'))? 1 : 0},
+    	      data: {q: query, inactif: (checkbox && checkbox.is(':checked'))? 1 : 0},
     	      dataType: 'json',
     	      success: function (json) {
     	        return processAsync(json);
@@ -382,11 +383,18 @@
     	  },
           templates: {
               suggestion: function (e) {
-            	  var result = '<i class="mdi mdi-'+e.icon+' mdi-lg"></i>&nbsp;'+e.libelle+' <small>'+e.instance+'&nbsp;'+e.identifiant+'</small>';
-            	  if (!e.actif) {
-            		  result = result+' <small><label class="label label-xs label-danger">SUSPENDU</label></small>';
+            	  if (type == 'societe') {
+	            	  var result = '<i class="mdi mdi-'+e.icon+' mdi-lg"></i>&nbsp;'+e.libelle+' <small>'+e.instance+'&nbsp;'+e.identifiant+'</small>';
+	            	  if (!e.actif) {
+	            		  result = result+' <small><label class="label label-xs label-danger">SUSPENDU</label></small>';
+	            	  }
+	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
             	  }
-                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+            	  if (type == 'contrat') {
+
+	            	  var result = e.type+' <small class="text-'+e.color+'">'+e.statut+'</small> n°<strong>'+e.identifiant+'</strong> '+e.periode+' <small class="text-muted">'+e.garantie+'</small> '+e.prix+' €';
+	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+            	  }
               }
           }
     	});

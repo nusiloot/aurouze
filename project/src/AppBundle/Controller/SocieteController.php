@@ -33,7 +33,6 @@ class SocieteController extends Controller {
     		$query = $form->getData()['societes'];   	
     		$inactif = ($form->getData()['actif'])? true : false;
     		$search = true;
-    		$result = $dm->getRepository('AppBundle:Societe')->findByQuery($query, $inactif);
     		$result = array_merge($dm->getRepository('AppBundle:Societe')->findByQuery($query, $inactif), $dm->getRepository('AppBundle:Etablissement')->findByQuery($query, $inactif));
     		$result = array_merge($result, $dm->getRepository('AppBundle:Compte')->findByQuery($query, $inactif));
     	

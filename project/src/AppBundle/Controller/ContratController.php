@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Contrat;
-use AppBundle\Type\SocieteChoiceType;
+use AppBundle\Type\ContratChoiceType;
 use AppBundle\Type\ContratType;
 use AppBundle\Type\ContratMarkdownType;
 use AppBundle\Type\ContratGeneratorType;
@@ -26,15 +26,24 @@ class ContratController extends Controller {
      * @Route("/contrat", name="contrat")
      */
     public function indexAction(Request $request) {
-        $dm = $this->get('doctrine_mongodb')->getManager();
+    	
+    $dm = $this->get('doctrine_mongodb')->getManager();
+    	$form = $this->createForm(ContratChoiceType::class, null, array(
+    			'action' => $this->generateUrl('contrat'),
+    			'method' => 'GET',
+    	));
+    	$result = array();
+    	$search = false;
+    	$query = false;
+    	$form->handleRequest($request);
+    	if ($form->isSubmitted() && $form->isValid()) {    	
+    		$query = $form->getData()['contrats'];
+    		$search = true;
+    		$result = $dm->getRepository('AppBundle:Contrat')->findByQuery($query);
+    		usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
+    	}
 
-        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
-            'action' => $this->generateUrl('contrat_societe_choice'),
-            'method' => 'POST',
-        ));
-        $formSociete->handleRequest($request);
-
-        return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView()));
+        return $this->render('contrat/index.html.twig', array('form' => $form->createView(), 'result' => $result, 'search' => $search, 'query' => $query));
     }
 
     /**
