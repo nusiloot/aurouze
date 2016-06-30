@@ -48,7 +48,7 @@
         <tr>
             <th class="col-xs-7">Libellé</th>
             <th class="text-center col-xs-1">Qté</th>
-            <th class="text-right col-xs-1">Prix&nbsp;unit.&nbsp;HT</th>
+            <th class="text-right col-xs-2">Prix&nbsp;unit.&nbsp;HT</th>
             <th class="text-right col-xs-2">Sous-total&nbsp;HT</th>
         </tr>
     </thead>
@@ -61,7 +61,6 @@
                 {% if ligne.origineContrat %}
                 <small>
                     <small>
-                        <small>
                     Prestation{% if ligne.origineDocument.prestations|length > 1 %}s{% endif %} :
                     <ul class="list-unstyled" style="padding-left: 10px; margin-bottom: 0">
                     	{% for prestation in ligne.origineDocument.prestations %}
@@ -74,7 +73,6 @@
                             <li>- {{ p.etablissement.nom(false) }}, {% if(p.etablissement.adresse.adresse) %}{{ p.etablissement.adresse.adresse }},{% endif %} {{ p.etablissement.adresse.codePostal }} {{ p.etablissement.adresse.commune }}</li>
                             {% endfor %}
                         </ul>
-                        </small>
                     </small>
                 </small>
                 {% elseif (ligne.description) %}
