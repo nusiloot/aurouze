@@ -154,8 +154,10 @@ public static $export_stats_libelle = array(
         return $this->mm->getMouvements(true, false);
     }
 
-    public function getStatsForCsv(){
-      $date = new \DateTime();
+    public function getStatsForCsv($date){
+      if(!$date){
+        $date = new \DateTime();
+      }
       
       $facturesObjs = $this->getRepository()->exportOneMonthByDate($date);
       $ca_stats = array();
@@ -267,8 +269,10 @@ public static $export_stats_libelle = array(
   }
 
 
-    public function getFacturesForCsv() {
-        $date = new \DateTime("2016-05-14");
+    public function getFacturesForCsv($date = null) {
+        if(!$date){
+          $date = new \DateTime();
+        }
         $facturesObjs = $this->getRepository()->exportOneMonthByDate($date);
 
         $facturesArray = array();

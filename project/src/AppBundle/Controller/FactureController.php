@@ -286,16 +286,18 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/export-comptable", name="facture_export_comptable")
+     * @Route("/facture/export", name="facture_export")
      */
     public function exportComptableAction(Request $request) {
 
       // $response = new StreamedResponse();
+        $formRequest = $request->request->get('form');
+        $date = \DateTime::createFromFormat('d/m/Y',$formRequest['date']);
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
-        $facturesForCsv = $fm->getFacturesForCsv();
+        $facturesForCsv = $fm->getFacturesForCsv($date);
 
-        $filename = sprintf("export_factures_%s.csv", (new \DateTime())->format("Y-m-d"));
+        $filename = sprintf("export_factures_%s.csv", $date->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
         foreach ($facturesForCsv as $paiement) {
@@ -318,18 +320,20 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/export-stats", name="facture_export_stat")
+     * @Route("/stats/export", name="stats_export")
      */
     public function exportStatsAction(Request $request) {
 
       // $response = new StreamedResponse();
+        $formRequest = $request->request->get('form');
+        $date = \DateTime::createFromFormat('d/m/Y',$formRequest['date']);
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
-        $facturesStatsForCsv = $fm->getStatsForCsv();
+        $facturesStatsForCsv = $fm->getStatsForCsv($date);
 
 
 
-        $filename = sprintf("export_stat_%s.csv", (new \DateTime())->format("Y-m-d"));
+        $filename = sprintf("export_stat_%s.csv", $date->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
         foreach ($facturesStatsForCsv as $paiement) {

@@ -123,12 +123,16 @@ class PaiementsManager {
         return $paiements;
     }
 
-    public function getPaiementsForCsv() {
-
-        $date = new \DateTime();
+    public function getPaiementsForCsv($date = null) {
+        if(!$date){
+          $date = new \DateTime();
+          }
         $paiementsObjs = $this->getRepository()->findLastMonthByDate($date);
-
+        if(!$date){
         $oneMonthPast = new \DateTime();
+      }else{
+        $oneMonthPast = clone $date;
+      }
         $oneMonthPast->modify("-1 month");
         $startOfMonth = \DateTime::createFromFormat('Y-m-d', $oneMonthPast->format('Y-m')."-01");
         $endOfMonth = \DateTime::createFromFormat('Y-m-d', $date->format('Y-m')."-01");
