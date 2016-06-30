@@ -72,4 +72,23 @@ class FactureRepository extends DocumentRepository {
         return $query->execute();
     }
 
+    public function findByQuery($q)
+    {
+    	$resultSet = array();
+    	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Facture')->command([
+    			'find' => 'Facture',
+    			'filter' => ['$text' => ['$search' => $q]],
+    			'projection' => ['score' => [ '$meta' => "textScore" ]],
+    			'sort' => ['score' => [ '$meta' => "textScore" ]],
+    			'limit' => 50
+    
+    	]);
+    	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
+    		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
+    			$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Facture', $itemResult), "score" => $itemResult['score']);
+    		}
+    	}
+    	return $resultSet;
+    }
+
 }

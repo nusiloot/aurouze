@@ -879,4 +879,8 @@ class Facture implements DocumentSocieteInterface {
         return !$this->isCloture();
     }
 
+    public function getLibelle() {
+    	return $this->getNumeroFacture();
+    }
+
 }

@@ -67,13 +67,31 @@ class RechercheController extends Controller {
         $response->setContent(json_encode($result));
         return $response;
 	}
+
+	/**
+	 * @Route("/recherche/facture", name="recherche_facture")
+	 */
+	public function factureAction(Request $request) 
+	{
+		$dm = $this->get('doctrine_mongodb')->getManager();
+        $query = $request->get('q');
+        
+        $result = $dm->getRepository('AppBundle:Facture')->findByQuery($query);
+        usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
+        
+
+        $result = $this->contructSearchResultFacture($result);
+        
+        $response = new Response(); 
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setContent(json_encode($result));
+        return $response;
+	}
 	
 	public static function cmpContacts($a, $b) 
 	{
 		return ($a['score'] > $b['score']) ? -1 : +1;
 	}
-	
-
 
     public function contructSearchResultSociete($items) 
     {
@@ -91,8 +109,6 @@ class RechercheController extends Controller {
         }
         return $result;
     }
-	
-
 
     public function contructSearchResultContrat($items) 
     {
@@ -109,6 +125,19 @@ class RechercheController extends Controller {
             $newResult->periode = $object->getDateDebut()->format('M Y').'&nbsp;-&nbsp;'.$object->getDateFin()->format('M Y');
             $newResult->prix = $object->getPrixHt();
             $newResult->garantie = ($object->getDureeGarantie())? 'Garantie&nbsp;'.$object->getDureeGarantie().'&nbsp;mois' : 'Aucune ganrantie';
+            $result[] = $newResult;
+        }
+        return $result;
+    }
+
+    public function contructSearchResultFacture($items) 
+    {
+		$result = array();
+        foreach ($items as $item) {
+        	$object = $item['doc'];
+            $newResult = new \stdClass();
+            $newResult->id = $object->getId();
+            $newResult->libelle = $object->getLibelle();
             $result[] = $newResult;
         }
         return $result;

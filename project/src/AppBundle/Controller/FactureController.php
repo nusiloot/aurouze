@@ -12,7 +12,7 @@ use AppBundle\Document\FactureLigne;
 use AppBundle\Type\FactureType;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Societe;
-use AppBundle\Type\SocieteChoiceType;
+use AppBundle\Type\FactureChoiceType;
 
 /**
  * Facture controller.
@@ -25,14 +25,23 @@ class FactureController extends Controller {
      * @Route("/", name="facture")
      */
     public function indexAction(Request $request) {
-        $dm = $this->get('doctrine_mongodb')->getManager();
+    $dm = $this->get('doctrine_mongodb')->getManager();
+    	$form = $this->createForm(FactureChoiceType::class, null, array(
+    			'action' => $this->generateUrl('facture'),
+    			'method' => 'GET',
+    	));
+    	$result = array();
+    	$search = false;
+    	$query = false;
+    	$form->handleRequest($request);
+    	if ($form->isSubmitted() && $form->isValid()) {    	
+    		$query = $form->getData()['factures'];
+    		$search = true;
+    		$result = $dm->getRepository('AppBundle:Facture')->findByQuery($query);
+    		usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
+    	}
 
-        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
-            'action' => $this->generateUrl('facture_societe_choice'),
-            'method' => 'POST',
-        ));
-
-        return $this->render('facture/index.html.twig', array('formSociete' => $formSociete->createView()));
+        return $this->render('facture/index.html.twig', array('form' => $form->createView(), 'result' => $result, 'search' => $search, 'query' => $query));
     }
 
     /**

@@ -391,10 +391,14 @@
 	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
             	  }
             	  if (type == 'contrat') {
-
 	            	  var result = e.type+' <small class="text-'+e.color+'">'+e.statut+'</small> n°<strong>'+e.identifiant+'</strong> '+e.periode+' <small class="text-muted">'+e.garantie+'</small> '+e.prix+' €';
 	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
             	  }
+            	  if (type == 'facture') {
+	            	  var result = e.libelle;
+	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+            	  }
+            	  return 'undefined';
               }
           }
     	});

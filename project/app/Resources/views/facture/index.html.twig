@@ -4,5 +4,35 @@
 {% block title %}Factures{% endblock title %}
 
 {% block body %}
-{{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
+<div class="row" id="searchable" data-type="facture" data-url="{{ path('recherche_facture')  }}" data-target="{{ path('facture_pdf', {'id': '_id_'})  }}">
+	    <div class="col-xs-12">
+	        <h3 style="margin-top: 10px;">Rechercher par facture</h3>
+	        {{ form_start(form, {'attr': { 'novalidate': 'novalidate', 'class': 'form-horizontal' } }) }}
+	        <div class="form-group">
+	            <div class="col-xs-10">
+	                {{ form_errors(form.factures) }}
+	                {{ form_widget(form.factures) }}
+	            </div>
+	            <div class="col-xs-2 text-right">
+	            	<button type="submit" class="btn btn-default" type="button">Rechercher</button>
+	            </div>
+	        </div>
+	        {{form_end(form)}}
+	    </div>
+	</div>
+	
+	
+	{% if search %}
+
+	<h3>{{ result|length }} Résultat{% if result|length > 1 %}s{% endif %} <small>{{ query }}</small></h3>
+	
+	<table class="table table-striped table-hover">	
+	{% for item in result %}
+	<tr style="cursor: pointer;" onclick="document.location.href='{{ path('facture_pdf', {'id': item.doc.id}) }}'">
+		<td>{{ item.doc.Libelle }}</td>                
+    </tr>
+	{% endfor %}
+	</table>
+
+	{% endif %}
 {% endblock %}
