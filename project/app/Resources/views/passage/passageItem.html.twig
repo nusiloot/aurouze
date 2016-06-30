@@ -18,7 +18,7 @@
 {% endif %}
 {% set passagePec = passage.getPrevious() %}
 {#{% set passagePec = passageManager.passagePrecedent(passage) %}#}
-<a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
+<a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item hide-print">
     <div class="row">
         <div class="col-sm-12">
             <div class="row">
@@ -73,3 +73,38 @@
         </div>
     </div>
 </a>
+
+
+<div data-words='{{ words }}' class="hamzastyle-item show-print">
+	<div class="row">
+		<div class="col-sm-6">
+			<i class="mdi mdi-{{ passage.etablissement.icon }} mdi-lg"></i> <strong>{{ passage.etablissement.nom|capitalize }}</strong>
+		</div>
+		<div class="col-sm-6 text-right">
+			<small>{{ passage.libelle }}{% if(passage.mouvementDeclenchable) %} - facturant{% endif %} -</small> <strong>{{ passage.datePrevision | localizeddate("medium", "none", null, null, "dd MMM YYYY") | capitalize }}</strong>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-6">
+			{{ passage.etablissement.adresse.adresse }} {{ passage.etablissement.adresse.codePostal }} {{ passage.etablissement.adresse.commune }}<br />
+	        {{ passage.etablissement.telephoneFixe }}{% if passage.etablissement.telephonePortable and passage.etablissement.telephoneFixe %} - {% endif %} {{ passage.etablissement.telephonePortable }}
+	    </div>
+	    <div class="col-sm-6 text-right">
+	    	<ul>
+	    	{% for prestation in passage.prestations %}
+	    		<li>{{ prestation.nomToString }}</li>
+	        {% endfor %}
+	        </ul>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-6">
+			<strong>{{ techIdentite }}</strong>
+		</div>
+		<div class="col-sm-6 text-right">
+	            {% if(passagePec and passagePec.duree) %}
+	                Préc.&nbsp;à&nbsp;{{passagePec.dateDebut | date("H") }}h{{passagePec.dateDebut | date("i") }} d'une durée de {{ passagePec.duree }}
+	            {% endif %}
+		</div>
+	</div>
+</div>

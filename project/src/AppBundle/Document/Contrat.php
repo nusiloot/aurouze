@@ -737,6 +737,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
       }
     }
 
+    public function resetFacturableMouvement($identifiant)
+    {
+    	foreach ($this->getMouvements() as $mouvement) {
+    		if ($identifiant == $mouvement->getIdentifiant()) {
+    			$this->removeMouvement($mouvement);
+    		}
+    	}
+    }
+
 
     public function hasMouvements() {
         return boolval(count($this->getMouvements()));
@@ -1203,6 +1212,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $this->id = null;
     }
 
+    public function removeAllEtablissements(){
+      $this->etablissements = new ArrayCollection();
+    }
+
     public function copier() {
         $contrat = clone $this;
         $contrat->removeId();
@@ -1229,6 +1242,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         if (!$contrat->isKeepNumeroArchivage()) {
             $contrat->setNumeroArchive(null);
         }
+        foreach ($contrat->getEtablissements() as $etb) {
+          $this->addEtablissement($etb);
+        }
         $dateDebut = clone $contrat->getDateDebut();
         $dateAcceptation = clone $contrat->getDateDebut();
         $nbMois = $contrat->getDuree();
@@ -1245,13 +1261,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         } else {
             $contrat->setStatut(ContratManager::STATUT_EN_COURS);
         }
-
+        $contrat->removeAllEtablissements();
+        foreach ($this->getEtablissements() as $etablissement) {
+          $contrat->addEtablissement($etablissement);
+        }
         $contrat->contratPassages = array();
         $contrat->cleanMouvements();
         $contrat->setReconduit(false);
 
         $contrat->updateObject();
-
         return $contrat;
     }
 

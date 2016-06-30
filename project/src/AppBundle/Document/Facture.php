@@ -145,7 +145,7 @@ class Facture implements DocumentSocieteInterface {
         }
     }
 
-    public function update() {
+    public function updateCalcul() {
         $montant = 0;
         $montantTaxe = 0;
         foreach ($this->getLignes() as $ligne) {
@@ -156,6 +156,10 @@ class Facture implements DocumentSocieteInterface {
         $this->setMontantHT(round($montant, 2));
         $this->setMontantTaxe(round($montantTaxe, 2));
         $this->setMontantTTC(round($montant + $montantTaxe, 2));
+    }
+
+    public function update() {
+        $this->updateCalcul();
         $this->storeDestinataire();
         $this->setDateLimitePaiement($this->calculDateLimitePaiement());
     }
@@ -864,9 +868,11 @@ class Facture implements DocumentSocieteInterface {
       $avoir->setMontantHT(-1 * $avoir->getMontantHT());
       $avoir->setMontantTaxe(-1 * $avoir->getMontantTaxe());
       $avoir->setMontantTTC(-1 * $avoir->getMontantTTC());
+      $avoir->setDateEmission(new \DateTime());
+      $avoir->setDateFacturation(new \DateTime());
+      $avoir->setDateLimitePaiement($avoir->calculDateLimitePaiement());
       return $avoir;
     }
-
 
     public function isEditable() {
 

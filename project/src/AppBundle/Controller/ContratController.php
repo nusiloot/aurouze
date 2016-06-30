@@ -146,9 +146,9 @@ class ContratController extends Controller {
                     $contrat->changeTechnicien($contrat->getTechnicien());
                 }
                 if ($oldNbFactures != $contrat->getNbFactures()) {
-                    
+
                     $contratManager->updateNbFactureForContrat($contrat);
-                }      
+                }
                 $dm->persist($contrat);
                 $dm->flush();
                 return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
@@ -178,14 +178,19 @@ class ContratController extends Controller {
     public function reconductionAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         if ($contrat->isReconductible()) {
+            $etablissements = $contrat->getEtablissements();
             $contratReconduit = $contrat->reconduire();
             $dm->persist($contratReconduit);
-            $this->get('contrat.manager')->generateAllPassagesForContrat($contratReconduit);
-            $contrat->setReconduit(true);
             $dm->flush();
-            return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));
+            $this->get('contrat.manager')->generateAllPassagesForContrat($contratReconduit,true);
+            $dm->persist($contratReconduit);
+            $contrat->setReconduit(true);
+
+            $dm->persist($contratReconduit);
+            $dm->flush();
+            return $this->redirectToRoute('contrats_societe', array('id' => $contratReconduit->getSociete()->getId()));
         } else {
-            return $this->redirectToRoute('contrat_visualisation', array('id' => $contratReconduit->getId()));
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
     }
 
@@ -215,6 +220,12 @@ class ContratController extends Controller {
                         $passage->getContrat()->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
                     }
                 }
+            }
+
+            foreach ($contrat->getMouvements() as $mouvement) {
+            	if (!$mouvement->isFacture()) {
+            		$contrat->removeMouvement($mouvement);
+            	}
             }
 
             $commentaire = "";

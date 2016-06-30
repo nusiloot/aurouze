@@ -55,6 +55,8 @@ class Paiement {
 
     protected $montantTemporaire;
 
+    protected $factureTemporaire = array();
+
     public function __construct() {
         $this->versementComptable = false;
     }
@@ -237,6 +239,15 @@ class Paiement {
       return $this;
     }
 
+    public function getFactureTemporaire() {
+       return  $this->factureTemporaire;
+    }
+
+    public function addFactureTemporaire($facture) {
+           return  $this->factureTemporaire = array_merge($this->factureTemporaire,array($facture->getId() => $facture));
+    }
+
+
     public function getMoyenPaiementLibelle() {
         if(!$this->getMoyenPaiement()){
             return $this->getMoyenPaiement();
@@ -261,6 +272,11 @@ class Paiement {
     }
     public function getFactureMontantTTC() {
         return $this->factureMontantTTC ;
+    }
+
+    public function getMontantTaxe() {
+
+        return round($this->getMontant() - round($this->getMontant() / (1 + $this->getFacture()->getTva()), 2), 2);
     }
 
 }

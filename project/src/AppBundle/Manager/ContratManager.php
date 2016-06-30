@@ -164,7 +164,7 @@ class ContratManager implements MouvementManagerInterface {
 
     public function generateAllPassagesForContrat($contrat) {
         $this->removeAllPassagesForContrat($contrat);
-
+              
         $date_debut = $contrat->getDateDebut();
         $date_acceptation = $contrat->getDateAcceptation();
         if (!$date_debut && !$date_acceptation) {
@@ -181,8 +181,9 @@ class ContratManager implements MouvementManagerInterface {
                 $passage = new Passage();
                 $passage->setEtablissement($etablissement);
                 $passage->setEtablissementIdentifiant($etablissement->getIdentifiant());
-                $passage->addTechnicien($contrat->getTechnicien());
-
+                if($contrat->getTechnicien()){
+                  $passage->addTechnicien($contrat->getTechnicien());
+                }
                 $passage->setDatePrevision($datePrevision);
                 if (!$cpt) {
                     $passage->setDateDebut($datePrevision);
@@ -299,6 +300,24 @@ class ContratManager implements MouvementManagerInterface {
         }
         return $passagesByNumero;
     }
+
+    // public function getTechnicienPlusUtiliseByNumeroContrat($numeroContrat){
+    //   $contrats = $this->getRepository()->findByNumeroArchive($numeroContrat);
+    //   $passagesParTechnicien = array();
+    //   foreach ($contrats as $contrat) {
+    //     foreach ($contrat->getContratPassages() as $contratPassages) {
+    //         foreach ($contratPassages->getPassages() as $passage) {
+    //             foreach ($passage->getTechniciens() as $technicien) {
+    //               if(!array_key_exists($technicien->getId(),$passagesParTechnicien)){
+    //                 $passagesParTechnicien[$technicien->getId()] = 1;
+    //                 }
+    //                 $passagesParTechnicien[$technicien->getId()] = $passagesParTechnicien[$technicien->getId()] + 1;
+    //             }
+    //         }
+    //       }
+    //   }
+    //   var_dump($passagesParTechnicien); exit;
+    // }
 
     public function getAllFactureForContrat($contrat) {
         return $this->dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);

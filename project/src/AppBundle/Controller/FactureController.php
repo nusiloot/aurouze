@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Facture;
 use AppBundle\Document\FactureLigne;
 use AppBundle\Type\FactureType;
+use AppBundle\Document\Contrat;
 use AppBundle\Document\Societe;
 use AppBundle\Type\SocieteChoiceType;
 
@@ -143,10 +144,12 @@ class FactureController extends Controller {
 
         $mouvements = $fm->getMouvementsBySociete($societe);
 
-        $facture = $fm->create($societe, $mouvements, new \DateTime());
-        $facture->setDateFacturation($date);
-        $dm->persist($facture);
-        $dm->flush();
+        foreach($mouvements as $mouvement) {
+            $facture = $fm->create($societe, array($mouvement), new \DateTime());
+            $facture->setDateFacturation($date);
+            $dm->persist($facture);
+            $dm->flush();
+        }
 
         return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
     }
@@ -203,6 +206,18 @@ class FactureController extends Controller {
         $dm->persist($facture);
         $dm->flush();
         return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
+    }
+
+
+    /**
+     * @Route("/facturer/{id}/{identifiant}", name="facture_defacturer")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function defacturerAction(Request $request, Contrat $contrat, $identifiant) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+    	$contrat->resetFacturableMouvement($identifiant);
+        $dm->flush();
+        return $this->redirectToRoute('facture_societe', array('id' => $contrat->getSociete()->getId()));
     }
 
     /**
@@ -271,16 +286,18 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/export-comptable", name="facture_export_comptable")
+     * @Route("/facture/export", name="facture_export")
      */
     public function exportComptableAction(Request $request) {
 
       // $response = new StreamedResponse();
+        $formRequest = $request->request->get('form');
+        $date = \DateTime::createFromFormat('d/m/Y',$formRequest['date']);
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
-        $facturesForCsv = $fm->getFacturesForCsv();
+        $facturesForCsv = $fm->getFacturesForCsv($date);
 
-        $filename = sprintf("export_factures_%s.csv", (new \DateTime())->format("Y-m-d"));
+        $filename = sprintf("export_factures_%s.csv", $date->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
         foreach ($facturesForCsv as $paiement) {
@@ -290,6 +307,8 @@ class FactureController extends Controller {
         rewind($handle);
         $content = stream_get_contents($handle);
         fclose($handle);
+
+        $content = "\xef\xbb\xbf".$content;
 
         $response = new Response($content, 200, array(
             'Content-Type' => 'text/csv',
@@ -301,18 +320,20 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/export-stats", name="facture_export_stat")
+     * @Route("/stats/export", name="stats_export")
      */
     public function exportStatsAction(Request $request) {
 
       // $response = new StreamedResponse();
+        $formRequest = $request->request->get('form');
+        $date = \DateTime::createFromFormat('d/m/Y',$formRequest['date']);
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
-        $facturesStatsForCsv = $fm->getStatsForCsv();
+        $facturesStatsForCsv = $fm->getStatsForCsv($date);
 
 
 
-        $filename = sprintf("export_stat_%s.csv", (new \DateTime())->format("Y-m-d"));
+        $filename = sprintf("export_stat_%s.csv", $date->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
         foreach ($facturesStatsForCsv as $paiement) {

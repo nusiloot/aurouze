@@ -3,7 +3,7 @@
 {% block title %}Passages{% endblock title %}
 {% block body %}
 
-    <div class="row">
+    <div class="row hide-print">
         <div class="col-xs-12">
             {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
         </div>
@@ -11,14 +11,14 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <h3>Liste des passages à planifier pour {{ etablissementManager.secteursNom(secteur) }}
+            <h3 class="hide-print">Liste des passages à planifier pour {{ etablissementManager.secteursNom(secteur) }}
                 <br/>
                 {% for moisPassage in moisPassagesArray %}
                     <a href='{{ path('passage',{"secteur" : secteur}) }}#filtre=["{{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM") | capitalize}} {{ moisPassage.date | date("Y") }}"]' >
                         <small>{{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM") | capitalize }}</small></a>&nbsp;<span class="badge">{{ moisPassage.nb }}</span>&nbsp;&nbsp;
                 {% endfor %}
             </h3>
-            <div class="form-horizontal">
+            <div class="form-horizontal hide-print">
                 <div class="form-group">
                     <div class="col-xs-9">
                         <select mulitple="multiple" data-placeholder="Filtrer la liste en saisissant un techinicien, un code postal, ..." data-hamzastyle-container="#liste_passage" class="hamzastyle form-control select2"></select>
@@ -32,15 +32,14 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-6">
+                <div class="col-xs-6 enlarge-print">
                     <div id="liste_passage" class="list-group well" style="height: 650px; overflow: auto; position: relative;">
                         {% for passage in passages %}
                             {{ include('passage/passageItem.html.twig', {'passage': passage,'passageManager':passageManager}) }}
                         {% endfor %}
                     </div>
-
                 </div>
-                <div class="col-xs-6">
+                <div class="col-xs-6 hide-print">
                     <div id="map" class="well" style="width: 100%; height: 650px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
                     <pre class="hidden">{{ geojson | json_encode() }}</pre>
                 </div>

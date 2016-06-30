@@ -8,10 +8,11 @@
 
     </ol>
     <div class="btn-group">
-        <a onclick="return confirm('Êtes-vous sûre de vouloir faire l\'export comptable facture ?');" class="btn btn-sm btn-default" href="{{ path('facture_export_comptable') }}"><span class="glyphicon glyphicon-usd"></span> Export comptable factures</a>
-
-        <a onclick="return confirm('Êtes-vous sûre de vouloir faire l\'export comptable paiements ?');" class="btn btn-sm btn-default" href="{{ path('paiements_export_comptable') }}"><span class="glyphicon glyphicon-th-list"></span>  Export comptable paiements</a>
+      {% for exportForm in exportForms %}
+        <a data-toggle="modal" data-target="#datechoice{{ exportForm.type }}" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-usd"></span> {{exportForm.libelle}}</a>
+      {% endfor %}
     </div>
+
     <a class="btn btn-sm btn-default pull-right" href="{{ path('paiements_nouveau') }}" style="margin-bottom: 10px;"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Créer une nouvelle saisie</strong></a>
     <br/>
     <div id="wrapper">
@@ -28,15 +29,33 @@
             </thead>
             <tbody>
                 {% for paiements in paiementsDocs %}
-                    <tr class="">
-                        <th class="col-xs-2"><a href="{{ path('paiements_modification', {'id': paiements.id })}}">{{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}</a></th>
+                    <tr class="" {% if(paiements.isImprime) %} style="opacity:0.7" {% endif %}>
+                        <th class="col-xs-2">
+                          {% if(not paiements.isImprime) %}<a href="{{ path('paiements_modification', {'id': paiements.id })}}">{% endif %}
+                            {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}
+                          {% if(not paiements.isImprime) %}</a>{% endif %}
+                          {% if(paiements.isImprime) %}
+                          <br/>
+                          <br/>
+                          <a class="btn btn-sm btn-default" href="{{ path('paiements_export_banque', {'id': paiements.id }) }}">
+                              <span class="glyphicon glyphicon-print"></span>
+                              {% if(paiements.isRemiseEspece) %}
+                                Imprimé de 1 espèce
+                              {% else %}
+                              Imprimé de {{ paiements.nbPaiementUniqueParMoyen }} chèque(s)
+
+                              {% endif %}
+                          </a>{% endif %}
+                          </a>
+                        </th>
                         <th class="col-xs-1 text-right">{{ paiements.paiement | length }}</th>
                         <th class="col-xs-7">
                             {% for paiement in paiements.paiement %}
                                 <div class="row">
-                                    <div class="col-xs-10">
+                                    <div class="col-xs-10" style="height: 30px;">
                                         <a title="Voir la société" href="{{ path('societe_visualisation', {'id': paiement.facture.societe.id })}}">
-                                            {% if paiement.facture.societe.raisonSociale | length > 45 %}{{ paiement.facture.societe.raisonSociale | slice(0, 45)~"..." }}{%else%}{{ paiement.facture.societe.raisonSociale }}{%endif%}</a>&nbsp(Facture n°{{ paiement.facture.numeroFacture }})
+                                            {% if paiement.facture.societe.raisonSociale | length > 40 %}{{ paiement.facture.societe.raisonSociale | slice(0, 40)~"..." }}{%else%}{{ paiement.facture.societe.raisonSociale }}{%endif%}</a>&nbsp(Facture n°{{ paiement.facture.numeroFacture }})
+                                            {% if paiement.moyenPaiement == 'CHEQUE' %}&nbsp<span class="label label-warning">Chèque</span>{% endif %}
                                     </div>
                                     <div class="col-xs-2 text-right">
                                         {{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;
@@ -44,11 +63,40 @@
                                 </div>
                             {% endfor %}
                         </th>
-                        <th class="col-xs-2 text-right">{{ paiements.getMontantTotal | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</th>
+                        <th class="col-xs-2 text-right">{{ paiements.getMontantTotal | number_format(2, ',', ' ') }}&nbsp;€&nbsp;<br/>
+                        (Chèques : {{ paiements.getMontantTotalByMoyenPaiement('CHEQUE') | number_format(2, ',', ' ')}}&nbsp;€&nbsp;)</th>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-
     </div>
+      {% for exportForm in exportForms %}
+<div  id="datechoice{{exportForm.type}}"  class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content">
+            {{ form_start(exportForm.form) }}
+            <div class="modal-header">
+              <h4>Êtes-vous sûre de vouloir faire l'export comptable {{exportForm.type}}?</h4>
+            </div>
+                <div class="modal-body form-horizontal">
+                        <div class="form-group">
+                            {{ form_errors(exportForm.form.date) }}
+                            {{ form_label(exportForm.form.date, "Date de l'export", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
+                            <div class="col-xs-10">
+                                {{ form_widget(exportForm.form.date) }}
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-xs-12 text-right">
+                                <button class="btn btn-primary" type="submit">Exporter</button>
+                        </div>
+                    </div>
+                </div>
+                    {{ form_end(exportForm.form) }}
+            </div>
+        </div>
+      </div>
+    {% endfor %}
 {% endblock %}

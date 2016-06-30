@@ -131,9 +131,14 @@ body {
   margin: 0;
 }
 
+
 .searchable_result a {
 	color: #333;
 }
 .searchable_result a:hover {
 	text-decoration: none;
+}
+.show-print {
+	visibility: hidden !important;
+	position: absolute !important;
 }

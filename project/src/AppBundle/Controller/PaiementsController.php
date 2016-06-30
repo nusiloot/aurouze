@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\PaiementsType;
 use AppBundle\Document\Paiements;
 use AppBundle\Document\Societe;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class PaiementsController extends Controller {
 
@@ -18,9 +19,10 @@ class PaiementsController extends Controller {
      */
     public function indexAction(Request $request) {
 
-        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(10);
+        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(20);
 
-        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs));
+        $exportForms = $this->createExportsForms();
+        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs,'exportForms' => $exportForms));
     }
 
     /**
@@ -97,16 +99,18 @@ class PaiementsController extends Controller {
     }
 
     /**
-     * @Route("/paiements/export-comptable", name="paiements_export_comptable")
+     * @Route("/paiements/export", name="paiements_export")
      */
     public function exportComptableAction(Request $request) {
 
       // $response = new StreamedResponse();
+        $formRequest = $request->request->get('form');
+        $date = \DateTime::createFromFormat('d/m/Y',$formRequest['date']);
         $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('paiements.manager');
-        $paiementsForCsv = $pm->getPaiementsForCsv();
+        $paiementsForCsv = $pm->getPaiementsForCsv($date);
 
-        $filename = sprintf("export_paiements_%s.csv", (new \DateTime())->format("Y-m-d"));
+        $filename = sprintf("export_paiements_%s.csv", $date->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
         foreach ($paiementsForCsv as $paiement) {
@@ -114,8 +118,11 @@ class PaiementsController extends Controller {
         }
 
         rewind($handle);
+
         $content = stream_get_contents($handle);
         fclose($handle);
+
+        $content = "\xef\xbb\xbf".$content;
 
         $response = new Response($content, 200, array(
             'Content-Type' => 'text/csv',
@@ -133,6 +140,7 @@ class PaiementsController extends Controller {
     public function pdfBanqueAction(Request $request, Paiements $paiements) {
 
 
+        $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('paiements.manager');
         $paiementsLists = array();
         $page = 0;
@@ -145,6 +153,7 @@ class PaiementsController extends Controller {
           $paiementsLists[$page][] = $paiement;
           $cpt++;
         }
+
 
         $html = $this->renderView('paiements/pdfBanque.html.twig', array(
             'paiements' => $paiements,
@@ -160,6 +169,10 @@ class PaiementsController extends Controller {
             return new Response($html, 200);
         }
 
+        $paiements->setImprime(true);
+        $dm->persist($paiements);
+        $dm->flush();
+
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
             'Content-Type' => 'application/pdf',
@@ -170,6 +183,30 @@ class PaiementsController extends Controller {
 
     public function getPdfGenerationOptions() {
         return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4, 'zoom' => 1);
+    }
+
+    private function createExportsForms(){
+
+      $exportsTypes = array("facture" => "Export des factures","paiements" => "Export des paiements","stats" => "stats");
+      $exportForms = array();
+      foreach ($exportsTypes as $exporttype => $libelle) {
+        $exportForms[$exporttype] = new \stdClass();
+        $exportForms[$exporttype]->type = $exporttype;
+        $exportForms[$exporttype]->libelle = $libelle;
+        $form = $this->createFormBuilder(array())
+            ->add('date', DateType::class, array('required' => true,
+                "attr" => array('class' => 'input-inline datepicker',
+                    'data-provide' => 'datepicker',
+                    'data-date-format' => 'dd/mm/yyyy'
+                    ),
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy',
+                'label' => 'Date de début* :',
+            ))->setAction($this->generateUrl($exporttype.'_export'))->getForm();
+
+        $exportForms[$exporttype]->form = $form->createView();
+      }
+      return $exportForms;
     }
 
 }

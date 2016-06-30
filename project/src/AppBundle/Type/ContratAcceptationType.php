@@ -86,7 +86,7 @@ class ContratAcceptationType extends AbstractType {
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple"))));
 
-        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "required" => false, "attr" => array("class" => "form-control", "rows" => 14)));
+        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "required" => false, "attr" => array("class" => "form-control", "rows" => 15)));
         $builder->add('referenceClient', TextType::class, array('label' => 'Numéro de commande :', 'required' => false));
         $builder->add('factureDestinataire', TextType::class, array('label' => 'Destinataire de la facture (si différent de celui de la société) :', 'required' => false));
 

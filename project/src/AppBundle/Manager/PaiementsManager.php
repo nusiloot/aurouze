@@ -123,17 +123,29 @@ class PaiementsManager {
         return $paiements;
     }
 
-    public function getPaiementsForCsv() {
-        $date = new \DateTime();
-        $paiementsObjs = $this->getRepository()->findByDate($date);
+    public function getPaiementsForCsv($date = null) {
+        if(!$date){
+          $date = new \DateTime();
+          }
+        $paiementsObjs = $this->getRepository()->findLastMonthByDate($date);
+        if(!$date){
+        $oneMonthPast = new \DateTime();
+      }else{
+        $oneMonthPast = clone $date;
+      }
+        $oneMonthPast->modify("-1 month");
+        $startOfMonth = \DateTime::createFromFormat('Y-m-d', $oneMonthPast->format('Y-m')."-01");
+        $endOfMonth = \DateTime::createFromFormat('Y-m-d', $date->format('Y-m')."-01");
 
         $paiementsArray = array();
         $paiementsArray[] = self::$export_paiement_libelle;
 
         foreach ($paiementsObjs as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
+              $paiementDate = $paiement->getDatePaiement();
+              if(($paiementDate  >= $startOfMonth) && ($endOfMonth > $paiementDate)){
                 $paiementArr = array();
-                $paiementArr[self::EXPORT_DATE_PAIEMENT] = $paiement->getDatePaiement()->format('d/m/Y');
+                $paiementArr[self::EXPORT_DATE_PAIEMENT] = $paiementDate->format('d/m/Y');
                 $paiementArr[self::EXPORT_CODE_COMPTABLE] = $paiement->getFacture()->getSociete()->getCodeComptable();
                 $paiementArr[self::EXPORT_VR_PRIX] = "";
                 $paiementArr[self::EXPORT_FACTURE_NUM_RAISON_SOCIALE] = $paiement->getFacture()->getNumeroFacture()." ".$paiement->getFacture()->getSociete()->getRaisonSociale();
@@ -145,25 +157,39 @@ class PaiementsManager {
                     $paiementArr[self::EXPORT_TVA_7] = "";
                     $paiementArr[self::EXPORT_TVA_196] = "";
                     if($paiement->getFacture()->getTva() == 0.1){
-                      $paiementArr[self::EXPORT_TVA_10] = number_format($paiement->getFacture()->getMontantTaxe(), 2, ",", "");
+                      $paiementArr[self::EXPORT_TVA_10] = number_format($paiement->getMontantTaxe(), 2, ",", "");
                     }else{
                       $paiementArr[self::EXPORT_TVA_10] = "";
                     }
                     if($paiement->getFacture()->getTva() == 0.2){
-                      $paiementArr[self::EXPORT_TVA_20] = number_format($paiement->getFacture()->getMontantTaxe(), 2, ",", "");
+                      $paiementArr[self::EXPORT_TVA_20] = number_format($paiement->getMontantTaxe(), 2, ",", "");
                     }else{
                       $paiementArr[self::EXPORT_TVA_20] = "";
                     }
-                      $paiementArr[self::EXPORT_MODE_REGLEMENT] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
+                    if(isset(self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()])) {
+                        $paiementArr[self::EXPORT_MODE_REGLEMENT] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
+                    } else {
+                        $paiementArr[self::EXPORT_MODE_REGLEMENT] = "";
+                    }
+                    if(isset(self::$types_reglements_libelles[$paiement->getTypeReglement()])) {
                       $paiementArr[self::EXPORT_TYPE_REGLEMENT] = self::$types_reglements_libelles[$paiement->getTypeReglement()];
+                    } else {
+                      $paiementArr[self::EXPORT_TYPE_REGLEMENT] = "";
+                    }
+
                       $paiementArr[self::EXPORT_NUMERO_PIECE_BANQUE] = "";
                       $paiementArr[self::EXPORT_LIBELLE_PIECE_BANQUE] = $paiement->getLibelle();
-                      $paiementArr[self::EXPORT_TYPE_PIECE_BANQUE] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
+                      if(isset(self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()])) {
+                          $paiementArr[self::EXPORT_TYPE_PIECE_BANQUE] = self::$moyens_paiement_libelles[$paiement->getMoyenPaiement()];
+                      } else {
+                          $paiementArr[self::EXPORT_TYPE_PIECE_BANQUE] = "";
+                      }
                       $paiementArr[self::EXPORT_MONTANT_PIECE_BANQUE] = number_format($paiement->getMontant(), 2, ",", "");
                       $paiementArr[self::EXPORT_MONTANT_CHEQUE] = ($paiement->getMoyenPaiement() == self::MOYEN_PAIEMENT_CHEQUE)? $paiements->getMontantTotalByMoyenPaiement(self::MOYEN_PAIEMENT_CHEQUE) : "";
 
 
                 $paiementsArray[] = $paiementArr;
+              }
             }
         }
         return $paiementsArray;
