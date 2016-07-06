@@ -677,6 +677,16 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $prix;
     }
 
+    public function getPrixFactures() {
+        $prix = 0;
+        foreach ($this->getMouvements() as $mouvement) {
+          if($mouvement->isFacture()){
+            $prix = $prix + $mouvement->getPrixUnitaire();
+            }
+        }
+        return $prix;
+    }
+
     public function getPrixRestant() {
         $prixMouvement = $this->getPrixMouvements();
 
@@ -695,7 +705,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         if ($this->getPrixRestant() <= 0 || $this->getNbFacturesRestantes() <= 0) {
             return null;
         }
-        
+
         $mouvement = $this->buildMouvement($origineDocumentGeneration);
 
         $this->addMouvement($mouvement);
@@ -1589,5 +1599,26 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getDevisAdresse() {
 
         return $this->getDevisInterlocuteur()->getAdresse();
+    }
+
+    public function calculPca(){
+      if(!$this->getContratPassages()->first()){
+        return array('pca' => '0', 'ratioFacture' => '0', 'ratioActivite' => '0');
+      }
+      $nbPassagesEff = $this->getContratPassages()->first()->getNbPassagesRealisesOuAnnule();
+      $nbPassageTotal = $this->getNbPassages();
+      $nbPassageRestant = $nbPassageTotal - $nbPassagesEff;
+      $ratioEffectue = (!$nbPassageTotal)? "0" : (floatval($nbPassagesEff) / floatval($nbPassageTotal));
+
+      $prixFacture =  $this->getPrixFactures();
+      $prixTotal =  $this->getPrixHt();
+
+      $ratioFacture = (!$prixTotal)? "0" : (floatval($prixFacture) / floatval($prixTotal));
+
+      $diffRatio = $ratioEffectue - $ratioFacture;
+
+      $pca = $diffRatio * $prixTotal;
+
+      return array('pca' => $pca, 'ratioFacture' => $ratioFacture, 'ratioActivite' => $ratioEffectue);
     }
 }

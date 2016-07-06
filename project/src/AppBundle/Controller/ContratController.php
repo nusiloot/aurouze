@@ -371,4 +371,38 @@ class ContratController extends Controller {
         );
     }
 
+    /**
+     * @Route("/contrat/export-pca", name="pca_export")
+     */
+    public function exportPcaAction(Request $request) {
+        ini_set('memory_limit', '-1');
+      // $response = new StreamedResponse();
+        $formRequest = $request->request->get('form');
+        $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $cm = $this->get('contrat.manager');
+        $pca_for_csv = $cm->getPcaForCsv($dateDebut);
+
+        $filename = sprintf("export_pca_du_%s.csv", $dateDebut->format("Y-m-d"));
+        $handle = fopen('php://memory', 'r+');
+
+        foreach ($pca_for_csv as $paiement) {
+            fputcsv($handle, $paiement,';');
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        $content = "\xef\xbb\xbf".$content;
+
+        $response = new Response($content, 200, array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=' . $filename,
+        ));
+        $response->setCharset('UTF-8');
+
+        return $response;
+    }
+
 }
