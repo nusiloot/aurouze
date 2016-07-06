@@ -421,18 +421,19 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/facture/export", name="facture_export")
+     * @Route("/facture/export", name="factures_export")
      */
     public function exportComptableAction(Request $request) {
 
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
-        $date = \DateTime::createFromFormat('d/m/Y',$formRequest['date']);
+        $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dateFin = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
-        $facturesForCsv = $fm->getFacturesForCsv($date);
+        $facturesForCsv = $fm->getFacturesForCsv($dateDebut,$dateFin);
 
-        $filename = sprintf("export_factures_%s.csv", $date->format("Y-m-d"));
+        $filename = sprintf("export_factures_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
         foreach ($facturesForCsv as $paiement) {
@@ -461,14 +462,15 @@ class FactureController extends Controller {
 
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
-        $date = \DateTime::createFromFormat('d/m/Y',$formRequest['date']);
+        $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dateFin = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
-        $facturesStatsForCsv = $fm->getStatsForCsv($date);
+        $facturesStatsForCsv = $fm->getStatsForCsv($dateDebut,$dateFin);
 
 
 
-        $filename = sprintf("export_stat_%s.csv", $date->format("Y-m-d"));
+        $filename = sprintf("export_stats_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
         foreach ($facturesStatsForCsv as $paiement) {

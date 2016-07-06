@@ -57,16 +57,11 @@ class FactureRepository extends DocumentRepository {
         return is_null($results) ? array() : $results;
     }
 
-    public function exportOneMonthByDate(\DateTime $date) {
-
-        $oneMonthPast = clone $date;
-        $oneMonthPast->modify("-1 month");
-        $startOfMonth = \DateTime::createFromFormat('Y-m-d', $oneMonthPast->format('Y-m')."-01");
-        $endOfMonth = \DateTime::createFromFormat('Y-m-d', $date->format('Y-m')."-01");
-
+    public function exportOneMonthByDate(\DateTime $dateDebut,\DateTime $dateFin) {
+      
         $q = $this->createQueryBuilder();
 
-        $q->field('dateFacturation')->gte($startOfMonth)->lt($endOfMonth)->sort('dateFacturation', 'asc');
+        $q->field('dateFacturation')->gte($dateDebut)->lte($dateFin)->sort('dateFacturation', 'asc');
         $query = $q->getQuery();
 
         return $query->execute();
