@@ -383,10 +383,10 @@ class FactureController extends Controller {
                $lignePassage .= $passage->getEtablissement()->getAdresse()->getCodePostal()." ".$passage->getEtablissement()->getAdresse()->getCommune();
                $ligne['details'][$keyPassage][] = $lignePassage;
             }
+        }
 
-            if($ligneFacture->getDescription()) {
-                $ligne["details"]["description"] = $ligneFacture->getDescription();
-            }
+        if($ligneFacture->getDescription()) {
+            $ligne["details"]["description"] = $ligneFacture->getDescription();
         }
 
         return $ligne;
