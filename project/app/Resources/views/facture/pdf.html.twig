@@ -1,6 +1,7 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
+{% for lignes in pages %}
 <div class="row">
     <div class="col-xs-6">
         <br />
@@ -43,6 +44,7 @@
 </div>
 <br />
 <br />
+<p class="text-center"><small>Page {{ loop.index }} / {{ loop.length }}</small></p>
 <table class="table table-bordered table-condensed" style="border-bottom: 0 !important; border-right: 0 !important;  border-left: 0 !important;">
     <thead>
         <tr>
@@ -53,38 +55,37 @@
         </tr>
     </thead>
     <tbody>
-    {% for ligne in facture.lignes %}
+    {% for ligne in lignes %}
         <tr>
             <td>
-                {% if(ligne.libelle) %}{{ ligne.libelle }}<br />{% endif %}
-                {% if ligne.referenceClient %}<small><small>Votre Réf CDE : {{ ligne.referenceClient }}</small><br /></small>{% endif %}
-                {% if ligne.origineContrat %}
+                {% if(ligne.libelle is defined) %}{{ ligne.libelle }}<br />{% endif %}
+                {% if ligne.referenceClient is defined and ligne.referenceClient %}<small><small>Votre Réf CDE : {{ ligne.referenceClient }}</small><br /></small>{% endif %}
+                {% if ligne.details is defined %}
                 <small>
                     <small>
-                    Prestation{% if ligne.origineDocument.prestations|length > 1 %}s{% endif %} :
-                    <ul class="list-unstyled" style="padding-left: 10px; margin-bottom: 0">
-                    	{% for prestation in ligne.origineDocument.prestations %}
-                        <li>- {{ prestation.nom }}</li>
-                        {% endfor %}
-                    </ul>
-                    Lieu{% if(ligne.origineDocument.contratPassages | length > 1) %}x{% endif %} d'application{% if(ligne.origineDocument.contratPassages | length > 1) %}s{% endif %} :
-                        <ul class="list-unstyled" style="padding-left: 10px;">
-                            {% for p in ligne.origineDocument.contratPassages %}
-                            <li>- {{ p.etablissement.nom(false) }}, {% if(p.etablissement.adresse.adresse) %}{{ p.etablissement.adresse.adresse }},{% endif %} {{ p.etablissement.adresse.codePostal }} {{ p.etablissement.adresse.commune }}</li>
+                    {% for libelle, details in ligne.details %}
+                        {% if details is iterable %}
+                        {{ libelle }} :
+                        <ul class="list-unstyled" style="padding-left: 10px; margin-bottom: 0">
+                        	{% for detailLigne in details %}
+                            <li>- {{ detailLigne }}</li>
                             {% endfor %}
                         </ul>
+                        {% else %}
+                            {{ details | nl2br }}
+                        {% endif %}
+                    {% endfor %}
                     </small>
                 </small>
-                {% elseif (ligne.description) %}
-                <small>{{ ligne.description | nl2br }}</small>
                 {% endif %}
             </td>
-            <td class="text-center">{{ ligne.quantite }}</td>
-            <td class="text-right">{{ ligne.prixUnitaire|number_format(2, ',', ' ')  }} €</td>
-            <td class="text-right">{{ ligne.montantHT|number_format(2, ',', ' ')  }} €</td>
+            <td class="text-center">{% if ligne.quantite is defined %}{{ ligne.quantite }}{% endif %}</td>
+            <td class="text-right">{% if ligne.prixUnitaire is defined %}{{ ligne.prixUnitaire|number_format(2, ',', ' ')  }} €{% endif %}</td>
+            <td class="text-right">{% if ligne.montantHT is defined %}{{ ligne.montantHT|number_format(2, ',', ' ')  }} €{% endif %}</td>
         </tr>
     {% endfor %}
     </tbody>
+    {% if loop.last %}
     <tfoot class="lead">
         <tr>
             <td style="height: 15px; border: 0 !important;"></td>
@@ -113,7 +114,12 @@
             <td colspan="2" class="text-right">{{ facture.montantTTC|number_format(2, ',', ' ')  }} €</td>
         </tr>
     </tfoot>
+    {% endif %}
 </table>
+{% if not loop.last %}
+    <div style="page-break-after: always;"></div>
+{% endif %}
+{% endfor %}
 
 {% if (facture.isDevis) %}
 <p>
