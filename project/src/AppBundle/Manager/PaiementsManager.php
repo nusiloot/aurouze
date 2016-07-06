@@ -48,6 +48,7 @@ class PaiementsManager {
     const TYPE_EXPORT_FACTURES = "factures";
     const TYPE_EXPORT_PAIEMENTS = "paiements";
     const TYPE_EXPORT_STATS = "stats";
+    const TYPE_EXPORT_PCA = "pca";
 
 
     public static $types_reglements_libelles = array(
@@ -108,7 +109,9 @@ class PaiementsManager {
       public static $types_exports = array(self::TYPE_EXPORT_FACTURES => array("libelle" =>  "Export des factures",
                                                                                "picto" =>  "glyphicon glyphicon-eur"),
     self::TYPE_EXPORT_PAIEMENTS => array("libelle" =>  "Export des paiements","picto" =>  "glyphicon glyphicon-th-list"),
-    self::TYPE_EXPORT_STATS  => array("libelle" =>  "Export des statistiques","picto" =>  "glyphicon glyphicon-stats")
+    self::TYPE_EXPORT_STATS  => array("libelle" =>  "Export des statistiques","picto" =>  "glyphicon glyphicon-stats"),
+    self::TYPE_EXPORT_PCA  => array("libelle" =>  "Export PCA","picto" =>  "glyphicon glyphicon-send")
+
     );
 
     function __construct(DocumentManager $dm, FactureManager $fm, $parameters) {

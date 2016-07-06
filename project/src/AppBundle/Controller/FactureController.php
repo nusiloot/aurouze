@@ -329,23 +329,51 @@ class FactureController extends Controller {
         $formRequest = $request->request->get('form');
         $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
         $dateFin = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $fm = $this->get('facture.manager');
-        $facturesStatsForCsv = $fm->getStatsForCsv($dateDebut,$dateFin);
 
+        $dateDebutFirstOfMonth = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dateDebutFirstOfMonth->modify('first day of this month');
+        $dateFinFirstOfMonth = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
+        $dateFinFirstOfMonth->modify('first day of next month');
 
+        $interval = \DateInterval::createFromDateString('1 month');
+        $period   = new \DatePeriod($dateDebutFirstOfMonth, $interval, $dateFinFirstOfMonth);
 
-        $filename = sprintf("export_stats_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
-        $handle = fopen('php://memory', 'r+');
-
-        foreach ($facturesStatsForCsv as $paiement) {
-            fputcsv($handle, $paiement,';');
+        $arrayOfDates = array();
+        $cpt = 0;
+        foreach ($period as $dt) {
+            $arrayOfDates[$dt->format("Y-m")] = array();
+            $firstDay = clone $dt;
+            $lastDay = clone $dt;
+            $arrayOfDates[$dt->format("Y-m")]['dateDebut'] = $firstDay->modify('first day of this month');
+            $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $lastDay->modify('last day of this month');
+          if(!$cpt){
+            $arrayOfDates[$dt->format("Y-m")]['dateDebut'] = $dateDebut;
+          }
+          $cpt++;
+          if($cpt == count($period)){
+            $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $dateFin;
+          }
         }
 
-        rewind($handle);
-        $content = stream_get_contents($handle);
-        fclose($handle);
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
 
+        $filename = sprintf("export_stats_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+
+          $handle = fopen('php://memory', 'r+');
+          foreach ($arrayOfDates as $dates) {
+
+            $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin']);
+
+          foreach ($facturesStatsForCsv as $paiement) {
+              fputcsv($handle, $paiement,';');
+          }
+          fputcsv($handle, array("",""),';');
+
+        }
+          rewind($handle);
+          $content = stream_get_contents($handle);
+          fclose($handle);
         $response = new Response($content, 200, array(
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename=' . $filename,

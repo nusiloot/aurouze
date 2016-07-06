@@ -206,6 +206,7 @@ class PaiementsController extends Controller {
                 'format' => 'dd/MM/yyyy',
                 'label' => 'Date de début* :',
             ));
+            if($exporttype != PaiementsManager::TYPE_EXPORT_PCA){
         $formBuilder->add('dateFin', DateType::class, array('required' => true,
                 "attr" => array('class' => 'input-inline datepicker',
                     'data-provide' => 'datepicker',
@@ -215,6 +216,7 @@ class PaiementsController extends Controller {
                 'format' => 'dd/MM/yyyy',
                 'label' => 'Date de fin* :',
             ));
+          }
         $formBuilder->setAction($this->generateUrl($exporttype.'_export'));
         $form = $formBuilder->getForm();
 
