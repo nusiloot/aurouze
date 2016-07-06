@@ -326,7 +326,7 @@ class ContratController extends Controller {
         $dm->persist($contrat);
         $dm->flush();
 
-        return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
+        return $this->redirectToRoute('facture_societe', array('id' => $contrat->getSociete()->getId()));
     }
 
     /**
