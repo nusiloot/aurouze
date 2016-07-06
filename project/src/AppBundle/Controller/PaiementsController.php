@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Manager\PaiementsManager;
 use AppBundle\Type\PaiementsType;
 use AppBundle\Document\Paiements;
 use AppBundle\Document\Societe;
@@ -105,12 +106,13 @@ class PaiementsController extends Controller {
 
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
-        $date = \DateTime::createFromFormat('d/m/Y',$formRequest['date']);
+        $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dateFin = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
         $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('paiements.manager');
-        $paiementsForCsv = $pm->getPaiementsForCsv($date);
+        $paiementsForCsv = $pm->getPaiementsForCsv($dateDebut,$dateFin);
 
-        $filename = sprintf("export_paiements_%s.csv", $date->format("Y-m-d"));
+        $filename = sprintf("export_paiements_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
         foreach ($paiementsForCsv as $paiement) {
@@ -187,14 +189,15 @@ class PaiementsController extends Controller {
 
     private function createExportsForms(){
 
-      $exportsTypes = array("facture" => "Export des factures","paiements" => "Export des paiements","stats" => "stats");
+      $exportsTypes = PaiementsManager::$types_exports;
       $exportForms = array();
-      foreach ($exportsTypes as $exporttype => $libelle) {
+      foreach ($exportsTypes as $exporttype => $type_export) {
         $exportForms[$exporttype] = new \stdClass();
         $exportForms[$exporttype]->type = $exporttype;
-        $exportForms[$exporttype]->libelle = $libelle;
-        $form = $this->createFormBuilder(array())
-            ->add('date', DateType::class, array('required' => true,
+        $exportForms[$exporttype]->libelle = $type_export['libelle'];
+        $exportForms[$exporttype]->picto = $type_export['picto'];
+        $formBuilder = $this->createFormBuilder(array());
+            $formBuilder->add('dateDebut', DateType::class, array('required' => true,
                 "attr" => array('class' => 'input-inline datepicker',
                     'data-provide' => 'datepicker',
                     'data-date-format' => 'dd/mm/yyyy'
@@ -202,7 +205,18 @@ class PaiementsController extends Controller {
                 'widget' => 'single_text',
                 'format' => 'dd/MM/yyyy',
                 'label' => 'Date de début* :',
-            ))->setAction($this->generateUrl($exporttype.'_export'))->getForm();
+            ));
+        $formBuilder->add('dateFin', DateType::class, array('required' => true,
+                "attr" => array('class' => 'input-inline datepicker',
+                    'data-provide' => 'datepicker',
+                    'data-date-format' => 'dd/mm/yyyy'
+                    ),
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy',
+                'label' => 'Date de fin* :',
+            ));
+        $formBuilder->setAction($this->generateUrl($exporttype.'_export'));
+        $form = $formBuilder->getForm();
 
         $exportForms[$exporttype]->form = $form->createView();
       }
