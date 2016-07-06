@@ -1428,6 +1428,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      * @param AppBundle\Document\Mouvement $mouvement
      */
     public function removeMouvement(\AppBundle\Document\Mouvement $mouvement) {
+        if($mouvement->getOrigineDocumentGeneration() && $mouvement->getOrigineDocumentGeneration() instanceof Passage && $mouvement->getOrigineDocumentGeneration()->getMouvementDeclenche()) {
+            $mouvement->getOrigineDocumentGeneration()->setMouvementDeclenche(false);
+        }
+
         $this->mouvements->removeElement($mouvement);
     }
 
