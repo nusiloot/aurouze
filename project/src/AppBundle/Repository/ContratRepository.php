@@ -43,7 +43,7 @@ class ContratRepository extends DocumentRepository {
     public function findAllFrequences() {
     	return ContratManager::$frequences;
     }
-    
+
 
 
     public function findByQuery($q)
@@ -54,8 +54,8 @@ class ContratRepository extends DocumentRepository {
     			'filter' => ['$text' => ['$search' => $q]],
     			'projection' => ['score' => [ '$meta' => "textScore" ]],
     			'sort' => ['score' => [ '$meta' => "textScore" ]],
-    			'limit' => 50
-    
+    			'limit' => 100
+
     	]);
     	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
     		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {

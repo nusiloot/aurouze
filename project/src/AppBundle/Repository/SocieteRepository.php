@@ -48,7 +48,7 @@ class SocieteRepository extends DocumentRepository {
 
         return is_null($results) ? array() : $results;
     }
-    
+
     public function findByQuery($q, $inactif = false)
     {
 
@@ -56,25 +56,25 @@ class SocieteRepository extends DocumentRepository {
     	$expr = $query->expr()->operator('$text', array(
     			'$search'   => $q
     	));
-    	
-    	
-    	
+
+
+
     	$societes = $query->equals($expr->getQuery())->sortMeta('score', 'textScore')->limit(100)->getQuery()->execute();
     	foreach ($societes as $key => $societe) {
     		echo $societe->getLibelleComplet();
     		echo '<hr />';
     	}
     	exit;*/
-    	 
-    	
+
+
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([
     		'find' => 'Societe',
     		'filter' => ['$text' => ['$search' => $q]],
     		'projection' => ['score' => [ '$meta' => "textScore" ]],
     		'sort' => ['score' => [ '$meta' => "textScore" ]],
-    		'limit' => 50
-    				
+    		'limit' => 100
+
         ]);
     	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
 	    	foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {

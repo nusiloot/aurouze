@@ -4,7 +4,12 @@
 {% block title %}Factures{% endblock title %}
 
 {% block body %}
-<div class="row" id="searchable">
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('facture') }}">Facture</a></li>
+	</ol>
+
+	<div class="row" id="searchable">
 	    <div class="col-xs-12">
 	        <h3 style="margin-top: 10px;">Rechercher par facture</h3>
 	        {{ form_start(form, {'attr': { 'novalidate': 'novalidate', 'class': 'form-horizontal' } }) }}

@@ -15,6 +15,7 @@ use AppBundle\Type\ContratType;
 use AppBundle\Type\ContratMarkdownType;
 use AppBundle\Type\ContratGeneratorType;
 use AppBundle\Type\ContratAcceptationType;
+use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
 use Knp\Snappy\Pdf;
@@ -26,7 +27,7 @@ class ContratController extends Controller {
      * @Route("/contrat", name="contrat")
      */
     public function indexAction(Request $request) {
-    	
+
     $dm = $this->get('doctrine_mongodb')->getManager();
     	$form = $this->createForm(ContratChoiceType::class, null, array(
     			'action' => $this->generateUrl('contrat'),
@@ -36,7 +37,7 @@ class ContratController extends Controller {
     	$search = false;
     	$query = false;
     	$form->handleRequest($request);
-    	if ($form->isSubmitted() && $form->isValid()) {    	
+    	if ($form->isSubmitted() && $form->isValid()) {
     		$query = $form->getData()['contrats'];
     		$search = true;
     		$result = $dm->getRepository('AppBundle:Contrat')->findByQuery($query);
