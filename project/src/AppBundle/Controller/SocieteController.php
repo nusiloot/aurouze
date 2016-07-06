@@ -29,13 +29,13 @@ class SocieteController extends Controller {
     	$search = false;
     	$query = false;
     	$form->handleRequest($request);
-    	if ($form->isSubmitted() && $form->isValid()) {    	
-    		$query = $form->getData()['societes'];   	
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		$query = $form->getData()['societes'];
     		$inactif = ($form->getData()['actif'])? true : false;
     		$search = true;
     		$result = array_merge($dm->getRepository('AppBundle:Societe')->findByQuery($query, $inactif), $dm->getRepository('AppBundle:Etablissement')->findByQuery($query, $inactif));
     		$result = array_merge($result, $dm->getRepository('AppBundle:Compte')->findByQuery($query, $inactif));
-    	
+
     		usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
     	}
 

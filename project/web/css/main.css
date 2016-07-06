@@ -93,7 +93,7 @@ body {
 }
 
 .tt-menu {
-  max-height: 150px;
+  max-height: 300px;
   overflow-y: auto;
   width: 100%;
   margin: 8px 0;
@@ -112,7 +112,7 @@ body {
 .tt-suggestion {
   padding: 3px 15px;
   font-size: 15px;
-  line-height: 22px;
+  line-height: 28px;
 }
 
 .tt-suggestion:hover {

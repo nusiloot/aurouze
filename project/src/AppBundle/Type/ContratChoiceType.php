@@ -21,7 +21,7 @@ class ContratChoiceType extends AbstractType {
         if(isset($options['data']) && isset($options['data']['contrat'])) {
             $defaultChoice = array($options['data']['contrat']->getLibelle() => $options['data']['contrat']->getLibelle());
         }
-        $builder->add('contrats', TextType::class, array("attr" => array("class" => "typeahead form-control", "placeholder" => "Rechercher un contrat")));
+        $builder->add('contrats', TextType::class, array("attr" => array("class" => "form-control", "placeholder" => "Rechercher un contrat")));
     }
 
     /**

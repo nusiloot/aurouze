@@ -74,6 +74,7 @@ class FactureRepository extends DocumentRepository {
 
     public function findByQuery($q)
     {
+        $q = "\"".str_replace(" ", "\" \"", $q)."\"";
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Facture')->command([
     			'find' => 'Facture',

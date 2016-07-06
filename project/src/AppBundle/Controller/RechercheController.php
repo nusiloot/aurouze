@@ -34,11 +34,8 @@ class RechercheController extends Controller {
         $query = $request->get('q');
         $inactif = $request->get('inactif', false);
         $inactif = ($inactif)? true : false;
-
-        $result = array_merge($dm->getRepository('AppBundle:Societe')->findByQuery($query, $inactif), $dm->getRepository('AppBundle:Etablissement')->findByQuery($query, $inactif));
-        $result = array_merge($result, $dm->getRepository('AppBundle:Compte')->findByQuery($query, $inactif));
+        $result = array_merge($dm->getRepository('AppBundle:Societe')->findByQuery($query, $inactif));
         usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
-
 
         $result = $this->contructSearchResultSociete($result);
 
@@ -70,7 +67,7 @@ class RechercheController extends Controller {
 
 	public static function cmpContacts($a, $b)
 	{
-		return ($a['score'] > $b['score']) ? -1 : +1;
+		return ($a['score'] > $b['score']) ? false : true;
 	}
 
     public function contructSearchResultSociete($items)

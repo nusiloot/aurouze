@@ -66,6 +66,7 @@ class SocieteRepository extends DocumentRepository {
     	}
     	exit;*/
 
+        $q = "\"".str_replace(" ", "\" \"", $q)."\"";
 
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([

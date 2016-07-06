@@ -351,36 +351,36 @@
             $(this).parents(".dynamic-collection-item").find('.prix-unitaire').val(suggestion.prix);
         });
     }
-    
-    
+
+
 
     $.initTypeheadSearchable = function () {
         if (!$('#searchable').length) {
             return;
         }
-        var url = $('#searchable').data('url');
+        var url = $('#searchable').data('url')+"?q=%QUERY&inactif="+((checkbox && checkbox.is(':checked'))? "1" : "0");
         var type = $('#searchable').data('type');
         var target = $('#searchable').data('target');
         var checkbox = $('#searchable').find("input[type=checkbox]");
-        
+
+        console.log(url+"?q=%QUERY&inactif="+((checkbox && checkbox.is(':checked'))? "1" : "0"));
+
         $('#searchable .typeahead').typeahead({
     	  hint: true,
     	  highlight: true,
     	  minLength: 3
     	},
     	{
-    	  async: true,
-    	  source: function (query, processSync, processAsync) {
-    	    return $.ajax({
-    	      url: url, 
-    	      type: 'GET',
-    	      data: {q: query, inactif: (checkbox && checkbox.is(':checked'))? 1 : 0},
-    	      dataType: 'json',
-    	      success: function (json) {
-    	        return processAsync(json);
-    	      }
-    	    });
-    	  },
+          limit: 100,
+    	  source: new Bloodhound({
+              datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+              queryTokenizer: Bloodhound.tokenizers.whitespace,
+              remote: {
+                url: url,
+                wildcard: '%QUERY'
+              }
+            }),
+          display: "libelle",
           templates: {
               suggestion: function (e) {
             	  if (type == 'societe') {
@@ -392,10 +392,6 @@
             	  }
             	  if (type == 'contrat') {
 	            	  var result = e.type+' <small class="text-'+e.color+'">'+e.statut+'</small> n°<strong>'+e.identifiant+'</strong> '+e.periode+' <small class="text-muted">'+e.garantie+'</small> '+e.prix+' €';
-	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
-            	  }
-            	  if (type == 'facture') {
-	            	  var result = e.libelle;
 	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
             	  }
             	  return 'undefined';

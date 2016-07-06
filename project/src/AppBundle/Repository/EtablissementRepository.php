@@ -59,9 +59,12 @@ class EtablissementRepository extends DocumentRepository {
 
         return is_null($results) ? array() : $results;
     }
-    
+
     public function findByQuery($q, $inactif = false)
     {
+
+        $q = "\"".str_replace(" ", "\" \"", $q)."\"";
+
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([
     			'find' => 'Etablissement',
@@ -69,7 +72,7 @@ class EtablissementRepository extends DocumentRepository {
     			'projection' => ['score' => [ '$meta' => "textScore" ]],
     			'sort' => ['score' => [ '$meta' => "textScore" ]],
     			'limit' => 50
-    			 
+
     	]);
     	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
     		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {

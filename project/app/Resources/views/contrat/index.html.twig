@@ -45,7 +45,7 @@
             	{% for item in result %}
                     {% set contrat = item.doc %}
                     <tr>
-                        <td>{{ contrat.societe.raisonSociale }}</td>
+                        <td><a href="{{ path('contrats_societe', {'id': contrat.societe.id}) }}">{{ contrat.societe.raisonSociale }}</a></td>
                         <td><small class="text-{{ contrat.statutCouleur }}">{{ contrat.statutLibelle }}</small></td>
                         <td><small>{{ contrat.typeContratLibelle }}</small></td>
                         <td><a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">n°&nbsp;{{ contrat.numeroArchive }}</a></td>
