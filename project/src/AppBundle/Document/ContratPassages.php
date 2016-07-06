@@ -78,7 +78,7 @@ class ContratPassages {
     	usort($passages, array("AppBundle\Document\ContratPassages", $cmp));
     	return $passages;
     }
-    
+
     public static function cmpPassage($a, $b)
     {
     	$da = ($a->getDatePrevision())? $a->getDatePrevision()->format('Ymd') : 0;
@@ -88,7 +88,7 @@ class ContratPassages {
     	}
     	return ($da > $db) ? +1 : -1;
     }
-    
+
     public static function cmpInvPassage($a, $b)
     {
     	$da = ($a->getDatePrevision())? $a->getDatePrevision()->format('Ymd') : 0;
@@ -115,6 +115,14 @@ class ContratPassages {
             $realises+=($passage->isRealise());
         }
         return $realises;
+    }
+
+    public function getNbPassagesRealisesOuAnnule() {
+        $realisesOuAnnules = 0;
+        foreach ($this->getPassages() as $passage) {
+            $realisesOuAnnules+=($passage->isRealise() || $passage->isAnnule());
+        }
+        return $realisesOuAnnules;
     }
 
     public function getPassagesSorted($reverse = false) {

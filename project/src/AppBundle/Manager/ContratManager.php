@@ -37,6 +37,19 @@ class ContratManager implements MouvementManagerInterface {
     const FREQUENCE_45JMOIS = '45JMOIS';
     const FREQUENCE_60J = '60J';
 
+    const EXPORT_PCA_CLIENT = 0;
+    const EXPORT_PCA_NUMERO_CONTRAT = 1;
+    const EXPORT_PCA_DEBUT = 2;
+    const EXPORT_PCA_FIN = 3;
+    const EXPORT_PCA_MONTANT_HT = 4;
+    const EXPORT_PCA_MONTANT_FACTURE = 5;
+    const EXPORT_PCA_RATIO_FACTURE = 6;
+    const EXPORT_PCA_NB_PASSAGE = 7;
+    const EXPORT_PCA_NB_PASSAGE_EFFECTUE  = 8;
+    const EXPORT_PCA_RATIO_PASSAGE  = 9;
+    const EXPORT_PCA_PCA_VALEUR = 10;
+    const EXPORT_PCA_CONTROLE  = 11;
+
     public static $moyens_contrat_libelles = array(
         self::MOYEN_3D => '3D',
         self::MOYEN_PIGEONS => 'Pigeons',
@@ -103,6 +116,22 @@ class ContratManager implements MouvementManagerInterface {
         "6" => self::FREQUENCE_45JMOIS,
         "9" => self::FREQUENCE_60J
     );
+
+    public static $pca_entete_libelle = array(
+      self::EXPORT_PCA_CLIENT => "Client",
+      self::EXPORT_PCA_NUMERO_CONTRAT => "Numéro Contrat",
+      self::EXPORT_PCA_DEBUT => "Début",
+      self::EXPORT_PCA_FIN => "Fin",
+      self::EXPORT_PCA_MONTANT_HT => "Montant HT",
+      self::EXPORT_PCA_MONTANT_FACTURE => "Montant facturé",
+      self::EXPORT_PCA_RATIO_FACTURE => "Pourcentage facturé",
+      self::EXPORT_PCA_NB_PASSAGE => "Nb. passages du contrat",
+      self::EXPORT_PCA_NB_PASSAGE_EFFECTUE => "Nb. passages effectués",
+      self::EXPORT_PCA_RATIO_PASSAGE => "Pourcentage effectué",
+      self::EXPORT_PCA_PCA_VALEUR => "PCA",
+      self::EXPORT_PCA_CONTROLE => "Contrôle"
+
+    );
     protected $dm;
 
     public function __construct(DocumentManager $dm) {
@@ -164,7 +193,7 @@ class ContratManager implements MouvementManagerInterface {
 
     public function generateAllPassagesForContrat($contrat) {
         $this->removeAllPassagesForContrat($contrat);
-              
+
         $date_debut = $contrat->getDateDebut();
         $date_acceptation = $contrat->getDateAcceptation();
         if (!$date_debut && !$date_acceptation) {
@@ -333,6 +362,40 @@ class ContratManager implements MouvementManagerInterface {
             }
         }
         return false;
+    }
+
+    public function getPcaForCsv($dateDebut = null) {
+        if(!$dateDebut){
+          $dateDebut = new \DateTime();
+          }
+        $contratsObjs = $this->getRepository()->findByDateEntreDebutFin($dateDebut);
+
+        $pcaArray = array();
+        $pcaArray[] = self::$pca_entete_libelle;
+
+        foreach ($contratsObjs as $contratObj) {
+
+                $pcaArr = array();
+                $pcaArr[self::EXPORT_PCA_CLIENT] = $contratObj->getSociete()->getRaisonSociale();
+                $pcaArr[self::EXPORT_PCA_NUMERO_CONTRAT] = $contratObj->getNumeroArchive();
+                $pcaArr[self::EXPORT_PCA_DEBUT] = $contratObj->getDateDebut()->format('d/m/Y');
+                $pcaArr[self::EXPORT_PCA_FIN] = ($contratObj->getDateFin())? $contratObj->getDateFin()->format('d/m/Y') : "";
+                $pcaArr[self::EXPORT_PCA_MONTANT_HT] = sprintf("%01.02f",$contratObj->getPrixHt());
+                $pcaArr[self::EXPORT_PCA_MONTANT_FACTURE] = sprintf("%01.02f",$contratObj->getPrixFactures());
+                $calculPca = $contratObj->calculPca();
+                $pcaArr[self::EXPORT_PCA_RATIO_FACTURE] = sprintf("%01.02f",($calculPca['ratioFacture'] * 100))."%";
+
+                $pcaArr[self::EXPORT_PCA_NB_PASSAGE] = $contratObj->getNbPassages();
+                $pcaArr[self::EXPORT_PCA_NB_PASSAGE_EFFECTUE] = ($contratObj->getContratPassages()->first())? $contratObj->getContratPassages()->first()->getNbPassagesRealisesOuAnnule() : "pas de passages";
+                $pcaArr[self::EXPORT_PCA_RATIO_PASSAGE] = sprintf("%01.02f",($calculPca['ratioActivite'] * 100))."%";
+
+                $pcaArr[self::EXPORT_PCA_PCA_VALEUR] = sprintf("%01.02f",$calculPca['pca']);
+                $pcaArr[self::EXPORT_PCA_CONTROLE] = $contratObj->getStatutLibelle();
+
+                $pcaArray[] = $pcaArr;
+
+        }
+        return $pcaArray;
     }
 
 }
