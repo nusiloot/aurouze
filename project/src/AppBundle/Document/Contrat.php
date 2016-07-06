@@ -695,6 +695,19 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         if ($this->getPrixRestant() <= 0 || $this->getNbFacturesRestantes() <= 0) {
             return null;
         }
+        
+        $mouvement = $this->buildMouvement($origineDocumentGeneration);
+
+        $this->addMouvement($mouvement);
+
+        return $mouvement;
+    }
+
+    public function buildMouvement($origineDocumentGeneration = null) {
+        if ($this->getPrixRestant() <= 0 || $this->getNbFacturesRestantes() <= 0) {
+            return null;
+        }
+
         $mouvement = new Mouvement();
         $mouvement->setIdentifiant(uniqid());
         $mouvement->setPrixUnitaire(round($this->getPrixRestant() / $this->getNbFacturesRestantes(), 2));
@@ -709,8 +722,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         if ($origineDocumentGeneration) {
             $mouvement->setOrigineDocumentGeneration($origineDocumentGeneration);
         }
-
-        $this->addMouvement($mouvement);
 
         return $mouvement;
     }

@@ -84,11 +84,24 @@
             <tr>
                 <td>{{ mouvement.libelle }}</td>
                 <td class="text-right"></td>
-                <td class="text-center"><small>En attente</small></td>
+                <td class="text-center">En attente de génération</td>
                 <td class="text-right">{{ "%0.2f" | format(mouvement.prixUnitaire) }} €</td>
             </tr>
         {% endfor %}
         </tbody>
+        {% set mouvement = contrat.buildMouvement() %}
+        {% if(mouvement) %}
+        <tfoot style="opacity: 0.6">
+            <tr>
+                <td>{{ mouvement.libelle }}</td>
+                <td class="text-right"></td>
+                <td class="text-center"><a onclick="return confirm('Etes vous sûr de forcer la genération d\'un mouvement de facture directement (sans le faire via un passage) ?');" href="{{ path('contrat_generation_mouvement', {'id': contrat.id})}}">Générer un mouvement</a></td>
+                <td class="text-right">{{ "%0.2f" | format(mouvement.prixUnitaire) }} €</td>
+            </tr>
+        </tfoot>
+        {% endif %}
     </table>
+
+
 </div>
 {% endif %}
