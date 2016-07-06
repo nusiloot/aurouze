@@ -45,15 +45,11 @@ class PaiementsRepository extends DocumentRepository {
     }
 
 
-    public function findLastMonthByDate(\DateTime $date) {
+    public function findByDatePaiementsDebutFin(\DateTime $dateDebut,\DateTime $dateFin) {
 
-        $oneMonthPast = clone $date;
-        $oneMonthPast->modify("-1 month");
-        $startOfMonth = \DateTime::createFromFormat('Y-m-d', $oneMonthPast->format('Y-m')."-01");
-        $endOfMonth = \DateTime::createFromFormat('Y-m-d', $date->format('Y-m')."-01");
         $q = $this->createQueryBuilder();
-        $q->field('paiement.datePaiement')->gte($startOfMonth);
-        $q->field('paiement.datePaiement')->lt($endOfMonth);
+        $q->field('paiement.datePaiement')->gte($dateDebut);
+        $q->field('paiement.datePaiement')->lte($dateFin);
         $query = $q->getQuery();
 
         return $query->execute();
