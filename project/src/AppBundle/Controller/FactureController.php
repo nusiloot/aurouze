@@ -274,7 +274,7 @@ class FactureController extends Controller {
 
             // La ligne ne tient pas sur une page complète
             if(($nbLigneParLigneFacture[$key]) > $nbLigneParPage[$nbCurrentPage]) {
-                $nbLignes2Keep = (int)(0.7 * $nbLigneParPage[$nbCurrentPage]);
+                $nbLignes2Keep = (int)(0.8 * $nbLigneParPage[$nbCurrentPage]);
                 $lignesSplitted = $this->splitLigne($ligne, $nbLignes2Keep);
                 $pages[$nbCurrentPage][] = $lignesSplitted[0];
                 $pages[$nbCurrentPage+1][] = $lignesSplitted[1];

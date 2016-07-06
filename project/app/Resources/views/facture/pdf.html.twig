@@ -42,9 +42,12 @@
         </p>
     </div>
 </div>
-<br />
-<br />
+{% if loop.length > 1 %}
 <p class="text-center"><small>Page {{ loop.index }} / {{ loop.length }}</small></p>
+{% else %}
+    <br />
+    <br />
+{% endif %}
 <table class="table table-bordered table-condensed" style="border-bottom: 0 !important; border-right: 0 !important;  border-left: 0 !important;">
     <thead>
         <tr>
