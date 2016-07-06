@@ -13,6 +13,7 @@ use AppBundle\Type\FactureType;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Societe;
 use AppBundle\Type\FactureChoiceType;
+use AppBundle\Type\SocieteChoiceType;
 
 /**
  * Facture controller.
@@ -34,9 +35,9 @@ class FactureController extends Controller {
     	$search = false;
     	$query = false;
     	$form->handleRequest($request);
-    	if ($form->isSubmitted() && $form->isValid()) {    	
+    	if ($form->isSubmitted() && $form->isValid()) {
     		$query = $form->getData()['factures'];
-    		$search = true;
+    		$search = is_null($query) ? false : true;
     		$result = $dm->getRepository('AppBundle:Facture')->findByQuery($query);
     		usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
     	}

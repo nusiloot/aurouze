@@ -4,7 +4,7 @@
 {% block title %}Factures{% endblock title %}
 
 {% block body %}
-<div class="row" id="searchable" data-type="facture" data-url="{{ path('recherche_facture')  }}" data-target="{{ path('facture_pdf', {'id': '_id_'})  }}">
+<div class="row" id="searchable">
 	    <div class="col-xs-12">
 	        <h3 style="margin-top: 10px;">Rechercher par facture</h3>
 	        {{ form_start(form, {'attr': { 'novalidate': 'novalidate', 'class': 'form-horizontal' } }) }}
@@ -20,19 +20,52 @@
 	        {{form_end(form)}}
 	    </div>
 	</div>
-	
-	
+
+
 	{% if search %}
 
-	<h3>{{ result|length }} Résultat{% if result|length > 1 %}s{% endif %} <small>{{ query }}</small></h3>
-	
-	<table class="table table-striped table-hover">	
-	{% for item in result %}
-	<tr style="cursor: pointer;" onclick="document.location.href='{{ path('facture_pdf', {'id': item.doc.id}) }}'">
-		<td>{{ item.doc.Libelle }}</td>                
-    </tr>
-	{% endfor %}
+	<h3>{% if(result | length) > 0 %}{{ result|length }}{% else %}Aucun{% endif %} résultat{% if result|length > 1 %}s{% endif %} <small>pour la recherche "{{ query }}"</small></h3>
+
+	{% if result | length > 0 %}
+	<table class="table table-bordered table-striped table-hover">
+		<thead>
+            <tr>
+				<th class="col-xs-3 text-left">Société</th>
+                <th class="col-xs-2">Date</th>
+                <th class="col-xs-2">Document</th>
+                <th class="col-xs-3">Contenu</th>
+                <th class="col-xs-1 text-right">Montant&nbsp;TTC</th>
+                <th class="col-xs-1 text-right">Montant&nbsp;payé</th>
+            </tr>
+        </thead>
+        <tbody>
+		{% for item in result %}
+		{% set facture = item.doc %}
+			<tr class="">
+				<td><a href="{{ path('facture_societe', {'id': facture.societe.id })}}">{{ facture.destinataire.nom }}</a></td>
+				<td>{{ ((facture.isDevis) ? facture.dateDevis : facture.dateFacturation) | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</td>
+				<td><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span> {% if facture.isDevis %}Devis n° {{ facture.numeroDevis }}{% elseif(facture.isAvoir) %}Avoir n° {{ facture.numeroFacture }}{% else %}Facture n° {{ facture.numeroFacture }}{% endif %}</a></td>
+				<td>
+					<a data-toggle="tooltip" title="{% for ligne in facture.lignes %}{{ (ligne.libelle) ? ligne.libelle~"\n" : "Aucun" }}{% endfor %}" href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.lignes | length}} ligne(s)</a>
+					{% for origine in facture.origines %}
+						- <a href="{{ path('contrat_visualisation', {'id': origine.id })}}">Contrat n° {{ origine.numeroArchive }}</a>
+					{% endfor %}
+				</td>
+				<td class="text-right">{{ "%0.2f" | format(facture.montantTTC)  }}&nbsp;€</td>
+				<td class="text-right {% if facture.isDevis %}active{% endif %}">
+				{% if facture.isFacture %}
+				  {% if(facture.isAvoir) %}<span class="text-muted">-</span>
+				  {% elseif(facture.isRedressee) %}
+				  <span data-toggle="tooltip" title="{{ facture.avoir }}" class="pull-left label label-xs label-warning">R</span>
+				  &nbsp;<span class="text-muted">{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€</span>
+				  {% else %}<span class="text-muted">{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€</span>{% endif %}
+				{% endif %}
+			  </td>
+			</tr>
+		{% endfor %}
+		</tbody>
 	</table>
+	{% endif %}
 
 	{% endif %}
 {% endblock %}

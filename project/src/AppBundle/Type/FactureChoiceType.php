@@ -21,7 +21,7 @@ class FactureChoiceType extends AbstractType {
         if(isset($options['data']) && isset($options['data']['facture'])) {
             $defaultChoice = array($options['data']['facture']->getLibelle() => $options['data']['facture']->getLibelle());
         }
-        $builder->add('factures', TextType::class, array("attr" => array("class" => "typeahead form-control", "placeholder" => "Rechercher une facture")));
+        $builder->add('factures', TextType::class, array("attr" => array("class" => "form-control", "placeholder" => "Rechercher une facture")));
     }
 
     /**
