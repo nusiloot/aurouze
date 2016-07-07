@@ -456,6 +456,42 @@ class FactureController extends Controller {
     }
 
     /**
+     * @Route("/facture-commerciaux/export", name="commerciaux_export")
+     */
+    public function exportCommerciauxAction(Request $request) {
+
+      // $response = new StreamedResponse();
+        $formRequest = $request->request->get('form');
+        $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dateFin = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
+
+        $facturesForCsv = $fm->getStatsForCommerciauxForCsv($dateDebut,$dateFin);
+
+        $filename = sprintf("export_details_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+        $handle = fopen('php://memory', 'r+');
+
+        foreach ($facturesForCsv as $paiement) {
+            fputcsv($handle, $paiement,';');
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        $content = "\xef\xbb\xbf".$content;
+
+        $response = new Response($content, 200, array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=' . $filename,
+        ));
+        $response->setCharset('UTF-8');
+
+        return $response;
+    }
+
+    /**
      * @Route("/stats/export", name="stats_export")
      */
     public function exportStatsAction(Request $request) {

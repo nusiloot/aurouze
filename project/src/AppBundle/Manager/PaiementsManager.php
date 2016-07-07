@@ -49,6 +49,7 @@ class PaiementsManager {
     const TYPE_EXPORT_PAIEMENTS = "paiements";
     const TYPE_EXPORT_STATS = "stats";
     const TYPE_EXPORT_PCA = "pca";
+    const TYPE_EXPORT_COMMERCIAUX = "commerciaux";
 
 
     public static $types_reglements_libelles = array(
@@ -110,6 +111,7 @@ class PaiementsManager {
                                                                                "picto" =>  "glyphicon glyphicon-eur"),
     self::TYPE_EXPORT_PAIEMENTS => array("libelle" =>  "Export des paiements","picto" =>  "glyphicon glyphicon-th-list"),
     self::TYPE_EXPORT_STATS  => array("libelle" =>  "Export des statistiques","picto" =>  "glyphicon glyphicon-stats"),
+      self::TYPE_EXPORT_COMMERCIAUX  => array("libelle" =>  "Export Commerciaux","picto" =>  "glyphicon glyphicon-user"),
     self::TYPE_EXPORT_PCA  => array("libelle" =>  "Export PCA","picto" =>  "glyphicon glyphicon-send")
 
     );

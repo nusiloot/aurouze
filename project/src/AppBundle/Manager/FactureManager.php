@@ -150,6 +150,45 @@ public static $export_stats_libelle = array(
         return $this->mm->getMouvements(true, false);
     }
 
+    public function getStatsForCommerciauxForCsv($dateDebut = null, $dateFin = null){
+    if(!$dateDebut){
+            $dateDebut = new \DateTime();
+            $dateFin = new \DateTime();
+            $dateFin->modify("+1month");
+          }
+
+          $facturesObjs = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
+          $csv = array();
+          $cpt = 0;
+          $csv["A_".$cpt] = array("commercial","numero contrat","numero facture","montant Ht");
+          foreach ($facturesObjs as $facture) {
+            if($facture->getContrat() && $facture->getContrat()->getCommercial()){
+                $contrat = $facture->getContrat();
+                $commercial = $facture->getContrat()->getCommercial();
+                $identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercial->getId())->getIdentite();
+                $arr_ligne = array();
+                $key = $identite."_".$cpt."_".$facture->getNumeroFacture();
+                $arr_ligne[] = $identite;
+                $arr_ligne[] = $facture->getContrat()->getNumeroArchive();
+                $arr_ligne[] = $facture->getNumeroFacture();
+                $arr_ligne[] = $facture->getMontantHt();
+                $csv[$key] = $arr_ligne;
+            }else{
+              $arr_ligne = array();
+              $key = "z_".$cpt."_". $facture->getNumeroFacture();
+              $arr_ligne[] = "Pas de commercial";
+              $arr_ligne[] = ($facture->getContrat())? $facture->getContrat()->getNumeroArchive() : "Pas de contrat";
+              $arr_ligne[] = $facture->getNumeroFacture();
+              $arr_ligne[] = $facture->getMontantHt();
+              $csv[$key] = $arr_ligne;
+            }
+            $cpt++;
+          }
+          ksort($csv);
+          return $csv;
+
+    }
+
     public function getStatsForCsv($dateDebut = null, $dateFin = null){
       if(!$dateDebut){
         $dateDebut = new \DateTime();
