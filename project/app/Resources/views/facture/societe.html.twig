@@ -5,7 +5,12 @@
 
 {% block body %}
 
-    {{ include('societe/choixForm.html.twig', {'form': formSociete, 'urlTarget': path('facture_societe', {'id': '_id_'})}) }}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('contrat') }}">Facture</a></li>
+        <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+    </ol>
+
+    {{ include('societe/choixForm.html.twig', {'urlTarget': path('facture_societe', {'id': '_id_'})}) }}
 
     <h3>
         Mouvements à facturer

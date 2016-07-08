@@ -1,14 +1,12 @@
 <div class="row" id="searchable" data-type="societe" data-url="{{ path('recherche_societe')  }}" data-target="{{ urlTarget }}">
     <div class="col-xs-12">
         <h3 style="margin-top: 10px;">Rechercher par société</h3>
-        {{ form_start(form, {'attr': { 'novalidate': 'novalidate', 'class': 'form-horizontal' } }) }}
-        <div class="form-group">
-            <div class="col-xs-12">
-                {{ form_errors(form.societes) }}
-                {{ form_widget(form.societes, {'attr': {'autofocus': (autofocus is defined and autofocus) ? "autofocus" : false}}) }}
-                {{ form_widget(form.actif) }}
-            </div>
-        </div>
-        {{form_end(form)}}
+        <form action="{{ path('recherche') }}" method="get" class="form-horizontal">
+            <div class="form-group">
+    			<div class="col-xs-12">
+					<input type="text" name="q" placeholder="{% if(societe is defined and societe) %}{{ societe.libelleComplet }}{% else %}Rechercher une société{% endif %}" class="form-control typeahead" {% if autofocus is defined and autofocus %}autofocus="autofocus"{% endif %} id="q" value="" />
+    			</div>
+    		</div>
+        </form>
     </div>
 </div>

@@ -17,12 +17,33 @@ class RechercheController extends Controller {
 		$dm = $this->get('doctrine_mongodb')->getManager();
         $query = $request->get('q');
 
-        $result = array_merge($dm->getRepository('AppBundle:Societe')->findByQuery($query), $dm->getRepository('AppBundle:Etablissement')->findByQuery($query));
-        $result = array_merge($result, $dm->getRepository('AppBundle:Compte')->findByQuery($query));
+		if(!$query) {
+			return $this->render('recherche/index.html.twig', array('query' => $query));
+		}
 
-        usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
+		$searchable = array(
+							"Societe" => "Societe",
+							"Etablissement" => "Etablissement",
+							"Compte" => "Compte",
+							"Contrat" => "Contrat",
+							"Facture" => "Facture",
+						);
 
-		return $this->render('recherche/index.html.twig', array('query' => $query, 'result' => $result));
+		$resultats = array();
+		foreach($searchable as $collection => $libelle) {
+			$items = $dm->getRepository('AppBundle:'.$collection)->findByQuery($query);
+			if(!count($items)) {
+				continue;
+			}
+			
+			$resultats[$libelle] = $items;
+		}
+
+
+
+        //usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
+
+		return $this->render('recherche/index.html.twig', array('query' => $query, 'resultats' => $resultats));
 	}
 
 	/**

@@ -394,13 +394,19 @@
             	  return '';
               },
               notFound: function(query) {
-                return "<div class=\"searchable_result tt-suggestion tt-selectable\">Rechercher \""+query.query+"\" dans les sociétés, les établissements et les interlocuteurs</div>";
+
+                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</a></div>";
               },
               footer: function(query, suggestions) {
 
-                return "<div class=\"searchable_result tt-suggestion tt-selectable\">Rechercher \""+query.query+"\" dans les sociétés, les établissements et les interlocuteurs</div>";
+                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</div></a>";
               }
           }
+        });
+
+        $('#searchable').on("click", "#search_more_submit", function() {
+            $('#searchable form').submit();
+            return false;
         });
 
         $('#searchable .typeahead').bind('typeahead:cursorchange', function (event, suggestion) {

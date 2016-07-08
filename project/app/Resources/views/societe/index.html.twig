@@ -6,54 +6,10 @@
 		<li><a href="{{ path('societe') }}">Société</a></li>
 	</ol>
 
-	{{ include('societe/choixForm.html.twig', {'form': form, 'urlTarget': path('societe_visualisation', {'id': '_id_'}), 'autofocus': true })}}
+	{{ include('societe/choixForm.html.twig', {'urlTarget': path('societe_visualisation', {'id': '_id_'}), 'autofocus': true })}}
 
     <div class="text-right" >
     <a class="btn btn-default" href="{{ path('societe_modification') }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Créer une nouvelle société</a>
     </div>
-
-
-
-   	{% if search %}
-
-	<h3>{% if(result | length) > 0 %}{{ result|length }}{% else %}Aucun{% endif %} résultat{% if result|length > 1 %}s{% endif %} <small>pour la recherche "{{ query }}"</small></h3>
-
-	{% if result | length > 0 %}
-	<table class="table table-striped table-hover">
-	{% for item in result %}
-	<tr style="cursor: pointer;" onclick="document.location.href='{{ path('societe_visualisation', {'id': item.doc.societe.id}) }}'">
-		<td>{{ item.instance }}<br /><small>{{ item.doc.identifiant }}</small></td>
-		<td>
-			{% if not item.doc.actif %}<small class="pull-right"><label class="label label-xs label-danger">SUSPENDU</label></small>{% endif %}
-			<i class="mdi mdi-{{ item.doc.icon }} mdi-lg"></i>&nbsp;{{ item.doc.libelleComplet }}<br />
-	        <small>
-	            {% if (item.doc.contactCoordonnee.telephoneFixe or item.doc.contactCoordonnee.telephoneMobile or item.doc.contactCoordonnee.fax or item.doc.contactCoordonnee.email or item.doc.contactCoordonnee.siteInternet)  %}
-	                {% if (item.doc.contactCoordonnee.telephoneFixe is defined and item.doc.contactCoordonnee.telephoneFixe)%}
-	                	<i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ item.doc.contactCoordonnee.telephoneFixe }}&nbsp;
-	                {%endif%}
-	                {% if (item.doc.contactCoordonnee.telephoneMobile is defined and item.doc.contactCoordonnee.telephoneMobile)%}
-	                    <i class="glyphicon glyphicon-phone"></i>&nbsp;{{ item.doc.contactCoordonnee.telephoneMobile }}&nbsp;
-	                {% endif %}
-	                {% if (item.doc.contactCoordonnee.fax is defined and item.doc.contactCoordonnee.fax)%}
-	                    <i class="glyphicon glyphicon-print"></i>&nbsp;{{ item.doc.contactCoordonnee.fax }}&nbsp;
-	                {% endif %}
-	                {% if(item.doc.contactCoordonnee.email is defined and item.doc.contactCoordonnee.email)%}
-	                	<i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ item.doc.contactCoordonnee.email }}&nbsp;
-	                {% endif %}
-	                {% if(item.doc.contactCoordonnee.siteInternet is defined and item.doc.contactCoordonnee.siteInternet)%}
-	                	<i class="glyphicon glyphicon-globe"></i>&nbsp;{{ item.doc.contactCoordonnee.siteInternet }}&nbsp;
-	                {% endif %}
-	            {% else %}
-	            	<em class="text-muted">Aucune information de contact définie</em>
-	            {% endif %}
-	        </small>
-		</td>
-	</tr>
-	{% endfor %}
-	</table>
-	{% endif %}
-
-	{% endif %}
-
 
 {% endblock %}

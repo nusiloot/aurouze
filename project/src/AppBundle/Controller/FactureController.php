@@ -26,23 +26,9 @@ class FactureController extends Controller {
      * @Route("/", name="facture")
      */
     public function indexAction(Request $request) {
-    $dm = $this->get('doctrine_mongodb')->getManager();
-        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
-            'action' => $this->generateUrl('societe'),
-            'method' => 'GET',
-        ));
-    	$result = array();
-    	$search = false;
-    	$query = false;
-    	/*$form->handleRequest($request);
-    	if ($form->isSubmitted() && $form->isValid()) {
-    		$query = $form->getData()['factures'];
-    		$search = is_null($query) ? false : true;
-    		$result = $dm->getRepository('AppBundle:Facture')->findByQuery($query);
-    		usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
-    	}*/
+        $dm = $this->get('doctrine_mongodb')->getManager();
 
-        return $this->render('facture/index.html.twig', array('formSociete' => $formSociete->createView(), 'result' => $result, 'search' => $search, 'query' => $query));
+        return $this->render('facture/index.html.twig');
     }
 
     /**
@@ -131,7 +117,7 @@ class FactureController extends Controller {
         $factures = $fm->findBySociete($societe);
         $mouvements = $fm->getMouvementsBySociete($societe);
 
-        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements, 'formSociete' => $formSociete->createView(), 'factures' => $factures));
+        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements, 'factures' => $factures));
     }
 
     /**

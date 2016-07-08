@@ -20,7 +20,7 @@
         <link rel="stylesheet" href="{{ asset('/component/aurouze/aurouze.css') }}">
         <link rel="stylesheet" href="{{ asset('/component/leaflet-extra-markers/css/leaflet.extra-markers.css') }}">
         <link rel="stylesheet" media="print" href="{{ asset('/component/fullcalendar/css/fullcalendar.print.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/css/main.css') }}?date=20160622" />
+        <link rel="stylesheet" href="{{ asset('/css/main.css') }}?date=20160708" />
         <link rel="stylesheet" media="print" href="{{ asset('/css/print.css') }}?date=20160622" />
 
         {% block stylesheets %}{% endblock %}
@@ -63,6 +63,7 @@
 
                     </ul>
                     <ul class="nav navbar-nav pull-right">
+                        <li class="{%if (_menu_active == 'recherche') %}active{% endif %}"><a href="{{ path('recherche')}}"><span class="glyphicon glyphicon-search"></span></a></li>
                         <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}"><span class="glyphicon glyphicon-calendar"></span> Calendrier</a></li>
                         <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog"></span></a></li>
                         <!--<li class="{%if (_menu_active == 'compte') %}active{% endif %}"><a href="{{ path('comptes') }}"><span class="glyphicon glyphicon-user"></span></a></li>-->

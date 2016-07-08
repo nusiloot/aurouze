@@ -143,6 +143,10 @@ body {
 	position: absolute !important;
 }
 
-.container .breadcrumb:first-child {
+#searchable {
     margin-bottom: 10px;
+}
+
+.container .breadcrumb:first-child {
+    margin-bottom: 5px;
 }

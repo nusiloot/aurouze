@@ -21,25 +21,8 @@ class SocieteController extends Controller {
     public function indexAction(Request $request) {
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
-    	$form = $this->createForm(SocieteChoiceType::class, null, array(
-    			'action' => $this->generateUrl('societe'),
-    			'method' => 'GET',
-    	));
-    	$result = array();
-    	$search = false;
-    	$query = false;
-    	$form->handleRequest($request);
-    	if ($form->isSubmitted() && $form->isValid()) {
-    		$query = $form->getData()['societes'];
-    		$inactif = ($form->getData()['actif'])? true : false;
-    		$search = true;
-    		$result = array_merge($dm->getRepository('AppBundle:Societe')->findByQuery($query, $inactif), $dm->getRepository('AppBundle:Etablissement')->findByQuery($query, $inactif));
-    		$result = array_merge($result, $dm->getRepository('AppBundle:Compte')->findByQuery($query, $inactif));
 
-    		usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
-    	}
-
-    	return $this->render('societe/index.html.twig', array('form' => $form->createView(), 'result' => $result, 'search' => $search, 'query' => $query));
+    	return $this->render('societe/index.html.twig');
     }
     protected static function cmpContacts($a, $b)
     {
@@ -62,14 +45,10 @@ class SocieteController extends Controller {
     public function visualisationAction(Request $request, $societe) {
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
-    	$form = $this->createForm(SocieteChoiceType::class, array('societe' => $societe), array(
-    			'action' => $this->generateUrl('societe'),
-    			'method' => 'GET',
-    	));
 
         $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
 
-    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe,'form' => $form->createView(), 'nbContratsSociete' => $nbContratsSociete));
+    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe, 'nbContratsSociete' => $nbContratsSociete));
     }
 
     /**
