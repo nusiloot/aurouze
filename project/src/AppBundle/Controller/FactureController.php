@@ -237,8 +237,82 @@ class FactureController extends Controller {
     public function pdfAction(Request $request, Facture $facture) {
         $fm = $this->get('facture.manager');
 
+        $pages = array();
+
+        $nbLigneMaxPourPageVierge = 50;
+        $nbLigneMaxPourDernierePage = 30;
+        $nbPage = 1;
+        $nbMaxCharByLigne = 60;
+        $nbCurrentLigne = 0;
+        $nbCurrentPage = 1;
+        $nbLigneParLigneFacture = array();
+        $nbLigneParPage = array(1 => $nbLigneMaxPourDernierePage);
+
+        foreach($facture->getLignes() as $key => $ligne) {
+            $nbCurrentLigne += 2;
+            if($ligne->getReferenceClient()) {
+                $nbCurrentLigne += 1;
+            }
+
+            if($ligne->isOrigineContrat()) {
+                $nbCurrentLigne += 4;
+                $nbCurrentLigne += count($ligne->getOrigineDocument()->getPrestations());
+                $nbCurrentLigne += count($ligne->getOrigineDocument()->getContratPassages());
+            }
+
+            $nbLigneParLigneFacture[$key] = $nbCurrentLigne;
+
+            if($nbCurrentPage == $nbPage && $nbCurrentLigne > $nbLigneMaxPourDernierePage) {
+                $nbLigneParPage[$nbCurrentPage] = $nbLigneMaxPourDernierePage;
+                $nbPage += 1;
+                $nbLigneParPage[$nbPage] = $nbLigneMaxPourDernierePage;
+            }
+
+            if($nbCurrentPage < $nbPage && $nbCurrentLigne > $nbLigneMaxPourPageVierge) {
+                $nbLigneParPage[$nbCurrentPage] = $nbLigneMaxPourPageVierge;
+                $nbCurrentPage += 1;
+                $nbCurrentLigne = 0;
+            }
+
+        }
+
+        $nbCurrentPage = 1;
+        $nbCurrentLigne = 0;
+        foreach($facture->getLignes() as $key => $ligneFacture) {
+
+            $ligne = $this->buildLignePDFFacture($ligneFacture);
+
+            // La ligne ne tient pas sur une page complète
+            if(($nbLigneParLigneFacture[$key]) > $nbLigneParPage[$nbCurrentPage]) {
+                $nbLignes2Keep = (int)(0.8 * $nbLigneParPage[$nbCurrentPage]);
+                $lignesSplitted = $this->splitLigne($ligne, $nbLignes2Keep);
+                $pages[$nbCurrentPage][] = $lignesSplitted[0];
+                $pages[$nbCurrentPage+1][] = $lignesSplitted[1];
+                $nbCurrentLigne = 0;
+                $nbCurrentPage += 1;
+                continue;
+            }
+
+            // La ligne tient sur la page
+            if(($nbCurrentLigne + $nbLigneParLigneFacture[$key]) < $nbLigneParPage[$nbCurrentPage]) {
+
+                $pages[$nbCurrentPage][] = $ligne;
+                continue;
+            }
+
+            // La ligne ne tient plus sur la page
+            if(($nbCurrentLigne + $nbLigneParLigneFacture[$key]) > $nbLigneParPage[$nbCurrentPage]) {
+
+                $nbCurrentLigne = 0;
+                $nbCurrentPage += 1;
+                $pages[$nbCurrentPage][] = $ligne;
+                continue;
+            }
+        }
+
         $html = $this->renderView('facture/pdf.html.twig', array(
             'facture' => $facture,
+            'pages' => $pages,
             'parameters' => $fm->getParameters(),
         ));
 
@@ -265,6 +339,67 @@ class FactureController extends Controller {
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
                 )
         );
+    }
+
+    public function splitLigne($ligne, $nbLignes2Keep) {
+        $ligneSplitted = array();
+
+        $ligneSplitted["libelle"] = $ligne['libelle']." (Suite)";
+        foreach($ligne["details"] as $key => $details) {
+            if(!preg_match("/^Lieu/", $key)) {
+                continue;
+            }
+            $nb = 0;
+            $keySplitted = $key." (Suite)";
+            $ligneSplitted["details"] = array();
+            $ligneSplitted["details"][$keySplitted] = array();
+            foreach($details as $keyLieu => $lieu) {
+                $nb += 1;
+                if($nb <= $nbLignes2Keep) {
+                    continue;
+                }
+                $ligneSplitted["details"][$keySplitted][] = $lieu;
+                unset($ligne["details"][$key][$keyLieu]);
+            }
+            $ligne["details"][$key][] = "(Suite de la liste sur la page suivante)";
+        }
+
+        return array($ligne, $ligneSplitted);
+    }
+
+    public function buildLignePDFFacture($ligneFacture) {
+        $ligne = array();
+        $ligne['libelle'] = $ligneFacture->getLibelle();
+        $ligne['quantite'] = $ligneFacture->getQuantite();
+        $ligne['prixUnitaire'] = $ligneFacture->getPrixUnitaire();
+        $ligne['montantHT'] = $ligneFacture->getMontantHT();
+        $ligne['referenceClient'] = $ligneFacture->getReferenceClient();
+        if($ligneFacture->isOrigineContrat()) {
+            $ligne['details'] = array();
+
+            $keyPrestation = "Prestation";
+            if (count($ligneFacture->getOrigineDocument()->getPrestations()) > 1) { $keyPrestation .= "s"; }
+            foreach($ligneFacture->getOrigineDocument()->getPrestations() as $prestation) {
+                $ligne['details'][$keyPrestation][] = $prestation->getNom();
+            }
+
+            $keyPassage = "Lieu";
+            if(count($ligneFacture->getOrigineDocument()->getContratPassages()) > 1) { $keyPassage .= "x"; }
+            $keyPassage .= " d'application";
+            if(count($ligneFacture->getOrigineDocument()->getContratPassages()) > 1) { $keyPassage .= "s"; }
+            foreach($ligneFacture->getOrigineDocument()->getContratPassages() as $passage) {
+               $lignePassage = $passage->getEtablissement()->getNom(false).", ";
+               if($passage->getEtablissement()->getAdresse()->getAdresse()){ $lignePassage .= $passage->getEtablissement()->getAdresse()->getAdresse().", "; }
+               $lignePassage .= $passage->getEtablissement()->getAdresse()->getCodePostal()." ".$passage->getEtablissement()->getAdresse()->getCommune();
+               $ligne['details'][$keyPassage][] = $lignePassage;
+            }
+        }
+
+        if($ligneFacture->getDescription()) {
+            $ligne["details"]["description"] = $ligneFacture->getDescription();
+        }
+
+        return $ligne;
     }
 
     public function getPdfGenerationOptions() {
@@ -296,18 +431,55 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/facture/export", name="facture_export")
+     * @Route("/facture/export", name="factures_export")
      */
     public function exportComptableAction(Request $request) {
 
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
-        $date = \DateTime::createFromFormat('d/m/Y',$formRequest['date']);
+        $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dateFin = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
-        $facturesForCsv = $fm->getFacturesForCsv($date);
+        $facturesForCsv = $fm->getFacturesForCsv($dateDebut,$dateFin);
 
-        $filename = sprintf("export_factures_%s.csv", $date->format("Y-m-d"));
+        $filename = sprintf("export_factures_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+        $handle = fopen('php://memory', 'r+');
+
+        foreach ($facturesForCsv as $paiement) {
+            fputcsv($handle, $paiement,';');
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        $content = "\xef\xbb\xbf".$content;
+
+        $response = new Response($content, 200, array(
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=' . $filename,
+        ));
+        $response->setCharset('UTF-8');
+
+        return $response;
+    }
+
+    /**
+     * @Route("/facture-commerciaux/export", name="commerciaux_export")
+     */
+    public function exportCommerciauxAction(Request $request) {
+
+      // $response = new StreamedResponse();
+        $formRequest = $request->request->get('form');
+        $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dateFin = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
+
+        $facturesForCsv = $fm->getStatsForCommerciauxForCsv($dateDebut,$dateFin);
+
+        $filename = sprintf("export_details_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
         foreach ($facturesForCsv as $paiement) {
@@ -336,24 +508,53 @@ class FactureController extends Controller {
 
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
-        $date = \DateTime::createFromFormat('d/m/Y',$formRequest['date']);
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $fm = $this->get('facture.manager');
-        $facturesStatsForCsv = $fm->getStatsForCsv($date);
+        $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dateFin = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
 
+        $dateDebutFirstOfMonth = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dateDebutFirstOfMonth->modify('first day of this month');
+        $dateFinFirstOfMonth = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
+        $dateFinFirstOfMonth->modify('first day of next month');
 
+        $interval = \DateInterval::createFromDateString('1 month');
+        $period   = new \DatePeriod($dateDebutFirstOfMonth, $interval, $dateFinFirstOfMonth);
 
-        $filename = sprintf("export_stat_%s.csv", $date->format("Y-m-d"));
-        $handle = fopen('php://memory', 'r+');
-
-        foreach ($facturesStatsForCsv as $paiement) {
-            fputcsv($handle, $paiement,';');
+        $arrayOfDates = array();
+        $cpt = 0;
+        foreach ($period as $dt) {
+            $arrayOfDates[$dt->format("Y-m")] = array();
+            $firstDay = clone $dt;
+            $lastDay = clone $dt;
+            $arrayOfDates[$dt->format("Y-m")]['dateDebut'] = $firstDay->modify('first day of this month');
+            $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $lastDay->modify('last day of this month');
+          if(!$cpt){
+            $arrayOfDates[$dt->format("Y-m")]['dateDebut'] = $dateDebut;
+          }
+          $cpt++;
+          if($cpt == count($period)){
+            $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $dateFin;
+          }
         }
 
-        rewind($handle);
-        $content = stream_get_contents($handle);
-        fclose($handle);
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
 
+        $filename = sprintf("export_stats_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+
+          $handle = fopen('php://memory', 'r+');
+          foreach ($arrayOfDates as $dates) {
+
+            $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin']);
+
+          foreach ($facturesStatsForCsv as $paiement) {
+              fputcsv($handle, $paiement,';');
+          }
+          fputcsv($handle, array("",""),';');
+
+        }
+          rewind($handle);
+          $content = stream_get_contents($handle);
+          fclose($handle);
         $response = new Response($content, 200, array(
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename=' . $filename,

@@ -45,6 +45,12 @@ class PaiementsManager {
     const EXPORT_MONTANT_PIECE_BANQUE = 18;
     const EXPORT_MONTANT_CHEQUE = 19;
 
+    const TYPE_EXPORT_FACTURES = "factures";
+    const TYPE_EXPORT_PAIEMENTS = "paiements";
+    const TYPE_EXPORT_STATS = "stats";
+    const TYPE_EXPORT_PCA = "pca";
+    const TYPE_EXPORT_COMMERCIAUX = "commerciaux";
+
 
     public static $types_reglements_libelles = array(
         self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
@@ -101,6 +107,15 @@ class PaiementsManager {
             self::EXPORT_MONTANT_PIECE_BANQUE => "Montant de la pièce de banque",
             self::EXPORT_MONTANT_CHEQUE => "Montant de remise de chèque");
 
+      public static $types_exports = array(self::TYPE_EXPORT_FACTURES => array("libelle" =>  "Export des factures",
+                                                                               "picto" =>  "glyphicon glyphicon-eur"),
+    self::TYPE_EXPORT_PAIEMENTS => array("libelle" =>  "Export des paiements","picto" =>  "glyphicon glyphicon-th-list"),
+    self::TYPE_EXPORT_STATS  => array("libelle" =>  "Export des statistiques","picto" =>  "glyphicon glyphicon-stats"),
+      self::TYPE_EXPORT_COMMERCIAUX  => array("libelle" =>  "Export Commerciaux","picto" =>  "glyphicon glyphicon-user"),
+    self::TYPE_EXPORT_PCA  => array("libelle" =>  "Export PCA","picto" =>  "glyphicon glyphicon-send")
+
+    );
+
     function __construct(DocumentManager $dm, FactureManager $fm, $parameters) {
         $this->dm = $dm;
         $this->fm = $fm;
@@ -123,19 +138,13 @@ class PaiementsManager {
         return $paiements;
     }
 
-    public function getPaiementsForCsv($date = null) {
-        if(!$date){
-          $date = new \DateTime();
+    public function getPaiementsForCsv($dateDebut = null,$dateFin = null) {
+        if(!$dateDebut){
+          $dateDebut = new \DateTime();
+          $dateFin = new \DateTime();
+          $dateFin->modify("+1 month");
           }
-        $paiementsObjs = $this->getRepository()->findLastMonthByDate($date);
-        if(!$date){
-        $oneMonthPast = new \DateTime();
-      }else{
-        $oneMonthPast = clone $date;
-      }
-        $oneMonthPast->modify("-1 month");
-        $startOfMonth = \DateTime::createFromFormat('Y-m-d', $oneMonthPast->format('Y-m')."-01");
-        $endOfMonth = \DateTime::createFromFormat('Y-m-d', $date->format('Y-m')."-01");
+        $paiementsObjs = $this->getRepository()->findByDatePaiementsDebutFin($dateDebut,$dateFin);
 
         $paiementsArray = array();
         $paiementsArray[] = self::$export_paiement_libelle;
@@ -143,7 +152,7 @@ class PaiementsManager {
         foreach ($paiementsObjs as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
               $paiementDate = $paiement->getDatePaiement();
-              if(($paiementDate  >= $startOfMonth) && ($endOfMonth > $paiementDate)){
+              if(($paiementDate  >= $dateDebut) && ($dateFin > $paiementDate)){
                 $paiementArr = array();
                 $paiementArr[self::EXPORT_DATE_PAIEMENT] = $paiementDate->format('d/m/Y');
                 $paiementArr[self::EXPORT_CODE_COMPTABLE] = $paiement->getFacture()->getSociete()->getCodeComptable();

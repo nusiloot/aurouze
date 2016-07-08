@@ -9,7 +9,7 @@
     </ol>
     <div class="btn-group">
       {% for exportForm in exportForms %}
-        <a data-toggle="modal" data-target="#datechoice{{ exportForm.type }}" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-usd"></span> {{exportForm.libelle}}</a>
+        <a data-toggle="modal" data-target="#datechoice{{ exportForm.type }}" class="btn btn-sm btn-default" ><span class="{{exportForm.picto}}"></span> {{exportForm.libelle}}</a>
       {% endfor %}
     </div>
 
@@ -76,16 +76,33 @@
         <div class="modal-content">
             {{ form_start(exportForm.form) }}
             <div class="modal-header">
-              <h4>Êtes-vous sûre de vouloir faire l'export comptable {{exportForm.type}}?</h4>
+              <h4>Êtes-vous sûre de vouloir faire l'export {{exportForm.type}}?</h4>
             </div>
                 <div class="modal-body form-horizontal">
+                        {% if exportForm.form.dateFin is defined %}
                         <div class="form-group">
-                            {{ form_errors(exportForm.form.date) }}
-                            {{ form_label(exportForm.form.date, "Date de l'export", {'label_attr': {'class': 'col-xs-2 contral-label'}}) }}
-                            <div class="col-xs-10">
-                                {{ form_widget(exportForm.form.date) }}
+                            {{ form_errors(exportForm.form.dateDebut) }}
+                            {{ form_label(exportForm.form.dateDebut, "Date début (incluse)", {'label_attr': {'class': 'col-xs-4 contral-label'}}) }}
+                            <div class="col-xs-8">
+                                {{ form_widget(exportForm.form.dateDebut) }}
                             </div>
                         </div>
+                        <div class="form-group">
+                            {{ form_errors(exportForm.form.dateFin) }}
+                            {{ form_label(exportForm.form.dateFin, "Date fin (incluse)", {'label_attr': {'class': 'col-xs-4 contral-label'}}) }}
+                            <div class="col-xs-8">
+                                {{ form_widget(exportForm.form.dateFin) }}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="form-group">
+                            {{ form_errors(exportForm.form.dateDebut) }}
+                            {{ form_label(exportForm.form.dateDebut, "Date du mois", {'label_attr': {'class': 'col-xs-4 contral-label'}}) }}
+                            <div class="col-xs-8">
+                                {{ form_widget(exportForm.form.dateDebut) }}
+                            </div>
+                        </div>
+                        {% endif %}
                 </div>
                 <div class="modal-footer">
                     <div class="row">

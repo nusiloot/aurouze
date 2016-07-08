@@ -44,8 +44,6 @@ class ContratRepository extends DocumentRepository {
     	return ContratManager::$frequences;
     }
 
-
-
     public function findByQuery($q)
     {
         $q = "\"".str_replace(" ", "\" \"", $q)."\"";
@@ -64,6 +62,21 @@ class ContratRepository extends DocumentRepository {
     		}
     	}
     	return $resultSet;
+    }
+
+    public function findByDateEntreDebutFin(\DateTime $date) {
+        $q = $this->createQueryBuilder();
+          $q->field('dateDebut')->lte($date);
+          $q->field('dateFin')->gte($date);
+        /**
+        * Attention cette requete devrait probablement renvoyer aussi les contrats a date de fin null?
+        */
+        // $q->addOr($q->expr()->field('dateFin')->gte($date))
+        //   ->addOr($q->expr()->field('dateFin')->equals(null));
+
+        $query = $q->getQuery();
+
+        return $query->execute();
     }
 
 }
