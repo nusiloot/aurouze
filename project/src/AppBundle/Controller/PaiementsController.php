@@ -124,9 +124,7 @@ class PaiementsController extends Controller {
         $content = stream_get_contents($handle);
         fclose($handle);
 
-        $content = "\xef\xbb\xbf".$content;
-
-        $response = new Response($content, 200, array(
+        $response = new Response(utf8_decode($content), 200, array(
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename=' . $filename,
         ));
