@@ -46,6 +46,7 @@ class ContratRepository extends DocumentRepository {
 
     public function findByQuery($q)
     {
+        $q = str_replace(",", "", $q);
         $q = "\"".str_replace(" ", "\" \"", $q)."\"";
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Contrat')->command([

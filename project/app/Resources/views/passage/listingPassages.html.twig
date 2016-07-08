@@ -40,7 +40,6 @@
 				| localizeddate('full', 'none') | capitalize }} {% endif %} {%
 				if(passage.duree) %} à {{passage.dateDebut | date("H") }}h{{passage.dateDebut |
 				date("i") }}{% endif %} </a>
-
 		</div>
 		<div class="col-xs-2">
 			{% for prestation in passage.prestations %} {% if(prestation.wordToPicto)
