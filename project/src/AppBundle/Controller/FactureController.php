@@ -27,22 +27,22 @@ class FactureController extends Controller {
      */
     public function indexAction(Request $request) {
     $dm = $this->get('doctrine_mongodb')->getManager();
-    	$form = $this->createForm(FactureChoiceType::class, null, array(
-    			'action' => $this->generateUrl('facture'),
-    			'method' => 'GET',
-    	));
+        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
+            'action' => $this->generateUrl('societe'),
+            'method' => 'GET',
+        ));
     	$result = array();
     	$search = false;
     	$query = false;
-    	$form->handleRequest($request);
+    	/*$form->handleRequest($request);
     	if ($form->isSubmitted() && $form->isValid()) {
     		$query = $form->getData()['factures'];
     		$search = is_null($query) ? false : true;
     		$result = $dm->getRepository('AppBundle:Facture')->findByQuery($query);
     		usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
-    	}
+    	}*/
 
-        return $this->render('facture/index.html.twig', array('form' => $form->createView(), 'result' => $result, 'search' => $search, 'query' => $query));
+        return $this->render('facture/index.html.twig', array('formSociete' => $formSociete->createView(), 'result' => $result, 'search' => $search, 'query' => $query));
     }
 
     /**
@@ -118,24 +118,15 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/etablissement-choix", name="facture_societe_choice")
-     */
-    public function societeChoiceAction(Request $request) {
-        $formData = $request->get('societe_choice');
-
-        return $this->redirectToRoute('facture_societe', array('id' => $formData['societes']));
-    }
-
-    /**
      * @Route("/societe/{id}", name="facture_societe")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
     public function societeAction(Request $request, Societe $societe) {
         $fm = $this->get('facture.manager');
 
-        $formSociete = $this->createForm(SocieteChoiceType::class, array('societes' => $societe->getIdentifiant(), 'societe' => $societe), array(
-            'action' => $this->generateUrl('facture_societe_choice'),
-            'method' => 'POST',
+        $formSociete = $this->createForm(SocieteChoiceType::class, array('societe' => $societe), array(
+            'action' => $this->generateUrl('societe'),
+            'method' => 'GET',
         ));
         $factures = $fm->findBySociete($societe);
         $mouvements = $fm->getMouvementsBySociete($societe);

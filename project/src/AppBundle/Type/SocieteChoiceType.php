@@ -22,7 +22,7 @@ class SocieteChoiceType extends AbstractType {
             $defaultChoice = array($options['data']['societe']->getIntitule() => $options['data']['societe']->getIntitule());
         }
         $builder->add('actif', CheckboxType::class, array('label' => 'inclure les sociétés suspendues', 'required' => false, 'empty_data' => null, 'attr'=> array("data-search-actif" => "1")));
-        $builder->add('societes', TextType::class, array("attr" => array("class" => "typeahead form-control", "placeholder" => "Rechercher une société")));
+        $builder->add('societes', TextType::class, array("attr" => array("class" => "typeahead form-control", "placeholder" => (isset($options['data']) && isset($options['data']['societe']) && $options['data']['societe']->getIntitule()) ? $options['data']['societe']->getIntitule() : "Rechercher une société")));
     }
 
     /**

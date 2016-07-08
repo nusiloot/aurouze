@@ -6,22 +6,7 @@
         <li><a href="{{ path('contrat') }}">Contrat</a></li>
     </ol>
 
-    <div class="row">
-	    <div class="col-xs-12">
-	        <h3 style="margin-top: 10px;">Rechercher par contrat</h3>
-	        {{ form_start(form, {'attr': { 'novalidate': 'novalidate', 'class': 'form-horizontal' } }) }}
-	        <div class="form-group">
-	            <div class="col-xs-10">
-	                {{ form_errors(form.contrats) }}
-	                {{ form_widget(form.contrats) }}
-	            </div>
-	            <div class="col-xs-2 text-right">
-	            	<button type="submit" class="btn btn-default" type="button">Rechercher</button>
-	            </div>
-	        </div>
-	        {{form_end(form)}}
-	    </div>
-	</div>
+    {{ include('societe/choixForm.html.twig', {'form': formSociete, 'urlTarget': path('contrats_societe', {'id': '_id_'}), 'autofocus': true })}}
 
 	{% if search %}
 

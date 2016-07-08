@@ -28,23 +28,23 @@ class ContratController extends Controller {
      */
     public function indexAction(Request $request) {
 
-    $dm = $this->get('doctrine_mongodb')->getManager();
-    	$form = $this->createForm(ContratChoiceType::class, null, array(
-    			'action' => $this->generateUrl('contrat'),
-    			'method' => 'GET',
-    	));
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
+            'action' => $this->generateUrl('societe'),
+            'method' => 'POST',
+        ));
     	$result = array();
     	$search = false;
     	$query = false;
-    	$form->handleRequest($request);
+    	/*$form->handleRequest($request);
     	if ($form->isSubmitted() && $form->isValid()) {
     		$query = $form->getData()['contrats'];
     		$search = true;
     		$result = $dm->getRepository('AppBundle:Contrat')->findByQuery($query);
     		usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
-    	}
+    	}*/
 
-        return $this->render('contrat/index.html.twig', array('form' => $form->createView(), 'result' => $result, 'search' => $search, 'query' => $query));
+        return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView(), 'result' => $result, 'search' => $search, 'query' => $query));
     }
 
     /**
@@ -66,8 +66,8 @@ class ContratController extends Controller {
         usort($contrats, array("AppBundle\Document\Contrat", "cmpContrat"));
 
 
-        $formSociete = $this->createForm(SocieteChoiceType::class, array('societes' => $societe->getIdentifiant(), 'societe' => $societe), array(
-            'action' => $this->generateUrl('contrat_societe_choice'),
+        $formSociete = $this->createForm(SocieteChoiceType::class, array('societe' => $societe), array(
+            'action' => $this->generateUrl('societe'),
             'method' => 'POST',
         ));
 

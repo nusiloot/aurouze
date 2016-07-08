@@ -5,7 +5,7 @@
 
 {% block body %}
 
-    {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
+    {{ include('societe/choixForm.html.twig', {'form': formSociete, 'urlTarget': path('facture_societe', {'id': '_id_'})}) }}
 
     <h3>
         Mouvements à facturer

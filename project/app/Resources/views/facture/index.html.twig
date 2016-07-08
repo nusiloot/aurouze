@@ -9,23 +9,7 @@
 		<li><a href="{{ path('facture') }}">Facture</a></li>
 	</ol>
 
-	<div class="row" id="searchable">
-	    <div class="col-xs-12">
-	        <h3 style="margin-top: 10px;">Rechercher par facture</h3>
-	        {{ form_start(form, {'attr': { 'novalidate': 'novalidate', 'class': 'form-horizontal' } }) }}
-	        <div class="form-group">
-	            <div class="col-xs-10">
-	                {{ form_errors(form.factures) }}
-	                {{ form_widget(form.factures) }}
-	            </div>
-	            <div class="col-xs-2 text-right">
-	            	<button type="submit" class="btn btn-default" type="button">Rechercher</button>
-	            </div>
-	        </div>
-	        {{form_end(form)}}
-	    </div>
-	</div>
-
+	{{ include('societe/choixForm.html.twig', {'form': formSociete, 'urlTarget': path('facture_societe', {'id': '_id_'}), 'autofocus': true }) }}
 
 	{% if search %}
 

@@ -6,22 +6,7 @@
 		<li><a href="{{ path('societe') }}">Société</a></li>
 	</ol>
 
-	<div class="row" id="searchable" data-type="societe" data-url="{{ path('recherche_societe')  }}" data-target="{{ path('societe_visualisation', {'id': '_id_'})  }}">
-	    <div class="col-xs-12">
-	        <h3 style="margin-top: 10px;">Rechercher par société</h3>
-	        {{ form_start(form, {'attr': { 'novalidate': 'novalidate', 'class': 'form-horizontal' } }) }}
-	        <div class="form-group">
-	            <div class="col-xs-12">
-	                {{ form_errors(form.societes) }}
-	                {{ form_widget(form.societes, {'attr': {'autofocus': 'autofocus'}}) }}
-	                {{ form_widget(form.actif) }}
-	            </div>
-	        </div>
-	        {{form_end(form)}}
-	    </div>
-	</div>
-
-
+	{{ include('societe/choixForm.html.twig', {'form': form, 'urlTarget': path('societe_visualisation', {'id': '_id_'}), 'autofocus': true })}}
 
     <div class="text-right" >
     <a class="btn btn-default" href="{{ path('societe_modification') }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Créer une nouvelle société</a>

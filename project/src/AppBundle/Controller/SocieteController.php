@@ -63,8 +63,8 @@ class SocieteController extends Controller {
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
     	$form = $this->createForm(SocieteChoiceType::class, array('societe' => $societe), array(
-    			'action' => $this->generateUrl('societe_choice'),
-    			'method' => 'POST',
+    			'action' => $this->generateUrl('societe'),
+    			'method' => 'GET',
     	));
 
         $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
