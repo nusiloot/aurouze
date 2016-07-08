@@ -47,4 +47,28 @@ class CompteRepository extends DocumentRepository {
         return $utilisateurs;
     }
 
+    public function findByQuery($q, $inactif = false)
+    {
+        $q = str_replace(",", "", $q);
+        $q = "\"".str_replace(" ", "\" \"", $q)."\"";
+    	$resultSet = array();
+    	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([
+    			'find' => 'Compte',
+    			'filter' => ['$text' => ['$search' => $q]],
+    			'projection' => ['score' => [ '$meta' => "textScore" ]],
+    			'sort' => ['score' => [ '$meta' => "textScore" ]],
+    			'limit' => 50
+
+    	]);
+    	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
+    		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
+    			if (!$inactif && !$itemResult['actif']) {
+    				continue;
+    			}
+    			$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Compte', $itemResult), "score" => $itemResult['score'], "instance" => "Compte");
+    		}
+    	}
+    	return $resultSet;
+    }
+
 }

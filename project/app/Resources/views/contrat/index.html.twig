@@ -5,5 +5,7 @@
     <ol class="breadcrumb">
         <li><a href="{{ path('contrat') }}">Contrat</a></li>
     </ol>
-    {{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
+
+    {{ include('societe/choixForm.html.twig', {'urlTarget': path('contrats_societe', {'id': '_id_'}), 'autofocus': true })}}
+
 {% endblock %}

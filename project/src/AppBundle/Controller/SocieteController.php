@@ -18,15 +18,15 @@ class SocieteController extends Controller {
     /**
      * @Route("/societe", name="societe")
      */
-    public function indexAction() {
+    public function indexAction(Request $request) {
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
-    	$form = $this->createForm(SocieteChoiceType::class, null, array(
-    			'action' => $this->generateUrl('societe_choice'),
-    			'method' => 'POST',
-    	));
 
-    	return $this->render('societe/index.html.twig', array('form' => $form->createView()));
+    	return $this->render('societe/index.html.twig');
+    }
+    protected static function cmpContacts($a, $b)
+    {
+    	return ($a['score'] > $b['score']) ? -1 : +1;
     }
 
     /**
@@ -45,14 +45,10 @@ class SocieteController extends Controller {
     public function visualisationAction(Request $request, $societe) {
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
-    	$form = $this->createForm(SocieteChoiceType::class, array('societe' => $societe), array(
-    			'action' => $this->generateUrl('societe_choice'),
-    			'method' => 'POST',
-    	));
 
         $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
 
-    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe,'form' => $form->createView(), 'nbContratsSociete' => $nbContratsSociete));
+    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe, 'nbContratsSociete' => $nbContratsSociete));
     }
 
     /**

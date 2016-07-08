@@ -25,6 +25,7 @@
         $.initLinkCalendar();
         $.initMap();
         $.initTypeheadFacture();
+        $.initTypeheadSearchable();
         $.initSomme();
     });
 
@@ -349,6 +350,77 @@
         $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
             $(this).parents(".dynamic-collection-item").find('.prix-unitaire').val(suggestion.prix);
         });
+    }
+
+    $.initTypeheadSearchable = function () {
+        if (!$('#searchable').length) {
+            return;
+        }
+        var url = $('#searchable').data('url')+"?q=%QUERY&inactif="+((checkbox && checkbox.is(':checked'))? "1" : "0");
+        var type = $('#searchable').data('type');
+        var target = $('#searchable').data('target');
+        var checkbox = $('#searchable').find("input[type=checkbox]");
+
+        $('#searchable .typeahead').typeahead({
+    	  hint: false,
+    	  highlight: true,
+    	  minLength: 2
+    	},
+    	{
+          limit: 10,
+    	  source: new Bloodhound({
+              datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+              queryTokenizer: Bloodhound.tokenizers.whitespace,
+              remote: {
+                url: url,
+                wildcard: '%QUERY'
+              }
+            }),
+          display: "libelle",
+          async: true,
+          templates: {
+              suggestion: function (e) {
+            	  if (type == 'societe') {
+	            	  var result = '<i class="mdi mdi-'+e.icon+' mdi-lg"></i>&nbsp;'+e.libelle+' <small>n°&nbsp;'+e.identifiant+'</small>';
+	            	  if (!e.actif) {
+	            		  result = result+' <small><label class="label label-xs label-danger">SUSPENDU</label></small>';
+	            	  }
+	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+            	  }
+            	  if (type == 'contrat') {
+	            	  var result = e.type+' <small class="text-'+e.color+'">'+e.statut+'</small> n°<strong>'+e.identifiant+'</strong> '+e.periode+' <small class="text-muted">'+e.garantie+'</small> '+e.prix+' €';
+	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+            	  }
+            	  return '';
+              },
+              notFound: function(query) {
+
+                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</a></div>";
+              },
+              footer: function(query, suggestions) {
+
+                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</div></a>";
+              }
+          }
+        });
+
+        $('#searchable').on("click", "#search_more_submit", function() {
+            $('#searchable form').submit();
+            return false;
+        });
+
+        $('#searchable .typeahead').bind('typeahead:cursorchange', function (event, suggestion) {
+            $('#societe_choice_societes').val($('.typeahead').typeahead('val'));
+        });
+
+        $('#searchable .typeahead').bind('typeahead:asyncreceive', function (event, suggestion) {
+            $('#searchable').find(".tt-dataset .tt-suggestion:first").addClass('tt-cursor');
+        });
+
+        $('#searchable .typeahead').bind('typeahead:select', function(ev, suggestion) {
+            document.location.href=target.replace('_id_', suggestion.id);
+        });
+
     }
 
     $.initFactureLibre = function () {

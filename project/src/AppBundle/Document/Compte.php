@@ -275,8 +275,8 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
     }
 
     public function getLibelleComplet() {
-
-        return $this->getDestinataire() . ', ' . $this->getAdresse()->getLibelleComplet();
+		
+        return ($this->getAdresse()->isEmpty())?  $this->getDestinataire() : $this->getDestinataire() . ', ' . $this->getAdresse()->getLibelleComplet();
     }
 
     public function __toString() {
@@ -438,7 +438,7 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
      * @return AppBundle\Document\Adresse $adresse
      */
     public function getAdresse() {
-        if(!$this->adresse || $this->adresse->isEmpty()) {
+        if(!$this->adresse) {
 
             return clone $this->getSociete()->getAdresse();
         }
@@ -574,5 +574,10 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
     public function getFonction()
     {
         return $this->fonction;
+    }
+    
+    public function getIcon() 
+    {
+    	return 'face';
     }
 }

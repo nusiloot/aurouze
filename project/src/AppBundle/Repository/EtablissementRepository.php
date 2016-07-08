@@ -60,6 +60,32 @@ class EtablissementRepository extends DocumentRepository {
         return is_null($results) ? array() : $results;
     }
 
+    public function findByQuery($q, $inactif = false)
+    {
+
+        $q = "\"".str_replace(" ", "\" \"", $q)."\"";
+        $q = str_replace(",", "", $q);
+        
+    	$resultSet = array();
+    	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([
+    			'find' => 'Etablissement',
+    			'filter' => ['$text' => ['$search' => $q]],
+    			'projection' => ['score' => [ '$meta' => "textScore" ]],
+    			'sort' => ['score' => [ '$meta' => "textScore" ]],
+    			'limit' => 50
+
+    	]);
+    	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
+    		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
+    			if (!$inactif && !$itemResult['actif']) {
+    				continue;
+    			}
+    			$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Etablissement', $itemResult), "score" => $itemResult['score'], "instance" => "Etablissement");
+    		}
+    	}
+    	return $resultSet;
+    }
+
     public function findAllPostfixByIdentifiantSociete($societe) {
         $etablissements = $this->findAllOrderedByIdentifiantSociete($societe);
         $allPostfixByIdentifiantSociete = array();

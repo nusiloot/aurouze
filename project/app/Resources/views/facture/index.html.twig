@@ -4,5 +4,11 @@
 {% block title %}Factures{% endblock title %}
 
 {% block body %}
-{{ include('societe/choixForm.html.twig', {'form': formSociete}) }}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('facture') }}">Facture</a></li>
+	</ol>
+
+	{{ include('societe/choixForm.html.twig', {'urlTarget': path('facture_societe', {'id': '_id_'}), 'autofocus': true }) }}
+
 {% endblock %}

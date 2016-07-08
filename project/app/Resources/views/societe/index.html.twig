@@ -2,8 +2,14 @@
 {% extends 'base.html.twig' %}
 {% block title %}Sociétés{% endblock title %}
 {% block body %}
-    {{ include('societe/choixForm.html.twig', {'form': form}) }}
-    <div class="text-right">
+	<ol class="breadcrumb">
+		<li><a href="{{ path('societe') }}">Société</a></li>
+	</ol>
+
+	{{ include('societe/choixForm.html.twig', {'urlTarget': path('societe_visualisation', {'id': '_id_'}), 'autofocus': true })}}
+
+    <div class="text-right" >
     <a class="btn btn-default" href="{{ path('societe_modification') }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Créer une nouvelle société</a>
     </div>
+
 {% endblock %}

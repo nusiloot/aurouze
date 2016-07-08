@@ -12,6 +12,7 @@ use AppBundle\Document\FactureLigne;
 use AppBundle\Type\FactureType;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Societe;
+use AppBundle\Type\FactureChoiceType;
 use AppBundle\Type\SocieteChoiceType;
 
 /**
@@ -27,12 +28,7 @@ class FactureController extends Controller {
     public function indexAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
-            'action' => $this->generateUrl('facture_societe_choice'),
-            'method' => 'POST',
-        ));
-
-        return $this->render('facture/index.html.twig', array('formSociete' => $formSociete->createView()));
+        return $this->render('facture/index.html.twig');
     }
 
     /**
@@ -108,29 +104,20 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/etablissement-choix", name="facture_societe_choice")
-     */
-    public function societeChoiceAction(Request $request) {
-        $formData = $request->get('societe_choice');
-
-        return $this->redirectToRoute('facture_societe', array('id' => $formData['societes']));
-    }
-
-    /**
      * @Route("/societe/{id}", name="facture_societe")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
     public function societeAction(Request $request, Societe $societe) {
         $fm = $this->get('facture.manager');
 
-        $formSociete = $this->createForm(SocieteChoiceType::class, array('societes' => $societe->getIdentifiant(), 'societe' => $societe), array(
-            'action' => $this->generateUrl('facture_societe_choice'),
-            'method' => 'POST',
+        $formSociete = $this->createForm(SocieteChoiceType::class, array('societe' => $societe), array(
+            'action' => $this->generateUrl('societe'),
+            'method' => 'GET',
         ));
         $factures = $fm->findBySociete($societe);
         $mouvements = $fm->getMouvementsBySociete($societe);
 
-        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements, 'formSociete' => $formSociete->createView(), 'factures' => $factures));
+        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements, 'factures' => $factures));
     }
 
     /**

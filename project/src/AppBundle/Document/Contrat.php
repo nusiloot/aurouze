@@ -1600,6 +1600,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return $this->getDevisInterlocuteur()->getAdresse();
     }
+    
+    public function getLibelle() {
+    	return $this->getNumeroArchive();
+    }
 
     public function calculPca(){
       if(!$this->getContratPassages()->first()){

@@ -10,11 +10,12 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Contrat;
-use AppBundle\Type\SocieteChoiceType;
+use AppBundle\Type\ContratChoiceType;
 use AppBundle\Type\ContratType;
 use AppBundle\Type\ContratMarkdownType;
 use AppBundle\Type\ContratGeneratorType;
 use AppBundle\Type\ContratAcceptationType;
+use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
 use Knp\Snappy\Pdf;
@@ -26,15 +27,10 @@ class ContratController extends Controller {
      * @Route("/contrat", name="contrat")
      */
     public function indexAction(Request $request) {
+
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $formSociete = $this->createForm(SocieteChoiceType::class, array(), array(
-            'action' => $this->generateUrl('contrat_societe_choice'),
-            'method' => 'POST',
-        ));
-        $formSociete->handleRequest($request);
-
-        return $this->render('contrat/index.html.twig', array('formSociete' => $formSociete->createView()));
+        return $this->render('contrat/index.html.twig');
     }
 
     /**
@@ -55,13 +51,7 @@ class ContratController extends Controller {
         $contrats = $this->get('contrat.manager')->getRepository()->findBy(array('societe' => $societe->getId()), array('dateDebut' => 'DESC'));
         usort($contrats, array("AppBundle\Document\Contrat", "cmpContrat"));
 
-
-        $formSociete = $this->createForm(SocieteChoiceType::class, array('societes' => $societe->getIdentifiant(), 'societe' => $societe), array(
-            'action' => $this->generateUrl('contrat_societe_choice'),
-            'method' => 'POST',
-        ));
-
-        return $this->render('contrat/societe.html.twig', array('formSociete' => $formSociete->createView(), 'societe' => $societe, 'contrats' => $contrats));
+        return $this->render('contrat/societe.html.twig', array('societe' => $societe, 'contrats' => $contrats));
     }
 
     /**

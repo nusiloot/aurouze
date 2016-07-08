@@ -93,7 +93,7 @@ body {
 }
 
 .tt-menu {
-  max-height: 150px;
+  max-height: 500px;
   overflow-y: auto;
   width: 100%;
   margin: 8px 0;
@@ -112,7 +112,7 @@ body {
 .tt-suggestion {
   padding: 3px 15px;
   font-size: 15px;
-  line-height: 22px;
+  line-height: 28px;
 }
 
 .tt-suggestion:hover {
@@ -131,7 +131,22 @@ body {
   margin: 0;
 }
 
+
+.searchable_result a {
+	color: #333;
+}
+.searchable_result a:hover {
+	text-decoration: none;
+}
 .show-print {
 	visibility: hidden !important;
 	position: absolute !important;
+}
+
+#searchable {
+    margin-bottom: 10px;
+}
+
+.container .breadcrumb:first-child {
+    margin-bottom: 5px;
 }
