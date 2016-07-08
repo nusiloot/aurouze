@@ -10,7 +10,7 @@
 		<div class="form-group">
 			<div class="col-xs-12">
 				<div class="input-group">
-					<input type="text" name="q" placeholder="Rechercher une société, un établissement, un interlocuteur, une facture, un contrat" class="form-control input-lg" id="q" value="{{ query }}" />
+					<input autofocus="autofocus" type="text" name="q" placeholder="Rechercher une société, un établissement, un interlocuteur, une facture, un contrat" class="form-control input-lg" id="q" value="{{ query }}" />
 		 			<span class="input-group-btn">
 						<button type="submit" class="btn btn-default btn-lg">Rechercher</button>
 					</span>
@@ -18,19 +18,25 @@
 			</div>
 		</div>
 	</form>
-	{% if resultats is defined %}
-		<ul class="nav nav-pills nav-justified">
-	{% for key, items in resultats %}
-	    <li class="{% if loop.first %}active{% endif %}" role="presentation"><a href="#{{ key }}" aria-controls="{{ key }}" role="tab" data-toggle="tab">{{ key }} <span class="badge">{{ items | length}}</span></a></li>
-	{% endfor %}
-	</ul>
 
-	<div class="tab-content">
+
+	{% if resultats is defined and resultats | length %}
+		<ul class="nav nav-pills nav-justified">
 		{% for key, items in resultats %}
-	    <div role="tabpanel" class="tab-pane {% if loop.first %}active{% endif %}" id="{{ key }}" style="margin-top: 20px;">
-			{% include 'recherche/list'~key~'.html.twig' with {'items': items} only %}
-		</div>
+		    <li class="{% if loop.first %}active{% endif %}" role="presentation"><a href="#{{ key }}" aria-controls="{{ key }}" role="tab" data-toggle="tab">{{ key }} <span class="badge">{{ items | length}}</span></a></li>
 		{% endfor %}
-	</div>
+		</ul>
+
+		<div class="tab-content">
+			{% for key, items in resultats %}
+		    <div role="tabpanel" class="tab-pane {% if loop.first %}active{% endif %}" id="{{ key }}" style="margin-top: 20px;">
+				{% include 'recherche/list'~key~'.html.twig' with {'items': items} only %}
+			</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+
+	{% if resultats is defined and not resultats | length %}
+		Aucun résultat trouvé
 	{% endif %}
 {% endblock %}
