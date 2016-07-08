@@ -13,6 +13,7 @@ use AppBundle\Document\Contrat;
 use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
 use AppBundle\Type\PassageCreationType;
+use AppBundle\Type\PassageModificationType;
 use AppBundle\Manager\PassageManager;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\InterventionRapideCreationType;
@@ -85,6 +86,36 @@ class PassageController extends Controller {
     }
 
     /**
+     * @Route("/passage/{id}/modifier", name="passage_modification")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function modificationAction(Request $request, Passage $passage) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        if($passage->isRealise()) {
+            throw $this->createNotFoundException();
+        }
+
+        $form = $this->createForm(new PassageModificationType($dm), $passage, array(
+            'action' => $this->generateUrl('passage_modification', array('id' => $passage->getId())),
+            'method' => 'POST',
+        ))->add('modifier', 'submit', array('label' => "Modifier", "attr" => array("class" => "btn btn-primary pull-right")));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $passage = $form->getData();
+            if(!$passage->getRendezVous()) {
+                $passage->setDateDebut($passage->getDatePrevision());
+            }
+            $dm->persist($passage);
+            $dm->flush();
+            return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
+        }
+
+
+        return $this->render('passage/modification.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+    }
+
+    /**
      * @Route("/passage/{passage}/planifier", name="passage_planifier")
      * @ParamConverter("passage", class="AppBundle:Passage")
      */
@@ -95,29 +126,6 @@ class PassageController extends Controller {
         }
 
         return $this->redirectToRoute('calendar', array('passage' => $passage->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
-    }
-
-    /**
-     * @Route("/passage/{id}/modifier", name="passage_modification")
-     * @ParamConverter("passage", class="AppBundle:Passage")
-     */
-    public function modificationAction(Request $request, Passage $passage) {
-        $dm = $this->get('doctrine_mongodb')->getManager();
-
-        $form = $this->createForm(new PassageCreationType($dm), $passage, array(
-            'action' => $this->generateUrl('passage_modification', array('id' => $passage->getId())),
-            'method' => 'POST',
-        ));
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $passage = $form->getData();
-            $dm->persist($passage);
-            $dm->flush();
-            return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
-        }
-
-
-        return $this->render('passage/modification.html.twig', array('passage' => $passage, 'form' => $form->createView()));
     }
 
     /**
