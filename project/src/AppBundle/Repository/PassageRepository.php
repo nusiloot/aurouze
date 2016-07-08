@@ -107,6 +107,27 @@ class PassageRepository extends DocumentRepository {
         return $query->execute();
     }
 
+    public function findByQuery($q)
+    {
+        $q = str_replace(",", "", $q);
+        $q = "\"".str_replace(" ", "\" \"", $q)."\"";
+        $resultSet = array();
+        $itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Passage')->command([
+                'find' => 'Passage',
+                'filter' => ['$text' => ['$search' => $q]],
+                'projection' => ['score' => [ '$meta' => "textScore" ]],
+                'sort' => ['score' => [ '$meta' => "textScore" ]],
+                'limit' => 100
+
+        ]);
+        if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
+            foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
+                $resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Passage', $itemResult), "score" => $itemResult['score']);
+            }
+        }
+        return $resultSet;
+    }
+
     public function findTechniciens() {
         $techniciens = array();
         $date = new \DateTime();
