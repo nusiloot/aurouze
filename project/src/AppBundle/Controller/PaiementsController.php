@@ -146,6 +146,12 @@ class PaiementsController extends Controller {
         $page = 0;
         $cpt = 0;
         foreach ($paiements->getPaiementUniqueParLibelle() as $paiement) {
+           if ($paiements->isRemiseEspece() && $paiement->getMoyenPaiement() == 'CHEQUE') {
+               continue;
+           }
+           if (!$paiements->isRemiseEspece() && $paiement->getMoyenPaiement() != 'CHEQUE') {
+               continue;
+           }
           if($cpt % 30 == 0){
             $page++;
             $paiementsLists[$page] = array();

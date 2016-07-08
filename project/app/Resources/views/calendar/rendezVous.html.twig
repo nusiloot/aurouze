@@ -59,6 +59,9 @@
                             <p class="form-control-static">
                                 <a title="Voir les passages" href="{{ path('passage_etablissement', {'id': rdv.passage.etablissement.id })}}">{{ rdv.passage.libelle }}, prévu en {{ rdv.passage.datePrevision | localizeddate("medium",
             				"none", null, null, "MMMM YYYY") }} (n° {{ rdv.passage.numeroArchive }})</a>
+                             {% if (not rdv.passage.isRealise) %}
+                             <a class="btn btn-default btn-xs" href="{{ path('passage_modification', {'id': rdv.passage.id }) }}"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
+                             {% endif %}
                             </p>
                         </div>
                     </div>
