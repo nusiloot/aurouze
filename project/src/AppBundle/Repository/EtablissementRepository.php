@@ -64,7 +64,8 @@ class EtablissementRepository extends DocumentRepository {
     {
 
         $q = "\"".str_replace(" ", "\" \"", $q)."\"";
-
+        $q = str_replace(",", "", $q);
+        
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([
     			'find' => 'Etablissement',

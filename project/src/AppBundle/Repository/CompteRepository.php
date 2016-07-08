@@ -49,6 +49,7 @@ class CompteRepository extends DocumentRepository {
 
     public function findByQuery($q, $inactif = false)
     {
+        $q = str_replace(",", "", $q);
         $q = "\"".str_replace(" ", "\" \"", $q)."\"";
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([

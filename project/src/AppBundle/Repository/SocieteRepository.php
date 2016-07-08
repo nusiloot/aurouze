@@ -49,7 +49,7 @@ class SocieteRepository extends DocumentRepository {
         return is_null($results) ? array() : $results;
     }
 
-    public function findByQuery($q, $inactif = false)
+    public function findByQuery($q, $inactif = false, $limit = 100)
     {
 
     	/*$query = $this->createQueryBuilder();
@@ -65,7 +65,7 @@ class SocieteRepository extends DocumentRepository {
     		echo '<hr />';
     	}
     	exit;*/
-
+        $q = str_replace(",", "", $q);
         $q = "\"".str_replace(" ", "\" \"", $q)."\"";
 
     	$resultSet = array();
@@ -74,7 +74,7 @@ class SocieteRepository extends DocumentRepository {
     		'filter' => ['$text' => ['$search' => $q]],
     		'projection' => ['score' => [ '$meta' => "textScore" ]],
     		'sort' => ['score' => [ '$meta' => "textScore" ]],
-    		'limit' => 100
+    		'limit' => $limit
 
         ]);
     	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {

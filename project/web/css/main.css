@@ -93,7 +93,7 @@ body {
 }
 
 .tt-menu {
-  max-height: 300px;
+  max-height: 500px;
   overflow-y: auto;
   width: 100%;
   margin: 8px 0;
@@ -141,4 +141,8 @@ body {
 .show-print {
 	visibility: hidden !important;
 	position: absolute !important;
+}
+
+.container .breadcrumb:first-child {
+    margin-bottom: 10px;
 }
