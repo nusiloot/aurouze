@@ -368,7 +368,10 @@ class ContratController extends Controller {
         ini_set('memory_limit', '-1');
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
-        $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
+        $dateDebutString = $formRequest['dateDebut']."00:00:00";
+
+        $dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
+
         $dm = $this->get('doctrine_mongodb')->getManager();
         $cm = $this->get('contrat.manager');
         $pca_for_csv = $cm->getPcaForCsv($dateDebut);

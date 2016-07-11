@@ -58,7 +58,7 @@ class FactureRepository extends DocumentRepository {
     }
 
     public function exportOneMonthByDate(\DateTime $dateDebut,\DateTime $dateFin) {
-      
+
         $q = $this->createQueryBuilder();
 
         $q->field('dateFacturation')->gte($dateDebut)->lte($dateFin)->sort('dateFacturation', 'asc');
