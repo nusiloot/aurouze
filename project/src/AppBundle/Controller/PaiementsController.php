@@ -106,8 +106,13 @@ class PaiementsController extends Controller {
 
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
-        $dateDebut = \DateTime::createFromFormat('d/m/Y',$formRequest['dateDebut']);
-        $dateFin = \DateTime::createFromFormat('d/m/Y',$formRequest['dateFin']);
+
+        $dateDebutString = $formRequest['dateDebut']."00:00:00";
+        $dateFinString = $formRequest['dateFin']."23:59:59";
+
+        $dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
+        $dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
+
         $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('paiements.manager');
         $paiementsForCsv = $pm->getPaiementsForCsv($dateDebut,$dateFin);
