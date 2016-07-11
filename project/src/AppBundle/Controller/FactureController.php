@@ -504,21 +504,22 @@ class FactureController extends Controller {
         $dateFinFirstOfMonth->modify('last day of this month');
 
         $interval = \DateInterval::createFromDateString('1 month');
-        $period   = new \DatePeriod($dateDebutFirstOfMonth, $interval, $dateFinFirstOfMonth);
+        $period = new \DatePeriod($dateDebutFirstOfMonth, $interval, $dateFinFirstOfMonth);
 
         $arrayOfDates = array();
         $cpt = 0;
+        $nbPeriod = count(iterator_to_array($period));
         foreach ($period as $dt) {
             $arrayOfDates[$dt->format("Y-m")] = array();
             $firstDay = clone $dt;
             $lastDay = clone $dt;
             $arrayOfDates[$dt->format("Y-m")]['dateDebut'] = $firstDay->modify('first day of this month');
-            $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $lastDay->modify('last day of this month');
+            $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $lastDay->modify('last day of this month +23 hours +59 minutes +59 seconds');
           if(!$cpt){
             $arrayOfDates[$dt->format("Y-m")]['dateDebut'] = $dateDebut;
           }
           $cpt++;
-          if($cpt == count($period)){
+          if($cpt == $nbPeriod){
             $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $dateFin;
           }
         }
@@ -528,20 +529,18 @@ class FactureController extends Controller {
 
         $filename = sprintf("export_stats_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
 
-          $handle = fopen('php://memory', 'r+');
-          foreach ($arrayOfDates as $dates) {
-
+        $handle = fopen('php://memory', 'r+');
+        foreach ($arrayOfDates as $dates) {
             $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin']);
-
-          foreach ($facturesStatsForCsv as $paiement) {
-              fputcsv($handle, $paiement,';');
-          }
-          fputcsv($handle, array("",""),';');
-
+            foreach ($facturesStatsForCsv as $paiement) {
+                fputcsv($handle, $paiement,';');
+            }
+            fputcsv($handle, array("",""),';');
         }
-          rewind($handle);
-          $content = stream_get_contents($handle);
-          fclose($handle);
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
         $response = new Response(utf8_decode($content), 200, array(
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename=' . $filename,
