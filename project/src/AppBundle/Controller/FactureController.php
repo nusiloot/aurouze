@@ -529,21 +529,18 @@ class FactureController extends Controller {
 
         $filename = sprintf("export_stats_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
 
-          $handle = fopen('php://memory', 'r+');
-          foreach ($arrayOfDates as $dates) {
-              echo $dates['dateDebut']->format("c")."\n";
-              echo $dates['dateFin']->format("c")."\n";
-              $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin']);
-          foreach ($facturesStatsForCsv as $paiement) {
-              fputcsv($handle, $paiement,';');
-          }
-          fputcsv($handle, array("",""),';');
-
+        $handle = fopen('php://memory', 'r+');
+        foreach ($arrayOfDates as $dates) {
+            $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin']);
+            foreach ($facturesStatsForCsv as $paiement) {
+                fputcsv($handle, $paiement,';');
+            }
+            fputcsv($handle, array("",""),';');
         }
-          rewind($handle);
-          $content = stream_get_contents($handle);
-          fclose($handle);
-          exit;
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
         $response = new Response(utf8_decode($content), 200, array(
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename=' . $filename,
