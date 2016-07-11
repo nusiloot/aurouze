@@ -368,7 +368,7 @@ class ContratController extends Controller {
         ini_set('memory_limit', '-1');
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
-        $dateDebutString = $formRequest['dateDebut']."00:00:00";
+        $dateDebutString = $formRequest['dateDebut']."23:59:59";
 
         $dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
 
