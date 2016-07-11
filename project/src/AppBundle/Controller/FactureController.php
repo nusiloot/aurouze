@@ -415,8 +415,8 @@ class FactureController extends Controller {
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
 
-        $dateDebutString = $formRequest['dateDebut']."00:00:00";
-        $dateFinString = $formRequest['dateFin']."23:59:59";
+        $dateDebutString = $formRequest['dateDebut']." 00:00:00";
+        $dateFinString = $formRequest['dateFin']." 23:59:59";
 
         $dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
         $dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
@@ -453,8 +453,8 @@ class FactureController extends Controller {
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
 
-        $dateDebutString = $formRequest['dateDebut']."00:00:00";
-        $dateFinString = $formRequest['dateFin']."23:59:59";
+        $dateDebutString = $formRequest['dateDebut']." 00:00:00";
+        $dateFinString = $formRequest['dateFin']." 23:59:59";
 
         $dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
         $dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
