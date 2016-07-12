@@ -346,7 +346,7 @@ public static $export_stats_libelle = array(
     if($typeLigne == self::EXPORT_LIGNE_GENERALE){
         $factureLigne[self::EXPORT_COMPTE] = $facture->getSociete()->getCodeComptable();
         $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? "0" : $facture->getMontantTTC(), 2, ",", "");
-        $factureLigne[self::EXPORT_CREDIT] = number_format(($facture->isAvoir())? $facture->getMontantTTC(): "0", 2, ",", "");
+        $factureLigne[self::EXPORT_CREDIT] = number_format(($facture->isAvoir())? (-1*$facture->getMontantTTC()): "0", 2, ",", "");
     }elseif($typeLigne == self::EXPORT_LIGNE_TVA){
 
       if($facture->getTva() == 0.2){
@@ -354,7 +354,7 @@ public static $export_stats_libelle = array(
       }elseif($facture->getTva() == 0.1){
         $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_10;
       }
-      $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? $facture->getMontantTaxe() : "0", 2, ",", "");
+      $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? (-1*$facture->getMontantTaxe()) : "0", 2, ",", "");
       $factureLigne[self::EXPORT_CREDIT] =  number_format(($facture->isAvoir())? "0" :$facture->getMontantTaxe(), 2, ",", "");
     }elseif($typeLigne == self::EXPORT_LIGNE_HT){
       if($facture->getTva() == 0.2 && $facture->getContrat()){
@@ -364,7 +364,7 @@ public static $export_stats_libelle = array(
       } elseif($facture->getTva() == 0.1){
         $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_10;
       }
-      $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? $facture->getMontantHt() : "0", 2, ",", "");
+      $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? (-1*$facture->getMontantHt()) : "0", 2, ",", "");
       $factureLigne[self::EXPORT_CREDIT] =  number_format(($facture->isAvoir())? "0" : $facture->getMontantHt(), 2, ",", "");
 
     }
