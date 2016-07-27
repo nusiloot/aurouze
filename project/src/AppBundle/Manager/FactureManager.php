@@ -239,8 +239,8 @@ public static $export_stats_libelle = array(
         }
       }
       $ca_stats['PAS DE CONTRAT'][$key_stat] = $total;
+      $ca_stats['PAS DE CONTRAT'][0] = "TOTAL";
     }
-
     foreach ($ca_stats as $commercial => $stats) {
       ksort($stats);
       foreach ($stats as $key => $stat) {

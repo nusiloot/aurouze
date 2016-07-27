@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Manager\FactureManager;
 use AppBundle\Document\Facture;
 use AppBundle\Document\FactureLigne;
 use AppBundle\Type\FactureType;
@@ -62,11 +63,11 @@ class FactureController extends Controller {
             $facture->setDateEmission(new \DateTime());
         }
 
+        $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant('003480005');
+        $facture->setCommercial($commercial);
         if ($type == "devis" && !$facture->getDateDevis()) {
-            $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant('003480005');
             $facture->setDateDevis(new \DateTime());
 
-            $facture->setCommercial($commercial);
         } elseif ($type == "facture" && !$facture->getDateFacturation()) {
             $facture->setDateFacturation(new \DateTime());
         }
@@ -493,6 +494,7 @@ class FactureController extends Controller {
     public function exportStatsAction(Request $request) {
 
       // $response = new StreamedResponse();
+        ini_set('memory_limit', '-1');
         $formRequest = $request->request->get('form');
 
         $dateDebutString = $formRequest['dateDebut']."00:00:00";
@@ -533,12 +535,59 @@ class FactureController extends Controller {
         $filename = sprintf("export_stats_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
 
         $handle = fopen('php://memory', 'r+');
+
+        $totalArray = array();
         foreach ($arrayOfDates as $dates) {
             $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin']);
-            foreach ($facturesStatsForCsv as $paiement) {
-                fputcsv($handle, $paiement,';');
+            foreach ($facturesStatsForCsv as $rowId => $paiement) {
+              if($rowId == "ENTETE_TITRE"){
+                $totalArray[$rowId] = array();
+                $totalArray[$rowId][] = array();
+                foreach ($paiement as $value) {
+                  $totalArray[$rowId][] = "";
+                }
+              }elseif($rowId == "ENTETE"){
+                foreach (FactureManager::$export_stats_libelle as $key => $entete) {
+                    $totalArray[$rowId][$key] = str_replace('{X}', 'Année courante',$entete);
+                    $totalArray[$rowId][$key] = str_replace('{X-1}', 'Année précédente',$totalArray[$rowId][$key]);
+                }
+              }
+              else{
+                if(!array_key_exists($rowId,$totalArray)){
+                  $totalArray[$rowId] = array();
+                  $totalArray[$rowId] = $paiement;
+                }else{
+                  foreach ($paiement as $key => $value) {
+                    if(!$key){
+                      $totalArray[$rowId][$key] = $value;
+                    }else{
+                      $floatValue = floatval(str_replace(array(' ',','),array('','.'),$value));
+                      $oldArrayValue = floatval(str_replace(array(' ',','),array('','.'),$totalArray[$rowId][$key]));
+                      $totalArray[$rowId][$key] = $oldArrayValue + $floatValue;
+                    }
+                  }
+                }
+              }
+              fputcsv($handle, $paiement,';');
             }
             fputcsv($handle, array("",""),';');
+        }
+        $totalArray["ENTETE_TITRE"][0] = sprintf("TOTAL des statistiques du %s au %s", $dateDebut->format("d/m/Y"), $dateFin->format("d/m/Y"));
+
+
+        if(count($arrayOfDates) > 1){
+          foreach ($totalArray as $rowId => $paiement) {
+            $tmpArray = array();
+            foreach ($paiement as $key => $paiementVal) {
+              if(is_numeric($paiementVal)){
+                $tmpArray[$key] = number_format($paiementVal, 2, ',', ' ');
+              }else{
+                $tmpArray[$key] = $paiementVal;
+              }
+            }
+             fputcsv($handle, $tmpArray,';');
+          }
+          fputcsv($handle, array("",""),';');
         }
         rewind($handle);
         $content = stream_get_contents($handle);

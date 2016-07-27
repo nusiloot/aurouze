@@ -49,6 +49,13 @@ class FactureType extends AbstractType
                     'attr' => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner une fréquence de paiement"),
             ))
             ->add('description', TextareaType::class, array('label' => 'Informations complémentaires :', 'required' => false, "attr" => array("class" => "form-control", "rows" => 3)))
+            ->add('commercial', DocumentType::class, array_merge(array('required' => false), array(
+                "choices" => $this->getCommerciaux(),
+                'label' => 'Commercial* :',
+                'class' => 'AppBundle\Document\Compte',
+                'expanded' => false,
+                'multiple' => false,
+                "attr" => array("class" => "select2 select2-simple"))))
         ;
 
         if($this->devis) {
@@ -62,13 +69,6 @@ class FactureType extends AbstractType
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy'
             ));
-            $builder->add('commercial', DocumentType::class, array_merge(array('required' => false), array(
-                "choices" => $this->getCommerciaux(),
-                'label' => 'Commercial* :',
-                'class' => 'AppBundle\Document\Compte',
-                'expanded' => false,
-                'multiple' => false,
-                "attr" => array("class" => "select2 select2-simple"))));
         } else {
             $builder->add('dateFacturation', DateType::class, array(
             'label' => 'Date de facturation',

@@ -205,6 +205,7 @@ class PaiementsController extends Controller {
         $exportForms[$exporttype]->type = $exporttype;
         $exportForms[$exporttype]->libelle = $type_export['libelle'];
         $exportForms[$exporttype]->picto = $type_export['picto'];
+        $exportForms[$exporttype]->pdf = $type_export['pdf'];
         $formBuilder = $this->createFormBuilder(array());
             $formBuilder->add('dateDebut', DateType::class, array('required' => true,
                 "attr" => array('class' => 'input-inline datepicker',

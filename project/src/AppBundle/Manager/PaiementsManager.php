@@ -107,13 +107,11 @@ class PaiementsManager {
             self::EXPORT_MONTANT_PIECE_BANQUE => "Montant de la pièce de banque",
             self::EXPORT_MONTANT_CHEQUE => "Montant de remise de chèque");
 
-      public static $types_exports = array(self::TYPE_EXPORT_FACTURES => array("libelle" =>  "Export des factures",
-                                                                               "picto" =>  "glyphicon glyphicon-eur"),
-    self::TYPE_EXPORT_PAIEMENTS => array("libelle" =>  "Export des paiements","picto" =>  "glyphicon glyphicon-th-list"),
-    self::TYPE_EXPORT_STATS  => array("libelle" =>  "Export des statistiques","picto" =>  "glyphicon glyphicon-stats"),
-      self::TYPE_EXPORT_COMMERCIAUX  => array("libelle" =>  "Export Commerciaux","picto" =>  "glyphicon glyphicon-user"),
-    self::TYPE_EXPORT_PCA  => array("libelle" =>  "Export PCA","picto" =>  "glyphicon glyphicon-send")
-
+      public static $types_exports = array(self::TYPE_EXPORT_FACTURES => array("libelle" =>  "Export des factures","picto" =>  "glyphicon glyphicon-eur", "pdf" =>  false),
+    self::TYPE_EXPORT_PAIEMENTS => array("libelle" =>  "Export des paiements", "picto" =>  "glyphicon glyphicon-th-list", "pdf" =>  false),
+    self::TYPE_EXPORT_STATS  => array("libelle" =>  "Export des statistiques", "picto" =>  "glyphicon glyphicon-stats", "pdf" =>  true),
+    self::TYPE_EXPORT_COMMERCIAUX  => array("libelle" =>  "Export Commerciaux", "picto" =>  "glyphicon glyphicon-user", "pdf" =>  true),
+    self::TYPE_EXPORT_PCA  => array("libelle" =>  "Export PCA", "picto" =>  "glyphicon glyphicon-send", "pdf" =>  false)
     );
 
     function __construct(DocumentManager $dm, FactureManager $fm, $parameters) {
