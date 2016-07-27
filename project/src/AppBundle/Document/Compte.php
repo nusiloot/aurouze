@@ -75,6 +75,11 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
     protected $passages = array();
 
     /**
+     *  @MongoDB\ReferenceMany(targetDocument="Facture", mappedBy="commercial")
+     */
+    protected $facturesProduit = array();
+
+    /**
      * @MongoDB\Boolean
      */
     protected $actif;
@@ -275,7 +280,7 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
     }
 
     public function getLibelleComplet() {
-		
+
         return ($this->getAdresse()->isEmpty())?  $this->getDestinataire() : $this->getDestinataire() . ', ' . $this->getAdresse()->getLibelleComplet();
     }
 
@@ -288,6 +293,7 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
         $this->adresse = new Adresse();
         $this->contactCoordonnee = new ContactCoordonnee();
         $this->passages = new ArrayCollection();
+        $this->facturesProduit = new ArrayCollection();
         $this->prestations = new ArrayCollection();
         $this->setSociete($societe);
 
@@ -575,9 +581,39 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
     {
         return $this->fonction;
     }
-    
-    public function getIcon() 
+
+    public function getIcon()
     {
     	return 'face';
+    }
+
+    /**
+     * Add facturesProduit
+     *
+     * @param AppBundle\Document\Facture $facturesProduit
+     */
+    public function addFacturesProduit(\AppBundle\Document\Facture $facturesProduit)
+    {
+        $this->facturesProduit[] = $facturesProduit;
+    }
+
+    /**
+     * Remove facturesProduit
+     *
+     * @param AppBundle\Document\Facture $facturesProduit
+     */
+    public function removeFacturesProduit(\AppBundle\Document\Facture $facturesProduit)
+    {
+        $this->facturesProduit->removeElement($facturesProduit);
+    }
+
+    /**
+     * Get facturesProduit
+     *
+     * @return \Doctrine\Common\Collections\Collection $facturesProduit
+     */
+    public function getFacturesProduit()
+    {
+        return $this->facturesProduit;
     }
 }

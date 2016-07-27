@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -61,6 +62,13 @@ class FactureType extends AbstractType
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy'
             ));
+            $builder->add('commercial', DocumentType::class, array_merge(array('required' => false), array(
+                "choices" => $this->getCommerciaux(),
+                'label' => 'Commercial* :',
+                'class' => 'AppBundle\Document\Compte',
+                'expanded' => false,
+                'multiple' => false,
+                "attr" => array("class" => "select2 select2-simple"))));
         } else {
             $builder->add('dateFacturation', DateType::class, array(
             'label' => 'Date de facturation',
@@ -96,5 +104,13 @@ class FactureType extends AbstractType
     public function getFrequences() {
         $tags = $this->dm->getRepository('AppBundle:Contrat')->findAllFrequences();
         return array_merge(array(null => null), $tags);
+    }
+
+    public function getCommerciaux() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursCommercial();
+    }
+
+    public function getDefaultCommercial() {
+        return $this->dm->getRepository('AppBundle:Compte')->findOneByIdentifiant('003480005');
     }
 }

@@ -73,6 +73,25 @@
                         {{ form_widget(form.frequencePaiement) }}
                     </div>
                 </div>
+                {% if (form.commercial is defined) %}
+                <div class="form-group">
+                    {{ form_errors(form.commercial) }}
+                    {{ form_label(form.commercial, "Commercial", {'label_attr': {'class': 'col-xs-5 control-label'}}) }}
+                    <div class="col-xs-7">
+                        {{ form_widget(form.commercial) }}
+                    </div>
+                </div>
+                {% elseif(facture.commercial is defined and not (facture.commercial is null)) %}
+                <div class="form-group">
+                  <label class="col-xs-5 control-label control-label" for="facture_frequencePaiement">Commercial</label>
+                    <div class="col-xs-7">
+                      <div class="input-group">
+                      {{ facture.commercial.identite }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
             </div>
             <div class="col-xs-5 col-xs-offset-2">
                 <span class="lead">{{ facture.destinataire.nom }}</span><br />

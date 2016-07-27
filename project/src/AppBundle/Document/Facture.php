@@ -24,6 +24,11 @@ class Facture implements DocumentSocieteInterface {
     protected $societe;
 
     /**
+     * @MongoDB\ReferenceOne(targetDocument="Compte", inversedBy="facturesProduit")
+     */
+    protected $commercial;
+
+    /**
      * @MongoDB\EmbedOne(targetDocument="FactureSoussigne")
      */
     protected $emetteur;
@@ -883,4 +888,26 @@ class Facture implements DocumentSocieteInterface {
     	return $this->getNumeroFacture();
     }
 
+
+    /**
+     * Set commercial
+     *
+     * @param AppBundle\Document\Compte $commercial
+     * @return self
+     */
+    public function setCommercial(\AppBundle\Document\Compte $commercial)
+    {
+        $this->commercial = $commercial;
+        return $this;
+    }
+
+    /**
+     * Get commercial
+     *
+     * @return AppBundle\Document\Compte $commercial
+     */
+    public function getCommercial()
+    {
+        return $this->commercial;
+    }
 }

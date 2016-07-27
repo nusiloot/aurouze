@@ -76,6 +76,7 @@
         <div class="modal-content">
             {{ form_start(exportForm.form) }}
             <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
               <h4>Êtes-vous sûre de vouloir faire l'export {{exportForm.type}}?</h4>
             </div>
                 <div class="modal-body form-horizontal">
@@ -106,7 +107,10 @@
                 </div>
                 <div class="modal-footer">
                     <div class="row">
-                        <div class="col-xs-12 text-right">
+                      <div class="col-xs-6 text-left">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+    </div>
+                        <div class="col-xs-6 text-right">
                                 <button class="btn btn-primary" type="submit">Exporter</button>
                         </div>
                     </div>
