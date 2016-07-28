@@ -1,0 +1,43 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12">
+            <br />
+            <h2>EXPORT DES STATISTIQUES PAR COMMERCIAL DU {{ dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }} AU {{ dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</h2>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="row">
+      <div class="col-xs-12">
+        <table class="table">
+          <thead class="thead-inverse">
+            <tr>
+              <th>Commercial</th>
+              <th>Client</th>
+              <th>Num Contrat</th>
+              <th>Num Facture</th>
+              <th>Montant Ht</th>
+              <th>Total Ht</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for statRow in statsForCommerciaux %}
+            {% if not loop.first %}
+            <tr>
+            {% for field in statRow %}
+              {% if loop.first %}
+              <th scope="row">{{field}}</th>
+              {% else %}
+                <td>{{field}}</td>
+              {% endif %}
+            {% endfor %}
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+ </div>
+</div>
+{% endblock %}
