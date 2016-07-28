@@ -456,7 +456,8 @@ class FactureController extends Controller {
 
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
-
+        $commercial = (isset($formRequest['commercial']) && $formRequest['commercial'] && ($formRequest['commercial']!= ""))?
+         $formRequest['commercial'] : null;
         $dateDebutString = $formRequest['dateDebut']." 00:00:00";
         $dateFinString = $formRequest['dateFin']." 23:59:59";
 
@@ -466,7 +467,7 @@ class FactureController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
 
-        $facturesForCsv = $fm->getStatsForCommerciauxForCsv($dateDebut,$dateFin);
+        $facturesForCsv = $fm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial);
 
         $filename = sprintf("export_details_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');

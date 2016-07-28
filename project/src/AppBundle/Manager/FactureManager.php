@@ -150,7 +150,7 @@ public static $export_stats_libelle = array(
         return $this->mm->getMouvements(true, false);
     }
 
-    public function getStatsForCommerciauxForCsv($dateDebut = null, $dateFin = null){
+    public function getStatsForCommerciauxForCsv($dateDebut = null, $dateFin = null, $commercial = null){
     if(!$dateDebut){
             $dateDebut = new \DateTime();
             $dateFin = new \DateTime();
@@ -164,8 +164,11 @@ public static $export_stats_libelle = array(
           foreach ($facturesObjs as $facture) {
             if($facture->getContrat() && $facture->getContrat()->getCommercial()){
                 $contrat = $facture->getContrat();
-                $commercial = $facture->getContrat()->getCommercial();
-                $identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercial->getId())->getIdentite();
+                $commercialFacture = $facture->getContrat()->getCommercial();
+                if($commercial && ($commercial != $commercialFacture->getId())) {
+                  continue;
+                }
+                $identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialFacture->getId())->getIdentite();
                 $arr_ligne = array();
                 $key = $identite."_".$cpt."_".$facture->getNumeroFacture();
                 $arr_ligne[] = $identite;
@@ -178,6 +181,9 @@ public static $export_stats_libelle = array(
             }else{
               $arr_ligne = array();
               $key = "z_".$cpt."_". $facture->getNumeroFacture();
+              if($commercial && (!$facture->getCommercial() || ($commercial != $facture->getCommercial()->getId()))){
+                continue;
+              }
               $arr_ligne[] = ($facture->getCommercial())? $facture->getCommercial()->getIdentite() :"Pas de commercial";
               $arr_ligne[] = $facture->getSociete()->getRaisonSociale();
               $arr_ligne[] = ($facture->getContrat())? $facture->getContrat()->getNumeroArchive() : "Pas de contrat";

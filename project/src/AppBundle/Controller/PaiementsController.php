@@ -13,6 +13,7 @@ use AppBundle\Document\Paiements;
 use AppBundle\Document\Societe;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 
 class PaiementsController extends Controller {
 
@@ -228,6 +229,18 @@ class PaiementsController extends Controller {
                 'label' => 'Date de fin* :',
             ));
           }
+
+          if($exporttype == PaiementsManager::TYPE_EXPORT_COMMERCIAUX){
+            $commerciaux =$this->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:Compte')->findAllUtilisateursCommercial();
+            $formBuilder->add('commercial', DocumentType::class, array(
+                'required' => false,
+                "choices" => array_merge(array('' => ''), $commerciaux),
+                'label' => 'Commercial :',
+                'class' => 'AppBundle\Document\Compte',
+                'expanded' => false,
+                'multiple' => false,
+                "attr" => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner un commercial", "style"=> "width:100%;")));
+        }
           if($type_export['pdf']){
             $formBuilder->add('pdf', CheckboxType::class, array('label' => 'PDF', 'required' => false, 'label_attr' => array('class' => 'small')));
           }
