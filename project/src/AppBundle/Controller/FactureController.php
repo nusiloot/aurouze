@@ -458,6 +458,8 @@ class FactureController extends Controller {
         $formRequest = $request->request->get('form');
         $commercial = (isset($formRequest['commercial']) && $formRequest['commercial'] && ($formRequest['commercial']!= ""))?
          $formRequest['commercial'] : null;
+        $pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
+
         $dateDebutString = $formRequest['dateDebut']." 00:00:00";
         $dateFinString = $formRequest['dateFin']." 23:59:59";
 
@@ -467,13 +469,14 @@ class FactureController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
 
-        $facturesForCsv = $fm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial);
+        $statsForCommerciaux = $fm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial);
 
+        if(!$pdf){
         $filename = sprintf("export_details_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
         $handle = fopen('php://memory', 'r+');
 
-        foreach ($facturesForCsv as $paiement) {
-            fputcsv($handle, $paiement,';');
+        foreach ($statsForCommerciaux as $stat) {
+            fputcsv($handle, $stat,';');
         }
 
         rewind($handle);
@@ -487,6 +490,33 @@ class FactureController extends Controller {
         $response->setCharset('UTF-8');
 
         return $response;
+      }else{
+        $html = $this->renderView('facture/pdfStatsCommerciaux.html.twig', array(
+          'statsForCommerciaux' => $statsForCommerciaux,
+          'dateDebut' => $dateDebut,
+          'dateFin' => $dateFin
+      ));
+
+
+      $filename = sprintf("export_stats_commerciaux_du_%s_au_%s.csv.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+
+      if ($request->get('output') == 'html') {
+
+          return new Response($html, 200);
+       }
+
+      return new Response(
+              $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+                'disable-smart-shrinking' => null,
+                 'encoding' => 'utf-8',
+                  'margin-left' => 1,
+                  'margin-right' => 1,
+                  'margin-top' => 1,
+                  'margin-bottom' => 1),$this->getPdfGenerationOptions()), 200, array(
+          'Content-Type' => 'application/pdf',
+          'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+        ));
+    }
     }
 
     public function exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin){
@@ -614,7 +644,6 @@ class FactureController extends Controller {
 
         return $response;
       }else{
-
           $html = $this->renderView('facture/pdfStats.html.twig', array(
             'exportStatsArray' => $exportStatsArray,
             'dateDebut' => $dateDebut,
@@ -641,7 +670,6 @@ class FactureController extends Controller {
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"'
           ));
-
       }
     }
 
