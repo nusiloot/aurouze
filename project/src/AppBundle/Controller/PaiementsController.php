@@ -12,6 +12,7 @@ use AppBundle\Type\PaiementsType;
 use AppBundle\Document\Paiements;
 use AppBundle\Document\Societe;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class PaiementsController extends Controller {
 
@@ -217,7 +218,7 @@ class PaiementsController extends Controller {
                 'label' => 'Date de début* :',
             ));
             if($exporttype != PaiementsManager::TYPE_EXPORT_PCA){
-        $formBuilder->add('dateFin', DateType::class, array('required' => true,
+              $formBuilder->add('dateFin', DateType::class, array('required' => true,
                 "attr" => array('class' => 'input-inline datepicker',
                     'data-provide' => 'datepicker',
                     'data-date-format' => 'dd/mm/yyyy'
@@ -226,6 +227,9 @@ class PaiementsController extends Controller {
                 'format' => 'dd/MM/yyyy',
                 'label' => 'Date de fin* :',
             ));
+          }
+          if($type_export['pdf']){
+            $formBuilder->add('pdf', CheckboxType::class, array('label' => 'PDF', 'required' => false, 'label_attr' => array('class' => 'small')));
           }
         $formBuilder->setAction($this->generateUrl($exporttype.'_export'));
         $form = $formBuilder->getForm();

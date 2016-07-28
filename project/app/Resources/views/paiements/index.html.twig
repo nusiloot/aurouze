@@ -108,11 +108,22 @@
                 <div class="modal-footer">
                     <div class="row">
                       <div class="col-xs-6 text-left">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-    </div>
-                        <div class="col-xs-6 text-right">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                      </div>
+                           {% if exportForm.pdf is defined and exportForm.pdf %}
+
+                            <div class="col-xs-4 text-right">
+                            {{ form_row(exportForm.form.pdf) }}
+                          </div>
+                            <div class="col-xs-2 text-right">
                                 <button class="btn btn-primary" type="submit">Exporter</button>
                         </div>
+                        {% else %}
+                        <div class="col-xs-6 text-right">
+                           <button class="btn btn-primary" type="submit">Exporter le CSV</button>
+                        </div>
+                            {% endif %}
+
                     </div>
                 </div>
                     {{ form_end(exportForm.form) }}

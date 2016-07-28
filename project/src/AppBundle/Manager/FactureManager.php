@@ -67,8 +67,8 @@ public static $export_stats_libelle = array(
    self::EXPORT_STATS_RECONDUCTION => "Reconduction T {X}",
    self::EXPORT_STATS_PONCTUEL_PREC => "Ponctuel {X-1}",
    self::EXPORT_STATS_PONCTUEL => "Ponctuel {X}",
-   self::EXPORT_STATS_RENOUVELABLE_PREC => "Renouv. Prop. {X-1}",
-   self::EXPORT_STATS_RENOUVELABLE => "Renouv. Prop. {X}",
+   self::EXPORT_STATS_RENOUVELABLE_PREC => "Renouv Prop {X-1}",
+   self::EXPORT_STATS_RENOUVELABLE => "Renouv Prop {X}",
   self::EXPORT_STATS_PRODUIT_PREC => "Produits {X-1}",
   self::EXPORT_STATS_PRODUIT => "Produits {X}",
   self::EXPORT_STATS_TOTAL_PREC => "Total {X-1}",
@@ -197,13 +197,13 @@ public static $export_stats_libelle = array(
       }
 
       $ca_stats = array();
-      $ca_stats["ENTETE_TITRE"] = array("Exports statistiques du ".$dateDebut->format("d/m/Y")." au ".$dateFin->format("d/m/Y"),"","","","","","","","","","");
+      $ca_stats["ENTETE_TITRE"] = array("Exports statistiques du ".$dateDebut->format("d/m/Y")." au ".$dateFin->format("d/m/Y"));
       $ca_stats['ENTETE'] = self::$export_stats_libelle;
       foreach ($ca_stats['ENTETE'] as $key => $value) {
         if(preg_match('/{X-1}/',$value)){
-          $ca_stats['ENTETE'][$key] =  str_replace("{X-1}",": ".$dateDebut->format("m")."/".($dateDebut->format("Y")-1),$value);
+          $ca_stats['ENTETE'][$key] =  str_replace("{X-1}","".$dateDebut->format("m")."/".($dateDebut->format("Y")-1),$value);
         }elseif(preg_match('/{X}/',$value)){
-          $ca_stats['ENTETE'][$key] =  str_replace("{X}",": ".$dateDebut->format("m/Y"),$value);
+          $ca_stats['ENTETE'][$key] =  str_replace("{X}","".$dateDebut->format("m/Y"),$value);
         }
       }
 
@@ -232,6 +232,9 @@ public static $export_stats_libelle = array(
       $total = 0.0;
       foreach ($ca_stats as $commercial => $stat) {
         if($key_stat > 0 && ($commercial != 'ENTETE') && ($commercial != 'ENTETE_TITRE') && ($commercial != '')){
+          if(!array_key_exists($key_stat,$ca_stats[$commercial])){
+            $ca_stats[$commercial][$key_stat] = "0";
+          }
           $total+= $ca_stats[$commercial][$key_stat];
         }
         if($commercial == "0"){

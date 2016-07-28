@@ -1,0 +1,35 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12">
+            <br />
+            <h2>EXPORT DES STATISTIQUES DU {{ dateDebut | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }} AU {{ dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</h2>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="row">
+      <div class="col-xs-12">
+      {% for exportStat in exportStatsArray %}
+        {% if exportStat|length < 2 %}
+          <div class="row">
+            <div class="col-xs-12">
+              <h3><strong>{{exportStat | first }}</strong></h3>
+            </div>
+          </div>
+         {% elseif exportStat|length < 11 %}
+         {% if not loop.last %}
+         <br/>  <br/>  <br/>  <br/>  <br/>  <br/>  <br/>  <br/>  <br/> <br/> <br/>  <br/>  <br/>  <br/>  <br/> <br/>  <br/>  <br/>  <br/>  <br/>  <br/>  <br/>  <br/>
+         {% endif %}
+          {% else %}
+          <div class="row">
+            {% for key, stat in exportStat %}
+            <div class="col-xs-1 text-right" style="border:1px solid black; min-height: 50px; min-width:110px; {% if key == 0 %} width:150px; {% endif %}"><small>{{stat}}</small></div>
+            {% endfor %}
+          </div>
+          {% endif %}
+   {% endfor %}
+ </div>
+</div>
+{% endblock %}

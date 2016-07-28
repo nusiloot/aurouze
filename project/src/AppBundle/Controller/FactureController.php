@@ -488,6 +488,95 @@ class FactureController extends Controller {
         return $response;
     }
 
+    public function exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin){
+
+      $dateDebutFirstOfMonth = \DateTime::createFromFormat('d/m/Y H:i:s', $dateDebutString);
+      $dateDebutFirstOfMonth->modify('first day of this month');
+      $dateFinFirstOfMonth = \DateTime::createFromFormat('d/m/Y H:i:s', $dateFinString);
+      $dateFinFirstOfMonth->modify('last day of this month');
+
+      $interval = \DateInterval::createFromDateString('1 month');
+      $period = new \DatePeriod($dateDebutFirstOfMonth, $interval, $dateFinFirstOfMonth);
+
+      $arrayOfDates = array();
+      $cpt = 0;
+      $nbPeriod = count(iterator_to_array($period));
+      foreach ($period as $dt) {
+          $arrayOfDates[$dt->format("Y-m")] = array();
+          $firstDay = clone $dt;
+          $lastDay = clone $dt;
+          $arrayOfDates[$dt->format("Y-m")]['dateDebut'] = $firstDay->modify('first day of this month');
+          $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $lastDay->modify('last day of this month +23 hours +59 minutes +59 seconds');
+        if(!$cpt){
+          $arrayOfDates[$dt->format("Y-m")]['dateDebut'] = $dateDebut;
+        }
+        $cpt++;
+        if($cpt == $nbPeriod){
+          $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $dateFin;
+        }
+      }
+
+      $dm = $this->get('doctrine_mongodb')->getManager();
+      $fm = $this->get('facture.manager');
+
+      $completeArray = array();
+
+      $totalArray = array();
+      foreach ($arrayOfDates as $dates) {
+          $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin']);
+          foreach ($facturesStatsForCsv as $rowId => $paiement) {
+            if($rowId == "ENTETE_TITRE"){
+              $totalArray[$rowId] = array();
+              $totalArray[$rowId][] = array();
+              foreach ($paiement as $value) {
+                $totalArray[$rowId][] = "";
+              }
+            }elseif($rowId == "ENTETE"){
+              foreach (FactureManager::$export_stats_libelle as $key => $entete) {
+                  $totalArray[$rowId][$key] = str_replace('{X}', 'Année courante',$entete);
+                  $totalArray[$rowId][$key] = str_replace('{X-1}', 'Année préc.',$totalArray[$rowId][$key]);
+              }
+            }
+            else{
+              if(!array_key_exists($rowId,$totalArray)){
+                $totalArray[$rowId] = array();
+                $totalArray[$rowId] = $paiement;
+              }else{
+                foreach ($paiement as $key => $value) {
+                  if(!$key){
+                    $totalArray[$rowId][$key] = $value;
+                  }else{
+                    $floatValue = floatval(str_replace(array(' ',','),array('','.'),$value));
+                    $oldArrayValue = floatval(str_replace(array(' ',','),array('','.'),$totalArray[$rowId][$key]));
+                    $totalArray[$rowId][$key] = $oldArrayValue + $floatValue;
+                  }
+                }
+              }
+            }
+            $completeArray[] = $paiement;
+          }
+          $completeArray[] = array("","","","","","","","","","");
+      }
+
+      $totalArray["ENTETE_TITRE"][0] = sprintf("TOTAL des statistiques du %s au %s", $dateDebut->format("d/m/Y"), $dateFin->format("d/m/Y"));
+
+      if(count($arrayOfDates) > 1){
+        foreach ($totalArray as $rowId => $paiement) {
+          $tmpArray = array();
+          foreach ($paiement as $key => $paiementVal) {
+            if(is_numeric($paiementVal)){
+              $tmpArray[$key] = number_format($paiementVal, 2, ',', ' ');
+            }else{
+              $tmpArray[$key] = $paiementVal;
+            }
+          }
+            $completeArray[] = $tmpArray;
+        }
+        $completeArray[] =  array("","","","","","","","","","");
+      }
+      return $completeArray;
+    }
+
     /**
      * @Route("/stats/export", name="stats_export")
      */
@@ -496,6 +585,7 @@ class FactureController extends Controller {
       // $response = new StreamedResponse();
         ini_set('memory_limit', '-1');
         $formRequest = $request->request->get('form');
+        $pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
 
         $dateDebutString = $formRequest['dateDebut']."00:00:00";
         $dateFinString = $formRequest['dateFin']."23:59:59";
@@ -503,103 +593,55 @@ class FactureController extends Controller {
         $dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
         $dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
 
-        $dateDebutFirstOfMonth = \DateTime::createFromFormat('d/m/Y H:i:s', $dateDebutString);
-        $dateDebutFirstOfMonth->modify('first day of this month');
-        $dateFinFirstOfMonth = \DateTime::createFromFormat('d/m/Y H:i:s', $dateFinString);
-        $dateFinFirstOfMonth->modify('last day of this month');
+        $exportStatsArray = $this->exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin);
 
-        $interval = \DateInterval::createFromDateString('1 month');
-        $period = new \DatePeriod($dateDebutFirstOfMonth, $interval, $dateFinFirstOfMonth);
-
-        $arrayOfDates = array();
-        $cpt = 0;
-        $nbPeriod = count(iterator_to_array($period));
-        foreach ($period as $dt) {
-            $arrayOfDates[$dt->format("Y-m")] = array();
-            $firstDay = clone $dt;
-            $lastDay = clone $dt;
-            $arrayOfDates[$dt->format("Y-m")]['dateDebut'] = $firstDay->modify('first day of this month');
-            $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $lastDay->modify('last day of this month +23 hours +59 minutes +59 seconds');
-          if(!$cpt){
-            $arrayOfDates[$dt->format("Y-m")]['dateDebut'] = $dateDebut;
-          }
-          $cpt++;
-          if($cpt == $nbPeriod){
-            $arrayOfDates[$dt->format("Y-m")]['dateFin'] = $dateFin;
-          }
-        }
-
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $fm = $this->get('facture.manager');
-
-        $filename = sprintf("export_stats_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
-
-        $handle = fopen('php://memory', 'r+');
-
-        $totalArray = array();
-        foreach ($arrayOfDates as $dates) {
-            $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin']);
-            foreach ($facturesStatsForCsv as $rowId => $paiement) {
-              if($rowId == "ENTETE_TITRE"){
-                $totalArray[$rowId] = array();
-                $totalArray[$rowId][] = array();
-                foreach ($paiement as $value) {
-                  $totalArray[$rowId][] = "";
-                }
-              }elseif($rowId == "ENTETE"){
-                foreach (FactureManager::$export_stats_libelle as $key => $entete) {
-                    $totalArray[$rowId][$key] = str_replace('{X}', 'Année courante',$entete);
-                    $totalArray[$rowId][$key] = str_replace('{X-1}', 'Année précédente',$totalArray[$rowId][$key]);
-                }
-              }
-              else{
-                if(!array_key_exists($rowId,$totalArray)){
-                  $totalArray[$rowId] = array();
-                  $totalArray[$rowId] = $paiement;
-                }else{
-                  foreach ($paiement as $key => $value) {
-                    if(!$key){
-                      $totalArray[$rowId][$key] = $value;
-                    }else{
-                      $floatValue = floatval(str_replace(array(' ',','),array('','.'),$value));
-                      $oldArrayValue = floatval(str_replace(array(' ',','),array('','.'),$totalArray[$rowId][$key]));
-                      $totalArray[$rowId][$key] = $oldArrayValue + $floatValue;
-                    }
-                  }
-                }
-              }
+        if(!$pdf){
+          $handle = fopen('php://memory', 'r+');
+          $filename = sprintf("export_stats_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+          foreach ($exportStatsArray as $paiement) {
               fputcsv($handle, $paiement,';');
             }
-            fputcsv($handle, array("",""),';');
-        }
-        $totalArray["ENTETE_TITRE"][0] = sprintf("TOTAL des statistiques du %s au %s", $dateDebut->format("d/m/Y"), $dateFin->format("d/m/Y"));
-
-
-        if(count($arrayOfDates) > 1){
-          foreach ($totalArray as $rowId => $paiement) {
-            $tmpArray = array();
-            foreach ($paiement as $key => $paiementVal) {
-              if(is_numeric($paiementVal)){
-                $tmpArray[$key] = number_format($paiementVal, 2, ',', ' ');
-              }else{
-                $tmpArray[$key] = $paiementVal;
-              }
-            }
-             fputcsv($handle, $tmpArray,';');
-          }
           fputcsv($handle, array("",""),';');
-        }
-        rewind($handle);
-        $content = stream_get_contents($handle);
-        fclose($handle);
-
-        $response = new Response(utf8_decode($content), 200, array(
+          rewind($handle);
+          $content = stream_get_contents($handle);
+          fclose($handle);
+          $response = new Response(utf8_decode($content), 200, array(
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename=' . $filename,
         ));
         $response->setCharset('UTF-8');
 
         return $response;
+      }else{
+
+          $html = $this->renderView('facture/pdfStats.html.twig', array(
+            'exportStatsArray' => $exportStatsArray,
+            'dateDebut' => $dateDebut,
+            'dateFin' => $dateFin
+        ));
+
+
+        $filename = sprintf("export_stats_du_%s_au_%s.csv.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+
+        if ($request->get('output') == 'html') {
+
+            return new Response($html, 200);
+         }
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+                  'disable-smart-shrinking' => null,
+                   'encoding' => 'utf-8',
+                    'margin-left' => 1,
+                    'margin-right' => 1,
+                    'margin-top' => 1,
+                    'margin-bottom' => 1,
+                    'orientation' => 'landscape'),$this->getPdfGenerationOptions()), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+          ));
+
+      }
     }
 
 
