@@ -160,7 +160,7 @@ public static $export_stats_libelle = array(
           $facturesObjs = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
           $csv = array();
           $cpt = 0;
-          $csv["A_".$cpt] = array("commercial","numero contrat","numero facture","montant Ht");
+          $csv["A_".$cpt] = array("commercial","client","numero contrat","numero facture","montant Ht","total commercial");
           foreach ($facturesObjs as $facture) {
             if($facture->getContrat() && $facture->getContrat()->getCommercial()){
                 $contrat = $facture->getContrat();
@@ -169,22 +169,43 @@ public static $export_stats_libelle = array(
                 $arr_ligne = array();
                 $key = $identite."_".$cpt."_".$facture->getNumeroFacture();
                 $arr_ligne[] = $identite;
+                $arr_ligne[] = $facture->getContrat()->getSociete()->getRaisonSociale();
                 $arr_ligne[] = $facture->getContrat()->getNumeroArchive();
                 $arr_ligne[] = $facture->getNumeroFacture();
                 $arr_ligne[] = $facture->getMontantHt();
+                $arr_ligne[] = 0.0;
                 $csv[$key] = $arr_ligne;
             }else{
               $arr_ligne = array();
               $key = "z_".$cpt."_". $facture->getNumeroFacture();
-              $arr_ligne[] = "Pas de commercial";
+              $arr_ligne[] = ($facture->getCommercial())? $facture->getCommercial()->getIdentite() :"Pas de commercial";
+              $arr_ligne[] = $facture->getSociete()->getRaisonSociale();
               $arr_ligne[] = ($facture->getContrat())? $facture->getContrat()->getNumeroArchive() : "Pas de contrat";
               $arr_ligne[] = $facture->getNumeroFacture();
               $arr_ligne[] = $facture->getMontantHt();
+              $arr_ligne[] = 0.0;
               $csv[$key] = $arr_ligne;
             }
             $cpt++;
           }
           ksort($csv);
+          $totalArray = array();
+
+          foreach ($csv as $csvRow) {
+            $commercial = $csvRow[0];
+            if(!array_key_exists($commercial,$totalArray)){
+              $totalArray[$commercial] = 0.0;
+            }
+            $totalArray[$commercial] = $totalArray[$commercial] +  $csvRow[4];
+          }
+          $cpt = 0;
+          foreach ($csv as $csvKey => $csvRow) {
+            if($cpt){
+              $csvRow[5] = $totalArray[$csvRow[0]];
+              $csv[$csvKey] = $csvRow;
+              }
+              $cpt++;
+          }
           return $csv;
 
     }
