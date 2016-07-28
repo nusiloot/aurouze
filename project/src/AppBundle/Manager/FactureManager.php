@@ -275,13 +275,19 @@ public static $export_stats_libelle = array(
             $ca_stats['PAS DE CONTRAT'][$stats_index] = 0.0;
           }
         }
-          $key = ($facture->getCommercial())? $facture->getCommercial()->getId() : 'PAS DE CONTRAT';
+          $commercial = ($facture->getCommercial())? $facture->getCommercial()->getId() : 'PAS DE CONTRAT';
+          if(!array_key_exists($commercial,$ca_stats)){
+                  foreach (array_keys(self::$export_stats_libelle) as $stats_index) {
+                    $ca_stats[$commercial][$stats_index] = 0.0;
+                  }
+                }
+
           if($last_year){
-            $ca_stats[$key][self::EXPORT_STATS_PRODUIT_PREC] += $facture->getMontantHT();
+            $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT_PREC] += $facture->getMontantHT();
           }else{
-              $ca_stats[$key][self::EXPORT_STATS_PRODUIT] += $facture->getMontantHT();
+              $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT] += $facture->getMontantHT();
           }
-          $ca_stats[$key][self::EXPORT_STATS_REPRESENTANT] = "TOTAL";
+        //  $ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT] = "TOTAL";
       }else{
 
         $commercial = ($facture->getContrat()->getCommercial())? $facture->getContrat()->getCommercial()->getId() : "VIDE";
