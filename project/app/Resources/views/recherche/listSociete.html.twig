@@ -6,7 +6,8 @@
         {% if not item.doc.actif %}<small class="pull-right"><label class="label label-xs label-danger">SUSPENDU</label></small>{% endif %}
         <i class="mdi mdi-{{ item.doc.icon }} mdi-lg"></i>&nbsp;{{ item.doc.libelleComplet }}<br />
         <small>
-            {% if (item.doc.contactCoordonnee.telephoneFixe or item.doc.contactCoordonnee.telephoneMobile or item.doc.contactCoordonnee.fax or item.doc.contactCoordonnee.email or item.doc.contactCoordonnee.siteInternet)  %}
+            {% if (item.doc.contactCoordonnee.telephoneFixe or item.doc.contactCoordonnee.telephoneMobile or item.doc.contactCoordonnee.fax or item.doc.contactCoordonnee.email or item.doc.contactCoordonnee.siteInternet or item.doc.contactCoordonnee.libelle)  %}
+            	{% if(societe.contactCoordonnee.libelle is defined and societe.contactCoordonnee.libelle)%}{{ societe.contactCoordonnee.libelle }}&nbsp;{%endif%}
                 {% if (item.doc.contactCoordonnee.telephoneFixe is defined and item.doc.contactCoordonnee.telephoneFixe)%}
                     <i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ item.doc.contactCoordonnee.telephoneFixe }}&nbsp;
                 {%endif%}
