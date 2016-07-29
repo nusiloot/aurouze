@@ -35,6 +35,11 @@ class ContactCoordonnee {
      */
     protected $siteInternet;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $libelle;
+
     public function isSameThan(ContactCoordonnee $contactCoordonnee) {
         if
         (
@@ -42,7 +47,8 @@ class ContactCoordonnee {
             ($this->getTelephoneMobile() == $contactCoordonnee->getTelephoneMobile() || !$this->getTelephoneMobile()) &&
             ($this->getFax() == $contactCoordonnee->getFax() || !$this->getFax()) &&
             ($this->getEmail() == $contactCoordonnee->getEmail() || !$this->getEmail()) &&
-            ($this->getSiteInternet() == $contactCoordonnee->getSiteInternet    () || !$this->getSiteInternet())
+            ($this->getSiteInternet() == $contactCoordonnee->getSiteInternet    () || !$this->getSiteInternet()) &&
+            ($this->getLibelle() == $contactCoordonnee->getLibelle    () || !$this->getLibelle())
         )
         {
 
@@ -58,6 +64,7 @@ class ContactCoordonnee {
         $this->setFax($contactCoordonnee->getFax());
         $this->setEmail($contactCoordonnee->getEmail());
         $this->setSiteInternet($contactCoordonnee->getSiteInternet());
+        $this->setLibelle($contactCoordonnee->getLibelle());
     }
 
     /**
@@ -168,6 +175,28 @@ class ContactCoordonnee {
     public function getSiteInternet()
     {
         return $this->siteInternet;
+    }
+
+    /**
+     * Set libelle
+     *
+     * @param string $libelle
+     * @return self
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+        return $this;
+    }
+
+    /**
+     * Get libelle
+     *
+     * @return string $libelle
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
     }
 
 }

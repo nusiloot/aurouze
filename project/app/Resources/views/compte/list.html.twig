@@ -14,6 +14,7 @@
             <td>{% if(not compte.sameAdresseThanSociete) %}{{ compte.adresse.adresse }}{% else %}<em class="text-muted">Même que la société</em>{% endif %}</td>
             <td>{% if(not compte.sameAdresseThanSociete) %}{{ compte.adresse.codePostal }} {{ compte.adresse.commune }}{% else %}<em class="text-muted">Même que la société</em>{% endif %}</td>
             <td>{% if(not compte.sameContactCoordonneeThanSociete) %}
+            	{%if(compte.contactCoordonnee.libelle is defined and compte.contactCoordonnee.libelle)%}{{ compte.contactCoordonnee.libelle }}<br />{%endif%}
                 {%if(compte.contactCoordonnee.telephoneFixe is defined and compte.contactCoordonnee.telephoneFixe)%}<a href="callto:{{ compte.contactCoordonnee.telephoneFixe }}"><i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ compte.contactCoordonnee.telephoneFixe }}</a><br />{%endif%}
                 {%if(compte.contactCoordonnee.telephoneMobile is defined and compte.contactCoordonnee.telephoneMobile)%}<a href="callto:{{ compte.contactCoordonnee.telephoneMobile }}"><i class="glyphicon glyphicon-phone"></i>&nbsp;{{ compte.contactCoordonnee.telephoneMobile }}</a><br />{%endif%}
                 {%if(compte.contactCoordonnee.fax is defined and compte.contactCoordonnee.fax)%}<a href="callto:{{ compte.contactCoordonnee.fax }}"><i class="glyphicon glyphicon-print"></i>&nbsp;{{ compte.contactCoordonnee.fax }}</a><br />{%endif%}

@@ -12,7 +12,10 @@
             <td><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> <a href="{{ path('passage_etablissement', {'id': etablissement.id }) }}">{{ etablissement.getNom(false) }}</a> <a class="btn btn-xs btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id, 'id': etablissement.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a></td>
             <td>{{ etablissement.adresse.adresse }}</td>
             <td>{{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}</td>
-            <td>{% if(not etablissement.sameContactCoordonneeThanSociete) %}{% if(etablissement.contactCoordonnee.telephoneFixe is defined and etablissement.contactCoordonnee.telephoneFixe)%}
+            <td>
+            {% if(not etablissement.sameContactCoordonneeThanSociete) %}
+            {%if(etablissement.contactCoordonnee.libelle is defined and etablissement.contactCoordonnee.libelle)%}{{ etablissement.contactCoordonnee.libelle }}<br />{%endif%}
+            {% if(etablissement.contactCoordonnee.telephoneFixe is defined and etablissement.contactCoordonnee.telephoneFixe)%}
                 <a href="callto:{{ etablissement.contactCoordonnee.telephoneFixe }}"><i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ etablissement.contactCoordonnee.telephoneFixe }}</a><br />
             {% endif %}
             {% if(etablissement.contactCoordonnee.telephoneMobile is defined and etablissement.contactCoordonnee.telephoneMobile)%}
