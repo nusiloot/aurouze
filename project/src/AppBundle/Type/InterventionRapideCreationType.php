@@ -61,6 +61,7 @@ class InterventionRapideCreationType extends AbstractType {
         	        		'multiple' => true,
                 			'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")))
                 ->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature', 'required' => false, "attr" => array("class" => "form-control", "rows" => 2)))
+                ->add('description', TextareaType::class, array('label' => 'Description facture', 'required' => false, "attr" => array("class" => "form-control", "rows" => 1)))
                 ->add('referenceClient', TextType::class, array('label' => 'Numéro de commande :', 'required' => false, 'attr' => array('placeholder' => 'Référence commande du client')));
 
     }

@@ -138,6 +138,10 @@ class FactureController extends Controller {
         foreach($mouvements as $mouvement) {
             $facture = $fm->create($societe, array($mouvement), new \DateTime());
             $facture->setDateFacturation($date);
+            $contrat =  $facture->getContrat();
+            if($contrat && $contrat->isBonbleu()){
+              $facture->setDescription($contrat->getDescription());
+            }
             $dm->persist($facture);
             $dm->flush();
         }
