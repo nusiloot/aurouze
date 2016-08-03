@@ -90,6 +90,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     /**
      * @MongoDB\String
      */
+    protected $description;
+
+    /**
+     * @MongoDB\String
+     */
     protected $commentaire;
 
     /**
@@ -1600,7 +1605,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return $this->getDevisInterlocuteur()->getAdresse();
     }
-    
+
     public function getLibelle() {
     	return $this->getNumeroArchive();
     }
@@ -1624,5 +1629,31 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
       $pca = $diffRatio * $prixTotal;
 
       return array('pca' => $pca, 'ratioFacture' => $ratioFacture, 'ratioActivite' => $ratioEffectue);
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return self
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string $description
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function isBonbleu(){
+      return boolval($this->getDescription());
     }
 }

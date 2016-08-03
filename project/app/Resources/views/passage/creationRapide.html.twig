@@ -85,6 +85,13 @@
                                 {{ form_widget(form.nomenclature) }}
                         </div>
     	            </div>
+                  <div class="form-group">
+                    {{ form_errors(form.description) }}
+                      {{ form_label(form.description, "Description facture", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
+                      <div class="col-xs-10">
+                              {{ form_widget(form.description) }}
+                      </div>
+                </div>
                     <div class="form-group">
     	                {{ form_errors(form.referenceClient) }}
                         {{ form_label(form.referenceClient, "Numéro de commande", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
