@@ -62,6 +62,11 @@ class ContratManager implements MouvementManagerInterface {
         self::TYPE_CONTRAT_AUTRE => 'Autre',
         self::TYPE_CONTRAT_ANNULE => 'Résilié'
     );
+
+    public static $types_contrats_reconductibles = array(self::TYPE_CONTRAT_RECONDUCTION_TACITE => 'Reconduction tacite',
+        self::TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION => 'Renouvelable sur proposition'
+    );
+
     public static $types_contrat_import_index = array(1 => self::TYPE_CONTRAT_RECONDUCTION_TACITE,
         2 => self::TYPE_CONTRAT_PONCTUEL,
         3 => self::TYPE_CONTRAT_RENOUVELABLE_SUR_PROPOSITION,

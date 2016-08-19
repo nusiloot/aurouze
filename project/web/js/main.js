@@ -27,7 +27,19 @@
         $.initTypeheadFacture();
         $.initTypeheadSearchable();
         $.initSomme();
+        $.initReconduction();
     });
+
+    $.initReconduction = function(){
+      $("form#formContratsAReconduire").each(function(){
+        $(".typeContrat").on("change", function(){
+            $("form#formContratsAReconduire").submit();
+        });
+        $(".dateRenouvellement").on("change", function(){
+            $("form#formContratsAReconduire").submit();
+        });
+      });
+    }
 
     $.initSomme = function () {
         $('.nombreSomme').blur(function () {

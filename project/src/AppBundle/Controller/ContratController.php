@@ -20,6 +20,10 @@ use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
 use Knp\Snappy\Pdf;
 use AppBundle\Type\ContratAnnulationType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class ContratController extends Controller {
 
@@ -405,9 +409,47 @@ class ContratController extends Controller {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $cm = $this->get('contrat.manager');
+
         $dateRecondution = new \DateTime();
-        $contratsAReconduire = $cm->getRepository()->findContratsAReconduire(ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE,$dateRecondution);
-        return $this->render('contrat/reconduction_massive.html.twig',array('contratsAReconduire' => $contratsAReconduire, 'dateRecondution' => $dateRecondution));
+        $typeContrat = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE;
+        $augmentation = 0.0;
+
+        $formContratsAReconduire = $this->createReconductionForm($typeContrat,$dateRecondution,$augmentation);
+
+        $formContratsAReconduire->handleRequest($request);
+        if ($formContratsAReconduire->isSubmitted() && $formContratsAReconduire->isValid()) {
+          $formValues =  $formContratsAReconduire->getData();
+          $dateRecondution = $formValues["dateRenouvellement"];
+          $typeContrat = $formValues["typeContrat"];
+          $augmentation = $formValues["augmentation"];
+        }
+        $contratsAReconduire = $cm->getRepository()->findContratsAReconduire($typeContrat, $dateRecondution);
+        return $this->render('contrat/reconduction_massive.html.twig',array('contratsAReconduire' => $contratsAReconduire, 'dateRecondution' => $dateRecondution, 'formContratsAReconduire' => $formContratsAReconduire->createView()));
+    }
+
+    private function createReconductionForm($typeContrat  = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE, $dateRecondution = null, $augmentation = 0.0){
+
+      $typesContrat = ContratManager::$types_contrats_reconductibles;
+      $formBuilder = $this->createFormBuilder(array());
+      $formBuilder->add('typeContrat', ChoiceType::class, array('label' => 'Type de contrat ',
+          'choices' => $typesContrat,
+          'data' => $typeContrat,
+           "attr" => array("class" => "select2 select2-simple typeContrat")));
+      $formBuilder->add('dateRenouvellement', DateType::class, array('required' => true,
+          "attr" => array('class' => 'input-inline datepicker dateRenouvellement',
+          'data-provide' => 'datepicker',
+          'data-date-format' => 'dd/mm/yyyy'
+        ),
+        'data' => $dateRecondution,
+        'widget' => 'single_text',
+        'format' => 'dd/MM/yyyy',
+        'label' => 'Date de renouvement',
+      ));
+      $formBuilder->add('augmentation', TextType::class, array('required' => false, 'label' => 'Augmentation','data' => $augmentation));
+
+      $formBuilder->setAction($this->generateUrl('contrats_reconduction_massive'));
+      $formContratsAReconduire = $formBuilder->getForm();
+      return $formContratsAReconduire;
     }
 
 }
