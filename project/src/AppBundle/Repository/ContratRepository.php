@@ -80,4 +80,16 @@ class ContratRepository extends DocumentRepository {
         return $query->execute();
     }
 
+    public function findContratsAReconduire($typeContrat = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE,\DateTime $date) {
+          $q = $this->createQueryBuilder();
+          $q->field('typeContrat')->equals($typeContrat);
+          $q->field('dateFin')->lte($date);
+          $q->field('reconduit')->equals(false);
+          $q->field('statut')->notEqual(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+          $q->sort('dateFin', 'asc');
+          $query = $q->getQuery();
+
+        return $query->execute();
+    }
+
 }

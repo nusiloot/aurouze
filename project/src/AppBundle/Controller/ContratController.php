@@ -398,4 +398,16 @@ class ContratController extends Controller {
         return $response;
     }
 
+    /**
+     * @Route("/contrats-reconduction", name="contrats_reconduction_massive")
+     */
+    public function reconductionMassiveAction(Request $request) {
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $cm = $this->get('contrat.manager');
+        $dateRecondution = new \DateTime();
+        $contratsAReconduire = $cm->getRepository()->findContratsAReconduire(ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE,$dateRecondution);
+        return $this->render('contrat/reconduction_massive.html.twig',array('contratsAReconduire' => $contratsAReconduire, 'dateRecondution' => $dateRecondution));
+    }
+
 }

@@ -1,0 +1,71 @@
+{% set _menu_active = 'contrat' %}
+{% extends 'base.html.twig' %}
+{% block title %}Contrats{% endblock title %}
+{% block body %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('contrat') }}">Contrat</a></li>
+        <li><a href="{{ path('contrats_reconduction_massive') }}">Reconduction Massive au {{ dateRecondution | localizeddate('full', 'none') }}</a></li>
+    </ol>
+    {{ include('societe/choixForm.html.twig', {'urlTarget': path('contrats_societe', {'id': '_id_'}), 'autofocus': true })}}
+    <div class="row">
+      <div class="col-xs-12">
+
+          <h3>Liste des contrats à reconduire </h3>
+          <table class="table table-bordered">
+              <thead>
+                  <tr>
+                      <th class="col-xs-2">Client</th>
+                      <th class="col-xs-1">Statut</th>
+                      <th class="col-xs-1">N°</th>
+                      <th class="col-xs-2">Date de fin</th>
+                      <th class="col-xs-1" class="text-center">Prix</th>
+                      <th class="col-xs-1">Prestations</th>
+                      <th class="col-xs-4 text-center">Lieu de passage</th>
+                      <th class="col-xs-1 text-center">Reconduire</th>
+                  </tr>
+              </thead>
+              {% for contrat in contratsAReconduire %}
+                  <tr class="{{ contrat.statutCouleur }}">
+                      <td><small>{{ contrat.societe.raisonSociale }}</small></td>
+                      <td><small class="text-{{ contrat.statutCouleur }}">{{ contrat.statutLibelle }}</small></td>
+                      <td><a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">n°&nbsp;{{ contrat.numeroArchive }}</a></td>
+                      <td><small>{{ contrat.dateFin | localizeddate('full', 'none') }}</small></td>
+                      <td class="text-right"><small>{{ "%0.2f" | format(contrat.getPrixHt)  }}&nbsp;€&nbsp;</small>
+                      {% if(contrat.dureeGarantie) %} <!-- <span class="badge badge-warning btn-xs" data-toggle="tooltip" title="" style="cursor: help;" data-original-title="Garantie : {{ contrat.dureeGarantie }} mois">G</span> -->
+                      {% endif %}
+                      </td>
+                      <td>
+                          {% for prestation in contrat.prestations %}
+                              {% if(prestation.wordToPicto) %}
+                                  &nbsp;<span class="" title="{{  prestation.nomToString }} : {{ prestation.nbPassages }}" data-toggle="tooltip" >
+                                      <i class="mdi-{{prestation.wordToPicto}}" style="cursor:pointer;">&nbsp;</i></span>
+                                  {% else %}
+                                  <span class="btn btn-xs label-primary">{{  prestation.nomToString }}&nbsp;<span>{{ prestation.nbPassages }}</span></span>
+                              {% endif %}
+                          {% endfor %}
+                      </td>
+                      <td class="text-center">
+                          {% if ((contrat.etablissements | length) > 1) %}
+                              <a data-html="true" title="{% for etablissement in contrat.etablissements %} {{ etablissement.adresse.adresseFormatee }} <br/> {% endfor %}" data-toggle="tooltip" href="{{ path('contrat_visualisation', {'id': contrat.id }) }}">{{ contrat.etablissements | length }}&nbsp;établissements</a>
+                          {% elseif ((contrat.etablissements | length) == 1) %}
+                              <a title="{% for etablissement in contrat.etablissements %} {{ etablissement.nom }} - {{ etablissement.adresse.commune }} {% endfor %}" data-toggle="tooltip" href="{{ path('passage_etablissement', {'id': contrat.etablissements[0].id }) }}">
+                            {% for etablissement in contrat.etablissements %}
+                             {{ etablissement.adresse.adresseFormatee }}
+                            {% endfor %}
+                            </a>
+                          {% else %}
+                              <small>Aucun</small>
+                          {% endif %}
+                      </td>
+                        <td class="text-center">
+                              <input type="checkbox"/>
+                              <a href="" class="pull-right"><span class="glyphicon glyphicon-tag"></span></a>&nbsp;
+                        </td>
+                  </tr>
+              {% endfor %}
+          </table>
+
+    </div>
+</div>
+
+{% endblock %}

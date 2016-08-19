@@ -22,8 +22,8 @@
                 <th class="col-xs-2">Date</th>
                 <th class="col-xs-1">Garantie</th>
                 <th class="col-xs-1" class="text-center">Prix</th>
-                <th class="col-xs-3">Prestations</th>
-                <th class="col-xs-2 text-center">Lieu de passage</th>
+                <th class="col-xs-1">Prestations</th>
+                <th class="col-xs-4 text-center">Lieu de passage</th>
             </tr>
         </thead>
         {% for contrat in contrats %}
@@ -37,18 +37,22 @@
                 <td>
                     {% for prestation in contrat.prestations %}
                         {% if(prestation.wordToPicto) %}
-                            &nbsp;<span class="" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                                <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i>&nbsp;<span>{{ prestation.nbPassages }}</span></span>
+                            &nbsp;<span class="" title="{{  prestation.nomToString }} : {{ prestation.nbPassages }}" data-toggle="tooltip" >
+                                <i class="mdi-{{prestation.wordToPicto}}" style="cursor:pointer;">&nbsp;</i></span>
                             {% else %}
                             <span class="btn btn-xs label-primary">{{  prestation.nomToString }}&nbsp;<span>{{ prestation.nbPassages }}</span></span>
                         {% endif %}
                     {% endfor %}
                 </td>
                 <td class="text-center">
-                    {% if contrat.etablissements | length > 1 %}
-                        <a title="Voir la liste" data-toggle="tooltip" href="{{ path('contrat_visualisation', {'id': contrat.id }) }}">{{ contrat.etablissements | length }}&nbsp;établissements</a>
-                    {% elseif contrat.etablissements | length == 1 %}
-                        <a title="{% for etablissement in contrat.etablissements %} {{ etablissement.nom }} - {{ etablissement.adresse.commune }} {% endfor %}" data-toggle="tooltip" href="{{ path('passage_etablissement', {'id': contrat.etablissements[0].id }) }}">1&nbsp;établissement</a>
+                    {% if ((contrat.etablissements | length) > 1) %}
+                        <a data-html="true" title="{% for etablissement in contrat.etablissements %} {{ etablissement.adresse.adresseFormatee }} <br/> {% endfor %}" data-toggle="tooltip" href="{{ path('contrat_visualisation', {'id': contrat.id }) }}">{{ contrat.etablissements | length }}&nbsp;établissements</a>
+                    {% elseif ((contrat.etablissements | length) == 1) %}
+                        <a title="{% for etablissement in contrat.etablissements %} {{ etablissement.nom }} - {{ etablissement.adresse.commune }} {% endfor %}" data-toggle="tooltip" href="{{ path('passage_etablissement', {'id': contrat.etablissements[0].id }) }}">
+                      {% for etablissement in contrat.etablissements %}
+                       {{ etablissement.adresse.adresseFormatee }}
+                      {% endfor %}
+                      </a>
                     {% else %}
                         <small>Aucun</small>
                     {% endif %}
