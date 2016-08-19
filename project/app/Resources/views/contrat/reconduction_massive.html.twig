@@ -48,11 +48,22 @@
       </div>
   </div>
 </div>
-  {{ form_end(formContratsAReconduire) }}
+{{ form_end(formContratsAReconduire) }}
 
+{{ form_start(formReconduction) }}
   <div class="row">
       <div class="col-xs-12">
           <h3>Liste des contrats à reconduire </h3>
+      </div>
+  </div>
+  <div class="row">
+      <div class="col-xs-12">
+          {{ form_widget(formReconduction.reconduire) }}
+      </div>
+  </div>
+  <br/>
+  <div class="row">
+      <div class="col-xs-12">
           <table class="table table-bordered">
               <thead>
                   <tr>
@@ -100,7 +111,9 @@
                           {% endif %}
                       </td>
                         <td class="text-center">
-                              <input type="checkbox"/>
+                              {% set idCheckbox = contrat.id %}
+                              {% set fieldFrom = attribute(formReconduction,idCheckbox) %}
+                              {{ form_widget(fieldFrom) }}
                               <a href="" class="pull-right"><span class="glyphicon glyphicon-tag"></span></a>&nbsp;
                         </td>
                   </tr>
@@ -109,5 +122,5 @@
 
     </div>
 </div>
-
+{{ form_end(formReconduction) }}
 {% endblock %}

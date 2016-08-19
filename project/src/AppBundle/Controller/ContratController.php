@@ -403,6 +403,33 @@ class ContratController extends Controller {
     }
 
     /**
+     * @Route("/contrats-reconduire-massivement", name="contrats_reconduire_massivement")
+     */
+    public function contrats_reconduire_massivement(Request $request) {
+      $dm = $this->get('doctrine_mongodb')->getManager();
+      $cm = $this->get('contrat.manager');
+      $contratsAReconduire = array();
+        $formRequest = $request->request->get('form');
+        foreach ($formRequest as $key => $value) {
+          if(preg_match("/^CONTRAT-/",$key)){
+              $contratsAReconduire[$key] = $cm->getRepository()->findOneById($key);
+          }
+        }
+        foreach ($contratsAReconduire as $contrat) {
+          $contratReconduit = $contrat->reconduire();
+          $dm->persist($contratReconduit);
+          $dm->flush();
+          $cm->generateAllPassagesForContrat($contratReconduit,true);
+          $dm->persist($contratReconduit);
+          $contrat->setReconduit(true);
+          $dm->persist($contratReconduit);
+        }
+        $dm->flush();
+        return $this->redirectToRoute('contrats_reconduction_massive');
+    }
+
+
+    /**
      * @Route("/contrats-reconduction", name="contrats_reconduction_massive")
      */
     public function reconductionMassiveAction(Request $request) {
@@ -414,7 +441,7 @@ class ContratController extends Controller {
         $typeContrat = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE;
         $augmentation = 0.0;
 
-        $formContratsAReconduire = $this->createReconductionForm($typeContrat,$dateRecondution,$augmentation);
+        $formContratsAReconduire = $this->createRechercheReconductionForm($typeContrat,$dateRecondution,$augmentation);
 
         $formContratsAReconduire->handleRequest($request);
         if ($formContratsAReconduire->isSubmitted() && $formContratsAReconduire->isValid()) {
@@ -424,10 +451,15 @@ class ContratController extends Controller {
           $augmentation = $formValues["augmentation"];
         }
         $contratsAReconduire = $cm->getRepository()->findContratsAReconduire($typeContrat, $dateRecondution);
-        return $this->render('contrat/reconduction_massive.html.twig',array('contratsAReconduire' => $contratsAReconduire, 'dateRecondution' => $dateRecondution, 'formContratsAReconduire' => $formContratsAReconduire->createView()));
+        $formReconduction = $this->createReconductionContratsForm($contratsAReconduire);
+
+        return $this->render('contrat/reconduction_massive.html.twig',array('contratsAReconduire' => $contratsAReconduire,
+                                                                            'dateRecondution' => $dateRecondution,
+                                                                            'formContratsAReconduire' => $formContratsAReconduire->createView(),
+                                                                            'formReconduction' => $formReconduction->createView()));
     }
 
-    private function createReconductionForm($typeContrat  = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE, $dateRecondution = null, $augmentation = 0.0){
+    private function createRechercheReconductionForm($typeContrat  = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE, $dateRecondution = null, $augmentation = 0.0){
 
       $typesContrat = ContratManager::$types_contrats_reconductibles;
       $formBuilder = $this->createFormBuilder(array());
@@ -450,6 +482,22 @@ class ContratController extends Controller {
       $formBuilder->setAction($this->generateUrl('contrats_reconduction_massive'));
       $formContratsAReconduire = $formBuilder->getForm();
       return $formContratsAReconduire;
+    }
+
+    private function createReconductionContratsForm($contratsAReconduire = array()){
+
+      $typesContrat = ContratManager::$types_contrats_reconductibles;
+      $formBuilder = $this->createFormBuilder(array());
+
+      foreach ($contratsAReconduire as $contratAReconduire) {
+        $formBuilder->add($contratAReconduire->getId(), CheckboxType::class, array('label' => '', 'required' => false, 'label_attr' => array('class' => 'small')));
+      }
+
+      $formBuilder->add('reconduire', 'submit', array('label' => "Reconduire", "attr" => array("class" => "btn btn-primary pull-right")));
+
+      $formBuilder->setAction($this->generateUrl('contrats_reconduire_massivement'));
+      $formReconduireContrats = $formBuilder->getForm();
+      return $formReconduireContrats;
     }
 
 }
