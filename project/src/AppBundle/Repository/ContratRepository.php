@@ -5,6 +5,7 @@ namespace AppBundle\Repository;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use MongoDate as MongoDate;
 use AppBundle\Manager\ContratManager;
+use AppBundle\Repository\SocieteRepository;
 
 class ContratRepository extends DocumentRepository {
 
@@ -27,6 +28,10 @@ class ContratRepository extends DocumentRepository {
              ->field('mouvements.facture')->equals($isFacture)
              ->getQuery()
              ->execute();
+    }
+    
+    public function findLast() {
+    	return $this->findBy(array(), array('dateCreation' => 'DESC'), 30);
     }
 
     public function findAllSortedByNumeroArchive() {
@@ -80,8 +85,12 @@ class ContratRepository extends DocumentRepository {
         return $query->execute();
     }
 
-    public function findContratsAReconduire($typeContrat = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE,\DateTime $date) {
+    public function findContratsAReconduire($typeContrat = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE, \DateTime $date, $societe = null) {
           $q = $this->createQueryBuilder();
+          if ($societe) {
+			$societeRepo = $this->getDocumentManager()->getRepository('AppBundle:Societe');
+			$q->field('societe')->in($societeRepo->getIdsByQuery($societe));
+          }
           $q->field('typeContrat')->equals($typeContrat);
           $q->field('dateFin')->lte($date);
           $q->field('reconduit')->equals(false);

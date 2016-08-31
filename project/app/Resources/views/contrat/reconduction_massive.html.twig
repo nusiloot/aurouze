@@ -6,7 +6,7 @@
         <li><a href="{{ path('contrat') }}">Contrat</a></li>
         <li><a href="{{ path('contrats_reconduction_massive') }}">Reconduction Massive au {{ dateRecondution | localizeddate('full', 'none') }}</a></li>
     </ol>
-    {{ include('societe/choixForm.html.twig', {'urlTarget': path('contrats_societe', {'id': '_id_'}), 'autofocus': true })}}
+    
     {{ form_start(formContratsAReconduire,{'attr': {'id': 'formContratsAReconduire'}}) }}
     <div class="row">
       <div class="col-xs-12">
@@ -16,33 +16,21 @@
             </div>
             <div class="panel-body  form-horizontal">
               <div class="row">
-                <div class="col-xs-4">
-                <div class="form-group">
-                    {{ form_errors(formContratsAReconduire.typeContrat) }}
-                    {{ form_label(formContratsAReconduire.typeContrat, "Type de contrat", {'label_attr': {'class': 'col-xs-5 control-label'}}) }}
-                    <div class="col-xs-7">
-                        {{ form_widget(formContratsAReconduire.typeContrat) }}
-                    </div>
+              	<div class="col-xs-6" id="searchable" data-type="societe" data-url="{{ path('recherche_societe')  }}" data-target="0">
+	            	{{ form_errors(formContratsAReconduire.societe) }}
+	            	{{ form_widget(formContratsAReconduire.societe) }}
                 </div>
-              </div>
-              <div class="col-xs-4">
-                <div class="form-group">
-                    {{ form_errors(formContratsAReconduire.dateRenouvellement) }}
-                    {{ form_label(formContratsAReconduire.dateRenouvellement, "Renouvelement au", {'label_attr': {'class': 'col-xs-6 control-label'}}) }}
-                    <div class="col-xs-6">
-                        {{ form_widget(formContratsAReconduire.dateRenouvellement) }}
-                    </div>
+                <div class="col-xs-2">
+	            	{{ form_errors(formContratsAReconduire.typeContrat) }}
+	            	{{ form_widget(formContratsAReconduire.typeContrat) }}
+              	</div>
+              	<div class="col-xs-2">
+	            	{{ form_errors(formContratsAReconduire.dateRenouvellement) }}
+					{{ form_widget(formContratsAReconduire.dateRenouvellement) }}
                 </div>
-                  </div>
-                  <div class="col-xs-4">
-                    <div class="form-group">
-                        {{ form_errors(formContratsAReconduire.augmentation) }}
-                        {{ form_label(formContratsAReconduire.augmentation, "Augmentation (en %)", {'label_attr': {'class': 'col-xs-6 control-label'}}) }}
-                        <div class="col-xs-6">
-                            {{ form_widget(formContratsAReconduire.augmentation) }}
-                        </div>
-                    </div>
-                  </div>
+              	<div class="col-xs-2">
+	                {{ form_widget(formContratsAReconduire.save) }}
+                </div>
             </div>
         </div>
       </div>
@@ -57,8 +45,13 @@
       </div>
   </div>
   <div class="row">
-      <div class="col-xs-12">
-          {{ form_widget(formReconduction.reconduire) }}
+      <div class="col-xs-3 pull-right">
+      	<div class="input-group">
+      			{{ form_widget(formReconduction.augmentation) }}
+      			<span class="input-group-btn">
+          		{{ form_widget(formReconduction.reconduire) }}
+          		</span>
+        </div>
       </div>
   </div>
   <br/>
@@ -70,23 +63,20 @@
                       <th class="col-xs-2">Client</th>
                       <th class="col-xs-1">Statut</th>
                       <th class="col-xs-1">N°</th>
-                      <th class="col-xs-2">Date de fin</th>
+                      <th class="col-xs-2">Date</th>
                       <th class="col-xs-1" class="text-center">Prix</th>
                       <th class="col-xs-1">Prestations</th>
-                      <th class="col-xs-4 text-center">Lieu de passage</th>
+                      <th class="col-xs-3 text-center">Lieu de passage</th>
                       <th class="col-xs-1 text-center">Reconduire</th>
                   </tr>
               </thead>
               {% for contrat in contratsAReconduire %}
                   <tr class="{{ contrat.statutCouleur }}">
-                      <td><small>{{ contrat.societe.raisonSociale }}</small></td>
+                      <td><small><a href="{{ path('contrats_societe', {'id': contrat.societe.id }) }}">{{ contrat.societe.raisonSociale }}</a></small></td>
                       <td><small class="text-{{ contrat.statutCouleur }}">{{ contrat.statutLibelle }}</small></td>
                       <td><a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">n°&nbsp;{{ contrat.numeroArchive }}</a></td>
-                      <td><small>{{ contrat.dateFin | localizeddate('full', 'none') }}</small></td>
-                      <td class="text-right"><small>{{ "%0.2f" | format(contrat.getPrixHt)  }}&nbsp;€&nbsp;</small>
-                      {% if(contrat.dureeGarantie) %} <!-- <span class="badge badge-warning btn-xs" data-toggle="tooltip" title="" style="cursor: help;" data-original-title="Garantie : {{ contrat.dureeGarantie }} mois">G</span> -->
-                      {% endif %}
-                      </td>
+                      <td><small>{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% endif %}</small></td>
+                      <td class="text-right">{{ "%0.2f" | format(contrat.getPrixHt)  }}&nbsp;€&nbsp;</td>
                       <td>
                           {% for prestation in contrat.prestations %}
                               {% if(prestation.wordToPicto) %}
@@ -114,7 +104,6 @@
                               {% set idCheckbox = contrat.id %}
                               {% set fieldFrom = attribute(formReconduction,idCheckbox) %}
                               {{ form_widget(fieldFrom) }}
-                              <a href="" class="pull-right"><span class="glyphicon glyphicon-tag"></span></a>&nbsp;
                         </td>
                   </tr>
               {% endfor %}

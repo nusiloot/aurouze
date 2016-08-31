@@ -24,6 +24,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use AppBundle\Type\ReconductionFiltresType;
+use AppBundle\Type\ReconductionType;
 
 class ContratController extends Controller {
 
@@ -33,8 +35,9 @@ class ContratController extends Controller {
     public function indexAction(Request $request) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-
-        return $this->render('contrat/index.html.twig');
+		
+        $contrats = $this->get('contrat.manager')->getRepository()->findLast();
+        return $this->render('contrat/index.html.twig', array('contrats' => $contrats));
     }
 
     /**
@@ -409,14 +412,16 @@ class ContratController extends Controller {
       $dm = $this->get('doctrine_mongodb')->getManager();
       $cm = $this->get('contrat.manager');
       $contratsAReconduire = array();
-        $formRequest = $request->request->get('form');
+        $formRequest = $request->request->get('reconduction');
+        $augmentation = (isset($formRequest['augmentation']))? $formRequest['augmentation'] : 0;
         foreach ($formRequest as $key => $value) {
           if(preg_match("/^CONTRAT-/",$key)){
               $contratsAReconduire[$key] = $cm->getRepository()->findOneById($key);
           }
         }
+        
         foreach ($contratsAReconduire as $contrat) {
-          $contratReconduit = $contrat->reconduire();
+          $contratReconduit = $contrat->reconduire($augmentation);
           $dm->persist($contratReconduit);
           $dm->flush();
           $cm->generateAllPassagesForContrat($contratReconduit,true);
@@ -439,65 +444,31 @@ class ContratController extends Controller {
 
         $dateRecondution = new \DateTime();
         $typeContrat = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE;
-        $augmentation = 0.0;
-
-        $formContratsAReconduire = $this->createRechercheReconductionForm($typeContrat,$dateRecondution,$augmentation);
-
+        $societe = null;
+        
+        $formContratsAReconduire = $this->createForm(new ReconductionFiltresType(), null, array(
+        		'action' => $this->generateUrl('contrats_reconduction_massive'),
+        		'method' => 'post',
+        ));
         $formContratsAReconduire->handleRequest($request);
         if ($formContratsAReconduire->isSubmitted() && $formContratsAReconduire->isValid()) {
-          $formValues =  $formContratsAReconduire->getData();
-          $dateRecondution = $formValues["dateRenouvellement"];
-          $typeContrat = $formValues["typeContrat"];
-          $augmentation = $formValues["augmentation"];
+
+        	$formValues =  $formContratsAReconduire->getData();
+        	$dateRecondution = $formValues["dateRenouvellement"];
+        	$typeContrat = $formValues["typeContrat"];
+        	$societe = $formValues["societe"];
         }
-        $contratsAReconduire = $cm->getRepository()->findContratsAReconduire($typeContrat, $dateRecondution);
-        $formReconduction = $this->createReconductionContratsForm($contratsAReconduire);
+        
+        $contratsAReconduire = $cm->getRepository()->findContratsAReconduire($typeContrat, $dateRecondution, $societe);
+        $formReconduction = $this->createForm(new ReconductionType($contratsAReconduire), null, array(
+        		'action' => $this->generateUrl('contrats_reconduire_massivement'),
+        		'method' => 'post',
+        ));;
 
         return $this->render('contrat/reconduction_massive.html.twig',array('contratsAReconduire' => $contratsAReconduire,
                                                                             'dateRecondution' => $dateRecondution,
                                                                             'formContratsAReconduire' => $formContratsAReconduire->createView(),
                                                                             'formReconduction' => $formReconduction->createView()));
-    }
-
-    private function createRechercheReconductionForm($typeContrat  = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE, $dateRecondution = null, $augmentation = 0.0){
-
-      $typesContrat = ContratManager::$types_contrats_reconductibles;
-      $formBuilder = $this->createFormBuilder(array());
-      $formBuilder->add('typeContrat', ChoiceType::class, array('label' => 'Type de contrat ',
-          'choices' => $typesContrat,
-          'data' => $typeContrat,
-           "attr" => array("class" => "select2 select2-simple typeContrat")));
-      $formBuilder->add('dateRenouvellement', DateType::class, array('required' => true,
-          "attr" => array('class' => 'input-inline datepicker dateRenouvellement',
-          'data-provide' => 'datepicker',
-          'data-date-format' => 'dd/mm/yyyy'
-        ),
-        'data' => $dateRecondution,
-        'widget' => 'single_text',
-        'format' => 'dd/MM/yyyy',
-        'label' => 'Date de renouvement',
-      ));
-      $formBuilder->add('augmentation', TextType::class, array('required' => false, 'label' => 'Augmentation','data' => $augmentation));
-
-      $formBuilder->setAction($this->generateUrl('contrats_reconduction_massive'));
-      $formContratsAReconduire = $formBuilder->getForm();
-      return $formContratsAReconduire;
-    }
-
-    private function createReconductionContratsForm($contratsAReconduire = array()){
-
-      $typesContrat = ContratManager::$types_contrats_reconductibles;
-      $formBuilder = $this->createFormBuilder(array());
-
-      foreach ($contratsAReconduire as $contratAReconduire) {
-        $formBuilder->add($contratAReconduire->getId(), CheckboxType::class, array('label' => '', 'required' => false, 'label_attr' => array('class' => 'small')));
-      }
-
-      $formBuilder->add('reconduire', 'submit', array('label' => "Reconduire", "attr" => array("class" => "btn btn-primary pull-right")));
-
-      $formBuilder->setAction($this->generateUrl('contrats_reconduire_massivement'));
-      $formReconduireContrats = $formBuilder->getForm();
-      return $formReconduireContrats;
     }
 
 }
