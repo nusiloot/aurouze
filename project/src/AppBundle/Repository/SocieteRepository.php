@@ -88,6 +88,17 @@ class SocieteRepository extends DocumentRepository {
     	return $resultSet;
     }
 
+    public function getIdsByQuery($q, $inactif = false, $limit = 100)
+    {
+    	$ids = array();
+    	$items = $this->findByQuery($q, $inactif, $limit);
+    	foreach ($items as $item) {
+    		$obj = $item["doc"];
+    		$ids[] = $obj->getId();
+    	}
+    	return $ids;
+    }
+
     public function findAllTags() {
         $request = $this->createQueryBuilder()
                 ->distinct('tags')

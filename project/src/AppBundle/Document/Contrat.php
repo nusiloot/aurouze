@@ -1261,7 +1261,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $contrat;
     }
 
-    public function reconduire() {
+    public function reconduire($augmentation = 0) {
         $contrat = clone $this;
         $contrat->removeId();
         $contrat->setIdentifiant(null);
@@ -1271,18 +1271,24 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         foreach ($contrat->getEtablissements() as $etb) {
           $this->addEtablissement($etb);
         }
+        if ($augmentation > 0) {
+        	$contrat->setPrixHt(round($this->getPrixHt() * (1+($augmentation/100)),2));
+        }
+        
         $dateDebut = clone $contrat->getDateDebut();
         $dateAcceptation = clone $contrat->getDateDebut();
+        $dateFin= clone $contrat->getDateFin();
         $nbMois = $contrat->getDuree();
 
         $dateDebut = $dateDebut->modify("+" . $nbMois . " month");
         $dateAcceptation = $dateAcceptation->modify("+" . $nbMois . " month");
+        $dateFin = $dateFin->modify("+" . $nbMois . " month");
         $contrat->setDateAcceptation($dateAcceptation);
         $contrat->setDateDebut($dateDebut);
-
+        $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
-        $contrat->setDateFin(null);
-        if ((new \DateTime())->format('Ymd') > $dateDebut->format('Ymd')) {
+        
+        if ($this->getStatut() == ContratManager::STATUT_EN_COURS) {
             $contrat->setStatut(ContratManager::STATUT_A_VENIR);
         } else {
             $contrat->setStatut(ContratManager::STATUT_EN_COURS);

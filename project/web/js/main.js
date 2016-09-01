@@ -27,7 +27,19 @@
         $.initTypeheadFacture();
         $.initTypeheadSearchable();
         $.initSomme();
+        $.initReconduction();
     });
+
+    $.initReconduction = function(){
+      $("form#formContratsAReconduire").each(function(){
+        $(".typeContrat").on("change", function(){
+            $("form#formContratsAReconduire").submit();
+        });
+        $(".dateRenouvellement").on("change", function(){
+            $("form#formContratsAReconduire").submit();
+        });
+      });
+    }
 
     $.initSomme = function () {
         $('.nombreSomme').blur(function () {
@@ -385,21 +397,32 @@
 	            	  if (!e.actif) {
 	            		  result = result+' <small><label class="label label-xs label-danger">SUSPENDU</label></small>';
 	            	  }
-	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+	            	  if (target) {
+	            		  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+	            	  } else {
+	            		  return $('<div class="searchable_result">'+result+'</div>');
+	            	  }
             	  }
             	  if (type == 'contrat') {
 	            	  var result = e.type+' <small class="text-'+e.color+'">'+e.statut+'</small> n°<strong>'+e.identifiant+'</strong> '+e.periode+' <small class="text-muted">'+e.garantie+'</small> '+e.prix+' €';
-	                  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+	            	  if (target) {
+	            		  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+	            	  } else {
+	            		  return $('<div class="searchable_result">'+result+'</div>');
+	            	  }
             	  }
             	  return '';
               },
               notFound: function(query) {
-
-                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</a></div>";
+            	  if (target) {
+            		  return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</a></div>";
+            	  }
+                
               },
               footer: function(query, suggestions) {
-
-                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</div></a>";
+            	  if (target) {
+	                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</div></a>";
+	              } 
               }
           }
         });
@@ -418,7 +441,9 @@
         });
 
         $('#searchable .typeahead').bind('typeahead:select', function(ev, suggestion) {
-            document.location.href=target.replace('_id_', suggestion.id);
+        	if (target) {
+        		document.location.href=target.replace('_id_', suggestion.id);
+        	}
         });
 
     }

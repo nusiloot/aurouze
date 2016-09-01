@@ -4,18 +4,57 @@
 {% block body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('contrat') }}">Contrat</a></li>
+        <li><a href="{{ path('contrats_reconduction_massive') }}">Reconduction Massive au {{ dateRecondution | localizeddate('full', 'none') }}</a></li>
     </ol>
-
-    {{ include('societe/choixForm.html.twig', {'urlTarget': path('contrats_societe', {'id': '_id_'}), 'autofocus': true })}}
     
+    {{ form_start(formContratsAReconduire,{'attr': {'id': 'formContratsAReconduire'}}) }}
     <div class="row">
-      <div class="col-xs-12 text-right">
-        <a href="{{ path('contrats_reconduction_massive') }}" class="btn btn-default" ><span class="glyphicon glyphicon-refresh"></span>&nbsp;Reconduction massive</a>
+      <div class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Critères de reconduction</h3>
+            </div>
+            <div class="panel-body  form-horizontal">
+              <div class="row">
+              	<div class="col-xs-6" id="searchable" data-type="societe" data-url="{{ path('recherche_societe')  }}" data-target="0">
+	            	{{ form_errors(formContratsAReconduire.societe) }}
+	            	{{ form_widget(formContratsAReconduire.societe) }}
+                </div>
+                <div class="col-xs-2">
+	            	{{ form_errors(formContratsAReconduire.typeContrat) }}
+	            	{{ form_widget(formContratsAReconduire.typeContrat) }}
+              	</div>
+              	<div class="col-xs-2">
+	            	{{ form_errors(formContratsAReconduire.dateRenouvellement) }}
+					{{ form_widget(formContratsAReconduire.dateRenouvellement) }}
+                </div>
+              	<div class="col-xs-2">
+	                {{ form_widget(formContratsAReconduire.save) }}
+                </div>
+            </div>
+        </div>
       </div>
-    </div>
-    
-    <h3>Derniers contrats créés</h3>
-    
+  </div>
+</div>
+{{ form_end(formContratsAReconduire) }}
+
+{{ form_start(formReconduction) }}
+  <div class="row">
+      <div class="col-xs-12">
+          <h3>Liste des contrats à reconduire </h3>
+      </div>
+  </div>
+  <div class="row">
+      <div class="col-xs-3 pull-right">
+      	<div class="input-group">
+      			{{ form_widget(formReconduction.augmentation) }}
+      			<span class="input-group-btn">
+          		{{ form_widget(formReconduction.reconduire) }}
+          		</span>
+        </div>
+      </div>
+  </div>
+  <br/>
   <div class="row">
       <div class="col-xs-12">
           <table class="table table-bordered">
@@ -23,19 +62,18 @@
                   <tr>
                       <th class="col-xs-2">Client</th>
                       <th class="col-xs-1">Statut</th>
-                      <th class="col-xs-1">Type</th>
                       <th class="col-xs-1">N°</th>
                       <th class="col-xs-2">Date</th>
                       <th class="col-xs-1" class="text-center">Prix</th>
                       <th class="col-xs-1">Prestations</th>
                       <th class="col-xs-3 text-center">Lieu de passage</th>
+                      <th class="col-xs-1 text-center">Reconduire</th>
                   </tr>
               </thead>
-              {% for contrat in contrats %}
+              {% for contrat in contratsAReconduire %}
                   <tr class="{{ contrat.statutCouleur }}">
                       <td><small><a href="{{ path('contrats_societe', {'id': contrat.societe.id }) }}">{{ contrat.societe.raisonSociale }}</a></small></td>
                       <td><small class="text-{{ contrat.statutCouleur }}">{{ contrat.statutLibelle }}</small></td>
-                      <td><small>{{ contrat.typeContratLibelle }}</small></td>
                       <td><a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">n°&nbsp;{{ contrat.numeroArchive }}</a></td>
                       <td><small>{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% endif %}</small></td>
                       <td class="text-right">{{ "%0.2f" | format(contrat.getPrixHt)  }}&nbsp;€&nbsp;</td>
@@ -62,11 +100,16 @@
                               <small>Aucun</small>
                           {% endif %}
                       </td>
+                        <td class="text-center">
+                              {% set idCheckbox = contrat.id %}
+                              {% set fieldFrom = attribute(formReconduction,idCheckbox) %}
+                              {{ form_widget(fieldFrom) }}
+                        </td>
                   </tr>
               {% endfor %}
           </table>
 
     </div>
 </div>
-
+{{ form_end(formReconduction) }}
 {% endblock %}

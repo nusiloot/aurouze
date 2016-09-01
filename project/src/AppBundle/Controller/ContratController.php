@@ -20,6 +20,12 @@ use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
 use Knp\Snappy\Pdf;
 use AppBundle\Type\ContratAnnulationType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use AppBundle\Type\ReconductionFiltresType;
+use AppBundle\Type\ReconductionType;
 
 class ContratController extends Controller {
 
@@ -29,8 +35,9 @@ class ContratController extends Controller {
     public function indexAction(Request $request) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-
-        return $this->render('contrat/index.html.twig');
+		
+        $contrats = $this->get('contrat.manager')->getRepository()->findLast();
+        return $this->render('contrat/index.html.twig', array('contrats' => $contrats));
     }
 
     /**
@@ -396,6 +403,72 @@ class ContratController extends Controller {
         $response->setCharset('UTF-8');
 
         return $response;
+    }
+
+    /**
+     * @Route("/contrats-reconduire-massivement", name="contrats_reconduire_massivement")
+     */
+    public function contrats_reconduire_massivement(Request $request) {
+      $dm = $this->get('doctrine_mongodb')->getManager();
+      $cm = $this->get('contrat.manager');
+      $contratsAReconduire = array();
+        $formRequest = $request->request->get('reconduction');
+        $augmentation = (isset($formRequest['augmentation']))? $formRequest['augmentation'] : 0;
+        foreach ($formRequest as $key => $value) {
+          if(preg_match("/^CONTRAT-/",$key)){
+              $contratsAReconduire[$key] = $cm->getRepository()->findOneById($key);
+          }
+        }
+        
+        foreach ($contratsAReconduire as $contrat) {
+          $contratReconduit = $contrat->reconduire($augmentation);
+          $dm->persist($contratReconduit);
+          $dm->flush();
+          $cm->generateAllPassagesForContrat($contratReconduit,true);
+          $dm->persist($contratReconduit);
+          $contrat->setReconduit(true);
+          $dm->persist($contratReconduit);
+        }
+        $dm->flush();
+        return $this->redirectToRoute('contrats_reconduction_massive');
+    }
+
+
+    /**
+     * @Route("/contrats-reconduction", name="contrats_reconduction_massive")
+     */
+    public function reconductionMassiveAction(Request $request) {
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $cm = $this->get('contrat.manager');
+
+        $dateRecondution = new \DateTime();
+        $typeContrat = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE;
+        $societe = null;
+        
+        $formContratsAReconduire = $this->createForm(new ReconductionFiltresType(), null, array(
+        		'action' => $this->generateUrl('contrats_reconduction_massive'),
+        		'method' => 'post',
+        ));
+        $formContratsAReconduire->handleRequest($request);
+        if ($formContratsAReconduire->isSubmitted() && $formContratsAReconduire->isValid()) {
+
+        	$formValues =  $formContratsAReconduire->getData();
+        	$dateRecondution = $formValues["dateRenouvellement"];
+        	$typeContrat = $formValues["typeContrat"];
+        	$societe = $formValues["societe"];
+        }
+        
+        $contratsAReconduire = $cm->getRepository()->findContratsAReconduire($typeContrat, $dateRecondution, $societe);
+        $formReconduction = $this->createForm(new ReconductionType($contratsAReconduire), null, array(
+        		'action' => $this->generateUrl('contrats_reconduire_massivement'),
+        		'method' => 'post',
+        ));;
+
+        return $this->render('contrat/reconduction_massive.html.twig',array('contratsAReconduire' => $contratsAReconduire,
+                                                                            'dateRecondution' => $dateRecondution,
+                                                                            'formContratsAReconduire' => $formContratsAReconduire->createView(),
+                                                                            'formReconduction' => $formReconduction->createView()));
     }
 
 }
