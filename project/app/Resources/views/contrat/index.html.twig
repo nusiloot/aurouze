@@ -36,7 +36,7 @@
                       <td><small><a href="{{ path('contrats_societe', {'id': contrat.societe.id }) }}">{{ contrat.societe.raisonSociale }}</a></small></td>
                       <td><small class="text-{{ contrat.statutCouleur }}">{{ contrat.statutLibelle }}</small></td>
                       <td><small>{{ contrat.typeContratLibelle }}</small></td>
-                      <td><a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">n°&nbsp;{{ contrat.numeroArchive }}</a></td>
+                      <td class="text-center"><a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">n°&nbsp;{{ contrat.numeroArchive }}</a><br /><a href="{{ path('contrat_pdf', {'id': contrat.id })}}"><small class="glyphicon glyphicon-file"></small></a></td>
                       <td><small>{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% endif %}</small></td>
                       <td class="text-right">{{ "%0.2f" | format(contrat.getPrixHt)  }}&nbsp;€&nbsp;</td>
                       <td>

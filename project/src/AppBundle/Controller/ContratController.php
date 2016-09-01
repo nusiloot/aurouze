@@ -370,6 +370,18 @@ class ContratController extends Controller {
         );
     }
 
+
+    /**
+     * @Route("/contrat/{id}/type-ponctuel", name="contrat_type_ponctuel")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function typePonctuelAction(Request $request, Contrat $contrat) {
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+    	$contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_PONCTUEL);
+    	$dm->flush();
+    	return $this->redirectToRoute('contrats_reconduction_massive');
+    }
+
     /**
      * @Route("/contrat/export-pca", name="pca_export")
      */
@@ -443,7 +455,7 @@ class ContratController extends Controller {
         $cm = $this->get('contrat.manager');
 
         $dateRecondution = new \DateTime();
-        $typeContrat = ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE;
+        $typeContrat = null;
         $societe = null;
         
         $formContratsAReconduire = $this->createForm(new ReconductionFiltresType(), null, array(

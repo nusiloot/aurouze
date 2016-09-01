@@ -29,7 +29,11 @@ class ReconductionType extends AbstractType {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
 	{
 		foreach ($this->contrats as $contrat) {
-        	$builder->add($contrat->getId(), CheckboxType::class, array('label' => ' ', 'required' => false, 'label_attr' => array('class' => 'small')));
+			if ($contrat->getTypeContrat() == ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE) {
+				$builder->add($contrat->getId(), CheckboxType::class, array('label' => ' ', 'required' => false, 'data' => true, 'label_attr' => array('class' => 'small')));
+			} else {
+        		$builder->add($contrat->getId(), CheckboxType::class, array('label' => ' ', 'required' => false, 'label_attr' => array('class' => 'small')));
+			}
       	}
       	$builder->add('augmentation', TextType::class, array('required' => false, 'attr' => array('placeholder' => 'Augmentation (%)')));
       	$builder->add('reconduire', 'submit', array('label' => "Reconduire", "attr" => array("class" => "btn btn-primary pull-right")));
