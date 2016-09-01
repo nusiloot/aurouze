@@ -21,7 +21,7 @@ class ReconductionFiltresType extends AbstractType {
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options) 
 	{
-		$typesContrat = ContratManager::$types_contrats_reconductibles;
+		$typesContrat = array_merge(array(null => null), ContratManager::$types_contrats_reconductibles);
 		$dateRecondution = new \DateTime();
 		$builder->add('typeContrat', ChoiceType::class, array('label' => 'Type de contrat',
                 		'choices' => $typesContrat,
