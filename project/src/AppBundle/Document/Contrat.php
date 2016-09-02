@@ -634,7 +634,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function updateObject() {
-        if (!$this->getNbPassages()) {
             $max = 0;
             foreach ($this->getPrestations() as $prestation) {
                 if ($prestation->getNbPassages() > $max) {
@@ -642,7 +641,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 }
             }
             $this->setNbPassages($max);
-        }
     }
 
     public function updatePrestations($dm) {
