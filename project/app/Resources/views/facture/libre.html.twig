@@ -32,12 +32,12 @@
     <ol class="breadcrumb">
         <li><a href="{{ path('facture') }}">Facture</a></li>
         <li><a href="{{ path('facture_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
-        <li><a href="">{% if(facture.isDevis) %}Création d'un devis{% elseif(facture.numeroFacture) %}Modification de la facture n° {{ facture.numeroFacture }}{% else %}Création d'une facture{% endif %}</a></li>
+        <li><a href="">{% if(facture.isDevis) %}Création d'un devis{% elseif(facture.numeroFacture) %}Modification de la facture n°{{ facture.numeroFacture }}{% else %}Création d'une facture{% endif %}</a></li>
     </ol>
 
     <div id="factureLibre" class="form-horizontal" data-produits="{{ produitsSuggestion | json_encode }}">
         {{ form_start(form) }}
-        <h3>{% if(not facture.id and facture.isDevis) %}Création d'un devis{% elseif(facture.id and not facture.numeroFacture and facture.isFacture) %}Transformation du devis n° {{ facture.numeroDevis }} en facture{% elseif(facture.numeroFacture) %}Modification de la facture n° {{ facture.numeroFacture }}{% elseif(facture.isDevis) %}Modification du devis n° {{ facture.numeroDevis }}{% else %}Création d'une facture{% endif %}</h3>
+        <h3>{% if(not facture.id and facture.isDevis) %}Création d'un devis{% elseif(facture.id and not facture.numeroFacture and facture.isFacture) %}Transformation du devis n°{{ facture.numeroDevis }} en facture{% elseif(facture.numeroFacture) %}Modification de {% if (facture.isAvoir) %}l'avoir{% else %}la facture{% endif %} n°{{ facture.numeroFacture }}{% elseif(facture.isDevis) %}Modification du devis n°{{ facture.numeroDevis }}{% else %}Création d'une facture{% endif %}</h3>
         <hr />
         <div class="row">
             <div class="col-xs-5">
