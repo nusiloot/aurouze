@@ -25,6 +25,7 @@ class ReconductionFiltresType extends AbstractType {
 		$dateRecondution = new \DateTime();
 		$builder->add('typeContrat', ChoiceType::class, array('label' => 'Type de contrat',
                 		'choices' => $typesContrat,
+						"required" => false,
                 		"attr" => array("class" => "select2 select2-simple typeContrat")));
 		$builder->add('dateRenouvellement', DateType::class, array('required' => true,
                 		"attr" => array('class' => 'input-inline datepicker dateRenouvellement',
