@@ -865,23 +865,26 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function genererAvoir(){
-      $avoir = clone $this;
-      $avoir->removeId();
-      $avoir->removeNumeroFacture();
-      $avoir->setCloture(true);
-      $avoir->setMontantPaye(-1 * $avoir->getMontantTTC());
-      $avoir->setMontantHT(-1 * $avoir->getMontantHT());
-      $avoir->setMontantTaxe(-1 * $avoir->getMontantTaxe());
-      $avoir->setMontantTTC(-1 * $avoir->getMontantTTC());
-      $avoir->setDateEmission(new \DateTime());
-      $avoir->setDateFacturation(new \DateTime());
-      $avoir->setDateLimitePaiement($avoir->calculDateLimitePaiement());
-      return $avoir;
+        $avoir = clone $this;
+        $avoir->removeId();
+        $avoir->removeNumeroFacture();
+        $avoir->setCloture(true);
+        $avoir->setMontantPaye(-1 * $avoir->getMontantTTC());
+        $avoir->setMontantHT(-1 * $avoir->getMontantHT());
+        $avoir->setMontantTaxe(-1 * $avoir->getMontantTaxe());
+        $avoir->setMontantTTC(-1 * $avoir->getMontantTTC());
+        foreach($avoir->getLignes() as $ligne) {
+            $ligne->setQuantite(-1 * $ligne->getQuantite());
+        }
+        $avoir->setDateEmission(new \DateTime());
+        $avoir->setDateFacturation(new \DateTime());
+        $avoir->setDateLimitePaiement($avoir->calculDateLimitePaiement());
+        return $avoir;
     }
 
     public function isEditable() {
 
-        return !$this->isCloture();
+        return !$this->isCloture() || $this->isAvoir();
     }
 
     public function getLibelle() {
