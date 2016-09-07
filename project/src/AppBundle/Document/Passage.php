@@ -902,7 +902,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function getNumeroOrdre() {
         if(!$this->numeroOrdre) {
-            //$this->numeroOrdre = $this->calculNumeroOrdre();
+            $this->numeroOrdre = $this->calculNumeroOrdre();
         }
         return $this->numeroOrdre;
     }
