@@ -160,7 +160,7 @@ public static $export_stats_libelle = array(
           $facturesObjs = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
           $csv = array();
           $cpt = 0;
-          $csv["A_".$cpt] = array("commercial","client","numero contrat","numero facture","montant Ht","total commercial");
+          $csv["A_".$cpt] = array("commercial","client","type contrat","numero contrat","numero facture","montant Ht","total commercial");
           foreach ($facturesObjs as $facture) {
             if($facture->getContrat() && $facture->getContrat()->getCommercial()){
                 $contrat = $facture->getContrat();
@@ -173,6 +173,7 @@ public static $export_stats_libelle = array(
                 $key = $identite."_".$cpt."_".$facture->getNumeroFacture();
                 $arr_ligne[] = $identite;
                 $arr_ligne[] = $facture->getContrat()->getSociete()->getRaisonSociale();
+                $arr_ligne[] = $facture->getContrat()->getTypeContratLibelle();
                 $arr_ligne[] = $facture->getContrat()->getNumeroArchive();
                 $arr_ligne[] = $facture->getNumeroFacture();
                 $arr_ligne[] = $facture->getMontantHt();
