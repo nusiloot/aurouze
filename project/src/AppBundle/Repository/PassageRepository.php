@@ -182,21 +182,6 @@ class PassageRepository extends DocumentRepository {
         return $query->execute();
     }
 
-    public function getNbPassagesToPlanPerMonth($secteur = EtablissementManager::SECTEUR_PARIS, \DateTime $dateFin) {
-        $passages = $this->findToPlan($secteur, $dateFin);
-        $result = array();
-        foreach ($passages as $passage) {
-            $moisAnnee = $passage->getDatePrevision()->format('Ym');
-            if (!array_key_exists($moisAnnee, $result)) {
-                $result[$moisAnnee] = new \stdClass();
-                $result[$moisAnnee]->nb = 0;
-                $result[$moisAnnee]->date = $passage->getDatePrevision();
-            }
-            $result[$moisAnnee]->nb = $result[$moisAnnee]->nb + 1;
-        }
-        return $result;
-    }
-
     public function countPassagesByTechnicien($compte) {
 
         return $this->createQueryBuilder()

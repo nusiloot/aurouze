@@ -417,12 +417,12 @@
             	  if (target) {
             		  return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</a></div>";
             	  }
-                
+
               },
               footer: function(query, suggestions) {
             	  if (target) {
 	                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</div></a>";
-	              } 
+	              }
               }
           }
         });
@@ -475,7 +475,7 @@
             var words = unique(words.sort());
             var data = [];
             for (key in words) {
-                if (words[key] + "") {
+                if ((words[key] + "").length > 1) {
                     data.push({id: words[key] + "", text: (words[key] + "")});
                 }
             }

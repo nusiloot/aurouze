@@ -167,6 +167,21 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $duree;
 
+    /**
+     *  @MongoDB\Date
+     */
+    protected $dureePrecedente;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $datePrecedente;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $numeroOrdre;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
@@ -190,7 +205,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return null;
     }
 
-    public function getNumeroPassage() {
+    public function calculNumeroOrdre() {
         if ($this->isControle()) {
             return "C";
         }
@@ -206,7 +221,13 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
                 $numero++;
             }
         }
+
         return "?";
+    }
+
+    public function getNumeroPassage() {
+
+        return $this->getNumeroOrdre();
     }
 
     public function getTechniciensIdentite() {
@@ -487,6 +508,14 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return string $libelle
      */
     public function getLibelle() {
+        if(!$this->libelle) {
+            $this->libelle = $this->calculLibelle();
+        }
+
+        return $this->libelle;
+    }
+
+    public function calculLibelle() {
         $nbPassage = $this->getNumeroPassage();
         if ($nbPassage == 'G') {
             return "Passage en garantie";
@@ -494,8 +523,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         if ($nbPassage == 'C') {
             return "Passage de contrôle";
         }
-
-        return "Passage " . $nbPassage . " sur " . $this->getContrat()->getNbPassagesPrevu() . " (sous contrat)";
+        $nbPassagePrevu = 0;
+        if($this->getContrat()) {
+            $nbPassagePrevu = $this->getContrat()->getNbPassagesPrevu();
+        }
+        return "Passage " . $nbPassage . " sur " . $nbPassagePrevu . " (sous contrat)";
     }
 
     /**
@@ -615,6 +647,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return AppBundle\Document\Contrat $contrat
      */
     public function getContrat() {
+
         return $this->contrat;
     }
 
@@ -860,6 +893,29 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     /**
+     * Get numeroOrdre
+     *
+     * @return increment $numeroOrdre
+     */
+    public function getNumeroOrdre() {
+        if(!$this->numeroOrdre) {
+            //$this->numeroOrdre = $this->calculNumeroOrdre();
+        }
+        return $this->numeroOrdre;
+    }
+
+    /**
+     * Set numeroOrdre
+     *
+     * @param increment $numeroOrdre
+     * @return self
+     */
+    public function setNumeroOrdre($numeroOrdre) {
+        $this->numeroOrdre = $numeroOrdre;
+        return $this;
+    }
+
+    /**
      * Get numeroArchive
      *
      * @return increment $numeroArchive
@@ -1041,6 +1097,20 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
        return $this->duree->format('H').'h'.$this->duree->format('i');
     }
 
+    public function getDureeDate() {
+        if (!$this->duree) {
+            if (!$this->dateFin || !$this->dateDebut) {
+
+                return null;
+            }
+
+            $today = new \DateTime(date('Y-m-d 00:00:00'));
+            return $today->sub($this->dateFin->diff($this->dateDebut));
+        }
+
+        return $this->duree;
+    }
+
    /**
     * Set duree
     *
@@ -1075,4 +1145,53 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->commentaire;
     }
 
+
+    /**
+     * Set dureePrecedente
+     *
+     * @param date $dureePrecedente
+     * @return self
+     */
+    public function setDureePrecedente($dureePrecedente)
+    {
+        $this->dureePrecedente = $dureePrecedente;
+        return $this;
+    }
+
+    /**
+     * Get dureePrecedente
+     *
+     * @return date $dureePrecedente
+     */
+    public function getDureePrecedente()
+    {
+        if(!$this->dureePrecedente) {
+
+            return null;
+        }
+
+        return $this->dureePrecedente->format('H').'h'.$this->dureePrecedente->format('i');
+    }
+
+    /**
+     * Set datePrecedente
+     *
+     * @param date $datePrecedente
+     * @return self
+     */
+    public function setDatePrecedente($datePrecedente)
+    {
+        $this->datePrecedente = $datePrecedente;
+        return $this;
+    }
+
+    /**
+     * Get datePrecedente
+     *
+     * @return date $datePrecedente
+     */
+    public function getDatePrecedente()
+    {
+        return $this->datePrecedente;
+    }
 }

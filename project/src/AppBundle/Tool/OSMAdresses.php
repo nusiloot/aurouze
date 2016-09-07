@@ -23,11 +23,14 @@ class OSMAdresses {
         }
         $this->document = $document;
         $adresseTrim = trim(preg_replace("/B[\.]*P[\.]* [0-9]+/", "", $document->getAdresse()));
-        $adresseTrim = preg_replace("/\//", ",", $adresseTrim);
+        $adresseTrim = str_replace(",", " ", $adresseTrim);
+        $adresseTrim = str_replace("/", " ", $adresseTrim);
+        $adresseTrim = preg_replace("/commune/i", "", $adresseTrim);
         if (!preg_match('/^http.*\./', $this->url)) {
             return false;
         }
-        $fullAdresse = $adresseTrim . "&commune=" . $document->getCommune() . "&codepostal=" . $document->getCodePostal().', FRANCE';
+        $fullAdresse = $adresseTrim.", ".$document->getCodePostal(). " ". $document->getCommune().', FRANCE';
+
         $url = $this->url . '?q=' . urlencode($fullAdresse);
 
         $file = file_get_contents($url);
@@ -39,6 +42,7 @@ class OSMAdresses {
         if(!count($result->response->docs) || !isset($result->response->docs[0])){
             return "Adresse non trouvée : $fullAdresse" ;
         }
+
         $lat = $result->response->docs[0]->lat;
         $lon = $result->response->docs[0]->lng;
         $this->document->getCoordonnees()->setLat($lat);

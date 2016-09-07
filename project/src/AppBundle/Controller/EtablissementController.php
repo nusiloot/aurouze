@@ -79,8 +79,10 @@ class EtablissementController extends Controller {
             $dm->persist($coordonnes);
             $etablissement->getAdresse()->setCoordonnees($coordonnes);
             $this->get('etablissement.manager')->getOSMAdresse()->calculCoordonnees($etablissement->getAdresse());
-            
-            $dm->persist($etablissement);
+            if(!$etablissement->getId()) {
+                $dm->persist($etablissement);
+            }
+            $etablissement->updatePassages();
             $dm->flush();
             return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
         }

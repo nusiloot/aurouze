@@ -129,7 +129,8 @@ class PassageManager {
             $nextPassage = $this->getNextPassageFromPassage($nextPassage, true);
         }
         if ($nextPassage) {
-            $nextPassage->setDateDebut($nextPassage->getDatePrevision());
+            $nextPassage->setDureePrecedente($passage->getDureeDate());
+            $nextPassage->setDatePrecedente($passage->getDateDebut());
             $nextPassage->copyTechnicienFromPassage($passage);
         }
         return $nextPassage;
@@ -164,10 +165,10 @@ class PassageManager {
     }
 
     public function getPassagesByNumeroArchiveContrat(Passage $passage, $reverse = false) {
-       return $this->cm->getPassagesByNumeroArchiveContrat($passage->getContrat(),$reverse);       
+       return $this->cm->getPassagesByNumeroArchiveContrat($passage->getContrat(),$reverse);
     }
 
-    public function passagePrecedent(Passage $passage) {
+    public function passagePrecedentRealiseSousContrat(Passage $passage) {
         $lastPassage = null;
         $passagesArrayByNumeroArchive = $this->getPassagesByNumeroArchiveContrat($passage);
         foreach ($passagesArrayByNumeroArchive as $etbId => $passagesEtb) {
@@ -175,10 +176,26 @@ class PassageManager {
                 if ($p->getId() == $passage->getId()) {
                     return $lastPassage;
                 }
-                $lastPassage = $p;
+                if($p->isSousContrat() && $p->isRealise()) {
+                    $lastPassage = $p;
+                }
             }
         }
         return null;
+    }
+
+    public function getNbPassagesToPlanPerMonth($passages) {
+        $result = array();
+        foreach ($passages as $passage) {
+            $moisAnnee = $passage->getDatePrevision()->format('Ym');
+            if (!array_key_exists($moisAnnee, $result)) {
+                $result[$moisAnnee] = new \stdClass();
+                $result[$moisAnnee]->nb = 0;
+                $result[$moisAnnee]->date = $passage->getDatePrevision();
+            }
+            $result[$moisAnnee]->nb = $result[$moisAnnee]->nb + 1;
+        }
+        return $result;
     }
 
 }
