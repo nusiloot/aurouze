@@ -213,6 +213,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
             return "G";
         }
         $numero = 1;
+
+        if(!$this->getContrat()) {
+            return null;
+        }
+        
         foreach ($this->getContrat()->getPassages($this->getEtablissement()) as $passageId => $p) {
             if ($passageId == $this->getId()) {
                 return $numero;
