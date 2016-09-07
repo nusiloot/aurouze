@@ -2,7 +2,7 @@
 {% set techColor = "" %}
 {% set techBgColor = "" %}
 {% set techIdentite = "" %}
-{% set dptKeyWord = (passage.etablissementInfos.adresse.codePostal | slice(0, 2))? "departement "~passage.etablissementInfos.adresse.codePostal | slice(0, 2) : "" %}
+{% set dptKeyWord = (passage.etablissementInfos.adresse.codePostal | slice(0, 2))? "Département "~passage.etablissementInfos.adresse.codePostal | slice(0, 2) : "" %}
 {% if(passage.techniciens | length == 0) %}
     {% set words = [dptKeyWord, "Sans technicien", passage.etablissementInfos.adresse.codePostal | trim, passage.etablissementInfos.adresse.commune | trim, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize, passage.etablissementInfos.nom] | merge(passage.prestationsNom) |json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
     {% set techColor = 'white' %}
@@ -16,31 +16,24 @@
     {% set techIdentite = passage.techniciens[0].identite %}
     {% set urlPlanif = path('calendar', {'passage' : passage.id,'technicien' : passage.techniciens[0].id, 'calendrier' : passage.datedebut|date('d-m-Y')}) %}
 {% endif %}
-{% set passagePec = null %}
-{#% set passagePec = passage.getPrevious() %#}
-{#{% set passagePec = passageManager.passagePrecedent(passage) %}#}
-<a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item hide-print">
+<a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
     <div class="row">
-        <div class="col-sm-12">
-            <div class="row">
-                <div class="col-sm-9">
-                    <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
-                    <strong>{{ passage.etablissementInfos.nom|capitalize }}</strong>
-                    <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
-                </div>
-                <div class="col-sm-3 text-right">
-                    {% for prestation in passage.prestations %}
-                        {% if(prestation.wordToPicto) %}
-                            <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
-                                <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i></span>
-                            {%else%}
-                            <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
-                        {%endif%}
-                    {% endfor %}
-                </div>
-            </div>
+        <div class="col-sm-9">
+            <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
+            <strong>{{ passage.etablissementInfos.nom|capitalize }}</strong>
+            <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
         </div>
-                <div class="col-sm-12" style="min-height: 21px; margin-top:10px;">
+        <div class="col-sm-3 text-right">
+            {% for prestation in passage.prestations %}
+                {% if(prestation.wordToPicto) %}
+                    <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
+                        <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i></span>
+                    {%else%}
+                    <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
+                {%endif%}
+            {% endfor %}
+        </div>
+        <div class="col-sm-12" style="min-height: 21px; margin-top:10px;">
             {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
                 <i class="mdi mdi-call mdi-lg"></i>
                 <small>{{ passage.etablissementInfos.telephoneFixe }}</small>
@@ -75,41 +68,3 @@
         </div>
     </div>
 </a>
-
-
-<div data-words='{{ words }}' class="hamzastyle-item show-print">
-	<div class="row">
-		<div class="col-sm-6">
-			<i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i> <strong>{{ passage.etablissementInfos.nom|capitalize }}</strong>
-		</div>
-		<div class="col-sm-6 text-right">
-			<small>{{ passage.libelle }}{% if(passage.mouvementDeclenchable) %} - facturant{% endif %} -</small> <strong>{{ passage.datePrevision | localizeddate("medium", "none", null, null, "dd MMM YYYY") | capitalize }}</strong>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-6">
-			{{ passage.etablissementInfos.adresse.adresse }} {{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}<br />
-	        {{ passage.etablissementInfos.telephoneFixe }}{% if passage.etablissementInfos.telephonePortable and passage.etablissementInfos.telephoneFixe %} - {% endif %} {{ passage.etablissementInfos.telephonePortable }}
-	    </div>
-	    <div class="col-sm-6 text-right">
-	    	<ul>
-	    	{% for prestation in passage.prestations %}
-	    		<li>{{ prestation.nomToString }}</li>
-	        {% endfor %}
-	        </ul>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-6">
-			<strong>{{ techIdentite }}</strong>
-		</div>
-        <div class="col-sm-6 text-center">
-                {% if passage.datePrecedente %}
-                Préc.&nbsp;à&nbsp;{{passage.datePrecedente | date("H") }}h{{passage.datePrecedente | date("i") }}
-                {% endif %}
-                {% if passage.dureePrecedente %}
-                d'une durée de {{ passage.dureePrecedente }}
-                {% endif %}
-        </div>
-	</div>
-</div>
