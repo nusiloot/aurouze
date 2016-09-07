@@ -660,7 +660,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
     public function pullEtablissementInfos() {
         if(!$this->getEtablissementInfos()) {
-            $this->setEtablissementInfos(new EtablissementInfos());
+            return;
         }
         $this->getEtablissementInfos()->pull($this->getEtablissement());
     }
