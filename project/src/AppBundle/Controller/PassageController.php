@@ -27,7 +27,7 @@ class PassageController extends Controller {
      * @Route("/passage/{secteur}/visualisation", name="passage" , defaults={"secteur" = "PARIS"})
      */
     public function indexAction(Request $request, $secteur) {
-        ini_set('memory_limit', '512M');
+        ini_set('memory_limit', '64M');
 
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
@@ -44,7 +44,6 @@ class PassageController extends Controller {
         $passageManager = $this->get('passage.manager');
         $passages = $passageManager->getRepository()->findToPlan($secteur, $dateFin);
         $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($passages);
-        //$moisPassagesArray = array();
         $geojson = $this->buildGeoJson($passages);
 
         return $this->render('passage/index.html.twig', array('passages' => $passages,
