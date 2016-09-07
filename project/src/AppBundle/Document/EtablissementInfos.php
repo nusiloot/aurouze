@@ -27,6 +27,11 @@ class EtablissementInfos implements EtablissementInfosInterface {
     protected $adresse;
 
     /**
+     * @MongoDB\EmbedOne(targetDocument="ContactCoordonnee")
+     */
+    protected $contactCoordonnee;
+
+    /**
      * @MongoDB\String
      */
     protected $type;
@@ -102,15 +107,31 @@ class EtablissementInfos implements EtablissementInfosInterface {
     }
 
     public function getTelephoneFixe() {
-
+        if (!$this->getContactCoordonnee()) {
+            return null;
+        }
+        return $this->getContactCoordonnee()->getTelephoneFixe();
     }
 
     public function getTelephonePortable() {
-
+        if (!$this->getContactCoordonnee()) {
+            return null;
+        }
+        return $this->getContactCoordonnee()->getTelephoneMobile();
     }
 
     public function getFax() {
+        if (!$this->getContactCoordonnee()) {
+            return null;
+        }
+        return $this->getContactCoordonnee()->getFax();
+    }
 
+    public function getEmail() {
+        if (!$this->getContactCoordonnee()) {
+            return null;
+        }
+        return $this->getContactCoordonnee()->getEmail();
     }
 
     public function getIcon() {
@@ -126,6 +147,29 @@ class EtablissementInfos implements EtablissementInfosInterface {
     public function pull(EtablissementInfosInterface $etablissementFrom) {
         $this->setNom($etablissementFrom->getNom(false));
         $this->setAdresse(clone $etablissementFrom->getAdresse());
+        $this->setContactCoordonnee(clone $etablissementFrom->getContactCoordonnee());
         $this->setType($etablissementFrom->getType());
+    }
+
+    /**
+     * Set contactCoordonnee
+     *
+     * @param AppBundle\Document\ContactCoordonnee $contactCoordonnee
+     * @return self
+     */
+    public function setContactCoordonnee(\AppBundle\Document\ContactCoordonnee $contactCoordonnee)
+    {
+        $this->contactCoordonnee = $contactCoordonnee;
+        return $this;
+    }
+
+    /**
+     * Get contactCoordonnee
+     *
+     * @return AppBundle\Document\ContactCoordonnee $contactCoordonnee
+     */
+    public function getContactCoordonnee()
+    {
+        return $this->contactCoordonnee;
     }
 }

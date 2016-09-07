@@ -64,6 +64,11 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $contrats = array();
 
     /**
+     *  @MongoDB\ReferenceMany(targetDocument="Passage", mappedBy="etablissement")
+     */
+    protected $passages;
+
+    /**
      * @MongoDB\Increment
      */
     protected $numeroPassageIncrement;
@@ -97,6 +102,15 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     /** @MongoDB\PrePersist */
     public function prePersist() {
         $this->pullInfosFromSociete();
+    }
+
+    public function updatePassages() {
+        foreach($this->getPassages() as $passage) {
+            if($passage->isRealise() || $passage->isAnnule()) {
+                continue;
+            }
+            $passage->pullEtablissementInfos();
+        }
     }
 
     public function getSameAdresse() {
@@ -458,4 +472,34 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         return $this->actif;
     }
 
+
+    /**
+     * Add passage
+     *
+     * @param AppBundle\Document\Passage $passage
+     */
+    public function addPassage(\AppBundle\Document\Passage $passage)
+    {
+        $this->passages[] = $passage;
+    }
+
+    /**
+     * Remove passage
+     *
+     * @param AppBundle\Document\Passage $passage
+     */
+    public function removePassage(\AppBundle\Document\Passage $passage)
+    {
+        $this->passages->removeElement($passage);
+    }
+
+    /**
+     * Get passages
+     *
+     * @return \Doctrine\Common\Collections\Collection $passages
+     */
+    public function getPassages()
+    {
+        return $this->passages;
+    }
 }

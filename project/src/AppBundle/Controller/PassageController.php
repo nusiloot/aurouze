@@ -27,7 +27,7 @@ class PassageController extends Controller {
      * @Route("/passage/{secteur}/visualisation", name="passage" , defaults={"secteur" = "PARIS"})
      */
     public function indexAction(Request $request, $secteur) {
-        ini_set('memory_limit', '256M');
+        ini_set('memory_limit', '512M');
 
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
             'action' => $this->generateUrl('passage_etablissement_choice'),
@@ -43,7 +43,8 @@ class PassageController extends Controller {
 
         $passageManager = $this->get('passage.manager');
         $passages = $passageManager->getRepository()->findToPlan($secteur, $dateFin);
-        $moisPassagesArray = $passageManager->getRepository()->getNbPassagesToPlanPerMonth($secteur, $dateFin);
+        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($passages);
+        //$moisPassagesArray = array();
         $geojson = $this->buildGeoJson($passages);
 
         return $this->render('passage/index.html.twig', array('passages' => $passages,
@@ -191,6 +192,7 @@ class PassageController extends Controller {
      */
     public function editionAction(Request $request, Passage $passage) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+
 
         $form = $this->createForm(new PassageType($dm), $passage, array(
             'action' => $this->generateUrl('passage_edition', array('id' => $passage->getId())),
@@ -414,8 +416,8 @@ class PassageController extends Controller {
                     $firstTechnicien = $technicien;
                     break;
                 }
-                $etbInfos = $document->getEtablissement();
-                $coordinates = $document->getEtablissement()->getAdresse()->getCoordonnees();
+                $etbInfos = $document->getEtablissementInfos();
+                $coordinates = $document->getEtablissementInfos()->getAdresse()->getCoordonnees();
                 $feature->properties->color = 'black';
                 $feature->properties->colorText = 'white';
                 if (!is_null($firstTechnicien)) {

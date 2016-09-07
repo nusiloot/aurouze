@@ -1272,7 +1272,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         if ($augmentation > 0) {
         	$contrat->setPrixHt(round($this->getPrixHt() * (1+($augmentation/100)),2));
         }
-        
+
         $dateDebut = clone $contrat->getDateDebut();
         $dateAcceptation = clone $contrat->getDateDebut();
         $dateFin= clone $contrat->getDateFin();
@@ -1285,7 +1285,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateDebut($dateDebut);
         $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
-        
+
         if ($this->getStatut() == ContratManager::STATUT_EN_COURS) {
             $contrat->setStatut(ContratManager::STATUT_A_VENIR);
         } else {
@@ -1614,6 +1614,23 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	return $this->getNumeroArchive();
     }
 
+    public function updateNumeroOrdrePassage() {
+        foreach($this->getContratPassages() as $etablissementPassages) {
+            $numero = 1;
+            foreach ($etablissementPassages->getPassagesSorted() as $passage) {
+                if ($passage->isControle()) {
+                    $passage->setNumeroOrdre("C");
+                } elseif ($passage->isGarantie()) {
+                    $passage->setNumeroOrdre("G");
+                } elseif($passage->isSousContrat()) {
+                    $passage->setNumeroOrdre($numero);
+                    $numero++;
+                }
+                $passage->getLibelle();
+            }
+        }
+    }
+
     public function calculPca(){
       if(!$this->getContratPassages()->first()){
         return array('pca' => '0', 'ratioFacture' => '0', 'ratioActivite' => '0');
@@ -1659,5 +1676,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
     public function isBonbleu(){
       return boolval($this->getDescription());
+    }
+
+    /** @MongoDB\PreUpdate */
+    public function preUpdate() {
+        $this->updateNumeroOrdrePassage();
+    }
+
+    /** @MongoDB\PrePersist */
+    public function prePersist() {
+        $this->updateNumeroOrdrePassage();
     }
 }
