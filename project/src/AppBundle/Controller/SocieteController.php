@@ -75,6 +75,7 @@ class SocieteController extends Controller {
     			 $etablissement->setSociete($societe);
     			 $etablissement->setNom($societe->getRaisonSociale());
     			 $etablissement->setType($societe->getType());
+    			 $etablissement->setCommentaire($societe->getCommentaire());
     			 $dm->persist($etablissement);
     			 $dm->flush();
     		}
