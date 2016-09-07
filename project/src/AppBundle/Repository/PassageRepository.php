@@ -51,8 +51,8 @@ class PassageRepository extends DocumentRepository {
 
     public function findAllErreurs() {
         $query = $this->createQueryBuilder('Passage')
-                ->field('statut')->in(array(PassageManager::STATUT_PLANIFIE, PassageManager::STATUT_REALISE))
-                ->field('description')->exists(false)
+                ->field('statut')->equals(PassageManager::STATUT_REALISE)
+                ->field('description')->equals(null)
                 ->sort('dateDebut', 'asc');
         $query = $query->getQuery();
         return $query->execute();
