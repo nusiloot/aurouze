@@ -1,0 +1,14 @@
+{% set _menu_active = 'erreurs' %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Passages en erreurs{% endblock title %}
+
+{% block body %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('passage_erreurs') }}">Passages en erreurs</a></li>
+	</ol>
+	
+	{{ include('passage/listingPassages.html.twig', { 'passages': passages }) }}
+
+{% endblock %}

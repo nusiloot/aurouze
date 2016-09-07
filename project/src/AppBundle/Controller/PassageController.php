@@ -336,6 +336,17 @@ class PassageController extends Controller {
     }
 
     /**
+     * @Route("/passage/erreurs", name="passage_erreurs")
+     */
+    public function PassageErreursAction(Request $request) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $passages = $dm->getRepository('AppBundle:Passage')->findAllErreurs();
+
+        return $this->render('passage/erreurs.html.twig', array('passages' => $passages));
+    }
+
+    /**
      * @Route("/passage/pdf-missions-massif", name="passage_pdf_missions_massif")
      */
     public function pdfMissionsMassifAction(Request $request) {
