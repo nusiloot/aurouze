@@ -49,6 +49,15 @@ class PassageRepository extends DocumentRepository {
         return $query->execute();
     }
 
+    public function findAllErreurs() {
+        $query = $this->createQueryBuilder('Passage')
+                ->field('statut')->in(array(PassageManager::STATUT_PLANIFIE, PassageManager::STATUT_REALISE))
+                ->field('description')->exists(false)
+                ->sort('dateDebut', 'asc');
+        $query = $query->getQuery();
+        return $query->execute();
+    }
+
     public function findHistoriqueByEtablissementAndPrestationsAndNumeroContrat(Contrat $contrat, $etablissement, $prestations = array(), $limit = 2) {
         $passagesHistorique = array();
 
