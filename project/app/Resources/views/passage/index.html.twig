@@ -63,7 +63,7 @@
                                     <div class="col-sm-3 text-right">
                                         {% for prestation in passage.prestations %}
                                             {% if(prestation.wordToPicto) %}
-                                                <span class="step size-24" title="{{  prestation.nomToString }}" data-toggle="tooltip" >
+                                                <span class="step size-24" title="{{  prestation.nomToString }}" >
                                                     <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i></span>
                                                 {%else%}
                                                 <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
