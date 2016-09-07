@@ -249,6 +249,9 @@ class ContratManager implements MouvementManagerInterface {
             }
             $firstEtb = false;
         }
+
+        $contrat->updateNumeroOrdrePassage();
+
         $this->dm->flush();
     }
 
