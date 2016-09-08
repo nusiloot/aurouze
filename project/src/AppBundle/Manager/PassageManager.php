@@ -185,6 +185,22 @@ class PassageManager {
         return null;
     }
 
+    public function passagePrecedentSousContrat(Passage $passage) {
+        $lastPassage = null;
+        $passagesArrayByNumeroArchive = $this->getPassagesByNumeroArchiveContrat($passage);
+        foreach ($passagesArrayByNumeroArchive as $etbId => $passagesEtb) {
+            foreach ($passagesEtb as $p) {
+                if ($p->getId() == $passage->getId()) {
+                    return $lastPassage;
+                }
+                if($p->isSousContrat()) {
+                    $lastPassage = $p;
+                }
+            }
+        }
+        return null;
+    }
+
     public function getNbPassagesToPlanPerMonth($passages) {
         $result = array();
         foreach ($passages as $passage) {
