@@ -26,6 +26,8 @@
         <span>Du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
         {% if (facture.numeroDevis) %}
         À partir du devis n° {{ facture.numeroDevis }}
+        {% elseif (facture.origineAvoir) %}
+        Sur facture n°{{ facture.origineAvoir.numeroFacture }}
         {% else %}
         <br /><br />
         {% endif %}

@@ -118,6 +118,11 @@ class Facture implements DocumentSocieteInterface {
      */
     protected $avoir;
 
+     /**
+     * @MongoDB\ReferenceOne(targetDocument="Facture", inversedBy="factures", simple=true)
+     */
+    protected $origineAvoir;
+
     /**
      * @MongoDB\ReferenceMany(targetDocument="Paiements", mappedBy="paiement.facture", simple=true, repositoryMethod="findPaiementsByFacture")
      */
@@ -386,6 +391,29 @@ class Facture implements DocumentSocieteInterface {
      */
     public function getSociete() {
         return $this->societe;
+    }
+    
+
+
+    /**
+     * Set origineAvoir
+     *
+     * @param AppBundle\Document\Facture $facture
+     * @return self
+     */
+    public function setOrigineAvoir(\AppBundle\Document\Facture $facture) {
+    	$this->origineAvoir = $facture;
+    
+    	return $this;
+    }
+    
+    /**
+     * Get origineAvoir
+     *
+     * @return AppBundle\Document\Facture $facture
+     */
+    public function getOrigineAvoir() {
+    	return $this->origineAvoir;
     }
 
     /**
@@ -869,6 +897,7 @@ class Facture implements DocumentSocieteInterface {
         $avoir->removeId();
         $avoir->removeNumeroFacture();
         $avoir->setCloture(true);
+        $avoir->setOrigineAvoir($this);
         $avoir->setMontantPaye(-1 * $avoir->getMontantTTC());
         $avoir->setMontantHT(-1 * $avoir->getMontantHT());
         $avoir->setMontantTaxe(-1 * $avoir->getMontantTaxe());
