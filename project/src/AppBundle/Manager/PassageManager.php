@@ -129,6 +129,7 @@ class PassageManager {
             $nextPassage = $this->getNextPassageFromPassage($nextPassage, true);
         }
         if ($nextPassage) {
+            $nextPassage->setDateDebut($nextPassage->getDatePrevision());
             $nextPassage->setDureePrecedente($passage->getDureeDate());
             $nextPassage->setDatePrecedente($passage->getDateDebut());
             $nextPassage->copyTechnicienFromPassage($passage);
