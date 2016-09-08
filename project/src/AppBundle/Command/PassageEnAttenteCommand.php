@@ -57,7 +57,7 @@ class PassageEnAttenteCommand extends ContainerAwareCommand {
                 continue;
             }
 
-            $previousPassage = $this->getContainer()->get('passage.manager')->passagePrecedentRealiseSousContrat($passage);
+            $previousPassage = $this->getContainer()->get('passage.manager')->passagePrecedentSousContrat($passage);
 
             if($previousPassage && !$previousPassage->isRealise()) {
                 continue;
