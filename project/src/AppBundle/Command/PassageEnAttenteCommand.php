@@ -59,7 +59,7 @@ class PassageEnAttenteCommand extends ContainerAwareCommand {
 
             $previousPassage = $this->getContainer()->get('passage.manager')->passagePrecedentSousContrat($passage);
 
-            if($previousPassage && $previousPassage->isRealise() && $previousPassage->isPlanifie()) {
+            if($previousPassage && !$previousPassage->isRealise() && !$previousPassage->isPlanifie()) {
                 continue;
             }
 
@@ -69,6 +69,6 @@ class PassageEnAttenteCommand extends ContainerAwareCommand {
             echo "Passage de ".$passage->getDatePrevision()->format('M Y')." pour l'établissment ".$passage->getEtablissementInfos()->getNom()." dans le contrat n°".$passage->getContrat()->getNumeroArchive()." : ".$passage->getContrat()->getId()." ".$passage->getId()."\n";
         }
 
-        $this->dm->flush();
+        //$this->dm->flush();
     }
 }
