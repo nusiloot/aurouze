@@ -463,12 +463,14 @@ class PassageController extends Controller {
             $contrat->setDateAcceptation($contrat->getDateDebut());
             $contrat->updateObject();
             $contrat->updatePrestations($dm);
-            $dateFin = $contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month");
+            $dateFin = clone $contrat->getDateDebut();
+            $dateFin->modify("+" . $contrat->getDuree() . " month");
             $contrat->setDateFin($dateFin);
             $dm->persist($contrat);
             $cm->generateAllPassagesForContrat($contrat);
             $contrat->setStatut(ContratManager::STATUT_EN_COURS);
             $passage = $contrat->getUniquePassage();
+            $passage->setDateDebut($contrat->getDateDebut());
             $passage->setDateFin(clone $passage->getDateDebut());
             $dm->flush();
 
