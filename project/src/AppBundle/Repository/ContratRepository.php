@@ -29,7 +29,7 @@ class ContratRepository extends DocumentRepository {
              ->getQuery()
              ->execute();
     }
-    
+
     public function findLast() {
     	return $this->findBy(array(), array('dateCreation' => 'DESC'), 30);
     }
@@ -83,6 +83,21 @@ class ContratRepository extends DocumentRepository {
         $query = $q->getQuery();
 
         return $query->execute();
+    }
+
+    public function findLastContratByNumero($numeroArchive) {
+        $q = $this->createQueryBuilder();
+        $q->field('numeroArchive')->equals($numeroArchive);
+        $q->sort('dateFin', 'desc');
+        $q->limit(1);
+        $query = $q->getQuery();
+
+        foreach($query->execute() as $contrat) {
+
+            return $contrat;
+        }
+
+        return null;
     }
 
     public function findContratsAReconduire($typeContrat = null, \DateTime $date, $societe = null) {
