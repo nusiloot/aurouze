@@ -35,7 +35,7 @@ class ContratController extends Controller {
     public function indexAction(Request $request) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-		
+
         $contrats = $this->get('contrat.manager')->getRepository()->findLast();
         return $this->render('contrat/index.html.twig', array('contrats' => $contrats));
     }
@@ -177,6 +177,7 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function reconductionAction(Request $request, Contrat $contrat) {
+        set_time_limit(0);
         $dm = $this->get('doctrine_mongodb')->getManager();
         if ($contrat->isReconductible()) {
             $etablissements = $contrat->getEtablissements();
@@ -433,7 +434,7 @@ class ContratController extends Controller {
               $contratsAReconduire[$key] = $cm->getRepository()->findOneById($key);
           }
         }
-        
+
         foreach ($contratsAReconduire as $contrat) {
           $contratReconduit = $contrat->reconduire($augmentation);
           $dm->persist($contratReconduit);
@@ -459,7 +460,7 @@ class ContratController extends Controller {
         $dateRecondution = new \DateTime();
         $typeContrat = null;
         $societe = null;
-        
+
         $formContratsAReconduire = $this->createForm(new ReconductionFiltresType(), null, array(
         		'action' => $this->generateUrl('contrats_reconduction_massive'),
         		'method' => 'post',
@@ -472,7 +473,7 @@ class ContratController extends Controller {
         	$typeContrat = $formValues["typeContrat"];
         	$societe = $formValues["societe"];
         }
-        
+
         $contratsAReconduire = $cm->getRepository()->findContratsAReconduire($typeContrat, $dateRecondution, $societe);
         $formReconduction = $this->createForm(new ReconductionType($contratsAReconduire), null, array(
         		'action' => $this->generateUrl('contrats_reconduire_massivement'),
