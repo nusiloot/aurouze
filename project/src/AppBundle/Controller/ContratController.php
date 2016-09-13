@@ -177,7 +177,6 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function reconductionAction(Request $request, Contrat $contrat) {
-        set_time_limit(0);
         $dm = $this->get('doctrine_mongodb')->getManager();
         if ($contrat->isReconductible()) {
             $etablissements = $contrat->getEtablissements();
@@ -424,9 +423,10 @@ class ContratController extends Controller {
      * @Route("/contrats-reconduire-massivement", name="contrats_reconduire_massivement")
      */
     public function contrats_reconduire_massivement(Request $request) {
-      $dm = $this->get('doctrine_mongodb')->getManager();
-      $cm = $this->get('contrat.manager');
-      $contratsAReconduire = array();
+        set_time_limit(0);
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $cm = $this->get('contrat.manager');
+        $contratsAReconduire = array();
         $formRequest = $request->request->get('reconduction');
         $augmentation = (isset($formRequest['augmentation']))? $formRequest['augmentation'] : 0;
         foreach ($formRequest as $key => $value) {
@@ -453,7 +453,6 @@ class ContratController extends Controller {
      * @Route("/contrats-reconduction", name="contrats_reconduction_massive")
      */
     public function reconductionMassiveAction(Request $request) {
-
         $dm = $this->get('doctrine_mongodb')->getManager();
         $cm = $this->get('contrat.manager');
 
