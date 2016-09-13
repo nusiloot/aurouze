@@ -436,15 +436,17 @@ class ContratController extends Controller {
         }
 
         foreach ($contratsAReconduire as $contrat) {
-          $contratReconduit = $contrat->reconduire($augmentation);
-          $dm->persist($contratReconduit);
-          $dm->flush();
-          $cm->generateAllPassagesForContrat($contratReconduit,true);
-          $dm->persist($contratReconduit);
-          $contrat->setReconduit(true);
-          $dm->persist($contratReconduit);
+            if($contrat->getReconduit()) {
+
+                continue;
+            }
+            $contratReconduit = $contrat->reconduire($augmentation);
+            $dm->persist($contratReconduit);
+            $contrat->setReconduit(true);
+            $cm->generateAllPassagesForContrat($contratReconduit,true);
+            $dm->flush();
         }
-        $dm->flush();
+
         return $this->redirectToRoute('contrats_reconduction_massive');
     }
 

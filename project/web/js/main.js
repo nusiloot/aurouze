@@ -28,7 +28,14 @@
         $.initTypeheadSearchable();
         $.initSomme();
         $.initReconduction();
+        $.initButtonLoading();
     });
+
+    $.initButtonLoading = function() {
+        $('.btn-loading').on('click', function () {
+            $(this).button('loading');
+        });
+    }
 
     $.initReconduction = function(){
       $("form#formContratsAReconduire").each(function(){

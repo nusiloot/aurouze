@@ -6,7 +6,7 @@
         <li><a href="{{ path('contrat') }}">Contrat</a></li>
         <li><a href="{{ path('contrats_reconduction_massive') }}">Reconduction Massive au {{ dateRecondution | localizeddate('full', 'none') }}</a></li>
     </ol>
-    
+
     {{ form_start(formContratsAReconduire) }}
     <div class="row">
       <div class="col-xs-12">
@@ -49,7 +49,7 @@
       	<div class="input-group">
       			{{ form_widget(formReconduction.augmentation) }}
       			<span class="input-group-btn">
-          		{{ form_widget(formReconduction.reconduire) }}
+          		{{ form_widget(formReconduction.reconduire,  {'attr': {'class': 'btn-loading btn btn-primary pull-right', 'data-loading-text': "Reconduction en cours ..."}}) }}
           		</span>
         </div>
       </div>

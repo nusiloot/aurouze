@@ -1260,6 +1260,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function reconduire($augmentation = 0) {
+        if($this->getReconduit()) {
+
+            throw new \Exception("Ce contrat à déjà été reconduit");
+        }
         $contrat = clone $this;
         $contrat->removeId();
         $contrat->setIdentifiant(null);
