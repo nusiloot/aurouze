@@ -146,8 +146,10 @@ class ContratController extends Controller {
 
                     $contratManager->updateNbFactureForContrat($contrat);
                 }
-                $dateFinCalcule = \DateTime::createFromFormat('Y-m-d',$contrat->getDateDebut()->format('Y-m-d'));
-                $contrat->setDateFin($dateFinCalcule->modify("+" . $contrat->getDuree() . " month"));
+                if ($contrat->getDateDebut()) {
+                	$dateFinCalcule = \DateTime::createFromFormat('Y-m-d',$contrat->getDateDebut()->format('Y-m-d'));
+                	$contrat->setDateFin($dateFinCalcule->modify("+" . $contrat->getDuree() . " month"));
+                }
                 $dm->persist($contrat);
                 $dm->flush();
                 return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
