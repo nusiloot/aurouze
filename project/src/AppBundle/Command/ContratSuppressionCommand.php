@@ -47,8 +47,12 @@ class ContratSuppressionCommand extends ContainerAwareCommand {
 
         foreach($contrat->getContratPassages() as $passages) {
             foreach($passages->getPassages() as $passage) {
-                echo $passage->getId()."\n";
-                $this->dm->remove($passage);
+              if($passage->isPlanifie() || $passage->isRealise()){
+                echo $passage->getId()." est PLANIFIE ou REALISE\n";
+                return;
+              }
+              echo $passage->getId()."\n";
+              $this->dm->remove($passage);
             }
         }
 
