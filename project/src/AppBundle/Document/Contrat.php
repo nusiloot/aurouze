@@ -1285,17 +1285,21 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $dateDebut = $dateDebut->modify("+" . $nbMois . " month");
         $dateAcceptation = $dateAcceptation->modify("+" . $nbMois . " month");
         $dateFin = $dateFin->modify("+" . $nbMois . " month");
-        $contrat->setDateAcceptation($dateAcceptation);
+
         $contrat->setDateDebut($dateDebut);
         $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
 
-        if ($this->getStatut() == ContratManager::STATUT_EN_COURS) {
-            $contrat->setStatut(ContratManager::STATUT_A_VENIR);
-        } else {
-            $contrat->setStatut(ContratManager::STATUT_EN_COURS);
+        if($contrat->isTypeReconductionTacite()){
+          $contrat->setStatut(ContratManager::STATUT_EN_COURS);
+          $contrat->setDateAcceptation($dateAcceptation);
+        }else{
+          $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+          $contrat->setDateAcceptation(null);
         }
+
         $contrat->removeAllEtablissements();
+
         foreach ($this->getEtablissements() as $etablissement) {
           $contrat->addEtablissement($etablissement);
         }
@@ -1308,7 +1312,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isReconductible() {
-        if (!$this->isTypeReconductionTacite()) {
+        if (!$this->isTypeReconductionTacite() && !$this->isTypeRenouvelableSurProposition()) {
 
             return false;
         }

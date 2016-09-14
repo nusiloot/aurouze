@@ -22,7 +22,7 @@
                     <a href='{{ path('passage',{"secteur" : secteur, "mois" : key }) }}' >
                         <small><strong>
                           {% if key == 'courant' %}
-                            D'ici le {{ dateFin | localizeddate("medium", "none", null, null, "d/MM/Y") }}
+                            D'ici le {{ dateFinCourant | localizeddate("medium", "none", null, null, "d/MM/Y") }}
                           {% else %}
                             {{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
                           {% endif %}

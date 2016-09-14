@@ -37,13 +37,16 @@ class PassageController extends Controller {
 
         $moisCourrant = ($request->get('mois') == "courant");
         $dateFin = new \DateTime();
+        $dateFinCourant = clone $dateFin;
+        $dateFinCourant->modify("+1 month");
+
         $dateDebut = new \DateTime();
         $passages = null;
         $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur);
         $anneeMois = null;
 
         if($moisCourrant){
-          $dateFin->modify("+1 month");
+          $dateFin = $dateFinCourant;
           $passages = $passageManager->getRepository()->findToPlan($secteur, null, $dateFin);
           $anneeMois = 'courant';
         }else{
@@ -58,6 +61,7 @@ class PassageController extends Controller {
 
         return $this->render('passage/index.html.twig', array('passages' => $passages,
                     'anneeMois' => $anneeMois,
+                    'dateFinCourant' => $dateFinCourant,
                     'dateFin' => $dateFin,
                     'formEtablissement' => $formEtablissement->createView(),
                     'geojson' => $geojson,

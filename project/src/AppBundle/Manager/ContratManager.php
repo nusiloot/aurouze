@@ -201,7 +201,7 @@ class ContratManager implements MouvementManagerInterface {
 
         $date_debut = $contrat->getDateDebut();
         $date_acceptation = $contrat->getDateAcceptation();
-        if (!$date_debut && !$date_acceptation) {
+        if (!$date_debut || !$date_acceptation) {
             return false;
         }
         $date_debut = clone $contrat->getDateDebut();
