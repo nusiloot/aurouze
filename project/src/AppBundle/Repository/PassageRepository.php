@@ -163,33 +163,68 @@ class PassageRepository extends DocumentRepository {
         return $techniciens;
     }
 
-    public function findToPlan($secteur = EtablissementManager::SECTEUR_PARIS, \DateTime $dateFin) {
-        $dpts = EtablissementManager::$secteurs_departements[EtablissementManager::SECTEUR_SEINE_ET_MARNE];
+    public function findToPlan($secteur = EtablissementManager::SECTEUR_PARIS, \DateTime $dateDebut = null, \DateTime $dateFin) {
         $date = new \DateTime();
-
         $mongoEndDate = new MongoDate(strtotime($dateFin->format('Y-m-d')));
 
         $q = $this->createQueryBuilder();
-
         $q->field('statut')->equals(PassageManager::STATUT_A_PLANIFIER)
                 ->field('datePrevision')->lte($mongoEndDate);
-        $regex = '';
-        $dptReg = '';
-        foreach ($dpts as $i => $dpt) {
-            $dptReg .= $dpt;
-            if ($i < count($dpts) - 1) {
-                $dptReg .= '|';
-            }
+
+        if($dateDebut){
+          $mongoStartDate = new MongoDate(strtotime($dateDebut->format('Y-m-d')));
+          $q->field('datePrevision')->gte($mongoStartDate);
         }
-            $regex .= '/^(' . $dptReg . ')/i';
+
+        $regex = $this->getRegexForSeineEtMarne();
         if ($secteur == EtablissementManager::SECTEUR_PARIS) {
            $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->operator('$not', new \MongoRegex($regex)));
         } else {
            $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex($regex)));
         }
-        $query = $q->sort('datePrevision', 'asc')->getQuery();
+        $query = $q->sort('etablissementInfos.adresse.codePostal', 'asc')->getQuery();
 
         return $query->execute();
+    }
+
+    public function findNbPassagesToPlanPerMonthUntil($secteur = EtablissementManager::SECTEUR_PARIS, \DateTime $dateFin){
+      $date = new \DateTime();
+
+      $datePlusOnemonth = clone $date;
+      $datePlusOnemonth->modify("+1 month");
+
+      $mongoEndDate = new MongoDate(strtotime($dateFin->format('Y-m-d')));
+
+      $q = $this->createQueryBuilder();
+
+      $q->field('statut')->equals(PassageManager::STATUT_A_PLANIFIER)
+              ->field('datePrevision')->lte($mongoEndDate);
+      $regex = $this->getRegexForSeineEtMarne();
+      if ($secteur == EtablissementManager::SECTEUR_PARIS) {
+         $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->operator('$not', new \MongoRegex($regex)));
+      } else {
+         $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex($regex)));
+      }
+      $query = $q->sort('datePrevision', 'asc')->getQuery();
+
+      $passages = $query->execute();
+      $result = array();
+      $result['courant'] = new \stdClass();
+      $result['courant']->date = $date;
+      $result['courant']->nb = 0;
+      foreach ($passages as $passage) {
+          $moisAnnee = $passage->getDatePrevision()->format('Ym');
+          if (!array_key_exists($moisAnnee, $result)) {
+              $result[$moisAnnee] = new \stdClass();
+              $result[$moisAnnee]->nb = 0;
+              $result[$moisAnnee]->date = $passage->getDatePrevision();
+          }
+          if($datePlusOnemonth > $passage->getDatePrevision()){
+            $result['courant']->nb = $result['courant']->nb + 1;
+          }
+          $result[$moisAnnee]->nb = $result[$moisAnnee]->nb + 1;
+      }
+      return $result;
     }
 
     public function countPassagesByTechnicien($compte) {
@@ -210,6 +245,20 @@ class PassageRepository extends DocumentRepository {
 
     public function findAllApplications() {
         return PassageManager::$applications;
+    }
+
+    private function getRegexForSeineEtMarne(){
+      $dpts = EtablissementManager::$secteurs_departements[EtablissementManager::SECTEUR_SEINE_ET_MARNE];
+      $regex = '';
+      $dptReg = '';
+      foreach ($dpts as $i => $dpt) {
+          $dptReg .= $dpt;
+          if ($i < count($dpts) - 1) {
+              $dptReg .= '|';
+          }
+      }
+      $regex .= '/^(' . $dptReg . ')/i';
+      return $regex;
     }
 
 }
