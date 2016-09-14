@@ -56,7 +56,7 @@ class ContratAnnulationType extends AbstractType {
      * @return string
      */
     public function getName() {
-        return 'contrat_acceptation';
+        return 'contrat_annulation';
     }
 
 }

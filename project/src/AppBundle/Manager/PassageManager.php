@@ -204,7 +204,7 @@ class PassageManager {
     public function getNbPassagesToPlanPerMonth($secteur = EtablissementManager::SECTEUR_PARIS) {
         $lastDayOfNextMonth = new \DateTime();
         $lastDayOfNextMonth->modify("last day of next month");
-        return $this->getRepository()->findNbPassagesToPlanPerMonthUntil($secteur, $lastDayOfNextMonth);        
+        return $this->getRepository()->findNbPassagesToPlanPerMonthUntil($secteur, $lastDayOfNextMonth);
     }
 
 }

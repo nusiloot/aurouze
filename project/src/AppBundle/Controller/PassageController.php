@@ -14,6 +14,7 @@ use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
 use AppBundle\Type\PassageCreationType;
 use AppBundle\Type\PassageModificationType;
+use AppBundle\Type\PassageAnnulationType;
 use AppBundle\Manager\PassageManager;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\InterventionRapideCreationType;
@@ -160,14 +161,29 @@ class PassageController extends Controller {
     public function annulationAction(Request $request, Passage $passage) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('passage.manager');
-        $statut = $passage->getStatut();
-        $passage->setStatut(PassageManager::STATUT_ANNULE);
-        $dm->persist($passage);
-        if ($statut == PassageManager::STATUT_A_PLANIFIER) {
-        	$pm->updateNextPassageAPlannifier($passage);
+
+        $form = $this->createForm(new PassageAnnulationType($dm, $passage), $passage, array(
+            'action' => $this->generateUrl('passage_annulation', array('id' => $passage->getId())),
+            'method' => 'POST',
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+          $statut = $passage->getStatut();
+          $passage->setStatut(PassageManager::STATUT_ANNULE);
+          $dm->persist($passage);
+          if ($statut == PassageManager::STATUT_A_PLANIFIER) {
+            $pm->updateNextPassageAPlannifier($passage);
+          }
+          $dm->flush();
+          $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+          $contrat->verifyAndClose();
+
+          $dm->flush();
+
+          return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
         }
-        $dm->flush();
-        return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
+
+        return $this->render('passage/annulation.html.twig', array('form' => $form->createView(), 'passage' => $passage));
     }
 
     /**
@@ -237,9 +253,12 @@ class PassageController extends Controller {
 
         $passage->setDateRealise($passage->getDateDebut());
         $dm->persist($passage);
-
-
         $dm->persist($contrat);
+        $dm->flush();
+
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        $contrat->verifyAndClose();
+
         $dm->flush();
 
         if ($passage->getMouvementDeclenchable()) {

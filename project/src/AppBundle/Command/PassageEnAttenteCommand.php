@@ -45,7 +45,7 @@ class PassageEnAttenteCommand extends ContainerAwareCommand {
                 continue;
             }
 
-            if(!$passage->getContrat()->isAVenir() && !$passage->getContrat()->isEnCours()) {
+            if(!$passage->getContrat()->isEnCours()) {
                 continue;
             }
 

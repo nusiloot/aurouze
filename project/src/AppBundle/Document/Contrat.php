@@ -1178,7 +1178,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         if ($this->isEnAttenteAcceptation() || $this->isBrouillon()) {
             return true;
         }
-        if ($this->isEnCours() || $this->isAVenir()) {
+        if ($this->isEnCours()) {
             foreach ($this->getContratPassages() as $contratPassage) {
                 foreach ($contratPassage->getPassages() as $p) {
                     if ($p->isPlanifie() || $p->isRealise() || $p->isAnnule()) {
@@ -1192,7 +1192,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isAnnulable() {
-        return (($this->isEnCours() || $this->isAVenir() || $this->isFini()) && !$this->isAnnule());
+        return (($this->isEnCours()  || $this->isFini()) && !$this->isAnnule());
     }
 
     /*
@@ -1217,10 +1217,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return ($this->statut == ContratManager::STATUT_EN_COURS);
     }
 
-    public function isAVenir() {
-
-        return ($this->statut == ContratManager::STATUT_A_VENIR);
-    }
 
     public function isEnAttenteAcceptation() {
 
@@ -1637,6 +1633,20 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 $passage->getLibelle();
             }
         }
+    }
+
+    public function verifyAndClose(){
+      $flag = true;
+      foreach ($this->getContratPassages() as $contratPassages) {
+          foreach ($contratPassages->getPassages() as $passage) {
+              if (!$passage->isRealise() && !$passage->isAnnule()) {
+                  $flag = false;
+              }
+          }
+      }
+      if ($flag) {
+          $this->setStatut(ContratManager::STATUT_FINI);
+      }
     }
 
     public function calculPca(){

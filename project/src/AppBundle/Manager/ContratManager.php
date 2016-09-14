@@ -18,7 +18,6 @@ class ContratManager implements MouvementManagerInterface {
     const STATUT_BROUILLON = "BROUILLON";
     const STATUT_EN_ATTENTE_ACCEPTATION = "EN_ATTENTE_ACCEPTATION";
     const STATUT_EN_COURS = "EN_COURS";
-    const STATUT_A_VENIR = "A_VENIR";
     const STATUT_FINI = "FINI";
     const STATUT_RESILIE = "RESILIE"; // statut à retirer = ce n'est pas un statut mais un type!!
     const STATUT_ANNULE = "ANNULE";
@@ -76,7 +75,6 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_BROUILLON => 'Brouillon',
         self::STATUT_EN_ATTENTE_ACCEPTATION => "En attente",
         self::STATUT_EN_COURS => 'En cours',
-        self::STATUT_A_VENIR => 'A venir',
         self::STATUT_FINI => 'Terminé',
         self::STATUT_RESILIE => 'Résilié',
         self::STATUT_ANNULE => 'Annulé'
@@ -85,7 +83,6 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_BROUILLON => 'en brouillon',
         self::STATUT_EN_ATTENTE_ACCEPTATION => "en attente d'acceptation",
         self::STATUT_EN_COURS => 'en cours',
-        self::STATUT_A_VENIR => 'à venir',
         self::STATUT_FINI => 'terminé',
         self::STATUT_RESILIE => 'résilié'
     );
@@ -93,7 +90,6 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_BROUILLON => 'info',
         self::STATUT_EN_ATTENTE_ACCEPTATION => "warning",
         self::STATUT_EN_COURS => 'default',
-        self::STATUT_A_VENIR => 'default',
         self::STATUT_FINI => 'success',
         self::STATUT_RESILIE => 'danger',
         self::STATUT_ANNULE => 'danger'
@@ -102,7 +98,6 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_BROUILLON => 0,
         self::STATUT_EN_ATTENTE_ACCEPTATION => 2,
         self::STATUT_EN_COURS => 1,
-        self::STATUT_A_VENIR => 3,
         self::STATUT_FINI => 4,
         self::STATUT_RESILIE => 5,
         self::STATUT_ANNULE => 6
