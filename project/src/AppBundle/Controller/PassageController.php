@@ -24,7 +24,7 @@ use AppBundle\Manager\EtablissementManager;
 class PassageController extends Controller {
 
     /**
-     * @Route("/passage/{secteur}/visualisation", name="passage" , defaults={"secteur" = "PARIS"})
+     * @Route("/passage/{secteur}/visualisation/{mois}", name="passage" , defaults={"secteur" = "PARIS", "mois" = "courant"})
      */
     public function indexAction(Request $request, $secteur) {
         ini_set('memory_limit', '64M');
@@ -33,20 +33,32 @@ class PassageController extends Controller {
             'action' => $this->generateUrl('passage_etablissement_choice'),
             'method' => 'GET',
         ));
+        $passageManager = $this->get('passage.manager');
 
+        $moisCourrant = ($request->get('mois') == "courant");
         $dateFin = new \DateTime();
-        $dateFin->modify("last day of next month");
+        $dateDebut = new \DateTime();
+        $passages = null;
+        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur);
+        $anneeMois = null;
 
-        if($request->get('date')) {
-            $dateFin = new \DateTime($request->get('date'));
+        if($moisCourrant){
+          $dateFin->modify("+1 month");
+          $passages = $passageManager->getRepository()->findToPlan($secteur, null, $dateFin);
+          $anneeMois = 'courant';
+        }else{
+          $anneeMois = $request->get('mois');
+          $dateDebut = \DateTime::createFromFormat('Ymd',$anneeMois.'01');
+          $dateFin = clone $dateDebut;
+          $dateFin->modify("last day of this month");
+          $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, $dateFin);
         }
 
-        $passageManager = $this->get('passage.manager');
-        $passages = $passageManager->getRepository()->findToPlan($secteur, $dateFin);
-        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($passages);
         $geojson = $this->buildGeoJson($passages);
 
         return $this->render('passage/index.html.twig', array('passages' => $passages,
+                    'anneeMois' => $anneeMois,
+                    'dateFin' => $dateFin,
                     'formEtablissement' => $formEtablissement->createView(),
                     'geojson' => $geojson,
                     'moisPassagesArray' => $moisPassagesArray,
@@ -250,7 +262,7 @@ class PassageController extends Controller {
             'parameters' => $fm->getParameters(),
         ));
         $passage->setImprime(true);
-//        var_dump($passage->getImprime()); exit;
+
         $dm->flush();
         $filename = sprintf("bon_passage_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getTechniciens()->first()->getIdentite())));
 

@@ -11,13 +11,30 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <h3 class="hide-print">Liste des passages à planifier pour {{ etablissementManager.secteursNom(secteur) }}
-                <br/>
-                {% for moisPassage in moisPassagesArray %}
-                    <a href='{{ path('passage',{"secteur" : secteur}) }}#filtre=["{{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM") | capitalize}} {{ moisPassage.date | date("Y") }}"]' >
-                        <small>{{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</small></a>&nbsp;<span class="badge">{{ moisPassage.nb }}</span>&nbsp;&nbsp;
+            <h3 class="hide-print">Liste des passages à planifier pour {{ etablissementManager.secteursNom(secteur) }}{% if anneeMois %} en {{ dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }} {% else %} jusqu'au {{ dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }} {% endif %} </h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <ul class="nav nav-pills">
+                {% for key,moisPassage in moisPassagesArray %}
+                <li role="presentation" class="{% if key == anneeMois %} active {% endif %}">
+                    <a href='{{ path('passage',{"secteur" : secteur, "mois" : key }) }}' >
+                        <small><strong>
+                          {% if key == 'courant' %}
+                            D'ici le {{ dateFin | localizeddate("medium", "none", null, null, "d/MM/Y") }}
+                          {% else %}
+                            {{ moisPassage.date | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}
+                          {% endif %}
+                      </strong></small>&nbsp;&nbsp;&nbsp;<span class="badge">{{ moisPassage.nb }}</span>&nbsp;</a>
+                </li>
                 {% endfor %}
-            </h3>
+          </ul>
+        </div>
+      </div>
+      <br/>
+      <div class="row">
+        <div class="col-xs-12">
             <div class="form-horizontal hide-print">
                 <div class="form-group">
                     <div class="col-xs-9">
@@ -113,6 +130,7 @@
                     <div id="map" class="well" style="width: 100%; height: 650px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 {% endblock %}
