@@ -23,13 +23,13 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use AppBundle\Manager\ContratManager;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class ContratTransformAllAVenirToEnCoursCommand extends ContainerAwareCommand {
+class ContratUpdateAVenirToEnCoursCommand extends ContainerAwareCommand {
 
     protected $dm;
 
     protected function configure() {
         $this
-        ->setName('update:all-avenir-to-encours')
+        ->setName('update:contrat-update-avenir-to-encours')
         ->setDescription('Contrat transforme tout les avenir to en cours');
     }
 

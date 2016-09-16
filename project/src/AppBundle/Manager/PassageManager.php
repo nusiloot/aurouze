@@ -10,7 +10,7 @@ use AppBundle\Manager\ContratManager;
 
 class PassageManager {
 
-    const STATUT_EN_ATTENTE = "EN_ATTENTE";
+
     const STATUT_A_PLANIFIER = "A_PLANIFIER";
     const STATUT_PLANIFIE = "PLANIFIE";
     const STATUT_REALISE = "REALISE";
@@ -20,11 +20,9 @@ class PassageManager {
     const TYPE_PASSAGE_CONTROLE = "CONTROLE";
 
     public static $statutsLibellesActions = array(self::STATUT_A_PLANIFIER => 'A planifier',
-        self::STATUT_EN_ATTENTE => 'Prévu',
         self::STATUT_PLANIFIE => 'Planifié',
         self::STATUT_REALISE => 'Réalisé', self::STATUT_ANNULE => 'Annulé');
     public static $statutsLibelles = array(self::STATUT_A_PLANIFIER => 'À planifier',
-        self::STATUT_EN_ATTENTE => 'En attente',
         self::STATUT_PLANIFIE => 'Planifié',
         self::STATUT_REALISE => 'Réalisé', self::STATUT_ANNULE => 'Annulé');
     public static $typesPassageLibelles = array(
@@ -123,27 +121,27 @@ class PassageManager {
         return null;
     }
 
-    public function updateNextPassageAPlannifier($passage) {
-        $nextPassage = $this->getNextPassageFromPassage($passage, true);
-        while ($nextPassage && !$nextPassage->isEnAttente()) {
-            $nextPassage = $this->getNextPassageFromPassage($nextPassage, true);
-        }
-        if ($nextPassage) {
-            $nextPassage->setDateDebut($nextPassage->getDatePrevision());
-            $nextPassage->setDureePrecedente($passage->getDureeDate());
-            $nextPassage->setDatePrecedente($passage->getDateDebut());
-            $nextPassage->copyTechnicienFromPassage($passage);
-        }
-        return $nextPassage;
-    }
-
-    public function updateNextPassageEnAttente($passage) {
-        $nextPassage = $this->getNextPassageFromPassage($passage);
-        if ($nextPassage && $nextPassage->isAPlanifie()) {
-            $nextPassage->setDateDebut(null);
-        }
-        return $nextPassage;
-    }
+    // public function updateNextPassageAPlannifier($passage) {
+    //     $nextPassage = $this->getNextPassageFromPassage($passage, true);
+    //     while ($nextPassage && !$nextPassage->isEnAttente()) {
+    //         $nextPassage = $this->getNextPassageFromPassage($nextPassage, true);
+    //     }
+    //     if ($nextPassage) {
+    //         $nextPassage->setDateDebut($nextPassage->getDatePrevision());
+    //         $nextPassage->setDureePrecedente($passage->getDureeDate());
+    //         $nextPassage->setDatePrecedente($passage->getDateDebut());
+    //         $nextPassage->copyTechnicienFromPassage($passage);
+    //     }
+    //     return $nextPassage;
+    // }
+    //
+    // public function updateNextPassageEnAttente($passage) {
+    //     $nextPassage = $this->getNextPassageFromPassage($passage);
+    //     if ($nextPassage && $nextPassage->isAPlanifie()) {
+    //         $nextPassage->setDateDebut(null);
+    //     }
+    //     return $nextPassage;
+    // }
 
     public function isFirstPassageNonRealise($passage) {
         $contrat = $passage->getContrat();

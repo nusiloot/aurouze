@@ -16,10 +16,7 @@
             <tr>
                 <td><a data-toggle="modal" data-remote="false"
     				data-target="#modal-calendrier-infos" href="{{ path('passage_visualisation', { 'id': passage.id }) }}">n°&nbsp;{{ passage.numeroArchive }}</a></td>
-                <td>{% if (passage.enAttente) %}
-                <button class="btn btn-xs btn-block btn-default">{{
-                    passage.getStatutLibelle() }}</button>
-                {% elseif (passage.aPlanifie) %}
+                <td>{% if (passage.aPlanifie) %}
                 <button class="btn btn-xs btn-block btn-primary">{{
                     passage.getStatutLibelle() }}</button>
                 {% elseif (passage.planifie) %}
@@ -35,8 +32,6 @@
                 <td><a data-toggle="modal" data-remote="false"
     				data-target="#modal-calendrier-infos"
     				href="{{path('passage_visualisation', { 'id': passage.id })}}"> {% if
-    				(passage.enAttente) %} {{ passage.datePrevision | localizeddate("medium",
-    				"none", null, null, "MMMM YYYY") | capitalize }} {% elseif
     				(passage.APlanifie) %} {{ passage.dateDebut | localizeddate("medium", "none",
     				null, null, "MMMM YYYY") | capitalize }} {% else %} {{ passage.dateDebut
     				| localizeddate('full', 'none') | capitalize }} {% endif %} {%

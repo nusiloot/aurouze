@@ -171,9 +171,9 @@ class PassageController extends Controller {
           $statut = $passage->getStatut();
           $passage->setStatut(PassageManager::STATUT_ANNULE);
           $dm->persist($passage);
-          if ($statut == PassageManager::STATUT_A_PLANIFIER) {
-            $pm->updateNextPassageAPlannifier($passage);
-          }
+          // if ($statut == PassageManager::STATUT_A_PLANIFIER) {
+          //   $pm->updateNextPassageAPlannifier($passage);
+          // }
           $dm->flush();
           $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
           $contrat->verifyAndClose();
@@ -238,10 +238,10 @@ class PassageController extends Controller {
         }
         $passageManager = $this->get('passage.manager');
 
-        $nextPassage = $passageManager->updateNextPassageAPlannifier($passage);
-        if ($nextPassage) {
-            $dm->persist($nextPassage);
-        }
+      //  $nextPassage = $passageManager->updateNextPassageAPlannifier($passage);
+        // if ($nextPassage) {
+        //     $dm->persist($nextPassage);
+        // }
 
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
 

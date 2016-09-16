@@ -1004,7 +1004,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $this->setTechnicien($newTechnicien);
         foreach ($this->getContratPassages() as $contratPassage) {
             foreach ($contratPassage->getPassagesSorted() as $passage) {
-                if ($passage->isEnAttente() || $passage->isAPlanifie()) {
+                if ($passage->isAPlanifie()) {
                     $passage->removeAllTechniciens();
                     $passage->addTechnicien($newTechnicien);
                 }

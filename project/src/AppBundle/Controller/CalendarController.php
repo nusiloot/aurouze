@@ -151,7 +151,7 @@ class CalendarController extends Controller {
 
         $dm->persist($rdv);
         $rdv->pushToPassage();
-        $pm->updateNextPassageAPlannifier($rdv->getPassage());
+      //  $pm->updateNextPassageAPlannifier($rdv->getPassage());
         $dm->flush();
 
         $response = new Response(json_encode($rdv->getEventJson($technicien->getCouleur())));
@@ -285,7 +285,7 @@ class CalendarController extends Controller {
             $dm->persist($rdv);
             if($rdv->getPassage()) {
                 $rdv->pushToPassage();
-                $pm->updateNextPassageAPlannifier($rdv->getPassage());
+              //  $pm->updateNextPassageAPlannifier($rdv->getPassage());
             }
         }
 
@@ -303,9 +303,6 @@ class CalendarController extends Controller {
         $pm = $this->get('passage.manager');
         $technicien = $request->get('technicien');
 
-        if($rdv->getPassage()) {
-            $pm->updateNextPassageEnAttente($rdv->getPassage());
-        }
 
         $dm->remove($rdv);
 

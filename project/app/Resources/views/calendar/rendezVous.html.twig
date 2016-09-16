@@ -6,9 +6,7 @@
                 {% if (rdv.passage and rdv.passage.annule) %}
                     <button class="btn btn-md btn-block btn-danger">{{
             rdv.passage.getStatutLibelle() }}</button>
-                    {% elseif (rdv.passage and rdv.passage.enAttente) %}
-                    <button class="btn btn-md btn-block btn-default">{{
-                rdv.passage.getStatutLibelle() }}</button>
+                  
                     {% elseif (rdv.passage and rdv.passage.aPlanifie) %}
                     <button class="btn btn-md btn-block btn-primary">{{
                     rdv.passage.getStatutLibelle() }}</button>

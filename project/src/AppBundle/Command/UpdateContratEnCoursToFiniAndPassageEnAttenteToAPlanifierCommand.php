@@ -23,12 +23,12 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use AppBundle\Manager\ContratManager;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class ContratEnCoursToEnFiniCommand extends ContainerAwareCommand {
+class UpdateContratEnCoursToFiniAndPassageEnAttenteToAPlanifierCommand extends ContainerAwareCommand {
 
     protected $dm;
 
     protected function configure() {
-        $this->setName('update:update-enCours-to-Fini')
+        $this->setName('update:contrat-encours-to-fini-and-passage-enattente-to-aplanifier')
                 ->setDescription('Contrat en-cours vers fermé');
     }
 
@@ -37,11 +37,14 @@ class ContratEnCoursToEnFiniCommand extends ContainerAwareCommand {
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
 
         $allContratsEnCours = $this->dm->getRepository('AppBundle:Contrat')->findByStatut(ContratManager::STATUT_EN_COURS);
+
+        $allPassageEnAttente = $this->dm->getRepository('AppBundle:Passage')->findByStatut("EN_ATTENTE");
+
         $cptTotal = 0;
         $i = 0;
         $progress = new ProgressBar($output, 100);
         $progress->start();
-        $nb =  count($allContratsEnCours);
+        $nb =  count($allContratsEnCours) + count($allPassageEnAttente);
 
 
         foreach ($allContratsEnCours as $contrat) {
@@ -56,6 +59,20 @@ class ContratEnCoursToEnFiniCommand extends ContainerAwareCommand {
                 }
                 $i++;
         }
+
+        foreach ($allPassageEnAttente as $passage) {
+                $passage->setStatut(PassageManager::STATUT_A_PLANIFIER);
+                $cptTotal++;
+                if ($cptTotal % ($nb / 100) == 0) {
+                    $progress->advance();
+                }
+                if ($i >= 1000) {
+                    $this->dm->flush();
+                    $i = 0;
+                }
+                $i++;
+        }
+
         $this->dm->flush();
         $progress->finish();
     }

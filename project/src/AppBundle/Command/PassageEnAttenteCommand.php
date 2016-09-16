@@ -41,7 +41,7 @@ class PassageEnAttenteCommand extends ContainerAwareCommand {
         $iterableResult = $q->iterate();
 
         foreach ($iterableResult as $passage) {
-            if($passage->getStatut() != PassageManager::STATUT_EN_ATTENTE) {
+            if($passage->getStatut() != PassageManager::STATUT_A_PLANIFIER) {
                 continue;
             }
 

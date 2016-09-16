@@ -97,7 +97,7 @@ class ContratUpdateStatutCommand extends ContainerAwareCommand {
                         continue;
                     }
                     if ($passage->getDatePrevision()->format('YmdHi') > $contrat->getDateResiliation()->format('YmdHi')) {
-                        if ($passage->isEnAttente()) {
+                        if ($passage->isAPlanifie()) {
                             $passage->setStatut(PassageManager::STATUT_ANNULE);
                         } else {
                             $output->writeln(sprintf("<comment>ANNULATION DE PASSAGE : %s ne semble pas 'en attente' (statut='%s') => contrat  %s !</comment>", $passage->getId(),$passage->getStatut(), $contrat->getId()));
@@ -170,7 +170,7 @@ class ContratUpdateStatutCommand extends ContainerAwareCommand {
                         }
                     }
 
-                    if ($passage->isEnAttente() &&
+                    if ($passage->isAPlanifie() &&
                             (is_null($current_statut) || $current_statut == PassageManager::STATUT_PLANIFIE || $current_statut == PassageManager::STATUT_REALISE)) {
                         $passage->setDateDebut($passage->getDatePrevision());
 
