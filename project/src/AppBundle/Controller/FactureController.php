@@ -164,14 +164,15 @@ class FactureController extends Controller {
     }
 
   /**
-     * @Route("/avoir/{id}/{factureId}", name="facture_avoir")
+     * @Route("/avoir/{id}/{factureId}/{mouvement}", name="facture_avoir", defaults={"mouvement" = "1"})
    * @ParamConverter("societe", class="AppBundle:Societe")
    */
-  public function avoirAction(Request $request, Societe $societe, $factureId) {
+  public function avoirAction(Request $request, Societe $societe, $factureId,$mouvement) {
       $dm = $this->get('doctrine_mongodb')->getManager();
 
       $facture = $this->get('facture.manager')->getRepository()->findOneById($factureId);
       $avoir = $facture->genererAvoir();
+    
       $dm->persist($avoir);
       $dm->flush();
 
@@ -179,11 +180,13 @@ class FactureController extends Controller {
       $dm->persist($facture);
       $dm->flush();
 
-      $contrat = $facture->getContrat();
-      $contrat->restaureMouvements($facture);
+      if($mouvement){
+        $contrat = $facture->getContrat();
+        $contrat->restaureMouvements($facture);
 
-      $dm->persist($contrat);
-      $dm->flush();
+        $dm->persist($contrat);
+        $dm->flush();
+      }
 
       return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
   }

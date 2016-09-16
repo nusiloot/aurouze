@@ -61,11 +61,11 @@
         <thead>
             <tr>
                 <th class="col-xs-2">Date</th>
-                <th class="col-xs-2">Document</th>
+                <th class="col-xs-3">Document</th>
                 <th class="col-xs-4">Contenu</th>
                 <th class="col-xs-1 text-right">Montant&nbsp;TTC</th>
                 <th class="col-xs-1 text-right">Montant&nbsp;payé</th>
-                <th class="col-xs-2 text-right"></th>
+                <th class="col-xs-1 text-right"></th>
             </tr>
         </thead>
         <tbody>
@@ -92,26 +92,34 @@
                             {% endif %}
                           </td>
                             <td class="text-left">
-                                <div class="btn-group">
+                              {% if facture.isDevis or (facture.numeroFacture and facture.isEditable) or (not facture.isAvoir and not facture.isRedressee) %}
+                              <div class="dropdown">
+                                <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="actionButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                  Actions
+                                  <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="actionButton">
                                     {% if facture.isDevis %}
-                                        <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis', 'id': facture.id })}}" class="btn btn-default btn-xs">Modifier</a>
-                                        <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-primary btn-xs">Créer la facture</a>
+                                        <li><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis', 'id': facture.id })}}" class="btn btn-default btn-xs">Modifier {% if(facture.isAvoir) %}l'avoir{% else %}la facture{% endif %}</a></li>
+                                        <li><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-primary btn-xs">Créer la facture</a></li>
                                     {% else %}
-                                        <!-- <a href="" class="btn btn-default btn-xs">&nbsp;<span class="glyphicon glyphicon-repeat" data-toggle="tooltip" title="Regénerer"></span></a> -->
                                             {% if(facture.numeroFacture and facture.isEditable) %}
-                                                <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-default btn-xs">Modifier</a>
+                                              <li>  <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-default btn-xs">Modifier {% if(facture.isAvoir) %}l'avoir{% else %}la facture{% endif %}</a></li>
                                             {% endif %}
                                             {% if(not facture.isAvoir and not facture.isRedressee) %}
-                                            <a onclick="return confirm('Êtes vous sûr de vouloir faire un avoir sur cette facture ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id })}}" class="btn btn-default btn-xs">Avoir</a>
-                                            {% if(not facture.iscloture) %}
-                                                <a onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Cloturer</a>
+                                              {% if(not facture.iscloture) %}
+                                                <li><a onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Cloturer les paiements</a></li>
+                                              {% endif %}
+                                              {% if(facture.iscloture and facture.isDecloturable) %}
+                                                <li><a onclick="return confirm('Êtes vous sûr de vouloir décloturer cette facture ?')" href="{{ path('facture_decloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Décloturer (remettre les paiements à 0)</a></li>
+                                              {% endif %}
+                                                <li><a onclick="return confirm('Êtes vous sûr de vouloir faire un avoir partiel sur cette facture ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id , 'mouvement' : "0" })}}" class="btn btn-default btn-xs">Créer un avoir partiel</a></li>
+                                                <li><a onclick="return confirm('Êtes vous sûr de vouloir annuler la facture et générer un avoir ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id , 'mouvement' : "1" })}}" class="btn btn-default btn-xs">Annuler la facturation (donnera lieu à une nouvelle facture)</a></li>
                                             {% endif %}
-                                            {% if(facture.iscloture and facture.isDecloturable) %}
-                                                <a onclick="return confirm('Êtes vous sûr de vouloir décloturer cette facture ?')" href="{{ path('facture_decloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Déclot.</a>
-                                            {% endif %}
-                                        {% endif %}
                                     {% endif %}
+                                  </ul>
                                 </div>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
