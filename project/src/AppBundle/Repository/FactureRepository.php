@@ -87,4 +87,14 @@ class FactureRepository extends DocumentRepository {
     	return $resultSet;
     }
 
+    public function findAllRetardDePaiement(){
+      $today = new \DateTime();
+      $q = $this->createQueryBuilder();
+      $q->field('numeroFacture')->notEqual(null);
+      $q->field('cloture')->equals(false);
+      $q->field('dateLimitePaiement')->lte($today)->sort('dateFacturation', 'asc')->sort('societe', 'asc');
+      $query = $q->getQuery();
+      return $query->execute();
+    }
+
 }

@@ -65,10 +65,19 @@
                     <ul class="nav navbar-nav pull-right">
                         <li class="{%if (_menu_active == 'recherche') %}active{% endif %}"><a href="{{ path('recherche')}}"><span class="glyphicon glyphicon-search"></span></a></li>
                         <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}"><span class="glyphicon glyphicon-calendar"></span> Calendrier</a></li>
-                        <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog"></span></a></li>
-                        <li class="{%if (_menu_active == 'erreurs') %}active{% endif %}"><a href="{{ path('passage_erreurs') }}"><span class="glyphicon glyphicon-info-sign"></span></a></li>
-                        <!--<li class="{%if (_menu_active == 'compte') %}active{% endif %}"><a href="{{ path('comptes') }}"><span class="glyphicon glyphicon-user"></span></a></li>-->
-                    </ul>
+                        <li class="dropdown {%if (_menu_active == 'configuration' or _menu_active == 'erreurs' or _menu_active == 'paiementsRetard') %}active{% endif %}">
+
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
+                          <ul class="dropdown-menu" >
+                            <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog" style="font-size: 1.2em"></span>&nbsp;Paramètres</a></li>
+                            <li class="{%if (_menu_active == 'erreurs') %}active{% endif %}"><a href="{{ path('passage_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Passages en erreur</li>
+                            <li class="{%if (_menu_active == 'paiementsRetard') %}active{% endif %}"><a href="{{ path('paiements_retard') }}"><span class="mdi mdi-lg mdi-local-atm"></span>&nbsp;Retard de paiements</a></li>
+
+                            <!--<li class="{%if (_menu_active == 'compte') %}active{% endif %}"><a href="{{ path('comptes') }}"><span class="glyphicon glyphicon-user"></span></a></li>-->
+                          </ul>
+
+                    </li>
+                  </ul>
                 </div>
             </div>
         </nav>

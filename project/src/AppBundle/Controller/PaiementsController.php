@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Manager\PaiementsManager;
 use AppBundle\Type\PaiementsType;
+use AppBundle\Type\RelanceType;
 use AppBundle\Document\Paiements;
 use AppBundle\Document\Societe;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -100,6 +101,56 @@ class PaiementsController extends Controller {
 
         return $this->render('paiements/nouveau.html.twig', array('form' => $form->createView()));
     }
+
+    /**
+     * @Route("/paiements/retards", name="paiements_retard")
+     */
+    public function retardsAction(Request $request) {
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
+        $facturesEnRetard = $fm->getRepository()->findAllRetardDePaiement();
+
+        $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
+        		'action' => $this->generateUrl('paiements_relance_massive'),
+        		'method' => 'post',
+        ));;
+
+        return $this->render('paiements/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView()));
+        //'form' => $form->createView()));
+    }
+
+
+    /**
+     * @Route("/paiements/relance-massive", name="paiements_relance_massive")
+     */
+    public function relanceMassiveAction(Request $request) {
+
+      set_time_limit(0);
+      $dm = $this->get('doctrine_mongodb')->getManager();
+      $fm = $this->get('facture.manager');
+      $factureARelancer = array();
+      $formRequest = $request->request->get('relance');
+    //  $augmentation = (isset($formRequest['augmentation']))? $formRequest['augmentation'] : 0;
+      foreach ($formRequest as $key => $value) {
+        if(preg_match("/^FACTURE-/",$key)){
+            $factureARelancer[$key] = $fm->getRepository()->findOneById($key);
+        }
+      }
+
+      foreach ($factureARelancer as $facture) {
+          if($facture->getNbRelance() > 2) {
+              continue;
+          }
+          $nbRelance = intval($facture->getNbRelance()) + 1;
+          $facture->setNbRelance($nbRelance);
+          $dm->flush();
+      }
+
+      return $this->redirectToRoute('paiements_retard');
+    }
+
+
 
     /**
      * @Route("/paiements/export", name="paiements_export")

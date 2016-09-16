@@ -1,0 +1,66 @@
+{% set _menu_active = 'erreurs' %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Passages en erreurs{% endblock title %}
+
+{% block body %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('passage_erreurs') }}">Factures en retard de paiements</a></li>
+	</ol>
+
+
+{{ form_start(formRelance) }}
+<div class="row">
+  <div class="col-xs-12">
+    <h3>{{ facturesEnRetard | length }} factures en retard de paiements </h3>
+  </div>
+</div>
+<div class="row">
+    <div class="col-xs-3 pull-right">
+      <div class="input-group">
+          {{ form_widget(formRelance.typeRelance) }}
+          <span class="input-group-btn">
+            {{ form_widget(formRelance.relancer,  {'attr': {'class': 'btn-loading btn btn-primary pull-right', 'data-loading-text': "Relances en cours de génération..."}}) }}
+            </span>
+      </div>
+    </div>
+</div>
+<br/>
+  <div class="row">
+    <div class="col-xs-12">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th class="col-xs-2">Date</th>
+              <th class="col-xs-3">Client</th>
+              <th class="col-xs-3">Facture</th>
+              <th class="col-xs-1">Montant TTC</th>
+              <th class="col-xs-1">Montant Payé</th>
+              <th class="col-xs-1">Nb relance</th>
+              <th class="col-xs-1">Relance</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for factureEnRetard in facturesEnRetard %}
+            <tr style="background-color:{{ factureEnRetard.getRelanceColor }};" >
+              {{factureEnRetard.isDevis }}
+              <td><small>{{ factureEnRetard.dateFacturation | localizeddate("medium", "none", null, null, "d MMM YYYY") | capitalize }}</small></td>
+              <td><small><a href="{{ path('facture_societe', {'id': factureEnRetard.societe.id }) }}">{{ factureEnRetard.societe.raisonSociale }}</a></small></td>
+              <td><a href="{{ path('facture_pdf', {'id': factureEnRetard.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;Facture n° {{ factureEnRetard.numeroFacture }}</a></td>
+              <td class="text-right">{{ "%0.2f" | format(factureEnRetard.montantTTC)  }}&nbsp;€</td>
+              <td class="text-right">{{ "%0.2f" | format(factureEnRetard.montantPaye)  }}&nbsp;€</td>
+              <td class="text-right">{{ factureEnRetard.getNbRelance }}</td>
+              <td class="text-center">
+                    {% set idCheckbox = factureEnRetard.id %}
+                    {% set fieldFrom = attribute(formRelance,idCheckbox) %}
+                    {{ form_widget(fieldFrom) }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+      </div>
+      {{ form_end(formRelance) }}
+{% endblock %}
