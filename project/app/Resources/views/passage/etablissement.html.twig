@@ -43,12 +43,18 @@
 
     <div class="row" style="margin-top: 20px;">
         <div class="col-xs-12">
-            {% for contrat in contrats %}
+            {% for contratObj in contrats %}
+                {% set contrat = contratObj.contrat %}
                 {% set passagesEtablissement = contrat.getPassagesEtablissementNode(etablissement) %}
-                {% if(passagesEtablissement is not null) %}
+
                     <div id="contrat-{{ contrat.id }}" class="panel panel-default
                          {% if(contrat.isAnnule) %} panel-danger
-                         {% elseif(contrat.isFini) %} panel-success
+                         {% elseif(contrat.isFini) %}
+                          {% if  contratObj.displayStatut == "REALISE_NON_TERMINE" %}
+                            panel-info
+                          {% else %}
+                            panel-success
+                          {% endif %}
                          {% elseif(contrat.isBrouillon or contrat.isEnAttenteAcceptation) %} panel-warning {% endif %}
                          "
                          >
@@ -58,11 +64,19 @@
                                 {% if(contrat.isAnnule) %}
                                     Contrat résilié le {{ contrat.dateResiliation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
                                 {% elseif (contrat.isEnCours) %}
-                                    Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
+                                    {% if  contratObj.displayStatut == "A_VENIR" %}
+                                      Contrat à venir commençant le {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
+                                    {% else %}
+                                      Contrat en cours jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
+                                    {% endif %}
                                 {% elseif (contrat.isEnAttenteAcceptation) %}
                                     Contrat en cours d'acceptation prévu jusqu'au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}
                                 {% elseif (contrat.isFini) %}
+                                  {% if  contratObj.displayStatut == "REALISE_NON_TERMINE" %}
+                                    Contrat en cours et réalisé ({{ contrat.dateDebut | localizeddate("medium", "none", null, null, "d MMMM YYYY") | capitalize }} au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") | capitalize }})
+                                  {% else %}
                                     Contrat terminé ({{ contrat.dateDebut | localizeddate("medium", "none", null, null, "d MMMM YYYY") | capitalize }} au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") | capitalize }})
+                                  {% endif %}
                                 {% elseif (contrat.isBrouillon) %}
                                     Contrat brouillon
                                 {% endif %}
@@ -81,7 +95,7 @@
                                 <span class="pull-right">{% if(contratManager.isContratEnRetardPaiement(contrat)) %}<span class="glyphicon glyphicon-warning-sign" title="En retard de paiement" data-html="true" data-toggle="tooltip"></span>{% endif %}&nbsp;&nbsp;&nbsp;</span>
                             </h4>
                         </div>
-                        <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(not passagesEtablissement.hasEnCoursPassages) %} out {% else%} in {% endif %} list-group">
+                        <div id="contrat-{{ contrat.id }}-passages" class="collapse {% if(not contratObj.actif) %} out {% else%} in {% endif %} list-group">
                            <div class="list-group-item {% if(contrat.isAnnule) %} list-group-item-danger
                              {% elseif(contrat.isFini) %}list-group-item-success
                              {% elseif(contrat.isBrouillon or contrat.isEnAttenteAcceptation) %} list-group-item-warning {% endif %}
@@ -115,7 +129,7 @@
 							{{ include('passage/listingPassages.html.twig', { 'passages': passagesEtablissement.getPassagesSorted(true) }) }}
                         </div>
                     </div>
-                {% endif %}
+
             {% endfor %}
         </div>
     </div>

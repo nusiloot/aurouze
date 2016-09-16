@@ -871,15 +871,32 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getStatutLibelle() {
-
+        $today = new \DateTime();
+        if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))){
+          return "A venir";
+        }elseif($this->isFini() && $this->getDateFin() && ($today->format("Ymd") < $this->getDateFin()->format("Ymd"))){
+          return "En cours (réalisé)";
+        }
         return ContratManager::$statuts_libelles[$this->getStatut()];
     }
 
     public function getStatutLibelleLong() {
+      $today = new \DateTime();
+      if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))){
+        return "à venir";
+      }elseif($this->isFini() && $this->getDateFin() && ($today->format("Ymd") < $this->getDateFin()->format("Ymd"))){
+        return "en cours réalisé";
+      }
         return ContratManager::$statuts_libelles_long[$this->getStatut()];
     }
 
     public function getStatutCouleur() {
+      $today = new \DateTime();
+      if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))){
+        return "default";
+      }elseif($this->isFini() && $this->getDateFin() && ($today->format("Ymd") < $this->getDateFin()->format("Ymd"))){
+        return "info";
+      }
         if ($this->isAnnule()) {
             return ContratManager::$statuts_couleurs[$this->getTypeContrat()];
         }
@@ -1646,6 +1663,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
       }
       if ($flag) {
           $this->setStatut(ContratManager::STATUT_FINI);
+      }else{
+        $this->setStatut(ContratManager::STATUT_EN_COURS);
       }
     }
 

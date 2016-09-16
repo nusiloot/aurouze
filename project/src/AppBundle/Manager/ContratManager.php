@@ -182,6 +182,34 @@ class ContratManager implements MouvementManagerInterface {
         return $this->dm->getRepository('AppBundle:Contrat');
     }
 
+    public function sortedContratsByEtablissement(Etablissement $etablissement){
+      $contratsByEtablissement = $this->getRepository()->findByEtablissement($etablissement);
+      $sortedContratsByEtablissement = array();
+      $today = new \DateTime();
+      foreach ($contratsByEtablissement as $contrat) {
+        $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
+        if($passagesEtablissement){
+          $contratObj = new \stdClass();
+          $contratObj->contrat = $contrat;
+          $contratObj->displayStatut = $contrat->getStatut();
+          $contratObj->actif = false;
+          if($contrat->isEnCours() && $contrat->getDateDebut() && ($today->format("Ymd") < $contrat->getDateDebut()->format("Ymd"))){
+            $contratObj->displayStatut = "A_VENIR";
+          }elseif($contrat->isFini() && $contrat->getDateFin() && ($today->format("Ymd") < $contrat->getDateFin()->format("Ymd"))){
+          //  var_dump($contrat->getDateFin());
+            $contratObj->displayStatut = "REALISE_NON_TERMINE";
+          }
+          if(($contrat->isEnCours() || $contratObj->displayStatut == "REALISE_NON_TERMINE")
+          && ($today <= $contrat->getDateFin()) && ($today >= $contrat->getDateDebut())) {
+            $contratObj->actif = true;
+          }
+          $sortedContratsByEtablissement[] = $contratObj;
+        }
+      }
+
+      return $sortedContratsByEtablissement;
+    }
+
     private function removeAllPassagesForContrat($contrat) {
         foreach ($contrat->getContratPassages() as $contratPassage) {
             foreach ($contratPassage->getPassages() as $p) {
