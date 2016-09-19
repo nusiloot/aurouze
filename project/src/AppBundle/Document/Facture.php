@@ -781,6 +781,10 @@ class Facture implements DocumentSocieteInterface {
         $this->setMontantAPayer(round($this->getMontantTTC() - $this->getMontantPaye(), 2));
     }
 
+    public function getRestantAPayer() {
+        return round($this->getMontantTTC() - $this->getMontantPaye(), 2);
+    }
+
     /**
      * Set montantAPayer
      *

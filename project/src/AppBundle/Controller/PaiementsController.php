@@ -147,7 +147,27 @@ class PaiementsController extends Controller {
           $dm->flush();
       }
 
-      return $this->redirectToRoute('paiements_retard');
+
+      $html = $this->renderView('paiements/pdfRelance.html.twig', array(
+          'facturesRelancees' => $factureARelancer,
+          'parameters' => $fm->getParameters()
+      ));
+
+
+      $filename = sprintf("relances_massives_%s.pdf", (new \DateTime())->format("Y-m-d_His"));
+
+      if ($request->get('output') == 'html') {
+
+          return new Response($html, 200);
+      }
+
+      return new Response(
+              $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
+          'Content-Type' => 'application/pdf',
+          'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+              )
+      );
+
     }
 
 
