@@ -414,4 +414,8 @@ public static $export_stats_libelle = array(
     ksort($factureLigne);
     return $factureLigne;
   }
+
+    public function getRetardDePaiementBySociete(Societe $societe, $nbJourSeuil = 0){
+      return $this->getRepository()->findRetardDePaiementBySociete($societe, $nbJourSeuil);
+    }
 }

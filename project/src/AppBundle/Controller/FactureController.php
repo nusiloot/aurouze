@@ -113,6 +113,7 @@ class FactureController extends Controller {
      */
     public function societeAction(Request $request, Societe $societe) {
         $fm = $this->get('facture.manager');
+        $facturesRetard = $fm->getRepository()->findRetardDePaiementBySociete($societe,45);
 
         $formSociete = $this->createForm(SocieteChoiceType::class, array('societe' => $societe), array(
             'action' => $this->generateUrl('societe'),
@@ -172,7 +173,7 @@ class FactureController extends Controller {
 
       $facture = $this->get('facture.manager')->getRepository()->findOneById($factureId);
       $avoir = $facture->genererAvoir();
-    
+
       $dm->persist($avoir);
       $dm->flush();
 
