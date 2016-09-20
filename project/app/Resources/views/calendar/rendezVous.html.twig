@@ -6,7 +6,7 @@
                 {% if (rdv.passage and rdv.passage.annule) %}
                     <button class="btn btn-md btn-block btn-danger">{{
             rdv.passage.getStatutLibelle() }}</button>
-                  
+
                     {% elseif (rdv.passage and rdv.passage.aPlanifie) %}
                     <button class="btn btn-md btn-block btn-primary">{{
                     rdv.passage.getStatutLibelle() }}</button>
@@ -26,7 +26,7 @@
                 <h3 class="modal-title col-xs-9">
                     {{ rdv.titre }}
                     {% if(rdv.id) %}
-                        <br /><small><i class="mdi mdi-today mdi-lg"></i> <a title="Voir sur le calendrier" href='{% if (rdv.participants | length >= 1) %}{{ path('calendar', {'date': rdv.dateDebut | date('Y-m-d'), 'technicien': rdv.participants.first.id}) }}{% else %}{{ path('calendarManuel', {'date': rdv.dateDebut | date('Y-m-d')}) }}{% endif %}'>
+                        <br /><small><i class="mdi mdi-today mdi-lg"></i> <a title="Voir sur le calendrier" href='{% if (rdv.participants | length >= 1) %}{{ path('calendar', {'date': rdv.dateDebut | date('Y-m-d'), 'technicien': rdv.participants.first.id, 'id': "0"}) }}{% else %}{{ path('calendarManuel', {'date': rdv.dateDebut | date('Y-m-d')}) }}{% endif %}'>
                                 {{ rdv.dateDebut | localizeddate('full', 'none') | capitalize }} de {{ rdv.dateDebut | date('H') }}:{{ rdv.dateDebut | date('i') }} à {{ rdv.dateFin | date('H') }}:{{ rdv.dateFin | date('i') }}</span></a>{% if(rdv.duree) %}
                                 <span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{ rdv.passage.duree }}{% endif %}</small>
                             {% endif %}

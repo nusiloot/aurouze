@@ -6,15 +6,15 @@
 {% block body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('calendarManuel') }}">Calendrier global</a></li>
-        <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date }) }}">&nbsp;{{ technicienObj.identite }}</a></li>
+        <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date , 'id': ((passage) ? passage.etablissement.id : "0") }) }}">&nbsp;{{ technicienObj.identite }}</a></li>
             {% if(mode == 'SEMAINE') %}
-            <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date, 'mode':mode }) }}">&nbsp;Semaine {{ calendarTool.getLibelle() }}</a></li>
+            <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date, 'mode':mode, 'id': ((passage) ? passage.etablissement.id : "0")  }) }}">&nbsp;Semaine {{ calendarTool.getLibelle() }}</a></li>
             {% endif %}
             {% if(mode == 'JOUR') %}
-            <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date, 'mode':mode }) }}">&nbsp;{{ date | localizeddate('full', 'none') | capitalize }}</a></li>
+            <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date, 'mode':mode, 'id': ((passage) ? passage.etablissement.id : "0")  }) }}">&nbsp;{{ date | localizeddate('full', 'none') | capitalize }}</a></li>
             {% endif %}
         {% if(mode == 'MOIS') %}
-            <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date, 'mode':mode }) }}">&nbsp;{{ date | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</a></li>
+            <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date, 'mode':mode, 'id': ((passage) ? passage.etablissement.id : "0")  }) }}">&nbsp;{{ date | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</a></li>
             {% endif %}
     </ol>
     <div class="row">
@@ -26,7 +26,7 @@
                 {% set i=0 %}
                 {% for tech in techniciens %}
                     <li role="presentation"{% if tech.getId() == technicien %} class="active"{% endif %}>
-                        <a href="{{ path('calendar',{'technicien': tech.getId(), 'passage': ((passage) ? passage.id : null), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" role="tab" style="color: {{ tech.getCouleur() }};">
+                        <a href="{{ path('calendar',{'technicien': tech.getId(), 'id': ((passage) ? passage.etablissement.id : "0"), 'passage': ((passage) ? passage.id : null), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" role="tab" style="color: {{ tech.getCouleur() }};">
                             <i class="mdi mdi-face mdi-lg"></i> <strong>{% autoescape false %}{{ tech.getIdentiteCourt() | replace({' ' : '&nbsp;'})  }}{% endautoescape %}</strong>
                         </a>
                     </li>
@@ -40,9 +40,9 @@
         <div class="col-sm-4">
         	<div class="btn-group">
                 <div class="row">
-                    <div class="col-sm-2 text-left"><a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a></div>
+                    <div class="col-sm-2 text-left"><a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null),  'id': ((passage) ? passage.etablissement.id : "0"), 'technicien': technicienObj.id, 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a></div>
                     <div class="col-sm-8 text-center"><a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0; width: " class="btn btn-link">{{ calendarTool.getLibelle() }}</a></div>
-                    <div class="col-sm-2 text-center"><a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a></div>
+                    <div class="col-sm-2 text-center"><a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'technicien': technicienObj.id, 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a></div>
                 </div>
             </div>
         </div>
@@ -72,13 +72,13 @@
                 </ul>
             </div>
             <div class="btn-group">
-                <a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getDateDebut() | date("Y-m-d"), 'mode': 'MOIS' }) }}" class="btn {% if (calendarTool.mode == "MOIS") %}active{% endif %} btn-md btn-default">
+                <a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'technicien': technicienObj.id, 'date': calendarTool.getDateDebut() | date("Y-m-d"), 'mode': 'MOIS' }) }}" class="btn {% if (calendarTool.mode == "MOIS") %}active{% endif %} btn-md btn-default">
                     <i class="mdi mdi-view-comfy"></i> Mois
                 </a>
-                <a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getDateDebut() | date("Y-m-d"), 'mode': 'SEMAINE' }) }}" class="btn btn-default {% if (calendarTool.mode == "SEMAINE") %}active{% endif %}">
+                <a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'technicien': technicienObj.id, 'date': calendarTool.getDateDebut() | date("Y-m-d"), 'mode': 'SEMAINE' }) }}" class="btn btn-default {% if (calendarTool.mode == "SEMAINE") %}active{% endif %}">
                     <i class="mdi mdi-view-week"></i> Semaine
                 </a>
-                <a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicienObj.id, 'date': calendarTool.getDateDebut() | date("Y-m-d"), 'mode': 'JOUR' }) }}" class="btn btn-md btn-default {% if (calendarTool.mode == "JOUR") %}active{% endif %}">
+                <a href="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'technicien': technicienObj.id, 'date': calendarTool.getDateDebut() | date("Y-m-d"), 'mode': 'JOUR' }) }}" class="btn btn-md btn-default {% if (calendarTool.mode == "JOUR") %}active{% endif %}">
                     <i class="mdi mdi-view-day"></i> Jour
                 </a>
             </div>
@@ -96,9 +96,9 @@
                 data-url-add-libre="{{path('calendarAddLibre', {'technicien': technicien})}}"
                 data-url-read="{{ path('calendarRead') }}"
                 data-url-update="{{path('calendarUpdate', {'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getDateDebut('Y-m-d')})}}"
-                data-url-prev="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemainePrecedente('Y-m-d')}) }}"
-                data-url-next="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': calendarTool.getSemaineSuivante('Y-m-d')}) }}"
-                data-url-date="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'technicien': technicien, 'date': '-d', 'mode': 'JOUR'}) }}"
+                data-url-prev="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'technicien': technicien, 'date': calendarTool.getSemainePrecedente('Y-m-d')}) }}"
+                data-url-next="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'technicien': technicien, 'date': calendarTool.getSemaineSuivante('Y-m-d')}) }}"
+                data-url-date="{{ path('calendar',{'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'technicien': technicien, 'date': '-d', 'mode': 'JOUR'}) }}"
                 >
             </div>
         </div>

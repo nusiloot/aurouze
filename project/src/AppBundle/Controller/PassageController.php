@@ -142,7 +142,7 @@ class PassageController extends Controller {
             return $this->redirectToRoute('calendarManuel', array('passage' => $passage->getId()));
         }
 
-        return $this->redirectToRoute('calendar', array('passage' => $passage->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
+        return $this->redirectToRoute('calendar', array('passage' => $passage->getId(),'id' => $passage->getEtablissement()->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
     }
 
     /**

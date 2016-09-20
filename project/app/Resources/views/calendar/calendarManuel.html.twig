@@ -15,7 +15,7 @@
                 {% set i=0 %}
                 {% for tech in techniciens %}
                     <li role="presentation">
-                        <a href="{{ path('calendar',{'technicien': tech.getId(), 'passage': ((passage) ? passage.id : null), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" role="tab" style="color: {{ tech.getCouleur() }};">
+                        <a href="{{ path('calendar',{'technicien': tech.getId(), 'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" role="tab" style="color: {{ tech.getCouleur() }};">
                             <i class="mdi mdi-face mdi-lg"></i> <strong>{% autoescape false %}{{ tech.getIdentiteCourt() | replace({' ' : '&nbsp;'})  }}{% endautoescape %}</strong>
                         </a>
                     </li>
@@ -28,9 +28,9 @@
         <div class="col-sm-4">
             <div class="btn-group">
                 <div class="row">
-                <div class="col-sm-2 text-left"><a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a></div>
+                <div class="col-sm-2 text-left"><a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'date': calendarTool.getPrecedent() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a></div>
                 <div class="col-sm-8 text-center"><a href="" style="font-size: 24px; padding-bottom:0; padding-top: 0; width: " class="btn btn-link">{{ calendarTool.getLibelle() }}</a></div>
-                <div class="col-sm-2 text-center"><a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a></div>
+                <div class="col-sm-2 text-center"><a href="{{ path('calendarManuel',{'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'date': calendarTool.getSuivant() | date("Y-m-d"), 'mode': calendarTool.getMode() }) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a></div>
                 </div>
             </div>
         </div>
@@ -63,7 +63,7 @@
 													{% for date, eventDate in eventsDates %}
 													<th data-date="{{ date }}" class="fc-day-header fc-widget-header fc-mon">{{ calendarTool.getShortLibelleJour(date|date("N")) }} {{ date|date("j") }}/{{ date|date("n") }}
                                                     <br />
-                                                    {% for technicien, events in eventDate %}<a href="{{ path('calendar',{'technicien': techniciens["COMPTE-"~technicien].id, 'passage': ((passage) ? passage.id : null), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" data-toggle="tooltip" title="{{ techniciens["COMPTE-"~technicien].identite }}" style="
+                                                    {% for technicien, events in eventDate %}<a href="{{ path('calendar',{'technicien': techniciens["COMPTE-"~technicien].id, 'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" data-toggle="tooltip" title="{{ techniciens["COMPTE-"~technicien].identite }}" style="
                                                         display:inline-block;
                                                         margin-right: 1px;
                                                         border-radius: 0;
