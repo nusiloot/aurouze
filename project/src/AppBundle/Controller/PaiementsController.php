@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Manager\PaiementsManager;
 use AppBundle\Type\PaiementsType;
 use AppBundle\Type\RelanceType;
+use AppBundle\Type\FacturesEnRetardFiltresType;
 use AppBundle\Document\Paiements;
 use AppBundle\Document\Societe;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -109,6 +110,30 @@ class PaiementsController extends Controller {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
+
+        $dateFactureBasse = new \DateTime();
+        $dateFactureHaute = new \DateTime();
+        $dateFactureHaute->modify("+1 month");
+
+        $nbRelances = null;
+        $societe = null;
+
+        $formFacturesEnRetard = $this->createForm(new FacturesEnRetardFiltresType(), null, array(
+            'action' => $this->generateUrl('paiements_retard'),
+            'method' => 'post',
+        ));
+        $formFacturesEnRetard->handleRequest($request);
+        if ($formFacturesEnRetard->isSubmitted() && $formFacturesEnRetard->isValid()) {
+
+          $formValues =  $formFacturesEnRetard->getData();
+          $dateFactureBasse = $formValues["dateFactureBasse"];
+          $dateFactureHaute = $formValues["dateFactureHaute"];
+          $nbRelances = $formValues["nbRelances"];
+          $societe = $formValues["societe"];
+        }
+
+
+
         $facturesEnRetard = $fm->getRepository()->findAllRetardDePaiement();
 
         $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
@@ -116,8 +141,8 @@ class PaiementsController extends Controller {
         		'method' => 'post',
         ));;
 
-        return $this->render('paiements/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView()));
-        //'form' => $form->createView()));
+        return $this->render('paiements/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(),
+        'formFacturesARelancer' => $formFacturesEnRetard->createView()));
     }
 
 

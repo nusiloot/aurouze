@@ -9,6 +9,41 @@
 		<li><a href="{{ path('passage_erreurs') }}">Factures en retard de paiements</a></li>
 	</ol>
 
+	{{ form_start(formFacturesARelancer) }}
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Critères de relances</h3>
+					</div>
+					<div class="panel-body  form-horizontal">
+						<div class="row">
+							<div class="col-xs-6" id="searchable" data-type="societe" data-url="{{ path('recherche_societe')  }}" data-target="0">
+							{{ form_errors(formFacturesARelancer.societe) }}
+							{{ form_widget(formFacturesARelancer.societe) }}
+							</div>
+							<div class="col-xs-2">
+							{{ form_errors(formFacturesARelancer.dateFactureBasse) }}
+							{{ form_widget(formFacturesARelancer.dateFactureBasse) }}
+							</div>
+							<div class="col-xs-2">
+							{{ form_errors(formFacturesARelancer.dateFactureHaute) }}
+							{{ form_widget(formFacturesARelancer.dateFactureHaute) }}
+							</div>
+							<div class="col-xs-2">
+							{{ form_errors(formFacturesARelancer.nbRelances) }}
+							{{ form_widget(formFacturesARelancer.nbRelances) }}
+							</div>
+							<div class="col-xs-2">
+								{{ form_widget(formFacturesARelancer.save) }}
+							</div>
+					</div>
+			</div>
+		</div>
+</div>
+</div>
+{{ form_end(formFacturesARelancer) }}
+
 
 {{ form_start(formRelance) }}
 <div class="row">
