@@ -9,8 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Manager\PaiementsManager;
 use AppBundle\Type\PaiementsType;
-use AppBundle\Type\RelanceType;
-use AppBundle\Type\FacturesEnRetardFiltresType;
 use AppBundle\Document\Paiements;
 use AppBundle\Document\Societe;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -102,99 +100,6 @@ class PaiementsController extends Controller {
 
         return $this->render('paiements/nouveau.html.twig', array('form' => $form->createView()));
     }
-
-    /**
-     * @Route("/paiements/retards", name="paiements_retard")
-     */
-    public function retardsAction(Request $request) {
-
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $fm = $this->get('facture.manager');
-        $sm = $this->get('societe.manager');
-
-        $dateFactureBasse = null;
-        $dateFactureHaute = null;
-        //$dateFactureHaute->modify("+1 month");
-
-        $nbRelances = null;
-        $societe = null;
-
-        $formFacturesEnRetard = $this->createForm(new FacturesEnRetardFiltresType(), null, array(
-            'action' => $this->generateUrl('paiements_retard'),
-            'method' => 'post',
-        ));
-        $formFacturesEnRetard->handleRequest($request);
-        if ($formFacturesEnRetard->isSubmitted() && $formFacturesEnRetard->isValid()) {
-
-          $formValues =  $formFacturesEnRetard->getData();
-          $dateFactureBasse = $formValues["dateFactureBasse"];
-          $dateFactureHaute = $formValues["dateFactureHaute"];
-          $nbRelances = $formValues["nbRelances"];
-          $societe = $formValues["societe"];
-
-        }
-        $facturesEnRetard = $fm->getRepository()->findFactureRetardDePaiement($dateFactureBasse, $dateFactureHaute, $nbRelances, $societe);
-
-        $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
-        		'action' => $this->generateUrl('paiements_relance_massive'),
-        		'method' => 'post',
-        ));;
-
-        return $this->render('paiements/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(),
-        'formFacturesARelancer' => $formFacturesEnRetard->createView()));
-    }
-
-
-    /**
-     * @Route("/paiements/relance-massive", name="paiements_relance_massive")
-     */
-    public function relanceMassiveAction(Request $request) {
-
-      set_time_limit(0);
-      $dm = $this->get('doctrine_mongodb')->getManager();
-      $fm = $this->get('facture.manager');
-      $factureARelancer = array();
-      $formRequest = $request->request->get('relance');
-    //  $augmentation = (isset($formRequest['augmentation']))? $formRequest['augmentation'] : 0;
-      foreach ($formRequest as $key => $value) {
-        if(preg_match("/^FACTURE-/",$key)){
-            $factureARelancer[$key] = $fm->getRepository()->findOneById($key);
-        }
-      }
-
-      foreach ($factureARelancer as $facture) {
-          if($facture->getNbRelance() > 2) {
-              continue;
-          }
-          $nbRelance = intval($facture->getNbRelance()) + 1;
-          $facture->setNbRelance($nbRelance);
-          $dm->flush();
-      }
-
-
-      $html = $this->renderView('paiements/pdfRelance.html.twig', array(
-          'facturesRelancees' => $factureARelancer,
-          'parameters' => $fm->getParameters()
-      ));
-
-
-      $filename = sprintf("relances_massives_%s.pdf", (new \DateTime())->format("Y-m-d_His"));
-
-      if ($request->get('output') == 'html') {
-
-          return new Response($html, 200);
-      }
-
-      return new Response(
-              $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
-          'Content-Type' => 'application/pdf',
-          'Content-Disposition' => 'attachment; filename="' . $filename . '"'
-              )
-      );
-
-    }
-
-
 
     /**
      * @Route("/paiements/export", name="paiements_export")

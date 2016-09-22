@@ -6,9 +6,9 @@
 {% block body %}
 
 	<ol class="breadcrumb">
-		<li><a href="{{ path('paiements_retard') }}">Factures en retard de paiements</a></li>
+		<li><a href="{{ path('factures_retard') }}">Factures en retard de paiements</a></li>
 	</ol>
-	
+
 	<div class="row">
 	  <div class="col-xs-12">
 	    <h3>{{ facturesEnRetard | length }} factures en retard de paiements </h3>
@@ -25,7 +25,7 @@
 					<div class="panel-body">
 						<div class="row">
 							<div class="col-xs-6" id="searchable" data-type="societe" data-url="{{ path('recherche_societe')  }}" data-target="0">
-									{{ form_label(formFacturesARelancer.societe) }}
+							{{ form_label(formFacturesARelancer.societe) }}
 							{{ form_errors(formFacturesARelancer.societe) }}
 							{{ form_widget(formFacturesARelancer.societe) }}
 							</div>
@@ -50,7 +50,7 @@
 						<br/>
 						<div class="row">
 							<div class="col-xs-12 text-right">
-									<a class="btn btn-default" href="{{ path('paiements_retard') }}"><span class="glyphicon glyphicon-repeat"></span>&nbsp;Ré-initialiser</a>&nbsp;&nbsp;
+									<a class="btn btn-default" href="{{ path('factures_retard') }}"><span class="glyphicon glyphicon-repeat"></span>&nbsp;Ré-initialiser</a>&nbsp;&nbsp;
 								{{ form_widget(formFacturesARelancer.save) }}
 							</div>
 					</div>
@@ -83,7 +83,7 @@
               <th class="col-xs-3">Facture</th>
               <th class="col-xs-1">Montant TTC</th>
               <th class="col-xs-1">Montant Payé</th>
-              <th class="col-xs-1">Nb relance</th>
+              <th class="col-xs-1">Relance(s)</th>
               <th class="col-xs-1">Relance</th>
             </tr>
           </thead>
@@ -92,11 +92,28 @@
             <tr style="background-color:{{ factureEnRetard.getRelanceColor }};" >
               {{factureEnRetard.isDevis }}
               <td><small>{{ factureEnRetard.dateFacturation | localizeddate("medium", "none", null, null, "d MMM YYYY") | capitalize }}</small></td>
-              <td><small><a href="{{ path('facture_societe', {'id': factureEnRetard.societe.id }) }}">{{ factureEnRetard.societe.raisonSociale }}</a></small></td>
-              <td><a href="{{ path('facture_pdf', {'id': factureEnRetard.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;Facture n° {{ factureEnRetard.numeroFacture }}</a></td>
+              <td>
+								<small><a href="{{ path('facture_societe', {'id': factureEnRetard.societe.id }) }}">{{ factureEnRetard.societe.raisonSociale }}</a></small>
+								{% if factureEnRetard.societe.contactCoordonnee.email %}
+									<small><a href="mailto:{{ factureEnRetard.societe.contactCoordonnee.email }}">{{ factureEnRetard.societe.contactCoordonnee.email }}</a></small>
+								{% endif %}
+							</td>
+              <td>
+								<a href="{{ path('facture_pdf', {'id': factureEnRetard.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;Facture n° {{ factureEnRetard.numeroFacture }}</a>
+							</td>
               <td class="text-right">{{ "%0.2f" | format(factureEnRetard.montantTTC)  }}&nbsp;€</td>
               <td class="text-right">{{ "%0.2f" | format(factureEnRetard.montantPaye)  }}&nbsp;€</td>
-              <td class="text-right">{{ factureEnRetard.getNbRelance }}</td>
+              <td class="text-left">
+								{% if factureEnRetard.has1ereRelance %}
+										<a data-toggle="tooltip" title="1ère relance" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 1 })}}"><span class="glyphicon glyphicon-file text-info"></span></a>&nbsp;
+								{% endif %}
+								{% if factureEnRetard.has2ndRelance %}
+									<a data-toggle="tooltip" title="2nd relance" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 2 })}}"><span class="glyphicon glyphicon-file text-warning"></span></a>&nbsp;
+								{% endif %}
+								{% if factureEnRetard.has3emeRelance %}
+									<a data-toggle="tooltip" title="3ème relance avec AR" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 3 })}}"><span class="glyphicon glyphicon-file text-danger"></span></a>&nbsp;
+								{% endif %}
+							</td>
               <td class="text-center">
                     {% set idCheckbox = factureEnRetard.id %}
                     {% set fieldFrom = attribute(formRelance,idCheckbox) %}
