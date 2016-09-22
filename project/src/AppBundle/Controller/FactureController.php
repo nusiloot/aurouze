@@ -684,7 +684,7 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/factures/retards", name="factures_retard")
+     * @Route("/retards-de-facture", name="factures_retard")
      */
     public function retardsAction(Request $request) {
 
@@ -726,7 +726,7 @@ class FactureController extends Controller {
 
 
     /**
-     * @Route("/factures/relance-massive", name="factures_relance_massive")
+     * @Route("/relance-massive", name="factures_relance_massive")
      */
     public function relanceMassiveAction(Request $request) {
 
@@ -775,41 +775,23 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/factures/relance-pdf/{id}/{numeroRelance}", name="facture_relance_pdf")
-     * @ParamConverter("id", class="AppBundle:Facture")
+     * @Route("/relance-pdf/{id}/{numeroRelance}", name="facture_relance_pdf")
+     * @ParamConverter("facture", class="AppBundle:Facture")
      */
     public function relancePdfAction(Request $request, Facture $facture, $numeroRelance = 0 ) {
 
       set_time_limit(0);
-      $dm = $this->get('doctrine_mongodb')->getManager();
-      var_dump($facture->getId()); exit;
-      $factureARelancer = array();
-      $formRequest = $request->request->get('relance');
-    //  $augmentation = (isset($formRequest['augmentation']))? $formRequest['augmentation'] : 0;
-      foreach ($formRequest as $key => $value) {
-        if(preg_match("/^FACTURE-/",$key)){
-            $factureARelancer[$key] = $fm->getRepository()->findOneById($key);
-        }
-      }
+      $fm = $this->get('facture.manager');
 
-      foreach ($factureARelancer as $facture) {
-          if($facture->getNbRelance() > 2) {
-              continue;
-          }
-          $nbRelance = intval($facture->getNbRelance()) + 1;
-          $facture->setNbRelance($nbRelance);
-          $dm->flush();
-      }
-
-
-      $html = $this->renderView('paiements/pdfRelanceMassive.html.twig', array(
-          'facturesRelancees' => $factureARelancer,
+      $html = $this->renderView('facture/pdfGeneriqueRelance.html.twig', array(
+          'facture' => $facture,
+          'numeroRelance' => $numeroRelance,
           'parameters' => $fm->getParameters()
       ));
+      $terme_relance = FactureManager::$types_nb_relance[$numeroRelance];
 
-
-      $filename = sprintf("relances_massives_%s.pdf", (new \DateTime())->format("Y-m-d_His"));
-
+      $filename = sprintf("relance_%s_facture_%s_%s.pdf",$terme_relance, $facture->getNumeroFacture(), (new \DateTime())->format("Y-m-d_His"));
+  
       if ($request->get('output') == 'html') {
 
           return new Response($html, 200);
