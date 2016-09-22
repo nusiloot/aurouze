@@ -1,0 +1,129 @@
+<div class="row">
+    <div class="col-xs-6">
+        <br />
+        <p>
+            <span class="lead">{{ facture.emetteur.nom }}</span><br />
+            {% if(facture.emetteur) %}
+            {{ facture.emetteur.adresse }}<br />
+            {{ facture.emetteur.codePostal }}, {{ facture.emetteur.commune }}<br />
+            {% endif %}
+            Tél : {{ facture.emetteur.telephone }}<br />
+            E-mail: {{ facture.emetteur.email }}
+        </p>
+    </div>
+    <div class="col-xs-6">
+        <div class="text-right">
+        <h3>{%if(facture.isAvoir)%}AVOIR{%else%}FACTURE{%endif%} {% if(facture.numeroFacture) %}N°&nbsp;{{ facture.numeroFacture }}{% else %}BROUILLON{% endif %}</h3>
+        <span>Du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
+        {% if (facture.origineAvoir) %}
+        Sur facture n°{{ facture.origineAvoir.numeroFacture }}
+        {% else %}
+        <br /><br />
+        {% endif %}
+        </div>
+        <br />
+        <br />
+        <p>
+        	<small>
+            {{ facture.destinataire.nomFormatee | nl2br }}<br />
+            {{ facture.destinataire.adresseFormatee | nl2br }}<br />
+            {{ facture.destinataire.codePostal }} {{ facture.destinataire.commune }}<br />
+            </small>
+        </p>
+    </div>
+</div>
+<br />
+<br />
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        <h1>2ème relance</h1>
+    </div>
+</div>
+<br />
+<br />
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        <h3>Objet : rappel concernant la facture n° {{ facture.numeroFacture }}</h3>
+    </div>
+</div>
+<br />
+<br />
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        Madame, Monsieur,
+      </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        Sauf erreur ou omission de notre part, nous attendons toujours un règlement de :
+      </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        <div class="text-center">
+          <strong>{{ "%0.2f" | format(facture.restantAPayer) }}</strong>
+        </div>
+      </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        En effet, la facture n° {{ facture.numeroFacture }} que nous vous avons adressée le {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY")  }}, payable le
+      </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        <div class="text-center">
+          <strong>{{ facture.dateLimitePaiement | localizeddate("medium", "none", null, null,  "d/MM/YYYY")  }}</strong>
+        </div>
+      </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        n'a pas encore été honorée. L'échéance étant dépassée, nous vous demandons pour la bonne règle de nos écritures,
+      </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        de nous adresser le règlement par retour de courrier.
+      </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        Dans le cas où celui-ci aurait été adressé entre temps, nous vous prions de ne pas tenir compte de la présente.
+      </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        Nous vous prions de croire, Madame, Monsieur, en l'assurance de notre considération distinguée.
+      </div>
+</div>
+<br /><br /><br /><br />
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        <div class="text-center">
+        Le service Comptabilité Client
+        </div>
+      </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        <div class="text-center">
+          PARIS le {{ "now" | localizeddate("medium", "none", null, null,  "d/MM/YYYY") }}
+        </div>
+      </div>
+</div>
+<div style="page-break-after: always;"></div>

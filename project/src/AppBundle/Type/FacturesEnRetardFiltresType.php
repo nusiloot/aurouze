@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use AppBundle\Manager\PaiementsManager;
+use AppBundle\Manager\FactureManager;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class FacturesEnRetardFiltresType extends AbstractType {
@@ -21,7 +21,7 @@ class FacturesEnRetardFiltresType extends AbstractType {
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$nbRelances = array_merge(array(null => null), PaiementsManager::$types_nb_relance);
+		$nbRelances = array_merge(array(null => null), FactureManager::$types_nb_relance);
 		//$dateFactureHaute = new \DateTime();
     //$dateFactureBasse = new \DateTime();
 

@@ -9,12 +9,12 @@
         </div>
 
     </div>
-    <div class="row">
+    <div class="row hide-print">
         <div class="col-xs-12">
             <h3 class="hide-print">Liste des passages à planifier pour {{ etablissementManager.secteursNom(secteur) }}{% if anneeMois %} en {{ dateFin | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }} {% else %} jusqu'au {{ dateFin | localizeddate("medium", "none", null, null, "d MMMM YYYY") }} {% endif %} </h3>
         </div>
       </div>
-      <div class="row">
+      <div class="row hide-print">
         <div class="col-xs-12">
           <ul class="nav nav-pills">
                 {% for key,moisPassage in moisPassagesArray %}
@@ -70,7 +70,7 @@
                                 {% set techIdentite = passage.techniciens[0].identite %}
                                 {% set urlPlanif = path('calendar', {'passage' : passage.id, 'id': passage.etablissement.id ,'technicien' : passage.techniciens[0].id, 'calendrier' : passage.datedebut|date('d-m-Y')}) %}
                             {% endif %}
-                            <a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item">
+                            <a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item hide-print">
                                 <div class="row">
                                     <div class="col-sm-9">
                                         <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
@@ -123,6 +123,43 @@
                                     </div>
                                 </div>
                             </a>
+                            
+                            <div data-words='{{ words }}' class="hamzastyle-item show-print">
+								<div class="row">
+									<div class="col-sm-6">
+										<i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i> <strong>{{ passage.etablissementInfos.nom|capitalize }}</strong>
+									</div>
+									<div class="col-sm-6 text-right">
+										<small>{{ passage.libelle }}{% if(passage.mouvementDeclenchable) %} - facturant{% endif %} -</small> <strong>{{ passage.datePrevision | localizeddate("medium", "none", null, null, "dd MMM YYYY") | capitalize }}</strong>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										{{ passage.etablissementInfos.adresse.adresse }} {{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}<br />
+								        {{ passage.etablissementInfos.telephoneFixe }}{% if passage.etablissementInfos.telephonePortable and passage.etablissementInfos.telephoneFixe %} - {% endif %} {{ passage.etablissementInfos.telephonePortable }}
+								    </div>
+								    <div class="col-sm-6 text-right">
+								    	<ul>
+								    	{% for prestation in passage.prestations %}
+								    		<li>{{ prestation.nomToString }}</li>
+								        {% endfor %}
+								        </ul>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<strong>{{ techIdentite }}</strong>
+									</div>
+							        <div class="col-sm-6 text-right">
+							                {% if passage.datePrecedente %}
+							                Préc.&nbsp;à&nbsp;{{passage.datePrecedente | date("H") }}h{{passage.datePrecedente | date("i") }}
+							                {% endif %}
+							                {% if passage.dureePrecedente %}
+							                d'une durée de {{ passage.dureePrecedente }}
+							                {% endif %}
+							        </div>
+								</div>
+							</div>
 
                         {% endfor %}
                     </div>

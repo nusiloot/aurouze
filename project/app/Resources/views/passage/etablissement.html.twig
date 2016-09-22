@@ -105,7 +105,7 @@
                                     <a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">Voir le contrat</a>
                                     </div>
                                     <div class="col-xs-3">
-                                        {{ passagesEtablissement.nbPassagePrevu}} passages prévus sur {{ contrat.duree }} mois
+                                        {{ contrat.nbPassages}} passages prévus sur {{ contrat.duree }} mois
                                     </div>
                                     <div class="col-xs-2">
                                         <a href="" title="{{ contrat.nomenclature | nl2br }}" data-html="true" data-toggle="tooltip">Voir la nomenclature</a>
@@ -126,7 +126,9 @@
                                     </div>
                                 </div>
                             </div>
+                            {% if passagesEtablissement %}
 							{{ include('passage/listingPassages.html.twig', { 'passages': passagesEtablissement.getPassagesSorted(true) }) }}
+							{% endif %}
                         </div>
                     </div>
 

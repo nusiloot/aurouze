@@ -114,7 +114,7 @@ class FactureRepository extends DocumentRepository {
 
         $q->field('societe')->in($societeRepo->getIdsByQuery($societe));
       }
-      $q->sort('dateFacturation', 'asc')->sort('societe', 'asc');
+      $q->sort('dateFacturation', 'desc')->sort('societe', 'asc');
       $query = $q->getQuery();
       return $query->execute();
     }

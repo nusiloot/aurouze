@@ -1,0 +1,11 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+{% if numeroRelance == 1 %}
+  {% include 'facture/pdfRelance1.html.twig' with {'facture': facture} %}
+{% elseif numeroRelance == 2 %}
+  {% include 'facture/pdfRelance2.html.twig' with {'facture': facture} %}
+{% elseif numeroRelance == 3 %}
+  {% include 'facture/pdfRelance3.html.twig' with {'facture': facture} %}
+{% endif %}
+{% endblock %}

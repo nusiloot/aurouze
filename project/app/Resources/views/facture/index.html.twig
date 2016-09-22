@@ -8,7 +8,7 @@
 	<ol class="breadcrumb">
 		<li><a href="{{ path('facture') }}">Facture</a></li>
 	</ol>
-<a href="{{ path('paiements_retard') }}" class="btn btn-sm btn-default pull-right" ><strong><span class="mdi mdi-lg mdi-local-atm"></span>&nbsp;Retard de paiements</strong></a>
+<a href="{{ path('factures_retard') }}" class="btn btn-sm btn-default pull-right" ><strong><span class="mdi mdi-lg mdi-local-atm"></span>&nbsp;Retard de paiements</strong></a>
 <br/>
 	{{ include('societe/choixForm.html.twig', {'urlTarget': path('facture_societe', {'id': '_id_'}), 'autofocus': true }) }}
 

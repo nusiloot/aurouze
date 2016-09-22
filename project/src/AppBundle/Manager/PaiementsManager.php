@@ -51,14 +51,6 @@ class PaiementsManager {
     const TYPE_EXPORT_PCA = "pca";
     const TYPE_EXPORT_COMMERCIAUX = "commerciaux";
 
-    const RELANCE_RAPPEL = "Rappel";
-    const RELANCE_MISE_EN_DEMEURE = "Mise en demeure";
-    const RELANCE_AR = "Courrier en AR";
-
-    public static $types_nb_relance = array(
-      self::RELANCE_RAPPEL, self::RELANCE_MISE_EN_DEMEURE, self::RELANCE_AR
-    );
-
     public static $types_reglements_libelles = array(
         self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
         self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",

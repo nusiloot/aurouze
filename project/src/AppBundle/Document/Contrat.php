@@ -911,6 +911,14 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return $contratPassages[$etablissement->getId()];
     }
+    
+    public function hasEtablissementNode(Etablissement $etablissement) {
+        $etablissements = array();
+        foreach ($this->getEtablissements() as $etab) {
+        	$etablissements[] = $etab->getId();
+        }
+        return in_array($etablissement->getId(), $etablissements);
+    }
 
     public static function cmpContrat($a, $b) {
         $statutsPositions = ContratManager::$statuts_positions;
@@ -1010,6 +1018,30 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 }
             }
         }
+    }
+
+    public function getTechnicienPlusUtilise(){
+      $techniciensArray = array();
+      foreach ($this->getContratPassages() as $contratPassage) {
+          foreach ($contratPassage->getPassagesSorted() as $passage) {
+              foreach ($passage->getTechniciens() as $technicien) {
+                if(!array_key_exists($technicien->getId(),$techniciensArray)){
+                  $techniciensArray[$technicien->getId()] = new \stdClass();
+                  $techniciensArray[$technicien->getId()]->occurs = 0;
+                  $techniciensArray[$technicien->getId()]->technicien = $technicien;
+                }
+                $techniciensArray[$technicien->getId()]->occurs = $techniciensArray[$technicien->getId()]->occurs + 1;
+              }
+          }
+      }
+      $techNum = 0;
+      $tech = null;
+      foreach ($techniciensArray as $techId => $techRefs) {
+        if($techRefs->occurs > $techNum){
+          $tech = $techRefs->technicien;
+        }
+      }
+      return $tech;
     }
 
     /**
@@ -1319,7 +1351,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->contratPassages = array();
         $contrat->cleanMouvements();
         $contrat->setReconduit(false);
-
+        if(!$contrat->getTechnicien()){
+          $contrat->setTechnicien($this->getTechnicienPlusUtilise());
+        }
         $contrat->updateObject();
         return $contrat;
     }

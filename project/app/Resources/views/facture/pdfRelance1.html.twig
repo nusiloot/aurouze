@@ -1,8 +1,3 @@
-{% extends 'base_pdf.html.twig' %}
-
-{% block body %}
-{% for facture in facturesRelancees %}
-
 <div class="row">
     <div class="col-xs-6">
         <br />
@@ -35,6 +30,14 @@
             {{ facture.destinataire.codePostal }} {{ facture.destinataire.commune }}<br />
             </small>
         </p>
+    </div>
+</div>
+<br />
+<br />
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        <h1>1ère relance</h1>
     </div>
 </div>
 <br />
@@ -124,5 +127,3 @@
       </div>
 </div>
 <div style="page-break-after: always;"></div>
-{% endfor %}
-{% endblock %}
