@@ -14,6 +14,7 @@ use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
 use AppBundle\Type\PassageCreationType;
 use AppBundle\Type\PassageModificationType;
+use AppBundle\Type\PassageCommentaireType;
 use AppBundle\Type\PassageAnnulationType;
 use AppBundle\Manager\PassageManager;
 use Behat\Transliterator\Transliterator;
@@ -100,6 +101,28 @@ class PassageController extends Controller {
         }
 
         return $this->render('passage/creation.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+    }
+
+    /**
+     * @Route("/passage/commentaire/{id}", name="passage_commentaire")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function commentaireAction(Request $request, Passage $passage) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $form = $this->createForm(new PassageCommentaireType($dm), $passage, array(
+            'action' => $this->generateUrl('passage_commentaire', array('id' => $passage->getId())),
+            'method' => 'POST',
+        ));
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $passage = $form->getData();
+            $dm->flush();
+            return $this->redirectToRoute('passage');
+        }
+
+        return $this->render('passage/commentaire.html.twig', array('passage' => $passage, 'form' => $form->createView()));
     }
 
     /**

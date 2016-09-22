@@ -113,6 +113,7 @@
                                             <i class="mdi mdi-schedule mdi-lg"></i>
                                             <small>{{ passage.dureePrecedente }}</small>
                                             {% endif %}
+                                            <span title="{% if(passage.commentaire) %}{{ passage.commentaire }}{% else %}Ajouter un commentaire{% endif %}" data-url="{{ path('passage_commentaire', {'id': passage.id }) }}" data-toggle="tooltip" class="{% if(passage.commentaire) %}text-primary{% endif %} commentaire_lien" style="{% if(not passage.commentaire) %}opacity: 0.3;{% endif %}"><span class="glyphicon glyphicon-comment"></span></span>
                                     </div>
                                     <div class="col-sm-3 text-right">
                                         <div data-url="{{ urlPlanif }}" class="btn btn-link calendar_lien" >

@@ -29,7 +29,7 @@ class RendezVousManager {
                 $passage->getEtablissementInfos()->getAdresse()->getCodePostal(), $passage->getEtablissementInfos()->getAdresse()->getCommune()
         ));
 
-        $rdv->setDescription($passage->getCommentaire());
+        $rdv->setDescription(null);
 
         $rdv->setLieu(sprintf("%s %s %s",
                 $passage->getEtablissementInfos()->getAdresse()->getAdresse(),
