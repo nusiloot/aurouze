@@ -6,6 +6,7 @@
         $.initAjaxPost();
         $.initSelect2();
         $.initSelect2Ajax();
+        $.initModal();
         $.initTooltips();
         $.initHamzaStyle();
         $.initQueryHash();
@@ -35,6 +36,10 @@
         $('.btn-loading').on('click', function () {
             $(this).button('loading');
         });
+    }
+
+    $.initModal = function() {
+        $('.modal.openOnLoad').modal('show');
     }
 
     $.initReconduction = function(){
@@ -77,6 +82,11 @@
 
     $.initListingPassage = function () {
         $('.calendar_lien').click(function (event) {
+            event.preventDefault();
+            var url = $(this).attr('data-url');
+            window.location.href = url;
+        });
+        $('.commentaire_lien').click(function (event) {
             event.preventDefault();
             var url = $(this).attr('data-url');
             window.location.href = url;

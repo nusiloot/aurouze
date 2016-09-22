@@ -911,6 +911,14 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return $contratPassages[$etablissement->getId()];
     }
+    
+    public function hasEtablissementNode(Etablissement $etablissement) {
+        $etablissements = array();
+        foreach ($this->getEtablissements() as $etab) {
+        	$etablissements[] = $etab->getId();
+        }
+        return in_array($etablissement->getId(), $etablissements);
+    }
 
     public static function cmpContrat($a, $b) {
         $statutsPositions = ContratManager::$statuts_positions;
