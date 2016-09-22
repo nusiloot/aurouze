@@ -40,6 +40,7 @@ twig:
         resources: ['bootstrap_3_layout.html.twig']
     globals:
         kernelRootDir: %kernel.root_dir%
+        facture_manager: "@facture.manager"
 
 doctrine_mongodb:
     connections:

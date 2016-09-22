@@ -23,45 +23,32 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use AppBundle\Manager\ContratManager;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class ContratAVenirToEnCoursCommand extends ContainerAwareCommand {
+class UpdateContratEnCoursToFiniAndPassageEnAttenteToAPlanifierCommand extends ContainerAwareCommand {
 
     protected $dm;
 
     protected function configure() {
-        $this
-                ->setName('update:cron-avenir-to-encours')
-                ->setDescription('Contrat cron avenir to en cours');
+        $this->setName('update:contrat-encours-to-fini-and-passage-enattente-to-aplanifier')
+                ->setDescription('Contrat en-cours vers fermé');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
 
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
 
-        $allContratsAVenir = $this->dm->getRepository('AppBundle:Contrat')->findByStatut(ContratManager::STATUT_A_VENIR);
         $allContratsEnCours = $this->dm->getRepository('AppBundle:Contrat')->findByStatut(ContratManager::STATUT_EN_COURS);
+
+        $allPassageEnAttente = $this->dm->getRepository('AppBundle:Passage')->findByStatut("EN_ATTENTE");
+
         $cptTotal = 0;
         $i = 0;
         $progress = new ProgressBar($output, 100);
         $progress->start();
-        $nb = count($allContratsAVenir) + count($allContratsEnCours);
+        $nb =  count($allContratsEnCours) + count($allPassageEnAttente);
 
-        foreach ($allContratsAVenir as $contrat) {
-            if ($contrat->getDateDebut()->format('Ymd') <= (new \DateTime())->format('Ymd')) {
-                $contrat->setStatut(ContratManager::STATUT_EN_COURS);
-                $cptTotal++;
-                if ($cptTotal % ($nb / 100) == 0) {
-                    $progress->advance();
-                }
-                if ($i >= 1000) {
-                    $this->dm->flush();
-                    $i = 0;
-                }
-                $i++;
-            }
-        }
+
         foreach ($allContratsEnCours as $contrat) {
-            if ($contrat->getDateFin()->format('Ymd') < (new \DateTime())->format('Ymd')) {
-                $contrat->setStatut(ContratManager::STATUT_FINI);
+                $contrat->verifyAndClose();
                 $cptTotal++;
                 if ($cptTotal % ($nb / 100) == 0) {
                     $progress->advance();
@@ -71,8 +58,21 @@ class ContratAVenirToEnCoursCommand extends ContainerAwareCommand {
                     $i = 0;
                 }
                 $i++;
-            }
         }
+
+        foreach ($allPassageEnAttente as $passage) {
+                $passage->setStatut(PassageManager::STATUT_A_PLANIFIER);
+                $cptTotal++;
+                if ($cptTotal % ($nb / 100) == 0) {
+                    $progress->advance();
+                }
+                if ($i >= 1000) {
+                    $this->dm->flush();
+                    $i = 0;
+                }
+                $i++;
+        }
+
         $this->dm->flush();
         $progress->finish();
     }

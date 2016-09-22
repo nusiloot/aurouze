@@ -26,7 +26,7 @@
 
 
 
-{%  if(contrat.isEnAttenteAcceptation()) %}
+{%  if(contrat.isEnAttenteAcceptation() and contrat.contratPassages | length == 0 ) %}
     {{ include('contrat/contrat_previsionnel.html.twig', { 'contrat': contrat ,'form' : (form is defined)? form : null}) }}
 {%  else %}
     {{ include('contrat/contrat_passages.html.twig', { 'contrat': contrat ,'form' : (form is defined)? form : null }) }}

@@ -83,6 +83,7 @@ class ContratAcceptationType extends AbstractType {
             'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
             'multiple' => false,
+            'required' => false,
             "attr" => array("class" => "select2 select2-simple"))));
 
         $builder->add('commercial', DocumentType::class, array_merge($required, array(

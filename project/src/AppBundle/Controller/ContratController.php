@@ -131,7 +131,7 @@ class ContratController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
 
             $contrat = $form->getData();
-            if ($contrat->isModifiable() && !$isBrouillon && $contrat->getTechnicien() && $contrat->getDateDebut()) {
+            if ($contrat->isModifiable() && !$isBrouillon && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $contrat->setDateFin($contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month"));
                 $contrat->setStatut(ContratManager::STATUT_EN_COURS);

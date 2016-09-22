@@ -871,15 +871,32 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getStatutLibelle() {
-
+        $today = new \DateTime();
+        if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))){
+          return "A venir";
+        }elseif($this->isFini() && $this->getDateFin() && ($today->format("Ymd") < $this->getDateFin()->format("Ymd"))){
+          return "En cours (réalisé)";
+        }
         return ContratManager::$statuts_libelles[$this->getStatut()];
     }
 
     public function getStatutLibelleLong() {
+      $today = new \DateTime();
+      if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))){
+        return "à venir";
+      }elseif($this->isFini() && $this->getDateFin() && ($today->format("Ymd") < $this->getDateFin()->format("Ymd"))){
+        return "en cours réalisé";
+      }
         return ContratManager::$statuts_libelles_long[$this->getStatut()];
     }
 
     public function getStatutCouleur() {
+      $today = new \DateTime();
+      if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))){
+        return "default";
+      }elseif($this->isFini() && $this->getDateFin() && ($today->format("Ymd") < $this->getDateFin()->format("Ymd"))){
+        return "info";
+      }
         if ($this->isAnnule()) {
             return ContratManager::$statuts_couleurs[$this->getTypeContrat()];
         }
@@ -987,7 +1004,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $this->setTechnicien($newTechnicien);
         foreach ($this->getContratPassages() as $contratPassage) {
             foreach ($contratPassage->getPassagesSorted() as $passage) {
-                if ($passage->isEnAttente() || $passage->isAPlanifie()) {
+                if ($passage->isAPlanifie()) {
                     $passage->removeAllTechniciens();
                     $passage->addTechnicien($newTechnicien);
                 }
@@ -1178,7 +1195,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         if ($this->isEnAttenteAcceptation() || $this->isBrouillon()) {
             return true;
         }
-        if ($this->isEnCours() || $this->isAVenir()) {
+        if ($this->isEnCours()) {
             foreach ($this->getContratPassages() as $contratPassage) {
                 foreach ($contratPassage->getPassages() as $p) {
                     if ($p->isPlanifie() || $p->isRealise() || $p->isAnnule()) {
@@ -1192,7 +1209,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isAnnulable() {
-        return (($this->isEnCours() || $this->isAVenir() || $this->isFini()) && !$this->isAnnule());
+        return (($this->isEnCours()  || $this->isFini()) && !$this->isAnnule());
     }
 
     /*
@@ -1217,10 +1234,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return ($this->statut == ContratManager::STATUT_EN_COURS);
     }
 
-    public function isAVenir() {
-
-        return ($this->statut == ContratManager::STATUT_A_VENIR);
-    }
 
     public function isEnAttenteAcceptation() {
 
@@ -1285,17 +1298,21 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $dateDebut = $dateDebut->modify("+" . $nbMois . " month");
         $dateAcceptation = $dateAcceptation->modify("+" . $nbMois . " month");
         $dateFin = $dateFin->modify("+" . $nbMois . " month");
-        $contrat->setDateAcceptation($dateAcceptation);
+
         $contrat->setDateDebut($dateDebut);
         $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
 
-        if ($this->getStatut() == ContratManager::STATUT_EN_COURS) {
-            $contrat->setStatut(ContratManager::STATUT_A_VENIR);
-        } else {
-            $contrat->setStatut(ContratManager::STATUT_EN_COURS);
+        if($contrat->isTypeReconductionTacite()){
+          $contrat->setStatut(ContratManager::STATUT_EN_COURS);
+          $contrat->setDateAcceptation($dateAcceptation);
+        }else{
+          $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+          $contrat->setDateAcceptation(null);
         }
+
         $contrat->removeAllEtablissements();
+
         foreach ($this->getEtablissements() as $etablissement) {
           $contrat->addEtablissement($etablissement);
         }
@@ -1308,7 +1325,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isReconductible() {
-        if (!$this->isTypeReconductionTacite()) {
+        if (!$this->isTypeReconductionTacite() && !$this->isTypeRenouvelableSurProposition()) {
 
             return false;
         }
@@ -1633,6 +1650,22 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 $passage->getLibelle();
             }
         }
+    }
+
+    public function verifyAndClose(){
+      $flag = true;
+      foreach ($this->getContratPassages() as $contratPassages) {
+          foreach ($contratPassages->getPassages() as $passage) {
+              if (!$passage->isRealise() && !$passage->isAnnule()) {
+                  $flag = false;
+              }
+          }
+      }
+      if ($flag) {
+          $this->setStatut(ContratManager::STATUT_FINI);
+      }else{
+        $this->setStatut(ContratManager::STATUT_EN_COURS);
+      }
     }
 
     public function calculPca(){

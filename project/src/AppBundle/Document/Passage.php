@@ -273,10 +273,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->statut == PassageManager::STATUT_A_PLANIFIER;
     }
 
-    public function isEnAttente() {
-        return $this->statut == PassageManager::STATUT_EN_ATTENTE;
-    }
-
     public function isAnnule() {
         return $this->statut == PassageManager::STATUT_ANNULE;
     }
@@ -297,10 +293,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function deplanifier() {
-        if($this->isEnAttente()) {
-            return null;
-        }
-
+      
         $this->setDateDebut($this->getDatePrevision());
         $this->setDateFin(null);
         if($this->isRealise()) {
@@ -314,7 +307,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function updateStatut() {
         if (!$this->isAnnule()) {
             if ($this->getDatePrevision() && !boolval($this->getDateFin()) && !boolval($this->getDateDebut()) && !boolval($this->getDateRealise())) {
-                $this->setStatut(PassageManager::STATUT_EN_ATTENTE);
+                $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
                 return;
             }
             if (boolval($this->getDateDebut()) && !boolval($this->getDateFin()) && !boolval($this->getDateRealise())) {

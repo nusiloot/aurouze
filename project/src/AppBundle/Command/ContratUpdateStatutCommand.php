@@ -45,9 +45,6 @@ class ContratUpdateStatutCommand extends ContainerAwareCommand {
         echo "\nMis à jour des passages en attente...\n";
         $this->updatePassagesAPlanifier($output);
 
-        echo "\nMis à jour des contrats à venir...\n";
-        $this->updateContratsAVenir($output);
-
         echo "\nMis à jour des contrats finis...\n";
         $this->updateContratsFinis($output);
     }
@@ -100,7 +97,7 @@ class ContratUpdateStatutCommand extends ContainerAwareCommand {
                         continue;
                     }
                     if ($passage->getDatePrevision()->format('YmdHi') > $contrat->getDateResiliation()->format('YmdHi')) {
-                        if ($passage->isEnAttente()) {
+                        if ($passage->isAPlanifie()) {
                             $passage->setStatut(PassageManager::STATUT_ANNULE);
                         } else {
                             $output->writeln(sprintf("<comment>ANNULATION DE PASSAGE : %s ne semble pas 'en attente' (statut='%s') => contrat  %s !</comment>", $passage->getId(),$passage->getStatut(), $contrat->getId()));
@@ -173,7 +170,7 @@ class ContratUpdateStatutCommand extends ContainerAwareCommand {
                         }
                     }
 
-                    if ($passage->isEnAttente() &&
+                    if ($passage->isAPlanifie() &&
                             (is_null($current_statut) || $current_statut == PassageManager::STATUT_PLANIFIE || $current_statut == PassageManager::STATUT_REALISE)) {
                         $passage->setDateDebut($passage->getDatePrevision());
 
@@ -199,39 +196,6 @@ class ContratUpdateStatutCommand extends ContainerAwareCommand {
         $progress->finish();
     }
 
-    public function updateContratsAVenir($output) {
-        $allContratsEnCours = $this->dm->getRepository('AppBundle:Contrat')->findByStatut(ContratManager::STATUT_EN_COURS);
-
-        $cptTotal = 0;
-        $i = 0;
-        $progress = new ProgressBar($output, 100);
-        $progress->start();
-        foreach ($allContratsEnCours as $contrat) {
-            $flag = true;
-            foreach ($contrat->getContratPassages() as $contratPassages) {
-                foreach ($contratPassages->getPassages() as $passage) {
-                    if (!$passage->isEnAttente()) {
-                        $flag = false;
-                    }
-                }
-            }
-            if ($flag) {
-                $contrat->setStatut(ContratManager::STATUT_A_VENIR);
-            }
-
-            $cptTotal++;
-            if ($cptTotal % (count($allContratsEnCours) / 100) == 0) {
-                $progress->advance();
-            }
-            if ($i >= 2000) {
-                $this->dm->flush();
-                $i = 0;
-            }
-            $i++;
-        }
-        $this->dm->flush();
-        $progress->finish();
-    }
 
     public function updateContratsFinis($output) {
         $allContratsEnCours = $this->dm->getRepository('AppBundle:Contrat')->findByStatut(ContratManager::STATUT_EN_COURS);
@@ -241,17 +205,8 @@ class ContratUpdateStatutCommand extends ContainerAwareCommand {
         $progress = new ProgressBar($output, 100);
         $progress->start();
         foreach ($allContratsEnCours as $contrat) {
-            $flag = true;
-            foreach ($contrat->getContratPassages() as $contratPassages) {
-                foreach ($contratPassages->getPassages() as $passage) {
-                    if (!$passage->isRealise()) {
-                        $flag = false;
-                    }
-                }
-            }
-            if ($flag) {
-                $contrat->setStatut(ContratManager::STATUT_FINI);
-            }
+
+            $contrat->verifyAndClose();
 
             $cptTotal++;
             if ($cptTotal % (count($allContratsEnCours) / 100) == 0) {

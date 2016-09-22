@@ -1,0 +1,36 @@
+{% set _menu_active = 'passage' %}
+{% extends 'base.html.twig' %}
+{% block title %}Passages {{ passage.etablissement.nom }}{% endblock title %}
+{% block body %}
+<ol class="breadcrumb">
+    <li><a href="{{ path('passage') }}">Passage</a></li>
+    <li><a href="{{ path('passage_etablissement',{ 'id' : passage.etablissement.id }) }}">&nbsp;{{ passage.etablissement.nom }}&nbsp;<small>{{passage.etablissement.adresse.intitule }}</small></a></li>
+    <li><a href="{{ path('passage_annulation',{ 'id' : passage.id }) }}">&nbsp;<small>{{ passage.dateDebut | localizeddate('full', 'none') | capitalize }}</small></a></li>
+</ol>
+<h2>Annulation du passage n° {{ passage.numeroArchive }}</h2>
+{% if passage.mouvementDeclenche %}
+<p class="bg-success" style="padding: 15px;"><span class="glyphicon glyphicon-exclamation-sign"></span> Un mouvement de facture a été déclenché pour ce passage.</p>
+{% endif %}
+{{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
+
+<div class="panel panel-default">
+        <div class="panel-heading"><strong>Annulation du passage</strong></div>
+        <div class="panel-body col-xs-offset-2">
+          <div class="row">
+              <div class="col-xs-10">
+                {{ form_row(form.commentaire) }}
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-xs-10">
+                <div class="text-right">
+                  {{ form_widget(form.save) }}
+                </div>
+              </div>
+          </div>
+      </div>
+</div>
+{{ form_end(form) }}
+
+
+{% endblock %}

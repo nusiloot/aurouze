@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Tool\CalendarDateTool;
 use AppBundle\Document\Compte;
+use AppBundle\Document\Etablissement;
 use AppBundle\Document\RendezVous;
 use AppBundle\Document\CompteInfos;
 use Behat\Transliterator\Transliterator;
@@ -18,9 +19,11 @@ use AppBundle\Type\RendezVousType;
 class CalendarController extends Controller {
 
     /**
-     * @Route("/calendrier", name="calendar")
+     * @Route("/calendrier/technicien/0", name="calendar", defaults={"etablissement" = null})
+     * @Route("/calendrier/technicien/{id}", name="calendar")
+     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
      */
-    public function calendarAction(Request $request) {
+    public function calendarAction(Request $request, Etablissement $etablissement = null) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $passage = null;
@@ -151,7 +154,7 @@ class CalendarController extends Controller {
 
         $dm->persist($rdv);
         $rdv->pushToPassage();
-        $pm->updateNextPassageAPlannifier($rdv->getPassage());
+      //  $pm->updateNextPassageAPlannifier($rdv->getPassage());
         $dm->flush();
 
         $response = new Response(json_encode($rdv->getEventJson($technicien->getCouleur())));
@@ -285,7 +288,7 @@ class CalendarController extends Controller {
             $dm->persist($rdv);
             if($rdv->getPassage()) {
                 $rdv->pushToPassage();
-                $pm->updateNextPassageAPlannifier($rdv->getPassage());
+              //  $pm->updateNextPassageAPlannifier($rdv->getPassage());
             }
         }
 
@@ -303,9 +306,6 @@ class CalendarController extends Controller {
         $pm = $this->get('passage.manager');
         $technicien = $request->get('technicien');
 
-        if($rdv->getPassage()) {
-            $pm->updateNextPassageEnAttente($rdv->getPassage());
-        }
 
         $dm->remove($rdv);
 

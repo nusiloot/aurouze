@@ -138,6 +138,11 @@ class Facture implements DocumentSocieteInterface {
      */
     protected $cloture;
 
+    /**
+     * @MongoDB\Int
+     */
+    protected $nbRelance;
+
     public function __construct() {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->emetteur = new FactureSoussigne();
@@ -392,7 +397,7 @@ class Facture implements DocumentSocieteInterface {
     public function getSociete() {
         return $this->societe;
     }
-    
+
 
 
     /**
@@ -403,10 +408,10 @@ class Facture implements DocumentSocieteInterface {
      */
     public function setOrigineAvoir(\AppBundle\Document\Facture $facture) {
     	$this->origineAvoir = $facture;
-    
+
     	return $this;
     }
-    
+
     /**
      * Get origineAvoir
      *
@@ -776,6 +781,10 @@ class Facture implements DocumentSocieteInterface {
         $this->setMontantAPayer(round($this->getMontantTTC() - $this->getMontantPaye(), 2));
     }
 
+    public function getRestantAPayer() {
+        return round($this->getMontantTTC() - $this->getMontantPaye(), 2);
+    }
+
     /**
      * Set montantAPayer
      *
@@ -941,5 +950,44 @@ class Facture implements DocumentSocieteInterface {
     public function getCommercial()
     {
         return $this->commercial;
+    }
+
+    /**
+     * Set nbRelance
+     *
+     * @param int $nbRelance
+     * @return self
+     */
+    public function setNbRelance($nbRelance)
+    {
+        $this->nbRelance = $nbRelance;
+        return $this;
+    }
+
+    /**
+     * Get nbRelance
+     *
+     * @return int $nbRelance
+     */
+    public function getNbRelance()
+    {
+        return $this->nbRelance;
+    }
+
+    public function getRelanceColor()
+    {
+        $nb = $this->getNbRelance();
+        if(!$nb){
+          return "#ffffff";
+        }
+        if($nb == 1){
+          return "#FFD1D1";
+        }
+        if($nb == 2){
+          return "#FFABAB";
+        }
+        if($nb >= 2 ){
+          return "#FF5E5E";
+        }
     }
 }

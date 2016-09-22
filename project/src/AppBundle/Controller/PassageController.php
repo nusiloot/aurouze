@@ -14,6 +14,7 @@ use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
 use AppBundle\Type\PassageCreationType;
 use AppBundle\Type\PassageModificationType;
+use AppBundle\Type\PassageAnnulationType;
 use AppBundle\Manager\PassageManager;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\InterventionRapideCreationType;
@@ -37,13 +38,16 @@ class PassageController extends Controller {
 
         $moisCourrant = ($request->get('mois') == "courant");
         $dateFin = new \DateTime();
+        $dateFinCourant = clone $dateFin;
+        $dateFinCourant->modify("+1 month");
+
         $dateDebut = new \DateTime();
         $passages = null;
         $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur);
         $anneeMois = null;
 
         if($moisCourrant){
-          $dateFin->modify("+1 month");
+          $dateFin = $dateFinCourant;
           $passages = $passageManager->getRepository()->findToPlan($secteur, null, $dateFin);
           $anneeMois = 'courant';
         }else{
@@ -58,6 +62,7 @@ class PassageController extends Controller {
 
         return $this->render('passage/index.html.twig', array('passages' => $passages,
                     'anneeMois' => $anneeMois,
+                    'dateFinCourant' => $dateFinCourant,
                     'dateFin' => $dateFin,
                     'formEtablissement' => $formEtablissement->createView(),
                     'geojson' => $geojson,
@@ -137,7 +142,7 @@ class PassageController extends Controller {
             return $this->redirectToRoute('calendarManuel', array('passage' => $passage->getId()));
         }
 
-        return $this->redirectToRoute('calendar', array('passage' => $passage->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
+        return $this->redirectToRoute('calendar', array('passage' => $passage->getId(),'id' => $passage->getEtablissement()->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
     }
 
     /**
@@ -156,14 +161,29 @@ class PassageController extends Controller {
     public function annulationAction(Request $request, Passage $passage) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('passage.manager');
-        $statut = $passage->getStatut();
-        $passage->setStatut(PassageManager::STATUT_ANNULE);
-        $dm->persist($passage);
-        if ($statut == PassageManager::STATUT_A_PLANIFIER) {
-        	$pm->updateNextPassageAPlannifier($passage);
+
+        $form = $this->createForm(new PassageAnnulationType($dm, $passage), $passage, array(
+            'action' => $this->generateUrl('passage_annulation', array('id' => $passage->getId())),
+            'method' => 'POST',
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+          $statut = $passage->getStatut();
+          $passage->setStatut(PassageManager::STATUT_ANNULE);
+          $dm->persist($passage);
+          // if ($statut == PassageManager::STATUT_A_PLANIFIER) {
+          //   $pm->updateNextPassageAPlannifier($passage);
+          // }
+          $dm->flush();
+          $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+          $contrat->verifyAndClose();
+
+          $dm->flush();
+
+          return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
         }
-        $dm->flush();
-        return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
+
+        return $this->render('passage/annulation.html.twig', array('form' => $form->createView(), 'passage' => $passage));
     }
 
     /**
@@ -173,7 +193,7 @@ class PassageController extends Controller {
     public function etablissementAction(Request $request, Etablissement $etablissement) {
 
         $contratManager = $this->get('contrat.manager');
-        $contrats = $contratManager->getRepository()->findByEtablissement($etablissement);
+        $contrats = $contratManager->sortedContratsByEtablissement($etablissement);
 
         $geojson = $this->buildGeoJson(array($etablissement));
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, array('etablissements' => $etablissement->getIdentifiant(), 'etablissement' => $etablissement), array(
@@ -218,10 +238,10 @@ class PassageController extends Controller {
         }
         $passageManager = $this->get('passage.manager');
 
-        $nextPassage = $passageManager->updateNextPassageAPlannifier($passage);
-        if ($nextPassage) {
-            $dm->persist($nextPassage);
-        }
+      //  $nextPassage = $passageManager->updateNextPassageAPlannifier($passage);
+        // if ($nextPassage) {
+        //     $dm->persist($nextPassage);
+        // }
 
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
 
@@ -233,9 +253,12 @@ class PassageController extends Controller {
 
         $passage->setDateRealise($passage->getDateDebut());
         $dm->persist($passage);
-
-
         $dm->persist($contrat);
+        $dm->flush();
+
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        $contrat->verifyAndClose();
+
         $dm->flush();
 
         if ($passage->getMouvementDeclenchable()) {
