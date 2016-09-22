@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Manager\PaiementsManager;
 use AppBundle\Type\PaiementsType;
+use AppBundle\Type\SocieteCommentaireType;
 use AppBundle\Type\RelanceType;
 use AppBundle\Type\FacturesEnRetardFiltresType;
 use AppBundle\Document\Paiements;
@@ -27,7 +28,21 @@ class PaiementsController extends Controller {
         $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(20);
 
         $exportForms = $this->createExportsForms();
-        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs,'exportForms' => $exportForms));
+        
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $societe = $dm->getRepository('AppBundle:Societe')->findAurouze();
+        $form = $this->createForm(new SocieteCommentaireType(), $societe, array(
+        		'action' => $this->generateUrl('paiements_liste'),
+        		'method' => 'POST',
+        ));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+        	$dm->flush();
+        
+        	return $this->redirectToRoute('paiements_liste');
+        }
+        
+        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs,'exportForms' => $exportForms, 'form' => $form->createView()));
     }
 
     /**
@@ -37,6 +52,7 @@ class PaiementsController extends Controller {
     public function societeAction(Request $request, Societe $societe) {
 
         $paiementsDocs = $this->get('paiements.manager')->getRepository()->getBySociete($societe);
+        
 
         return $this->render('paiements/societe.html.twig', array('paiementsDocs' => $paiementsDocs, 'societe' => $societe));
     }
