@@ -47,7 +47,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="" href="{{ path('accueil') }}" style="margin: 5px 10px 5px 0;"><img src="{{ asset('/images/logo.png') }}" height="40" style="margin-top: 5px;"  /></a>
+                    <a href="{{ path('accueil') }}" alt="aurouze" style="margin: 5px 10px 5px 0; height: 40px;"><img src="{{ asset('/images/logo.svg') }}" height="40" style="margin-top: 5px;"  /></a>
                 </div>
                 {% set retard = 0 %}
                 {% if(app.request.get('etablissement')) %}
@@ -70,7 +70,7 @@
 
                     </ul>
 
-                    {% if(app.request.get('etablissement')) %}<p class="navbar-text"><strong>{{ app.request.get('etablissement').societe.raisonSociale }}</strong></p>{% endif %}
+                    {% if(app.request.get('etablissement')) %}<p id="nav_nom_etablissement" class="navbar-text truncate"><strong>{{ app.request.get('etablissement').societe.raisonSociale }}</strong></p>{% endif %}
 
                     <ul class="nav navbar-nav pull-right">
                         <li class="{%if (_menu_active == 'recherche') %}active{% endif %}"><a href="{{ path('recherche')}}"><span class="glyphicon glyphicon-search"></span></a></li>
