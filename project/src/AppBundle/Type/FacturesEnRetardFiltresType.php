@@ -21,7 +21,7 @@ class FacturesEnRetardFiltresType extends AbstractType {
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$nbRelances = array_merge(array(null => null), FactureManager::$types_nb_relance);
+		$nbRelances = array_merge(array("Toutes les factures"), FactureManager::$types_nb_relance);
 		//$dateFactureHaute = new \DateTime();
     //$dateFactureBasse = new \DateTime();
 

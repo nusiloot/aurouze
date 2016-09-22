@@ -102,11 +102,14 @@ class FactureRepository extends DocumentRepository {
       if($dateFactureHaute){
         $q->field('dateFacturation')->lte($dateFactureHaute);
       }
-      if(!is_null($nbRelance) && $nbRelance != ""){
+      if(!is_null($nbRelance)){
         if($nbRelance > 2){
           $q->field('nbRelance')->gte($nbRelance);
-        }else{
+        }elseif ($nbRelance == 1 || $nbRelance == 2) {
           $q->field('nbRelance')->equals($nbRelance);
+        }elseif ($nbRelance == 0) {
+          $q->addOr($q->expr()->field('nbRelance')->equals(null))
+            ->addOr($q->expr()->field('nbRelance')->equals(0));
         }
       }
       if ($societe) {

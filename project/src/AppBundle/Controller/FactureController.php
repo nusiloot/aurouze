@@ -694,7 +694,7 @@ class FactureController extends Controller {
 
         $dateFactureBasse = null;
         $dateFactureHaute = null;
-        //$dateFactureHaute->modify("+1 month");
+
 
         $nbRelances = null;
         $societe = null;
@@ -709,7 +709,7 @@ class FactureController extends Controller {
           $formValues =  $formFacturesEnRetard->getData();
           $dateFactureBasse = $formValues["dateFactureBasse"];
           $dateFactureHaute = $formValues["dateFactureHaute"];
-          $nbRelances = $formValues["nbRelances"];
+          $nbRelances = intval($formValues["nbRelances"]) -1;
           $societe = $formValues["societe"];
 
         }
@@ -717,10 +717,11 @@ class FactureController extends Controller {
 
         $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
             'action' => $this->generateUrl('factures_relance_massive'),
+        //    "attr" => array('target' => "_blank", "onsubmit" => "document.location.href=\"http://google.fr\""),
             'method' => 'post',
-        ));;
+        ));
 
-        return $this->render('facture/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(),
+        return $this->render('facture/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(), 'nbRelances' => $nbRelances,
         'formFacturesARelancer' => $formFacturesEnRetard->createView()));
     }
 
@@ -735,15 +736,25 @@ class FactureController extends Controller {
       $fm = $this->get('facture.manager');
       $factureARelancer = array();
       $formRequest = $request->request->get('relance');
-      var_dump($formRequest); exit;
-    //  $augmentation = (isset($formRequest['augmentation']))? $formRequest['augmentation'] : 0;
+
+
       foreach ($formRequest as $key => $value) {
         if(preg_match("/^FACTURE-/",$key)){
             $factureARelancer[$key] = $fm->getRepository()->findOneById($key);
         }
       }
 
+      $lignesFacturesRelancees = array();
+
       foreach ($factureARelancer as $facture) {
+
+          $lignesFacturesRelancees[$facture->getId()] = array();
+          foreach($facture->getLignes() as $key => $ligneFacture) {
+
+              $ligne = $this->buildLignePDFFacture($ligneFacture);
+              $lignesFacturesRelancees[$facture->getId()][] = $ligne;
+          }
+
           if($facture->getNbRelance() > 2) {
               continue;
           }
@@ -755,6 +766,8 @@ class FactureController extends Controller {
 
       $html = $this->renderView('facture/pdfRelanceMassive.html.twig', array(
           'facturesRelancees' => $factureARelancer,
+          'lignesFacturesRelancees' => $lignesFacturesRelancees,
+
           'parameters' => $fm->getParameters()
       ));
 
@@ -797,7 +810,7 @@ class FactureController extends Controller {
           'numeroRelance' => $numeroRelance,
           'parameters' => $fm->getParameters()
       ));
-      
+
       $terme_relance = FactureManager::$types_nb_relance[$numeroRelance];
 
       $filename = sprintf("relance_%s_facture_%s_%s.pdf",$terme_relance, $facture->getNumeroFacture(), (new \DateTime())->format("Y-m-d_His"));
