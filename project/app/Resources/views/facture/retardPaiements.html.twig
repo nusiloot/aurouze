@@ -111,7 +111,7 @@
 									<a data-toggle="tooltip" title="2nd relance" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 2 })}}"><span class="glyphicon glyphicon-file text-warning"></span></a>&nbsp;
 								{% endif %}
 								{% if factureEnRetard.has3emeRelance %}
-									<a data-toggle="tooltip" title="3ème relance avec AR" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 3 })}}"><span class="glyphicon glyphicon-file text-danger"></span></a>&nbsp;
+									<a data-toggle="tooltip" title="mise en demeure avec AR" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 3 })}}"><span class="glyphicon glyphicon-file text-danger"></span></a>&nbsp;
 								{% endif %}
 							</td>
               <td class="text-center">

@@ -735,6 +735,7 @@ class FactureController extends Controller {
       $fm = $this->get('facture.manager');
       $factureARelancer = array();
       $formRequest = $request->request->get('relance');
+      var_dump($formRequest); exit;
     //  $augmentation = (isset($formRequest['augmentation']))? $formRequest['augmentation'] : 0;
       foreach ($formRequest as $key => $value) {
         if(preg_match("/^FACTURE-/",$key)){
@@ -752,7 +753,7 @@ class FactureController extends Controller {
       }
 
 
-      $html = $this->renderView('facture/pdfRelance.html.twig', array(
+      $html = $this->renderView('facture/pdfRelanceMassive.html.twig', array(
           'facturesRelancees' => $factureARelancer,
           'parameters' => $fm->getParameters()
       ));
@@ -791,7 +792,7 @@ class FactureController extends Controller {
       $terme_relance = FactureManager::$types_nb_relance[$numeroRelance];
 
       $filename = sprintf("relance_%s_facture_%s_%s.pdf",$terme_relance, $facture->getNumeroFacture(), (new \DateTime())->format("Y-m-d_His"));
-  
+
       if ($request->get('output') == 'html') {
 
           return new Response($html, 200);
