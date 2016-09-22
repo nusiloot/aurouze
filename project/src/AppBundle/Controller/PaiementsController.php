@@ -110,10 +110,11 @@ class PaiementsController extends Controller {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
+        $sm = $this->get('societe.manager');
 
-        $dateFactureBasse = new \DateTime();
-        $dateFactureHaute = new \DateTime();
-        $dateFactureHaute->modify("+1 month");
+        $dateFactureBasse = null;
+        $dateFactureHaute = null;
+        //$dateFactureHaute->modify("+1 month");
 
         $nbRelances = null;
         $societe = null;
@@ -130,11 +131,9 @@ class PaiementsController extends Controller {
           $dateFactureHaute = $formValues["dateFactureHaute"];
           $nbRelances = $formValues["nbRelances"];
           $societe = $formValues["societe"];
+
         }
-
-
-
-        $facturesEnRetard = $fm->getRepository()->findAllRetardDePaiement();
+        $facturesEnRetard = $fm->getRepository()->findFactureRetardDePaiement($dateFactureBasse, $dateFactureHaute, $nbRelances, $societe);
 
         $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
         		'action' => $this->generateUrl('paiements_relance_massive'),

@@ -31,7 +31,6 @@ class RelanceType extends AbstractType {
 		foreach ($this->factures as $facture) {
         		$builder->add($facture->getId(), CheckboxType::class, array('label' => ' ', 'required' => false, 'label_attr' => array('class' => 'small')));
     }
-    $builder->add('typeRelance', ChoiceType::class, array('required' => false, 'choices' => array_merge(array(null => null), PaiementsManager::$typesRelance), "attr" => array("class" => "select2 select2-simple', 'placeholder' => 'Type de relance'")));
     $builder->add('relancer', 'submit', array('label' => "Relancer", "attr" => array("class" => "btn btn-primary pull-right")));
 	}
 

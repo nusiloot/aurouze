@@ -88,13 +88,33 @@ class FactureRepository extends DocumentRepository {
     	return $resultSet;
     }
 
-    public function findAllRetardDePaiement(){
+    public function findFactureRetardDePaiement($dateFactureBasse = null, $dateFactureHaute = null, $nbRelance = null, $societe = null){
       $today = new \DateTime();
       $q = $this->createQueryBuilder();
       $q->field('numeroFacture')->notEqual(null);
       $q->field('cloture')->equals(false);
       $q->field('montantTTC')->gt(0.0);
-      $q->field('dateLimitePaiement')->lte($today)->sort('dateFacturation', 'asc')->sort('societe', 'asc');
+      $q->field('montantAPayer')->gt(0.0);
+      $q->field('dateLimitePaiement')->lte($today);
+      if($dateFactureBasse){
+        $q->field('dateFacturation')->gte($dateFactureBasse);
+      }
+      if($dateFactureHaute){
+        $q->field('dateFacturation')->lte($dateFactureHaute);
+      }
+      if(!is_null($nbRelance) && $nbRelance != ""){
+        if($nbRelance > 2){
+          $q->field('nbRelance')->gte($nbRelance);
+        }else{
+          $q->field('nbRelance')->equals($nbRelance);
+        }
+      }
+      if ($societe) {
+        $societeRepo = $this->getDocumentManager()->getRepository('AppBundle:Societe');
+
+        $q->field('societe')->in($societeRepo->getIdsByQuery($societe));
+      }
+      $q->sort('dateFacturation', 'asc')->sort('societe', 'asc');
       $query = $q->getQuery();
       return $query->execute();
     }

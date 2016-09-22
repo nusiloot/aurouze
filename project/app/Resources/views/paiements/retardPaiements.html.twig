@@ -6,35 +6,51 @@
 {% block body %}
 
 	<ol class="breadcrumb">
-		<li><a href="{{ path('passage_erreurs') }}">Factures en retard de paiements</a></li>
+		<li><a href="{{ path('paiements_retard') }}">Factures en retard de paiements</a></li>
 	</ol>
-
+	
+	<div class="row">
+	  <div class="col-xs-12">
+	    <h3>{{ facturesEnRetard | length }} factures en retard de paiements </h3>
+	  </div>
+	</div>
 	{{ form_start(formFacturesARelancer) }}
+	<br/><br/>
 	<div class="row">
 		<div class="col-xs-12">
 			<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">Critères de relances</h3>
+						<h3 class="panel-title">Critères factures en retard de paiements</h3>
 					</div>
-					<div class="panel-body  form-horizontal">
+					<div class="panel-body">
 						<div class="row">
 							<div class="col-xs-6" id="searchable" data-type="societe" data-url="{{ path('recherche_societe')  }}" data-target="0">
+									{{ form_label(formFacturesARelancer.societe) }}
 							{{ form_errors(formFacturesARelancer.societe) }}
 							{{ form_widget(formFacturesARelancer.societe) }}
 							</div>
-							<div class="col-xs-2">
+							<div class="col-xs-6">
+									{{ form_label(formFacturesARelancer.nbRelances) }}
+								{{ form_errors(formFacturesARelancer.nbRelances) }}
+								{{ form_widget(formFacturesARelancer.nbRelances) }}
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-6">
+							{{ form_label(formFacturesARelancer.dateFactureBasse) }}
 							{{ form_errors(formFacturesARelancer.dateFactureBasse) }}
 							{{ form_widget(formFacturesARelancer.dateFactureBasse) }}
 							</div>
-							<div class="col-xs-2">
+							<div class="col-xs-6">
+								{{ form_label(formFacturesARelancer.dateFactureHaute) }}
 							{{ form_errors(formFacturesARelancer.dateFactureHaute) }}
 							{{ form_widget(formFacturesARelancer.dateFactureHaute) }}
 							</div>
-							<div class="col-xs-2">
-							{{ form_errors(formFacturesARelancer.nbRelances) }}
-							{{ form_widget(formFacturesARelancer.nbRelances) }}
-							</div>
-							<div class="col-xs-2">
+						</div>
+						<br/>
+						<div class="row">
+							<div class="col-xs-12 text-right">
+									<a class="btn btn-default" href="{{ path('paiements_retard') }}"><span class="glyphicon glyphicon-repeat"></span>&nbsp;Ré-initialiser</a>&nbsp;&nbsp;
 								{{ form_widget(formFacturesARelancer.save) }}
 							</div>
 					</div>
@@ -46,17 +62,12 @@
 
 
 {{ form_start(formRelance) }}
-<div class="row">
-  <div class="col-xs-12">
-    <h3>{{ facturesEnRetard | length }} factures en retard de paiements </h3>
-  </div>
-</div>
+
 <div class="row">
     <div class="col-xs-3 pull-right">
       <div class="input-group">
-          {{ form_widget(formRelance.typeRelance) }}
           <span class="input-group-btn">
-            {{ form_widget(formRelance.relancer,  {'attr': {'class': 'btn-loading btn btn-primary pull-right', 'data-loading-text': "Relances en cours de génération..."}}) }}
+            {{ form_widget(formRelance.relancer,  {'attr': {'class': 'btn-loading btn btn-success pull-right', 'data-loading-text': "Relances en cours de génération..."}}) }}
             </span>
       </div>
     </div>
