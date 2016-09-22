@@ -978,16 +978,16 @@ class Facture implements DocumentSocieteInterface {
     {
         $nb = $this->getNbRelance();
         if(!$nb){
-          return "#ffffff";
+          return "";
         }
         if($nb == 1){
-          return "#FFD1D1";
+          return "background-color: #d9edf7";
         }
         if($nb == 2){
-          return "#FFABAB";
+          return "background-color: #fcf8e3";
         }
         if($nb >= 2 ){
-          return "#FF5E5E";
+          return "background-color:#f2dede";
         }
     }
 

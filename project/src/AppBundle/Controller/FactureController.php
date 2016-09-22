@@ -784,11 +784,20 @@ class FactureController extends Controller {
       set_time_limit(0);
       $fm = $this->get('facture.manager');
 
+      $lignes = array();
+      foreach($facture->getLignes() as $key => $ligneFacture) {
+
+          $ligne = $this->buildLignePDFFacture($ligneFacture);
+          $lignes[] = $ligne;
+      }
+
       $html = $this->renderView('facture/pdfGeneriqueRelance.html.twig', array(
           'facture' => $facture,
+          'lignes' => $lignes,
           'numeroRelance' => $numeroRelance,
           'parameters' => $fm->getParameters()
       ));
+      
       $terme_relance = FactureManager::$types_nb_relance[$numeroRelance];
 
       $filename = sprintf("relance_%s_facture_%s_%s.pdf",$terme_relance, $facture->getNumeroFacture(), (new \DateTime())->format("Y-m-d_His"));

@@ -13,13 +13,8 @@
     </div>
     <div class="col-xs-6">
         <div class="text-right">
-        <h3>{%if(facture.isAvoir)%}AVOIR{%else%}FACTURE{%endif%} {% if(facture.numeroFacture) %}N°&nbsp;{{ facture.numeroFacture }}{% else %}BROUILLON{% endif %}</h3>
-        <span>Du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
-        {% if (facture.origineAvoir) %}
-        Sur facture n°{{ facture.origineAvoir.numeroFacture }}
-        {% else %}
+        <h3>2nd relance</h3>
         <br /><br />
-        {% endif %}
         </div>
         <br />
         <br />
@@ -37,14 +32,12 @@
 <div class="row">
     <div class="col-xs-12">
         <br />
-        <h1>2ème relance</h1>
+        <h2>2nd relance</h2>
     </div>
 </div>
 <br />
-<br />
 <div class="row">
     <div class="col-xs-12">
-        <br />
         <h3>Objet : rappel concernant la facture n° {{ facture.numeroFacture }}</h3>
     </div>
 </div>
@@ -52,14 +45,38 @@
 <br />
 <div class="row">
     <div class="col-xs-12">
-        <br />
+    {% for ligne in lignes %}
+            {% if ligne.referenceClient is defined and ligne.referenceClient %}<small><small>Votre Réf CDE : {{ ligne.referenceClient }}</small><br /></small>{% endif %}
+            {% if ligne.details is defined %}
+            <small>
+                <small>
+                {% for libelle, details in ligne.details %}
+                    {% if details is iterable %}
+                    {{ libelle }} :
+                    <ul class="list-unstyled" style="padding-left: 10px; margin-bottom: 0">
+                      {% for detailLigne in details %}
+                        <li>- {{ detailLigne }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                        {{ details | nl2br }}
+                    {% endif %}
+                {% endfor %}
+                </small>
+            </small>
+            {% endif %}
+          {% endfor %}
+      </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-xs-12">
         Madame, Monsieur,
       </div>
 </div>
 <br />
 <div class="row">
     <div class="col-xs-12">
-        <br />
         Sauf erreur ou omission de notre part, nous attendons toujours un règlement de :
       </div>
 </div>
@@ -67,7 +84,7 @@
     <div class="col-xs-12">
         <br />
         <div class="text-center">
-          <strong>{{ "%0.2f" | format(facture.restantAPayer) }}</strong>
+          <strong>{{ facture.restantAPayer|number_format(2, ',', ' ') }} €</strong>
         </div>
       </div>
 </div>
@@ -93,8 +110,13 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        <br />
         de nous adresser le règlement par retour de courrier.
+      </div>
+</div>
+<br/>
+<div class="row">
+    <div class="col-xs-12">
+        Nous vous avons déjà envoyé un 1er courrier concernant cet impayé.
       </div>
 </div>
 <div class="row">
@@ -109,20 +131,43 @@
         Nous vous prions de croire, Madame, Monsieur, en l'assurance de notre considération distinguée.
       </div>
 </div>
-<br /><br /><br /><br />
+<br /><br />
 <div class="row">
     <div class="col-xs-12">
-        <br />
         <div class="text-center">
         Le service Comptabilité Client
+        <br/>
+        PARIS le {{ "now" | localizeddate("medium", "none", null, null,  "d/MM/YYYY") }}
         </div>
       </div>
 </div>
-<div class="row">
-    <div class="col-xs-12">
-        <br />
-        <div class="text-center">
-          PARIS le {{ "now" | localizeddate("medium", "none", null, null,  "d/MM/YYYY") }}
+<br /><br />
+<small>
+<p class="text-center" style="line-height: 13px;">
+    <small>
+    {{ parameters.emetteur.infos }}<br />
+    {{ parameters.emetteur.banque }}<br />
+    {{ parameters.emetteur.virement }}<br />
+    Agrément du Ministère de l'Agriculture A. I. F. 00131<br />
+    </small>
+</p>
+</small>
+<br /><br />
+<div style="border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; margin-top: 15px;">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <small><small><small>Coupon à joindre avec votre règlement</small></small></small>
         </div>
-      </div>
+        <div class="col-xs-6">
+            <p>
+            <span class="lead" style="font-size: 15px;">Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
+            <small>Client : {{ facture.destinataire.raisonSociale }} ({{ facture.destinataire.codeComptable }})</small>
+            </p>
+        </div>
+        <div class="col-xs-6 text-right">
+            <p>
+            <span class="lead" style="font-size: 15px;">Montant dû : {{ facture.montantTTC|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
+            </p>
+        </div>
+    </div>
 </div>

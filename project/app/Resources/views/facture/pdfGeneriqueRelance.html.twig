@@ -2,10 +2,10 @@
 
 {% block body %}
 {% if numeroRelance == 1 %}
-  {% include 'facture/pdfRelance1.html.twig' with {'facture': facture} %}
+  {% include 'facture/pdfRelance1.html.twig' with {'facture': facture, 'lignes' : lignes} %}
 {% elseif numeroRelance == 2 %}
-  {% include 'facture/pdfRelance2.html.twig' with {'facture': facture} %}
+  {% include 'facture/pdfRelance2.html.twig' with {'facture': facture, 'lignes' : lignes} %}
 {% elseif numeroRelance == 3 %}
-  {% include 'facture/pdfMisEnDemeure.html.twig' with {'facture': facture} %}
+  {% include 'facture/pdfMiseEnDemeure.html.twig' with {'facture': facture, 'lignes' : lignes} %}
 {% endif %}
 {% endblock %}

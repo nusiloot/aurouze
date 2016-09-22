@@ -89,7 +89,7 @@
           </thead>
           <tbody>
             {% for factureEnRetard in facturesEnRetard %}
-            <tr style="background-color:{{ factureEnRetard.getRelanceColor }};" >
+            <tr style="{{ factureEnRetard.getRelanceColor }}" >
               {{factureEnRetard.isDevis }}
               <td><small>{{ factureEnRetard.dateFacturation | localizeddate("medium", "none", null, null, "d MMM YYYY") | capitalize }}</small></td>
               <td>
