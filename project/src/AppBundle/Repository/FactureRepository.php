@@ -32,6 +32,7 @@ class FactureRepository extends DocumentRepository {
             $q = $this->createQueryBuilder();
 
             $q->field('cloture')->equals(false);
+            $q->field('numeroFacture')->notEqual(null);
             if (preg_match('/^[0-9]+\.[0-9]+$/', $term)) {
                 $nbInf = $term - 0.0001;
                 $nbSup = $term + 0.0001;
