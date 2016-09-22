@@ -85,7 +85,12 @@
     </div>
 </div>
 <br />
-
+<div class="row">
+    <div class="col-xs-12">
+        <br />
+        En conséquence, nous vous mettons en demeure de nous régler la somme de :
+        </div>
+</div>
 <div class="row">
     <div class="col-xs-12">
         <br />
@@ -97,43 +102,23 @@
 <div class="row">
     <div class="col-xs-12">
         <br />
-        En effet, la facture n° {{ facture.numeroFacture }} que nous vous avons adressée le {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY")  }}, payable le
-      </div>
-</div>
-<div class="row">
-    <div class="col-xs-12">
-        <br />
-        <div class="text-center">
-          <strong>{{ facture.dateLimitePaiement | localizeddate("medium", "none", null, null,  "d/MM/YYYY")  }}</strong>
-        </div>
-      </div>
-</div>
-<div class="row">
-    <div class="col-xs-12">
-        <br />
-        n'a pas encore été honorée. L'échéance étant dépassée, nous vous demandons pour la bonne règle de nos écritures,
-      </div>
-</div>
-<div class="row">
-    <div class="col-xs-12">
-        de nous adresser le règlement par retour de courrier.
+        dans un délai de huit jours à réception de la présente.
       </div>
 </div>
 <br/>
 <div class="row">
     <div class="col-xs-12">
-        Nous vous avons déjà envoyé un 1er courrier concernant cet impayé.
+        A défaut, notre service contentieux se chargera d'en obtenir le recouvrement par voie de justice.
       </div>
 </div>
 <div class="row">
     <div class="col-xs-12">
-        <br />
-        Dans le cas où celui-ci aurait été adressé entre temps, nous vous prions de ne pas tenir compte de la présente.
+        Nous vous rappelons que le présent courrier fait courrir les intérêts légaux et conventionnels.
       </div>
 </div>
+<br/>
 <div class="row">
     <div class="col-xs-12">
-        <br />
         Nous vous prions de croire, Madame, Monsieur, en l'assurance de notre considération distinguée.
       </div>
 </div>
@@ -172,7 +157,7 @@
         </div>
         <div class="col-xs-6 text-right">
             <p>
-            <span class="lead" style="font-size: 15px;">Montant dû : {{ facture.montantTTC|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
+            <span class="lead" style="font-size: 15px;">Montant dû : {{ facture.restantAPayer|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
             </p>
         </div>
     </div>
