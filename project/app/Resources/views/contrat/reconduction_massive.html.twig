@@ -89,6 +89,8 @@
                                   <span class="btn btn-xs label-primary">{{  prestation.nomToString }}&nbsp;<span>{{ prestation.nbPassages }}</span></span>
                               {% endif %}
                           {% endfor %}
+                          <br/>
+                          <span>{{ contrat.getDureePassageFormat }}</span>
                       </td>
                       <td class="text-center">
                           {% if ((contrat.etablissements | length) > 1) %}

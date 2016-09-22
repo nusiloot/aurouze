@@ -43,7 +43,26 @@
             </div>
         </div>
     {% else %}
-        {{ contrat.getPrixHt()}}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small> <small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
+      <div class="row">
+        <div class="col-xs-6">
+          {{ contrat.getPrixHt()}}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small> <small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
+        </div>
+        {% if(form is defined and not form is null)%}
+          <div class="col-xs-6 text-left">
+            <div class="row">
+              <div class="col-xs-8">
+                <small>{{ form_label(form.dureePassage) }}</small>
+              </div>
+              <div class="col-xs-3">
+                  <div class="input-group" style="padding-top: 10px;">
+                    {{ form_errors(form.dureePassage) }}
+                    {{ form_widget(form.dureePassage) }}
+                  </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+     </div>
     {% endif %}
 
 </h1>

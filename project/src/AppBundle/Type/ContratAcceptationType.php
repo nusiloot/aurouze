@@ -15,6 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Compte;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
+use Symfony\Component\Form\CallbackTransformer;
 
 class ContratAcceptationType extends AbstractType {
 
@@ -48,6 +49,16 @@ class ContratAcceptationType extends AbstractType {
                 $builder->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false, 'label_attr' => array('class' => 'small')));
             }
             $builder->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature* :', "attr" => array("class" => "form-control", "rows" => 6)));
+            $builder->add('dureePassage', TextType::class, array('label' => 'Durée d\'un passage :', 'attr' => array('class' => 'input-timepicker')));
+            $builder->get('dureePassage')
+                    ->addModelTransformer(new CallbackTransformer(
+                            function ($originalDescription) {
+                        $heure = floor($originalDescription / 60);
+                        return $heure . ':' . ((($originalDescription / 60) - $heure) * 60);
+                    }, function ($submittedDescription) {
+                        $duration = explode(':', $submittedDescription);
+                        return $duration[0] * 60 + $duration[1];
+                    }));
         }
         if ($this->contrat->isEnAttenteAcceptation()) {
             $required = array('required' => false);
