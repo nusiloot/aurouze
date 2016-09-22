@@ -150,3 +150,15 @@ body {
 .container .breadcrumb:first-child {
     margin-bottom: 5px;
 }
+
+#nav_nom_etablissement {
+    margin-bottom: 14px;
+    max-width: 250px;
+    height: 21px;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
