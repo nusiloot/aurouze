@@ -2,12 +2,12 @@
 
 {% block body %}
   {% for facture in facturesRelancees %}
-    {% if facture.numeroRelance == 1 %}
-      {% include 'facture/pdfRelance1.html.twig' with {'facture': facture} %}
-    {% elseif facture.numeroRelance == 2 %}
-      {% include 'facture/pdfRelance2.html.twig' with {'facture': facture} %}
-    {% elseif facture.numeroRelance == 3 %}
-      {% include 'facture/pdfMiseEnDemeure.html.twig' with {'facture': facture} %}
+    {% if facture.nbRelance == 1 %}
+      {% include 'facture/pdfRelance1.html.twig' with {'facture': facture, 'lignes' : lignesFacturesRelancees[facture.id] } %}
+    {% elseif facture.nbRelance == 2 %}
+      {% include 'facture/pdfRelance2.html.twig' with {'facture': facture, 'lignes' : lignesFacturesRelancees[facture.id]} %}
+    {% elseif facture.nbRelance == 3 %}
+      {% include 'facture/pdfMiseEnDemeure.html.twig' with {'facture': facture, 'lignes' : lignesFacturesRelancees[facture.id]} %}
     {% endif %}
     <div style="page-break-after: always;"></div>
   {% endfor %}
