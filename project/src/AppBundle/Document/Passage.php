@@ -293,7 +293,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function deplanifier() {
-      
+
         $this->setDateDebut($this->getDatePrevision());
         $this->setDateFin(null);
         if($this->isRealise()) {
@@ -528,6 +528,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
             $nbPassagePrevu = $this->getContrat()->getNbPassagesPrevu();
         }
         return "Passage " . $nbPassage . " sur " . $nbPassagePrevu . " (sous contrat)";
+    }
+
+    public function getRegion() {
+
+        return $this->getEtablissement()->getRegion();
     }
 
     /**
