@@ -22,28 +22,28 @@ class FacturesEnRetardFiltresType extends AbstractType {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$nbRelances = array_merge(array(null => null), PaiementsManager::$types_nb_relance);
-		$dateFactureHaute = new \DateTime();
-    $dateFactureBasse = new \DateTime();
+		//$dateFactureHaute = new \DateTime();
+    //$dateFactureBasse = new \DateTime();
 
 		$builder->add('nbRelances', ChoiceType::class, array('label' => 'Nombre de relance',
                 		'choices' => $nbRelances,
 						        "required" => false,
                 		"attr" => array("class" => "select2 select2-simple nbRelance")));
-		$builder->add('dateFactureBasse', DateType::class, array('required' => true,
+		$builder->add('dateFactureBasse', DateType::class, array('required' => false,
                 		"attr" => array('class' => 'input-inline datepicker dateFactureBasse',
                 				'data-provide' => 'datepicker',
                 				'data-date-format' => 'dd/mm/yyyy'
                 		),
-                		'data' => $dateFactureHaute,
+                	//	'data' => $dateFactureHaute,
                 		'widget' => 'single_text',
                 		'format' => 'dd/MM/yyyy',
 		));
-    $builder->add('dateFactureHaute', DateType::class, array('required' => true,
+    $builder->add('dateFactureHaute', DateType::class, array('required' => false,
                 		"attr" => array('class' => 'input-inline datepicker dateFactureBasse',
                 				'data-provide' => 'datepicker',
                 				'data-date-format' => 'dd/mm/yyyy'
                 		),
-                		'data' => $dateFactureBasse,
+                	//	'data' => $dateFactureBasse,
                 		'widget' => 'single_text',
                 		'format' => 'dd/MM/yyyy',
 		));

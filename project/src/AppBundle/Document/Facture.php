@@ -990,4 +990,15 @@ class Facture implements DocumentSocieteInterface {
           return "#FF5E5E";
         }
     }
+
+    public function has1ereRelance(){
+      return $this->getNbRelance() >= 1;
+    }
+    public function has2ndRelance(){
+      return $this->getNbRelance() >= 2;
+    }
+    public function has3emeRelance(){
+      return $this->getNbRelance() >= 3;
+    }
+
 }
