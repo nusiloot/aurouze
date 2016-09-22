@@ -14,6 +14,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  * repository methods below.
  */
 class SocieteRepository extends DocumentRepository {
+	
+	public function findAurouze()
+	{
+		return $this->findOneByRaisonSociale("AUROUZE");
+	}
 
     public function findByTerms($queryString, $withNonActif = false) {
         $terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $queryString)));
