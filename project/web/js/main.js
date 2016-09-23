@@ -30,7 +30,12 @@
         $.initSomme();
         $.initReconduction();
         $.initButtonLoading();
+        $.initPopupRelancePdf();
     });
+    $.initPopupRelancePdf = function() {
+        $('#relancePdfPopup').modal('show');
+    }
+
 
     $.initButtonLoading = function() {
         $('.btn-loading').on('click', function () {

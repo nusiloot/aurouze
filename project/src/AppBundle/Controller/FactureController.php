@@ -158,11 +158,15 @@ class FactureController extends Controller {
      */
     public function cloturerAction(Request $request, Societe $societe, $factureId) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-
+        $retour = ($request->get('retour', null));
         $facture = $this->get('facture.manager')->getRepository()->findOneById($factureId);
         $facture->cloturer();
         $dm->persist($facture);
         $dm->flush();
+
+        if($retour && ($retour == "relance")){
+          return $this->redirectToRoute('factures_retard');
+        }
         return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
     }
 
@@ -691,7 +695,7 @@ class FactureController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
         $sm = $this->get('societe.manager');
-
+        $pdf = $request->get('pdf',null);
         $dateFactureBasse = null;
         $dateFactureHaute = null;
 
@@ -717,11 +721,10 @@ class FactureController extends Controller {
 
         $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
             'action' => $this->generateUrl('factures_relance_massive'),
-        //    "attr" => array('target' => "_blank", "onsubmit" => "document.location.href=\"http://google.fr\""),
             'method' => 'post',
         ));
 
-        return $this->render('facture/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(), 'nbRelances' => $nbRelances,
+        return $this->render('facture/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(), 'nbRelances' => $nbRelances, 'pdf' => $pdf,
         'formFacturesARelancer' => $formFacturesEnRetard->createView()));
     }
 
@@ -772,19 +775,15 @@ class FactureController extends Controller {
       ));
 
 
-      $filename = sprintf("relances_massives_%s.pdf", (new \DateTime())->format("Y-m-d_His"));
+      $filename = sprintf("relances_massives_%s_%s.pdf", (new \DateTime())->format("Y-m-d_His") , uniqid() );
 
       if ($request->get('output') == 'html') {
 
           return new Response($html, 200);
       }
-
-      return new Response(
-              $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
-          'Content-Type' => 'application/pdf',
-          'Content-Disposition' => 'attachment; filename="' . $filename . '"'
-              )
-      );
+      $path = './pdf/relances/';
+      $this->get('knp_snappy.pdf')->generateFromHtml($html, $path.$filename);
+      return $this->redirectToRoute('factures_retard',array('pdf' => $filename));   
 
     }
 

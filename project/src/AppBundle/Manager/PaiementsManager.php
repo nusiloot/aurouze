@@ -113,6 +113,7 @@ class PaiementsManager {
     self::TYPE_EXPORT_PCA  => array("libelle" =>  "Export PCA", "picto" =>  "glyphicon glyphicon-send", "pdf" =>  false)
     );
 
+
     function __construct(DocumentManager $dm, FactureManager $fm, $parameters) {
         $this->dm = $dm;
         $this->fm = $fm;
