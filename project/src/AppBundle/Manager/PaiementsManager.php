@@ -113,8 +113,6 @@ class PaiementsManager {
     self::TYPE_EXPORT_PCA  => array("libelle" =>  "Export PCA", "picto" =>  "glyphicon glyphicon-send", "pdf" =>  false)
     );
 
-    public static $typesRelance = array(FactureManager::RELANCE_RAPPEL,FactureManager::RELANCE_MISE_EN_DEMEURE, FactureManager::RELANCE_AR);
-
     function __construct(DocumentManager $dm, FactureManager $fm, $parameters) {
         $this->dm = $dm;
         $this->fm = $fm;
