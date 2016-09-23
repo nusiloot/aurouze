@@ -502,4 +502,9 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     {
         return $this->passages;
     }
+
+    public function getRegion() {
+
+        return EtablissementManager::getRegion($this->getAdresse()->getCodePostal());
+    }
 }

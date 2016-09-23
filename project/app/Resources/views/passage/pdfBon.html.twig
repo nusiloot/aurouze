@@ -1,20 +1,26 @@
 <h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Bon de passage du {{ passage.dateDebut | localizeddate("full", "none") }} à {{ passage.dateDebut | date("H") }}h{{ passage.dateDebut | date("i") }}</strong> n° {{ passage.numeroArchive }}
 </h2>
 <hr style="border-color: #ddd; margin-bottom: 30px;" />
+{% set emetteur = parameters.emetteur %}
+{% if parameters["emetteur_"~passage.region] is defined %}
+    {% set emetteur = parameters["emetteur_"~passage.region] %}
+{% endif %}
 <div class="row">
     <div class="col-xs-6">
         <p>
-            <span class="lead" style="font-weight: 400; font-size: 18px">{{ parameters.emetteur.nom }}</span><br />
-            {{ parameters.emetteur.adresse }}<br />
-            {{ parameters.emetteur.code_postal }} {{ parameters.emetteur.commune }} <br />
-            Tél : {{ parameters.emetteur.telephone }}<br />
-            Email : {{ parameters.emetteur.email }}
+            <span class="lead" style="font-weight: 400; font-size: 18px">{{ emetteur.nom }}</span><br />
+            {{ emetteur.adresse }}<br />
+            {{ emetteur.code_postal }} {{ emetteur.commune }} <br />
+            Tél : {{ emetteur.telephone }}<br />
+            Email : {{ emetteur.email }}
         </p>
     </div>
     <div class="col-xs-6 text-left form-horizontal">
         <p>
             <span class="lead" style="font-weight: 400; font-size: 18px"><strong>{{ passage.societe.raisonSociale }}</strong></span><br />
+            {% if(passage.etablissement.nom != passage.societe.raisonSociale) %}
             <span class="lead" style="font-weight: 400; font-size: 18px">{{ passage.etablissement.nom }}</span><br />
+            {% endif %}
             {{ passage.etablissement.adresse.adresseFormatee | nl2br }}<br />
             {{ passage.etablissement.adresse.codePostal }}
             {{ passage.etablissement.adresse.Commune }}
