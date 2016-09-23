@@ -32,6 +32,7 @@ class FactureRepository extends DocumentRepository {
             $q = $this->createQueryBuilder();
 
             $q->field('cloture')->equals(false);
+            $q->field('numeroFacture')->notEqual(null);
             if (preg_match('/^[0-9]+\.[0-9]+$/', $term)) {
                 $nbInf = $term - 0.0001;
                 $nbSup = $term + 0.0001;
@@ -102,11 +103,14 @@ class FactureRepository extends DocumentRepository {
       if($dateFactureHaute){
         $q->field('dateFacturation')->lte($dateFactureHaute);
       }
-      if(!is_null($nbRelance) && $nbRelance != ""){
+      if(!is_null($nbRelance)){
         if($nbRelance > 2){
           $q->field('nbRelance')->gte($nbRelance);
-        }else{
+        }elseif ($nbRelance == 1 || $nbRelance == 2) {
           $q->field('nbRelance')->equals($nbRelance);
+        }elseif ($nbRelance == 0) {
+          $q->addOr($q->expr()->field('nbRelance')->equals(null))
+            ->addOr($q->expr()->field('nbRelance')->equals(0));
         }
       }
       if ($societe) {
@@ -114,7 +118,7 @@ class FactureRepository extends DocumentRepository {
 
         $q->field('societe')->in($societeRepo->getIdsByQuery($societe));
       }
-      $q->sort('dateFacturation', 'asc')->sort('societe', 'asc');
+      $q->sort('dateFacturation', 'desc')->sort('societe', 'asc');
       $query = $q->getQuery();
       return $query->execute();
     }

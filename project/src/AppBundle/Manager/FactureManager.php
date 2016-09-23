@@ -50,6 +50,15 @@ class FactureManager {
     const EXPORT_STATS_TOTAL_PREC = 10;
     const EXPORT_STATS_TOTAL = 11;
 
+    const AUCUNE_RELANCE = "Aucune relance effectuée";
+    const RELANCE_RAPPEL = "1ère relance";
+    const RELANCE_RAPPEL2 = "2ème relance";
+    const RELANCE_DEMEURE_AR = "Mise en demeure avec AR";
+
+    public static $types_nb_relance = array(
+      self::AUCUNE_RELANCE, self::RELANCE_RAPPEL, self::RELANCE_RAPPEL2, self::RELANCE_DEMEURE_AR
+    );
+
 public static $export_factures_libelle = array(
   self::EXPORT_DATE => "Date",
    self::EXPORT_JOURNAL=> "Journal",

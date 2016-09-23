@@ -92,7 +92,7 @@ Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accord
 
 {% endif %}
 ## Durée
-Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{% if contrat.tacite %}, renouvelable par tacite reconduction. Elle peut être dénoncée par les deux parties à chaque date anniversaire par lettre recommandée avec accusé de réception en respectant un préavis de deux mois{% endif %}.
+Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{% if contrat.tacite %}{% if contrat.societe.raisonSociale matches '/mairie/i' %}{% else %}, renouvelable par tacite reconduction. Elle peut être dénoncée par les deux parties à chaque date anniversaire par lettre recommandée avec accusé de réception en respectant un préavis de deux mois{% endif %}{% endif %}.
 
 ## Montant forfaitaire
 

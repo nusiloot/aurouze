@@ -98,6 +98,19 @@ class EtablissementManager {
         return sprintf("%03d", max($allEtablissementsIdentifiants) + 1);
     }
 
+    public static function getRegion($codePostal) {
+        $departement = substr($codePostal, 0, 2);
+
+        foreach(self::$secteurs_departements as $region => $departements) {
+            if(in_array($departement, $departements)) {
+
+                return $region;
+            }
+        }
+
+        return null;
+    }
+
     public function getOSMAdresse() {
         return $this->osmAdresse;
     }

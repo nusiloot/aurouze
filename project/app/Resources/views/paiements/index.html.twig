@@ -7,6 +7,15 @@
         <li><a href="{{ path('paiements_liste') }}">Paiements</a></li>
 
     </ol>
+    {{ form_start(form) }}
+    <h2>Mémo</h2>
+    <div class="row" style="margin-bottom: 20px;">
+		<div class="col-xs-10">
+			{{ form_widget(form.commentaire) }}
+		</div>
+		<div class="col-xs-2">{{ form_widget(form.save) }}</div>
+	</div>
+    {{ form_end(form) }}
     <div class="btn-group">
       {% for exportForm in exportForms %}
         <a data-toggle="modal" data-target="#datechoice{{ exportForm.type }}" class="btn btn-sm btn-default" ><span class="{{exportForm.picto}}"></span> {{exportForm.libelle}}</a>

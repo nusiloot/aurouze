@@ -15,6 +15,8 @@ use AppBundle\Document\Contrat;
 use AppBundle\Document\Societe;
 use AppBundle\Type\FactureChoiceType;
 use AppBundle\Type\SocieteChoiceType;
+use AppBundle\Type\RelanceType;
+use AppBundle\Type\FacturesEnRetardFiltresType;
 
 /**
  * Facture controller.
@@ -113,7 +115,7 @@ class FactureController extends Controller {
      */
     public function societeAction(Request $request, Societe $societe) {
         $fm = $this->get('facture.manager');
-        $facturesRetard = $fm->getRepository()->findRetardDePaiementBySociete($societe,45);
+        $facturesRetard = $fm->getRepository()->findRetardDePaiementBySociete($societe,30);
 
         $formSociete = $this->createForm(SocieteChoiceType::class, array('societe' => $societe), array(
             'action' => $this->generateUrl('societe'),
@@ -679,6 +681,152 @@ class FactureController extends Controller {
             'Content-Disposition' => 'attachment; filename="' . $filename . '"'
           ));
       }
+    }
+
+    /**
+     * @Route("/retards-de-facture", name="factures_retard")
+     */
+    public function retardsAction(Request $request) {
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
+        $sm = $this->get('societe.manager');
+
+        $dateFactureBasse = null;
+        $dateFactureHaute = null;
+
+
+        $nbRelances = null;
+        $societe = null;
+
+        $formFacturesEnRetard = $this->createForm(new FacturesEnRetardFiltresType(), null, array(
+            'action' => $this->generateUrl('factures_retard'),
+            'method' => 'post',
+        ));
+        $formFacturesEnRetard->handleRequest($request);
+        if ($formFacturesEnRetard->isSubmitted() && $formFacturesEnRetard->isValid()) {
+
+          $formValues =  $formFacturesEnRetard->getData();
+          $dateFactureBasse = $formValues["dateFactureBasse"];
+          $dateFactureHaute = $formValues["dateFactureHaute"];
+          $nbRelances = intval($formValues["nbRelances"]) -1;
+          $societe = $formValues["societe"];
+
+        }
+        $facturesEnRetard = $fm->getRepository()->findFactureRetardDePaiement($dateFactureBasse, $dateFactureHaute, $nbRelances, $societe);
+
+        $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
+            'action' => $this->generateUrl('factures_relance_massive'),
+        //    "attr" => array('target' => "_blank", "onsubmit" => "document.location.href=\"http://google.fr\""),
+            'method' => 'post',
+        ));
+
+        return $this->render('facture/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(), 'nbRelances' => $nbRelances,
+        'formFacturesARelancer' => $formFacturesEnRetard->createView()));
+    }
+
+
+    /**
+     * @Route("/relance-massive", name="factures_relance_massive")
+     */
+    public function relanceMassiveAction(Request $request) {
+
+      set_time_limit(0);
+      $dm = $this->get('doctrine_mongodb')->getManager();
+      $fm = $this->get('facture.manager');
+      $factureARelancer = array();
+      $formRequest = $request->request->get('relance');
+
+
+      foreach ($formRequest as $key => $value) {
+        if(preg_match("/^FACTURE-/",$key)){
+            $factureARelancer[$key] = $fm->getRepository()->findOneById($key);
+        }
+      }
+
+      $lignesFacturesRelancees = array();
+
+      foreach ($factureARelancer as $facture) {
+
+          $lignesFacturesRelancees[$facture->getId()] = array();
+          foreach($facture->getLignes() as $key => $ligneFacture) {
+
+              $ligne = $this->buildLignePDFFacture($ligneFacture);
+              $lignesFacturesRelancees[$facture->getId()][] = $ligne;
+          }
+
+          if($facture->getNbRelance() > 2) {
+              continue;
+          }
+          $nbRelance = intval($facture->getNbRelance()) + 1;
+          $facture->setNbRelance($nbRelance);
+          $dm->flush();
+      }
+
+
+      $html = $this->renderView('facture/pdfRelanceMassive.html.twig', array(
+          'facturesRelancees' => $factureARelancer,
+          'lignesFacturesRelancees' => $lignesFacturesRelancees,
+
+          'parameters' => $fm->getParameters()
+      ));
+
+
+      $filename = sprintf("relances_massives_%s.pdf", (new \DateTime())->format("Y-m-d_His"));
+
+      if ($request->get('output') == 'html') {
+
+          return new Response($html, 200);
+      }
+
+      return new Response(
+              $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
+          'Content-Type' => 'application/pdf',
+          'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+              )
+      );
+
+    }
+
+    /**
+     * @Route("/relance-pdf/{id}/{numeroRelance}", name="facture_relance_pdf")
+     * @ParamConverter("facture", class="AppBundle:Facture")
+     */
+    public function relancePdfAction(Request $request, Facture $facture, $numeroRelance = 0 ) {
+
+      set_time_limit(0);
+      $fm = $this->get('facture.manager');
+
+      $lignes = array();
+      foreach($facture->getLignes() as $key => $ligneFacture) {
+
+          $ligne = $this->buildLignePDFFacture($ligneFacture);
+          $lignes[] = $ligne;
+      }
+
+      $html = $this->renderView('facture/pdfGeneriqueRelance.html.twig', array(
+          'facture' => $facture,
+          'lignes' => $lignes,
+          'numeroRelance' => $numeroRelance,
+          'parameters' => $fm->getParameters()
+      ));
+
+      $terme_relance = FactureManager::$types_nb_relance[$numeroRelance];
+
+      $filename = sprintf("relance_%s_facture_%s_%s.pdf",$terme_relance, $facture->getNumeroFacture(), (new \DateTime())->format("Y-m-d_His"));
+
+      if ($request->get('output') == 'html') {
+
+          return new Response($html, 200);
+      }
+
+      return new Response(
+              $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
+          'Content-Type' => 'application/pdf',
+          'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+              )
+      );
+
     }
 
 

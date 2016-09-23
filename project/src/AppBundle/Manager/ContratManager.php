@@ -187,7 +187,7 @@ class ContratManager implements MouvementManagerInterface {
       $sortedContratsByEtablissement = array();
       $today = new \DateTime();
       foreach ($contratsByEtablissement as $contrat) {
-        $passagesEtablissement = $contrat->getPassagesEtablissementNode($etablissement);
+        $passagesEtablissement = $contrat->hasEtablissementNode($etablissement);
         if($passagesEtablissement){
           $contratObj = new \stdClass();
           $contratObj->contrat = $contrat;
