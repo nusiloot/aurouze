@@ -50,7 +50,7 @@
                     {% elseif ((contrat.etablissements | length) == 1) %}
                         <a title="{% for etablissement in contrat.etablissements %} {{ etablissement.nom }} - {{ etablissement.adresse.commune }} {% endfor %}" data-toggle="tooltip" href="{{ path('passage_etablissement', {'id': contrat.etablissements[0].id }) }}">
                       {% for etablissement in contrat.etablissements %}
-                       {{ etablissement.adresse.adresseFormatee }}
+                       {% if etablissement.adresse.adresseFormatee %}{{ etablissement.adresse.adresseFormatee }}{% else %}{{ etablissement.adresse.commune }}{% endif %}
                       {% endfor %}
                       </a>
                     {% else %}
