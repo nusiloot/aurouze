@@ -185,7 +185,7 @@ public static $export_stats_libelle = array(
                 $arr_ligne[] = $facture->getContrat()->getTypeContratLibelle();
                 $arr_ligne[] = $facture->getContrat()->getNumeroArchive();
                 $arr_ligne[] = $facture->getNumeroFacture();
-                $arr_ligne[] = $facture->getMontantHt();
+                $arr_ligne[] = $facture->getMontantHT();
                 $arr_ligne[] = 0.0;
                 $csv[$key] = $arr_ligne;
             }else{
@@ -198,13 +198,15 @@ public static $export_stats_libelle = array(
               $arr_ligne[] = $facture->getSociete()->getRaisonSociale();
               $arr_ligne[] = ($facture->getContrat())? $facture->getContrat()->getNumeroArchive() : "Pas de contrat";
               $arr_ligne[] = $facture->getNumeroFacture();
-              $arr_ligne[] = $facture->getMontantHt();
+              $arr_ligne[] = $facture->getMontantHT();
               $arr_ligne[] = 0.0;
               $csv[$key] = $arr_ligne;
             }
             $cpt++;
           }
           ksort($csv);
+
+
           $totalArray = array();
 
           foreach ($csv as $csvRow) {
@@ -212,8 +214,9 @@ public static $export_stats_libelle = array(
             if(!array_key_exists($commercial,$totalArray)){
               $totalArray[$commercial] = 0.0;
             }
-            $totalArray[$commercial] = $totalArray[$commercial] +  $csvRow[4];
+            $totalArray[$commercial] = $totalArray[$commercial] +  $csvRow[5];
           }
+
           $cpt = 0;
           foreach ($csv as $csvKey => $csvRow) {
             if($cpt){
@@ -246,6 +249,7 @@ public static $export_stats_libelle = array(
 
 
       $facturesObjs = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
+
       $this->fillCaStatsArray($ca_stats,$facturesObjs);
 
       $dateDebutMoinsOneYear = \DateTime::createFromFormat('Y-m-d', $dateDebut->format('Y-m-d'));
@@ -305,7 +309,7 @@ public static $export_stats_libelle = array(
   private function fillCaStatsArray(&$ca_stats,$facturesObjs,$last_year = false){
 
     foreach ($facturesObjs as $facture) {
-      if(!$facture->getContrat()){
+        if(!$facture->getContrat()){
         if(!array_key_exists('PAS DE CONTRAT',$ca_stats)){
         $ca_stats['PAS DE CONTRAT'] = array();
           foreach (array_keys(self::$export_stats_libelle) as $stats_index) {
@@ -324,10 +328,10 @@ public static $export_stats_libelle = array(
           }else{
               $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT] += $facture->getMontantHT();
           }
-        //  $ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT] = "TOTAL";
       }else{
 
-        $commercial = ($facture->getContrat()->getCommercial())? $facture->getContrat()->getCommercial()->getId() : "VIDE";
+        $commercial = ($facture->getContrat()->getCommercial()) ? $facture->getContrat()->getCommercial()->getId() : "VIDE";
+
         if(!array_key_exists($commercial,$ca_stats)){
           foreach (array_keys(self::$export_stats_libelle) as $stats_index) {
             $ca_stats[$commercial][$stats_index] = 0.0;
@@ -359,14 +363,16 @@ public static $export_stats_libelle = array(
           $ca_stats[$commercial][self::EXPORT_STATS_RECONDUCTION] += $facture->getMontantHT();
         }
       }
+    }
 
-      $ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT] = (!$ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT])? 'VIDE' : $this->dm->getRepository('AppBundle:Compte')->findOneById($commercial)->getIdentite();
+        if(!$ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT] && $this->dm->getRepository('AppBundle:Compte')->findOneById($commercial)) {
+            $ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT] =  $this->dm->getRepository('AppBundle:Compte')->findOneById($commercial)->getIdentite();
+        } elseif(!$ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT]) {
+            $ca_stats[$commercial][self::EXPORT_STATS_REPRESENTANT] = $commercial;
+        }
 
     }
   }
-
-  }
-
 
     public function getFacturesForCsv($dateDebut = null,$dateFin = null) {
         if(!$dateDebut){
