@@ -63,7 +63,7 @@
             }
 
             $.get($(this).attr('href'));
-            $(this).parents('tr').remove();
+            $(this).parents('tr').fadeOut(500, function() {$(this).parents('tr').remove();});
             return false;
         });
     }
