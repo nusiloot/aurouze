@@ -911,7 +911,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return $contratPassages[$etablissement->getId()];
     }
-    
+
     public function hasEtablissementNode(Etablissement $etablissement) {
         $etablissements = array();
         foreach ($this->getEtablissements() as $etab) {
@@ -1224,6 +1224,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isModifiable() {
+        if($this->hasMouvements()) {
+
+            return false;
+        }
+        
         if ($this->isEnAttenteAcceptation() || $this->isBrouillon()) {
             return true;
         }

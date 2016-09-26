@@ -90,6 +90,8 @@ class ContratController extends Controller {
     public function modificationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
+        $contratManager = new ContratManager($dm);
+
         if (!$contrat->isModifiable()) {
             throw $this->createNotFoundException();
         }
@@ -104,10 +106,16 @@ class ContratController extends Controller {
             if(!$contrat->getStatut() || $contrat->isBrouillon()) {
                 $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
             }
+
             $contrat->updateObject();
             $contrat->updatePrestations($dm);
             $contrat->updateProduits($dm);
-            $dm->persist($contrat);
+            if($contrat->isEnCours()) {
+                $contratManager->generateAllPassagesForContrat($contrat);
+            }
+            if(!$contrat->getId()) {
+                $dm->persist($contrat);
+            }
             $dm->flush();
             return $this->redirectToRoute('contrat_acceptation', array('id' => $contrat->getId()));
         }
