@@ -391,6 +391,12 @@ class ContratController extends Controller {
     	$dm = $this->get('doctrine_mongodb')->getManager();
     	$contrat->setReconduit(true);
     	$dm->flush();
+
+        if($request->isXmlHttpRequest()) {
+
+            return new Response();
+        }
+
     	return $this->redirectToRoute('contrats_reconduction_massive');
     }
 

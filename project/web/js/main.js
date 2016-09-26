@@ -56,6 +56,16 @@
             $("form#formContratsAReconduire").submit();
         });
       });
+
+        $('.lien_pas_de_reconduction').on('click', function() {
+            if(!confirm('Ne plus jamais reconduire ce contrat ?')) {
+                return false;
+            }
+
+            $.get($(this).attr('href'));
+            $(this).parents('tr').remove();
+            return false;
+        });
     }
 
     $.initSomme = function () {

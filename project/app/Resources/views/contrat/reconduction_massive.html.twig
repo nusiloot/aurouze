@@ -112,7 +112,7 @@
                         </td>
                         <td>
                         	<div class="checkbox">
-                        		<a onclick="return confirm('Ne plus jamais reconduire ce contrat ?')"  href="{{ path('contrat_force_reconduction', {'id': contrat.id }) }}"><small class="glyphicon glyphicon-remove text-danger">&nbsp;</small></a>
+                                <a class="lien_pas_de_reconduction" href="{{ path('contrat_force_reconduction', {'id': contrat.id }) }}"><small class="glyphicon glyphicon-remove text-danger">&nbsp;</small></a>
                         	</div>
                         </td>
                   </tr>
