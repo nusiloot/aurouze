@@ -101,7 +101,9 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
-            $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+            if(!$contrat->getStatut() || $contrat->isBrouillon()) {
+                $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+            }
             $contrat->updateObject();
             $contrat->updatePrestations($dm);
             $contrat->updateProduits($dm);
