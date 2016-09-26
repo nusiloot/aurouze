@@ -1,7 +1,7 @@
 {% set _menu_active = 'paiementsRetard' %}
 {% extends 'base.html.twig' %}
 
-{% block title %}Passages en erreurs{% endblock title %}
+{% block title %}Relances et retard de Paiements{% endblock title %}
 
 {% block body %}
 
@@ -92,7 +92,7 @@
               <th class="col-xs-1">Montant TTC</th>
               <th class="col-xs-1">Montant Payé</th>
               <th class="col-xs-1">Relance(s)</th>
-              <th class="col-xs-1">Relance</th>
+              <th class="col-xs-1"></th>
             </tr>
           </thead>
           <tbody>
@@ -123,9 +123,16 @@
 								{% endif %}
 							</td>
               <td class="text-center">
-                    {% set idCheckbox = factureEnRetard.id %}
-                    {% set fieldFrom = attribute(formRelance,idCheckbox) %}
-                    {{ form_widget(fieldFrom) }}
+								<div class="row" >
+										<div class="col-xs-6" style="padding-top:6px;">
+											<a data-toggle="tooltip" title="cloturer" onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': factureEnRetard.societe.id, 'factureId': factureEnRetard.id, 'retour':'relance' }) }}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-check"></span>&nbsp;</a>
+										</div>
+										<div class="col-xs-6 text-left">
+											{% set idCheckbox = factureEnRetard.id %}
+	                    {% set fieldFrom = attribute(formRelance,idCheckbox) %}
+	                    {{ form_widget(fieldFrom) }}
+										</div>
+								</div>
               </td>
             </tr>
             {% endfor %}
@@ -134,4 +141,25 @@
         </div>
       </div>
       {{ form_end(formRelance) }}
+
+			{% if pdf %}
+			<div id="relancePdfPopup" class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			        <h4 class="modal-title">PDF des relances générées</h4>
+			      </div>
+			      <div class="modal-body">
+			        <p><a data-toggle="tooltip" data-original-title="Télécharger les relances massives" href="/pdf/relances/{{pdf}}">Cliquez ici pour obtenir le pdf des relances générées : <span class="glyphicon glyphicon-file"></span></a></p>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+			      </div>
+			    </div>
+
+			  </div>
+			</div>
+			{% endif %}
 {% endblock %}
