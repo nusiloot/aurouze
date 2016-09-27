@@ -164,6 +164,11 @@ class FactureController extends Controller {
         $dm->persist($facture);
         $dm->flush();
 
+        if($request->isXmlHttpRequest()) {
+
+            return new Response();
+        }
+
         if($retour && ($retour == "relance")){
           return $this->redirectToRoute('factures_retard');
         }

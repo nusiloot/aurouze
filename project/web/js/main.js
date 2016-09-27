@@ -29,6 +29,7 @@
         $.initTypeheadSearchable();
         $.initSomme();
         $.initReconduction();
+        $.initRelance();
         $.initButtonLoading();
         $.initPopupRelancePdf();
     });
@@ -59,6 +60,18 @@
 
         $('.lien_pas_de_reconduction').on('click', function() {
             if(!confirm('Ne plus jamais reconduire ce contrat ?')) {
+                return false;
+            }
+
+            $.get($(this).attr('href'));
+            $(this).parents('tr').fadeOut(500, function() {$(this).parents('tr').remove();});
+            return false;
+        });
+    }
+
+    $.initRelance = function(){
+        $('.relance_lien_cloturer').on('click', function() {
+            if(!confirm('Êtes vous sûr de vouloir cloturer cette facture ?')) {
                 return false;
             }
 
