@@ -125,7 +125,7 @@
               <td class="text-center">
 								<div class="row" >
 										<div class="col-xs-6" style="padding-top:6px;">
-											<a data-toggle="tooltip" title="cloturer" onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': factureEnRetard.societe.id, 'factureId': factureEnRetard.id, 'retour':'relance' }) }}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-check"></span>&nbsp;</a>
+											<a data-toggle="tooltip" title="cloturer" href="{{ path('facture_cloturer', {'id': factureEnRetard.societe.id, 'factureId': factureEnRetard.id, 'retour':'relance' }) }}" class="btn btn-default btn-xs relance_lien_cloturer"><span class="glyphicon glyphicon-check"></span>&nbsp;</a>
 										</div>
 										<div class="col-xs-6 text-left">
 											{% set idCheckbox = factureEnRetard.id %}
