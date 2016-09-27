@@ -28,10 +28,8 @@
     </div>
 </div>
 <br />
-<br />
 <div class="row">
     <div class="col-xs-12">
-        <br />
         <h3>2nd relance</h3>
     </div>
 </div>
@@ -41,8 +39,6 @@
         <h4>Objet : rappel concernant la facture n° {{ facture.numeroFacture }}</h4>
     </div>
 </div>
-<br />
-<br />
 <div class="row">
     <div class="col-xs-12">
     {% for ligne in lignes %}
@@ -74,7 +70,6 @@
         Madame, Monsieur,
       </div>
 </div>
-<br />
 <div class="row">
     <div class="col-xs-12" style="font-size: 12px;">
         Sauf erreur ou omission de notre part, nous attendons toujours un règlement de :
@@ -141,7 +136,7 @@
         </div>
       </div>
 </div>
-<br /><br />
+<br />
 <small>
 <p class="text-center" style="line-height: 13px;">
     <small>
@@ -152,7 +147,7 @@
     </small>
 </p>
 </small>
-<br /><br />
+<br />
 <div style="border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; margin-top: 15px;">
     <div class="row">
         <div class="col-xs-12 text-center">
@@ -160,13 +155,13 @@
         </div>
         <div class="col-xs-6">
             <p>
-            <span class="lead" style="font-size: 15px;">Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
+            <span class="lead" style="font-size: 12px;">Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
             <small>Client : {{ facture.destinataire.raisonSociale }} ({{ facture.destinataire.codeComptable }})</small>
             </p>
         </div>
         <div class="col-xs-6 text-right">
             <p>
-            <span class="lead" style="font-size: 15px;">Montant dû : {{ facture.restantAPayer|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
+            <span class="lead" style="font-size: 12px;">Montant dû : {{ facture.restantAPayer|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
             </p>
         </div>
     </div>
