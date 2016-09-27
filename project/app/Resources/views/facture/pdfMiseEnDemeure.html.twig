@@ -28,20 +28,11 @@
     </div>
 </div>
 <br />
-<br />
 <div class="row">
     <div class="col-xs-12">
-        <br />
+        <h4>Objet : mise en demeure<br/>Lettre recommandée avec accusé de réception</h4>
     </div>
 </div>
-<br />
-<div class="row">
-    <div class="col-xs-12">
-        <h3>Objet : mise en demeure<br/>Lettre recommandée avec accusé de réception</h3>
-    </div>
-</div>
-<br />
-<br />
 <div class="row">
     <div class="col-xs-12">
     {% for ligne in lignes %}
@@ -73,7 +64,6 @@
         Madame, Monsieur,
       </div>
 </div>
-<br />
 <div class="row">
     <div class="col-xs-12" style="font-size: 12px;">
         Nous constatons avec regret qu'en dépit de courriers de relance, vous n'avez toujours pas procédé au reglement
@@ -84,7 +74,6 @@
         de notre facture n° {{ facture.numeroFacture }} du {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY")  }} échue le {{ facture.dateLimitePaiement | localizeddate("medium", "none", null, null,  "d/MM/YYYY")  }}.
     </div>
 </div>
-<br />
 <div class="row">
     <div class="col-xs-12" style="font-size: 12px;">
         <br />
@@ -105,7 +94,6 @@
         dans un délai de huit jours à réception de la présente.
       </div>
 </div>
-<br/>
 <div class="row">
     <div class="col-xs-12" style="font-size: 12px;">
         A défaut, notre service contentieux se chargera d'en obtenir le recouvrement par voie de justice.
@@ -116,9 +104,9 @@
         Nous vous rappelons que le présent courrier fait courrir les intérêts légaux et conventionnels.
       </div>
 </div>
-<br/>
 <div class="row">
     <div class="col-xs-12" style="font-size: 12px;">
+	<br />
         Nous vous prions de croire, Madame, Monsieur, en l'assurance de notre considération distinguée.
       </div>
 </div>
@@ -132,7 +120,7 @@
         </div>
       </div>
 </div>
-<br /><br />
+<br />
 <small>
 <p class="text-center" style="line-height: 13px;">
     <small>
@@ -143,7 +131,7 @@
     </small>
 </p>
 </small>
-<br /><br />
+<br />
 <div style="border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; margin-top: 15px;">
     <div class="row">
         <div class="col-xs-12 text-center">
