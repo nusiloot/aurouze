@@ -157,7 +157,7 @@ class ContratController extends Controller {
                     $contratManager->updateNbFactureForContrat($contrat);
                 }
                 if ($contrat->getDateDebut()) {
-                	$dateFinCalcule = \DateTime::createFromFormat('Y-m-d',$contrat->getDateDebut()->format('Y-m-d'));
+                	$dateFinCalcule = \DateTime::createFromFormat('Y-m-d H:i:s',$contrat->getDateDebut()->format('Y-m-d')." 00:00:00");
                 	$contrat->setDateFin($dateFinCalcule->modify("+" . $contrat->getDuree() . " month"));
                 }
                 $dm->persist($contrat);
