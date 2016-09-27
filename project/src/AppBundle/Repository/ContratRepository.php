@@ -101,6 +101,7 @@ class ContratRepository extends DocumentRepository {
     }
 
     public function findContratsAReconduire($typeContrat = null, \DateTime $date, $societe = null) {
+          $date = new \DateTime($date->format('Y-m-d')." 23:59:59");
           $q = $this->createQueryBuilder();
           if ($societe) {
 			$societeRepo = $this->getDocumentManager()->getRepository('AppBundle:Societe');

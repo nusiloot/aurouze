@@ -90,6 +90,8 @@ class ContratController extends Controller {
     public function modificationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
+        $contratManager = new ContratManager($dm);
+
         if (!$contrat->isModifiable()) {
             throw $this->createNotFoundException();
         }
@@ -101,11 +103,19 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contrat = $form->getData();
-            $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+            if(!$contrat->getStatut() || $contrat->isBrouillon()) {
+                $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
+            }
+
             $contrat->updateObject();
             $contrat->updatePrestations($dm);
             $contrat->updateProduits($dm);
-            $dm->persist($contrat);
+            if($contrat->isEnCours()) {
+                $contratManager->generateAllPassagesForContrat($contrat);
+            }
+            if(!$contrat->getId()) {
+                $dm->persist($contrat);
+            }
             $dm->flush();
             return $this->redirectToRoute('contrat_acceptation', array('id' => $contrat->getId()));
         }
@@ -147,7 +157,7 @@ class ContratController extends Controller {
                     $contratManager->updateNbFactureForContrat($contrat);
                 }
                 if ($contrat->getDateDebut()) {
-                	$dateFinCalcule = \DateTime::createFromFormat('Y-m-d',$contrat->getDateDebut()->format('Y-m-d'));
+                	$dateFinCalcule = \DateTime::createFromFormat('Y-m-d H:i:s',$contrat->getDateDebut()->format('Y-m-d')." 00:00:00");
                 	$contrat->setDateFin($dateFinCalcule->modify("+" . $contrat->getDuree() . " month"));
                 }
                 $dm->persist($contrat);
@@ -381,6 +391,12 @@ class ContratController extends Controller {
     	$dm = $this->get('doctrine_mongodb')->getManager();
     	$contrat->setReconduit(true);
     	$dm->flush();
+
+        if($request->isXmlHttpRequest()) {
+
+            return new Response();
+        }
+
     	return $this->redirectToRoute('contrats_reconduction_massive');
     }
 

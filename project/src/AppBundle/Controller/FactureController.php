@@ -164,6 +164,11 @@ class FactureController extends Controller {
         $dm->persist($facture);
         $dm->flush();
 
+        if($request->isXmlHttpRequest()) {
+
+            return new Response();
+        }
+
         if($retour && ($retour == "relance")){
           return $this->redirectToRoute('factures_retard');
         }
@@ -783,7 +788,7 @@ class FactureController extends Controller {
       }
       $path = './pdf/relances/';
       $this->get('knp_snappy.pdf')->generateFromHtml($html, $path.$filename);
-      return $this->redirectToRoute('factures_retard',array('pdf' => $filename));   
+      return $this->redirectToRoute('factures_retard',array('pdf' => $filename));
 
     }
 

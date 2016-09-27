@@ -1,14 +1,14 @@
-<h1 class="text-center">
+<h2 class="text-center">
     {% if(form is defined and not form is null and not contrat.hasMouvements())%}
 
         <div class="row">
-            <div class="col-xs-5 text-right">
+            <div class="col-xs-3 text-right">
                 <div class="row  ">
-                    <div class="col-xs-8">
+                    <div class="col-xs-6">
                         {{ form_errors(form.prixHt) }}
                         <small>{{ form_label(form.prixHt) }}</small>
                     </div>
-                    <div class="col-xs-4 text-right">
+                    <div class="col-xs-6 text-right">
                         <div class="input-group" style="padding-top: 10px;">
                             {{ form_widget(form.prixHt) }} <div class="input-group-addon">€</div>
 
@@ -18,19 +18,19 @@
             </div>
             <div class="col-xs-3 text-left">
                 <div class="row">
-                    <div class="col-xs-2 text-left">
+                    <div class="col-xs-3 text-left">
                         {{ form_errors(form.nbFactures) }}
                         <small>{{ form_label(form.nbFactures) }}</small>
                     </div>
-                    <div class="col-xs-3 text-left">
+                    <div class="col-xs-4 text-left">
                         <div style="padding-top: 10px;">
                             {{ form_widget(form.nbFactures) }}
                         </div>
                     </div>
-                    <small class="col-xs-3" style="padding-top: 12px;">&nbsp;facture(s)</small>
+                    <small class="col-xs-4" style="padding-top: 12px;">&nbsp;facture(s)</small>
                 </div>
             </div>
-            <div class="col-xs-4 text-left">
+            <div class="col-xs-2 text-left">
                 <div class="row">
                     <div class="col-xs-12 text-left">
                         <div style="margin-top:-8px">
@@ -41,6 +41,19 @@
                     </div>
                 </div>
             </div>
+            {% if(form is defined and not form is null)%}
+            <div class="col-xs-4 text-left">
+                 <div class="col-xs-8">
+                    <small>{{ form_label(form.dureePassage) }}</small>
+                </div>
+                <div class="col-xs-4">
+                    <div class="input-group" style="padding-top: 10px;">
+                        {{ form_errors(form.dureePassage) }}
+                        {{ form_widget(form.dureePassage) }}
+                      </div>
+                 </div>
+            </div>
+            {% endif %}
         </div>
     {% else %}
       <div class="row">
@@ -48,24 +61,23 @@
           {{ contrat.getPrixHt()}}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small> <small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
         </div>
         {% if(form is defined and not form is null)%}
-          <div class="col-xs-6 text-left">
+        <div class="col-xs-6 text-left">
             <div class="row">
-              <div class="col-xs-8">
-                <small>{{ form_label(form.dureePassage) }}</small>
-              </div>
-              <div class="col-xs-3">
-                  <div class="input-group" style="padding-top: 10px;">
-                    {{ form_errors(form.dureePassage) }}
-                    {{ form_widget(form.dureePassage) }}
-                  </div>
-              </div>
+                <div class="col-xs-8">
+                    <small>{{ form_label(form.dureePassage) }}</small>
+                </div>
+                <div class="col-xs-3">
+                    <div class="input-group" style="padding-top: 10px;">
+                        {{ form_errors(form.dureePassage) }}
+                        {{ form_widget(form.dureePassage) }}
+                    </div>
+                </div>
             </div>
-          </div>
+        </div>
         {% endif %}
      </div>
     {% endif %}
-
-</h1>
+</h2>
 <br/>
 
 
