@@ -96,8 +96,7 @@ class FactureRepository extends DocumentRepository {
       $q->field('cloture')->equals(false);
       $q->field('montantTTC')->gt(0.0);
       $q->field('montantAPayer')->gt(0.0);
-      // TODO: a enlever
-      //    $q->field('avoir')->equals(null);
+      $q->field('avoir')->equals(null);
       $q->field('dateLimitePaiement')->lte($today);
       if($dateFactureBasse){
         $q->field('dateFacturation')->gte($dateFactureBasse);
@@ -133,7 +132,7 @@ class FactureRepository extends DocumentRepository {
       $q->field('societe')->equals($societe->getId());
       $q->field('cloture')->equals(false);
       $q->field('montantTTC')->gt(0.0);
-      $q->field('avoir')->equals(null);       
+      $q->field('avoir')->equals(null);
       $q->field('dateLimitePaiement')->lt($jour)->sort('dateFacturation', 'asc');
       $query = $q->getQuery();
       return $query->execute();
