@@ -14,7 +14,7 @@
             <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date, 'mode':mode, 'id': ((passage) ? passage.etablissement.id : "0")  }) }}">&nbsp;{{ date | localizeddate('full', 'none') | capitalize }}</a></li>
             {% endif %}
         {% if(mode == 'MOIS') %}
-            <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date, 'mode':mode, 'id': ((passage) ? passage.etablissement.id : "0")  }) }}">&nbsp;{{ date | localizeddate("medium", "none", null, null, "MMMM YYYY") | capitalize }}</a></li>
+            <li><a href="{{ path('calendar',{ 'technicien': technicien, 'date': date, 'mode':mode, 'id': ((passage) ? passage.etablissement.id : "0")  }) }}">&nbsp;{{ date | localizeddate("medium", "none", null, null, "MMMM yyyy") | capitalize }}</a></li>
             {% endif %}
     </ol>
     <div class="row">

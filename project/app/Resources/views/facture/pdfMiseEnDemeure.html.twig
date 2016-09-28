@@ -81,7 +81,7 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        de notre facture n° {{ facture.numeroFacture }} du {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY")  }} échue le {{ facture.dateLimitePaiement | localizeddate("medium", "none", null, null,  "d/MM/YYYY")  }}.
+        de notre facture n° {{ facture.numeroFacture }} du {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/yyyy")  }} échue le {{ facture.dateLimitePaiement | localizeddate("medium", "none", null, null,  "d/MM/yyyy")  }}.
     </div>
 </div>
 <br />
@@ -128,7 +128,7 @@
         <div class="text-center">
         Le service Comptabilité Client
         <br/>
-        PARIS le {{ "now" | localizeddate("medium", "none", null, null,  "d/MM/YYYY") }}
+        PARIS le {{ "now" | localizeddate("medium", "none", null, null,  "d/MM/yyyy") }}
         </div>
       </div>
 </div>

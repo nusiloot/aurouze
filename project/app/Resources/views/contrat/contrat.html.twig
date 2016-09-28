@@ -76,7 +76,7 @@
         {% for mouvement in facture.lignes %}
             <tr>
                 <td>{{ mouvement.libelle }}</td>
-                <td class="text-right">{{ facture.dateFacturation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}</td>
+                <td class="text-right">{{ facture.dateFacturation | localizeddate("medium", "none", null, null, "d MMM yyyy") }}</td>
                 <td class="text-center"><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;{{ facture.numeroFacture }}</a></td>
                 <td class="text-right">{{ "%0.2f" | format(mouvement.montantHT) }} €</td>
             </tr>
