@@ -1,6 +1,6 @@
 {% set _menu_active = 'paiements' %}
 {% extends 'base.html.twig' %}
-{% block title %}Modification des paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}{% endblock title %}
+{% block title %}Modification des paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}{% endblock title %}
 
 {% form_theme form _self %}
 
@@ -70,7 +70,7 @@
     <ol class="breadcrumb">
         <li><a href="{{ path('paiements_liste') }}">Paiements</a></li>
             {#        <li><a href="{{ path('paiements_visualisation',{ 'id' : paiements.id }) }}">&nbsp;{{ paiements.id }}</a></li>#}
-        <li><a href="{{ path('paiements_modification', {'id': paiements.id }) }}"><small>Modification paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</small></a></li>
+        <li><a href="{{ path('paiements_modification', {'id': paiements.id }) }}"><small>Modification paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</small></a></li>
     </ol>
 
     <div id="wrapper" >
@@ -80,7 +80,7 @@
             Impression banque
         </a>
         <br/>
-        <h1>Modification des paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM YYYY") }}</h1>
+        <h1>Modification des paiements du {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</h1>
         {{ form_start(form) }}
 
             <div class="panel panel-default">

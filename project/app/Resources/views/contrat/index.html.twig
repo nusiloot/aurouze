@@ -37,7 +37,7 @@
                       <td><small class="text-{{ contrat.statutCouleur }}">{{ contrat.statutLibelle }}</small></td>
                       <td><small>{{ contrat.typeContratLibelle }}</small></td>
                       <td class="text-center"><a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">n°&nbsp;{{ contrat.numeroArchive }}</a>&nbsp;<a href="{{ path('contrat_pdf', {'id': contrat.id })}}"><small class="glyphicon glyphicon-file"></small></a></td>
-                      <td><small>{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}{% endif %}</small></td>
+                      <td><small>{{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") %}&nbsp;-&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% endif %}</small></td>
                       <td class="text-right">{{ "%0.2f" | format(contrat.getPrixHt)  }}&nbsp;€&nbsp;</td>
                       <td>
                           {% for prestation in contrat.prestations %}

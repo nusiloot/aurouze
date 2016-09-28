@@ -99,7 +99,7 @@
             {% for factureEnRetard in facturesEnRetard %}
             <tr style="{{ factureEnRetard.getRelanceColor }}" >
               {{factureEnRetard.isDevis }}
-              <td><small>{{ factureEnRetard.dateFacturation | localizeddate("medium", "none", null, null, "d MMM YYYY") | capitalize }}</small></td>
+              <td><small>{{ factureEnRetard.dateFacturation | localizeddate("medium", "none", null, null, "d MMM yyyy") | capitalize }}</small></td>
               <td>
 								<small><a href="{{ path('facture_societe', {'id': factureEnRetard.societe.id }) }}">{{ factureEnRetard.societe.raisonSociale }}</a></small>
 								{% if factureEnRetard.societe.contactCoordonnee.email %}
@@ -108,6 +108,9 @@
 							</td>
               <td>
 								<a href="{{ path('facture_pdf', {'id': factureEnRetard.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;Facture n° {{ factureEnRetard.numeroFacture }}</a>
+								{% if(factureEnRetard.isRedressee()) %}
+								&nbsp;<span data-toggle="tooltip" title="{{ factureEnRetard.avoir }}" class="label label-xs label-warning">R</span>
+								{% endif %}
 							</td>
               <td class="text-right">{{ "%0.2f" | format(factureEnRetard.montantTTC)  }}&nbsp;€</td>
               <td class="text-right">{{ "%0.2f" | format(factureEnRetard.montantPaye)  }}&nbsp;€</td>

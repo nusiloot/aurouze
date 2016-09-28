@@ -41,7 +41,7 @@
                     <tr class="" {% if(paiements.isImprime) %} style="opacity:0.7" {% endif %}>
                         <th class="col-xs-2">
                           {% if(not paiements.isImprime) %}<a href="{{ path('paiements_modification', {'id': paiements.id })}}">{% endif %}
-                            {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}
+                            {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM yyyy") }}
                           {% if(not paiements.isImprime) %}</a>{% endif %}
                           {% if(paiements.isImprime) %}
                           <br/>

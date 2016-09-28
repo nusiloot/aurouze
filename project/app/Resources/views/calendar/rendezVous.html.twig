@@ -44,8 +44,8 @@
                         <label class="control-label col-xs-2">Contrat</label>
                         <div class="col-xs-10">
                             <p class="form-control-static">
-                                <a title="Voir le contrat" href="{{ path('contrat_visualisation', {'id': rdv.passage.contrat.id })}}">N° {{ rdv.passage.contrat.numeroArchive }} ({{ rdv.passage.contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }}
-                                    {% if(rdv.passage.contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM YYYY")) != rdv.passage.contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") %}&nbsp;-&nbsp;{{ rdv.passage.contrat.dateFin | localizeddate("medium", "none", null, null, "MMM YYYY") | capitalize }})
+                                <a title="Voir le contrat" href="{{ path('contrat_visualisation', {'id': rdv.passage.contrat.id })}}">N° {{ rdv.passage.contrat.numeroArchive }} ({{ rdv.passage.contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}
+                                    {% if(rdv.passage.contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy")) != rdv.passage.contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") %}&nbsp;-&nbsp;{{ rdv.passage.contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }})
                                     {% endif %}
                                 </a>
                             </p>
@@ -56,7 +56,7 @@
                         <div class="col-xs-10">
                             <p class="form-control-static">
                                 <a title="Voir les passages" href="{{ path('passage_etablissement', {'id': rdv.passage.etablissement.id })}}">{{ rdv.passage.libelle }}, prévu en {{ rdv.passage.datePrevision | localizeddate("medium",
-            				"none", null, null, "MMMM YYYY") }} (n° {{ rdv.passage.numeroArchive }})</a>
+            				"none", null, null, "MMMM yyyy") }} (n° {{ rdv.passage.numeroArchive }})</a>
                              {% if (not rdv.passage.isRealise) %}
                              <a class="btn btn-default btn-xs" href="{{ path('passage_modification', {'id': rdv.passage.id }) }}"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
                              {% endif %}

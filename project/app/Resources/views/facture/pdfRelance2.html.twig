@@ -86,14 +86,14 @@
 <div class="row">
     <div class="col-xs-12" style="font-size: 12px;">
         <br />
-        En effet, la facture n° {{ facture.numeroFacture }} que nous vous avons adressée le {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/YYYY")  }}, payable le
+        En effet, la facture n° {{ facture.numeroFacture }} que nous vous avons adressée le {{ facture.dateEmission | localizeddate("medium", "none", null, null, "d/MM/yyyy")  }}, payable le
       </div>
 </div>
 <div class="row">
     <div class="col-xs-12" style="font-size: 12px;">
         <br />
         <div class="text-center">
-          <strong>{{ facture.dateLimitePaiement | localizeddate("medium", "none", null, null,  "d/MM/YYYY")  }}</strong>
+          <strong>{{ facture.dateLimitePaiement | localizeddate("medium", "none", null, null,  "d/MM/yyyy")  }}</strong>
         </div>
       </div>
 </div>
@@ -132,7 +132,7 @@
         <div class="text-center">
         Le service Comptabilité Client
         <br/>
-        PARIS le {{ "now" | localizeddate("medium", "none", null, null,  "d/MM/YYYY") }}
+        PARIS le {{ "now" | localizeddate("medium", "none", null, null,  "d/MM/yyyy") }}
         </div>
       </div>
 </div>

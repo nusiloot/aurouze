@@ -34,7 +34,7 @@
             <tbody>
                 {% for paiements in paiementsDocs %}
                     <tr class="">
-                        <th class="col-xs-2"><a href="{{ path('paiements_modification', {'id': paiements.id })}}">{{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM YYYY") }}</a></th>
+                        <th class="col-xs-2"><a href="{{ path('paiements_modification', {'id': paiements.id })}}">{{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM yyyy") }}</a></th>
                         <th class="col-xs-1 text-right">{{ paiements.paiementBySociete(societe) | length }}</th>
                         <th class="col-xs-7">
                             {% for paiement in paiements.paiementBySociete(societe) %}
