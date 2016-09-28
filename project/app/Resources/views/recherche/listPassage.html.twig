@@ -33,7 +33,7 @@
     				data-target="#modal-calendrier-infos"
     				href="{{path('passage_visualisation', { 'id': passage.id })}}"> {% if
     				(passage.APlanifie) %} {{ passage.dateDebut | localizeddate("medium", "none",
-    				null, null, "MMMM YYYY") | capitalize }} {% else %} {{ passage.dateDebut
+    				null, null, "MMMM yyyy") | capitalize }} {% else %} {{ passage.dateDebut
     				| localizeddate('full', 'none') | capitalize }} {% endif %} {%
     				if(passage.duree) %} à {{passage.dateDebut | date("H") }}h{{passage.dateDebut |
     				date("i") }}{% endif %} </a></td>

@@ -32,9 +32,9 @@
 				data-target="#modal-calendrier-infos"
 				href="{{path('passage_visualisation', { 'id': passage.id })}}">
 				{% if passage.APlanifie %}
-				 prévu le {{ passage.datePrevision | localizeddate("medium", "none", null, null, "d MMMM YYYY") | capitalize }}
+				 prévu le {{ passage.datePrevision | localizeddate("medium", "none", null, null, "d MMMM yyyy") | capitalize }}
 				{% elseif passage.isAnnule %}
-				({{ passage.datePrevision | localizeddate("medium", "none", null, null, "d MMMM YYYY") | capitalize }})
+				({{ passage.datePrevision | localizeddate("medium", "none", null, null, "d MMMM yyyy") | capitalize }})
 				{% else %}
 					{{ passage.dateDebut| localizeddate('full', 'none') | capitalize }}
 			  {% endif %}
