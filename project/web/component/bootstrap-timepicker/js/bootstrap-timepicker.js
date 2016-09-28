@@ -1154,7 +1154,7 @@
       up: 'glyphicon glyphicon-chevron-up',
       down: 'glyphicon glyphicon-chevron-down'
     },
-    maxHours: 24,
+    maxHours: 1000,
     explicitMode: false
   };
 
