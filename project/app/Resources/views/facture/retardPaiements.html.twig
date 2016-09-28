@@ -108,6 +108,9 @@
 							</td>
               <td>
 								<a href="{{ path('facture_pdf', {'id': factureEnRetard.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;Facture n° {{ factureEnRetard.numeroFacture }}</a>
+								{% if(factureEnRetard.isRedressee()) %}
+								&nbsp;<span data-toggle="tooltip" title="{{ factureEnRetard.avoir }}" class="label label-xs label-warning">R</span>
+								{% endif %}
 							</td>
               <td class="text-right">{{ "%0.2f" | format(factureEnRetard.montantTTC)  }}&nbsp;€</td>
               <td class="text-right">{{ "%0.2f" | format(factureEnRetard.montantPaye)  }}&nbsp;€</td>
