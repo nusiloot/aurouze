@@ -148,7 +148,7 @@ Condition de réglement : {{ facture.frequencePaiementLibelle }}
     </small>
 </p>
 </small>
-{% if(not facture.isFacture and not facture.isAvoir) %}
+{% if(facture.isFacture or facture.isDevis) %}
 <div style="border-top: 1px dashed #ccc; margin-top: 15px;">
     <div class="row">
         <div class="col-xs-12 text-center">
@@ -156,14 +156,20 @@ Condition de réglement : {{ facture.frequencePaiementLibelle }}
         </div>
         <div class="col-xs-6">
             <p>
+            {% if facture.isDevis %}
+            <span class="lead" style="font-size: 15px;">Devis n°&nbsp;{{ facture.numeroDevis }} du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
+            {% else %}
             <span class="lead" style="font-size: 15px;">Facture n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
+            {% endif %}
             <small>Client : {{ facture.destinataire.raisonSociale }} ({{ facture.destinataire.codeComptable }})</small>
             </p>
         </div>
         <div class="col-xs-6 text-right">
             <p>
-            <span class="lead" style="font-size: 15px;">Montant dû : {{ facture.montantTTC|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
+            <span class="lead" style="font-size: 15px;">Montant {% if facture.isFacture %}dû{% endif %} : {{ facture.montantTTC|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
+            {% if facture.isFacture %}
             <small>Date limite de règlement : {{ facture.dateLimitePaiement|date("d/m/Y") }}</small>
+            {% endif %}
             </p>
         </div>
     </div>
