@@ -871,7 +871,7 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function isAvoir() {
-        return $this->getMontantTTC() <= 0;
+        return $this->getMontantTTC() < 0;
     }
 
     public function isRedressee() {
