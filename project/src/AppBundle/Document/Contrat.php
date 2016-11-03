@@ -701,7 +701,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getNbFacturesRestantes() {
-        return $this->getNbFactures() - count($this->getMouvements());
+    $nbFacturesGenerees = 0;
+      foreach ($this->getMouvements() as $mouvement) {
+        if($mouvement->getPrixUnitaire() > 0){
+          $nbFacturesGenerees++;
+        }else{
+          $nbFacturesGenerees--;
+        }
+      }
+      return $this->getNbFactures() - $nbFacturesGenerees;
     }
 
     public function generateMouvement($origineDocumentGeneration = null) {
