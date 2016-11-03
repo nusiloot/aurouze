@@ -275,7 +275,38 @@ class ContratManager implements MouvementManagerInterface {
 
         $contrat->updateNumeroOrdrePassage();
 
-        $this->dm->flush();
+    //    $this->dm->flush();
+    }
+
+    public function copyPassagesForContratReconduit($contratReconduit,$contratOrigine) {
+        $this->generateAllPassagesForContrat($contratReconduit);
+        if($contratReconduit->isTypeReconductionTacite()){
+          $this->updateEcartDatesPrevisionPassage($contratReconduit,$contratOrigine);
+        }
+    }
+
+
+    public function updateEcartDatesPrevisionPassage($contratReconduit,$contratOrigine){
+        $datesPrevisionArray = array();
+        foreach ($contratOrigine->getContratPassages() as $contratPassage) {
+            foreach ($contratPassage->getPassagesSorted() as $passage) {
+              if($passage->isSousContrat()){
+                $datesPrevisionArray[] = $passage;
+              }
+          }
+        }
+      $cpt = 0;
+      $dateDebutContratOrigine = clone $contratOrigine->getDateDebut();
+      foreach ($contratReconduit->getContratPassages() as $contratPassage) {
+          foreach ($contratPassage->getPassagesSorted() as $passage) {
+           $dateDebutContratReconduit = clone $contratReconduit->getDateDebut();
+           $datePrevisionCloned = clone $datesPrevisionArray[$cpt]->getDatePrevision();
+           $ecartDateDebutDatePrev = $dateDebutContratOrigine->diff($datePrevisionCloned)->format('%R%a');
+           $datePrevision = $dateDebutContratReconduit->modify($ecartDateDebutDatePrev." days");
+           $passage->setDatePrevision($datePrevision);
+           $cpt++;
+        }
+      }
     }
 
     public function updateNbFactureForContrat($contrat) {

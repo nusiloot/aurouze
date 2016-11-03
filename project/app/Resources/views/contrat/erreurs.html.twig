@@ -1,0 +1,14 @@
+{% set _menu_active = 'erreurs' %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrats en erreurs{% endblock title %}
+
+{% block body %}
+
+	<ol class="breadcrumb">
+		<li><a href="{{ path('passage_erreurs') }}">Contrats en erreurs</a>&nbsp;<span class="badge">{{ contrats | length }}</span>&nbsp;</li>
+	</ol>
+
+	{{ include('contrat/listingContrats.html.twig', { 'contrats': contrats }) }}
+
+{% endblock %}
