@@ -38,6 +38,10 @@ class ContratRepository extends DocumentRepository {
        return $this->findBy(array(), array('numeroArchive' => 'ASC'));
     }
 
+    public function findAllTaciteSortedByNumeroArchive() {
+       return $this->findBy(array('typeContrat' => ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE), array('numeroArchive' => 'ASC'));
+    }
+
     public function countContratByCommercial($compte) {
 
         return $this->createQueryBuilder()
@@ -47,6 +51,47 @@ class ContratRepository extends DocumentRepository {
 
     public function findAllFrequences() {
     	return ContratManager::$frequences;
+    }
+
+    public function findAllErreurs() {
+        $contratsTacites = array();
+        $num_arch = null;
+        $dateFin = null;
+        $contratsErreurs = array();
+        foreach ($this->findAllTaciteSortedByNumeroArchive() as $contrat) {
+            if(is_null($num_arch) || $contrat->getNumeroArchive()!= $num_arch){
+              $num_arch = $contrat->getNumeroArchive();
+              $lastContrat = $contrat;
+              continue;
+            }else{
+              $flag = false;
+              $datesPrevContrat = array_keys($contrat->getArrayDatePrevision());
+              $datesPrevLastContrat = array_keys($lastContrat->getArrayDatePrevision());
+              for ($i=0; $i < count($datesPrevLastContrat); $i++) {
+                $datePrevContrat = \DateTime::createFromFormat('Y-m-d',$datesPrevLastContrat[$i]);
+                if(!isset($datesPrevContrat[$i])){
+                  $flag = true;
+                  $contratsErreurs[$contrat->getId()] = new \stdClass();
+                  $contratsErreurs[$contrat->getId()]->contrat = $contrat;
+                  $contratsErreurs[$contrat->getId()]->datesPrevContrat = $datesPrevContrat;
+                  $contratsErreurs[$contrat->getId()]->datesPrevLastContrat = $datesPrevLastContrat;
+                  break;
+                }
+                $dateContrat = \DateTime::createFromFormat('Y-m-d',$datesPrevContrat[$i]);
+                if($datePrevContrat->format("m") != $dateContrat->format("m")){
+                  $flag = true;
+                  $contratsErreurs[$contrat->getId()] = new \stdClass();
+                  $contratsErreurs[$contrat->getId()]->contrat = $contrat;
+                  $contratsErreurs[$contrat->getId()]->datesPrevContrat = $datesPrevContrat;
+                  $contratsErreurs[$contrat->getId()]->datesPrevLastContrat = $datesPrevLastContrat;
+                  break;
+                }
+              }
+              $lastContrat = $contrat;
+            }
+
+        }
+        return $contratsErreurs;
     }
 
     public function findByQuery($q)

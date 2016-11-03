@@ -1,0 +1,41 @@
+{% for contratObj in contrats %}
+<div class="list-group-item">
+	<div class="row">
+		<div class="col-xs-12">
+			<a href="{{ path('contrat_visualisation', {'id': contratObj.contrat.id })}}">n°&nbsp;{{ contratObj.contrat.numeroArchive }}&nbsp;-&nbsp;{{ contratObj.contrat.societe.raisonSociale }}</a>&nbsp;&nbsp;&nbsp;<span class="pull-right">( {{ contratObj.contrat.duree }} mois )</span>
+		</div>
+		<div class="col-xs-12">
+			<table class="table table-bordered table-condensed table-stripped">
+	        <thead>
+	            <tr>
+	                <th class="col-xs-6 text-center">  <strong>Précédent</strong></th>
+	                <th class="col-xs-6 text-center">  <strong>Nouveau</strong></th>
+	            </tr>
+	        </thead>
+	        <tbody>
+	                <tr>
+	                    <td class="col-xs-6 text-right">
+												<ul class="list-group">
+	            						{% for datePrevLastContrat in contratObj.datesPrevLastContrat %}
+  												<li class="list-group-item">
+														{{ datePrevLastContrat | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}
+													</li>
+	            						{% endfor %}
+												</ul>
+											</td>
+	                    <td class="col-xs-6 text-left">
+												<ul class="list-group">
+	            						{% for datePrevContrat in contratObj.datesPrevContrat %}
+  												<li class="list-group-item">
+														{{ datePrevContrat | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}
+													</li>
+	            						{% endfor %}
+												</ul>
+											</td>
+	                </tr>
+	        </tbody>
+	    </table>
+		</div>
+	</div>
+</div>
+{% endfor %}

@@ -193,7 +193,7 @@ class ContratController extends Controller {
             $contratReconduit = $contrat->reconduire();
             $dm->persist($contratReconduit);
             $dm->flush();
-            $this->get('contrat.manager')->generateAllPassagesForContrat($contratReconduit,true);
+            $this->get('contrat.manager')->copyPassagesForContratReconduit($contratReconduit,$contrat);
             $dm->persist($contratReconduit);
             $contrat->setReconduit(true);
 
@@ -459,11 +459,23 @@ class ContratController extends Controller {
             $contratReconduit = $contrat->reconduire($augmentation);
             $dm->persist($contratReconduit);
             $contrat->setReconduit(true);
-            $cm->generateAllPassagesForContrat($contratReconduit,true);
+            $cm->copyPassagesForContratReconduit($contratReconduit,$contrat);
             $dm->flush();
         }
 
         return $this->redirectToRoute('contrats_reconduction_massive');
+    }
+
+    /**
+     * @Route("/contrats/erreurs", name="contrats_erreurs")
+     */
+    public function contratsErreursAction(Request $request) {
+        ini_set('memory_limit', '1024M');
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $contrats = $dm->getRepository('AppBundle:Contrat')->findAllErreurs();
+
+        return $this->render('contrat/erreurs.html.twig', array('contrats' => $contrats));
     }
 
 

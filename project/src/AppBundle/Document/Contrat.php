@@ -1228,7 +1228,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
             return false;
         }
-        
+
         if ($this->isEnAttenteAcceptation() || $this->isBrouillon()) {
             return true;
         }
@@ -1705,6 +1705,19 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
       }else{
         $this->setStatut(ContratManager::STATUT_EN_COURS);
       }
+    }
+
+    public function getArrayDatePrevision(){
+      $arrayPassages = array();
+      foreach ($this->getContratPassages() as $contratPassage) {
+          foreach ($contratPassage->getPassagesSorted() as $passage) {
+              if($passage->isSousContrat()){
+                $arrayPassages[$passage->getDatePrevision()->format("Y-m-d")] = $passage;
+              }
+          }
+          break;
+      }
+      return $arrayPassages;
     }
 
     public function calculPca(){
