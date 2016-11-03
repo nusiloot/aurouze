@@ -261,11 +261,6 @@ class PassageController extends Controller {
         }
         $passageManager = $this->get('passage.manager');
 
-      //  $nextPassage = $passageManager->updateNextPassageAPlannifier($passage);
-        // if ($nextPassage) {
-        //     $dm->persist($nextPassage);
-        // }
-
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
 
         if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
@@ -283,7 +278,6 @@ class PassageController extends Controller {
         $contrat->verifyAndClose();
 
         $dm->flush();
-
         if ($passage->getMouvementDeclenchable()) {
             return $this->redirectToRoute('facture_societe', array('id' => $passage->getSociete()->getId()));
         } else {
