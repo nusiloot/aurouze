@@ -421,10 +421,10 @@
         $('#searchable .typeahead').typeahead({
     	  hint: false,
     	  highlight: true,
-    	  minLength: 2
+    	  minLength: 1
     	},
     	{
-          limit: 10,
+          limit: 5,
     	  source: new Bloodhound({
               datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
               queryTokenizer: Bloodhound.tokenizers.whitespace,
