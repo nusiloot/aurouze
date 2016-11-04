@@ -14,50 +14,53 @@ use Doctrine\Common\Collections\ArrayCollection;
  * repository methods below.
  */
 class SocieteRepository extends DocumentRepository {
-	
+
 	public function findAurouze()
 	{
 		return $this->findOneByRaisonSociale("AUROUZE");
 	}
 
-    public function findByTerms($queryString, $withNonActif = false) {
+    public function findByTerms($queryString, $withNonActif = false, $limit = 1000, $mixWith = false) {
         $terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $queryString)));
+
         $results = null;
         foreach ($terms as $term) {
             if (strlen($term) < 2) {
                 continue;
             }
             $q = $this->createQueryBuilder();
-            $q
-                    ->addOr($q->expr()->field('identifiant')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
-                    ->addOr($q->expr()->field('raisonSociale')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')))
-                    ->addOr($q->expr()->field('adresse.adresse')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')))
-                    ->addOr($q->expr()->field('adresse.codePostal')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
-                    ->addOr($q->expr()->field('adresse.commune')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')));
+            $q->addOr($q->expr()->field('identifiant')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
+              ->addOr($q->expr()->field('raisonSociale')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')))
+              ->addOr($q->expr()->field('adresse.adresse')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')))
+              ->addOr($q->expr()->field('adresse.codePostal')->equals(new \MongoRegex('/.*' . $term . '.*/i')))
+              ->addOr($q->expr()->field('adresse.commune')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')));
             if (!$withNonActif) {
                 $q->field('actif')->equals(true);
             }
-            $societes = $q->limit(1000)->getQuery()->execute();
+            $societes = $q->limit($limit)->getQuery()->execute();
 
             $currentResults = array();
             foreach ($societes as $societe) {
-                $currentResults[$societe->getId()] = $societe->getIntitule();
+								if($mixWith){
+									$currentResults[$societe->getId()] = array("doc" => $societe, "score" => "1", "instance" => "Societe");
+								}else{
+                	$currentResults[$societe->getId()] = $societe->getIntitule();
+								}
             }
-
-            if (!is_null($results)) {
-                $results = array_intersect_assoc($results, $currentResults);
-            } else {
-                $results = $currentResults;
-            }
+						if (!is_null($results)) {
+								$results = array_intersect_assoc($results, $currentResults);
+						} else {
+								$results = $currentResults;
+						}
         }
-
         return is_null($results) ? array() : $results;
     }
+
 
     public function findByQuery($q, $inactif = false, $limit = 100)
     {
 
-    	/*$query = $this->createQueryBuilder();
+    /*	$query = $this->createQueryBuilder();
     	$expr = $query->expr()->operator('$text', array(
     			'$search'   => $q
     	));
@@ -66,10 +69,9 @@ class SocieteRepository extends DocumentRepository {
 
     	$societes = $query->equals($expr->getQuery())->sortMeta('score', 'textScore')->limit(100)->getQuery()->execute();
     	foreach ($societes as $key => $societe) {
-    		echo $societe->getLibelleComplet();
-    		echo '<hr />';
+				$resultSet[] = array("doc" => $societe, "score" => 1, "instance" => "Societe");
     	}
-    	exit;*/
+		*/
         $q = str_replace(",", "", $q);
         $q = "\"".str_replace(" ", "\" \"", $q)."\"";
 
@@ -87,7 +89,8 @@ class SocieteRepository extends DocumentRepository {
 	    		if (!$inactif && !$itemResult['actif']) {
 	    			continue;
 	    		}
-	    		$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Societe', $itemResult), "score" => $itemResult['score'], "instance" => "Societe");
+					$docSoc = $this->uow->getOrCreateDocument('\AppBundle\Document\Societe', $itemResult);
+	    		$resultSet[$docSoc->getId()] = array("doc" => $docSoc, "score" => $itemResult['score'], "instance" => "Societe");
 	    	}
     	}
     	return $resultSet;

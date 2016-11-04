@@ -56,7 +56,10 @@ class RechercheController extends Controller {
         $query = $request->get('q');
         $inactif = $request->get('inactif', false);
         $inactif = ($inactif)? true : false;
-        $result = array_merge($dm->getRepository('AppBundle:Societe')->findByQuery($query, $inactif, 10));
+				$querySearch = $dm->getRepository('AppBundle:Societe')->findByQuery($query, $inactif, 10);
+				$termSearch = $dm->getRepository('AppBundle:Societe')->findByTerms($query, $inactif, 10,true);
+				
+        $result = array_merge($querySearch,$termSearch);
         usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
 
         $result = $this->contructSearchResultSociete($result);

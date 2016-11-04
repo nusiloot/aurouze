@@ -41,7 +41,7 @@ class ContratRepository extends DocumentRepository {
     public function findAllTaciteSortedByNumeroArchive($dateMin) {
       return $this->createQueryBuilder()
            ->field('typeContrat')->equals(ContratManager::TYPE_CONTRAT_RECONDUCTION_TACITE)
-           ->field('dateAcceptation')->gte($dateMin)
+           ->field('dateDebut')->gte($dateMin)
            ->sort('numeroArchive', 'asc')
            ->getQuery()
            ->execute();
@@ -63,9 +63,9 @@ class ContratRepository extends DocumentRepository {
         $num_arch = null;
         $dateFin = null;
         $contratsErreurs = array();
-        $dateMin = (new \DateTime())->modify("-2 year -2 month");
+        $dateMin = (new \DateTime())->modify("-1 year -6 month");
         foreach ($this->findAllTaciteSortedByNumeroArchive($dateMin) as $contrat) {
-
+          
             if(is_null($num_arch) || $contrat->getNumeroArchive()!= $num_arch){
               $num_arch = $contrat->getNumeroArchive();
               $lastContrat = $contrat;
