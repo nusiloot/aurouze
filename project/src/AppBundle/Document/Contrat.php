@@ -957,14 +957,16 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
             throw new \Exception("Il y a plusieurs passage pour ce contrat");
         }
-        $uniqPassage = null;
         try{
-          $uniqPassage = $this->getContratPassages()->first()->getPassages()->first();
+          foreach ($this->getContratPassages() as $contratPassage) {
+              foreach ($contratPassage->getPassagesSorted() as $passage) {
+                return $passage;
+            }
+          }
         }catch(Exception $e){
           throw new \Exception("Il y a un problème avec le contrat ".$this->getId());
         }
-
-        return $uniqPassage;
+        return null;
     }
 
     /**
