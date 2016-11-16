@@ -141,6 +141,9 @@ class ContratController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
 
             $contrat = $form->getData();
+            if(is_null($contrat->getDateAcceptation()) || is_null($contrat->getDateDebut())){
+              throw new \Exception("Le contrat doit avoir date d'acceptation et date de début");              
+            }
             if ($contrat->isModifiable() && !$isBrouillon && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $contrat->setDateFin($contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month"));
