@@ -112,7 +112,7 @@
                     <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
                     <a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}">Visualiser</a>
                 </div>
-                <div class="col-xs-4 text-right">
+                <div class="col-xs-4 text-right" id="contrat_acceptation_button_row">
                     <button class="btn btn-default btn" name="{{ "brouillon" }}"  type="submit" value="1"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Enregistrer brouillon</button>&nbsp;
                     {{ form_widget(form.save) }}
                 </div>

@@ -108,9 +108,13 @@ class ContratAcceptationType extends AbstractType {
         $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "required" => false, "attr" => array("class" => "form-control", "rows" => 15)));
         $builder->add('referenceClient', TextType::class, array('label' => 'Numéro de commande :', 'required' => false));
         $builder->add('factureDestinataire', TextType::class, array('label' => 'Destinataire de la facture (si différent de celui de la société) :', 'required' => false));
-
-
-        $builder->add('save', SubmitType::class, array('label' => ($this->contrat->isEnAttenteAcceptation()) ? 'Acceptation du contrat' : 'Modification du contrat', "attr" => array("class" => "btn btn-success pull-right")));
+        $saveBtnAttr = array("class" => "btn btn-success pull-right");
+        if($this->contrat->isEnAttenteAcceptation()){
+          $saveBtnAttr = array_merge($saveBtnAttr,array("onclick" => "return confirm('Êtes vous sûr de vouloir accepter ce contrat ?');"));
+        }
+        $builder->add('save', SubmitType::class,
+              array('label' => ($this->contrat->isEnAttenteAcceptation()) ? 'Acceptation du contrat' : 'Modification du contrat',
+                    "attr" => $saveBtnAttr));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
