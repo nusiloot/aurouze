@@ -31,7 +31,7 @@ class ContratRepository extends DocumentRepository {
     }
 
     public function findLast() {
-    	return $this->findBy(array(), array('dateCreation' => 'DESC'), 50);
+    	return $this->findBy(array(), array('dateCreation' => 'DESC', 'identifiant' => 'DESC'), 50);
     }
 
     public function findAllSortedByNumeroArchive() {
