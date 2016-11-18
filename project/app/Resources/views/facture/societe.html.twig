@@ -61,10 +61,12 @@
         <thead>
             <tr>
                 <th class="col-xs-2">Date</th>
-                <th class="col-xs-3">Document</th>
-                <th class="col-xs-4">Contenu</th>
+                <th class="col-xs-2">Document</th>
+                <th class="col-xs-3">Contenu</th>
+                <th class="col-xs-1">Écheance</th>
                 <th class="col-xs-1 text-right">Montant&nbsp;TTC</th>
                 <th class="col-xs-1 text-right">Montant&nbsp;payé</th>
+                <th class="col-xs-1 text-right">Restant</th>
                 <th class="col-xs-1 text-right"></th>
             </tr>
         </thead>
@@ -81,6 +83,7 @@
                                     - <a href="{{ path('contrat_visualisation', {'id': origine.id })}}">Contrat n° {{ origine.numeroArchive }}</a>
                                 {% endfor %}
                             </td>
+                            <td class="col-xs-1">{{ facture.dateLimitePaiement | localizeddate("short", "none", null, null, "dd/MM/Y")  }}</td>
                             <td class="text-right">{{ "%0.2f" | format(facture.montantTTC)  }}&nbsp;€</td>
                             <td class="text-right {% if facture.isDevis %}active{% endif %}">
                             {% if facture.isFacture %}
@@ -89,6 +92,11 @@
                               <span data-toggle="tooltip" title="{{ facture.avoir }}" class="pull-left label label-xs label-warning">R</span>
                               &nbsp;<span class="text-muted">{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€</span>
                               {% else %}<span class="text-muted">{{ "%0.2f" | format(facture.montantPaye)  }}&nbsp;€</span>{% endif %}
+                            {% endif %}
+                          </td>
+                          <td class="col-xs-1 text-right">
+                            {% if not facture.isAvoir %}
+                              <span class="text-muted">{{ "%0.2f" | format(facture.montantAPayer) }}&nbsp;€</span>
                             {% endif %}
                           </td>
                             <td class="text-left">
@@ -106,13 +114,15 @@
                                             {% if(facture.numeroFacture and facture.isEditable) %}
                                               <li>  <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-default btn-xs">Modifier {% if(facture.isAvoir) %}l'avoir{% else %}la facture{% endif %}</a></li>
                                             {% endif %}
-                                            {% if(not facture.isAvoir and not facture.isRedressee) %}
+                                            {% if(not facture.isAvoir) %}
                                               {% if(not facture.iscloture) %}
                                                 <li><a onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Cloturer les paiements</a></li>
                                               {% endif %}
                                                 <li><a onclick="return confirm('Êtes vous sûr de vouloir décloturer cette facture ?')" href="{{ path('facture_decloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Décloturer (remettre les paiements à 0)</a></li>
-                                                <li><a onclick="return confirm('Êtes vous sûr de vouloir faire un avoir partiel sur cette facture ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id , 'mouvement' : "0" })}}" class="btn btn-default btn-xs">Créer un avoir partiel</a></li>
-                                                <li><a onclick="return confirm('Êtes vous sûr de vouloir annuler la facture et générer un avoir ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id , 'mouvement' : "1" })}}" class="btn btn-default btn-xs">Annuler la facturation (donnera lieu à une nouvelle facture)</a></li>
+                                                {% if not facture.isRedressee %}
+                                                  <li><a onclick="return confirm('Êtes vous sûr de vouloir faire un avoir partiel sur cette facture ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id , 'mouvement' : "0" })}}" class="btn btn-default btn-xs">Créer un avoir partiel</a></li>
+                                                  <li><a onclick="return confirm('Êtes vous sûr de vouloir annuler la facture et générer un avoir ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id , 'mouvement' : "1" })}}" class="btn btn-default btn-xs">Annuler la facturation (donnera lieu à une nouvelle facture)</a></li>
+                                                {% endif %}
                                             {% endif %}
                                     {% endif %}
                                   </ul>
