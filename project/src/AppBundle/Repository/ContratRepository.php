@@ -31,7 +31,7 @@ class ContratRepository extends DocumentRepository {
     }
 
     public function findLast() {
-    	return $this->findBy(array(), array('dateCreation' => 'DESC', 'identifiant' => 'DESC'), 50);
+    	return $this->findBy(array(), array('dateCreation' => 'DESC', 'identifiant' => 'DESC'), 100);
     }
 
     public function findAllSortedByNumeroArchive() {
@@ -65,7 +65,7 @@ class ContratRepository extends DocumentRepository {
         $contratsErreurs = array();
         $dateMin = (new \DateTime())->modify("-1 year -6 month");
         foreach ($this->findAllTaciteSortedByNumeroArchive($dateMin) as $contrat) {
-          
+
             if(is_null($num_arch) || $contrat->getNumeroArchive()!= $num_arch){
               $num_arch = $contrat->getNumeroArchive();
               $lastContrat = $contrat;
@@ -171,6 +171,14 @@ class ContratRepository extends DocumentRepository {
           $query = $q->getQuery();
 
         return $query->execute();
+    }
+
+    public function findContratWithFactureAFacturer($limit = 50){
+      $q = $this->createQueryBuilder();
+      $q->field('mouvements.facture')->equals(false);
+      $q->limit($limit);
+      $query = $q->getQuery();
+      return $query->execute();
     }
 
 }

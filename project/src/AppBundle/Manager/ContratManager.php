@@ -459,5 +459,5 @@ class ContratManager implements MouvementManagerInterface {
         }
         return $pcaArray;
     }
-
+    
 }

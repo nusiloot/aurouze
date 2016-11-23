@@ -30,8 +30,11 @@ class FactureController extends Controller {
      */
     public function indexAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $contratManager = $this->get('contrat.manager');
+        $contratsFactureAEditer = $contratManager->getRepository()->findContratWithFactureAFacturer(50);
 
-        return $this->render('facture/index.html.twig');
+
+        return $this->render('facture/index.html.twig',array('contratsFactureAEditer' => $contratsFactureAEditer));
     }
 
     /**
