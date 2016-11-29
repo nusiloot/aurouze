@@ -40,8 +40,11 @@
 
 {{ form_start(formReconduction) }}
   <div class="row">
-      <div class="col-xs-12">
+      <div class="col-xs-8">
           <h3>{{  contratsAReconduire|length }} contrats à reconduire </h3>
+      </div>
+      <div class="col-xs-4 text-right">
+        <a href="{{ path('contrats_reconduction_historique') }}">Historique des reconduction</a>
       </div>
   </div>
   <div class="row">

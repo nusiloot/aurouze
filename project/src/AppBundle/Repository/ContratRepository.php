@@ -181,4 +181,12 @@ class ContratRepository extends DocumentRepository {
       return $query->execute();
     }
 
+    public function findAllContratWithDateReconduction(){
+      $q = $this->createQueryBuilder();
+      $q->field('dateReconduction')->notEqual(null);
+      $query = $q->getQuery();
+
+        return $query->execute();
+    }
+
 }

@@ -142,7 +142,7 @@ class ContratController extends Controller {
 
             $contrat = $form->getData();
             if(is_null($contrat->getDateAcceptation()) || is_null($contrat->getDateDebut())){
-              throw new \Exception("Le contrat doit avoir date d'acceptation et date de début");              
+              throw new \Exception("Le contrat doit avoir date d'acceptation et date de début");
             }
             if ($contrat->isModifiable() && !$isBrouillon && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
@@ -186,6 +186,17 @@ class ContratController extends Controller {
     }
 
     /**
+     * @Route("/contrats-reconduction-historique", name="contrats_reconduction_historique")
+     */
+    public function reconductionHistoriqueAction(Request $request) {
+      $dm = $this->get('doctrine_mongodb')->getManager();
+
+      $contratManager = new ContratManager($dm);
+      $listeReconductions = $contratManager->getNbContratsReconduitByDateReconduction();
+      return $this->render('contrat/reconduction_historique.html.twig',array('listeReconductions' => $listeReconductions));
+
+    }
+    /**
      * @Route("/contrat/{id}/reconduction", name="contrat_reconduction")
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
@@ -207,6 +218,8 @@ class ContratController extends Controller {
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
     }
+
+
 
     /**
      * @Route("/contrat/{id}/annulation", name="contrat_annulation")

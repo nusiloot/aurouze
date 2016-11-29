@@ -138,6 +138,12 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $dateResiliation;
 
     /**
+     * @MongoDB\Date
+     */
+    protected $dateReconduction;
+
+
+    /**
      * @MongoDB\Int
      */
     protected $duree;
@@ -1372,6 +1378,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->contratPassages = array();
         $contrat->cleanMouvements();
         $contrat->setReconduit(false);
+        $contrat->setDateReconduction(new \DateTime());
         if(!$contrat->getTechnicien()){
           $contrat->setTechnicien($this->getTechnicienPlusUtilise());
         }
@@ -1791,5 +1798,27 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     /** @MongoDB\PrePersist */
     public function prePersist() {
         $this->updateNumeroOrdrePassage();
+    }
+
+    /**
+     * Set dateReconduction
+     *
+     * @param date $dateReconduction
+     * @return self
+     */
+    public function setDateReconduction($dateReconduction)
+    {
+        $this->dateReconduction = $dateReconduction;
+        return $this;
+    }
+
+    /**
+     * Get dateReconduction
+     *
+     * @return date $dateReconduction
+     */
+    public function getDateReconduction()
+    {
+        return $this->dateReconduction;
     }
 }
