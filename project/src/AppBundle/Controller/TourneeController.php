@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Document\Passage;
 
 class TourneeController extends Controller {
 
@@ -44,9 +45,23 @@ class TourneeController extends Controller {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
 
-        $passageManager = $this->get('passage.manager');
-        $passagesByTechnicien = $passageManager->getRepository()->findAllPassagesForTechnicien($date,$technicienObj);
+        $passagesByTechnicien = $this->get('passage.manager')->getRepository()->findAllPassagesForTechnicien($date,$technicienObj);
         return $this->render('tournee/journeeTechnicien.html.twig', array('passagesByTechnicien' => $passagesByTechnicien, "technicien" => $technicienObj, "date" => $date));
+    }
+
+    /**
+     * @Route("/tournee-passage-visualisation/{passage}/{technicien}", name="tournee_passage_visualisation")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function tourneePassageVisualisationAction(Request $request, Passage $passage) {
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $technicien = $request->get('technicien');
+        $technicienObj = null;
+        if ($technicien) {
+            $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
+        }
+        return $this->render('tournee/passageVisualisation.html.twig', array('passage' => $passage, "technicien" => $technicienObj));
     }
 
 

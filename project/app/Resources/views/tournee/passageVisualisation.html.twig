@@ -1,0 +1,108 @@
+{% set _menu_active = 'tournee' %}
+{% extends 'base_mobile.html.twig' %}
+
+{% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
+{% block body %}
+<div class="row">
+  <div class="col-xs-1">
+  </div>
+  <div class="col-xs-8 text-center">
+        <h2>Intervention {{ technicien.identite }}</h2>
+        <h3>{{ passage.dateDebut | localizeddate("medium", "none", null, null, "d MMMM yyyy") }} {{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</h3>
+        <span><strong>Commercial : {{ passage.contrat.commercial.identite }}</strong></span>
+  </div>
+  <div class="col-xs-3 text-right">
+    <br/>
+    <a class="btn btn-default">TRANSMETTRE</a><br/><br/>
+    <a class="btn btn-default">MODIFIER LE RAPPORT</a>
+  </div>
+</div>
+<br/>
+  <div class="panel panel-default">
+  	<div class="panel-body">
+      	<div class="row">
+      		<div class="col-xs-12 text-left"><strong>{{ passage.etablissementInfos.nom }}</strong></div>
+          <div class="col-xs-12 text-left">{{ passage.etablissementInfos.adresse.adresse }}<br/>
+              {{ passage.etablissementInfos.adresse.codePostal }}&nbsp;{{ passage.etablissementInfos.adresse.commune }}
+          </div>
+          {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
+          <div class="col-xs-12 text-left">
+              <i class="mdi mdi-call mdi-lg"></i>
+              <a href="tel:{{ passage.etablissementInfos.telephoneFixe }}">{{ passage.etablissementInfos.telephoneFixe }}</a>
+              {% if passage.etablissementInfos.telephoneFixe and passage.etablissementInfos.telephonePortable %}
+                  /
+              {% endif %}
+              <a href="tel:{{ passage.etablissementInfos.telephonePortable }}">{{ passage.etablissementInfos.telephonePortable }}</a>
+            </div>
+          {% endif %}
+        {% if(passage.commentaire) %}
+          <div class="col-xs-12 text-left"> Commentaire : {{ passage.commentaire }}</div>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+          <div class="row">
+            <div class="col-xs-12 text-left">
+              {{passage.libelle | capitalize }}
+            </div>
+            <div class="col-xs-12 text-left">
+              <br/>
+              Traitement :&nbsp;
+              {% for prestation in passage.prestations %}
+                <div class="btn btn-default btn-xs">
+                  {% if(prestation.wordToPicto) %}
+                    <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
+                  {% endif %}
+                  &nbsp;{{ prestation.getNomSimplifieToString | upper }}
+                </div>
+              {% endfor %}
+            </div>
+
+          <div class="col-xs-12 text-left">
+            <br/>
+            <span style="text-decoration: underline">Nomenclature</span><br/><br/>
+            {{ passage.contrat.nomenclature | nl2br }}
+          </div>
+          <div class="col-xs-12 text-left">
+            <br/>
+            <a class="btn btn-lg btn-group btn-warning col-xs-12 text-center"><span class="pull-left glyphicon glyphicon-pencil"></span><span class="sr-only">Toggle Dropdown</span>SAISIR LE RAPPORT</a>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+          <div class="col-xs-12 text-left">
+            <h4>Historique</h4>
+            <hr/>
+          </div>
+          <div class="col-xs-12 text-left">
+            <br/>
+            Traitement :&nbsp;
+            {% for prestation in passage.prestations %}
+              <div class="btn btn-default btn-xs">
+                {% if(prestation.wordToPicto) %}
+                  <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
+                {% endif %}
+                &nbsp;{{ prestation.getNomSimplifieToString | upper }}
+              </div>
+            {% endfor %}
+          </div>
+
+        <div class="col-xs-12 text-left">
+          <br/>
+          <span style="text-decoration: underline">Nomenclature</span><br/><br/>
+          {{ passage.contrat.nomenclature | nl2br }}
+        </div>
+        <div class="col-xs-12 text-left">
+          <br/>
+          <a class="btn btn-lg btn-group btn-warning col-xs-12 text-center"><span class="pull-left glyphicon glyphicon-pencil"></span><span class="sr-only">Toggle Dropdown</span>SAISIR LE RAPPORT</a>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
