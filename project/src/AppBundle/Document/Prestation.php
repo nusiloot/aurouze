@@ -76,6 +76,55 @@ class Prestation {
         return $this->getNom();
     }
 
+    public function getNomSimplifieToString() {
+      $nom_libelles = explode('-', $this->getIdentifiant());
+      $mot_rongeur = array('DERATISATION', 'RONGEURS');
+      $mot_puce = array('RAMPANTS');
+      $mot_moustique = array('VOLANTS');
+      $mot_cafard = array('BLATTES', 'PUNAISES');
+      $mot_chenille = array('CHENILLES');
+      $mot_pigeon = array('DEPIGEONNAGE');
+      $mot_bois = array('TRAITEMENT', 'BOIS');
+      $mot_travaux = array('TRAVAUX', 'DIVERS');
+      $mot_DEIV = array('MAINTENANCE', 'D.E.I.V');
+      $mot_desinfection = array('DESINFECTION','ASSAINISSEMENT');
+      if($this->isPictoForLibelles($nom_libelles, $mot_rongeur)){
+          if($this->isPictoForLibelles($nom_libelles,array('RATS'))){
+              return "rats";
+          }
+          if($this->isPictoForLibelles($nom_libelles,array('SOURIS'))){
+              return "souris";
+          }
+          if($this->isPictoForLibelles($nom_libelles,array('LOIRS'))){
+              return "loirs";
+          }
+          if($this->isPictoForLibelles($nom_libelles,array('SURMULOTS'))){
+              return "surmulots";
+          }
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_puce)){
+          return 'puce';
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_moustique)){
+          return 'moustique';
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_cafard)){
+          return 'cafard';
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_chenille)){
+          return 'chenille';
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_pigeon)){
+          return 'pigeon';
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_bois)){
+          return 'traitement bois';
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_travaux)){
+          return 'travaux';
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_DEIV)){
+          return 'd.e.i.v';
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_desinfection)){
+          return 'déinfection assainissement';
+      }
+      
+      return "";
+    }
+
+
     public function getWordToPicto() {
         $nom_libelles = explode('-', $this->getIdentifiant());
         $mot_rongeur = array('DERATISATION', 'RONGEURS');

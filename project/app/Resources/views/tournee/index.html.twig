@@ -1,0 +1,71 @@
+{% set _menu_active = 'tournee' %}
+{% extends 'base.html.twig' %}
+{% block title %}Tournées du {{ date | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}{% endblock title %}
+{% block body %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('tournees') }}">Tournees</a></li>
+    </ol>
+
+    <h2>Tournées du {{ date | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</h2>
+  {% for technicienId,passagesTechnicien in passagesByTechniciens %}
+  <div class="panel panel-default">
+  	<div class="panel-body">
+    	<div class="row">
+    		<div class="col-xs-2">
+          <br/>
+    			<h4>
+            <i class="mdi mdi-face mdi-lg" ></i><br/><strong>{{ passagesTechnicien.technicien.identite }}</strong>
+          </h4>
+          <br/><br/>
+          <a href="{{ path('calendar',{ 'technicien': passagesTechnicien.technicien.id, 'date': date | localizeddate('medium', 'none', null, null, 'YYYY-MM-dd') , 'id': '0' }) }}" ><span class="glyphicon glyphicon-calendar"></span>&nbsp;calendrier</a>
+        </div>
+    		<div class="col-xs-8">
+          {% for passage in passagesTechnicien.passages %}
+          <div class="list-group-item">
+          <div class="row">
+            <div class="col-xs-2">{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</div>
+            <div class="col-xs-7"><strong>{{ passage.etablissementInfos.nom }}</strong></div>
+            <div class="col-xs-3"><small>{{ passage.contrat.commercial.identite }}</small></div>
+          </div>
+          <div class="row">
+            <div class="col-xs-2"></div>
+            <div class="col-xs-7">{{ passage.etablissementInfos.adresse.adresse }}
+                {{ passage.etablissementInfos.adresse.codePostal }}
+                {{ passage.etablissementInfos.adresse.commune }}</div>
+            <div class="col-xs-3"></div>
+          </div>
+          <div class="row">
+            <div class="col-xs-2">
+              {% if(passage.isGarantie or passage.isControle) %}
+                <span class="badge badge-warning">{% if(passage.isGarantie) %}ganrantie{% elseif(passage.isControle) %}contrôle{% endif %}</span>
+              {% endif %}
+              {% if(passage.mouvementDeclenchable) %}
+                <span class="badge badge-inverse">facturant</span>
+              {% endif %}
+            </div>
+            <div class="col-xs-7">
+              {% for prestation in passage.prestations %}
+              {% if(prestation.wordToPicto) %}
+              <span class="step size-24" title="{{  prestation.nomToString }}"
+              data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
+              style="cursor: pointer;">&nbsp;</i></span>
+              {% else %}
+              <span class="label label-xs label-primary">{{ prestation.nomToString }}</span>
+              {% endif %}
+              {% endfor %}
+            </div>
+            <div class="col-xs-3">
+                  {% if(passage.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{passage.duree }}</span>{% endif %}
+            </div>
+        </div>
+    </div>
+  {% endfor %}
+    		</div>
+    		<div class="col-xs-2 text-right">
+          <a title="Accéder à la tournée" href="{{ path('tournee_technicien', {'technicien': passagesTechnicien.technicien.id, 'date': date | localizeddate('medium', 'none', null, null, 'YYYY-MM-dd') })}}" class="btn btn-success">Tournée&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></a>
+    		</div>
+    	</div>
+    </div>
+    </div>
+  {% endfor %}
+{% endblock %}

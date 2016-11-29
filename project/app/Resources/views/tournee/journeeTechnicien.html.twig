@@ -1,0 +1,42 @@
+{% set _menu_active = 'tournee' %}
+{% extends 'base_mobile.html.twig' %}
+
+{% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
+{% block body %}
+  <div class="row">
+    <div class="col-xs-12 text-center">
+      <h2>Tournée {{ technicien.identite }}</h2>
+      <h3>{{ date | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</h3>
+    </div>
+  </div>
+  {% for passage in passagesByTechnicien %}
+  <div class="panel panel-default">
+  	<div class="panel-body">
+    	<div class="row">
+    		<div class="col-xs-3 text-left"><strong>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</strong></div>
+        <div class="col-xs-9"><strong>{{ passage.etablissementInfos.nom }}</strong></div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3 text-left"></div>
+        <div class="col-xs-9">{{ passage.etablissementInfos.adresse.adresse }}
+            {{ passage.etablissementInfos.adresse.codePostal }}
+            {{ passage.etablissementInfos.adresse.commune }}</div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3 text-left"></div>
+        <div class="col-xs-9">
+          <br/>
+          {% for prestation in passage.prestations %}
+          <div class="btn btn-default btn-xs">
+            {% if(prestation.wordToPicto) %}
+              <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
+            {% endif %}
+            &nbsp;{{ prestation.getNomSimplifieToString | upper }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% endblock %}
