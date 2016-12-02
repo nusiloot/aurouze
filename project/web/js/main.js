@@ -101,6 +101,22 @@
             $(this).parents('tr').fadeOut(500, function() {$(this).parents('tr').remove();});
             return false;
         });
+        $('.commentaire').each(function(){
+            $(this).on('blur', function (event, state) {
+
+                var commentaire = $(this);
+                var id = commentaire.attr("data-id");
+                var value = commentaire.val();
+                var urlCom = commentaire.attr("data-url");
+                if (urlCom) {
+                     $.ajax({
+                         type: "POST",
+                         url: commentaire.data('url'),
+                         data: {id: id, value: value}
+                     });
+                 }
+            });
+        });
     }
 
     $.initSomme = function () {

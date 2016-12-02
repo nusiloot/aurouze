@@ -836,5 +836,28 @@ class FactureController extends Controller {
 
     }
 
+    /**
+     * @Route("/relance-commentaire/{id}", name="facture_relance_commentaire_add")
+     * @ParamConverter("facture", class="AppBundle:Facture")
+     */
+    public function relanceCommentaireAction(Request $request, Facture $facture) {
 
+      if (!$request->isXmlHttpRequest()) {
+          throw $this->createNotFoundException();
+      }
+
+      $dm = $this->get('doctrine_mongodb')->getManager();
+      if ($facture) {
+          try {
+              $facture->setRelanceCommentaire($request->get('value'));
+              $dm->persist($facture);
+              $dm->flush();
+              return new Response(json_encode(array("success" => true)));
+          } catch (\Exception $e) {
+
+          }
+      }
+
+      throw new \Exception('Une erreur s\'est produite');
+      }
 }

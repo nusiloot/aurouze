@@ -143,6 +143,11 @@ class Facture implements DocumentSocieteInterface {
      */
     protected $nbRelance;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $relanceCommentaire;
+
     public function __construct() {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->emetteur = new FactureSoussigne();
@@ -1001,4 +1006,26 @@ class Facture implements DocumentSocieteInterface {
       return $this->getNbRelance() >= 3;
     }
 
+
+    /**
+     * Set relanceCommentaire
+     *
+     * @param string $relanceCommentaire
+     * @return self
+     */
+    public function setRelanceCommentaire($relanceCommentaire)
+    {
+        $this->relanceCommentaire = $relanceCommentaire;
+        return $this;
+    }
+
+    /**
+     * Get relanceCommentaire
+     *
+     * @return string $relanceCommentaire
+     */
+    public function getRelanceCommentaire()
+    {
+        return $this->relanceCommentaire;
+    }
 }

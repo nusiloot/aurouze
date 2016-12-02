@@ -61,7 +61,9 @@ class TourneeController extends Controller {
         if ($technicien) {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
-        return $this->render('tournee/passageVisualisation.html.twig', array('passage' => $passage, "technicien" => $technicienObj));
+        $historiquePassages = $this->get('contrat.manager')->getHistoriquePassagesByNumeroArchive($passage, 2);
+
+        return $this->render('tournee/passageVisualisation.html.twig', array('passage' => $passage, "technicien" => $technicienObj, "historiquePassages" => $historiquePassages));
     }
 
 

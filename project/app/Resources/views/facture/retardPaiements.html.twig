@@ -86,17 +86,18 @@
         <table class="table table-bordered">
           <thead>
             <tr>
-              <th class="col-xs-2">Date</th>
+              <th class="col-xs-1">Date</th>
               <th class="col-xs-3">Client</th>
-              <th class="col-xs-3">Facture</th>
-              <th class="col-xs-1">Montant TTC</th>
-              <th class="col-xs-1">Montant Payé</th>
+              <th class="col-xs-2">Facture</th>
+              <th class="col-xs-2">Montant Total / Payé</th>
+              <th class="col-xs-2">Commentaire</th>
               <th class="col-xs-1">Relance(s)</th>
               <th class="col-xs-1"></th>
             </tr>
           </thead>
           <tbody>
             {% for factureEnRetard in facturesEnRetard %}
+						{% set idCheckbox = factureEnRetard.id %}
             <tr style="{{ factureEnRetard.getRelanceColor }}" >
               {{factureEnRetard.isDevis }}
               <td><small>{{ factureEnRetard.dateFacturation | localizeddate("medium", "none", null, null, "d MMM yyyy") | capitalize }}</small></td>
@@ -112,8 +113,12 @@
 								&nbsp;<span data-toggle="tooltip" title="{{ factureEnRetard.avoir }}" class="label label-xs label-warning">R</span>
 								{% endif %}
 							</td>
-              <td class="text-right">{{ "%0.2f" | format(factureEnRetard.montantTTC)  }}&nbsp;€</td>
-              <td class="text-right">{{ "%0.2f" | format(factureEnRetard.montantPaye)  }}&nbsp;€</td>
+              <td class="text-center">
+								<span class="text-right">{{ "%0.2f" | format(factureEnRetard.montantTTC)  }}&nbsp;€</span>&nbsp;/&nbsp;<span class="text-left">{{ "%0.2f" | format(factureEnRetard.montantPaye)  }}&nbsp;€</span>
+							</td>
+							<td>
+								<textarea rows="3" data-url="{{ path('facture_relance_commentaire_add', {'id': factureEnRetard.id }) }}" data-id="{{factureEnRetard.id}}" class="input-inline form-control commentaire" id="facture_retard_commentaire_ajax" >{{ factureEnRetard.relanceCommentaire }}</textarea>
+							</td>
               <td class="text-left">
 								{% if factureEnRetard.has1ereRelance %}
 										<a data-toggle="tooltip" title="1ère relance" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 1 })}}"><span class="glyphicon glyphicon-file text-info"></span></a>&nbsp;
@@ -131,7 +136,6 @@
 											<a data-toggle="tooltip" title="cloturer" href="{{ path('facture_cloturer', {'id': factureEnRetard.societe.id, 'factureId': factureEnRetard.id, 'retour':'relance' }) }}" class="btn btn-default btn-xs relance_lien_cloturer"><span class="glyphicon glyphicon-check"></span>&nbsp;</a>
 										</div>
 										<div class="col-xs-6 text-left">
-											{% set idCheckbox = factureEnRetard.id %}
 	                    {% set fieldFrom = attribute(formRelance,idCheckbox) %}
 	                    {{ form_widget(fieldFrom) }}
 										</div>

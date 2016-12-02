@@ -392,6 +392,27 @@ class ContratManager implements MouvementManagerInterface {
         return $passagesByNumero;
     }
 
+    public function getHistoriquePassagesByNumeroArchive(Passage $passage, $nbHistorique = 10){
+    $passagesNumArchive = $this->getPassagesByNumeroArchiveContrat($passage->getContrat());
+    $historiquePassages =  array();
+      foreach ($passagesNumArchive as $etablissementId => $passagesEtablissement) {
+        if($etablissementId == $passage->getEtablissement()->getId()){
+          krsort($passagesEtablissement);
+          $found = false;
+          foreach ($passagesEtablissement as $key => $p) {
+            if($found && (count($historiquePassages) < $nbHistorique)){
+              $historiquePassages[$key] = $p;
+            }
+            if($passage->getId() == $p->getId()){
+              $found = true;
+            }
+          }
+          break;
+        }
+      }
+    return $historiquePassages;
+    }
+
     public function getAllFactureForContrat($contrat) {
         return $this->dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
     }
