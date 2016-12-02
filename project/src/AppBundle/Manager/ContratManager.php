@@ -392,24 +392,6 @@ class ContratManager implements MouvementManagerInterface {
         return $passagesByNumero;
     }
 
-    // public function getTechnicienPlusUtiliseByNumeroContrat($numeroContrat){
-    //   $contrats = $this->getRepository()->findByNumeroArchive($numeroContrat);
-    //   $passagesParTechnicien = array();
-    //   foreach ($contrats as $contrat) {
-    //     foreach ($contrat->getContratPassages() as $contratPassages) {
-    //         foreach ($contratPassages->getPassages() as $passage) {
-    //             foreach ($passage->getTechniciens() as $technicien) {
-    //               if(!array_key_exists($technicien->getId(),$passagesParTechnicien)){
-    //                 $passagesParTechnicien[$technicien->getId()] = 1;
-    //                 }
-    //                 $passagesParTechnicien[$technicien->getId()] = $passagesParTechnicien[$technicien->getId()] + 1;
-    //             }
-    //         }
-    //       }
-    //   }
-    //   var_dump($passagesParTechnicien); exit;
-    // }
-
     public function getAllFactureForContrat($contrat) {
         return $this->dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
     }
@@ -458,6 +440,21 @@ class ContratManager implements MouvementManagerInterface {
 
         }
         return $pcaArray;
+    }
+
+    public function getNbContratsReconduitByDateReconduction(){
+      $contratsWithDateReconduction = $this->getRepository()->findAllContratWithDateReconduction();
+      $contratsReconduits = array();
+      foreach ($contratsWithDateReconduction as $contrat) {
+        if(!array_key_exists($contrat->getDateReconduction()->format("Ymd"), $contratsReconduits)){
+          $contratsReconduits[$contrat->getDateReconduction()->format("Ymd")] = new \stdClass();
+          $contratsReconduits[$contrat->getDateReconduction()->format("Ymd")]->contrats = array();
+          $contratsReconduits[$contrat->getDateReconduction()->format("Ymd")]->date = $contrat->getDateReconduction();
+        }
+        $contratsReconduits[$contrat->getDateReconduction()->format("Ymd")]->contrats[$contrat->getId()] = $contrat;
+      }
+      krsort($contratsReconduits);
+      return $contratsReconduits;
     }
 
 }

@@ -141,9 +141,10 @@ class ContratController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
 
             $contrat = $form->getData();
-            if(is_null($contrat->getDateAcceptation()) || is_null($contrat->getDateDebut())){
-              throw new \Exception("Le contrat doit avoir date d'acceptation et date de début");              
+            if(!$isBrouillon && (is_null($contrat->getDateAcceptation()) || is_null($contrat->getDateDebut()))) {
+              throw new \Exception("Le contrat doit avoir date d'acceptation et date de début");
             }
+
             if ($contrat->isModifiable() && !$isBrouillon && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $contrat->setDateFin($contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month"));
@@ -151,7 +152,7 @@ class ContratController extends Controller {
                 $dm->persist($contrat);
                 $dm->flush();
                 return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
-            } else {
+            } elseif(!$isBrouillon) {
                 if ((!$oldTechnicien) || $oldTechnicien->getId() != $contrat->getTechnicien()->getId()) {
                     $contrat->changeTechnicien($contrat->getTechnicien());
                 }
@@ -167,6 +168,10 @@ class ContratController extends Controller {
                 $dm->flush();
                 return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
             }
+
+            $dm->persist($contrat);
+            $dm->flush();
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
         $factures = $contratManager->getAllFactureForContrat($contrat);
         return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat, 'factures' => $factures, 'form' => $form->createView(), 'societe' => $contrat->getSociete()));
@@ -185,6 +190,17 @@ class ContratController extends Controller {
         return $this->redirectToRoute('contrat_acceptation', array('id' => $contratReconduit->getId()));
     }
 
+    /**
+     * @Route("/contrats-reconduction-historique", name="contrats_reconduction_historique")
+     */
+    public function reconductionHistoriqueAction(Request $request) {
+      $dm = $this->get('doctrine_mongodb')->getManager();
+
+      $contratManager = new ContratManager($dm);
+      $listeReconductions = $contratManager->getNbContratsReconduitByDateReconduction();
+      return $this->render('contrat/reconduction_historique.html.twig',array('listeReconductions' => $listeReconductions));
+
+    }
     /**
      * @Route("/contrat/{id}/reconduction", name="contrat_reconduction")
      * @ParamConverter("contrat", class="AppBundle:Contrat")
@@ -207,6 +223,8 @@ class ContratController extends Controller {
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
     }
+
+
 
     /**
      * @Route("/contrat/{id}/annulation", name="contrat_annulation")

@@ -12,4 +12,9 @@
 <br/>
 	{{ include('societe/choixForm.html.twig', {'urlTarget': path('facture_societe', {'id': '_id_'}), 'autofocus': true }) }}
 
+
+  <h3>Contrats comportant des factures non éditées</h3>
+
+	{{ include('contrat/contratTableau.html.twig', {'contrats': contratsFactureAEditer }) }}
+
 {% endblock %}

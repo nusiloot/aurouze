@@ -1,0 +1,26 @@
+{% set _menu_active = 'contrat' %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrats{% endblock title %}
+
+{% block body %}
+<ol class="breadcrumb">
+    <li><a href="{{ path('contrat') }}">Contrat</a></li>
+    <li><a href="{{ path('contrats_reconduction_massive') }}">Reconduction Massive</a></li>
+    <li><a href="{{ path('contrats_reconduction_historique') }}">Historique</a></li>
+</ol>
+
+
+  <h3>Liste des reconductions de contrat</h3>
+
+  {% for contratsReconduits in listeReconductions %}
+  <div class="row">
+      <div class="col-xs-12">
+        <h4>Contrat reconduit le {{ contratsReconduits.date | date("d/m/Y") }}</h4>
+      </div>
+  </div>
+    {{ include('contrat/contratTableau.html.twig', {'contrats': contratsReconduits.contrats }) }}
+    <br/>
+
+  {% endfor %}
+{% endblock %}

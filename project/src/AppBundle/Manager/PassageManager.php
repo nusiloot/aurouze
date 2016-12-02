@@ -205,4 +205,19 @@ class PassageManager {
         return $this->getRepository()->findNbPassagesToPlanPerMonthUntil($secteur, $lastDayOfNextMonth);
     }
 
+    public function sortPassagesByTechnicien($passagesForAllTechniciens){
+        $passagesByTechniciens = array();
+        foreach ($passagesForAllTechniciens as $passage) {
+          foreach ($passage->getTechniciens() as $technicien) {
+            if(!array_key_exists($technicien->getId(),$passagesByTechniciens)){
+              $passagesByTechniciens[$technicien->getId()] = new \stdClass();
+              $passagesByTechniciens[$technicien->getId()]->technicien = $technicien;
+              $passagesByTechniciens[$technicien->getId()]->passages = array();
+
+            }
+            $passagesByTechniciens[$technicien->getId()]->passages[$passage->getId()] = $passage;
+          }
+        }
+        return $passagesByTechniciens;
+    }
 }
