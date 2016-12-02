@@ -141,9 +141,10 @@ class ContratController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
 
             $contrat = $form->getData();
-            if(is_null($contrat->getDateAcceptation()) || is_null($contrat->getDateDebut())){
+            if(!$isBrouillon && (is_null($contrat->getDateAcceptation()) || is_null($contrat->getDateDebut()))) {
               throw new \Exception("Le contrat doit avoir date d'acceptation et date de début");
             }
+
             if ($contrat->isModifiable() && !$isBrouillon && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $contrat->setDateFin($contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month"));
@@ -151,7 +152,7 @@ class ContratController extends Controller {
                 $dm->persist($contrat);
                 $dm->flush();
                 return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
-            } else {
+            } elseif(!$isBrouillon) {
                 if ((!$oldTechnicien) || $oldTechnicien->getId() != $contrat->getTechnicien()->getId()) {
                     $contrat->changeTechnicien($contrat->getTechnicien());
                 }
@@ -167,6 +168,10 @@ class ContratController extends Controller {
                 $dm->flush();
                 return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
             }
+
+            $dm->persist($contrat);
+            $dm->flush();
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
         $factures = $contratManager->getAllFactureForContrat($contrat);
         return $this->render('contrat/acceptation.html.twig', array('contrat' => $contrat, 'factures' => $factures, 'form' => $form->createView(), 'societe' => $contrat->getSociete()));
