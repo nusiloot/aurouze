@@ -80,10 +80,23 @@
             <h4>Historique</h4>
             <hr/>
           </div>
+          {% for hPassage in historiquePassages %}
+          <div class="col-xs-12 text-left">
+            Passage du {{ hPassage.dateDebut | localizeddate("medium", "none", null, null, "d MMMM yyyy") }} {{hPassage.dateDebut | date("H") }}h{{hPassage.dateDebut | date("i") }}
+            (
+            {% for tech in hPassage.techniciens %}
+            {{ technicien.identite }}
+            {% endfor %}
+            )
+          </div>
           <div class="col-xs-12 text-left">
             <br/>
-            Traitement :&nbsp;
-            {% for prestation in passage.prestations %}
+            <span style="text-decoration: underline">Constat</span><br/><br/>
+            {{ hPassage.description | nl2br }}
+          </div>
+          <div class="col-xs-12 text-left">
+            <br/>
+            {% for prestation in hPassage.prestations %}
               <div class="btn btn-default btn-xs">
                 {% if(prestation.wordToPicto) %}
                   <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
@@ -93,15 +106,32 @@
             {% endfor %}
           </div>
 
-        <div class="col-xs-12 text-left">
-          <br/>
-          <span style="text-decoration: underline">Nomenclature</span><br/><br/>
-          {{ passage.contrat.nomenclature | nl2br }}
-        </div>
-        <div class="col-xs-12 text-left">
-          <br/>
-          <a class="btn btn-lg btn-group btn-warning col-xs-12 text-center"><span class="pull-left glyphicon glyphicon-pencil"></span><span class="sr-only">Toggle Dropdown</span>SAISIR LE RAPPORT</a>
-        </div>
+          <div class="col-xs-12 text-left">
+            <br/>
+            <table style="margin-top: 20px;" class="table table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-xs-2 text-center">Quantité utilisée</th>
+                        <th class="col-xs-8">Produit</th>
+                        <th class="col-xs-2 text-center">Quantité totale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produit in hPassage.produits  %}
+                    <tr>
+                        <td>{{ produit.nbUtilisePassage }}</td>
+                        {{ dump(produit) }}
+                        <td>{{ produit.nom}} <small class="text-muted">({{ produit.conditionnement }})</small></td>
+                        <td class="text-right">{{ passage.getNbProduitsContrat(produit.identifiant)  }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br/>
+            <hr/>
+          </div>
+
+        {% endfor %}
     </div>
   </div>
 </div>
