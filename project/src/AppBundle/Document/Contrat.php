@@ -1379,6 +1379,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->cleanMouvements();
         $contrat->setReconduit(false);
         $contrat->setDateReconduction(new \DateTime());
+        $contrat->setReferenceClient(null);
         if(!$contrat->getTechnicien()){
           $contrat->setTechnicien($this->getTechnicienPlusUtilise());
         }

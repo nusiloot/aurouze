@@ -92,9 +92,9 @@ class ContratController extends Controller {
 
         $contratManager = new ContratManager($dm);
 
-        if (!$contrat->isModifiable()) {
-            throw $this->createNotFoundException();
-        }
+        // if (!$contrat->isModifiable()) {
+        //     throw $this->createNotFoundException();
+        // }
 
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
             'action' => "",
@@ -110,7 +110,7 @@ class ContratController extends Controller {
             $contrat->updateObject();
             $contrat->updatePrestations($dm);
             $contrat->updateProduits($dm);
-            if($contrat->isEnCours()) {
+            if($contrat->isEnCours() && $contrat->isModifiable()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
             }
             if(!$contrat->getId()) {

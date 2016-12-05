@@ -288,19 +288,21 @@ class ContratManager implements MouvementManagerInterface {
 
     public function updateEcartDatesPrevisionPassage($contratReconduit,$contratOrigine){
         $datesPrevisionArray = array();
-        foreach ($contratOrigine->getContratPassages() as $contratPassage) {
+        foreach ($contratOrigine->getContratPassages() as $etb => $contratPassage) {
+          $datesPrevisionArray[$etb] = array();
             foreach ($contratPassage->getPassagesSorted() as $passage) {
               if($passage->isSousContrat()){
-                $datesPrevisionArray[] = $passage;
+                $datesPrevisionArray[$etb][] = $passage;
               }
           }
         }
-      $cpt = 0;
       $dateDebutContratOrigine = clone $contratOrigine->getDateDebut();
-      foreach ($contratReconduit->getContratPassages() as $contratPassage) {
+      foreach ($contratReconduit->getContratPassages() as $etb => $contratPassage) {
+          $cpt = 0;
           foreach ($contratPassage->getPassagesSorted() as $passage) {
            $dateDebutContratReconduit = clone $contratReconduit->getDateDebut();
-           $datePrevisionCloned = clone $datesPrevisionArray[$cpt]->getDatePrevision();
+           if(!isset($datesPrevisionArray[$etb][$cpt])){ continue; }
+           $datePrevisionCloned = clone $datesPrevisionArray[$etb][$cpt]->getDatePrevision();
            $ecartDateDebutDatePrev = $dateDebutContratOrigine->diff($datePrevisionCloned)->format('%R%a');
            $datePrevision = $dateDebutContratReconduit->modify($ecartDateDebutDatePrev." days");
            $passage->setDatePrevision($datePrevision);
