@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Passage;
+use AppBundle\Type\PassageMobileType;
 
 class TourneeController extends Controller {
 
@@ -66,6 +67,53 @@ class TourneeController extends Controller {
           $this->get('passage.manager')->synchroniseProduitsWithConfiguration($hPassage);
         }
         return $this->render('tournee/passageVisualisation.html.twig', array('passage' => $passage, "technicien" => $technicienObj, "historiquePassages" => $historiquePassages));
+    }
+
+    /**
+     * @Route("/tournee-passage-rapport/{passage}/{technicien}", name="tournee_passage_rapport")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function tourneePassageRapportAction(Request $request, Passage $passage) {
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $technicien = $request->get('technicien');
+        $technicienObj = null;
+        if ($technicien) {
+            $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
+        }
+
+        $form = $this->createForm(new PassageMobileType($dm), $passage, array(
+            'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
+            'method' => 'POST',
+        ));
+
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+
+            //return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+        }
+        $passageManager = $this->get('passage.manager');
+
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+
+        if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
+            if ($contrat->generateMouvement($passage)) {
+                $passage->setMouvementDeclenche(true);
+            }
+        }
+
+        $passage->setDateRealise($passage->getDateDebut());
+        $dm->persist($passage);
+        $dm->persist($contrat);
+        $dm->flush();
+
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        $contrat->verifyAndClose();
+
+        $dm->flush();
+
+        return $this->render('tournee/passageRapport.html.twig', array('passage' => $passage, "technicien" => $technicienObj, 'form' => $form->createView()));
     }
 
 

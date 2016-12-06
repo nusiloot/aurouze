@@ -33,7 +33,14 @@
         $.initButtonLoading();
         $.initPopupRelancePdf();
         $.initAcceptationContrat();
+        $.initMobile();
     });
+
+    $.initMobile = function(){
+      $('.phoenix').each(function(){
+        $(this).phoenix();
+      });
+    }
 
     $.initAcceptationContrat = function() {
       $.updateAcceptationContratButton();

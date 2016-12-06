@@ -1,0 +1,131 @@
+{% set _menu_active = 'tournee' %}
+{% extends 'base_mobile.html.twig' %}
+{% form_theme form _self %}
+
+{% block _passage_produits_entry_row %}
+    <div class="row form-group dynamic-collection-item">
+          <div class="col-xs-10 col-xs-offset-1">
+            <div class="row">
+              <div class="col-xs-7">
+                  {{ form_widget(form.identifiant) }}
+              </div>
+              <div class="col-xs-2 text-right">
+                  {{ form_widget(form.nbUtilisePassage) }}
+              </div>
+              <div class="col-xs-1 text-right">
+                  <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
+              </div>
+            </div>
+          </div>
+    </div>
+{% endblock %}
+
+
+{% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
+{% block body %}
+<div class="row">
+  <div class="col-xs-1">
+  </div>
+  <div class="col-xs-12 text-center">
+        <h2>Rapport de visite</h2>
+        <h3><strong>{{ passage.etablissementInfos.nom }}</strong></h3>
+        <h4><strong>{{ passage.etablissementInfos.adresse.adresse }}&nbsp;{{ passage.etablissementInfos.adresse.codePostal }}&nbsp;{{ passage.etablissementInfos.adresse.commune }}
+        </strong></h4>
+  </div>
+</div>
+<br/>
+{{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
+  <div class="panel panel-default">
+  	<div class="panel-body">
+      	<div class="row">
+      		<div class="col-xs-12 text-left">
+            <h4><strong>Durée intervention</strong></h4>
+            <hr/>
+            <div class="row">
+              <div class="col-xs-10 col-xs-offset-1 bootstrap-timepicker timepicker">
+                  <div class="form-group">
+                      {{ form_label(form.duree) }}
+                      {{ form_errors(form.duree) }}
+                      <div class="input-group">
+                          {{ form_widget(form.duree) }}
+                          <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <br/>
+          </div>
+          <div class="col-xs-12 text-left">
+            <h4><strong>Niveau infestation</strong></h4>
+            <hr/>
+            {{ passage.etablissementInfos.nom }}
+            <br/>
+          </div>
+          <div class="col-xs-12 text-left">
+            <h4><strong>Nettoyage</strong></h4>
+            <hr/>
+            <div class="row">
+                <div class="col-xs-10 col-xs-offset-1">
+                    {{ form_row(form.nettoyages) }}
+                </div>
+            </div>
+            <br/>
+          </div>
+
+          <div class="col-xs-12 text-left">
+            <h4><strong>Application</strong></h4>
+            <hr/>
+            <div class="row">
+                <div class="col-xs-10 col-xs-offset-1">
+                    {{ form_row(form.applications) }}
+                </div>
+            </div>
+            <br/>
+          </div>
+
+          <div class="col-xs-12 text-left">
+            <h4><strong>Constat / Recommandation</strong></h4>
+            <hr/>
+            <div class="row">
+                <div class="col-xs-10 col-xs-offset-1">
+                  {{ form_row(form.description) }}
+                </div>
+            </div>
+            <br/>
+          </div>
+
+          <div class="col-xs-12 text-left">
+            <h4><strong>Produits</strong></h4>
+            <hr/>
+            <div class="row">
+                <div class="col-xs-10 col-xs-offset-1">
+                  <div class="row">
+                    <div class="col-xs-7">
+                        <label class="control-label">Produit :</label>
+                    </div>
+                    <div class="col-xs-2 text-center">
+                        <label class="control-label">Quantité :</label>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
+            <div class="row">
+              <div class="col-xs-10 col-xs-offset-1">
+                <div class="row">
+                  <div class="col-xs-10 text-right">
+                      <a href="javascript:void(0);" data-collection-target="#passage_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br/>
+          </div>
+          <div class="col-xs-12 text-left">
+            {{ form_widget(form.save) }}
+            </div>
+        </div>
+    </div>
+  </div>
+  {{ form_end(form) }}
+{% endblock %}
