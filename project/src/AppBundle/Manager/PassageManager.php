@@ -121,28 +121,6 @@ class PassageManager {
         return null;
     }
 
-    // public function updateNextPassageAPlannifier($passage) {
-    //     $nextPassage = $this->getNextPassageFromPassage($passage, true);
-    //     while ($nextPassage && !$nextPassage->isEnAttente()) {
-    //         $nextPassage = $this->getNextPassageFromPassage($nextPassage, true);
-    //     }
-    //     if ($nextPassage) {
-    //         $nextPassage->setDateDebut($nextPassage->getDatePrevision());
-    //         $nextPassage->setDureePrecedente($passage->getDureeDate());
-    //         $nextPassage->setDatePrecedente($passage->getDateDebut());
-    //         $nextPassage->copyTechnicienFromPassage($passage);
-    //     }
-    //     return $nextPassage;
-    // }
-    //
-    // public function updateNextPassageEnAttente($passage) {
-    //     $nextPassage = $this->getNextPassageFromPassage($passage);
-    //     if ($nextPassage && $nextPassage->isAPlanifie()) {
-    //         $nextPassage->setDateDebut(null);
-    //     }
-    //     return $nextPassage;
-    // }
-
     public function isFirstPassageNonRealise($passage) {
         $contrat = $passage->getContrat();
 
@@ -219,5 +197,26 @@ class PassageManager {
           }
         }
         return $passagesByTechniciens;
+    }
+
+    public function synchroniseProduitsWithConfiguration($passage){
+      $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
+
+      foreach ($passage->getProduits() as $produit) {
+        $identifiantProduit = $produit->getIdentifiant();
+        if($identifiantProduit && !$produit->getNom()){
+          $produitConf = $configuration->getProduitByIdentifiant($identifiantProduit);
+          $produit->setNom($produitConf->getNom());
+          $produit->setPrixHt($produitConf->getPrixHt());
+          $produit->setPrixPrestation($produitConf->getPrixPrestation());
+          $produit->setPrixVente($produitConf->getPrixVente());
+          $produit->setConditionnement($produitConf->getConditionnement());
+          $produit->setStatut($produitConf->getStatut());
+          if($produitContrat = $passage->getContrat()->getProduit($identifiantProduit)){
+          $produit->setNbTotalContrat($produitContrat->getNbTotalContrat());
+          $produit->setNbPremierPassage($produitContrat->getNbPremierPassage());
+          }
+        }
+      }
     }
 }

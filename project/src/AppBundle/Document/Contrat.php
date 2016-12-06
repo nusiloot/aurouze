@@ -396,6 +396,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->produits;
     }
 
+    public function getProduit($identifiant){
+      foreach ($this->produits as $produit) {
+        if($produit->getIdentifiant() == $identifiant){
+          return $produit;
+        }
+      }
+      return null;
+    }
+
     /**
      * Set dateCreation
      *

@@ -171,4 +171,14 @@ class Configuration {
     {
         return $this->provenances;
     }
+
+    public function getProduitByIdentifiant($identifiant){
+      foreach ($this->getProduits() as $produit) {
+        if($identifiant == $produit->getIdentifiant()){
+          return $produit;
+        }
+      }
+      return null;
+    }
+
 }

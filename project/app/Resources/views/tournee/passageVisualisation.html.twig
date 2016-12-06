@@ -85,7 +85,7 @@
             Passage du {{ hPassage.dateDebut | localizeddate("medium", "none", null, null, "d MMMM yyyy") }} {{hPassage.dateDebut | date("H") }}h{{hPassage.dateDebut | date("i") }}
             (
             {% for tech in hPassage.techniciens %}
-            {{ technicien.identite }}
+            {{ tech.identite }}{% if not loop.last %}, {% endif %}
             {% endfor %}
             )
           </div>
@@ -120,9 +120,8 @@
                     {% for produit in hPassage.produits  %}
                     <tr>
                         <td>{{ produit.nbUtilisePassage }}</td>
-                        {{ dump(produit) }}
-                        <td>{{ produit.nom}} <small class="text-muted">({{ produit.conditionnement }})</small></td>
-                        <td class="text-right">{{ passage.getNbProduitsContrat(produit.identifiant)  }}</td>
+                        <td>{{ produit.nom }} {% if produit.conditionnement %}<small class="text-muted">({{ produit.conditionnement }})</small>{% endif %}</td>
+                        <td class="text-right"> {{ produit.nbUtilisePassage }} {{ hPassage.getNbProduitsContrat(produit.identifiant)  }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

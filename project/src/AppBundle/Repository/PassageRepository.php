@@ -232,7 +232,8 @@ class PassageRepository extends DocumentRepository {
       $mongoStartDate = new MongoDate(strtotime($date->format("Y-m-d") . " 00:00:00"));
       $mongoEndDate = new MongoDate(strtotime($date->format("Y-m-d") . " 23:59:59"));
       $queryBuilder = $this->createQueryBuilder('Passage');
-      $query = $queryBuilder->field('dateDebut')->gte($mongoStartDate)
+      $query = $queryBuilder->field('dateFin')->notEqual(null)
+              ->field('dateDebut')->gte($mongoStartDate)
               ->field('dateDebut')->lte($mongoEndDate);
       if($technicien){
           $queryBuilder->field('techniciens')->equals($technicien->getId());
