@@ -45,29 +45,30 @@ class TourneeController extends Controller {
         if ($technicien) {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
-
         $passagesByTechnicien = $this->get('passage.manager')->getRepository()->findAllPassagesForTechnicien($date,$technicienObj);
-        return $this->render('tournee/journeeTechnicien.html.twig', array('passagesByTechnicien' => $passagesByTechnicien, "technicien" => $technicienObj, "date" => $date));
+
+        $historiqueAllPassages = array();
+        $passagesForms = array();
+
+        foreach ($passagesByTechnicien as $passage) {
+          $historiqueAllPassages[$passage->getId()] = $this->get('contrat.manager')->getHistoriquePassagesByNumeroArchive($passage, 2);
+          foreach ($historiqueAllPassages[$passage->getId()] as $hPassage) {
+            $this->get('passage.manager')->synchroniseProduitsWithConfiguration($hPassage);
+          }
+          $passagesForms[$passage->getId()] = $this->createForm(new PassageMobileType($dm, $passage->getId()), $passage, array(
+            'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
+            'method' => 'POST',
+          ))->createView();
+
+        }
+
+        return $this->render('tournee/tourneeTechnicien.html.twig', array('passagesByTechnicien' => $passagesByTechnicien,
+                                                                          "technicien" => $technicienObj,
+                                                                          "date" => $date,
+                                                                          "historiqueAllPassages" => $historiqueAllPassages,
+                                                                          "passagesForms" => $passagesForms));
     }
 
-    /**
-     * @Route("/tournee-passage-visualisation/{passage}/{technicien}", name="tournee_passage_visualisation")
-     * @ParamConverter("passage", class="AppBundle:Passage")
-     */
-    public function tourneePassageVisualisationAction(Request $request, Passage $passage) {
-
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $technicien = $request->get('technicien');
-        $technicienObj = null;
-        if ($technicien) {
-            $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
-        }
-        $historiquePassages = $this->get('contrat.manager')->getHistoriquePassagesByNumeroArchive($passage, 2);
-        foreach ($historiquePassages as $hPassage) {
-          $this->get('passage.manager')->synchroniseProduitsWithConfiguration($hPassage);
-        }
-        return $this->render('tournee/passageVisualisation.html.twig', array('passage' => $passage, "technicien" => $technicienObj, "historiquePassages" => $historiquePassages));
-    }
 
     /**
      * @Route("/tournee-passage-rapport/{passage}/{technicien}", name="tournee_passage_rapport")

@@ -22,9 +22,11 @@ CACHE:
 /component/moment/js/moment.min.js
 /component/select2/js/select2.min.js
 /component/select2/js/i18n/fr.js
+/component/typeahead/typeahead.bundle.min.js
 /js/functions.js
 /js/jquery.phoenix.min.js
 /js/main.js
+/js/mobile.js
 
 /component/bootstrap/fonts/glyphicons-halflings-regular.ttf
 /component/bootstrap/fonts/glyphicons-halflings-regular.woff
