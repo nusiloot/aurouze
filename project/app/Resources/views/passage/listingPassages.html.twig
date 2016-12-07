@@ -43,8 +43,6 @@
 
 				{% if (not passage.isRealise and origine is defined and origine == "contrat") %}
 				<a class="btn btn-link btn-xs" href="{{ path('passage_modification', {'id': passage.id, 'service': path('contrat_visualisation', { 'id': contrat.id }) ~ "#" ~ passage.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
-				{% elseif(not passage.isRealise) %}
-					<a class="btn btn-link btn-xs" href="{{ path('passage_modification', {'id': passage.id}) }}"><span class="glyphicon glyphicon-pencil"></span></a>
 				{% endif %}
 		</div>
 		<div class="col-xs-2">
