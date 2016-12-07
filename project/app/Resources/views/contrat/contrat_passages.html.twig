@@ -107,7 +107,7 @@
     <ul class="list-group">
         {% for etablissement in contrat.getEtablissements %}
             <li class="list-group-item"><span>{{ etablissement.getNom(false) }} - {{ etablissement.adresse.intitule }}</span><a class="pull-right" href="{{ path('passage_etablissement', { 'id': etablissement.id }) }}">Voir tous les passage</a></li>
-            {{ include('passage/listingPassages.html.twig', { 'passages': contrat.getPassagesEtablissementNode(etablissement).getPassagesDateSorted(true) }) }}
+            {{ include('passage/listingPassages.html.twig', { 'passages': contrat.getPassagesEtablissementNode(etablissement).getPassagesDateSorted(true), 'origine': "contrat" }) }}
         {% endfor %}
     </ul>
 </div>

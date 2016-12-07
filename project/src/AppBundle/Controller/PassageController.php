@@ -137,7 +137,7 @@ class PassageController extends Controller {
         }
 
         $form = $this->createForm(new PassageModificationType($dm), $passage, array(
-            'action' => $this->generateUrl('passage_modification', array('id' => $passage->getId())),
+            'action' => $this->generateUrl('passage_modification', array('id' => $passage->getId(), 'service' => $request->get('service'))),
             'method' => 'POST',
         ))->add('modifier', 'submit', array('label' => "Modifier", "attr" => array("class" => "btn btn-primary pull-right")));
         $form->handleRequest($request);
@@ -148,6 +148,12 @@ class PassageController extends Controller {
             }
             $dm->persist($passage);
             $dm->flush();
+
+            if($request->get('service')) {
+                
+                return $this->redirect($request->get('service'));
+            }
+
             return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
         }
 

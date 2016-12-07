@@ -56,7 +56,7 @@ class PassageModificationType extends AbstractType
                 "attr" => array(
                         'class' => 'input-inline datepicker',
                         'data-provide' => 'datepicker',
-                        'data-date-format' => 'dd/mm/yyyy'
+                        'data-date-format' => 'dd/mm/yyyy',
                 ),
                 'widget' => 'single_text',
                 'format' => 'dd/MM/yyyy'
