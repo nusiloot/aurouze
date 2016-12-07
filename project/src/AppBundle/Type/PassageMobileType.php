@@ -16,9 +16,11 @@ class PassageMobileType extends AbstractType
 {
 
     protected $dm;
+    protected $passageId;
 
-    public function __construct(DocumentManager $documentManager) {
+    public function __construct(DocumentManager $documentManager,$passageId) {
         $this->dm = $documentManager;
+        $this->passageId = $passageId;
     }
 
     /**
@@ -47,7 +49,7 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "select2 select2-simple phoenix", "multiple" => "multiple", "data-tags" => "true"),
+        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-tags" => "true"),
         ));
         $builder->get('nettoyages')->resetViewTransformers();
 
@@ -57,7 +59,7 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "select2 select2-simple phoenix", "multiple" => "multiple"),
+        		'attr' => array("class" => "phoenix", "multiple" => "multiple"),
         ));
         $builder->get('applications')->resetViewTransformers();
     }
@@ -77,7 +79,7 @@ class PassageMobileType extends AbstractType
      */
     public function getName()
     {
-        return 'passage';
+        return 'passage_mobile_'.str_replace("-","_",$this->passageId);
     }
 
     public function getTechniciens() {

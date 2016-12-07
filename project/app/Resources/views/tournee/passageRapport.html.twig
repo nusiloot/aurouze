@@ -1,28 +1,3 @@
-{% set _menu_active = 'tournee' %}
-{% extends 'base_mobile.html.twig' %}
-{% form_theme form _self %}
-
-{% block _passage_produits_entry_row %}
-    <div class="row form-group dynamic-collection-item">
-          <div class="col-xs-10 col-xs-offset-1">
-            <div class="row">
-              <div class="col-xs-7">
-                  {{ form_widget(form.identifiant) }}
-              </div>
-              <div class="col-xs-2 text-right">
-                  {{ form_widget(form.nbUtilisePassage) }}
-              </div>
-              <div class="col-xs-1 text-right">
-                  <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
-              </div>
-            </div>
-          </div>
-    </div>
-{% endblock %}
-
-
-{% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
-{% block body %}
 <div class="row">
   <div class="col-xs-1">
   </div>
@@ -35,6 +10,7 @@
 </div>
 <br/>
 {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
+{% set passageId = passage.id %}
   <div class="panel panel-default">
   	<div class="panel-body">
       	<div class="row">
@@ -127,5 +103,4 @@
         </div>
     </div>
   </div>
-  {{ form_end(form) }}
-{% endblock %}
+{{ form_end(form) }}

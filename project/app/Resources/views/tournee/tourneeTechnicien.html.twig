@@ -1,0 +1,80 @@
+{% set _menu_active = 'tournee' %}
+{% extends 'base_mobile.html.twig' %}
+
+{% for passage in passagesByTechnicien %}
+{% set idPassage = passage.id %}
+{% set form = passagesForms[idPassage] %}
+{% set blockName = "_passage_mobile_"~idPassage~"_produits_entry_row" %}
+{% form_theme form _self %}
+  {% block blockName %}
+      <div class="row form-group dynamic-collection-item">
+            <div class="col-xs-10 col-xs-offset-1">
+              <div class="row">
+                <div class="col-xs-7">
+                    {{ form_widget(form.identifiant) }}
+                </div>
+                <div class="col-xs-2 text-right">
+                    {{ form_widget(form.nbUtilisePassage) }}
+                </div>
+                <div class="col-xs-1 text-right">
+                    <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button>
+                </div>
+              </div>
+            </div>
+      </div>
+  {% endblock %}
+{% endfor %}
+
+
+{% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
+{% block body %}
+<div class="tournee_accueil">
+<div class="row">
+  <div class="col-xs-12 text-center">
+    <h2>Tournée {{ technicien.identite }}</h2>
+    <h3>{{ date | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</h3>
+  </div>
+</div>
+  {% for passage in passagesByTechnicien %}
+  <div class="panel panel-default">
+  	<div class="panel-body">
+      <a class="tournee_passage_visualisation" data-id="{{ passage.id }}" style="color:black;">
+      	<div class="row">
+      		    		<div class="col-xs-3 text-left"><strong>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</strong></div>
+          <div class="col-xs-9"><strong>{{ passage.etablissementInfos.nom }}</strong></div>
+        </div>
+        <div class="row">
+          <div class="col-xs-3 text-left"></div>
+          <div class="col-xs-9">{{ passage.etablissementInfos.adresse.adresse }}
+              {{ passage.etablissementInfos.adresse.codePostal }}
+              {{ passage.etablissementInfos.adresse.commune }}</div>
+        </div>
+        <div class="row">
+          <div class="col-xs-3 text-left"></div>
+          <div class="col-xs-9">
+            <br/>
+            {% for prestation in passage.prestations %}
+            <div class="btn btn-default btn-xs">
+              {% if(prestation.wordToPicto) %}
+                <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
+              {% endif %}
+              &nbsp;{{ prestation.getNomSimplifieToString | upper }}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% for passage in passagesByTechnicien %}
+  {% set idPassage = passage.id %}
+  <div class="passage_visualisation" data-id="{{ idPassage }}" style="display:none;">
+    {{ include('tournee/passageVisualisation.html.twig', { 'passage' : passage, "technicien" : technicien, "historiquePassages" : historiqueAllPassages[idPassage]}) }}
+  </div>
+  <div class="passage_rapport" data-id="{{ idPassage }}" style="display:none;">
+    {{ include('tournee/passageRapport.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[idPassage]}) }}
+  </div>
+{% endfor %}
+{% endblock %}

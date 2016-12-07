@@ -1,8 +1,4 @@
-{% set _menu_active = 'tournee' %}
-{% extends 'base_mobile.html.twig' %}
 
-{% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
-{% block body %}
 <div class="row">
   <div class="col-xs-1">
   </div>
@@ -68,7 +64,7 @@
           </div>
           <div class="col-xs-12 text-left">
             <br/>
-            <a class="btn btn-lg btn-group btn-warning col-xs-12 text-center" href="{{ path('tournee_passage_rapport',{ 'passage': passage.id, 'technicien' : technicien.id }) }}"><span class="pull-left glyphicon glyphicon-pencil"></span>SAISIR LE RAPPORT</a>
+            <a class="btn btn-lg btn-group btn-warning col-xs-12 text-center passage_rapport_saisie" data-id="{{ passage.id }}" ><span class="pull-left glyphicon glyphicon-pencil"></span>SAISIR LE RAPPORT</a>
           </div>
       </div>
     </div>
@@ -134,4 +130,3 @@
     </div>
   </div>
 </div>
-{% endblock %}
