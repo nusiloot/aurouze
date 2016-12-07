@@ -42,12 +42,12 @@ class ContratRegeneratePassagesCommand extends ContainerAwareCommand {
 
         if (!$contrat->getDateAcceptation())
         {
-            $output->writeln("Non accepté ".$contrat->getId()." : ".$contrat->getDateDebut()->format('Y-m-d')." / ".$contrat->getDateFin()->format('Y-m-d') ." date de création: ".(($contrat->getDateCreation()) ? $contrat->getDateCreation()->format('Y-m-d'): null));
+            $output->writeln("Non accepté " . $contrat->getNumeroArchive() . " ".$contrat->getId()." : ".$contrat->getDateDebut()->format('Y-m-d')." / ".$contrat->getDateFin()->format('Y-m-d') ." date de création: ".(($contrat->getDateCreation()) ? $contrat->getDateCreation()->format('Y-m-d'): null));
             return;
         }
 
         if($contrat->getDateDebut()->format('Y-m-d') != $contrat->getDateFin()->format('Y-m-d')) {
-            $output->writeln("Déjà OK ".$contrat->getId());
+            $output->writeln("Déjà OK  " . $contrat->getNumeroArchive() . " ".$contrat->getId());
             return;
         }
 
@@ -70,9 +70,9 @@ class ContratRegeneratePassagesCommand extends ContainerAwareCommand {
 
         if ($contrat->isModifiable() && $contrat->getDateDebut()) {
             $cm->generateAllPassagesForContrat($contrat);
-            $output->writeln("Modification et regénération des passages ".$contrat->getId()." : ".$contrat->getDateDebut()->format('Y-m-d')." / ".$contrat->getDateFin()->format('Y-m-d') ." date de création: ".(($contrat->getDateCreation()) ? $contrat->getDateCreation()->format('Y-m-d'): null). " " . $nbDecalage . ' decalages');
+            $output->writeln("Modification et regénération des passages " . $contrat->getNumeroArchive() . " ".$contrat->getId()." : ".$contrat->getDateDebut()->format('Y-m-d')." / ".$contrat->getDateFin()->format('Y-m-d') ." date de création: ".(($contrat->getDateCreation()) ? $contrat->getDateCreation()->format('Y-m-d'): null). " " . $nbDecalage . ' decalages');
         } else {
-            $output->writeln("Modification ".$contrat->getId()." : ".$contrat->getDateDebut()->format('Y-m-d')." / ".$contrat->getDateFin()->format('Y-m-d') ." date de création: ".(($contrat->getDateCreation()) ? $contrat->getDateCreation()->format('Y-m-d'): null). " " . $nbDecalage . ' decalages');
+            $output->writeln("Modification " . $contrat->getNumeroArchive() . " ".$contrat->getId()." : ".$contrat->getDateDebut()->format('Y-m-d')." / ".$contrat->getDateFin()->format('Y-m-d') ." date de création: ".(($contrat->getDateCreation()) ? $contrat->getDateCreation()->format('Y-m-d'): null). " " . $nbDecalage . ' decalages');
         }
 
         $dm->flush();
