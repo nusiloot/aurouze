@@ -147,7 +147,9 @@ class ContratController extends Controller {
 
             if ($contrat->isModifiable() && !$isBrouillon && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
-                $contrat->setDateFin($contrat->getDateDebut()->modify("+" . $contrat->getDuree() . " month"));
+                $dateFin = clone $contrat->getDateDebut();
+                $dateFin = $dateFin->modify("+" . $contrat->getDuree() . " month");
+                $contrat->setDateFin($dateFin);
                 $contrat->setStatut(ContratManager::STATUT_EN_COURS);
                 $dm->persist($contrat);
                 $dm->flush();

@@ -1,5 +1,6 @@
 {% for passage in passages %}
 <div class="list-group-item">
+	<a name="{{ passage.id }}"></a>
 	<div class="row">
 		<div class="col-xs-2">
 			<div class="row">
@@ -39,6 +40,12 @@
 					{{ passage.dateDebut| localizeddate('full', 'none') | capitalize }}
 			  {% endif %}
 				{% if passage.duree %} à {{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}{% endif %} </a>
+
+				{% if (not passage.isRealise and origine is defined and origine == "contrat") %}
+				<a class="btn btn-link btn-xs" href="{{ path('passage_modification', {'id': passage.id, 'service': path('contrat_visualisation', { 'id': contrat.id }) ~ "#" ~ passage.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+				{% elseif(not passage.isRealise) %}
+					<a class="btn btn-link btn-xs" href="{{ path('passage_modification', {'id': passage.id}) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+				{% endif %}
 		</div>
 		<div class="col-xs-2">
 			{% for prestation in passage.prestations %} {% if(prestation.wordToPicto)
