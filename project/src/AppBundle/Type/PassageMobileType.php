@@ -32,13 +32,12 @@ class PassageMobileType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('description', TextareaType::class, array('label' => 'Constat :', 'required' => false, "attr" => array("class" => " phoenix", "rows" => 10)))
+        $passageId = $builder->getData()->getId();
+        $builder->add('description', TextareaType::class, array('label' => 'Constat :', 'required' => false, "attr" => array("class" => " phoenix", "rows" => 10)))
             ->add('dureeRaw', 'time', array(
             'input' => 'string',
-            'widget' => 'single_text'))
+            'widget' => 'single_text'));
             //, TimeType::class, array('label' => 'Durée effective du passage* :', 'attr' => array('class' => " phoenix", "data-clear-btn" => "true")))
-            ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => " phoenix")));
             $builder->get('dureeRaw')
                 ->addModelTransformer(new CallbackTransformer(
                     function ($dureeAsDateTime) {
@@ -97,9 +96,9 @@ class PassageMobileType extends AbstractType
         ));
       //  $builder->get('applications')->resetViewTransformers();
 
-        $builder->add('emailTransmission', TextType::class, array('label' => 'Email :', 'attr' => array('class' => " phoenix")));
-        $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'attr' => array('class' => " phoenix")));
-        $builder->add('signatureBase64', HiddenType::class, array('attr' => array('class' => " phoenix")));
+        $builder->add('emailTransmission', TextType::class, array('label' => 'Email :','required' => false, 'attr' => array('class' => " phoenix")));
+        $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'required' => false, 'attr' => array('class' => " phoenix")));
+        $builder->add('signatureBase64', HiddenType::class, array('attr' => array('class' => "", "data-cible" => "passage_mobile_".$passageId."_signatureBase64")));
     }
 
     /**

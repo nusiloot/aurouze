@@ -78,9 +78,7 @@
     </div>
 <!--  FIN  -->
 
-      {{ form_widget(form.save) }}
-
-<a class="passage_rapport_signature ui-link ui-btn ui-shadow ui-corner-all" href="#passage_signature_{{ passage.id }}" >Valider la saisie</a>
+<a class="passage_rapport_signature ui-link ui-btn ui-shadow ui-corner-all" data-id="{{ passage.id }}" >Valider la saisie</a>
 
 {{ form_end(form) }}
 </div>
@@ -106,8 +104,6 @@
       {{ form_errors(form.signatureBase64) }}
       {{ form_widget(form.signatureBase64) }}
     </div>
-
-    {{ form_widget(form.save) }}
     </div>
     {{ form_end(form) }}
 </div>
