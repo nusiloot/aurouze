@@ -11,10 +11,7 @@
 <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Durée intervention</strong></h3>
 <div class="ui-body ui-body">
   {{ form_errors(form.duree) }}
-  <div class="input-group">
-  <input type="time" value="01h00" data-options="{&quot;mode&quot;: &quot;calbox&quot;, &quot;useNewStyle&quot;:true}" data-role="datebox" class="phoenix form-control" required="required" name="passage_mobile_PASSAGE_009456001_20161124_00007[duree]" id="passage_mobile_PASSAGE_009456001_20161124_00007_duree">
-    <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
-  </div>
+  {{ form_widget(form.duree) }}
 </div>
 
 <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Niveau infestation</strong></h3>

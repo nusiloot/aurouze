@@ -31,7 +31,7 @@ class PassageMobileType extends AbstractType
     {
         $builder
             ->add('description', TextareaType::class, array('label' => 'Constat :', 'required' => false, "attr" => array("class" => " phoenix", "rows" => 10)))
-            ->add('duree', TextType::class, array('label' => 'Durée effective du passage* :', 'attr' => array('class' => " phoenix","type" => "time", "data-clear-btn" => "true")))
+            ->add('duree', TimeType::class, array('label' => 'Durée effective du passage* :', 'attr' => array('class' => " phoenix", "data-clear-btn" => "true")))
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => " phoenix")));
         ;
 
@@ -58,7 +58,7 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-native-menu"=>"false", "data-icon"=>"grid", "data-iconpos"=>"left" ),
+        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-icon"=>"grid", "data-iconpos"=>"left" ),
         ));
         //$builder->get('nettoyages')->resetViewTransformers();
 
@@ -68,7 +68,7 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-native-menu"=>"false", "data-icon"=>"grid", "data-iconpos"=>"left" ),
+        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-icon"=>"grid", "data-iconpos"=>"left" ),
         ));
       //  $builder->get('applications')->resetViewTransformers();
 
