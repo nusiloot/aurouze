@@ -53,7 +53,6 @@ class PassageMobileType extends AbstractType
                         return $today->modify("+1 hours");
                       }
                       $dureeArr = explode(":",$dureeAsString);
-                      var_dump($dureeArr); exit;
                       return \DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d')." ".$dureeArr[0].":".$dureeArr[1].":".$dureeArr[2]);
                     }
                 ))
