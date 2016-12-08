@@ -17,26 +17,26 @@
           <div class="ui-grid-a">
             <div class="ui-block-a">
               <h2>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</h2>
-              <p>
-              {% for prestation in passage.prestations %}
-
-                  {% if(prestation.wordToPicto) %}
-                    <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
-                  {% endif %}
-                  &nbsp;<strong>{{ prestation.getNomSimplifieToString }}</strong><br/>
-
-                {% endfor %}
-              </p>
             </div>
             <div class="ui-block-b">
                 <h2>{{ passage.etablissementInfos.nom }}</h2>
-                <p>
-                  <strong>{{ passage.etablissementInfos.adresse.adresse }}
-                  {{ passage.etablissementInfos.adresse.codePostal }}
-                  {{ passage.etablissementInfos.adresse.commune }}</strong>
-                </p>
             </div>
           </div>
+          <p>
+            <strong>{{ passage.etablissementInfos.adresse.adresse }}
+            {{ passage.etablissementInfos.adresse.codePostal }}
+            {{ passage.etablissementInfos.adresse.commune }}</strong>
+          </p>
+            <p>
+            {% for prestation in passage.prestations %}
+
+                {% if(prestation.wordToPicto) %}
+                  <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
+                {% endif %}
+                &nbsp;<strong>{{ prestation.getNomSimplifieToString }}</strong>&nbsp;&nbsp;
+
+              {% endfor %}
+            </p>
         </a>
     </li>
 {% endfor %}
