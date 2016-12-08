@@ -26,7 +26,6 @@
           [].forEach.call(divs, function(div) {
               var idCanva = div.id;
               signaturesPad[idCanva] = new SignaturePad(div);
-              console.log($("#"+idCanva).parent().find("input").val());
               var input = $("#"+idCanva).parent().find("input");
 
               if (input.val()) {
