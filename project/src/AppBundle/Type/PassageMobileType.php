@@ -32,11 +32,14 @@ class PassageMobileType extends AbstractType
     {
         $builder
             ->add('description', TextareaType::class, array('label' => 'Constat :', 'required' => false, "attr" => array("class" => " phoenix", "rows" => 10)))
-            ->add('dureeRaw', TimeType::class, array('label' => 'Durée effective du passage* :', 'attr' => array('class' => " phoenix", "data-clear-btn" => "true")))
+            ->add('dureeRaw', 'time', array(
+            'input' => 'string',
+            'widget' => 'single_text'))
+            //, TimeType::class, array('label' => 'Durée effective du passage* :', 'attr' => array('class' => " phoenix", "data-clear-btn" => "true")))
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => " phoenix")));
         ;
 
-      
+
 
         $builder->add('produits', CollectionType::class, array(
             'entry_type' => new ProduitPassageMobileType($this->dm),
