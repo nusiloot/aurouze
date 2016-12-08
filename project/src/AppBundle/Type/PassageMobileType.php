@@ -30,18 +30,27 @@ class PassageMobileType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('description', TextareaType::class, array('label' => 'Constat :', 'required' => false, "attr" => array("class" => "form-control phoenix", "rows" => 10)))
-            ->add('duree', TextType::class, array('label' => 'Durée effective du passage* :', 'attr' => array('class' => "input-timepicker phoenix")))
-            ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => "btn btn-success phoenix")));
+            ->add('description', TextareaType::class, array('label' => 'Constat :', 'required' => false, "attr" => array("class" => " phoenix", "rows" => 10)))
+            ->add('duree', TextType::class, array('label' => 'Durée effective du passage* :', 'attr' => array('class' => " phoenix","type" => "time", "data-clear-btn" => "true")))
+            ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => " phoenix")));
         ;
 
         $builder->add('produits', CollectionType::class, array(
-            'entry_type' => new ProduitPassageType($this->dm, array("phoenix" => "phoenix")),
+            'entry_type' => new ProduitPassageMobileType($this->dm),
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
             'label' => '',
         ));
+
+        $builder->add('niveauInfestation', CollectionType::class, array(
+            'entry_type' => new NiveauInfestationPassageMobileType($this->dm),
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'label' => '',
+        ));
+
 
         $builder->add('nettoyages', ChoiceType::class, array(
         		'label' => 'Nettoyage : ',
@@ -49,9 +58,9 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-tags" => "true"),
+        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-native-menu"=>"false", "data-icon"=>"grid", "data-iconpos"=>"left" ),
         ));
-        $builder->get('nettoyages')->resetViewTransformers();
+        //$builder->get('nettoyages')->resetViewTransformers();
 
         $builder->add('applications', ChoiceType::class, array(
         		'label' => 'Respect des applications : ',
@@ -59,9 +68,13 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "phoenix", "multiple" => "multiple"),
+        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-native-menu"=>"false", "data-icon"=>"grid", "data-iconpos"=>"left" ),
         ));
-        $builder->get('applications')->resetViewTransformers();
+      //  $builder->get('applications')->resetViewTransformers();
+
+        $builder->add('emailTransmission', TextType::class, array('label' => 'Email :', 'attr' => array('class' => " phoenix")));
+        $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'attr' => array('class' => " phoenix")));
+        $builder->add('signatureBase64', TextType::class, array('label' => 'Signature :', 'attr' => array('class' => " phoenix")));
     }
 
     /**

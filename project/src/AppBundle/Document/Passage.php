@@ -182,6 +182,26 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $numeroOrdre;
 
+    /**
+     * @MongoDB\EmbedMany(targetDocument="NiveauInfestation")
+     */
+    protected $niveauInfestation;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $emailTransmission;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $nomTransmission;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $signatureBase64;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
@@ -1201,5 +1221,101 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getDatePrecedente()
     {
         return $this->datePrecedente;
+    }
+
+    /**
+     * Add niveauInfestation
+     *
+     * @param AppBundle\Document\NiveauInfestation $niveauInfestation
+     */
+    public function addNiveauInfestation(\AppBundle\Document\NiveauInfestation $niveauInfestation)
+    {
+        $this->niveauInfestation[] = $niveauInfestation;
+    }
+
+    /**
+     * Remove niveauInfestation
+     *
+     * @param AppBundle\Document\NiveauInfestation $niveauInfestation
+     */
+    public function removeNiveauInfestation(\AppBundle\Document\NiveauInfestation $niveauInfestation)
+    {
+        $this->niveauInfestation->removeElement($niveauInfestation);
+    }
+
+    /**
+     * Get niveauInfestation
+     *
+     * @return \Doctrine\Common\Collections\Collection $niveauInfestation
+     */
+    public function getNiveauInfestation()
+    {
+        return $this->niveauInfestation;
+    }
+
+    /**
+     * Set emailTransmission
+     *
+     * @param string $emailTransmission
+     * @return self
+     */
+    public function setEmailTransmission($emailTransmission)
+    {
+        $this->emailTransmission = $emailTransmission;
+        return $this;
+    }
+
+    /**
+     * Get emailTransmission
+     *
+     * @return string $emailTransmission
+     */
+    public function getEmailTransmission()
+    {
+        return $this->emailTransmission;
+    }
+
+    /**
+     * Set nomTransmission
+     *
+     * @param string $nomTransmission
+     * @return self
+     */
+    public function setNomTransmission($nomTransmission)
+    {
+        $this->nomTransmission = $nomTransmission;
+        return $this;
+    }
+
+    /**
+     * Get nomTransmission
+     *
+     * @return string $nomTransmission
+     */
+    public function getNomTransmission()
+    {
+        return $this->nomTransmission;
+    }
+
+    /**
+     * Set signatureBase64
+     *
+     * @param string $signatureBase64
+     * @return self
+     */
+    public function setSignatureBase64($signatureBase64)
+    {
+        $this->signatureBase64 = $signatureBase64;
+        return $this;
+    }
+
+    /**
+     * Get signatureBase64
+     *
+     * @return string $signatureBase64
+     */
+    public function getSignatureBase64()
+    {
+        return $this->signatureBase64;
     }
 }

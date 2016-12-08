@@ -37,6 +37,13 @@ class PassageManager {
         'Ecrasés',
         'Déplacés'
     );
+
+    public static $typesInfestationLibelles = array(
+        self::TYPE_PASSAGE_CONTRAT => "Sous contrat",
+        self::TYPE_PASSAGE_GARANTIE => "Sous garantie",
+        self::TYPE_PASSAGE_CONTROLE => "Contrôle",
+    );
+
     protected $dm;
     protected $cm;
 

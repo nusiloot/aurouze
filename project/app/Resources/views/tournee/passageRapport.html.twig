@@ -1,106 +1,114 @@
-<div class="row">
-  <div class="col-xs-1">
-  </div>
-  <div class="col-xs-12 text-center">
+
+<div class="passage_rapport" data-role="page" id="passage_rapport_{{ passage.id }}">
+  <div data-role="main" class="ui-content">
+  {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
         <h2>Rapport de visite</h2>
         <h3><strong>{{ passage.etablissementInfos.nom }}</strong></h3>
         <h4><strong>{{ passage.etablissementInfos.adresse.adresse }}&nbsp;{{ passage.etablissementInfos.adresse.codePostal }}&nbsp;{{ passage.etablissementInfos.adresse.commune }}
         </strong></h4>
+        <br/>
+{% set passageId = passage.id %}
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Durée intervention</strong></h3>
+<div class="ui-body ui-body">
+  {{ form_errors(form.duree) }}
+  <div class="input-group">
+  <input type="time" value="01h00" data-options="{&quot;mode&quot;: &quot;calbox&quot;, &quot;useNewStyle&quot;:true}" data-role="datebox" class="phoenix form-control" required="required" name="passage_mobile_PASSAGE_009456001_20161124_00007[duree]" id="passage_mobile_PASSAGE_009456001_20161124_00007_duree">
+    <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
   </div>
 </div>
-<br/>
-{{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
-{% set passageId = passage.id %}
-  <div class="panel panel-default">
-  	<div class="panel-body">
-      	<div class="row">
-      		<div class="col-xs-12 text-left">
-            <h4><strong>Durée intervention</strong></h4>
-            <hr/>
-            <div class="row">
-              <div class="col-xs-10 col-xs-offset-1 bootstrap-timepicker timepicker">
-                  <div class="form-group">
-                      {{ form_label(form.duree) }}
-                      {{ form_errors(form.duree) }}
-                      <div class="input-group">
-                          {{ form_widget(form.duree) }}
-                          <div class="input-group-addon"><i class="glyphicon glyphicon-time"></i></div>
-                      </div>
-                  </div>
-              </div>
-            </div>
-            <br/>
-          </div>
-          <div class="col-xs-12 text-left">
-            <h4><strong>Niveau infestation</strong></h4>
-            <hr/>
-            {{ passage.etablissementInfos.nom }}
-            <br/>
-          </div>
-          <div class="col-xs-12 text-left">
-            <h4><strong>Nettoyage</strong></h4>
-            <hr/>
-            <div class="row">
-                <div class="col-xs-10 col-xs-offset-1">
-                    {{ form_row(form.nettoyages) }}
-                </div>
-            </div>
-            <br/>
-          </div>
 
-          <div class="col-xs-12 text-left">
-            <h4><strong>Application</strong></h4>
-            <hr/>
-            <div class="row">
-                <div class="col-xs-10 col-xs-offset-1">
-                    {{ form_row(form.applications) }}
-                </div>
-            </div>
-            <br/>
-          </div>
-
-          <div class="col-xs-12 text-left">
-            <h4><strong>Constat / Recommandation</strong></h4>
-            <hr/>
-            <div class="row">
-                <div class="col-xs-10 col-xs-offset-1">
-                  {{ form_row(form.description) }}
-                </div>
-            </div>
-            <br/>
-          </div>
-
-          <div class="col-xs-12 text-left">
-            <h4><strong>Produits</strong></h4>
-            <hr/>
-            <div class="row">
-                <div class="col-xs-10 col-xs-offset-1">
-                  <div class="row">
-                    <div class="col-xs-7">
-                        <label class="control-label">Produit :</label>
-                    </div>
-                    <div class="col-xs-2 text-center">
-                        <label class="control-label">Quantité :</label>
-                    </div>
-                  </div>
-                </div>
-            </div>
-            {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
-            <div class="row">
-              <div class="col-xs-10 col-xs-offset-1">
-                <div class="row">
-                  <div class="col-xs-10 text-right">
-                      <a href="javascript:void(0);" data-collection-target="#passage_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <br/>
-          </div>
-          <div class="col-xs-12 text-left">
-            {{ form_widget(form.save) }}
-            </div>
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Niveau infestation</strong></h3>
+<div class="ui-body ui-body">
+  {{ form_widget(form.niveauInfestation, { 'attr': {'class': 'dynamic-collection'} }) }}
+  <div class="row">
+    <div class="col-xs-10 col-xs-offset-1">
+      <div class="row">
+        <div class="col-xs-10 text-right">
+            <a href="javascript:void(0);" data-collection-target="#passage_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
         </div>
+      </div>
     </div>
   </div>
+</div>
+
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nettoyage</strong></h3>
+<div class="ui-body ui-body">
+  {{ form_widget(form.nettoyages) }}
+</div>
+
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Application</strong></h3>
+<div class="ui-body ui-body">
+  {{ form_widget(form.applications) }}
+</div>
+
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Constat / Recommandation</strong></h3>
+<div class="ui-body ui-body">
+    {{ form_widget(form.description) }}
+</div>
+
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Produits</strong></h3>
+<div class="ui-body ui-body">
+  {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
+  <div class="row">
+    <div class="col-xs-10 col-xs-offset-1">
+      <div class="row">
+        <div class="col-xs-10 text-right">
+            <a href="javascript:void(0);" data-collection-target="#passage_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--  A SUPPRIMER DE CE TEMPLATE -->
+  <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nom</strong></h3>
+    <div class="ui-body ui-body">
+      {{ form_errors(form.nomTransmission) }}
+      {{ form_widget(form.nomTransmission) }}
+    </div>
+
+    <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Email</strong></h3>
+    <div class="ui-body ui-body">
+      {{ form_errors(form.emailTransmission) }}
+      {{ form_widget(form.emailTransmission) }}
+    </div>
+
+    <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Signature</strong></h3>
+    <div class="ui-body ui-body">
+      {{ form_errors(form.signatureBase64) }}
+      {{ form_widget(form.signatureBase64) }}
+    </div>
+<!--  FIN  -->
+
+      {{ form_widget(form.save) }}
+
+<a class="passage_rapport_signature ui-link ui-btn ui-shadow ui-corner-all" href="#passage_signature_{{ passage.id }}" >Valider la saisie</a>
+
 {{ form_end(form) }}
+</div>
+</div>
+
+<div class="passage_signature" data-role="page" id="passage_signature_{{ passage.id }}">
+  {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
+    <div data-role="main" class="ui-content">
+    <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nom</strong></h3>
+    <div class="ui-body ui-body">
+      {{ form_errors(form.nomTransmission) }}
+      {{ form_widget(form.nomTransmission) }}
+    </div>
+
+    <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Email</strong></h3>
+    <div class="ui-body ui-body">
+      {{ form_errors(form.emailTransmission) }}
+      {{ form_widget(form.emailTransmission) }}
+    </div>
+
+    <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Signature</strong></h3>
+    <div class="ui-body ui-body">
+      {{ form_errors(form.signatureBase64) }}
+      {{ form_widget(form.signatureBase64) }}
+    </div>
+
+    {{ form_widget(form.save) }}
+    </div>
+    {{ form_end(form) }}
+</div>

@@ -83,13 +83,12 @@ class TourneeController extends Controller {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
 
-        $form = $this->createForm(new PassageMobileType($dm), $passage, array(
+        $form = $this->createForm(new PassageMobileType($dm, $passage->getId()), $passage, array(
             'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
             'method' => 'POST',
         ));
 
         $form->handleRequest($request);
-
         if (!$form->isSubmitted() || !$form->isValid()) {
 
             //return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
