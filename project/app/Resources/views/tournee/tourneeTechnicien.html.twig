@@ -14,14 +14,7 @@
   {% for passage in passagesByTechnicien %}
     <li>
         <a class="tournee_passage_visualisation anchor-link" href="#passage_visualisation_{{ passage.id }}"  >
-          <div class="ui-grid-a">
-            <div class="ui-block-a">
-              <h2>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</h2>
-            </div>
-            <div class="ui-block-b">
-                <h2>{{ passage.etablissementInfos.nom }}</h2>
-            </div>
-          </div>
+          <h2>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}&nbsp;-&nbsp;{{ passage.etablissementInfos.nom }}</h2>          
           <p>
             <strong>{{ passage.etablissementInfos.adresse.adresse }}
             {{ passage.etablissementInfos.adresse.codePostal }}
@@ -33,7 +26,7 @@
                 {% if(prestation.wordToPicto) %}
                   <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
                 {% endif %}
-                &nbsp;<strong>{{ prestation.getNomSimplifieToString }}</strong>&nbsp;&nbsp; 
+                &nbsp;<strong>{{ prestation.getNomSimplifieToString }}</strong>&nbsp;&nbsp;
 
               {% endfor %}
             </p>
