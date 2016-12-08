@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\CallbackTransformer;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
 class PassageMobileType extends AbstractType
@@ -37,7 +39,24 @@ class PassageMobileType extends AbstractType
             'widget' => 'single_text'))
             //, TimeType::class, array('label' => 'Durée effective du passage* :', 'attr' => array('class' => " phoenix", "data-clear-btn" => "true")))
             ->add('save', SubmitType::class, array('label' => 'Valider', "attr" => array("class" => " phoenix")));
-        ;
+            $builder->get('dureeRaw')
+                ->addModelTransformer(new CallbackTransformer(
+                    function ($dureeAsDateTime) {
+                         if(!$dureeAsDateTime){
+                           return "01:00:00";
+                         }
+                        return $dureeAsDateTime->format('H').':'.$dureeAsDateTime->format('i').":00";
+                    },
+                    function ($dureeAsString) {
+                      $today = new \DateTime(date('Y-m-d 00:00:00'));
+                      if(!$dureeAsString){
+                        return $today->modify("+1 hours");
+                      }
+                      $dureeArr = explode(":",$dureeAsString);
+                      return \DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d')." ".$dureeArr[0].":".$dureeArr[1].":".$dureeArr[3]);                      
+                    }
+                ))
+            ;
 
 
 
@@ -80,7 +99,7 @@ class PassageMobileType extends AbstractType
 
         $builder->add('emailTransmission', TextType::class, array('label' => 'Email :', 'attr' => array('class' => " phoenix")));
         $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'attr' => array('class' => " phoenix")));
-        $builder->add('signatureBase64', TextType::class, array('label' => 'Signature :', 'attr' => array('class' => " phoenix")));
+        $builder->add('signatureBase64', HiddenType::class, array('attr' => array('class' => " phoenix")));
     }
 
     /**
