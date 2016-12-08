@@ -1151,6 +1151,29 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
        return $this;
    }
 
+   /**
+    * Get dureeRaw
+    *
+    * @return date $dureeRaw
+    */
+    public function getDureeRaw() {
+       return $this->duree;
+    }
+
+   /**
+    * Set duree
+    *
+    * @param date $dureeRaw
+    * @return self
+    */
+   public function setDureeRaw($dureeRaw) {
+       $this->duree = $dureeRaw;
+
+       return $this;
+   }
+
+
+
     /**
      * Set commentaire
      *
