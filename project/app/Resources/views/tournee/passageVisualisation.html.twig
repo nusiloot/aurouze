@@ -1,7 +1,7 @@
 <div class="ui-grid-a">
     <div class="ui-block-a">
       <div class="ui-bar ui-bar-a" style="height:60px">
-        <h2>Intervention {{ technicien.identite }}</h2><br/>
+        <h2>{{ technicien.identite }}</h2><br/>
         <h3>{{ passage.dateDebut | localizeddate("medium", "none", null, null, "d MMMM yyyy") }} {{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</h3><br/>
         <span><strong>Commercial : {{ passage.contrat.commercial.identite }}</strong></span>
       </div>
