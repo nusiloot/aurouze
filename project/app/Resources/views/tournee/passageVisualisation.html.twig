@@ -2,8 +2,7 @@
     <div class="ui-block-a">
       <div class="ui-bar ui-bar-a" style="height:60px">
         <h2>{{ technicien.identite }}</h2><br/>
-        <h3>{{ passage.dateDebut | localizeddate("medium", "none", null, null, "d MMMM yyyy") }} {{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</h3><br/>
-        <span><strong>Commercial : {{ passage.contrat.commercial.identite }}</strong></span>
+        <h3>{{ passage.dateDebut | localizeddate("medium", "none", null, null, "d MMMM yyyy") }} {{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</h3>
       </div>
     </div>
     <div class="ui-block-b">
@@ -26,6 +25,7 @@
   {% if(passage.commentaire) %}
     <br/> Commentaire : {{ passage.commentaire }}
   {% endif %}
+      <br/><span><strong>Com : {{ passage.contrat.commercial.identite }}</strong></span>
   </div>
   <div class="ui-body ui-body-a">
     <p>
