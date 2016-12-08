@@ -32,14 +32,11 @@
       {{passage.libelle | capitalize }}
     </p>
     <p>
-      Traitement :&nbsp;
       {% for prestation in passage.prestations %}
-        <div class="btn btn-default btn-xs">
           {% if(prestation.wordToPicto) %}
             <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
           {% endif %}
-          &nbsp;{{ prestation.getNomSimplifieToString | upper }}
-        </div>
+          &nbsp;{{ prestation.getNomSimplifieToString }}
       {% endfor %}
     </p>
     <div class="ui-body ui-body-a ui-corner-all">
@@ -75,7 +72,7 @@
                 {% if(prestation.wordToPicto) %}
                   <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
                 {% endif %}
-                &nbsp;{{ prestation.getNomSimplifieToString | upper }}
+                &nbsp;{{ prestation.getNomSimplifieToString }}
             {% endfor %}
           </p>
 
