@@ -38,7 +38,7 @@ class PassageMobileType extends AbstractType
             ->add('dureeRaw', 'time', array(
             'input' => 'string',
             'widget' => 'single_text',
-            "attr" => array("class" => " phoenix"));
+            "attr" => array("class" => " phoenix")));
 
             $builder->get('dureeRaw')
                 ->addModelTransformer(new CallbackTransformer(
