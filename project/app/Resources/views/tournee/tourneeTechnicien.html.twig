@@ -13,8 +13,8 @@
   </li>
   {% for passage in passagesByTechnicien %}
     <li>
-        <a class="tournee_passage_visualisation anchor-link" href="#passage_visualisation_{{ passage.id }}"  >
-          <h2>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}&nbsp;-&nbsp;{{ passage.etablissementInfos.nom }}</h2>          
+        <a class="tournee_passage_visualisation anchor-link {% if( passage.isTransmis ) %}transmis{% endif %}" href="#passage_visualisation_{{ passage.id }}"  >
+          <h2>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}&nbsp;-&nbsp;{{ passage.etablissementInfos.nom }}</h2>
           <p>
             <strong>{{ passage.etablissementInfos.adresse.adresse }}
             {{ passage.etablissementInfos.adresse.codePostal }}

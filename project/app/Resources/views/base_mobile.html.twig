@@ -1,4 +1,4 @@
-<html lang="{{ app.request.locale }}" manifest="/example.appcache" >
+<html lang="{{ app.request.locale }}" >
     <head>
         <meta charset="{{ _charset }}">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,10 +36,9 @@
 
         {% block javascripts %}{% endblock %}
 
-        <script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/mobile/js/jquery.mobile-1.4.5.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.mobile-1.4.5.min.js') }}"></script>
 
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/mobile/js/jquery.phoenix.min.js') }}"></script>

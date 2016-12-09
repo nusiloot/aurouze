@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\CallbackTransformer;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
@@ -37,7 +38,7 @@ class PassageMobileType extends AbstractType
             ->add('dureeRaw', 'time', array(
             'input' => 'string',
             'widget' => 'single_text'));
-            //, TimeType::class, array('label' => 'Durée effective du passage* :', 'attr' => array('class' => " phoenix", "data-clear-btn" => "true")))
+
             $builder->get('dureeRaw')
                 ->addModelTransformer(new CallbackTransformer(
                     function ($dureeAsDateTime) {
@@ -96,7 +97,7 @@ class PassageMobileType extends AbstractType
         ));
       //  $builder->get('applications')->resetViewTransformers();
 
-        $builder->add('emailTransmission', TextType::class, array('label' => 'Email :','required' => false, 'attr' => array('class' => " phoenix")));
+        $builder->add('emailTransmission', EmailType::class, array('label' => 'Email :','required' => false, 'attr' => array('class' => " phoenix")));
         $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'required' => false, 'attr' => array('class' => " phoenix")));
         $builder->add('signatureBase64', HiddenType::class, array('attr' => array('class' => "", "data-cible" => "passage_mobile_".$passageId."_signatureBase64")));
     }

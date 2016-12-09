@@ -1,5 +1,5 @@
 
-<div class="passage_rapport" data-role="page" id="passage_rapport_{{ passage.id }}">
+<div class="passage_rapport" data-role="page" id="passage_rapport_{{ passage.id }}" data-id="{{ passage.id }}">
   <div data-role="main" class="ui-content">
   {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
         <h2>Rapport de visite</h2>
@@ -16,16 +16,16 @@
 
 <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Niveau infestation</strong></h3>
 <div class="ui-body ui-body">
-  {{ form_widget(form.niveauInfestation, { 'attr': {'class': 'dynamic-collection'} }) }}
-  <div class="row">
-    <div class="col-xs-10 col-xs-offset-1">
-      <div class="row">
-        <div class="col-xs-10 text-right">
-            <a href="javascript:void(0);" data-collection-target="#passage_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
-        </div>
-      </div>
-    </div>
-  </div>
+  <ul data-role="listview" id="niveauInfestation-liste-{{ passage.id }}" class="niveauInfestation-list" data-id="{{ passage.id }}"
+    data-prototype="{{ form_widget(form.niveauInfestation.vars.prototype) |e }}">
+    {% for niveauInfestationField in form.niveauInfestation %}
+        <li>
+            {{ form_errors(niveauInfestationField) }}
+            {{ form_widget(niveauInfestationField) }}
+        </li>
+    {% endfor %}
+</ul>
+<a class="ui-link ui-btn ui-shadow ui-corner-all niveauInfestation-ajout-lien" id="niveauInfestation-ajout-lien-{{ passage.id }}" data-id="{{ passage.id }}" >Ajouter une prestation</a>
 </div>
 
 <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nettoyage</strong></h3>
@@ -45,16 +45,17 @@
 
 <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Produits</strong></h3>
 <div class="ui-body ui-body">
-  {{ form_widget(form.produits, { 'attr': {'class': 'dynamic-collection'} }) }}
-  <div class="row">
-    <div class="col-xs-10 col-xs-offset-1">
-      <div class="row">
-        <div class="col-xs-10 text-right">
-            <a href="javascript:void(0);" data-collection-target="#passage_produits" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
-        </div>
-      </div>
-    </div>
-  </div>
+  <ul data-role="listview" id="produits-liste-{{ passage.id }}" class="produits-list" data-id="{{ passage.id }}"
+    data-prototype="{{ form_widget(form.produits.vars.prototype) |e }}">
+    {% for produitField in form.produits %}
+        <li>
+            {{ form_errors(produitField) }}
+            {{ form_widget(produitField) }}
+        </li>
+    {% endfor %}
+</ul>
+
+<a class="ui-link ui-btn ui-shadow ui-corner-all produits-ajout-lien" id="produits-ajout-lien-{{ passage.id }}" data-id="{{ passage.id }}" >Ajouter un produit</a>
 </div>
 <!--  A SUPPRIMER DE CE TEMPLATE -->
   <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nom</strong></h3>
@@ -78,32 +79,8 @@
     </div>
 <!--  FIN  -->
 
-<a class="passage_rapport_signature ui-link ui-btn ui-shadow ui-corner-all" data-id="{{ passage.id }}" >Valider la saisie</a>
+<a class="passage_rapport_signature ui-link ui-btn ui-shadow ui-corner-all" data-id="{{ passage.id }}" href="#passage_visualisation_{{ passage.id }}" >Valider la saisie</a>
 
 {{ form_end(form) }}
 </div>
-</div>
-
-<div class="passage_signature" data-role="page" id="passage_signature_{{ passage.id }}">
-  {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
-    <div data-role="main" class="ui-content">
-    <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nom</strong></h3>
-    <div class="ui-body ui-body">
-      {{ form_errors(form.nomTransmission) }}
-      {{ form_widget(form.nomTransmission) }}
-    </div>
-
-    <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Email</strong></h3>
-    <div class="ui-body ui-body">
-      {{ form_errors(form.emailTransmission) }}
-      {{ form_widget(form.emailTransmission) }}
-    </div>
-
-    <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Signature</strong></h3>
-    <div class="ui-body ui-body">
-      {{ form_errors(form.signatureBase64) }}
-      {{ form_widget(form.signatureBase64) }}
-    </div>
-    </div>
-    {{ form_end(form) }}
 </div>

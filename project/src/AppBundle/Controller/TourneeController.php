@@ -87,7 +87,6 @@ class TourneeController extends Controller {
             'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
             'method' => 'POST',
         ));
-
         $form->handleRequest($request);
         if (!$form->isSubmitted() || !$form->isValid()) {
 
@@ -95,25 +94,25 @@ class TourneeController extends Controller {
         }
         $passageManager = $this->get('passage.manager');
 
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        // $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
 
-        if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
-            if ($contrat->generateMouvement($passage)) {
-                $passage->setMouvementDeclenche(true);
-            }
-        }
+        // if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
+        //     if ($contrat->generateMouvement($passage)) {
+        //         $passage->setMouvementDeclenche(true);
+        //     }
+        // }
 
         $passage->setDateRealise($passage->getDateDebut());
         $dm->persist($passage);
-        $dm->persist($contrat);
+        // $dm->persist($contrat);
         $dm->flush();
 
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
-        $contrat->verifyAndClose();
+        // $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        // $contrat->verifyAndClose();
+        //
+        // $dm->flush();
 
-        $dm->flush();
-
-        return $this->render('tournee/passageRapport.html.twig', array('passage' => $passage, "technicien" => $technicienObj, 'form' => $form->createView()));
+        return $this->redirectToRoute('tournee_technicien', array('passage' => $passage->getId(),"technicien" => $technicienObj->getId()));
     }
 
 

@@ -19,6 +19,10 @@ class PassageManager {
     const TYPE_PASSAGE_GARANTIE = "GARANTIE";
     const TYPE_PASSAGE_CONTROLE = "CONTROLE";
 
+    const TYPE_INFESTATION_FAIBLE = "FAIBLE";
+    const TYPE_INFESTATION_PRESENCE = "PRESENCE";
+    const TYPE_INFESTATION_ELEVE = "ELEVE";
+
     public static $statutsLibellesActions = array(self::STATUT_A_PLANIFIER => 'A planifier',
         self::STATUT_PLANIFIE => 'Planifié',
         self::STATUT_REALISE => 'Réalisé', self::STATUT_ANNULE => 'Annulé');
@@ -39,9 +43,9 @@ class PassageManager {
     );
 
     public static $typesInfestationLibelles = array(
-        self::TYPE_PASSAGE_CONTRAT => "Sous contrat",
-        self::TYPE_PASSAGE_GARANTIE => "Sous garantie",
-        self::TYPE_PASSAGE_CONTROLE => "Contrôle",
+        self::TYPE_INFESTATION_FAIBLE => "Faible",
+        self::TYPE_INFESTATION_PRESENCE => "Présence moyenne",
+        self::TYPE_INFESTATION_ELEVE => "Élevé",
     );
 
     protected $dm;

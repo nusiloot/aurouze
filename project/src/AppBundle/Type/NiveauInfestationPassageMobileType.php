@@ -9,6 +9,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Form\CallbackTransformer;
+use AppBundle\Document\Passage;
+use AppBundle\Manager\PassageManager;
 
 class NiveauInfestationPassageMobileType extends AbstractType {
 
@@ -27,7 +29,7 @@ class NiveauInfestationPassageMobileType extends AbstractType {
 	{
 		$builder
 		->add('identifiant', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getPrestations()), "attr" => array("class" => "form-control phoenix","placeholder" => 'Choisir une prestation')))
-		->add('infestation', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getPrestations()), "attr" => array("class" => "form-control phoenix","placeholder" => 'Choisir une infestation')))
+		->add('infestation', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getInfestations()), "attr" => array("class" => "form-control phoenix","placeholder" => 'Choisir une infestation')))
 
 		;
 
@@ -51,6 +53,11 @@ class NiveauInfestationPassageMobileType extends AbstractType {
   {
     return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
   }
+
+	public function getInfestations()
+	{
+		return PassageManager::$typesInfestationLibelles;
+	}
 
 	/**
 	 * @return string

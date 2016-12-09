@@ -1273,6 +1273,13 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function getNiveauInfestation()
     {
+      if(!count($this->niveauInfestation)){
+          foreach ($this->getPrestations() as $prestation) {
+            $niveauInfestation = new niveauInfestation();
+            $niveauInfestation->setIdentifiant($prestation->getIdentifiant());
+            $this->addNiveauInfestation($niveauInfestation);
+          }
+        }
         return $this->niveauInfestation;
     }
 
@@ -1340,5 +1347,9 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getSignatureBase64()
     {
         return $this->signatureBase64;
+    }
+
+    public function isTransmis(){
+      return boolval($this->signatureBase64);
     }
 }
