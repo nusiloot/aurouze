@@ -37,7 +37,8 @@ class PassageMobileType extends AbstractType
         $builder->add('description', TextareaType::class, array('label' => 'Constat :', 'required' => false, "attr" => array("class" => " phoenix", "rows" => 10)))
             ->add('dureeRaw', 'time', array(
             'input' => 'string',
-            'widget' => 'single_text'));
+            'widget' => 'single_text',
+            "attr" => array("class" => " phoenix"));
 
             $builder->get('dureeRaw')
                 ->addModelTransformer(new CallbackTransformer(
@@ -99,7 +100,7 @@ class PassageMobileType extends AbstractType
 
         $builder->add('emailTransmission', EmailType::class, array('label' => 'Email :','required' => false, 'attr' => array('class' => " phoenix")));
         $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'required' => false, 'attr' => array('class' => " phoenix")));
-        $builder->add('signatureBase64', HiddenType::class, array('attr' => array('class' => "", "data-cible" => "passage_mobile_".$passageId."_signatureBase64")));
+        $builder->add('signatureBase64', HiddenType::class, array('attr' => array('class' => "phoenix", "data-cible" => "passage_mobile_".$passageId."_signatureBase64")));
     }
 
     /**
