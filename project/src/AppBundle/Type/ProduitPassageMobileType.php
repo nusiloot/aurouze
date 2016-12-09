@@ -28,17 +28,8 @@ class ProduitPassageMobileType extends AbstractType {
 	{
 		$builder
 		->add('identifiant', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getProduits()), "attr" => array("class" => "form-control phoenix","placeholder" => 'Choisir un produit')))
-		->add('nbUtilisePassage', NumberType::class, array('label' => ' ',"required" => false, "attr" => array("class" => "text-right phoenix")))
-
-		;
-
-		$builder->get('nbUtilisePassage')
-                ->addModelTransformer(new CallbackTransformer(
-                        function ($originalDescription) {
-                    return (!$originalDescription)? null : $originalDescription;
-                }, function ($submittedDescription) {
-                    return (!$submittedDescription)? 0 : $submittedDescription;
-                }));
+		->add('nbUtilisePassage', NumberType::class, array('label' => ' ',"required" => false, "attr" => array("class" => "text-right phoenix")));
+		
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

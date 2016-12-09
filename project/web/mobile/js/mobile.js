@@ -22,7 +22,7 @@
 
     $.initPhoenix = function(){
       $('.phoenix').each(function(){
-      //  $(this).phoenix();
+        $(this).phoenix();
       });
     }
 
