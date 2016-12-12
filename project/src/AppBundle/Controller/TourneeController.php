@@ -115,6 +115,17 @@ class TourneeController extends Controller {
         return $this->redirectToRoute('tournee_technicien', array('passage' => $passage->getId(),"technicien" => $technicienObj->getId()));
     }
 
+    /**
+     * @Route("/manifest/{technicien}/{date}", name="manifest")
+     */
+    public function manifestAction(Request $request) {
+      $versionManifest = "1";
 
+      $response = new Response();
+      $response->setContent('CACHE MANIFEST');
+      $response->headers->set('Content-Type', 'text/cache-manifest');
+
+      return $this->render('tournee/manifest.twig', array('versionManifest' => $versionManifest),$response);
+    }
 
 }

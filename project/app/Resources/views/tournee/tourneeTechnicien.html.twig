@@ -1,6 +1,6 @@
 {% set _menu_active = 'tournee' %}
 {% extends 'base_mobile.html.twig' %}
-
+{% block manifest %}{{path('manifest',{ 'technicien' : technicien.id, 'date' : date | date("Y-m-d") })}}{% endblock manifest %}
 {% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
 {% block body %}
 <div class="tournee_accueil" data-role="page" id="tournee_accueil">
