@@ -1,6 +1,6 @@
 {% set _menu_active = 'tournee' %}
 {% extends 'base_mobile.html.twig' %}
-{% block manifest %}{{path('manifest',{ 'technicien' : technicien.id, 'date' : date | date("Y-m-d") })}}{% endblock manifest %}
+{% block manifest %}{{path('manifest',{ 'version' : version })}}{% endblock manifest %}
 {% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
 {% block body %}
 <div id="version" data-version="{{version}}" data-url="{{ path('tournee_version',{ 'technicien' : technicien.id, "date" : date | date('Y-m-d') }) }}" ></div>
