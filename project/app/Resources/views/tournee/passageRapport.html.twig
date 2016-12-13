@@ -1,5 +1,20 @@
-
 <div class="passage_rapport" data-role="page" id="passage_rapport_{{ passage.id }}" data-id="{{ passage.id }}">
+  <div data-role="header" style="overflow:hidden;" data-position="fixed">
+  <h1>Tournée {{ technicien.identite }}</h1>
+  <a href="#passage_visualisation_{{ passage.id }}" class="ui-btn ui-icon-arrow-l ui-btn-icon-left" >
+        &nbsp;Retour
+  </a>
+  <a  class="ui-btn ui-icon-check ui-btn-icon-right passage_rapport_signature"  href="#passage_visualisation_{{ passage.id }}" >
+      Valider&nbsp;
+  </a>
+  <div class="reloadWarning ui-bar ui-bar-b" style="display:none;">
+  	<h3>Votre tournée a été modifiée. Il est préférable de la recharger.&nbsp;
+        <a href="{{path('tournee_technicien',{ 'technicien' : technicien.id })}}" class="ui-btn ui-icon-back ui-btn-icon-left" data-role="button" data-mini="true" >
+          &nbsp;Recharger
+        </a>
+    </h3>
+  </div>
+  </div>
   <div data-role="main" class="ui-content">
   {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
         <h2>Rapport de visite</h2>
@@ -64,7 +79,7 @@
   </li>
 </ul>
 </div>
-<!--  A SUPPRIMER DE CE TEMPLATE -->
+
   <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nom</strong></h3>
     <div class="ui-body ui-body">
       {{ form_errors(form.nomTransmission) }}
@@ -84,10 +99,7 @@
       {{ form_widget(form.signatureBase64) }}
       <canvas style="width: 100%; height: 200px;" height="200" id="signature_pad_{{ passage.id }}" ></canvas>
     </div>
-<!--  FIN  -->
-
-<a class="passage_rapport_signature ui-link ui-btn ui-shadow ui-corner-all" data-id="{{ passage.id }}" href="#passage_visualisation_{{ passage.id }}" >Valider la saisie</a>
-
-{{ form_end(form) }}
+    <a class="passage_rapport_signature ui-link ui-btn ui-shadow ui-corner-all" data-id="{{ passage.id }}" href="#passage_visualisation_{{ passage.id }}" >Valider la saisie</a>
+</form>
 </div>
 </div>

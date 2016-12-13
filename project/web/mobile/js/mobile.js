@@ -9,6 +9,7 @@
     var forms = [];
     var produitsCount = [];
     var niveauInfestationCount = [];
+    var version = null;
 
     $(document).ready(function ()
     {
@@ -18,6 +19,7 @@
         $.signatureCanvas();
         $.initSaisie();
         $.initTransmission();
+        $.initVersion();
     });
 
     $.initPhoenix = function(){
@@ -124,6 +126,40 @@
         formToPost.submit();
 
       });
+    }
+
+    $.initVersion = function () {
+      if(version == null){
+        version = $("#version").attr('data-version');
+      }
+      var urlVersion = $("#version").attr("data-url");
+      if (urlVersion) {
+         setInterval(function(){
+          $.ajax({
+                   type: "GET",
+                   url: urlVersion,
+                   success: function (data) {
+                        result = JSON.parse(data);
+                        $("#version").attr('data-version',result.version);
+                        $.checkVersion();
+                   }
+               });
+        }
+      , 20000);
+      }
+    }
+
+    $.checkVersion = function () {
+      versionDiv = $("#version").attr('data-version');
+      if(versionDiv != version){
+        $(".reloadWarning").each(function(){
+          $(this).show();
+        });
+      }else{
+        $(".reloadWarning").each(function(){
+          $(this).hide();
+        });
+      }
     }
 }
 )(jQuery);

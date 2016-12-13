@@ -68,6 +68,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $dateRealise;
 
     /**
+     * @MongoDB\Date
+     */
+    protected $dateModification;
+
+    /**
      * @MongoDB\String
      */
     protected $etablissementIdentifiant;
@@ -432,6 +437,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return self
      */
     public function setDateDebut($dateDebut) {
+        $this->setDateModification(new \DateTime());
         if ($this->dateDebut && $dateDebut != $this->dateDebut) {
             $this->setImprime(false);
         }
@@ -455,6 +461,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return self
      */
     public function setDateFin($dateFin) {
+        $this->setDateModification(new \DateTime());
         if ($this->dateFin && $dateFin != $this->dateFin) {
             $this->setImprime(false);
         }
@@ -582,6 +589,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return self
      */
     public function setStatut($statut) {
+        $this->setDateModification(new \DateTime());
         $this->statut = $statut;
         return $this;
     }
@@ -731,6 +739,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @param AppBundle\Document\Compte $technicien
      */
     public function addTechnicien(\AppBundle\Document\Compte $technicien) {
+        $this->setDateModification(new \DateTime());
         foreach ($this->getTechniciens() as $tech) {
             if ($tech->getIdentifiant() == $technicien->getIdentifiant()) {
                 return;
@@ -755,10 +764,12 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @param AppBundle\Document\Compte $technicien
      */
     public function removeTechnicien(\AppBundle\Document\Compte $technicien) {
+        $this->setDateModification(new \DateTime());
         $this->techniciens->removeElement($technicien);
     }
 
     public function removeAllTechniciens() {
+        $this->setDateModification(new \DateTime());
         $this->techniciens = new ArrayCollection();
         $this->setImprime(false);
     }
@@ -1351,5 +1362,27 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
     public function isTransmis(){
       return boolval($this->signatureBase64);
+    }
+
+    /**
+     * Set dateModification
+     *
+     * @param date $dateModification
+     * @return self
+     */
+    public function setDateModification($dateModification)
+    {
+        $this->dateModification = $dateModification;
+        return $this;
+    }
+
+    /**
+     * Get dateModification
+     *
+     * @return date $dateModification
+     */
+    public function getDateModification()
+    {
+        return $this->dateModification;
     }
 }
