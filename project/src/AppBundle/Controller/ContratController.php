@@ -293,9 +293,9 @@ class ContratController extends Controller {
      */
     public function markdownAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-
+        $cm = $this->get('contrat.manager');
         if (!$contrat->getMarkdown()) {
-            $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
+            $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat, 'contratManager' => $cm)));
             $dm->persist($contrat);
             $dm->flush();
         }
@@ -320,7 +320,7 @@ class ContratController extends Controller {
         $formGenerator->handleRequest($request);
         if ($formGenerator->isSubmitted() && $formGenerator->isValid()) {
             $contrat = $formGenerator->getData();
-            $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
+            $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat, 'contratManager' => $cm)));
             $dm->persist($contrat);
             $dm->flush();
         }
@@ -369,9 +369,9 @@ class ContratController extends Controller {
      */
     public function pdfAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $cm = $this->get('contrat.manager');
 
-
-        $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat)));
+        $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat, 'contratManager' => $cm)));
         $dm->persist($contrat);
         $dm->flush();
 
