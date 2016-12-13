@@ -138,6 +138,10 @@ class ContratManager implements MouvementManagerInterface {
         $this->dm = $dm;
     }
 
+    public function getFrequence($freq){
+      return self::$frequences[$freq];
+    }
+
     public function createBySociete(Societe $societe, \DateTime $dateCreation = null, Etablissement $etablissement = null) {
         if (!$dateCreation) {
             $dateCreation = new \DateTime();
