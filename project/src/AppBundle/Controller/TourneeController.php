@@ -119,7 +119,8 @@ class TourneeController extends Controller {
      * @Route("/manifest/{technicien}/{date}", name="manifest")
      */
     public function manifestAction(Request $request) {
-      $versionManifest = "1";
+      $version = $request->get('version', null);
+      $versionManifest = ($version)? $version : "1";
 
       $response = new Response();
       $response->setContent('CACHE MANIFEST');

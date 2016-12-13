@@ -25,7 +25,11 @@
         </li>
     {% endfor %}
 </ul>
-<a class="ui-link ui-btn ui-shadow ui-corner-all niveauInfestation-ajout-lien" id="niveauInfestation-ajout-lien-{{ passage.id }}" data-id="{{ passage.id }}" >Ajouter une prestation</a>
+<ul data-role="listview">
+  <li>
+    <a class="ui-link ui-btn ui-shadow ui-corner-all niveauInfestation-ajout-lien" id="niveauInfestation-ajout-lien-{{ passage.id }}" data-id="{{ passage.id }}" >Ajouter une prestation</a>
+  </li>
+</ul>
 </div>
 
 <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nettoyage</strong></h3>
@@ -54,8 +58,11 @@
         </li>
     {% endfor %}
 </ul>
-
-<a class="ui-link ui-btn ui-shadow ui-corner-all produits-ajout-lien" id="produits-ajout-lien-{{ passage.id }}" data-id="{{ passage.id }}" >Ajouter un produit</a>
+<ul data-role="listview">
+  <li>
+    <a class="ui-link ui-btn ui-shadow ui-corner-all produits-ajout-lien" id="produits-ajout-lien-{{ passage.id }}" data-id="{{ passage.id }}" >Ajouter un produit</a>
+  </li>
+</ul>
 </div>
 <!--  A SUPPRIMER DE CE TEMPLATE -->
   <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nom</strong></h3>
