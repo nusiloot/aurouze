@@ -61,9 +61,14 @@
 
 
     $.initButtonLoading = function() {
+        $('.btn-loading-submit').parents('form').on('submit', function () {
+            $(this).find('.btn-loading-submit').button('loading')
+        });
         $('.btn-loading').on('click', function () {
             $(this).button('loading');
         });
+
+
     }
 
     $.initModal = function() {
