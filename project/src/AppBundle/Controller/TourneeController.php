@@ -50,6 +50,8 @@ class TourneeController extends Controller {
         $historiqueAllPassages = array();
         $passagesForms = array();
 
+        $version = $this->getVersionManifest($technicienObj->getId(),$date->format('Y-m-d'));
+
         foreach ($passagesByTechnicien as $passage) {
           $historiqueAllPassages[$passage->getId()] = $this->get('contrat.manager')->getHistoriquePassagesByNumeroArchive($passage, 2);
           foreach ($historiqueAllPassages[$passage->getId()] as $hPassage) {
@@ -65,10 +67,32 @@ class TourneeController extends Controller {
         return $this->render('tournee/tourneeTechnicien.html.twig', array('passagesByTechnicien' => $passagesByTechnicien,
                                                                           "technicien" => $technicienObj,
                                                                           "date" => $date,
+                                                                          "version" => $version,
                                                                           "historiqueAllPassages" => $historiqueAllPassages,
                                                                           "passagesForms" => $passagesForms));
     }
 
+    /**
+     * @Route("/tournee-version/{technicien}/{date}", name="tournee_version", defaults={"date" = "0"})
+     */
+     public function tourneeVersionAction(Request $request,$technicien, $date) {
+
+         $dm = $this->get('doctrine_mongodb')->getManager();
+         if($date == "0"){
+           $date = new \DateTime();
+         }else{
+           $date = \DateTime::createFromFormat('Y-m-d',$date);
+         }
+         $technicien = $request->get('technicien');
+         $technicienObj = null;
+         if ($technicien) {
+             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
+         }
+
+         $version = $this->getVersionManifest($technicienObj->getId(),$date->format('Y-m-d'));
+
+         return new Response(json_encode(array("success" => true,"version" => $version)));
+     }
 
     /**
      * @Route("/tournee-passage-rapport/{passage}/{technicien}", name="tournee_passage_rapport")
@@ -83,40 +107,55 @@ class TourneeController extends Controller {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
 
-        $form = $this->createForm(new PassageMobileType($dm), $passage, array(
+        $form = $this->createForm(new PassageMobileType($dm, $passage->getId()), $passage, array(
             'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
             'method' => 'POST',
         ));
 
         $form->handleRequest($request);
-
         if (!$form->isSubmitted() || !$form->isValid()) {
 
             //return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
         }
         $passageManager = $this->get('passage.manager');
 
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        // $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
 
-        if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
-            if ($contrat->generateMouvement($passage)) {
-                $passage->setMouvementDeclenche(true);
-            }
-        }
+        // if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
+        //     if ($contrat->generateMouvement($passage)) {
+        //         $passage->setMouvementDeclenche(true);
+        //     }
+        // }
 
         $passage->setDateRealise($passage->getDateDebut());
         $dm->persist($passage);
-        $dm->persist($contrat);
+        // $dm->persist($contrat);
         $dm->flush();
 
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
-        $contrat->verifyAndClose();
+        // $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        // $contrat->verifyAndClose();
+        //
+        // $dm->flush();
 
-        $dm->flush();
-
-        return $this->render('tournee/passageRapport.html.twig', array('passage' => $passage, "technicien" => $technicienObj, 'form' => $form->createView()));
+        return $this->redirectToRoute('tournee_technicien', array('passage' => $passage->getId(),"technicien" => $technicienObj->getId()));
     }
 
+    /**
+     * @Route("/manifest", name="manifest")
+     */
+    public function manifestAction(Request $request) {
+      $version = $request->get('version', null);
+      $versionManifest = ($version)? $version : "1";
 
+      $response = new Response();
+      $response->setContent('CACHE MANIFEST');
+      $response->headers->set('Content-Type', 'text/cache-manifest');
+
+      return $this->render('tournee/manifest.twig', array('versionManifest' => $versionManifest),$response);
+    }
+
+    private function getVersionManifest($technicien,$date){
+      return $this->get('passage.manager')->getRepository()->findLastDateModificationPassagesForTechnicien($technicien,$date);
+    }
 
 }
