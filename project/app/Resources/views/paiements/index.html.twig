@@ -63,8 +63,8 @@
                                 <div class="row">
                                     <div class="col-xs-10" style="height: 30px;">
                                         <a title="Voir la société" href="{{ path('societe_visualisation', {'id': paiement.facture.societe.id })}}">
-                                            {% if paiement.facture.societe.raisonSociale | length > 40 %}{{ paiement.facture.societe.raisonSociale | slice(0, 40)~"..." }}{%else%}{{ paiement.facture.societe.raisonSociale }}{%endif%}</a>&nbsp(Facture n°{{ paiement.facture.numeroFacture }})
-                                            {% if paiement.moyenPaiement == 'CHEQUE' %}&nbsp<span class="label label-warning">Chèque</span>{% endif %}
+                                            {% if paiement.facture.societe.raisonSociale | length > 40 %}{{ paiement.facture.societe.raisonSociale | slice(0, 40)~"..." }}{%else%}{{ paiement.facture.societe.raisonSociale }}{% endif %}</a>&nbsp;(Facture n°{{ paiement.facture.numeroFacture }})
+                                            {% if paiement.moyenPaiement == 'CHEQUE' %}&nbsp;<span class="label label-warning">Chèque</span>{% endif %}
                                     </div>
                                     <div class="col-xs-2 text-right">
                                         {{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;

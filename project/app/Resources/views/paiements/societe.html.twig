@@ -15,42 +15,46 @@
             <thead>
                 <tr>
                     <th class="col-xs-2">Date</th>
-                    <th class="col-xs-1 text-right">Nombre</th>
+                    <!--<th class="col-xs-1 text-right">Nombre</th>-->
                     <th class="col-xs-7">
                         <div class="row">
-                            <div class="col-xs-6">          
+                            <div class="col-xs-4">
                                 <div class="row">
                                     <div class="col-xs-8 text-right">Type Règlement</div>
                                     <div class="col-xs-4 text-left">Moyen</div>
                                 </div>
                             </div>
                             <div class="col-xs-4">Libelle</div>
+                            <div class="col-xs-2 text-left">N° Facture</div>
                             <div class="col-xs-2 text-right">Montant</div>
                         </div>
                     </th>
-                    <th class="col-xs-2 text-right">Total</th>
+                    <th class="col-xs-1 text-right">Total</th>
                 </tr>
             </thead>
             <tbody>
                 {% for paiements in paiementsDocs %}
                     <tr class="">
                         <th class="col-xs-2"><a href="{{ path('paiements_modification', {'id': paiements.id })}}">{{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM yyyy") }}</a></th>
-                        <th class="col-xs-1 text-right">{{ paiements.paiementBySociete(societe) | length }}</th>
-                        <th class="col-xs-7">
+                        <!--<th class="col-xs-1 text-right">{{ paiements.paiementBySociete(societe) | length }}</th>-->
+                        <th class="col-xs-9">
                             {% for paiement in paiements.paiementBySociete(societe) %}
                                 <div class="row">
-                                    <div class="col-xs-6">          
+                                    <div class="col-xs-4">
                                         <div class="row">
                                             <div class="col-xs-8 text-right">
                                                 {{ paiement.typeReglementLibelle }}
                                             </div>
-                                            <div class="col-xs-4  text-left">          
+                                            <div class="col-xs-4  text-left">
                                                 {{ paiement.getMoyenPaiementLibelle() }}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-4"> 
+                                    <div class="col-xs-4">
                                         {% if(paiement.libelle) %}{{ paiement.libelle }}{% endif %}
+                                    </div>
+                                    <div class="col-xs-2 text-left">
+                                        <a href="{{ path('facture_pdf', {'id': paiement.facture.id}) }}">N° {{ paiement.facture.numeroFacture }}</a>
                                     </div>
                                     <div class="col-xs-2 text-right">
                                         {{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;
@@ -58,7 +62,7 @@
                                 </div>
                             {% endfor %}
                         </th>
-                        <th class="col-xs-2 text-right" >{{ paiements.getTotalBySociete(societe) | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</th>
+                        <th class="col-xs-1 text-right" >{{ paiements.getTotalBySociete(societe) | number_format(2, ',', ' ') }}&nbsp;€&nbsp;</th>
                     </tr>
                 {% endfor %}
             </tbody>
