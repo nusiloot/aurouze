@@ -95,7 +95,7 @@ class FactureRepository extends DocumentRepository {
       $q->field('numeroFacture')->notEqual(null);
       $q->field('cloture')->equals(false);
       $q->field('montantTTC')->gt(0.0);
-      $q->field('montantAPayer')->gt(0.0);
+      //$q->field('montantAPayer')->gt(0.0);
       $q->field('avoir')->equals(null);
       $q->field('dateLimitePaiement')->lte($today);
       if($dateFactureBasse){
@@ -119,9 +119,19 @@ class FactureRepository extends DocumentRepository {
 
         $q->field('societe')->in($societeRepo->getIdsByQuery($societe));
       }
-      $q->sort('dateFacturation', 'desc')->sort('societe', 'asc');
-      $query = $q->getQuery();
-      return $query->execute();
+        $q->sort('dateFacturation', 'desc')->sort('societe', 'asc');
+        $query = $q->getQuery();
+        $results = $query->execute();
+        $factures = array();
+        foreach($results as $facture) {
+            if(round($facture->getMontantTTC() - $facture->getMontantPaye(), 2) <= 0) {
+                continue;
+            }
+
+            $factures[$facture->getId()] = $facture;
+        }
+
+        return $factures;
     }
 
     public function findRetardDePaiementBySociete(Societe $societe, $nbJourSeuil = 0){
