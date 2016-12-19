@@ -1,0 +1,65 @@
+{% set _menu_active = 'tournee' %}
+{% extends 'base_mobile.html.twig' %}
+{% block manifest %}{{path('manifest',{ 'version' : version })}}{% endblock manifest %}
+{% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
+{% block body %}
+<div id="version" data-version="{{version}}" data-url="{{ path('tournee_version',{ 'technicien' : technicien.id, "date" : date | date('Y-m-d') }) }}" ></div>
+<div class="tournee_accueil" data-role="page" id="tournee_accueil">
+
+<div data-role="header" style="overflow:hidden;" data-position="fixed">
+<h1>Tournée {{ technicien.identite }}</h1>
+<a href="{{path('tournee_technicien',{ 'technicien' : technicien.id })}}" class="ui-btn ui-icon-back ui-btn-icon-left" >
+      &nbsp;Recharger
+</a>
+
+
+<div class="reloadWarning ui-bar ui-bar-b" style="display:none;">
+	<h3>Votre tournée a été modifiée. Il est préférable de la recharger.&nbsp;
+      <a href="{{path('tournee_technicien',{ 'technicien' : technicien.id })}}" class="ui-btn ui-icon-back ui-btn-icon-left" data-role="button" data-mini="true" >
+        &nbsp;Recharger
+      </a>
+  </h3>
+</div>
+</div>
+
+<div data-role="main" class="ui-content">
+<ul data-role="listview" data-ajax="false" data-inset="true" data-theme="a">
+  <li data-role="list-divider">
+    <h3>{{ date | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</h3>
+    <span class="ui-li-count">{{ passagesByTechnicien | length }}</span>
+  </li>
+  {% for passage in passagesByTechnicien %}
+    <li>
+        <a class="tournee_passage_visualisation anchor-link {% if( passage.isTransmis ) %}transmis{% endif %}" href="#passage_visualisation_{{ passage.id }}"  >
+          <h2>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}&nbsp;-&nbsp;{{ passage.etablissementInfos.nom }}</h2>
+          <p>
+            <strong>{{ passage.etablissementInfos.adresse.adresse }}
+            {{ passage.etablissementInfos.adresse.codePostal }}
+            {{ passage.etablissementInfos.adresse.commune }}</strong>
+          </p>
+            <p>
+            {% for prestation in passage.prestations %}
+
+                {% if(prestation.wordToPicto) %}
+                mathurin
+                  <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
+                {% endif %}
+                &nbsp;<strong>{{ prestation.getNomSimplifieToString }}</strong>&nbsp;&nbsp;
+
+              {% endfor %}
+            </p>
+        </a>
+    </li>
+{% endfor %}
+</ul>
+</div>
+</div>
+{% for passage in passagesByTechnicien %}
+  <div class="passage_visualisation" data-role="page" id="passage_visualisation_{{ passage.id }}">
+    <div data-role="main" class="ui-content">
+      {{ include('tournee/passageVisualisation.html.twig', { 'passage' : passage, "technicien" : technicien, "historiquePassages" : historiqueAllPassages[passage.id]}) }}
+    </div>
+  </div>
+  {{ include('tournee/passageRapport.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[passage.id]}) }}
+{% endfor %}
+{% endblock %}

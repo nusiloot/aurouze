@@ -68,6 +68,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $dateRealise;
 
     /**
+     * @MongoDB\Date
+     */
+    protected $dateModification;
+
+    /**
      * @MongoDB\String
      */
     protected $etablissementIdentifiant;
@@ -181,6 +186,26 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @MongoDB\String
      */
     protected $numeroOrdre;
+
+    /**
+     * @MongoDB\EmbedMany(targetDocument="NiveauInfestation")
+     */
+    protected $niveauInfestation;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $emailTransmission;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $nomTransmission;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $signatureBase64;
 
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
@@ -412,6 +437,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return self
      */
     public function setDateDebut($dateDebut) {
+        $this->setDateModification(new \DateTime());
         if ($this->dateDebut && $dateDebut != $this->dateDebut) {
             $this->setImprime(false);
         }
@@ -435,6 +461,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return self
      */
     public function setDateFin($dateFin) {
+        $this->setDateModification(new \DateTime());
         if ($this->dateFin && $dateFin != $this->dateFin) {
             $this->setImprime(false);
         }
@@ -562,6 +589,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @return self
      */
     public function setStatut($statut) {
+        $this->setDateModification(new \DateTime());
         $this->statut = $statut;
         return $this;
     }
@@ -711,6 +739,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @param AppBundle\Document\Compte $technicien
      */
     public function addTechnicien(\AppBundle\Document\Compte $technicien) {
+        $this->setDateModification(new \DateTime());
         foreach ($this->getTechniciens() as $tech) {
             if ($tech->getIdentifiant() == $technicien->getIdentifiant()) {
                 return;
@@ -735,10 +764,12 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @param AppBundle\Document\Compte $technicien
      */
     public function removeTechnicien(\AppBundle\Document\Compte $technicien) {
+        $this->setDateModification(new \DateTime());
         $this->techniciens->removeElement($technicien);
     }
 
     public function removeAllTechniciens() {
+        $this->setDateModification(new \DateTime());
         $this->techniciens = new ArrayCollection();
         $this->setImprime(false);
     }
@@ -1131,6 +1162,29 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
        return $this;
    }
 
+   /**
+    * Get dureeRaw
+    *
+    * @return date $dureeRaw
+    */
+    public function getDureeRaw() {
+       return $this->duree;
+    }
+
+   /**
+    * Set duree
+    *
+    * @param date $dureeRaw
+    * @return self
+    */
+   public function setDureeRaw($dureeRaw) {
+       $this->duree = $dureeRaw;
+
+       return $this;
+   }
+
+
+
     /**
      * Set commentaire
      *
@@ -1201,5 +1255,134 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getDatePrecedente()
     {
         return $this->datePrecedente;
+    }
+
+    /**
+     * Add niveauInfestation
+     *
+     * @param AppBundle\Document\NiveauInfestation $niveauInfestation
+     */
+    public function addNiveauInfestation(\AppBundle\Document\NiveauInfestation $niveauInfestation)
+    {
+        $this->niveauInfestation[] = $niveauInfestation;
+    }
+
+    /**
+     * Remove niveauInfestation
+     *
+     * @param AppBundle\Document\NiveauInfestation $niveauInfestation
+     */
+    public function removeNiveauInfestation(\AppBundle\Document\NiveauInfestation $niveauInfestation)
+    {
+        $this->niveauInfestation->removeElement($niveauInfestation);
+    }
+
+    /**
+     * Get niveauInfestation
+     *
+     * @return \Doctrine\Common\Collections\Collection $niveauInfestation
+     */
+    public function getNiveauInfestation()
+    {
+      if(!count($this->niveauInfestation)){
+          foreach ($this->getPrestations() as $prestation) {
+            $niveauInfestation = new niveauInfestation();
+            $niveauInfestation->setIdentifiant($prestation->getIdentifiant());
+            $this->addNiveauInfestation($niveauInfestation);
+          }
+        }
+        return $this->niveauInfestation;
+    }
+
+    /**
+     * Set emailTransmission
+     *
+     * @param string $emailTransmission
+     * @return self
+     */
+    public function setEmailTransmission($emailTransmission)
+    {
+        $this->emailTransmission = $emailTransmission;
+        return $this;
+    }
+
+    /**
+     * Get emailTransmission
+     *
+     * @return string $emailTransmission
+     */
+    public function getEmailTransmission()
+    {
+        return $this->emailTransmission;
+    }
+
+    /**
+     * Set nomTransmission
+     *
+     * @param string $nomTransmission
+     * @return self
+     */
+    public function setNomTransmission($nomTransmission)
+    {
+        $this->nomTransmission = $nomTransmission;
+        return $this;
+    }
+
+    /**
+     * Get nomTransmission
+     *
+     * @return string $nomTransmission
+     */
+    public function getNomTransmission()
+    {
+        return $this->nomTransmission;
+    }
+
+    /**
+     * Set signatureBase64
+     *
+     * @param string $signatureBase64
+     * @return self
+     */
+    public function setSignatureBase64($signatureBase64)
+    {
+        $this->signatureBase64 = $signatureBase64;
+        return $this;
+    }
+
+    /**
+     * Get signatureBase64
+     *
+     * @return string $signatureBase64
+     */
+    public function getSignatureBase64()
+    {
+        return $this->signatureBase64;
+    }
+
+    public function isTransmis(){
+      return boolval($this->signatureBase64);
+    }
+
+    /**
+     * Set dateModification
+     *
+     * @param date $dateModification
+     * @return self
+     */
+    public function setDateModification($dateModification)
+    {
+        $this->dateModification = $dateModification;
+        return $this;
+    }
+
+    /**
+     * Get dateModification
+     *
+     * @return date $dateModification
+     */
+    public function getDateModification()
+    {
+        return $this->dateModification;
     }
 }

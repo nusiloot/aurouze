@@ -94,7 +94,16 @@
 </div>
 
 <div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title"><strong>Lieux de passage et interventions</strong> (Acceptation du contrat le {{ contrat.dateAcceptation | date("d/m/y")}}) <span class='pull-right'>Date de début : <strong>{{ contrat.dateDebut | date("d/m/Y")}}</strong></h3></div>
+    <div class="panel-heading">
+    <h3 class="panel-title"><strong>Lieux de passage et interventions</strong> (Acceptation du contrat le {{ contrat.dateAcceptation | date("d/m/y")}})
+    <span class='pull-right'>&nbsp;&nbsp;&nbsp;Date de début : <strong>{{ contrat.dateDebut | date("d/m/Y")}}</strong></span>
+    {%  if (not contrat.isBrouillon()) %}
+        <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-xs pull-right btn-warning" onclick="return confirm('Attention, vous êtes sur le point de modifier un contrat dont certain passages sont déjà plannifiés ou effectués. Les modifications de ce contrat concernant les passages (type de prestation supplémentaire, passage facturant...) ne seront pas pris en compte dans les passages associés. Toutefois, lors de sa reconduction, les nouvelles caractéristiques du contrat seront bien reprises.');">
+          <span class="glyphicon glyphicon-warning-sign" ></span>&nbsp;Modification après acceptation
+        </a>
+    {% endif %}
+    </h3>
+    </div>
     <ul class="list-group">
         {% for etablissement in contrat.getEtablissements %}
             <li class="list-group-item"><span>{{ etablissement.getNom(false) }} - {{ etablissement.adresse.intitule }}</span><a class="pull-right" href="{{ path('passage_etablissement', { 'id': etablissement.id }) }}">Voir tous les passage</a></li>

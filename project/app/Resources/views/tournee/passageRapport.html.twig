@@ -1,0 +1,105 @@
+<div class="passage_rapport" data-role="page" id="passage_rapport_{{ passage.id }}" data-id="{{ passage.id }}">
+  <div data-role="header" style="overflow:hidden;" data-position="fixed">
+  <h1>Tournée {{ technicien.identite }}</h1>
+  <a href="#passage_visualisation_{{ passage.id }}" class="ui-btn ui-icon-arrow-l ui-btn-icon-left" >
+        &nbsp;Retour
+  </a>
+  <a  class="ui-btn ui-icon-check ui-btn-icon-right passage_rapport_signature"  href="#passage_visualisation_{{ passage.id }}" >
+      Valider&nbsp;
+  </a>
+  <div class="reloadWarning ui-bar ui-bar-b" style="display:none;">
+  	<h3>Votre tournée a été modifiée. Il est préférable de la recharger.&nbsp;
+        <a href="{{path('tournee_technicien',{ 'technicien' : technicien.id })}}" class="ui-btn ui-icon-back ui-btn-icon-left" data-role="button" data-mini="true" >
+          &nbsp;Recharger
+        </a>
+    </h3>
+  </div>
+  </div>
+  <div data-role="main" class="ui-content">
+  {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
+        <h2>Rapport de visite</h2>
+        <h3><strong>{{ passage.etablissementInfos.nom }}</strong></h3>
+        <h4><strong>{{ passage.etablissementInfos.adresse.adresse }}&nbsp;{{ passage.etablissementInfos.adresse.codePostal }}&nbsp;{{ passage.etablissementInfos.adresse.commune }}
+        </strong></h4>
+        <br/>
+{% set passageId = passage.id %}
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Durée intervention</strong></h3>
+<div class="ui-body ui-body">
+  {{ form_errors(form.dureeRaw) }}
+  {{ form_widget(form.dureeRaw) }}
+</div>
+
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Niveau infestation</strong></h3>
+<div class="ui-body ui-body">
+  <ul data-role="listview" id="niveauInfestation-liste-{{ passage.id }}" class="niveauInfestation-list" data-id="{{ passage.id }}"
+    data-prototype="{{ form_widget(form.niveauInfestation.vars.prototype) |e }}">
+    {% for niveauInfestationField in form.niveauInfestation %}
+        <li>
+            {{ form_errors(niveauInfestationField) }}
+            {{ form_widget(niveauInfestationField) }}
+        </li>
+    {% endfor %}
+</ul>
+<ul data-role="listview">
+  <li>
+    <a class="ui-link ui-btn ui-shadow ui-corner-all niveauInfestation-ajout-lien" id="niveauInfestation-ajout-lien-{{ passage.id }}" data-id="{{ passage.id }}" >Ajouter une prestation</a>
+  </li>
+</ul>
+</div>
+
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nettoyage</strong></h3>
+<div class="ui-body ui-body">
+  {{ form_widget(form.nettoyages) }}
+</div>
+
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Application</strong></h3>
+<div class="ui-body ui-body">
+  {{ form_widget(form.applications) }}
+</div>
+
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Constat / Recommandation</strong></h3>
+<div class="ui-body ui-body">
+    {{ form_widget(form.description) }}
+</div>
+
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Produits</strong></h3>
+<div class="ui-body ui-body">
+  <ul data-role="listview" id="produits-liste-{{ passage.id }}" class="produits-list" data-id="{{ passage.id }}"
+    data-prototype="{{ form_widget(form.produits.vars.prototype) |e }}">
+    {% for produitField in form.produits %}
+        <li>
+            {{ form_errors(produitField) }}
+            {{ form_widget(produitField) }}
+        </li>
+    {% endfor %}
+</ul>
+<ul data-role="listview">
+  <li>
+    <a class="ui-link ui-btn ui-shadow ui-corner-all produits-ajout-lien" id="produits-ajout-lien-{{ passage.id }}" data-id="{{ passage.id }}" >Ajouter un produit</a>
+  </li>
+</ul>
+</div>
+
+  <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Nom</strong></h3>
+    <div class="ui-body ui-body">
+      {{ form_errors(form.nomTransmission) }}
+      {{ form_widget(form.nomTransmission) }}
+    </div>
+
+    <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Email</strong></h3>
+    <div class="ui-body ui-body">
+      {{ form_errors(form.emailTransmission) }}
+      {{ form_widget(form.emailTransmission) }}
+    </div>
+
+    <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Signature</strong></h3>
+
+    <div class="signature-pad ui-body ui-body-a ui-corner-all" style="width: 290px; padding: 5px;">
+      {{ form_errors(form.signatureBase64) }}
+      {{ form_widget(form.signatureBase64) }}
+      <canvas style="width: 100%; height: 200px;" height="200" id="signature_pad_{{ passage.id }}" ></canvas>
+    </div>
+    <a class="passage_rapport_signature ui-link ui-btn ui-shadow ui-corner-all" data-id="{{ passage.id }}" href="#passage_visualisation_{{ passage.id }}" >Valider la saisie</a>
+</form>
+</div>
+</div>

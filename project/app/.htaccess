@@ -5,3 +5,4 @@
     Order deny,allow
     Deny from all
 </IfModule>
+AddType text/cache-manifest appcache manifest

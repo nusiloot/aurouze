@@ -232,7 +232,8 @@ class PassageRepository extends DocumentRepository {
       $mongoStartDate = new MongoDate(strtotime($date->format("Y-m-d") . " 00:00:00"));
       $mongoEndDate = new MongoDate(strtotime($date->format("Y-m-d") . " 23:59:59"));
       $queryBuilder = $this->createQueryBuilder('Passage');
-      $query = $queryBuilder->field('dateDebut')->gte($mongoStartDate)
+      $query = $queryBuilder->field('dateFin')->notEqual(null)
+              ->field('dateDebut')->gte($mongoStartDate)
               ->field('dateDebut')->lte($mongoEndDate);
       if($technicien){
           $queryBuilder->field('techniciens')->equals($technicien->getId());
@@ -241,6 +242,28 @@ class PassageRepository extends DocumentRepository {
       $query = $queryBuilder->getQuery();
 
       return $query->execute();
+    }
+
+
+    public function findLastDateModificationPassagesForTechnicien($technicien, $date){
+
+      $mongoStartDate = new MongoDate(strtotime($date . " 00:00:00"));
+      $mongoEndDate = new MongoDate(strtotime($date." 23:59:59"));
+      $queryBuilder = $this->createQueryBuilder('Passage');
+      $query = $queryBuilder->field('dateFin')->notEqual(null)
+              ->field('dateDebut')->gte($mongoStartDate)
+              ->field('dateDebut')->lte($mongoEndDate)
+              ->field('techniciens')->equals($technicien);
+
+      $queryBuilder->sort('dateModification', 'desc');
+      $query = $queryBuilder->getQuery();
+      $resultPassage = $query->execute();
+      foreach ($resultPassage as $passage) {
+        if($passage->getDateModification()){
+          return $passage->getDateModification()->format("YmdHis");
+        }
+      }
+      return "0";
     }
 
     public function countPassagesByTechnicien($compte) {

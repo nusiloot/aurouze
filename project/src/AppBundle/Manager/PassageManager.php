@@ -19,6 +19,10 @@ class PassageManager {
     const TYPE_PASSAGE_GARANTIE = "GARANTIE";
     const TYPE_PASSAGE_CONTROLE = "CONTROLE";
 
+    const TYPE_INFESTATION_FAIBLE = "FAIBLE";
+    const TYPE_INFESTATION_PRESENCE = "PRESENCE";
+    const TYPE_INFESTATION_ELEVE = "ELEVE";
+
     public static $statutsLibellesActions = array(self::STATUT_A_PLANIFIER => 'A planifier',
         self::STATUT_PLANIFIE => 'Planifié',
         self::STATUT_REALISE => 'Réalisé', self::STATUT_ANNULE => 'Annulé');
@@ -37,6 +41,13 @@ class PassageManager {
         'Ecrasés',
         'Déplacés'
     );
+
+    public static $typesInfestationLibelles = array(
+        self::TYPE_INFESTATION_FAIBLE => "Faible",
+        self::TYPE_INFESTATION_PRESENCE => "Présence moyenne",
+        self::TYPE_INFESTATION_ELEVE => "Élevé",
+    );
+
     protected $dm;
     protected $cm;
 
@@ -121,28 +132,6 @@ class PassageManager {
         return null;
     }
 
-    // public function updateNextPassageAPlannifier($passage) {
-    //     $nextPassage = $this->getNextPassageFromPassage($passage, true);
-    //     while ($nextPassage && !$nextPassage->isEnAttente()) {
-    //         $nextPassage = $this->getNextPassageFromPassage($nextPassage, true);
-    //     }
-    //     if ($nextPassage) {
-    //         $nextPassage->setDateDebut($nextPassage->getDatePrevision());
-    //         $nextPassage->setDureePrecedente($passage->getDureeDate());
-    //         $nextPassage->setDatePrecedente($passage->getDateDebut());
-    //         $nextPassage->copyTechnicienFromPassage($passage);
-    //     }
-    //     return $nextPassage;
-    // }
-    //
-    // public function updateNextPassageEnAttente($passage) {
-    //     $nextPassage = $this->getNextPassageFromPassage($passage);
-    //     if ($nextPassage && $nextPassage->isAPlanifie()) {
-    //         $nextPassage->setDateDebut(null);
-    //     }
-    //     return $nextPassage;
-    // }
-
     public function isFirstPassageNonRealise($passage) {
         $contrat = $passage->getContrat();
 
@@ -219,5 +208,26 @@ class PassageManager {
           }
         }
         return $passagesByTechniciens;
+    }
+
+    public function synchroniseProduitsWithConfiguration($passage){
+      $configuration = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration();
+
+      foreach ($passage->getProduits() as $produit) {
+        $identifiantProduit = $produit->getIdentifiant();
+        if($identifiantProduit && !$produit->getNom()){
+          $produitConf = $configuration->getProduitByIdentifiant($identifiantProduit);
+          $produit->setNom($produitConf->getNom());
+          $produit->setPrixHt($produitConf->getPrixHt());
+          $produit->setPrixPrestation($produitConf->getPrixPrestation());
+          $produit->setPrixVente($produitConf->getPrixVente());
+          $produit->setConditionnement($produitConf->getConditionnement());
+          $produit->setStatut($produitConf->getStatut());
+          if($produitContrat = $passage->getContrat()->getProduit($identifiantProduit)){
+          $produit->setNbTotalContrat($produitContrat->getNbTotalContrat());
+          $produit->setNbPremierPassage($produitContrat->getNbPremierPassage());
+          }
+        }
+      }
     }
 }

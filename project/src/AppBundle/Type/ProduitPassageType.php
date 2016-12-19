@@ -27,11 +27,11 @@ class ProduitPassageType extends AbstractType {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-		->add('identifiant', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getProduits()), "attr" => array("class" => "form-control select2 select2-simple","placeholder" => 'Choisir un produit')))
-		->add('nbUtilisePassage', NumberType::class, array('label' => ' ',"required" => false, "attr" => array("class" => "text-right")))
+		->add('identifiant', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getProduits()), "attr" => array("class" => "form-control select2 select2-simple ","placeholder" => 'Choisir un produit')))
+		->add('nbUtilisePassage', NumberType::class, array('label' => ' ',"required" => false, "attr" => array("class" => "text-right ")))
 
 		;
-		
+
 		$builder->get('nbUtilisePassage')
                 ->addModelTransformer(new CallbackTransformer(
                         function ($originalDescription) {

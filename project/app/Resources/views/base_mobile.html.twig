@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="{{ app.request.locale }}">
+<html lang="{{ app.request.locale }}" manifest="{% block manifest %}{% endblock manifest %}" class="ui-mobile" >
     <head>
         <meta charset="{{ _charset }}">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,20 +7,12 @@
 
         <title>{% block title %}Aurouze{% endblock title %}</title>
 
-        <link rel="stylesheet" href="{{ asset('/component/bootstrap/css/bootstrap.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/component/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/component/bootstrap-timepicker/css/bootstrap-timepicker.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/component/bootstrap-switch/css/bootstrap-switch.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/component/fullcalendar/css/fullcalendar.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/component/select2/css/select2.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/component/select2/css/select2-bootstrap.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/component/mervick/material-design-icons/css/material-icons.css') }}">
-        <link rel="stylesheet" href="{{ asset('/component/leaflet/leaflet.css') }}">
+        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile-1.4.5.css') }}">
+        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile-1.4.5.min.css') }}">
         <link rel="stylesheet" href="{{ asset('/component/aurouze/aurouze.css') }}">
-        <link rel="stylesheet" href="{{ asset('/component/leaflet-extra-markers/css/leaflet.extra-markers.css') }}">
-        <link rel="stylesheet" media="print" href="{{ asset('/component/fullcalendar/css/fullcalendar.print.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/css/main.css') }}?date=20160708" />
-        <link rel="stylesheet" media="print" href="{{ asset('/css/print.css') }}?date=20160622" />
+        <link rel="stylesheet" href="{{ asset('/css/main.css') }}" />
+        <link rel="stylesheet" href="{{ asset('/mobile/css/mobile.css') }}">
+        <link rel="stylesheet" media="print" href="{{ asset('/css/print.css') }}" />
 
         {% block stylesheets %}{% endblock %}
     </head>
@@ -37,33 +28,21 @@
             </div>
         </div>
 
-        <div class="container">
+        <div class="main-mobile">
             {% block body %}{% endblock %}
         </div>
 
-        <div class="modal" id="modal-calendrier-infos" tabindex="-1" role="dialog"></div>
 
 
         {% block javascripts %}{% endblock %}
 
-        <script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/bootstrap/js/bootstrap.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/bootstrap-timepicker/js/bootstrap-timepicker.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/moment/js/moment.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/fullcalendar/js/fullcalendar.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/fullcalendar/js/fullcalendar-languages.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/select2/js/select2.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/select2/js/i18n/fr.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/leaflet/leaflet.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/leaflet-extra-markers/js/leaflet.extra-markers.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/component/typeahead/typeahead.bundle.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/js/calendar-settings.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/js/main.js?date=20160927') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.mobile-1.4.5.js') }}"></script>
 
+        <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.phoenix.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/signature_pad.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/mobile.js') }}"></script>
     </body>
 </html>

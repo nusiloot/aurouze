@@ -396,6 +396,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->produits;
     }
 
+    public function getProduit($identifiant){
+      foreach ($this->produits as $produit) {
+        if($produit->getIdentifiant() == $identifiant){
+          return $produit;
+        }
+      }
+      return null;
+    }
+
     /**
      * Set dateCreation
      *
@@ -1379,6 +1388,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->cleanMouvements();
         $contrat->setReconduit(false);
         $contrat->setDateReconduction(new \DateTime());
+        $contrat->setReferenceClient(null);
         if(!$contrat->getTechnicien()){
           $contrat->setTechnicien($this->getTechnicienPlusUtilise());
         }
@@ -1623,11 +1633,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getDateExpirationGarantie() {
 		$mois = ($this->getDureeGarantie()) ? $this->getDureeGarantie() : 0;
     	if ($this->getDateDebut()) {
-    		$date = $this->getDateDebut();
+    		$date = clone $this->getDateDebut();
     	} elseif ($this->getDateAcceptation()) {
-    		$date = $this->getDateAcceptation();
+    		$date = clone $$this->getDateAcceptation();
     	} else {
-    		$date = $this->getDateCreation();
+    		$date = clone $this->getDateCreation();
     	}
     	$date->modify("+$mois month");
     	return $date;
