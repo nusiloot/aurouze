@@ -51,7 +51,7 @@
                 </div>
                 {% set retard = 0 %}
                 {% if(app.request.get('etablissement')) %}
-                  {% set retard = facture_manager.getRetardDePaiementBySociete(app.request.get('etablissement').societe,45) | length %}
+                  {% set retard = facture_manager.getRetardDePaiementBySociete(app.request.get('etablissement').societe) | length %}
                 {% endif %}
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
