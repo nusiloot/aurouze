@@ -1,5 +1,6 @@
+
 <h1 class="text-center">
-    {{ contrat.getPrixHt() }}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small> <small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
+	  {{ ((1+contrat.tva) * contrat.getPrixHt)|number_format(2, ',', ' ') }}&nbsp;<small>€&nbsp;TTC</small> / {{ contrat.getPrixHt()|number_format(2, ',', ' ') }}<small>&nbsp;€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small><br /><small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
 </h1>
 
 <br/>

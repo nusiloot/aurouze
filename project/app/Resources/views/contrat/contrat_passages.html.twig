@@ -56,11 +56,14 @@
             {% endif %}
         </div>
     {% else %}
+        {% if(form is defined and not form is null)%}
       <div class="row">
         <div class="col-xs-6">
-          {{ contrat.getPrixHt()}}&nbsp;<small>€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small> <small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
+        	
+		    <h1 class="text-center">
+			   {{ ((1+contrat.tva) * contrat.getPrixHt)|number_format(2, ',', ' ') }}&nbsp;<small>€&nbsp;TTC</small> / {{ contrat.getPrixHt()|number_format(2, ',', ' ') }}<small>&nbsp;€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small><br /><small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
+			</h1>
         </div>
-        {% if(form is defined and not form is null)%}
         <div class="col-xs-6 text-left">
             <div class="row">
                 <div class="col-xs-8">
@@ -74,8 +77,14 @@
                 </div>
             </div>
         </div>
-        {% endif %}
      </div>
+     	{% else %}
+     	
+    <h1 class="text-center">
+	   {{ ((1+contrat.tva) * contrat.getPrixHt)|number_format(2, ',', ' ') }}&nbsp;<small>€&nbsp;TTC</small> / {{ contrat.getPrixHt()|number_format(2, ',', ' ') }}<small>&nbsp;€&nbsp;HT{% if contrat.getTvaReduite() %} (TVA réduite){% endif %}</small><br /><small>en {{ contrat.nbFactures }} factures <small>(Paiement {% if (contrat.frequencePaiement) %}{{ contrat.frequencePaiementLibelle | lower }}{% else %}à récéption{% endif %})</small></small>
+	</h1>
+        {% endif %}
+        
     {% endif %}
 </h2>
 <br/>

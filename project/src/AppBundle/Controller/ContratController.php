@@ -237,6 +237,7 @@ class ContratController extends Controller {
         if (!$contrat->isAnnulable()) {
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
+        $contrat->setDateResiliation(new \DateTime());
         $form = $this->createForm(new ContratAnnulationType($dm, $contrat), $contrat, array(
             'action' => $this->generateUrl('contrat_annulation', array('id' => $contrat->getId())),
             'method' => 'POST',
