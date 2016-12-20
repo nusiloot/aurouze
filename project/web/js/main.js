@@ -37,22 +37,6 @@
 
     $.initAcceptationContrat = function() {
       $.updateAcceptationContratButton();
-      $("#contrat_acceptation_dateAcceptation").on('change',function(){
-        $.updateAcceptationContratButton();
-      });
-      $("#contrat_acceptation_dateDebut").on('change',function(){
-        $.updateAcceptationContratButton();
-      });
-    }
-
-    $.updateAcceptationContratButton = function(){
-      var dateAcceptation = $("#contrat_acceptation_dateAcceptation").datepicker("getDate");
-      var dateDebut = $("#contrat_acceptation_dateDebut").datepicker("getDate");
-      if(dateAcceptation && dateDebut){
-          $("#contrat_acceptation_button_row button#contrat_acceptation_save").removeAttr("disabled");
-      }else{
-          $("#contrat_acceptation_button_row button#contrat_acceptation_save").attr("disabled","disabled");
-      }
     }
 
     $.initPopupRelancePdf = function() {

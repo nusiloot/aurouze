@@ -35,13 +35,7 @@ class ContratAcceptationType extends AbstractType {
         $readonly = array();
         $datePicker = array();
         $required = array();
-
-        if (!$this->contrat->isModifiable()) {
-            $readonly = array('readonly' => 'readonly');
-        } else {
-            $datePicker = array('class' => 'input-inline datepicker',
-                'data-provide' => 'datepicker');
-        }
+        
         if (!$this->contrat->isEnAttenteAcceptation() && !$this->contrat->isBrouillon()) {
             if (!$this->contrat->hasMouvements()) {
                 $builder->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2, "attr" => array("class" => "form-control col-xs-2 text-right ")));
@@ -64,22 +58,28 @@ class ContratAcceptationType extends AbstractType {
             $required = array('required' => false);
         }
 
+        if (!$this->contrat->isModifiable()) {
+            $readonly = array('readonly' => 'readonly');
+        } else {
+            $datePicker = array('class' => 'input-inline datepicker',  'data-provide' => 'datepicker');
+        }
 
-        $builder->add('dateCreation', DateType::class, array_merge($required, array(
+
+        $builder->add('dateCreation', DateType::class, array_merge(array('required' => true), array(
             "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy',
             'label' => 'Date d\'édition* :',
-        )))->add('dateDebut', DateType::class, array_merge($required, array(
+        )))->add('dateDebut', DateType::class, array_merge(array('required' => true), array(
             "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy',
             'label' => 'Date de début* :',
-        )))->add('dateAcceptation', DateType::class, array_merge($required, array(
+        )))->add('dateAcceptation', DateType::class, array_merge(array('required' => true), array(
             "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),

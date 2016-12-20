@@ -279,6 +279,11 @@ class PassageController extends Controller {
         $dm->persist($passage);
         $dm->persist($contrat);
         $dm->flush();
+        
+        if ($next = $passageManager->getNextPassageFromPassage($passage)) {
+        	$next->setDureePrecedente($passage->getDureeDate());
+        	$next->setDatePrecedente($passage->getDateDebut());
+        }
 
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
         $contrat->verifyAndClose();

@@ -1,9 +1,14 @@
 <div class="panel panel-default">
-    <div class="panel-heading">Contrat de type <strong>{{ contrat.getTypeContratLibelle() }}</strong>{% if contrat.isTypeReconductionTacite or contrat.isTypeRenouvelableSurProposition %}
+    <div class="panel-heading">Contrat de type <strong{% if contrat.isAnnule() %} class="text-danger"{% endif %}>{{ contrat.getTypeContratLibelle() }}</strong>{% if contrat.isTypeReconductionTacite or contrat.isTypeRenouvelableSurProposition %}
       <span style="cursor: pointer;" data-toggle="tooltip" title="{% if contrat.getReconduit %} Contrat reconduit {% else %} Contrat à reconduire {% endif %}" class=" pull-right badge {% if contrat.getReconduit %} badge-success {% else %} badge-danger {% endif %}">R</span>{% endif %}
     </div>
     <div class="panel-body">
         <div class="row">
+        	{% if contrat.isAnnule() %}
+            <div class="col-xs-12">
+            	<p class="bg-danger" style="padding: 10px;">{{ contrat.commentaire }}</p>
+            </div>
+        	{% endif %}
             {% if contrat.referenceClient %}
             <div class="col-xs-12">
             	Numéro de commande : <strong>{{ contrat.referenceClient }}</strong>
