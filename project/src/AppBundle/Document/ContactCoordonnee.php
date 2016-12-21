@@ -47,8 +47,8 @@ class ContactCoordonnee {
             ($this->getTelephoneMobile() == $contactCoordonnee->getTelephoneMobile() || !$this->getTelephoneMobile()) &&
             ($this->getFax() == $contactCoordonnee->getFax() || !$this->getFax()) &&
             ($this->getEmail() == $contactCoordonnee->getEmail() || !$this->getEmail()) &&
-            ($this->getSiteInternet() == $contactCoordonnee->getSiteInternet    () || !$this->getSiteInternet()) &&
-            ($this->getLibelle() == $contactCoordonnee->getLibelle    () || !$this->getLibelle())
+            ($this->getSiteInternet() == $contactCoordonnee->getSiteInternet() || !$this->getSiteInternet()) &&
+            ($this->getLibelle() == $contactCoordonnee->getLibelle() || !$this->getLibelle())
         )
         {
 

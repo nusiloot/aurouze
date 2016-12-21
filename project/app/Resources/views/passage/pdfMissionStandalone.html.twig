@@ -9,9 +9,7 @@
         {{ passage.etablissement.adresse.codePostal }} {{ passage.etablissement.adresse.commune }}
     </div>
     <div class="col-xs-6">
-        {% if (passage.etablissement.societe.contactCoordonnee.telephoneFixe) %}
-        Tél : {{ passage.etablissement.societe.contactCoordonnee.telephoneFixe }}<br />
-        {% endif %}
+        Contact : {{ passage.etablissement.contactCoordonnee.telephoneFixe }}{% if passage.etablissement.contactCoordonnee.telephoneFixe and passage.etablissement.contactCoordonnee.telephoneMobile %} / {% endif %}{{ passage.etablissement.contactCoordonnee.telephoneMobile }}{% if  passage.etablissement.contactCoordonnee.libelle %} ({{ passage.etablissement.contactCoordonnee.libelle }}){% endif %}<br />
         {% if(passage.etablissement.commentaire or passage.contrat.commentaire) %}
         Commentaire :
         {% endif %}
