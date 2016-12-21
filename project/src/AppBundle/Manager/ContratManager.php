@@ -12,6 +12,7 @@ use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
 use AppBundle\Document\Societe;
 use AppBundle\Model\DocumentFacturableInterface;
+use AppBundle\Manager\PassageManager;
 
 class ContratManager implements MouvementManagerInterface {
 
@@ -237,6 +238,7 @@ class ContratManager implements MouvementManagerInterface {
         $firstEtb = true;
         foreach ($contrat->getEtablissements() as $etablissement) {
             $cpt = 0;
+        	$firstPass = true;
             foreach ($passagesArray as $datePassage => $passageInfos) {
                 $datePrevision = new \DateTime($datePassage);
                 $passage = new Passage();
@@ -267,10 +269,18 @@ class ContratManager implements MouvementManagerInterface {
                     $produitNode = clone $produit;
                     $passage->addProduit($produitNode);
                 }
-
+				
                 if ($passage) {
                     $contrat->addPassage($etablissement, $passage);
                     $this->dm->persist($passage);
+                }
+                if ($firstPass) {
+                	$passagePrec = $this->getPassageManager()->passagePrecedentRealiseSousContrat($passage);
+                	if($passagePrec) {
+                		$passage->setDureePrecedente($passagePrec->getDureeDate());
+                		$passage->setDatePrecedente($passagePrec->getDateDebut());
+                	}
+                	$firstPass = false;
                 }
                 $cpt++;
             }
@@ -279,7 +289,12 @@ class ContratManager implements MouvementManagerInterface {
 
         $contrat->updateNumeroOrdrePassage();
 
-    //    $this->dm->flush();
+        $this->dm->flush();
+    }
+    
+    public function getPassageManager()
+    {
+    	return new PassageManager($this->dm, $this);
     }
 
     public function copyPassagesForContratReconduit($contratReconduit,$contratOrigine) {
