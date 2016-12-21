@@ -581,9 +581,6 @@ class FactureController extends Controller {
             if($rowId == "ENTETE_TITRE"){
               $totalArray[$rowId] = array();
               $totalArray[$rowId][] = array();
-              foreach ($paiement as $value) {
-                $totalArray[$rowId][] = "";
-              }
             }elseif($rowId == "ENTETE"){
               foreach (FactureManager::$export_stats_libelle as $key => $entete) {
                   $totalArray[$rowId][$key] = str_replace('{X}', 'Année courante',$entete);
