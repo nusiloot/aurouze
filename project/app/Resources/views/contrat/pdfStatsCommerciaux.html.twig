@@ -1,0 +1,26 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h3><strong>Export contrats du {{ dateDebut | localizeddate("medium", "none", null, null, "dd/MM/yyyy") | capitalize }} au {{ dateFin | localizeddate("medium", "none", null, null, "dd/MM/yyyy") | capitalize }}</strong></h3>
+        </div>
+    </div>
+    <br />
+
+        <table class="table table-bordered table-condensed">
+            {% for key, statRow in statsForCommerciaux %}
+            {% set headers = loop.first %}
+            <tr style="page-break-inside: avoid;"{% if headers or key matches '/TOTAL/' %} class="active"{% endif %}>
+            {% for field in statRow %}
+              {% if headers %}
+              <th>{{field}}</th>
+              {% else %}
+              <td{% if loop.index in [7,8,9] %} class="text-right"{% endif %}>{% if key matches '/TOTAL/' %}<strong>{% endif %}{{field}}{% if key matches '/TOTAL/' %}</strong>{% endif %}</span></td>
+              {% endif %}
+            {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+
+{% endblock %}

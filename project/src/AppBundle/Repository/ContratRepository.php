@@ -189,4 +189,14 @@ class ContratRepository extends DocumentRepository {
         return $query->execute();
     }
 
+    public function exportOneMonthByDate(\DateTime $dateDebut,\DateTime $dateFin) {
+
+        $q = $this->createQueryBuilder();
+
+        $q->field('dateCreation')->gte($dateDebut)->lte($dateFin)->sort('dateCreation', 'asc');
+        $query = $q->getQuery();
+
+        return $query->execute();
+    }
+
 }

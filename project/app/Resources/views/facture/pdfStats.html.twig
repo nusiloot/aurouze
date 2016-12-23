@@ -1,29 +1,27 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
-	<br/> 
-
+	  {% set headers = 0 %}
       {% for exportStat in exportStatsArray %}
         {% if exportStat|length < 2 %}
         	{% if not loop.first %}
+        	</table>
         	<hr style="border-color: #fff;margin: 0;page-break-after: always;" />
         	{% endif  %}
-          <div class="row" style="page-break-inside: avoid;">
-            <div class="col-xs-12">
-              <h3><strong>{{exportStat | first }}</strong></h3>
-            </div>
-          </div>
+	  		{% set headers = 1 %}
+          	<div class="row" style="page-break-inside: avoid;">
+            	<div class="col-xs-12"><h3><strong>{{exportStat | first }}</strong></h3></div>
+          	</div>
+        	<table class="table table-bordered table-condensed">
          {% elseif exportStat|length < 11 %}
-         {% if not loop.last %}
-         <br/> 
-         {% endif %}
-          {% else %}
-          <div class="row" style="page-break-inside: avoid;">
-            {% for key, stat in exportStat %}
-            <div class="col-xs-1 text-right" style="margin:0px; padding:3px; border:1px solid black; min-height: 60px; {% if key == 0 %} width: 130px; {% endif %}"><small>{{stat}}</small></div>
+         {% else %}
+         	<tr style="page-break-inside: avoid;"{% if headers or exportStat[0] matches '/TOTAL/i' %} class="active"{% endif %}>
+            {% for key, field in exportStat %}
+              <td class="{% if loop.index != 1 %}text-right{% endif %}{% if key in [10,11] %} active{% endif %}">{% if headers or key in [10,11] or exportStat[0] matches '/TOTAL/i' %}<strong>{% endif %}{{field}}{% if headers or key in [10,11] or exportStat[0] matches '/TOTAL/i' %}</strong>{% endif %}</span></td>
             {% endfor %}
-          </div>
-          {% endif %}
+            </tr>
+	  		{% set headers = 0 %}
+        {% endif %}
    {% endfor %}
 
 {% endblock %}

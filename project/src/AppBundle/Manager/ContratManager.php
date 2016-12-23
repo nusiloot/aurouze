@@ -498,5 +498,152 @@ class ContratManager implements MouvementManagerInterface {
       krsort($contratsReconduits);
       return $contratsReconduits;
     }
+    
+
+
+    public function getStatsForCommerciauxForCsv($dateDebut = null, $dateFin = null, $commercial = null){
+    	if(!$dateDebut){
+    		$dateDebut = new \DateTime();
+    		$dateFin = new \DateTime();
+    		$dateFin->modify("+1month");
+    	}
+    
+    	$contrats = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
+    	$csv = array();
+    	$cpt = 0;
+    	$csv["AAAaaa_0_0000000000"] = array("Commercial","Client","Contacts", "Num. contrat", "Type contrat","Statut contrat","Montant HT","Facturé HT", "Pourcent. facturé");
+    	foreach ($contrats as $contrat) {
+    		if($contrat->getCommercial()){
+    			$commercialFacture = $contrat->getCommercial();
+    			if($commercial && ($commercial != $commercialFacture->getId())) {
+    				continue;
+    			}
+    			$identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialFacture->getId())->getIdentite();
+    			$arr_ligne = array();
+    			$key = $identite."_".$cpt."_".$contrat->getNumeroArchive();
+    			$keyTotal = $identite."_9_9999999999_TOTAL";
+    			$arr_ligne[] = $identite;
+    			$arr_ligne[] = $contrat->getSociete()->getRaisonSociale();
+    			$arr_ligne[] = str_replace(' / ', "\n", $contrat->getSociete()->getComptesLibelle(true));
+    			$arr_ligne[] = $contrat->getNumeroArchive();
+    			$arr_ligne[] = $contrat->getTypeContratLibelle();
+    			$arr_ligne[] = $contrat->getStatutLibelle();
+    			$arr_ligne[] = number_format($contrat->getPrixHT(), 2, ',', '');
+    			$arr_ligne[] = number_format($contrat->getPrixFactures(), 2, ',', '');
+    			$arr_ligne[] = ($contrat->getPrixHT() > 0)? round((100 * $contrat->getPrixFactures() / $contrat->getPrixHT())) : 0;
+    			$csv[$key] = $arr_ligne;
+    			$csv[$keyTotal][0] = $identite;
+    			$csv[$keyTotal][1] = "TOTAL";
+    			$csv[$keyTotal][2] = "";
+    			$csv[$keyTotal][3] = "";
+    			$csv[$keyTotal][4] = "";
+    			$csv[$keyTotal][5] = "";
+    			$csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
+    			$csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
+    			$csv[$keyTotal][8] = ($csv[$keyTotal][6] > 0)? round((100 * str_replace(',', '.', $csv[$keyTotal][7]) / str_replace(',', '.', $csv[$keyTotal][6]))) : 0;
+    		}else{
+    			$arr_ligne = array();
+    			$key = "zZ_".$cpt."_". $contrat->getNumeroArchive();
+    			$keyTotal = "zZ_9_9999999999_TOTAL";
+    			if($commercial){
+    				continue;
+    			}
+    			$arr_ligne[] = "Pas de commercial";
+    			$arr_ligne[] = $contrat->getSociete()->getRaisonSociale();
+    			$arr_ligne[] = str_replace(' / ', "\n", $contrat->getSociete()->getComptesLibelle(true));
+    			$arr_ligne[] = $contrat->getNumeroArchive();
+    			$arr_ligne[] = $contrat->getTypeContratLibelle();
+    			$arr_ligne[] = $contrat->getStatutLibelle();
+    			$arr_ligne[] = number_format($contrat->getPrixHT(), 2, ',', '');
+    			$arr_ligne[] = number_format($contrat->getPrixFactures(), 2, ',', '');
+    			$arr_ligne[] = ($contrat->getPrixHT() > 0)? round((100 * $contrat->getPrixFactures() / $contrat->getPrixHT())) : 0;
+    			$csv[$key] = $arr_ligne;
+    			$csv[$keyTotal][0] = "Pas de commercial";
+    			$csv[$keyTotal][1] = "TOTAL";
+    			$csv[$keyTotal][2] = "";
+    			$csv[$keyTotal][3] = "";
+    			$csv[$keyTotal][4] = "";
+    			$csv[$keyTotal][5] = "";
+    			$csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
+    			$csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
+    			$csv[$keyTotal][8] = ($csv[$keyTotal][6] > 0)? round((100 * str_replace(',', '.', $csv[$keyTotal][7]) / str_replace(',', '.', $csv[$keyTotal][6]))) : 0;
+    		}
+    		$csv['zzzZZZ_TOTAL'][0] = "TOTAL";
+    		$csv['zzzZZZ_TOTAL'][1] = "";
+    		$csv['zzzZZZ_TOTAL'][2] = "";
+    		$csv['zzzZZZ_TOTAL'][3] = "";
+    		$csv['zzzZZZ_TOTAL'][4] = "";
+    		$csv['zzzZZZ_TOTAL'][5] = "";
+    		$csv['zzzZZZ_TOTAL'][6] = (isset($csv['zzzZZZ_TOTAL'][6]))? number_format(str_replace(',', '.', $csv['zzzZZZ_TOTAL'][6]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
+    		$csv['zzzZZZ_TOTAL'][7] = (isset($csv['zzzZZZ_TOTAL'][7]))? number_format(str_replace(',', '.', $csv['zzzZZZ_TOTAL'][7]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
+    		$csv['zzzZZZ_TOTAL'][8] = ($csv['zzzZZZ_TOTAL'][6] > 0)? round((100 * str_replace(',', '.', $csv['zzzZZZ_TOTAL'][7]) / str_replace(',', '.', $csv['zzzZZZ_TOTAL'][6]))) : 0;
+    		$cpt++;
+    	}
+    	ksort($csv);
+    	return $csv;
+    
+    }
+    
+
+
+    public function getStatsForRentabiliteForCsv($dateDebut = null, $dateFin = null, $client = null){
+    	if(!$dateDebut){
+    		$dateDebut = new \DateTime();
+    		$dateFin = new \DateTime();
+    		$dateFin->modify("+1month");
+    	}
+    
+    	$contrats = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
+    	$csv = array();
+    	$cpt = 0;
+    	$csv["AAAaaa_0_0000000000"] = array("Objet", "Client", "Num. contrat", "Type contrat","Statut contrat","Montant HT", "Nb passage", "Nb garantie", "Temps passage", "Temps garantie", "Produit", "Qté", "Prix u. HT", "Total produit HT");
+    	foreach ($contrats as $contrat) {
+    			if($client && ($client != $contrat->getSociete()->getIdentifiant())) {
+    				continue;
+    			}
+    			$identite = $contrat->getSociete()->getRaisonSociale();
+    			$arr_ligne = array();
+    			$key = $identite."_".$cpt."_".$contrat->getNumeroArchive();
+    			$keyTotal = $identite."_9_9999999999_TOTAL";
+    			$arr_ligne[] = 'Contrat';
+    			$arr_ligne[] = $identite;
+    			$arr_ligne[] = $contrat->getNumeroArchive();
+    			$arr_ligne[] = $contrat->getTypeContratLibelle();
+    			$arr_ligne[] = $contrat->getStatutLibelle();
+    			$arr_ligne[] = number_format($contrat->getPrixHT(), 2, ',', '');
+    			$arr_ligne[] = $contrat->getNbPassagePrevu();
+    			$arr_ligne[] = $contrat->getNbPassageNonPrevu();
+    			$arr_ligne[] = $contrat->getDureePassagePrevu();
+    			$arr_ligne[] = $contrat->getDureePassageNonPrevu();
+    			$arr_ligne[] = '';
+    			$arr_ligne[] = '';
+    			$arr_ligne[] = '';
+    			$arr_ligne[] = number_format($contrat->getMontantProduitsUtilises(), 2, ',', '');
+    			$csv[$key] = $arr_ligne;
+    			$i = 0;
+    			foreach ($contrat->getProduitsUtilises() as $produit) {
+    				$i++;
+    				$arr_produit = array();
+    				$arr_produit[] = 'Produit';
+    				$arr_produit[] = $identite;
+    				$arr_produit[] = $contrat->getNumeroArchive();
+    				$arr_produit[] = $contrat->getTypeContratLibelle();
+    				$arr_produit[] = $contrat->getStatutLibelle();
+    				$arr_produit[] = '';
+    				$arr_produit[] = '';
+    				$arr_produit[] = '';
+    				$arr_produit[] = '';
+    				$arr_produit[] = '';
+    				$arr_produit[] = $produit[0];
+    				$arr_produit[] = $produit[1];
+    				$arr_produit[] = number_format($produit[2], 2, ',', '');
+    				$arr_produit[] = number_format($produit[3], 2, ',', '');
+    				$csv[$key.'p'.$i] = $arr_produit;
+    			}
+    		$cpt++;
+    	}
+    	ksort($csv);
+    	return $csv;
+    }
 
 }

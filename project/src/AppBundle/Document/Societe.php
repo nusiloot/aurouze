@@ -122,7 +122,7 @@ class Societe implements InterlocuteurInterface {
 
     public function getLibelleComplet() {
 
-        return $this->getDestinataire() . ', ' . $this->getAdresse()->getLibelleComplet();
+        return $this->getDestinataire() . ', ' . $this->getAdresse()->getLibelleComplet() . ', ' . $this->getIdentifiant();
     }
 
     /**
@@ -416,6 +416,28 @@ class Societe implements InterlocuteurInterface {
         }
 
         return $comptes;
+    }
+    
+    public function getComptesLibelle($statut)
+    {
+    	$comptes = $this->getComptesByStatut($statut);
+    	$libelle = '';
+    	foreach ($comptes as $compte) {
+    		if ($libelle) {
+    			$libelle .= ' / ';
+    		}
+    		$libelle .= $compte->getIdentite().' ';
+    		if ($compte->getContactCoordonnee()->getTelephoneFixe()) {
+    			$libelle .= ' - '.$compte->getContactCoordonnee()->getTelephoneFixe();
+    		}
+    		if ($compte->getContactCoordonnee()->getTelephoneMobile()) {
+    			$libelle .= ' - '.$compte->getContactCoordonnee()->getTelephoneMobile();
+    		}
+    		if($compte->getContactCoordonnee()->getEmail()) {
+    			$libelle .= ' - '.$compte->getContactCoordonnee()->getEmail();
+    		}
+    	}
+    	return $libelle;
     }
 
     public function getIcon() {

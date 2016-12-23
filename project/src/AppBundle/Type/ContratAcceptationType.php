@@ -65,21 +65,21 @@ class ContratAcceptationType extends AbstractType {
         }
 
 
-        $builder->add('dateCreation', DateType::class, array_merge(array('required' => true), array(
+        $builder->add('dateCreation', DateType::class, array_merge($required, array(
             "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy',
             'label' => 'Date d\'édition* :',
-        )))->add('dateDebut', DateType::class, array_merge(array('required' => true), array(
+        )))->add('dateDebut', DateType::class, array_merge($required, array(
             "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy',
             'label' => 'Date de début* :',
-        )))->add('dateAcceptation', DateType::class, array_merge(array('required' => true), array(
+        )))->add('dateAcceptation', DateType::class, array_merge($required, array(
             "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),

@@ -6,10 +6,24 @@
         <li><a href="{{ path('statistiques') }}">Statistiques</a></li>
     </ol>
     <h1>Exports statistiques</h1>
-    <div>
-      	{% for exportForm in exportForms %}
-      		<a style="cursor: pointer; float:left; width:20%; background-color: #f5f5f5; color: #333; border: 1px solid #fff; height: 115px; line-height: 1.4; padding: 31px 10px 10px 10px; text-align: center;" data-toggle="modal" data-target="#datechoice{{ exportForm.type }}"><span class="{{exportForm.picto}}"></span><br />{{exportForm.libelle}}</a>
-      	{% endfor %}
+    <div class="row">
+	    <div class="col-xs-12">
+	      	{% for exportForm in exportForms %}
+	      		{% if  exportForm.type not in ['factures', 'paiements', 'pca'] %}
+	      		<a style="cursor: pointer; float:left; width:20%; background-color: #f5f5f5; color: #333; border: 1px solid #fff; height: 115px; line-height: 1.4; padding: 31px 10px 10px 10px; text-align: center;" data-toggle="modal" data-target="#datechoice{{ exportForm.type }}"><span class="{{exportForm.picto}}"></span><br />{{exportForm.libelle}}</a>
+	      		{% endif %}
+	      	{% endfor %}
+	    </div>
+    </div>
+    <h1>Exports comptable</h1>
+    <div class="row">
+	    <div class="col-xs-12">
+	      	{% for exportForm in exportForms %}
+	      		{% if  exportForm.type in ['factures', 'paiements', 'pca'] %}
+	      		<a style="cursor: pointer; float:left; width:20%; background-color: #f5f5f5; color: #333; border: 1px solid #fff; height: 115px; line-height: 1.4; padding: 31px 10px 10px 10px; text-align: center;" data-toggle="modal" data-target="#datechoice{{ exportForm.type }}"><span class="{{exportForm.picto}}"></span><br />{{exportForm.libelle}}</a>
+	      		{% endif %}
+	      	{% endfor %}
+	    </div>
     </div>
 
           {% for exportForm in exportForms %}
@@ -19,7 +33,7 @@
             {{ form_start(exportForm.form) }}
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4>Export {{exportForm.type}}?</h4>
+              <h4>Export {{exportForm.type}}</h4>
             </div>
                 <div class="modal-body form-horizontal">
                         {% if exportForm.form.dateFin is defined %}
@@ -52,6 +66,15 @@
                             {{ form_label(exportForm.form.commercial, "Choix du commercial", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
                             <div class="col-xs-8">
                                 {{ form_widget(exportForm.form.commercial) }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if exportForm.form.societe is defined %}
+                        <div class="form-group" id="searchable" data-type="societe" data-url="{{ path('recherche_societe')  }}" data-target="0">
+                            {{ form_errors(exportForm.form.societe) }}
+                            {{ form_label(exportForm.form.societe, "Choix de la société", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+                            <div class="col-xs-8">
+                                {{ form_widget(exportForm.form.societe) }}
                             </div>
                         </div>
                         {% endif %}

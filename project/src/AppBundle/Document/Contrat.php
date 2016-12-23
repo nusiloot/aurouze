@@ -1831,4 +1831,73 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     {
         return $this->dateReconduction;
     }
+    
+
+
+    public function getNbPassagePrevu() {
+    	$nbPrevus = 0;
+    	foreach ($this->getContratPassages() as $passage){
+    			$nbPrevus += $passage->getNbPassagePrevu();
+    	}
+    	return $nbPrevus;
+    }
+    
+    public function getNbPassageNonPrevu() {
+    	$nbNonPrevus = 0;
+    	foreach ($this->getContratPassages() as $passage){
+    			$nbNonPrevus += $passage->getNbPassageNonPrevu();
+    	}
+    	return $nbNonPrevus;
+    }
+    
+    
+    public function getDureePassagePrevu() {
+    	$nbPrevus = 0;
+    	foreach ($this->getContratPassages() as $passage){
+    			$nbPrevus += $passage->getDureePassagePrevu();
+    	}
+    	$h = floor($nbPrevus/60);
+    	$m = round(($nbPrevus/60 - $h) * 60);
+    	return sprintf("%02dh%02d", $h, $m);
+    }
+    
+    public function getDureePassageNonPrevu() {
+    	$nbNonPrevus = 0;
+    	foreach ($this->getContratPassages() as $passage){
+    			$nbNonPrevus += $passage->getDureePassageNonPrevu();
+    	}
+    	$h = floor($nbNonPrevus/60);
+    	$m = round(($nbNonPrevus/60 - $h) * 60);
+    	return sprintf("%02dh%02d", $h, $m);
+    }
+    
+    public function getProduitsUtilises()
+    {
+    	$produits = array();
+    	foreach ($this->getContratPassages() as $passage){
+    		foreach ($passage->getProduitsUtilises() as $id => $produit) {
+    			if (!isset($produits[$id])) {
+    				$produits[$id] = array();
+    				$produits[$id][0] = '';
+    				$produits[$id][1] = 0;
+    				$produits[$id][2] = 0;
+    				$produits[$id][3] = 0;
+    			}
+    			$produits[$id][0] = $produit[0];
+    			$produits[$id][1] += $produit[1];
+    			$produits[$id][2] = $produit[2];
+    			$produits[$id][3] = $produits[$id][1] * $produits[$id][2];
+    		}
+    	}
+    	return $produits;
+    }
+    
+    public function getMontantProduitsUtilises()
+    {
+    	$total = 0;
+    	foreach ($this->getProduitsUtilises() as $produit) {
+    		$total += $produit[3];
+    	}
+    	return $total;
+    }
 }
