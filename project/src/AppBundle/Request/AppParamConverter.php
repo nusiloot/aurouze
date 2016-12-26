@@ -32,9 +32,9 @@ class AppParamConverter extends DoctrineParamConverter
             $request->attributes->set('societe', $object->getSociete());
         }
 
-        if($request->attributes->get('societe') && $request->attributes->get('societe') instanceof Societe && !$request->attributes->get('etablissement')) {
+        /*if($request->attributes->get('societe') && $request->attributes->get('societe') instanceof Societe && !$request->attributes->get('etablissement')) {
             $request->attributes->set('etablissement', $request->attributes->get('societe')->getEtablissements()->first());
-        }
+        }*/
 
         return $return;
     }

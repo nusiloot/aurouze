@@ -4,7 +4,8 @@
 {% block body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('passage') }}">Passage</a></li>
-        <li><a href="{{ path('passage_etablissement',{ 'id' : etablissement.id }) }}">&nbsp;{{ etablissement.nom }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></a></li>
+        <li><a href="{{ path('passage_societe',{ 'id' : etablissement.societe.id }) }}">&nbsp;{{ etablissement.societe.raisonSociale }} </small></a></li>
+        <li><a href="{{ path('passage_etablissement',{ 'id' : etablissement.id }) }}">&nbsp;{{ etablissement.getNom(false) }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></a></li>
     </ol>
     {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
 

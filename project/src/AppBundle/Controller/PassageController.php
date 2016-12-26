@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\EtablissementChoiceType;
 use AppBundle\Document\Etablissement;
+use AppBundle\Document\Societe;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Passage;
 use AppBundle\Type\PassageType;
@@ -150,7 +151,7 @@ class PassageController extends Controller {
             $dm->flush();
 
             if($request->get('service')) {
-                
+
                 return $this->redirect($request->get('service'));
             }
 
@@ -213,6 +214,24 @@ class PassageController extends Controller {
         }
 
         return $this->render('passage/annulation.html.twig', array('form' => $form->createView(), 'passage' => $passage));
+    }
+
+    /**
+     * @Route("/passages/{id}/societe", name="passage_societe")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+    public function societeAction(Request $request, Societe $societe) {
+
+        $etablissements = $societe->getEtablissementsByStatut(true);
+
+        if(count($etablissements) == 1) {
+            foreach($etablissements as $etablissement) {
+
+                return $this->redirectToRoute('passage_etablissement', array('id' => $etablissement->getId()));
+            }
+        }
+
+        return $this->render('passage/societe.html.twig', array('societe' => $societe, "etablissements" => $etablissements));
     }
 
     /**
@@ -279,7 +298,7 @@ class PassageController extends Controller {
         $dm->persist($passage);
         $dm->persist($contrat);
         $dm->flush();
-        
+
         if ($next = $passageManager->getNextPassageFromPassage($passage)) {
         	$next->setDureePrecedente($passage->getDureeDate());
         	$next->setDatePrecedente($passage->getDateDebut());

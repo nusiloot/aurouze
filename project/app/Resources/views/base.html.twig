@@ -50,8 +50,8 @@
                     <a href="{{ path('accueil') }}" alt="aurouze" style="margin: 5px 10px 5px 0; height: 40px;"><img src="{{ asset('/images/logo.svg') }}" height="40" style="margin-top: 5px;"  /></a>
                 </div>
                 {% set retard = 0 %}
-                {% if(app.request.get('etablissement')) %}
-                  {% set retard = facture_manager.getRetardDePaiementBySociete(app.request.get('etablissement').societe) | length %}
+                {% if(app.request.get('societe')) %}
+                  {% set retard = facture_manager.getRetardDePaiementBySociete(app.request.get('societe')) | length %}
                 {% endif %}
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -60,7 +60,7 @@
                         <li class="{%if (_menu_active == 'contrat') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'contrat') %}{{ path('contrats_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('contrat') }}{% endif %}">Contrats</a>
                         </li>
                         <li class="{%if (_menu_active == 'passage') %}active{% endif %}">
-                            <a href="{% if(app.request.get('etablissement') and _menu_active != 'passage') %}{{ path('passage_etablissement', { id: app.request.get('etablissement').id }) }}{% else %}{{ path('passage') }}{% endif %}">Passages / Planif.</a>
+                            <a href="{% if(app.request.get('etablissement') and _menu_active != 'passage') %}{{ path('passage_etablissement', { id: app.request.get('etablissement').id }) }}{% elseif(app.request.get('societe') and _menu_active != 'passage') %}{{ path('passage_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('passage') }}{% endif %}">Passages / Planif.</a>
                         </li>
                         <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}" >Factures
                           {% if(retard > 0) %}&nbsp;<span class="badge badge-danger">{{ retard }}</span>{% endif %}

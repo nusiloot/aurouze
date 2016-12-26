@@ -1,0 +1,13 @@
+{% set _menu_active = 'passage' %}
+{% extends 'base.html.twig' %}
+{% block title %}Passages {{ societe.raisonSociale }}{% endblock title %}
+{% block body %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('passage') }}">Passage</a></li>
+        <li><a href="{{ path('passage_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}</a></li>
+    </ol>
+
+    <h3>Séléctionner un établissement pour voir ses passages</h3>
+
+    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(true)}) }}
+{% endblock %}
