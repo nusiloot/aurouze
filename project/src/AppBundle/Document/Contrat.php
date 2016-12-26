@@ -904,12 +904,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getStatutLibelleLong() {
-      $today = new \DateTime();
-      if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))){
-        return "à venir";
-      }elseif($this->isFini() && $this->getDateFin() && ($today->format("Ymd") < $this->getDateFin()->format("Ymd"))){
-        return "en cours réalisé";
-      }
+        $today = new \DateTime();
+        if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))) {
+
+            return "à venir";
+        } elseif($this->isFini() && $this->getDateFin() && ($today->format("Ymd") < $this->getDateFin()->format("Ymd"))) {
+
+            return "en cours réalisé";
+        }
+        
         return ContratManager::$statuts_libelles_long[$this->getStatut()];
     }
 
@@ -1831,7 +1834,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     {
         return $this->dateReconduction;
     }
-    
+
 
 
     public function getNbPassagePrevu() {
@@ -1841,7 +1844,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	}
     	return $nbPrevus;
     }
-    
+
     public function getNbPassageNonPrevu() {
     	$nbNonPrevus = 0;
     	foreach ($this->getContratPassages() as $passage){
@@ -1849,8 +1852,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	}
     	return $nbNonPrevus;
     }
-    
-    
+
+
     public function getDureePassagePrevu() {
     	$nbPrevus = 0;
     	foreach ($this->getContratPassages() as $passage){
@@ -1860,7 +1863,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	$m = round(($nbPrevus/60 - $h) * 60);
     	return sprintf("%02dh%02d", $h, $m);
     }
-    
+
     public function getDureePassageNonPrevu() {
     	$nbNonPrevus = 0;
     	foreach ($this->getContratPassages() as $passage){
@@ -1870,7 +1873,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	$m = round(($nbNonPrevus/60 - $h) * 60);
     	return sprintf("%02dh%02d", $h, $m);
     }
-    
+
     public function getProduitsUtilises()
     {
     	$produits = array();
@@ -1891,7 +1894,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	}
     	return $produits;
     }
-    
+
     public function getMontantProduitsUtilises()
     {
     	$total = 0;

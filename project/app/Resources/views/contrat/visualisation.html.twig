@@ -8,9 +8,13 @@
         <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
         <li><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a></li>
     </ol>
-    <div class="row">
+    <div class="row" style="margin-bottom: 10px;">
         <div class="col-xs-7">
-            <h2>Contrat {{ contrat.getStatutLibelleLong }}&nbsp;<small>n° {{ contrat.getNumeroArchive() }}</small></h2>
+            <h3>Contrat de {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") %}&nbsp;à&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% endif %}
+                <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span>
+                <small>&nbsp;n° {{ contrat.getNumeroArchive() }}</small>
+            </h3>
+
         </div>
         <div class="col-xs-5 text-right" style="padding-top: 30px; ">
             <div class="btn-group">
@@ -21,19 +25,13 @@
                     <a href="{{ path('contrat_copie', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de créer un nouveau contrat avec les infos de ce contrat ?');"><span class="glyphicon glyphicon-duplicate"></span> Dupliquer</a>
                 {% endif %}
                 {%  if (contrat.isAnnulable()) %}
-                    <a href="{{ path('contrat_annulation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir résilier le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span> Résilier</a>
+                    <a href="{{ path('contrat_annulation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de vouloir résilier le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span> Résilier</a>
                 {%  endif %}
                 {%  if (contrat.isEnAttenteAcceptation() or contrat.isBrouillon()) %}
                     <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir supprimer le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
                 {%  endif %}
-                <a class="btn btn-sm btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon glyphicon-file"></span> Visualiser</a>
-                {%  if (contrat.isEnAttenteAcceptation()) %}
-                    <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><i class="mdi mdi-check-circle"></i>&nbsp;Accepter / Modifier</a>
-                {%  elseif (contrat.isBrouillon()) %}
-                    <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span>&nbsp;Modifier</a>
-                {% else %}
-                    <a href="{{ path('contrat_acceptation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-warning"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
-                {% endif %}
+                <a class="btn btn-sm btn-info" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon glyphicon-file"></span> Voir le PDF</a>
+                <a href="{% if (contrat.isBrouillon()) %}{{ path('contrat_modification', {'id': contrat.getId()}) }}{% else %}{{ path('contrat_acceptation', {'id': contrat.getId()}) }}{% endif %}" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
             </div>
         </div>
     </div>

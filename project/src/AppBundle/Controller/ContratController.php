@@ -127,6 +127,7 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function acceptationAction(Request $request, Contrat $contrat) {
+
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $contratManager = new ContratManager($dm);
@@ -281,6 +282,12 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function visualisationAction(Request $request, Contrat $contrat) {
+        if($contrat->isEnAttenteAcceptation()) {
+
+            return $this->redirectToRoute('contrat_acceptation', array('id' => $contrat->getId()));
+        }
+
+
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $factures = $dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
@@ -538,7 +545,7 @@ class ContratController extends Controller {
                                                                             'formContratsAReconduire' => $formContratsAReconduire->createView(),
                                                                             'formReconduction' => $formReconduction->createView()));
     }
-    
+
 
 
 
@@ -547,7 +554,7 @@ class ContratController extends Controller {
      * @Route("/contrat/export-rentabilite", name="rentabilite_export")
      */
 	public function exportRentabiliteAction(Request $request) {
-    
+
     	// $response = new StreamedResponse();
     	$formRequest = $request->request->get('form');
     	$client = (isset($formRequest['societe']) && $formRequest['societe'] && ($formRequest['societe']!= ""))? $formRequest['societe'] : null;
@@ -556,35 +563,35 @@ class ContratController extends Controller {
     		$client = trim($ec[count($ec) -1]);
     	}
     	$pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
-    
+
     	$dateDebutString = $formRequest['dateDebut']." 00:00:00";
     	$dateFinString = $formRequest['dateFin']." 23:59:59";
-    
+
     	$dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
     	$dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
-    
+
     	$cm = $this->get('contrat.manager');
-    
+
     	$statsForRentabilite = $cm->getStatsForRentabiliteForCsv($dateDebut,$dateFin,$client);
-    
+
     	if(!$pdf){
     		$filename = sprintf("export_details_rentabilite_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
     		$handle = fopen('php://memory', 'r+');
-    
+
     		foreach ($statsForRentabilite as $stat) {
     			fputcsv($handle, $stat,';');
     		}
-    
+
     		rewind($handle);
     		$content = stream_get_contents($handle);
     		fclose($handle);
-    
+
     		$response = new Response(utf8_decode($content), 200, array(
     				'Content-Type' => 'text/csv',
     				'Content-Disposition' => 'attachment; filename=' . $filename,
     		));
     		$response->setCharset('UTF-8');
-    
+
     		return $response;
     	}else{
     		$html = $this->renderView('contrat/pdfStatsRentabilite.html.twig', array(
@@ -592,15 +599,15 @@ class ContratController extends Controller {
     				'dateDebut' => $dateDebut,
     				'dateFin' => $dateFin
     		));
-    
-    
+
+
     		$filename = sprintf("export_stats_rentabilite_du_%s_au_%s.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
-    
+
     		if ($request->get('output') == 'html') {
-    
+
     			return new Response($html, 200);
     		}
-    
+
     		return new Response(
     				$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
     						'disable-smart-shrinking' => null,
@@ -614,48 +621,48 @@ class ContratController extends Controller {
     						));
     	}
     }
-    
+
 
 
     /**
      * @Route("/contrats-commerciaux/export", name="commerciaux_export")
      */
     public function exportCommerciauxAction(Request $request) {
-    
+
     	// $response = new StreamedResponse();
     	$formRequest = $request->request->get('form');
     	$commercial = (isset($formRequest['commercial']) && $formRequest['commercial'] && ($formRequest['commercial']!= ""))?
     	$formRequest['commercial'] : null;
     	$pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
-    
+
     	$dateDebutString = $formRequest['dateDebut']." 00:00:00";
     	$dateFinString = $formRequest['dateFin']." 23:59:59";
-    
+
     	$dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
     	$dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
-    
+
     	$cm = $this->get('contrat.manager');
-    
+
     	$statsForCommerciaux = $cm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial);
-    
+
     	if(!$pdf){
     		$filename = sprintf("export_details_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
     		$handle = fopen('php://memory', 'r+');
-    
+
     		foreach ($statsForCommerciaux as $stat) {
     			fputcsv($handle, $stat,';');
     		}
-    
+
     		rewind($handle);
     		$content = stream_get_contents($handle);
     		fclose($handle);
-    
+
     		$response = new Response(utf8_decode($content), 200, array(
     				'Content-Type' => 'text/csv',
     				'Content-Disposition' => 'attachment; filename=' . $filename,
     		));
     		$response->setCharset('UTF-8');
-    
+
     		return $response;
     	}else{
     		$html = $this->renderView('contrat/pdfStatsCommerciaux.html.twig', array(
@@ -663,15 +670,15 @@ class ContratController extends Controller {
     				'dateDebut' => $dateDebut,
     				'dateFin' => $dateFin
     		));
-    
-    
+
+
     		$filename = sprintf("export_stats_commerciaux_du_%s_au_%s.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
-    
+
     		if ($request->get('output') == 'html') {
-    
+
     			return new Response($html, 200);
     		}
-    
+
     		return new Response(
     				$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
     						'disable-smart-shrinking' => null,

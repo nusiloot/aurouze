@@ -1,35 +1,73 @@
-<div class="panel panel-default">
-    <div class="panel-heading">Contrat de type <strong{% if contrat.isAnnule() %} class="text-danger"{% endif %}>{{ contrat.getTypeContratLibelle() }}</strong>{% if contrat.isTypeReconductionTacite or contrat.isTypeRenouvelableSurProposition %}
-      <span style="cursor: pointer;" data-toggle="tooltip" title="{% if contrat.getReconduit %} Contrat reconduit {% else %} Contrat à reconduire {% endif %}" class=" pull-right badge {% if contrat.getReconduit %} badge-success {% else %} badge-danger {% endif %}">R</span>{% endif %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Contrat</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-7">
+                    	{% if contrat.isAnnule() %}
+                        <p class="bg-danger" style="padding: 10px;">{{ contrat.commentaire }}</p>
+                    	{% endif %}
+                        <p class="lead text-center">
+                            Contrat {{ contrat.getTypeContratLibelle() }} de {{ contrat.getDuree() }} mois
+                        </p>
+                        <p class="text-center">
+                            Du {{ contrat.getDateDebut() | localizeddate("medium", "none", null, null, "d MMMM yyyy") }} au {{ contrat.getDateFin() | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}
+                        </p>
+                        <p class="text-center">
+                        {% for prestation in contrat.prestations %} {% if(prestation.wordToPicto)
+            			%} <span class="step size-24" title="{{  prestation.nomToString }}"
+            				data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
+            				style="cursor: pointer;">&nbsp;</i></span> {%else%} <span
+            				class="label label-xs label-primary">{{ prestation.nomToString }}</span>
+            			{%endif%} {% endfor %} ({{ contrat.getNbPassages() }} passages)
+                        </p>
+                        <p class="text-center">
+                            {% if contrat.getDureeGarantie() %}Garantie {{ contrat.getDureeGarantie() }}  mois{% else %}Sans garantie{% endif %}
+                        </p>
+                    </div>
+                    <div class="col-xs-5">
+                        Date de création : <strong>{{ contrat.getDateAcceptation()|date("d/m/Y") }}</strong><br />
+                        Date d'acceptation : <strong>{{ contrat.getDateAcceptation()|date("d/m/Y") }}</strong><br /><br />
+                        Durée d'un passage : <strong>{{ contrat.getHumanDureePassage() }}</strong><br /><br />
+                        Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
+                        Technicien : <strong>{% if contrat.getTechnicien() %}{{ contrat.getTechnicien().getIdentite() }}{% else %}Non défini{% endif %}</strong><br />
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="panel-body">
-        <div class="row">
-        	{% if contrat.isAnnule() %}
-            <div class="col-xs-12">
-            	<p class="bg-danger" style="padding: 10px;">{{ contrat.commentaire }}</p>
-            </div>
-        	{% endif %}
-            {% if contrat.referenceClient %}
-            <div class="col-xs-12">
-            	Numéro de commande : <strong>{{ contrat.referenceClient }}</strong>
-            </div>
-            {% endif %}
-            <div class="col-xs-6">
-                {% if contrat.getCommercial() %}Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />{% endif %}
-                <strong>{{ contrat.getDateDebut()|date("d/m/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />
-                {% if contrat.getDureeGarantie() %}Garantie : <strong>{{ contrat.getDureeGarantie() }}</strong> mois{% endif %}
-            </div>
-            <div class="col-xs-6">
-                {% if contrat.getTechnicien() %}
-                    Technicien : <strong>{{ contrat.getTechnicien().getIdentite() }}</strong><br />
-                {% endif %}
-                <strong>{{ contrat.getNbPassages() }}</strong> passage{% if contrat.getNbPassages() > 1 %}s{% endif %} de <strong>{{ contrat.getHumanDureePassage() }}</strong>
+
+    <div class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Facturation</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <p class="lead text-center">{{ contrat.getPrixHt()|number_format(2, '.', ' ') }} € HT soit {{ ((1+contrat.tva) * contrat.getPrixHt)|number_format(2, '.', ' ') }} TTC <small>(TVA à {{ contrat.tva | number_format(2, '.', ' ') }} %)</small></p>
+                        <p class="text-center">En {{ contrat.nbFactures }} facture(s)</p>
+                    </div>
+                    <div class="col-xs-5">
+                        Fréquence de paiement : <strong>{{ contrat.frequencePaiementLibelle }}</strong><br />
+                    	Numéro de commande : <strong>{% if contrat.referenceClient %}{{ contrat.referenceClient }}{% else %}Non défini{% endif %}</strong><br />
+                        Destinataire de la facture : <strong>{% if contrat.factureDestinataire %}{{ contrat.factureDestinataire }}{% else %}{{ contrat.societe.raisonSociale }}{% endif %}</strong>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Nomenclature</h3></div>
+    <div class="panel-body">
+        {% if (contrat.nomenclature) %}
+        {{ contrat.nomenclature | nl2br }}
+        {% else %}
+        Aucune nomenclature définie
+        {% endif %}
+    </div>
+</div>
 
 {%  if(contrat.isEnAttenteAcceptation() and contrat.contratPassages | length == 0 ) %}
     {{ include('contrat/contrat_previsionnel.html.twig', { 'contrat': contrat ,'form' : (form is defined)? form : null}) }}
@@ -40,6 +78,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Produits</h3></div>
+    {% if(contrat.produits | length ) %}
     <table class="table table-bordered table-condensed table-stripped">
         <thead>
             <tr>
@@ -62,11 +101,16 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <div class="panel-body">
+        Aucun produit défini
+    </div>
+    {% endif %}
 </div>
 
 {% if(contrat.mouvements | length > 0 or factures | length > 0) %}
 <div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title">Facturation</h3></div>
+    <div class="panel-heading"><h3 class="panel-title">Factures</h3></div>
     <table class="table table-bordered table-condensed table-stripped">
         <thead>
             <tr>

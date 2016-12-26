@@ -41,9 +41,14 @@
         <ol class="breadcrumb">
             <li><a href="{{ path('contrat') }}">Contrat</a></li>
             <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
-            <li>{% if (contrat.id ) %}<a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a>{% else %}Nouveau contrat{% endif %}</li>
+            <li>{% if (contrat.id ) %}<a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Saisie du Contrat&nbsp;{{ contrat.numeroArchive }}</a>{% else %}Création d'un contrat{% endif %}</li>
         </ol>
-        <h1>Création Contrat</h1>
+        <nav style="margin-top: 20px;" class="navbar navbar-default">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">1. Saisie des informations</a></li>
+                <li><a href="{{ path('contrat_acceptation',{ 'id' : contrat.id }) }}">2. Acceptation du contrat</a></li>
+            </ul>
+        </nav>
         {{ form_start(form) }}
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Informations</strong></div>
