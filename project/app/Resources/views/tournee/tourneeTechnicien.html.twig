@@ -1,9 +1,9 @@
 {% set _menu_active = 'tournee' %}
 {% extends 'base_mobile.html.twig' %}
-{% block manifest %}{{path('manifest',{ 'version' : version })}}{% endblock manifest %}
+{% block manifest %}{{path('manifest',{ 'technicien' : technicien.id })}}{% endblock manifest %}
 {% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
 {% block body %}
-<div id="version" data-version="{{version}}" data-url="{{ path('tournee_version',{ 'technicien' : technicien.id, "date" : date | date('Y-m-d') }) }}" ></div>
+<div id="version" data-version="{{version}}" data-url="{{ path('tournee_version',{ 'technicien' : technicien.id }) }}" ></div>
 <div class="tournee_accueil" data-role="page" id="tournee_accueil">
 
 <div data-role="header" style="overflow:hidden;" data-position="fixed">
@@ -41,7 +41,6 @@
             {% for prestation in passage.prestations %}
 
                 {% if(prestation.wordToPicto) %}
-                mathurin
                   <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
                 {% endif %}
                 &nbsp;<strong>{{ prestation.getNomSimplifieToString }}</strong>&nbsp;&nbsp;

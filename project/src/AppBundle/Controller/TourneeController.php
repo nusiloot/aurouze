@@ -73,15 +73,15 @@ class TourneeController extends Controller {
     }
 
     /**
-     * @Route("/tournee-version/{technicien}/{date}", name="tournee_version", defaults={"date" = "0"})
+     * @Route("/tournee-version/{technicien}", name="tournee_version")
      */
-     public function tourneeVersionAction(Request $request,$technicien, $date) {
+     public function tourneeVersionAction(Request $request,$technicien) {
 
          $dm = $this->get('doctrine_mongodb')->getManager();
-         if($date == "0"){
-           $date = new \DateTime();
-         }else{
-           $date = \DateTime::createFromFormat('Y-m-d',$date);
+         $date = $request->get('date',null);
+         if(!$date){
+           $dateTime = new \DateTime();
+           $date = $dateTime->format('Y-m-d');
          }
          $technicien = $request->get('technicien');
          $technicienObj = null;
@@ -89,7 +89,7 @@ class TourneeController extends Controller {
              $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
          }
 
-         $version = $this->getVersionManifest($technicienObj->getId(),$date->format('Y-m-d'));
+         $version = $this->getVersionManifest($technicienObj->getId(),$date);
 
          return new Response(json_encode(array("success" => true,"version" => $version)));
      }
@@ -141,17 +141,28 @@ class TourneeController extends Controller {
     }
 
     /**
-     * @Route("/manifest", name="manifest")
+     * @Route("/manifest/{technicien}", name="manifest")
      */
     public function manifestAction(Request $request) {
+      $dm = $this->get('doctrine_mongodb')->getManager();
       $version = $request->get('version', null);
-      $versionManifest = ($version)? $version : "1";
+      $date = $request->get('date', null);
+      if(!$date){
+        $dateTime = new \DateTime();
+        $date = $dateTime->format('Y-m-d');
+      }
+
+      $technicien = $request->get('technicien');
+      $technicienObj = null;
+      if ($technicien) {
+          $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
+      }
+      $versionManifest = ($version)? $version : $this->getVersionManifest($technicien,$date);
 
       $response = new Response();
-      $response->setContent('CACHE MANIFEST');
       $response->headers->set('Content-Type', 'text/cache-manifest');
 
-      return $this->render('tournee/manifest.twig', array('versionManifest' => $versionManifest),$response);
+      return $this->render('tournee/manifest.twig', array('version' => $versionManifest),$response);
     }
 
     private function getVersionManifest($technicien,$date){
