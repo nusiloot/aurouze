@@ -4,21 +4,17 @@
 {% block body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('passage') }}">Passage</a></li>
-        <li><a href="{{ path('passage_etablissement',{ 'id' : etablissement.id }) }}">&nbsp;{{ etablissement.nom }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></a></li>
+        <li><a href="{{ path('passage_societe',{ 'id' : etablissement.societe.id }) }}">&nbsp;{{ etablissement.societe.raisonSociale }} </small></a></li>
+        <li><a href="{{ path('passage_etablissement',{ 'id' : etablissement.id }) }}">&nbsp;{{ etablissement.getNom(false) }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></a></li>
     </ol>
     {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
 
     <div class="row" style="margin-top: 10px; height: 130px;">
         <div class="col-xs-8">
-            <h3 style="margin-top: 5px;"><i style="cursor: default;" class="mdi mdi-{{ etablissement.icon }} mdi-lg" title="{{ etablissement.type }}" data-toggle="tooltip" ></i> {{ etablissement.nom }} <small class="text-muted">({{ etablissement.raisonSociale }})</small></h3>
-            <p class="lead">
-                {{ etablissement.adresse.adresse }} {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}<br />
-                {% if etablissement.contactCoordonnee.telephoneFixe %}
-                    {{ etablissement.contactCoordonnee.telephoneFixe }}
-                {% endif %}
-                {% if etablissement.contactCoordonnee.telephoneMobile %}
-                    {{ etablissement.contactCoordonnee.telephoneMobile }}
-                {% endif %}
+            <h3 style="margin-top: 0;"><i style="cursor: default;" class="mdi mdi-{{ etablissement.icon }} mdi-lg" title="{{ etablissement.type }}" data-toggle="tooltip" ></i> {{ etablissement.nom }} <small class="text-muted">({{ etablissement.raisonSociale }})</small></h3>
+            <p class="lead">{{ etablissement.adresse.adresse }} {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}</p>
+            <p>
+            	Contact : {{ etablissement.contactCoordonnee.telephoneFixe }}{% if etablissement.contactCoordonnee.telephoneFixe and etablissement.contactCoordonnee.telephoneMobile %} / {% endif %}{{ etablissement.contactCoordonnee.telephoneMobile }}{% if  etablissement.contactCoordonnee.libelle %} ({{ etablissement.contactCoordonnee.libelle }}){% endif %}
             </p>
             {% if etablissement.commentaire %}
                 <p>

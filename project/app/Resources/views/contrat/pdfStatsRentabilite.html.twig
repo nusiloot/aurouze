@@ -1,0 +1,26 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h3><strong>Export rentabilite du {{ dateDebut | localizeddate("medium", "none", null, null, "dd/MM/yyyy") | capitalize }} au {{ dateFin | localizeddate("medium", "none", null, null, "dd/MM/yyyy") | capitalize }}</strong></h3>
+        </div>
+    </div>
+    <br />
+
+        <table class="table table-bordered table-condensed">
+            {% for key, statRow in statsForRentabilite %}
+            {% set headers = loop.first %}
+            <tr style="page-break-inside: avoid;"{% if headers %} class="active"{% elseif not (key matches '/p[0-9]+/') %} class="active"{% endif %}>
+            {% for field in statRow %}
+              {% if headers %}
+              <th>{{field}}</th>
+              {% else %}
+              <td{% if loop.index in [6,7,8,9,10,12,13,14] %} class="text-right"{% endif %}>{{field}}</span></td>
+              {% endif %}
+            {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+
+{% endblock %}

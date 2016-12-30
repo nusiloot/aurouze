@@ -106,6 +106,13 @@ class EtablissementInfos implements EtablissementInfosInterface {
         return $this->type;
     }
 
+    public function getLibelle() {
+        if (!$this->getContactCoordonnee()) {
+            return null;
+        }
+        return $this->getContactCoordonnee()->getLibelle();
+    }
+
     public function getTelephoneFixe() {
         if (!$this->getContactCoordonnee()) {
             return null;

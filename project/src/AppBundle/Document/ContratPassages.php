@@ -109,6 +109,58 @@ class ContratPassages {
         return $nbPrevus;
     }
 
+    public function getNbPassageNonPrevu() {
+        $nbNonPrevus = 0;
+        foreach ($this->getPassages() as $passage){
+            if(!$passage->isSousContrat()){
+                $nbNonPrevus ++;
+            }
+        }
+        return $nbNonPrevus;
+    }
+
+
+    public function getDureePassagePrevu() {
+    	$nbPrevus = 0;
+    	foreach ($this->getPassages() as $passage){
+    		if($passage->isSousContrat()){
+    			$nbPrevus += $passage->getDureeMinute();
+    		}
+    	}
+    	return $nbPrevus;
+    }
+
+    public function getDureePassageNonPrevu() {
+        $nbNonPrevus = 0;
+        foreach ($this->getPassages() as $passage){
+            if(!$passage->isSousContrat()){
+    			$nbNonPrevus += $passage->getDureeMinute();
+            }
+        }
+        return $nbNonPrevus;
+    }
+    
+    public function getProduitsUtilises()
+    {
+    	$produits = array();
+    	foreach ($this->getPassages() as $passage){
+    		foreach ($passage->getProduits() as $produit) {
+    			if (!isset($produits[$produit->getIdentifiant()])) {
+    				$produits[$produit->getIdentifiant()] = array();
+    				$produits[$produit->getIdentifiant()][0] = '';
+    				$produits[$produit->getIdentifiant()][1] = 0;
+    				$produits[$produit->getIdentifiant()][2] = 0;
+    				$produits[$produit->getIdentifiant()][3] = 0;
+    			}
+    			if ($produit->getNom()) $produits[$produit->getIdentifiant()][0] = $produit->getNom();
+    			if ($produit->getNbUtilisePassage()) $produits[$produit->getIdentifiant()][1] += $produit->getNbUtilisePassage();
+    			if ($produit->getPrixHt()) $produits[$produit->getIdentifiant()][2] = $produit->getPrixHt();
+    			$produits[$produit->getIdentifiant()][3] = $produits[$produit->getIdentifiant()][1] * $produits[$produit->getIdentifiant()][2];
+    		}
+    	}
+    	return $produits;
+    }
+
     public function getNbPassagesRealises() {
         $realises = 0;
         foreach ($this->getPassages() as $passage) {

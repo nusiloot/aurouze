@@ -36,7 +36,7 @@
     });
 
     $.initAcceptationContrat = function() {
-      $.updateAcceptationContratButton();
+    	 $.updateAcceptationContratButton();
       $("#contrat_acceptation_dateAcceptation").on('change',function(){
         $.updateAcceptationContratButton();
       });
@@ -46,13 +46,14 @@
     }
 
     $.updateAcceptationContratButton = function(){
-      var dateAcceptation = $("#contrat_acceptation_dateAcceptation").datepicker("getDate");
-      var dateDebut = $("#contrat_acceptation_dateDebut").datepicker("getDate");
+      var dateAcceptation = $("#contrat_acceptation_dateAcceptation").val();
+      var dateDebut = $("#contrat_acceptation_dateDebut").val();
       if(dateAcceptation && dateDebut){
           $("#contrat_acceptation_button_row button#contrat_acceptation_save").removeAttr("disabled");
       }else{
           $("#contrat_acceptation_button_row button#contrat_acceptation_save").attr("disabled","disabled");
       }
+
     }
 
     $.initPopupRelancePdf = function() {
@@ -61,9 +62,14 @@
 
 
     $.initButtonLoading = function() {
+        $('.btn-loading-submit').parents('form').on('submit', function () {
+            $(this).find('.btn-loading-submit').button('loading')
+        });
         $('.btn-loading').on('click', function () {
             $(this).button('loading');
         });
+
+
     }
 
     $.initModal = function() {

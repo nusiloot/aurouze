@@ -271,7 +271,7 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
 
     public function getIdentiteCourt() {
 
-        return $this->getPrenom().' '. substr(ucfirst($this->getNom()),0,1).'.';
+        return ($this->getNom())? $this->getPrenom().' '. substr(ucfirst($this->getNom()),0,1).'.' : $this->getPrenom();
     }
 
     public function getDestinataire() {

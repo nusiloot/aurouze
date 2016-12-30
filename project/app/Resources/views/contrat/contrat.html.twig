@@ -1,40 +1,144 @@
-<div class="panel panel-default">
-    <div class="panel-heading">Contrat de type <strong>{{ contrat.getTypeContratLibelle() }}</strong>{% if contrat.isTypeReconductionTacite or contrat.isTypeRenouvelableSurProposition %}
-      <span style="cursor: pointer;" data-toggle="tooltip" title="{% if contrat.getReconduit %} Contrat reconduit {% else %} Contrat à reconduire {% endif %}" class=" pull-right badge {% if contrat.getReconduit %} badge-success {% else %} badge-danger {% endif %}">R</span>{% endif %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">Contrat {% if (editionMode is defined) %}<a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_modification', {'id': contrat.id })}}">Modifier</a>{% endif %}</h3></div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-7">
+                    	{% if contrat.isAnnule() %}
+                        <p class="bg-danger" style="padding: 10px;">{{ contrat.commentaire }}</p>
+                    	{% endif %}
+                        <p class="lead text-center">
+                            {{ contrat.getTypeContratLibelle() }} de {{ contrat.getDuree() }} mois<br />
+                        </p>
+                        <p class="lead text-center">
+                            Du {{ contrat.getDateDebut() | localizeddate("medium", "none", null, null, "dd/MM/y") }} au {{ contrat.getDateFin() | localizeddate("medium", "none", null, null, "dd/MM/y") }}
+                        </p>
+                        <p class="text-center">
+                        {% for prestation in contrat.prestations %} {% if(prestation.wordToPicto)
+            			%} <span class="step size-24" title="{{  prestation.nomToString }}"
+            				data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
+            				style="cursor: pointer;">&nbsp;</i></span> {%else%} <span
+            				class="label label-xs label-primary">{{ prestation.nomToString }}</span>
+            			{%endif%} {% endfor %} ({{ contrat.getNbPassages() }} passage(s))
+                        </p>
+                        <p class="text-center">
+                            {% if contrat.getDureeGarantie() %}Garantie {{ contrat.getDureeGarantie() }}  mois{% else %}Sans garantie{% endif %}
+                        </p>
+                    </div>
+                    <div class="col-xs-5">
+                        Date de création : <strong>{{ contrat.getDateAcceptation()|date("d/m/Y") }}</strong><br />
+                        Date d'acceptation : <strong>{{ contrat.getDateAcceptation()|date("d/m/Y") }}</strong><br /><br />
+                        Durée d'un passage : <strong>{{ contrat.getHumanDureePassage() }}</strong><br /><br />
+                        Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
+                        Technicien : <strong>{% if contrat.getTechnicien() %}{{ contrat.getTechnicien().getIdentite() }}{% else %}Non défini{% endif %}</strong><br />
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="panel-body">
-        <div class="row">
-            {% if contrat.referenceClient %}
-            <div class="col-xs-12">
-            	Numéro de commande : <strong>{{ contrat.referenceClient }}</strong>
-            </div>
-            {% endif %}
-            <div class="col-xs-6">
-                {% if contrat.getCommercial() %}Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />{% endif %}
-                <strong>{{ contrat.getDateDebut()|date("d/m/Y") }}</strong> (<strong>{{ contrat.getDuree() }}</strong> mois)<br />
-                {% if contrat.getDureeGarantie() %}Garantie : <strong>{{ contrat.getDureeGarantie() }}</strong> mois{% endif %}
-            </div>
-            <div class="col-xs-6">
-                {% if contrat.getTechnicien() %}
-                    Technicien : <strong>{{ contrat.getTechnicien().getIdentite() }}</strong><br />
-                {% endif %}
-                <strong>{{ contrat.getNbPassages() }}</strong> passage{% if contrat.getNbPassages() > 1 %}s{% endif %} de <strong>{{ contrat.getHumanDureePassage() }}</strong>
+
+    <div class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">Facturation {% if(editionMode is defined) %}<a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_modification', {'id': contrat.id })}}">Modifier</a>{% endif %}</h3></div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <p class="lead text-center">{{ contrat.getPrixHt()|number_format(2, '.', ' ') }} € HT soit {{ ((1+contrat.tva) * contrat.getPrixHt)|number_format(2, '.', ' ') }} € TTC <small>(TVA à {{ contrat.tva | number_format(2, '.', ' ') }} %)</small></p>
+                        <p class="text-center">En {{ contrat.nbFactures }} facture(s)</p>
+                    </div>
+                    <div class="col-xs-5">
+                        Fréquence de paiement : <strong>{{ contrat.frequencePaiementLibelle }}</strong><br />
+                    	Numéro de commande : <strong>{% if contrat.referenceClient %}{{ contrat.referenceClient }}{% else %}Non défini{% endif %}</strong><br />
+                        Destinataire de la facture : <strong>{% if contrat.factureDestinataire %}{{ contrat.factureDestinataire }}{% else %}{{ contrat.societe.raisonSociale }}{% endif %}</strong>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Nomenclature {% if(editionMode is defined) %}<a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_modification', {'id': contrat.id })}}">Modifier</a>{% endif %}</h3></div>
+    <div class="panel-body">
+        {% if (contrat.nomenclature) %}
+        {{ contrat.nomenclature | nl2br }}
+        {% else %}
+        Aucune nomenclature définie
+        {% endif %}
+    </div>
+</div>
 
+{% if(contrat.isEnAttenteAcceptation() and contrat.contratPassages | length == 0 ) %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Lieux de passage : </h3></div>
+        <ul class="list-group">
+            {% for etablissement in contrat.getEtablissements %}
+                <li class="list-group-item"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> <span><a href="{{ path('passage_etablissement', { 'id': etablissement.id }) }}">{{ etablissement.intitule }}</a></span></li>
+            {% endfor %}
+        </ul>
+    </div>
 
-{%  if(contrat.isEnAttenteAcceptation() and contrat.contratPassages | length == 0 ) %}
-    {{ include('contrat/contrat_previsionnel.html.twig', { 'contrat': contrat ,'form' : (form is defined)? form : null}) }}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Planning prévisionnelles des interventions (avec une date de début de contrat au {{ contrat.dateDebut | date("d/m/Y")}})</h3>
+        </div>
+        <div id="contrat-{{ contrat.id }}-passages" class="list-group">
+            {% if contrat.previsionnel|length > 0 %}
+                    {% for date,passage in contrat.previsionnel %}
+
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-xs-1">
+                                    <span style="cursor: help;" title=""
+                                        data-toggle="tooltip"
+                                        class="badge badge-default {% if(passage.mouvement_declenchable) %}badge-inverse{% endif %} btn-xs">{{ (loop.length - loop.index) + 1 }}</span>
+                                </div>
+                                <div class="col-xs-3">
+                                    prévu le <strong>{{ date|date("d/m/Y") }}</strong>
+                                </div>
+                                <div class="col-xs-3">
+                                    {% for prestation in passage.prestations %} {% if(prestation.wordToPicto)
+                                    %} <span class="step size-24" title="{{  prestation.nomToString }}"
+                                        data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
+                                        style="cursor: pointer;">&nbsp;</i></span> {%else%} <span
+                                        class="label label-xs label-primary">{{ prestation.nomToString }}</span>
+                                    {%endif%} {% endfor %}
+                                </div>
+                                <div class="col-xs-1">
+                                    <span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{contrat.getDureePassageFormat() }}</span>
+                                </div>
+                                <div class="col-xs-4">
+                                    {% if contrat.technicien %}
+                                    <ul class="list-inline list-unstyled">
+                                        <li><i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ contrat.technicien.identite}}</li>
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+            {% else %}
+                <p class="bg-warning" style="padding: 15px;">Attention, la saisie ne permet pas d'établir un prévisionnel d'intervention pour ce contrat.</p>
+            {% endif %}
+        </div>
+    </div>
 {%  else %}
-    {{ include('contrat/contrat_passages.html.twig', { 'contrat': contrat ,'form' : (form is defined)? form : null }) }}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Lieux de passage et interventions</h3></div>
+        <ul class="list-group">
+            {% for etablissement in contrat.getEtablissements %}
+                <li class="list-group-item"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> <a href="{{ path('passage_etablissement', { 'id': etablissement.id }) }}">{{ etablissement.getNom(false) }} - {{ etablissement.adresse.intitule }}</a></li>
+                {{ include('passage/listingPassages.html.twig', { 'passages': contrat.getPassagesEtablissementNode(etablissement).getPassagesDateSorted(true), 'origine': "contrat" }) }}
+            {% endfor %}
+        </ul>
+    </div>
 {% endif %}
 
 
 <div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title">Produits</h3></div>
+    <div class="panel-heading"><h3 class="panel-title">Produits {% if(editionMode is defined) %}<a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_modification', {'id': contrat.id })}}">Modifier</a>{% endif %}</h3></div>
+    {% if(contrat.produits | length ) %}
     <table class="table table-bordered table-condensed table-stripped">
         <thead>
             <tr>
@@ -57,11 +161,16 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <div class="panel-body">
+        Aucun produit défini
+    </div>
+    {% endif %}
 </div>
 
-{% if(contrat.mouvements | length > 0 or factures | length > 0) %}
+{% if(factureMode is defined) %}
 <div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title">Facturation</h3></div>
+    <div class="panel-heading"><h3 class="panel-title">Factures</h3></div>
     <table class="table table-bordered table-condensed table-stripped">
         <thead>
             <tr>
@@ -72,15 +181,20 @@
             </tr>
         </thead>
         <tbody>
+        {% if(not contrat.mouvements | length and not factures | length) %}
+        <tr>
+            <td colspan="4"><em>Aucune facture</em></td>
+        </tr>
+        {% endif %}
         {% for facture in factures %}
-        {% for mouvement in facture.lignes %}
-            <tr>
-                <td>{{ mouvement.libelle }}</td>
-                <td class="text-right">{{ facture.dateFacturation | localizeddate("medium", "none", null, null, "d MMM yyyy") }}</td>
-                <td class="text-center"><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;{{ facture.numeroFacture }}</a></td>
-                <td class="text-right">{{ "%0.2f" | format(mouvement.montantHT) }} €</td>
-            </tr>
-        {% endfor %}
+            {% for mouvement in facture.lignes %}
+                <tr>
+                    <td>{{ mouvement.libelle }}</td>
+                    <td class="text-right">{{ facture.dateFacturation | localizeddate("medium", "none", null, null, "d MMM yyyy") }}</td>
+                    <td class="text-center"><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;{{ facture.numeroFacture }}</a></td>
+                    <td class="text-right">{{ "%0.2f" | format(mouvement.montantHT) }} €</td>
+                </tr>
+            {% endfor %}
         {% endfor %}
         {% for mouvement in contrat.mouvements if not mouvement.facture %}
             <tr>
@@ -103,7 +217,5 @@
         </tfoot>
         {% endif %}
     </table>
-
-
 </div>
 {% endif %}

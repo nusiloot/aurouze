@@ -26,8 +26,6 @@ class PaiementsController extends Controller {
     public function indexAction(Request $request) {
 
         $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(20);
-
-        $exportForms = $this->createExportsForms();
         
         $dm = $this->get('doctrine_mongodb')->getManager();
         $societe = $dm->getRepository('AppBundle:Societe')->findAurouze();
@@ -42,7 +40,7 @@ class PaiementsController extends Controller {
         	return $this->redirectToRoute('paiements_liste');
         }
         
-        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs,'exportForms' => $exportForms, 'form' => $form->createView()));
+        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs, 'form' => $form->createView()));
     }
 
     /**
@@ -214,60 +212,6 @@ class PaiementsController extends Controller {
 
     public function getPdfGenerationOptions() {
         return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4, 'zoom' => 1);
-    }
-
-    private function createExportsForms(){
-
-      $exportsTypes = PaiementsManager::$types_exports;
-      $exportForms = array();
-      foreach ($exportsTypes as $exporttype => $type_export) {
-        $exportForms[$exporttype] = new \stdClass();
-        $exportForms[$exporttype]->type = $exporttype;
-        $exportForms[$exporttype]->libelle = $type_export['libelle'];
-        $exportForms[$exporttype]->picto = $type_export['picto'];
-        $exportForms[$exporttype]->pdf = $type_export['pdf'];
-        $formBuilder = $this->createFormBuilder(array());
-            $formBuilder->add('dateDebut', DateType::class, array('required' => true,
-                "attr" => array('class' => 'input-inline datepicker',
-                    'data-provide' => 'datepicker',
-                    'data-date-format' => 'dd/mm/yyyy'
-                    ),
-                'widget' => 'single_text',
-                'format' => 'dd/MM/yyyy',
-                'label' => 'Date de début* :',
-            ));
-            if($exporttype != PaiementsManager::TYPE_EXPORT_PCA){
-              $formBuilder->add('dateFin', DateType::class, array('required' => true,
-                "attr" => array('class' => 'input-inline datepicker',
-                    'data-provide' => 'datepicker',
-                    'data-date-format' => 'dd/mm/yyyy'
-                    ),
-                'widget' => 'single_text',
-                'format' => 'dd/MM/yyyy',
-                'label' => 'Date de fin* :',
-            ));
-          }
-
-          if($exporttype == PaiementsManager::TYPE_EXPORT_COMMERCIAUX){
-            $commerciaux =$this->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:Compte')->findAllUtilisateursCommercial();
-            $formBuilder->add('commercial', DocumentType::class, array(
-                'required' => false,
-                "choices" => array_merge(array('' => ''), $commerciaux),
-                'label' => 'Commercial :',
-                'class' => 'AppBundle\Document\Compte',
-                'expanded' => false,
-                'multiple' => false,
-                "attr" => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner un commercial", "style"=> "width:100%;")));
-        }
-          if($type_export['pdf']){
-            $formBuilder->add('pdf', CheckboxType::class, array('label' => 'PDF', 'required' => false, 'label_attr' => array('class' => 'small')));
-          }
-        $formBuilder->setAction($this->generateUrl($exporttype.'_export'));
-        $form = $formBuilder->getForm();
-
-        $exportForms[$exporttype]->form = $form->createView();
-      }
-      return $exportForms;
     }
 
 }
