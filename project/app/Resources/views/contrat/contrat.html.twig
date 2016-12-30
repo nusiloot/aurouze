@@ -9,7 +9,7 @@
                         <p class="bg-danger" style="padding: 10px;">{{ contrat.commentaire }}</p>
                     	{% endif %}
                         <p class="lead text-center">
-                            {{ contrat.getTypeContratLibelle() }} de {{ contrat.getDuree() }} mois {% if contrat.reconduit %}<button class="btn btn-xs btn-success" >Reconduit</button>{% endif %}<br />
+                            {{ contrat.getTypeContratLibelle() }} de {{ contrat.getDuree() }} mois {% if contrat.reconduit %}<button class="btn btn-xs btn-success">Reconduit</button>{% endif %}<br />
                         </p>
                         <p class="lead text-center">
                             Du {{ contrat.getDateDebut() | localizeddate("medium", "none", null, null, "dd/MM/y") }} au {{ contrat.getDateFin() | localizeddate("medium", "none", null, null, "dd/MM/y") }}
@@ -20,7 +20,7 @@
             				data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
             				style="cursor: pointer;">&nbsp;</i></span> {%else%} <span
             				class="label label-xs label-primary">{{ prestation.nomToString }}</span>
-            			{%endif%} {% endfor %} ({{ contrat.getNbPassages() }} passage(s))
+            			{%endif%} {% endfor %} {{ contrat.getNbPassages() }} passage(s)
                         </p>
                         <p class="text-center">
                             {% if contrat.getDureeGarantie() %}Garantie {{ contrat.getDureeGarantie() }}  mois{% else %}Sans garantie{% endif %}
