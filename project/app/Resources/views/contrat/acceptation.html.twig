@@ -17,13 +17,12 @@
             </ul>
         </nav>
 
-        <div class="row">
-            <div class="col-xs-7">
+        <div class="row" style="margin-bottom: 5px;">
+            <div class="col-xs-8">
                 <h3 style="margin-top: 0;">Acceptation du contrat de {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") %}&nbsp;à&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% endif %}
-                    <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span>
-                    <small>&nbsp;n° {{ contrat.getNumeroArchive() }}</small></h3>
+                    <small>&nbsp;n° {{ contrat.getNumeroArchive() }}</small> <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span></h3>
             </div>
-            <div class="col-xs-5 text-right">
+            <div class="col-xs-4 text-right">
                 {% if contrat.isEnAttenteAcceptation() %}
                 <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" onclick="return confirm('Etes-vous sûr de vouloir supprimer ce contrat ?')" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer le contrat</a>
                 {% else %}
@@ -94,15 +93,17 @@
             </div>
         </div>
         <hr />
+        {% if(contrat.isModifiable and not contrat.isEnAttenteAcceptation) %}
         <div class="alert alert-warning">
-            Lors de l'acception du contrat les passages seront régénéré
+            Lors de l'acception du contrat les passages seront régénérés
         </div>
+        {% endif %}
         <div class="row">
             <div class="col-xs-4 text-left">
                 {% if contrat.isEnAttenteAcceptation %}
                 <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;Retour à l'étape précédente</a>
                 {% else %}
-                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-link"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;Retour à la visualisation du contrat</a>
+                <a href="{{ path('contrat_visualisation', {'id': contrat.getId()}) }}" class="btn btn-link"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;Retour à la visualisation du contrat</a>
                 {% endif %}
             </div>
             <div class="col-xs-4 text-center">

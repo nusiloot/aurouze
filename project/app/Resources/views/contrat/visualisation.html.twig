@@ -8,15 +8,15 @@
         <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
         <li><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a></li>
     </ol>
-    <div class="row" style="margin-bottom: 10px;">
+    <div class="row" style="margin-bottom: 5px;">
         <div class="col-xs-7">
             <h3>Contrat de {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") %}&nbsp;à&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% endif %}
-                <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span>
                 <small>&nbsp;n° {{ contrat.getNumeroArchive() }}</small>
+                <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span>
             </h3>
 
         </div>
-        <div class="col-xs-5 text-right" style="padding-top: 30px; ">
+        <div class="col-xs-5 text-right" style="padding-top: 22px; ">
             <div class="btn-group">
                 {%  if (contrat.isReconductible) %}
                     <a href="{{ path('contrat_reconduction', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de vouloir reconduire le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-log-in"></span> Reconduire</a>
@@ -35,7 +35,7 @@
             </div>
         </div>
     </div>
-    
+
     {{ include('contrat/contrat.html.twig', { 'contrat': contrat, 'factureMode': true }) }}
 
 {% endblock %}
