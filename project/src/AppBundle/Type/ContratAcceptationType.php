@@ -36,23 +36,6 @@ class ContratAcceptationType extends AbstractType {
         $datePicker = array();
         $required = array();
 
-        if (!$this->contrat->isEnAttenteAcceptation() && !$this->contrat->isBrouillon()) {
-            if (!$this->contrat->hasMouvements()) {
-                $builder->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2, "attr" => array("class" => "form-control col-xs-2 text-right ")));
-                $builder->add('nbFactures', NumberType::class, array('label' => 'en ',"attr" => array("class" => "form-control col-xs-2 text-right ")));
-                $builder->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false, 'label_attr' => array('class' => 'small')));
-            }
-            $builder->add('dureePassage', TextType::class, array('label' => 'Durée d\'un passage :', 'attr' => array('class' => 'input-timepicker')));
-            $builder->get('dureePassage')
-                    ->addModelTransformer(new CallbackTransformer(
-                            function ($originalDescription) {
-                        $heure = floor($originalDescription / 60);
-                        return $heure . ':' . ((($originalDescription / 60) - $heure) * 60);
-                    }, function ($submittedDescription) {
-                        $duration = explode(':', $submittedDescription);
-                        return $duration[0] * 60 + $duration[1];
-                    }));
-        }
         if ($this->contrat->isEnAttenteAcceptation()) {
             $required = array('required' => false);
         }

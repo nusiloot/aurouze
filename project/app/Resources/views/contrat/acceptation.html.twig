@@ -19,18 +19,20 @@
 
         <div class="row">
             <div class="col-xs-7">
-                <h3 style="margin-top: 0;">Contrat de {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") %}&nbsp;à&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% endif %}
+                <h3 style="margin-top: 0;">Acceptation du contrat de {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") %}&nbsp;à&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% endif %}
                     <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span>
                     <small>&nbsp;n° {{ contrat.getNumeroArchive() }}</small></h3>
             </div>
             <div class="col-xs-5 text-right">
                 {% if contrat.isEnAttenteAcceptation() %}
                 <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" onclick="return confirm('Etes-vous sûr de vouloir supprimer ce contrat ?')" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer le contrat</a>
+                {% else %}
+                <a href="{{ path('contrat_visualisation', {'id': contrat.getId()}) }}" class="btn btn-link">Retour à la visualisation du contrat</a>
                 {% endif %}
             </div>
         </div>
 
-        {{ include('contrat/contrat.html.twig', { 'contrat': contrat ,'form' : form}) }}
+        {{ include('contrat/contrat.html.twig', { 'contrat': contrat ,'form' : form, 'editionMode': true}) }}
 
         {{ form_start(form) }}
 
@@ -91,20 +93,27 @@
                 </div>
             </div>
         </div>
+        <hr />
+        <div class="alert alert-warning">
+            Lors de l'acception du contrat les passages seront régénéré
+        </div>
         <div class="row">
-            <div class="col-xs-4 text-left"><a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;Retour à l'étape précédente</a>
+            <div class="col-xs-4 text-left">
+                {% if contrat.isEnAttenteAcceptation %}
+                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;Retour à l'étape précédente</a>
+                {% else %}
+                <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-link"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;Retour à la visualisation du contrat</a>
+                {% endif %}
             </div>
             <div class="col-xs-4 text-center">
                 <a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon glyphicon-file"></span> Voir le PDF</a>
                 <button class="btn btn-default btn" name="{{ "brouillon" }}"  type="submit" value="1"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Enregistrer en brouillon</button>
             </div>
-            <div class="col-xs-4 text-right">
-                <button onclick="return confirm('Êtes vous sûr de vouloir accepter ce contrat ?');" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Accepter le contrat</button>
+            <div id="contrat_acceptation_button_row" class="col-xs-4 text-right">
+                <button id="contrat_acceptation_save" onclick="return confirm('Êtes vous sûr de vouloir accepter ce contrat ?');" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Accepter le contrat</button>
             </div>
         </div>
         <br/>
         <br/>
     {{ form_end(form) }}
-
-
 {% endblock %}

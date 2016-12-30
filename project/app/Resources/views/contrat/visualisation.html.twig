@@ -28,13 +28,14 @@
                     <a href="{{ path('contrat_annulation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de vouloir résilier le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span> Résilier</a>
                 {%  endif %}
                 {%  if (contrat.isEnAttenteAcceptation() or contrat.isBrouillon()) %}
-                    <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûre de vouloir supprimer le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
+                    <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de vouloir supprimer le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer</a>
                 {%  endif %}
-                <a class="btn btn-sm btn-info" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon glyphicon-file"></span> Voir le PDF</a>
-                <a href="{% if (contrat.isBrouillon()) %}{{ path('contrat_modification', {'id': contrat.getId()}) }}{% else %}{{ path('contrat_acceptation', {'id': contrat.getId()}) }}{% endif %}" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
+                <a class="btn btn-sm btn-default" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon glyphicon-file"></span> Voir le PDF</a>
+                <a href="{% if (contrat.isBrouillon()) %}{{ path('contrat_modification', {'id': contrat.getId()}) }}{% else %}{{ path('contrat_acceptation', {'id': contrat.getId()}) }}{% endif %}" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
             </div>
         </div>
     </div>
-    {{ include('contrat/contrat.html.twig', { 'contrat': contrat }) }}
+    
+    {{ include('contrat/contrat.html.twig', { 'contrat': contrat, 'factureMode': true }) }}
 
 {% endblock %}

@@ -47,8 +47,7 @@ class ContratType extends AbstractType {
                 ->add('nbFactures', TextType::class, array('label' => 'Nombre de factures* :'))
                 ->add('dureePassage', TextType::class, array('label' => 'Durée estimative d\'un passage* :', 'attr' => array('class' => 'input-timepicker')))
                 ->add('prixHt', NumberType::class, array('label' => 'Prix HT* :', 'scale' => 2))
-                ->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false, 'label_attr' => array('class' => 'control-label')))
-                ->add('save', SubmitType::class, array('label' => 'Suivant', "attr" => array("class" => "btn btn-success pull-right")));
+                ->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false, 'label_attr' => array('class' => 'control-label')));
 
         $builder->add('devisInterlocuteur', ChoiceType::class, array('label' => 'Adresse du devis* : ',
             "choices" => $this->getInterlocuteurs($builder),
@@ -63,6 +62,7 @@ class ContratType extends AbstractType {
             'choices' => $this->getEtablissements($builder),
             'expanded' => false,
             'multiple' => true,
+            'disabled' => !$builder->getData()->isModifiable(),
             'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
         ));
 
@@ -112,7 +112,7 @@ class ContratType extends AbstractType {
                 		'required' => false,
                 		'attr' => array("class" => "select2 select2-simple"),
                 ));
-                
+
                 $builder->add('dateCreation', DateType::class, array(
             	"attr" => array('data-date-format' => 'dd/mm/yyyy', 'class' => 'input-inline datepicker', 'data-provide' => 'datepicker'),
             'widget' => 'single_text',

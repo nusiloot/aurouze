@@ -45,8 +45,13 @@
         </ol>
         <nav style="margin-top: 20px;" class="navbar navbar-default">
             <ul class="nav navbar-nav">
+                {% if (contrat.getId()) %}
                 <li class="active"><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">1. Saisie des informations</a></li>
                 <li><a href="{{ path('contrat_acceptation',{ 'id' : contrat.id }) }}">2. Acceptation du contrat</a></li>
+                {% else %}
+                <li class="active"><a href="">1. Saisie des informations</a></li>
+                <li class="disabled"><a href="">2. Acceptation du contrat</a></li>
+                {% endif %}
             </ul>
         </nav>
         {{ form_start(form) }}
@@ -196,8 +201,19 @@
                 </div>
             </div>
         </div>
-        {{ form_widget(form.save) }}
+        <div class="row">
+            <div class="text-left col-sm-6">
+                {% if not contrat.id %}
+                <a href="{{ path('contrats_societe', {'id': contrat.societe.id })}}" class="btn btn-default">Annuler</a>
+                {% endif %}
+            </div>
+            <div class="text-right col-sm-6">
+            <button type="submit" class="btn btn-default">Valider et aller à l'étape suivante&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
+            </div>
+        </div>
         {{ form_end(form) }}
+        <br />
+        <br />
     </div>
 
 {% endblock %}
