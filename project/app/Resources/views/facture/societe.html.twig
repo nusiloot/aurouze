@@ -134,4 +134,57 @@
                         </tbody>
                     </table>
 
-                    {% endblock %}
+                  <div class="btn-group pull-right">
+                    <a data-toggle="modal" data-target="#exportSocieteForm" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-usd"></span> Export des factures</a>
+                  </div>
+
+                  <div  id="exportSocieteForm"  class="modal fade" role="dialog">
+                      <div class="modal-dialog modal-lg" >
+                          <div class="modal-content">
+                              {{ form_start(exportSocieteForm) }}
+                              <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4>Export des factures de {{societe.raisonSociale}}</h4>
+                              </div>
+                                  <div class="modal-body form-horizontal">
+                                          <div class="form-group">
+                                              {{ form_errors(exportSocieteForm.dateDebut) }}
+                                              {{ form_label(exportSocieteForm.dateDebut, "Date début (incluse)", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+                                              <div class="col-xs-8">
+                                                  {{ form_widget(exportSocieteForm.dateDebut) }}
+                                              </div>
+                                          </div>
+                                          <div class="form-group">
+                                              {{ form_errors(exportSocieteForm.dateFin) }}
+                                              {{ form_label(exportSocieteForm.dateFin, "Date fin (incluse)", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+                                              <div class="col-xs-8">
+                                                  {{ form_widget(exportSocieteForm.dateFin) }}
+                                              </div>
+                                          </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <div class="row">
+                                        <div class="col-xs-6 text-left">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                                        </div>
+                                             {% if exportSocieteForm.pdf is defined and exportSocieteForm.pdf %}
+
+                                              <div class="col-xs-4 text-right">
+                                              {{ form_row(exportSocieteForm.pdf) }}
+                                            </div>
+                                              <div class="col-xs-2 text-right">
+                                                  <button class="btn btn-primary" type="submit">Exporter</button>
+                                          </div>
+                                          {% else %}
+                                          <div class="col-xs-6 text-right">
+                                             <button class="btn btn-primary" type="submit">Exporter le CSV</button>
+                                          </div>
+                                              {% endif %}
+
+                                      </div>
+                                  </div>
+                                      {{ form_end(exportSocieteForm) }}
+                              </div>
+                          </div>
+                        </div>
+{% endblock %}

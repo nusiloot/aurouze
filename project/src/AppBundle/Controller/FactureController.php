@@ -17,6 +17,9 @@ use AppBundle\Type\FactureChoiceType;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\RelanceType;
 use AppBundle\Type\FacturesEnRetardFiltresType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 /**
  * Facture controller.
@@ -32,7 +35,6 @@ class FactureController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $contratManager = $this->get('contrat.manager');
         $contratsFactureAEditer = $contratManager->getRepository()->findContratWithFactureAFacturer(50);
-
 
         return $this->render('facture/index.html.twig',array('contratsFactureAEditer' => $contratsFactureAEditer));
     }
@@ -127,7 +129,9 @@ class FactureController extends Controller {
         $factures = $fm->findBySociete($societe);
         $mouvements = $fm->getMouvementsBySociete($societe);
 
-        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements, 'factures' => $factures));
+        $exportSocieteForm = $this->createExportSocieteForm($societe);
+
+        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements, 'factures' => $factures, 'exportSocieteForm' => $exportSocieteForm->createView()));
     }
 
     /**
@@ -179,7 +183,7 @@ class FactureController extends Controller {
     }
 
   /**
-     * @Route("/avoir/{id}/{factureId}/{mouvement}", name="facture_avoir", defaults={"mouvement" = "1"})
+    * @Route("/avoir/{id}/{factureId}/{mouvement}", name="facture_avoir", defaults={"mouvement" = "1"})
    * @ParamConverter("societe", class="AppBundle:Societe")
    */
   public function avoirAction(Request $request, Societe $societe, $factureId,$mouvement) {
@@ -344,6 +348,33 @@ class FactureController extends Controller {
         );
     }
 
+    public function createExportSocieteForm(Societe $societe) {
+      $formBuilder = $this->createFormBuilder();
+      $formBuilder->add('dateDebut', DateType::class, array('required' => true,
+            "attr" => array('class' => 'input-inline datepicker',
+                'data-provide' => 'datepicker',
+                'data-date-format' => 'dd/mm/yyyy'
+                ),
+            'widget' => 'single_text',
+            'format' => 'dd/MM/yyyy',
+            'label' => 'Date de début* :',
+      ));
+      $formBuilder->add('dateFin', DateType::class, array('required' => true,
+            "attr" => array('class' => 'input-inline datepicker',
+                'data-provide' => 'datepicker',
+                'data-date-format' => 'dd/mm/yyyy'
+                ),
+            'widget' => 'single_text',
+            'format' => 'dd/MM/yyyy',
+            'label' => 'Date de fin* :',
+      ));
+      $formBuilder->add('pdf', CheckboxType::class, array('label' => 'PDF', 'required' => false, 'label_attr' => array('class' => 'small')));
+      $formBuilder->setAction($this->generateUrl('factures_export_client',array('societe' => $societe->getId())));
+      $exportForm = $formBuilder->getForm();
+
+      return $exportForm;
+    }
+
     public function splitLigne($ligne, $nbLignes2Keep) {
         $ligneSplitted = array();
 
@@ -469,6 +500,76 @@ class FactureController extends Controller {
         $response->setCharset('UTF-8');
 
         return $response;
+    }
+
+    /**
+     * @Route("/facture/export-client/{societe}", name="factures_export_client")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+    public function exportFactureClientAction(Request $request, Societe $societe) {
+
+        $formRequest = $request->request->get('form');
+
+        $dateDebutString = $formRequest['dateDebut']." 00:00:00";
+        $dateFinString = $formRequest['dateFin']." 23:59:59";
+
+        $dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
+        $dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
+        $facturesForCsv = $fm->getFacturesSocieteForCsv($societe, $dateDebut,$dateFin);
+
+        $pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
+
+        if(!$pdf){
+          $filename = sprintf("export_%s_factures_du_%s_au_%s.csv",$societe->getRaisonSociale(), $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+          $handle = fopen('php://memory', 'r+');
+
+          foreach ($facturesForCsv as $facture) {
+              fputcsv($handle, $facture,';');
+          }
+
+          rewind($handle);
+          $content = stream_get_contents($handle);
+          fclose($handle);
+
+          $response = new Response(utf8_decode($content), 200, array(
+              'Content-Type' => 'text/csv',
+              'Content-Disposition' => 'attachment; filename=' . $filename,
+          ));
+          $response->setCharset('UTF-8');
+
+          return $response;
+      }else{
+          $html = $this->renderView('facture/pdfSociete.html.twig', array(
+            'societe' => $societe,
+            'facturesArray' => $facturesForCsv,
+            'dateDebut' => $dateDebut,
+            'dateFin' => $dateFin
+        ));
+
+
+        $filename = sprintf("export_%s_factures_du_%s_au_%s.pdf",$societe->getRaisonSociale(),  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+
+        if ($request->get('output') == 'html') {
+
+            return new Response($html, 200);
+         }
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+                  'disable-smart-shrinking' => null,
+                   'encoding' => 'utf-8',
+                    'margin-left' => 10,
+                    'margin-right' => 10,
+                    'margin-top' => 10,
+                    'margin-bottom' => 10,
+                    'orientation' => 'landscape'),$this->getPdfGenerationOptions()), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+          ));
+      }
     }
 
     public function exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin){

@@ -26,6 +26,16 @@ class FactureManager {
     const EXPORT_CREDIT= 6;
     const EXPORT_MONNAIE= 7;
 
+    const EXPORT_SOCIETE_DATE = 0 ;
+    const EXPORT_SOCIETE_PIECE = 1;
+    const EXPORT_SOCIETE_TYPE = 2;
+    const EXPORT_SOCIETE_ECHEANCE = 3;
+    const EXPORT_SOCIETE_DEBIT = 4;
+    const EXPORT_SOCIETE_CREDIT = 5;
+    const EXPORT_SOCIETE_MOYEN_REGLEMENT = 6;
+
+
+
     const EXPORT_LIGNE_GENERALE = 'generale';
     const EXPORT_LIGNE_TVA = 'tva';
     const EXPORT_LIGNE_HT = 'ht';
@@ -57,6 +67,16 @@ class FactureManager {
 
     public static $types_nb_relance = array(
       self::AUCUNE_RELANCE, self::RELANCE_RAPPEL, self::RELANCE_RAPPEL2, self::RELANCE_DEMEURE_AR
+    );
+
+public static $export_factures_societe_libelle = array(
+      self::EXPORT_SOCIETE_DATE => "Date",
+       self::EXPORT_SOCIETE_PIECE=> "Pièce",
+       self::EXPORT_SOCIETE_TYPE => "Type de Règlement",
+       self::EXPORT_SOCIETE_ECHEANCE => "Echéance",
+       self::EXPORT_SOCIETE_DEBIT => "Débit",
+       self::EXPORT_SOCIETE_CREDIT => "Crédit",
+       self::EXPORT_SOCIETE_MOYEN_REGLEMENT => "Mode de réglement"
     );
 
 public static $export_factures_libelle = array(
@@ -323,6 +343,59 @@ public static $export_stats_libelle = array(
         return $facturesArray;
     }
 
+    public function getFacturesSocieteForCsv($societe, $dateDebut = null,$dateFin = null) {
+        if(!$dateDebut){
+          $dateDebut = new \DateTime();
+          $dateFin = new \DateTime();
+          $dateFin->modify("+1 month");
+        }
+        $facturesObjs = $this->getRepository()->exportBySocieteAndDate($societe, $dateDebut,$dateFin);
+
+        $facturesArray = array();
+        $facturesArray[] = array($societe->getRaisonSociale()." du ".$dateDebut->format("d/m/Y")." au ".$dateFin->format("d/m/Y"));
+        $facturesArray[] = array();
+        $facturesArray[] = self::$export_factures_societe_libelle;
+
+        $debit = 0;
+        $credit = 0;
+        foreach ($facturesObjs as $facture) {
+              $facturesArray[] =  $this->buildFactureSocieteLigne($facture,$debit,$credit);
+        }
+
+        $facturesArray[] =  array("","","","Total",$debit,$credit,"");
+        return $facturesArray;
+    }
+
+    public function buildFactureSocieteLigne($facture,&$debit,&$credit){
+      $factureLigne = array();
+      foreach ($facture->getPaiements() as $paiements) {
+            foreach ($paiements->getPaiement() as $paiement) {
+            if ($paiement->getFacture()->getId() == $facture->getId()) {
+              $factureLigne[self::EXPORT_SOCIETE_DATE] = $facture->getDateFacturation()->format('d/m/Y');
+              $factureLigne[self::EXPORT_SOCIETE_PIECE] =  $facture->getNumeroFacture();
+              $factureLigne[self::EXPORT_SOCIETE_TYPE] =  ($facture->isAvoir())? "Prestation Avoir" : "Prestation Facture" ;
+              $factureLigne[self::EXPORT_SOCIETE_ECHEANCE] =  $facture->getDateLimitePaiement()->format('d/m/Y');
+              $factureLigne[self::EXPORT_SOCIETE_DEBIT] =  number_format($facture->getMontantTTC(), 2, ",", "");
+              $factureLigne[self::EXPORT_SOCIETE_CREDIT] =  ($facture->isAvoir())? number_format($facture->getMontantTTC() , 2, ",", "") : number_format($paiement->getMontant() , 2, ",", "");
+              $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  $paiement->getMoyenPaiementLibelle();
+              $debit += $facture->getMontantTTC();
+              $credit += $paiement->getMontant();
+            }
+          }
+        }
+        if(!count($facture->getPaiements())){
+          $factureLigne[self::EXPORT_SOCIETE_DATE] = $facture->getDateFacturation()->format('d/m/Y');
+          $factureLigne[self::EXPORT_SOCIETE_PIECE] =  $facture->getNumeroFacture();
+          $factureLigne[self::EXPORT_SOCIETE_TYPE] =  ($facture->isAvoir())? "Prestation Avoir" : "Prestation Facture" ;
+          $factureLigne[self::EXPORT_SOCIETE_ECHEANCE] =  $facture->getDateLimitePaiement()->format('d/m/Y');
+          $factureLigne[self::EXPORT_SOCIETE_DEBIT] =  number_format($facture->getMontantTTC(), 2, ",", "");
+          $factureLigne[self::EXPORT_SOCIETE_CREDIT] =  ($facture->isAvoir())? number_format($facture->getMontantTTC() , 2, ",", "") : "0";
+          $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  "-";
+          $debit += $facture->getMontantTTC();
+          $credit += ($facture->isAvoir())? $facture->getMontantTTC() : 0;
+        }
+      return $factureLigne;
+    }
 
     public function buildFactureLigne($facture,$typeLigne = self::EXPORT_LIGNE_GENERALE){
     $factureLigne = array();

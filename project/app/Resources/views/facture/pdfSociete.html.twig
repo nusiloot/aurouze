@@ -1,0 +1,19 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+<h3>Export des Factures de la société {{ societe.raisonSociale }} du {{ dateDebut | date('d/m/Y') }} au {{ dateFin | date('d/m/Y') }}</h3>
+<table class="table table-bordered table-condensed">
+  {% for factureRow in facturesArray %}
+         {% if factureRow|length > 3 %}
+         	<tr style="page-break-inside: avoid;" class="active">
+            {% for key, field in factureRow %}
+              <td class="{% if loop.index != 1 %}text-right{% endif %}">
+								{{field}}
+							</span>
+						</td>
+            {% endfor %}
+          </tr>
+        {% endif %}
+   {% endfor %}
+ </table>
+{% endblock %}
