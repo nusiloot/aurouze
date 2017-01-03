@@ -526,8 +526,8 @@ class FactureController extends Controller {
           $filename = sprintf("export_%s_factures_du_%s_au_%s.csv",$societe->getRaisonSociale(), $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
           $handle = fopen('php://memory', 'r+');
 
-          foreach ($facturesForCsv as $facture) {
-              fputcsv($handle, $facture,';');
+          foreach ($facturesForCsv as $factureObj) {
+              fputcsv($handle, $factureObj->row,';');
           }
 
           rewind($handle);
@@ -546,7 +546,8 @@ class FactureController extends Controller {
             'societe' => $societe,
             'facturesArray' => $facturesForCsv,
             'dateDebut' => $dateDebut,
-            'dateFin' => $dateFin
+            'dateFin' => $dateFin,
+            'parameters' => $fm->getParameters()
         ));
 
 
@@ -564,8 +565,7 @@ class FactureController extends Controller {
                     'margin-left' => 10,
                     'margin-right' => 10,
                     'margin-top' => 10,
-                    'margin-bottom' => 10,
-                    'orientation' => 'landscape'),$this->getPdfGenerationOptions()), 200, array(
+                    'margin-bottom' => 10),$this->getPdfGenerationOptions()), 200, array(
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"'
           ));

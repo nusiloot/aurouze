@@ -352,17 +352,30 @@ public static $export_stats_libelle = array(
         $facturesObjs = $this->getRepository()->exportBySocieteAndDate($societe, $dateDebut,$dateFin);
 
         $facturesArray = array();
-        $facturesArray[] = array($societe->getRaisonSociale()." du ".$dateDebut->format("d/m/Y")." au ".$dateFin->format("d/m/Y"));
-        $facturesArray[] = array();
-        $facturesArray[] = self::$export_factures_societe_libelle;
+        $facturesArray["00"] = new \stdClass();
+        $facturesArray["00"]->facture = null;
+        $facturesArray["00"]->row = array($societe->getRaisonSociale()." du ".$dateDebut->format("d/m/Y")." au ".$dateFin->format("d/m/Y"));
+
+
+        $facturesArray["01"] = new \stdClass();
+        $facturesArray["01"]->facture = null;
+        $facturesArray["01"]->row = array();
+
+        $facturesArray["02"] = new \stdClass();
+        $facturesArray["02"]->facture = null;
+        $facturesArray["02"]->row = self::$export_factures_societe_libelle;
 
         $debit = 0;
         $credit = 0;
         foreach ($facturesObjs as $facture) {
-              $facturesArray[] =  $this->buildFactureSocieteLigne($facture,$debit,$credit);
+              $facturesArray[$facture->getId()] = new \stdClass();
+              $facturesArray[$facture->getId()]->facture = $facture;
+              $facturesArray[$facture->getId()]->row = $this->buildFactureSocieteLigne($facture,$debit,$credit);
         }
 
-        $facturesArray[] =  array("","","","Total",$debit,$credit,"");
+        $facturesArray["Z"] = new \stdClass();
+        $facturesArray["Z"]->facture = null;
+        $facturesArray["Z"]->row = array("","","","Total",$debit,$credit,"");
         return $facturesArray;
     }
 
