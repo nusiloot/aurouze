@@ -58,6 +58,17 @@
     </div>
 </div>
 
+{% if(contrat.isEnAttenteAcceptation() and contrat.contratPassages | length == 0 ) %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Lieux de passage : </h3></div>
+        <ul class="list-group">
+            {% for etablissement in contrat.getEtablissements %}
+                <li class="list-group-item"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> <span><a href="{{ path('passage_etablissement', { 'id': etablissement.id }) }}">{{ etablissement.intitule }}</a></span></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Nomenclature {% if(editionMode is defined) %}<a class="btn btn-default btn-xs pull-right" href="{{ path('contrat_modification', {'id': contrat.id })}}">Modifier</a>{% endif %}</h3></div>
     <div class="panel-body">
@@ -70,15 +81,6 @@
 </div>
 
 {% if(contrat.isEnAttenteAcceptation() and contrat.contratPassages | length == 0 ) %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h3 class="panel-title">Lieux de passage : </h3></div>
-        <ul class="list-group">
-            {% for etablissement in contrat.getEtablissements %}
-                <li class="list-group-item"><i class="mdi mdi-{{ etablissement.icon }} mdi-lg"></i> <span><a href="{{ path('passage_etablissement', { 'id': etablissement.id }) }}">{{ etablissement.intitule }}</a></span></li>
-            {% endfor %}
-        </ul>
-    </div>
-
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Planning prévisionnelles des interventions (avec une date de début de contrat au {{ contrat.dateDebut | date("d/m/Y")}})</h3>
