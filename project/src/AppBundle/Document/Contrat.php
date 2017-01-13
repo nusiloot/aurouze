@@ -942,15 +942,16 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getStatutCouleur() {
+        if ($this->isAnnule()) {
+            return ContratManager::$statuts_couleurs[$this->getTypeContrat()];
+        }
       $today = new \DateTime();
       if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))){
         return "default";
       }elseif($this->isFini() && $this->getDateFin() && ($today->format("Ymd") < $this->getDateFin()->format("Ymd"))){
         return "info";
       }
-        if ($this->isAnnule()) {
-            return ContratManager::$statuts_couleurs[$this->getTypeContrat()];
-        }
+
         return ContratManager::$statuts_couleurs[$this->getStatut()];
     }
 
