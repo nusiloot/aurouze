@@ -95,6 +95,9 @@
                                                 /
                                             {% endif %}
                                             <small>{{ passage.etablissementInfos.telephonePortable }}</small>
+                                            {% if  passage.etablissementInfos.libelle %}
+                                            <small> ({{ passage.etablissementInfos.libelle }})</small>
+                                            {% endif %}
                                         {% endif %}
                                         <span title="{{ passage.libelle }}"
                                               class="pull-right badge {% if(passage.isGarantie) %}badge-warning{% elseif(passage.isControle)%}badge-warning{% else %}badge-default{% endif %} {% if(passage.mouvementDeclenchable) %}badge-inverse{% endif %} btn-xs">{{

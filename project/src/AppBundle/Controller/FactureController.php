@@ -17,6 +17,9 @@ use AppBundle\Type\FactureChoiceType;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\RelanceType;
 use AppBundle\Type\FacturesEnRetardFiltresType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 /**
  * Facture controller.
@@ -32,7 +35,6 @@ class FactureController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $contratManager = $this->get('contrat.manager');
         $contratsFactureAEditer = $contratManager->getRepository()->findContratWithFactureAFacturer(50);
-
 
         return $this->render('facture/index.html.twig',array('contratsFactureAEditer' => $contratsFactureAEditer));
     }
@@ -127,7 +129,9 @@ class FactureController extends Controller {
         $factures = $fm->findBySociete($societe);
         $mouvements = $fm->getMouvementsBySociete($societe);
 
-        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements, 'factures' => $factures));
+        $exportSocieteForm = $this->createExportSocieteForm($societe);
+
+        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements, 'factures' => $factures, 'exportSocieteForm' => $exportSocieteForm->createView()));
     }
 
     /**
@@ -179,7 +183,7 @@ class FactureController extends Controller {
     }
 
   /**
-     * @Route("/avoir/{id}/{factureId}/{mouvement}", name="facture_avoir", defaults={"mouvement" = "1"})
+    * @Route("/avoir/{id}/{factureId}/{mouvement}", name="facture_avoir", defaults={"mouvement" = "1"})
    * @ParamConverter("societe", class="AppBundle:Societe")
    */
   public function avoirAction(Request $request, Societe $societe, $factureId,$mouvement) {
@@ -344,6 +348,33 @@ class FactureController extends Controller {
         );
     }
 
+    public function createExportSocieteForm(Societe $societe) {
+      $formBuilder = $this->createFormBuilder();
+      $formBuilder->add('dateDebut', DateType::class, array('required' => true,
+            "attr" => array('class' => 'input-inline datepicker',
+                'data-provide' => 'datepicker',
+                'data-date-format' => 'dd/mm/yyyy'
+                ),
+            'widget' => 'single_text',
+            'format' => 'dd/MM/yyyy',
+            'label' => 'Date de début* :',
+      ));
+      $formBuilder->add('dateFin', DateType::class, array('required' => true,
+            "attr" => array('class' => 'input-inline datepicker',
+                'data-provide' => 'datepicker',
+                'data-date-format' => 'dd/mm/yyyy'
+                ),
+            'widget' => 'single_text',
+            'format' => 'dd/MM/yyyy',
+            'label' => 'Date de fin* :',
+      ));
+      $formBuilder->add('pdf', CheckboxType::class, array('label' => 'PDF', 'required' => false, 'label_attr' => array('class' => 'small')));
+      $formBuilder->setAction($this->generateUrl('factures_export_client',array('societe' => $societe->getId())));
+      $exportForm = $formBuilder->getForm();
+
+      return $exportForm;
+    }
+
     public function splitLigne($ligne, $nbLignes2Keep) {
         $ligneSplitted = array();
 
@@ -472,15 +503,12 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/facture-commerciaux/export", name="commerciaux_export")
+     * @Route("/facture/export-client/{societe}", name="factures_export_client")
+     * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function exportCommerciauxAction(Request $request) {
+    public function exportFactureClientAction(Request $request, Societe $societe) {
 
-      // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
-        $commercial = (isset($formRequest['commercial']) && $formRequest['commercial'] && ($formRequest['commercial']!= ""))?
-         $formRequest['commercial'] : null;
-        $pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
 
         $dateDebutString = $formRequest['dateDebut']." 00:00:00";
         $dateFinString = $formRequest['dateFin']." 23:59:59";
@@ -490,55 +518,58 @@ class FactureController extends Controller {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
+        $facturesForCsv = $fm->getFacturesSocieteForCsv($societe, $dateDebut,$dateFin);
 
-        $statsForCommerciaux = $fm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial);
+        $pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
 
         if(!$pdf){
-        $filename = sprintf("export_details_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
-        $handle = fopen('php://memory', 'r+');
+          $filename = sprintf("export_%s_factures_du_%s_au_%s.csv",$societe->getRaisonSociale(), $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+          $handle = fopen('php://memory', 'r+');
 
-        foreach ($statsForCommerciaux as $stat) {
-            fputcsv($handle, $stat,';');
-        }
+          foreach ($facturesForCsv as $factureObj) {
+              fputcsv($handle, $factureObj->row,';');
+          }
 
-        rewind($handle);
-        $content = stream_get_contents($handle);
-        fclose($handle);
+          rewind($handle);
+          $content = stream_get_contents($handle);
+          fclose($handle);
 
-        $response = new Response(utf8_decode($content), 200, array(
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename=' . $filename,
-        ));
-        $response->setCharset('UTF-8');
+          $response = new Response(utf8_decode($content), 200, array(
+              'Content-Type' => 'text/csv',
+              'Content-Disposition' => 'attachment; filename=' . $filename,
+          ));
+          $response->setCharset('UTF-8');
 
-        return $response;
+          return $response;
       }else{
-        $html = $this->renderView('facture/pdfStatsCommerciaux.html.twig', array(
-          'statsForCommerciaux' => $statsForCommerciaux,
-          'dateDebut' => $dateDebut,
-          'dateFin' => $dateFin
-      ));
-
-
-      $filename = sprintf("export_stats_commerciaux_du_%s_au_%s.csv.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
-
-      if ($request->get('output') == 'html') {
-
-          return new Response($html, 200);
-       }
-
-      return new Response(
-              $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
-                'disable-smart-shrinking' => null,
-                 'encoding' => 'utf-8',
-                  'margin-left' => 1,
-                  'margin-right' => 1,
-                  'margin-top' => 1,
-                  'margin-bottom' => 1),$this->getPdfGenerationOptions()), 200, array(
-          'Content-Type' => 'application/pdf',
-          'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+          $html = $this->renderView('facture/pdfSociete.html.twig', array(
+            'societe' => $societe,
+            'facturesArray' => $facturesForCsv,
+            'dateDebut' => $dateDebut,
+            'dateFin' => $dateFin,
+            'parameters' => $fm->getParameters()
         ));
-    }
+
+
+        $filename = sprintf("export_%s_factures_du_%s_au_%s.pdf",$societe->getRaisonSociale(),  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+
+        if ($request->get('output') == 'html') {
+
+            return new Response($html, 200);
+         }
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+                  'disable-smart-shrinking' => null,
+                   'encoding' => 'utf-8',
+                    'margin-left' => 10,
+                    'margin-right' => 10,
+                    'margin-top' => 10,
+                    'margin-bottom' => 10),$this->getPdfGenerationOptions()), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+          ));
+      }
     }
 
     public function exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin){
@@ -581,9 +612,6 @@ class FactureController extends Controller {
             if($rowId == "ENTETE_TITRE"){
               $totalArray[$rowId] = array();
               $totalArray[$rowId][] = array();
-              foreach ($paiement as $value) {
-                $totalArray[$rowId][] = "";
-              }
             }elseif($rowId == "ENTETE"){
               foreach (FactureManager::$export_stats_libelle as $key => $entete) {
                   $totalArray[$rowId][$key] = str_replace('{X}', 'Année courante',$entete);
@@ -618,7 +646,7 @@ class FactureController extends Controller {
           $tmpArray = array();
           foreach ($paiement as $key => $paiementVal) {
             if(is_numeric($paiementVal)){
-              $tmpArray[$key] = number_format($paiementVal, 2, ',', ' ');
+              $tmpArray[$key] = number_format($paiementVal, 2, ',', '');
             }else{
               $tmpArray[$key] = $paiementVal;
             }
@@ -673,7 +701,7 @@ class FactureController extends Controller {
         ));
 
 
-        $filename = sprintf("export_stats_du_%s_au_%s.csv.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+        $filename = sprintf("export_stats_du_%s_au_%s.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
 
         if ($request->get('output') == 'html') {
 
@@ -684,10 +712,10 @@ class FactureController extends Controller {
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
                   'disable-smart-shrinking' => null,
                    'encoding' => 'utf-8',
-                    'margin-left' => 1,
-                    'margin-right' => 1,
-                    'margin-top' => 1,
-                    'margin-bottom' => 1,
+                    'margin-left' => 10,
+                    'margin-right' => 10,
+                    'margin-top' => 10,
+                    'margin-bottom' => 10,
                     'orientation' => 'landscape'),$this->getPdfGenerationOptions()), 200, array(
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"'

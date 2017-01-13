@@ -35,25 +35,7 @@ class ContratAcceptationType extends AbstractType {
         $readonly = array();
         $datePicker = array();
         $required = array();
-        
-        if (!$this->contrat->isEnAttenteAcceptation() && !$this->contrat->isBrouillon()) {
-            if (!$this->contrat->hasMouvements()) {
-                $builder->add('prixHt', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2, "attr" => array("class" => "form-control col-xs-2 text-right ")));
-                $builder->add('nbFactures', NumberType::class, array('label' => 'en ',"attr" => array("class" => "form-control col-xs-2 text-right ")));
-                $builder->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false, 'label_attr' => array('class' => 'small')));
-            }
-            $builder->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature* :', "attr" => array("class" => "form-control", "rows" => 6)));
-            $builder->add('dureePassage', TextType::class, array('label' => 'Durée d\'un passage :', 'attr' => array('class' => 'input-timepicker')));
-            $builder->get('dureePassage')
-                    ->addModelTransformer(new CallbackTransformer(
-                            function ($originalDescription) {
-                        $heure = floor($originalDescription / 60);
-                        return $heure . ':' . ((($originalDescription / 60) - $heure) * 60);
-                    }, function ($submittedDescription) {
-                        $duration = explode(':', $submittedDescription);
-                        return $duration[0] * 60 + $duration[1];
-                    }));
-        }
+
         if ($this->contrat->isEnAttenteAcceptation()) {
             $required = array('required' => false);
         }
@@ -65,32 +47,32 @@ class ContratAcceptationType extends AbstractType {
         }
 
 
-        $builder->add('dateCreation', DateType::class, array_merge(array('required' => true), array(
+        $builder->add('dateCreation', DateType::class, array_merge($required, array(
             "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy',
-            'label' => 'Date d\'édition* :',
-        )))->add('dateDebut', DateType::class, array_merge(array('required' => true), array(
+            'label' => 'Date de création :',
+        )))->add('dateDebut', DateType::class, array_merge($required, array(
             "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy',
-            'label' => 'Date de début* :',
-        )))->add('dateAcceptation', DateType::class, array_merge(array('required' => true), array(
+            'label' => 'Date de début du contrat:',
+        )))->add('dateAcceptation', DateType::class, array_merge($required, array(
             "attr" => array_merge($datePicker, array(
                 'data-date-format' => 'dd/mm/yyyy'
                     ), $readonly),
             'widget' => 'single_text',
             'format' => 'dd/MM/yyyy',
-            'label' => 'Date d\'acceptation* :',
+            'label' => 'Date d\'acceptation :',
         )));
 
         $builder->add('technicien', DocumentType::class, array_merge($required, array(
             "choices" => array_merge(array(null => null), $this->getTechniciens()),
-            'label' => 'Technicien* :',
+            'label' => 'Technicien :',
             'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
             'multiple' => false,
@@ -99,22 +81,15 @@ class ContratAcceptationType extends AbstractType {
 
         $builder->add('commercial', DocumentType::class, array_merge($required, array(
             "choices" => array_merge(array('' => ''), $this->getCommerciaux()),
-            'label' => 'Commercial* :',
+            'label' => 'Commercial :',
             'class' => 'AppBundle\Document\Compte',
             'expanded' => false,
             'multiple' => false,
             "attr" => array("class" => "select2 select2-simple"))));
 
-        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "required" => false, "attr" => array("class" => "form-control", "rows" => 15)));
+        $builder->add('commentaire', TextareaType::class, array('label' => 'Commentaire :', "required" => false, "attr" => array("class" => "form-control", "rows" => 8)));
         $builder->add('referenceClient', TextType::class, array('label' => 'Numéro de commande :', 'required' => false));
         $builder->add('factureDestinataire', TextType::class, array('label' => 'Destinataire de la facture (si différent de celui de la société) :', 'required' => false));
-        $saveBtnAttr = array("class" => "btn btn-success pull-right");
-        if($this->contrat->isEnAttenteAcceptation()){
-          $saveBtnAttr = array_merge($saveBtnAttr,array("onclick" => "return confirm('Êtes vous sûr de vouloir accepter ce contrat ?');"));
-        }
-        $builder->add('save', SubmitType::class,
-              array('label' => ($this->contrat->isEnAttenteAcceptation()) ? 'Acceptation du contrat' : 'Modification du contrat',
-                    "attr" => $saveBtnAttr));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {

@@ -1135,6 +1135,16 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
        return $this->duree->format('H').'h'.$this->duree->format('i');
     }
+    
+    public function getDureeMinute() {
+       if($duree = $this->getDuree()) {
+       	if (strpos($duree, 'h') !== false) {
+       		$ed = explode('h', $duree);
+       		return ($ed[0] * 60) + $ed[1];
+       	}
+       }
+       return 0;
+    }
 
     public function getDureeDate() {
         if (!$this->duree) {

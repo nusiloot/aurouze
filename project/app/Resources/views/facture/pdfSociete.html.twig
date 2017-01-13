@@ -1,0 +1,106 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+{% set facture = null %}
+{% for factureObj in facturesArray %}
+  {% if factureObj.facture %}
+    {% set facture = factureObj.facture %}
+  {% endif %}
+{% endfor %}
+<div class="row">
+    <div class="col-xs-6">
+        <br />
+        <p>
+            <span class="lead">{{ facture.emetteur.nom }}</span><br />
+            {% if(facture.emetteur) %}
+            {{ facture.emetteur.adresse }}<br />
+            {{ facture.emetteur.codePostal }}, {{ facture.emetteur.commune }}<br />
+            {% endif %}
+            Tél : {{ facture.emetteur.telephone }}<br />
+            E-mail: {{ facture.emetteur.email }}
+        </p>
+    </div>
+    <div class="col-xs-6">
+        <br />
+        <br />
+        <p>
+        	<small>
+            {{ facture.destinataire.nomFormatee | nl2br }}<br />
+            {{ facture.destinataire.adresseFormatee | nl2br }}<br />
+            {{ facture.destinataire.codePostal }} {{ facture.destinataire.commune }}<br />
+            </small>
+        </p>
+    </div>
+</div>
+<br/>
+<h4>Export des Factures de la société {{ societe.raisonSociale }} du {{ dateDebut | date('d/m/Y') }} au {{ dateFin | date('d/m/Y') }}</h4>
+
+<table class="table table-bordered table-condensed" style="border-bottom: 0 !important; border-right: 0 !important;  border-left: 0 !important;">
+    <thead>
+        <tr>
+            <th class="col-xs-2">Date</th>
+            <th class="text-center col-xs-1">Pièce</th>
+            <th class="text-right col-xs-2">Type de Règlement</th>
+            <th class="text-right col-xs-1">Echéance</th>
+            <th class="text-right col-xs-2">Débit</th>
+            <th class="text-right col-xs-2">Crédit</th>
+            <th class="text-right col-xs-2">Mode de réglement</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for factureRow in facturesArray %}
+        {% if factureRow.facture %}
+         	<tr style="page-break-inside: avoid;" class="active">
+            {% for field in factureRow.row %}
+              <td class="{% if loop.index != 1 %}text-right{% endif %}">
+								{{field}}
+							</span>
+						</td>
+            {% endfor %}
+          </tr>
+        {% endif %}
+      </tbody>
+    {% endfor %}
+    {% for factureRow in facturesArray %}
+      {% if loop.last %}
+        <tfoot class="lead">
+            <tr rowspan="3" >
+                <td colspan="3" style="height: 15px; border: 0 !important;"></td>
+                <td colspan="4" style="height: 15px; border: 0 !important;"></td>
+            </tr>
+            <tr >
+                <td colspan="3" style="border: 0 !important; padding: 0;">
+                <p class="well" style="padding: 5px; margin-bottom: 0; line-height: 10px; width: 92%;">
+                <small>
+                  <small style="font-size: 60%;">
+                La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l'obligation de vous indiquer :<br />
+                Application du taux minimum de pénalités de retard : trois fois le taux d'intérêt légal en vigueur (art. L. 441-6 du C.Cce)<br />
+                Indemnité forfaitaire pour frais de recouvrement : 40 euros (art. D. 441-5 du C.Cce)<br />
+                Sanction en cas de non respect des modalités ci-dessus :<br />
+                 - amende de 75 000 euros pour les personnes physiques / 375 000 euros pour les personnes morales.
+                  </small>
+                </small>
+              </p>
+                </td>
+                <td style="border: 0 !important; padding: 0;" class="text-right">Total</td>
+                <td style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.4 }} €</td>
+                <td style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.5 }} €</td>
+                <td style="border: 0 !important; padding: 0;"></td>
+            </tr>
+            <tr></
+        </tfoot>
+      {% endif %}
+   {% endfor %}
+ </table>
+
+ <small>
+ <p class="text-center" style="line-height: 13px;">
+     <small>
+     {{ parameters.emetteur.infos }}<br />
+     {{ parameters.emetteur.banque }}<br />
+     {{ parameters.emetteur.virement }}<br />
+     Agrément du Ministère de l'Agriculture A. I. F. 00131<br />
+     </small>
+ </p>
+ </small>
+{% endblock %}

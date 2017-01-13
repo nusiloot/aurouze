@@ -69,6 +69,16 @@ class FactureRepository extends DocumentRepository {
         return $query->execute();
     }
 
+    public function exportBySocieteAndDate($societe, \DateTime $dateDebut,\DateTime $dateFin) {
+
+        $q = $this->createQueryBuilder();
+        $q->field('societe')->equals($societe->getId());
+        $q->field('dateFacturation')->gte($dateDebut)->lte($dateFin)->sort('dateFacturation', 'asc');
+        $query = $q->getQuery();
+
+        return $query->execute();
+    }
+
     public function findByQuery($q)
     {
         $q = "\"".str_replace(" ", "\" \"", $q)."\"";

@@ -16,11 +16,6 @@
 		<div class="col-xs-2">{{ form_widget(form.save) }}</div>
 	</div>
     {{ form_end(form) }}
-    <div class="btn-group">
-      {% for exportForm in exportForms %}
-        <a data-toggle="modal" data-target="#datechoice{{ exportForm.type }}" class="btn btn-sm btn-default" ><span class="{{exportForm.picto}}"></span> {{exportForm.libelle}}</a>
-      {% endfor %}
-    </div>
 
     <a class="btn btn-sm btn-default pull-right" href="{{ path('paiements_nouveau') }}" style="margin-bottom: 10px;"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Créer une nouvelle saisie</strong></a>
     <br/>
@@ -79,74 +74,5 @@
             </tbody>
         </table>
     </div>
-      {% for exportForm in exportForms %}
-<div  id="datechoice{{exportForm.type}}"  class="modal fade" role="dialog">
-    <div class="modal-dialog modal-lg" >
-        <div class="modal-content">
-            {{ form_start(exportForm.form) }}
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4>Êtes-vous sûre de vouloir faire l'export {{exportForm.type}}?</h4>
-            </div>
-                <div class="modal-body form-horizontal">
-                        {% if exportForm.form.dateFin is defined %}
-                        <div class="form-group">
-                            {{ form_errors(exportForm.form.dateDebut) }}
-                            {{ form_label(exportForm.form.dateDebut, "Date début (incluse)", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
-                            <div class="col-xs-8">
-                                {{ form_widget(exportForm.form.dateDebut) }}
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            {{ form_errors(exportForm.form.dateFin) }}
-                            {{ form_label(exportForm.form.dateFin, "Date fin (incluse)", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
-                            <div class="col-xs-8">
-                                {{ form_widget(exportForm.form.dateFin) }}
-                            </div>
-                        </div>
-                        {% else %}
-                        <div class="form-group">
-                            {{ form_errors(exportForm.form.dateDebut) }}
-                            {{ form_label(exportForm.form.dateDebut, "Date du mois", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
-                            <div class="col-xs-8">
-                                {{ form_widget(exportForm.form.dateDebut) }}
-                            </div>
-                        </div>
-                        {% endif %}
-                        {% if exportForm.form.commercial is defined %}
-                        <div class="form-group">
-                            {{ form_errors(exportForm.form.commercial) }}
-                            {{ form_label(exportForm.form.commercial, "Choix du commercial", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
-                            <div class="col-xs-8">
-                                {{ form_widget(exportForm.form.commercial) }}
-                            </div>
-                        </div>
-                        {% endif %}
-                </div>
-                <div class="modal-footer">
-                    <div class="row">
-                      <div class="col-xs-6 text-left">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                      </div>
-                           {% if exportForm.pdf is defined and exportForm.pdf %}
 
-                            <div class="col-xs-4 text-right">
-                            {{ form_row(exportForm.form.pdf) }}
-                          </div>
-                            <div class="col-xs-2 text-right">
-                                <button class="btn btn-primary" type="submit">Exporter</button>
-                        </div>
-                        {% else %}
-                        <div class="col-xs-6 text-right">
-                           <button class="btn btn-primary" type="submit">Exporter le CSV</button>
-                        </div>
-                            {% endif %}
-
-                    </div>
-                </div>
-                    {{ form_end(exportForm.form) }}
-            </div>
-        </div>
-      </div>
-    {% endfor %}
 {% endblock %}

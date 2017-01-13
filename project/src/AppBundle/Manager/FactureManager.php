@@ -26,6 +26,16 @@ class FactureManager {
     const EXPORT_CREDIT= 6;
     const EXPORT_MONNAIE= 7;
 
+    const EXPORT_SOCIETE_DATE = 0 ;
+    const EXPORT_SOCIETE_PIECE = 1;
+    const EXPORT_SOCIETE_TYPE = 2;
+    const EXPORT_SOCIETE_ECHEANCE = 3;
+    const EXPORT_SOCIETE_DEBIT = 4;
+    const EXPORT_SOCIETE_CREDIT = 5;
+    const EXPORT_SOCIETE_MOYEN_REGLEMENT = 6;
+
+
+
     const EXPORT_LIGNE_GENERALE = 'generale';
     const EXPORT_LIGNE_TVA = 'tva';
     const EXPORT_LIGNE_HT = 'ht';
@@ -57,6 +67,16 @@ class FactureManager {
 
     public static $types_nb_relance = array(
       self::AUCUNE_RELANCE, self::RELANCE_RAPPEL, self::RELANCE_RAPPEL2, self::RELANCE_DEMEURE_AR
+    );
+
+public static $export_factures_societe_libelle = array(
+      self::EXPORT_SOCIETE_DATE => "Date",
+       self::EXPORT_SOCIETE_PIECE=> "Pièce",
+       self::EXPORT_SOCIETE_TYPE => "Type de Règlement",
+       self::EXPORT_SOCIETE_ECHEANCE => "Echéance",
+       self::EXPORT_SOCIETE_DEBIT => "Débit",
+       self::EXPORT_SOCIETE_CREDIT => "Crédit",
+       self::EXPORT_SOCIETE_MOYEN_REGLEMENT => "Mode de réglement"
     );
 
 public static $export_factures_libelle = array(
@@ -159,76 +179,6 @@ public static $export_stats_libelle = array(
         return $this->mm->getMouvements(true, false);
     }
 
-    public function getStatsForCommerciauxForCsv($dateDebut = null, $dateFin = null, $commercial = null){
-    if(!$dateDebut){
-            $dateDebut = new \DateTime();
-            $dateFin = new \DateTime();
-            $dateFin->modify("+1month");
-          }
-
-          $facturesObjs = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
-          $csv = array();
-          $cpt = 0;
-          $csv["A_".$cpt] = array("commercial","client","type contrat","numero contrat","numero facture","montant Ht","total commercial");
-          foreach ($facturesObjs as $facture) {
-            if($facture->getContrat() && $facture->getContrat()->getCommercial()){
-                $contrat = $facture->getContrat();
-                $commercialFacture = $facture->getContrat()->getCommercial();
-                if($commercial && ($commercial != $commercialFacture->getId())) {
-                  continue;
-                }
-                $identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialFacture->getId())->getIdentite();
-                $arr_ligne = array();
-                $key = $identite."_".$cpt."_".$facture->getNumeroFacture();
-                $arr_ligne[] = $identite;
-                $arr_ligne[] = $facture->getContrat()->getSociete()->getRaisonSociale();
-                $arr_ligne[] = $facture->getContrat()->getTypeContratLibelle();
-                $arr_ligne[] = $facture->getContrat()->getNumeroArchive();
-                $arr_ligne[] = $facture->getNumeroFacture();
-                $arr_ligne[] = $facture->getMontantHT();
-                $arr_ligne[] = 0.0;
-                $csv[$key] = $arr_ligne;
-            }else{
-              $arr_ligne = array();
-              $key = "z_".$cpt."_". $facture->getNumeroFacture();
-              if($commercial && (!$facture->getCommercial() || ($commercial != $facture->getCommercial()->getId()))){
-                continue;
-              }
-              $arr_ligne[] = ($facture->getCommercial())? $facture->getCommercial()->getIdentite() :"Pas de commercial";
-              $arr_ligne[] = $facture->getSociete()->getRaisonSociale();
-              $arr_ligne[] = ($facture->getContrat())? $facture->getContrat()->getNumeroArchive() : "Pas de contrat";
-              $arr_ligne[] = $facture->getNumeroFacture();
-              $arr_ligne[] = $facture->getMontantHT();
-              $arr_ligne[] = 0.0;
-              $csv[$key] = $arr_ligne;
-            }
-            $cpt++;
-          }
-          ksort($csv);
-
-
-          $totalArray = array();
-
-          foreach ($csv as $csvRow) {
-            $commercial = $csvRow[0];
-            if(!array_key_exists($commercial,$totalArray)){
-              $totalArray[$commercial] = 0.0;
-            }
-            $totalArray[$commercial] = $totalArray[$commercial] +  $csvRow[5];
-          }
-
-          $cpt = 0;
-          foreach ($csv as $csvKey => $csvRow) {
-            if($cpt){
-              $csvRow[5] = $totalArray[$csvRow[0]];
-              $csv[$csvKey] = $csvRow;
-              }
-              $cpt++;
-          }
-          return $csv;
-
-    }
-
     public function getStatsForCsv($dateDebut = null, $dateFin = null){
       if(!$dateDebut){
         $dateDebut = new \DateTime();
@@ -289,7 +239,7 @@ public static $export_stats_libelle = array(
       ksort($stats);
       foreach ($stats as $key => $stat) {
         if($key && is_numeric($ca_stats[$commercial][$key])){
-        $ca_stats[$commercial][$key] = number_format($ca_stats[$commercial][$key], 2, ',', ' ');
+        $ca_stats[$commercial][$key] = number_format($ca_stats[$commercial][$key], 2, ',', '');
         }
       }
     }
@@ -393,6 +343,72 @@ public static $export_stats_libelle = array(
         return $facturesArray;
     }
 
+    public function getFacturesSocieteForCsv($societe, $dateDebut = null,$dateFin = null) {
+        if(!$dateDebut){
+          $dateDebut = new \DateTime();
+          $dateFin = new \DateTime();
+          $dateFin->modify("+1 month");
+        }
+        $facturesObjs = $this->getRepository()->exportBySocieteAndDate($societe, $dateDebut,$dateFin);
+
+        $facturesArray = array();
+        $facturesArray["00"] = new \stdClass();
+        $facturesArray["00"]->facture = null;
+        $facturesArray["00"]->row = array($societe->getRaisonSociale()." du ".$dateDebut->format("d/m/Y")." au ".$dateFin->format("d/m/Y"));
+
+
+        $facturesArray["01"] = new \stdClass();
+        $facturesArray["01"]->facture = null;
+        $facturesArray["01"]->row = array();
+
+        $facturesArray["02"] = new \stdClass();
+        $facturesArray["02"]->facture = null;
+        $facturesArray["02"]->row = self::$export_factures_societe_libelle;
+
+        $debit = 0;
+        $credit = 0;
+        foreach ($facturesObjs as $facture) {
+              $facturesArray[$facture->getId()] = new \stdClass();
+              $facturesArray[$facture->getId()]->facture = $facture;
+              $facturesArray[$facture->getId()]->row = $this->buildFactureSocieteLigne($facture,$debit,$credit);
+        }
+
+        $facturesArray["Z"] = new \stdClass();
+        $facturesArray["Z"]->facture = null;
+        $facturesArray["Z"]->row = array("","","","Total",$debit,$credit,"");
+        return $facturesArray;
+    }
+
+    public function buildFactureSocieteLigne($facture,&$debit,&$credit){
+      $factureLigne = array();
+      foreach ($facture->getPaiements() as $paiements) {
+            foreach ($paiements->getPaiement() as $paiement) {
+            if ($paiement->getFacture()->getId() == $facture->getId()) {
+              $factureLigne[self::EXPORT_SOCIETE_DATE] = $facture->getDateFacturation()->format('d/m/Y');
+              $factureLigne[self::EXPORT_SOCIETE_PIECE] =  $facture->getNumeroFacture();
+              $factureLigne[self::EXPORT_SOCIETE_TYPE] =  ($facture->isAvoir())? "Prestation Avoir" : "Prestation Facture" ;
+              $factureLigne[self::EXPORT_SOCIETE_ECHEANCE] =  $facture->getDateLimitePaiement()->format('d/m/Y');
+              $factureLigne[self::EXPORT_SOCIETE_DEBIT] =  number_format($facture->getMontantTTC(), 2, ",", "");
+              $factureLigne[self::EXPORT_SOCIETE_CREDIT] =  ($facture->isAvoir())? number_format($facture->getMontantTTC() , 2, ",", "") : number_format($paiement->getMontant() , 2, ",", "");
+              $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  $paiement->getMoyenPaiementLibelle();
+              $debit += $facture->getMontantTTC();
+              $credit += $paiement->getMontant();
+            }
+          }
+        }
+        if(!count($facture->getPaiements())){
+          $factureLigne[self::EXPORT_SOCIETE_DATE] = $facture->getDateFacturation()->format('d/m/Y');
+          $factureLigne[self::EXPORT_SOCIETE_PIECE] =  $facture->getNumeroFacture();
+          $factureLigne[self::EXPORT_SOCIETE_TYPE] =  ($facture->isAvoir())? "Prestation Avoir" : "Prestation Facture" ;
+          $factureLigne[self::EXPORT_SOCIETE_ECHEANCE] =  $facture->getDateLimitePaiement()->format('d/m/Y');
+          $factureLigne[self::EXPORT_SOCIETE_DEBIT] =  number_format($facture->getMontantTTC(), 2, ",", "");
+          $factureLigne[self::EXPORT_SOCIETE_CREDIT] =  ($facture->isAvoir())? number_format($facture->getMontantTTC() , 2, ",", "") : "0";
+          $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  "-";
+          $debit += $facture->getMontantTTC();
+          $credit += ($facture->isAvoir())? $facture->getMontantTTC() : 0;
+        }
+      return $factureLigne;
+    }
 
     public function buildFactureLigne($facture,$typeLigne = self::EXPORT_LIGNE_GENERALE){
     $factureLigne = array();
