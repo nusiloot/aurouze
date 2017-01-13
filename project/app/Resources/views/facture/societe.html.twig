@@ -101,7 +101,7 @@
                           </td>
                             <td class="text-left">
                               {% if facture.isDevis or (facture.numeroFacture and facture.isEditable) or (not facture.isAvoir and not facture.isRedressee) %}
-                              <div class="dropdown">
+                              <div class="btn-group">
                                 <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="actionButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                   Actions
                                   <span class="caret"></span>
@@ -109,19 +109,19 @@
                                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="actionButton">
                                     {% if facture.isDevis %}
                                         <li><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis', 'id': facture.id })}}" class="btn btn-default btn-xs">Modifier {% if(facture.isAvoir) %}l'avoir{% else %}la facture{% endif %}</a></li>
-                                        <li><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-primary btn-xs">Créer la facture</a></li>
+                                        <li><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}">Créer la facture</a></li>
                                     {% else %}
                                             {% if(facture.numeroFacture and facture.isEditable) %}
-                                              <li>  <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}" class="btn btn-default btn-xs">Modifier {% if(facture.isAvoir) %}l'avoir{% else %}la facture{% endif %}</a></li>
+                                              <li>  <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}">Modifier {% if(facture.isAvoir) %}l'avoir{% else %}la facture{% endif %}</a></li>
                                             {% endif %}
                                             {% if(not facture.isAvoir) %}
                                               {% if(not facture.iscloture) %}
-                                                <li><a onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Cloturer les paiements</a></li>
+                                                <li><a onclick="return confirm('Êtes vous sûr de vouloir cloturer cette facture ?')" href="{{ path('facture_cloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}">Cloturer les paiements</a></li>
                                               {% endif %}
-                                                <li><a onclick="return confirm('Êtes vous sûr de vouloir décloturer cette facture ?')" href="{{ path('facture_decloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}" class="btn btn-default btn-xs">Décloturer (remettre les paiements à 0)</a></li>
+                                                <li><a onclick="return confirm('Êtes vous sûr de vouloir décloturer cette facture ?')" href="{{ path('facture_decloturer', {'id': facture.societe.id, 'factureId': facture.id }) }}">Décloturer (remettre les paiements à 0)</a></li>
                                                 {% if not facture.isRedressee %}
-                                                  <li><a onclick="return confirm('Êtes vous sûr de vouloir faire un avoir partiel sur cette facture ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id , 'mouvement' : "0" })}}" class="btn btn-default btn-xs">Créer un avoir partiel</a></li>
-                                                  <li><a onclick="return confirm('Êtes vous sûr de vouloir annuler la facture et générer un avoir ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id , 'mouvement' : "1" })}}" class="btn btn-default btn-xs">Annuler la facturation (donnera lieu à une nouvelle facture)</a></li>
+                                                  <li><a onclick="return confirm('Êtes vous sûr de vouloir faire un avoir partiel sur cette facture ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id , 'mouvement' : "0" })}}">Créer un avoir partiel</a></li>
+                                                  <li><a onclick="return confirm('Êtes vous sûr de vouloir annuler la facture et générer un avoir ?')"  href="{{ path('facture_avoir', { 'id': societe.id, 'type': 'facture', 'factureId': facture.id , 'mouvement' : "1" })}}">Annuler la facturation (donnera lieu à une nouvelle facture)</a></li>
                                                 {% endif %}
                                             {% endif %}
                                     {% endif %}
