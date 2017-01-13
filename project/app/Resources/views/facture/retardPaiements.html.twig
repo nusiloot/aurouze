@@ -104,8 +104,14 @@
               <td>
 								<small><a href="{{ path('facture_societe', {'id': factureEnRetard.societe.id }) }}">{{ factureEnRetard.societe.raisonSociale }}</a></small>
 								{% if factureEnRetard.societe.contactCoordonnee.email %}
-									<small><a href="mailto:{{ factureEnRetard.societe.contactCoordonnee.email }}">{{ factureEnRetard.societe.contactCoordonnee.email }}</a></small>
+									<br /><small><a href="mailto:{{ factureEnRetard.societe.contactCoordonnee.email }}">{{ factureEnRetard.societe.contactCoordonnee.email }}</a></small>
 								{% endif %}
+								{% if (factureEnRetard.societe.contactCoordonnee.telephoneFixe is defined and factureEnRetard.societe.contactCoordonnee.telephoneFixe)%}
+	                                <br /><small><i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ factureEnRetard.societe.contactCoordonnee.telephoneFixe }}</small>
+	                            {%endif%}
+	                            {% if (factureEnRetard.societe.contactCoordonnee.telephoneMobile is defined and factureEnRetard.societe.contactCoordonnee.telephoneMobile)%}
+	                                <br /><small><i class="glyphicon glyphicon-phone"></i>&nbsp;{{ factureEnRetard.societe.contactCoordonnee.telephoneMobile }}</small>
+	                            {% endif %}
 							</td>
               <td>
 								<a href="{{ path('facture_pdf', {'id': factureEnRetard.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;Facture n° {{ factureEnRetard.numeroFacture }}</a>
