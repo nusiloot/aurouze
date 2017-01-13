@@ -27,7 +27,8 @@
                         </p>
                     </div>
                     <div class="col-xs-5">
-                        Date de création : <strong>{{ contrat.getDateAcceptation()|date("d/m/Y") }}</strong><br />
+                        Date de création : <strong>{{ contrat.dateCreationAuto() ? contrat.dateCreationAuto()|date("d/m/Y") : contrat.dateCreation()|date("d/m/Y") }}</strong><br />
+                        Date d'édition : <strong>{{ contrat.dateCreation()|date("d/m/Y") }}</strong><br />
                         Date d'acceptation : <strong>{{ contrat.getDateAcceptation()|date("d/m/Y") }}</strong><br /><br />
                         Durée d'un passage : <strong>{{ contrat.getHumanDureePassage() }}</strong><br /><br />
                         Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />

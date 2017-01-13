@@ -150,6 +150,7 @@ class ContratManager implements MouvementManagerInterface {
         $contrat = new Contrat();
         $contrat->setSociete($societe);
         $contrat->setDateCreation($dateCreation);
+        $contrat->setDateCreationAuto($dateCreation);
         $contrat->setStatut(self::STATUT_BROUILLON);
         $contrat->addPrestation(new Prestation());
         $contrat->addProduit(new Produit());
@@ -269,7 +270,7 @@ class ContratManager implements MouvementManagerInterface {
                     $produitNode = clone $produit;
                     $passage->addProduit($produitNode);
                 }
-				
+
                 if ($passage) {
                     $contrat->addPassage($etablissement, $passage);
                     $this->dm->persist($passage);
@@ -291,7 +292,7 @@ class ContratManager implements MouvementManagerInterface {
 
         $this->dm->flush();
     }
-    
+
     public function getPassageManager()
     {
     	return new PassageManager($this->dm, $this);
@@ -498,7 +499,7 @@ class ContratManager implements MouvementManagerInterface {
       krsort($contratsReconduits);
       return $contratsReconduits;
     }
-    
+
 
 
     public function getStatsForCommerciauxForCsv($dateDebut = null, $dateFin = null, $commercial = null){
@@ -507,7 +508,7 @@ class ContratManager implements MouvementManagerInterface {
     		$dateFin = new \DateTime();
     		$dateFin->modify("+1month");
     	}
-    
+
     	$contrats = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
     	$csv = array();
     	$cpt = 0;
@@ -581,9 +582,9 @@ class ContratManager implements MouvementManagerInterface {
     	}
     	ksort($csv);
     	return $csv;
-    
+
     }
-    
+
 
 
     public function getStatsForRentabiliteForCsv($dateDebut = null, $dateFin = null, $client = null){
@@ -592,7 +593,7 @@ class ContratManager implements MouvementManagerInterface {
     		$dateFin = new \DateTime();
     		$dateFin->modify("+1month");
     	}
-    
+
     	$contrats = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
     	$csv = array();
     	$cpt = 0;

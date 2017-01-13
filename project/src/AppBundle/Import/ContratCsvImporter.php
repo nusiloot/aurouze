@@ -96,6 +96,7 @@ class ContratCsvImporter {
             }
 
             $contrat->setDateCreation(new \DateTime($data[self::CSV_DATE_CREATION]));
+            $contrat->setDateCreationAuto(new \DateTime($data[self::CSV_DATE_CREATION]));
             $contrat->setSociete($societe);
             $contrat->setTvaReduite(boolval($data[self::CSV_TVA_REDUITE]));
             $type_contrat = ContratManager::$types_contrat_import_index[$data[self::CSV_TYPE_CONTRAT]];
@@ -105,7 +106,7 @@ class ContratCsvImporter {
             if ($data[self::CSV_DATE_DEBUT]) {
                 $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
             }
-            
+
             if($data[self::CSV_DATE_ACCEPTATION]){
                 $contrat->setDateAcceptation(new \DateTime($data[self::CSV_DATE_ACCEPTATION]));
                 $contrat->setStatut(ContratManager::STATUT_EN_COURS);
@@ -167,7 +168,7 @@ class ContratCsvImporter {
                         $contrat->addProduit($produitToAdd);
                     }
                 }
-            }            
+            }
             $this->dm->persist($contrat);
             $i++;
             $cptTotal++;

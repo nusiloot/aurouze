@@ -120,6 +120,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     /**
      * @MongoDB\Date
      */
+    protected $dateCreationAuto;
+
+    /**
+     * @MongoDB\Date
+     */
     protected $dateDebut;
 
     /**
@@ -423,6 +428,26 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getDateCreation() {
         return $this->dateCreation;
+    }
+
+    /**
+     * Set dateCreationAuto
+     *
+     * @param date $dateCreationAuto
+     * @return self
+     */
+    public function setDateCreationAuto($dateCreationAuto) {
+        $this->dateCreationAuto = $dateCreationAuto;
+        return $this;
+    }
+
+    /**
+     * Get dateCreationAuto
+     *
+     * @return date $dateCreationAuto
+     */
+    public function getDateCreationAuto() {
+        return $this->dateCreationAuto;
     }
 
     /**
@@ -912,7 +937,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
             return "en cours réalisé";
         }
-        
+
         return ContratManager::$statuts_libelles_long[$this->getStatut()];
     }
 
@@ -1334,6 +1359,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateDebut(null);
         $contrat->setDateFin(null);
         $contrat->setDateCreation(new \DateTime());
+        $contrat->setDateCreationAuto(new \DateTime());
         $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
         $contrat->contratPassages = array();
         $contrat->cleanMouvements();
@@ -1373,6 +1399,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateDebut($dateDebut);
         $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
+        $contrat->setDateCreationAuto(new \DateTime());
 
         if($contrat->isTypeReconductionTacite()){
           $contrat->setStatut(ContratManager::STATUT_EN_COURS);
