@@ -41,10 +41,10 @@
             <th class="col-xs-2">Date</th>
             <th class="text-center col-xs-1">Pièce</th>
             <th class="text-right col-xs-2">Type de Règlement</th>
-            <th class="text-right col-xs-1">Echéance</th>
-            <th class="text-right col-xs-2">Débit</th>
-            <th class="text-right col-xs-2">Crédit</th>
-            <th class="text-right col-xs-2">Mode de réglement</th>
+            <th class="text-right col-xs-2">Echéance</th>
+            <th class="text-right col-xs-1">Débit</th>
+            <th class="text-right col-xs-1">Crédit</th>
+            <th class="text-right col-xs-3">Mode de réglement</th>
         </tr>
     </thead>
     <tbody>
@@ -64,12 +64,17 @@
     {% for factureRow in facturesArray %}
       {% if loop.last %}
         <tfoot class="lead">
-            <tr rowspan="3" >
-                <td colspan="3" style="height: 15px; border: 0 !important;"></td>
-                <td colspan="4" style="height: 15px; border: 0 !important;"></td>
+            <tr>
+                <td style="border: 0 !important; padding: 0;"></td>
+                <td style="border: 0 !important; padding: 0;"></td>
+                <td style="border: 0 !important; padding: 0;"></td>
+                <td style="border: 0 !important; padding: 0;" class="text-right">Total</td>
+                <td style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.4 }} €</td>
+                <td style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.5 }} €</td>
+                <td style="border: 0 !important; padding: 0;"></td>
             </tr>
-            <tr >
-                <td colspan="3" style="border: 0 !important; padding: 0;">
+            <tr>
+              <td colspan="3" style="border: 0 !important; padding: 0;">
                 <p class="well" style="padding: 5px; margin-bottom: 0; line-height: 10px; width: 92%;">
                 <small>
                   <small style="font-size: 60%;">
@@ -80,14 +85,13 @@
                  - amende de 75 000 euros pour les personnes physiques / 375 000 euros pour les personnes morales.
                   </small>
                 </small>
-              </p>
-                </td>
-                <td style="border: 0 !important; padding: 0;" class="text-right">Total</td>
-                <td style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.4 }} €</td>
-                <td style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.5 }} €</td>
-                <td style="border: 0 !important; padding: 0;"></td>
+                </p>
+              </td>
+              <td style="border: 0 !important; padding: 0;" class="text-right">Restant à payer</td>
+              <td style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.4 }} €</td>
+              <td style="border: 0 !important; padding: 0;"></td>
+              <td style="border: 0 !important; padding: 0;"></td>
             </tr>
-            <tr></
         </tfoot>
       {% endif %}
    {% endfor %}
