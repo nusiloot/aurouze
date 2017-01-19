@@ -99,7 +99,9 @@ class SocieteRepository extends DocumentRepository {
     public function getIdsByQuery($q, $inactif = false, $limit = 100)
     {
     	$ids = array();
-    	$items = $this->findByQuery($q, $inactif, $limit);
+    	$itemsQuery = $this->findByQuery($q, $inactif, $limit);
+    	$itemsTerms = $this->findByTerms($q, $inactif, $limit, true);
+    	$items = array_merge($itemsQuery,$itemsTerms);
     	foreach ($items as $item) {
     		$obj = $item["doc"];
     		$ids[] = $obj->getId();
