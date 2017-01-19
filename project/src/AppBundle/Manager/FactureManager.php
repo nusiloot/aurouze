@@ -386,6 +386,9 @@ public static $export_stats_libelle = array(
         $facturesArray["Z"] = new \stdClass();
         $facturesArray["Z"]->facture = null;
         $facturesArray["Z"]->row = array("","","","Total",$debit,$credit,"");
+        $facturesArray["ZZ"] = new \stdClass();
+        $facturesArray["ZZ"]->facture = null;
+        $facturesArray["ZZ"]->row = array("","","","Restant à payer",$debit-$credit,"","");
         return $facturesArray;
     }
 
