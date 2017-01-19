@@ -68,7 +68,7 @@
                                 {% set techColor = passage.techniciens[0].couleurText %}
                                 {% set techBgColor = passage.techniciens[0].couleur %}
                                 {% set techIdentite = passage.techniciens[0].identite %}
-                                {% set urlPlanif = path('calendar', {'passage' : passage.id, 'id': passage.etablissement.id ,'technicien' : passage.techniciens[0].id, 'calendrier' : passage.datedebut|date('d-m-Y')}) %}
+                                {% set urlPlanif = path('calendar', {'passage' : passage.id, 'id': passage.etablissement.id ,'technicien' : passage.techniciens[0].id, 'date' : passage.dateForPlanif|date('d-m-Y')}) %}
                             {% endif %}
                             <a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item hide-print">
                                 <div class="row">
