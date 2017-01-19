@@ -64,7 +64,7 @@ class PassageModificationType extends AbstractType
         }
 
         $builder->add('mouvement_declenchable', null, array('label' => "Ce mouvement déclenche une facture", "required" => false));
-
+        $builder->add('commentaire', null, array('label' => 'Commentaire :'));
         $builder->get('prestations')->addModelTransformer(new PrestationTransformer($this->dm));
     }
 
