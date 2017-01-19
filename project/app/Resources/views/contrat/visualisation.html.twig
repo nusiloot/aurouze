@@ -19,7 +19,7 @@
         <div class="col-xs-5 text-right" style="padding-top: 22px; ">
             <div class="btn-group">
                 {%  if (contrat.isReconductible) %}
-                    <a href="{{ path('contrat_reconduction', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de vouloir reconduire le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class="glyphicon glyphicon-log-in"></span> Reconduire</a>
+                    <a href="{{ path('contrat_reconduction', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="var a = prompt('Pourcentage d\'augmentation (%) :', 0); if(a === null) { return false; } a = a.replace(',', '.'); a = parseFloat(a); if(isNaN(a)) { a = parseInt(a); } if(isNaN(a)) { console.log(a); return false;} this.href = this.href + '?augmentation=' + a;"><span class="glyphicon glyphicon-log-in"></span> Reconduire</a>
                 {% endif %}
                 {%  if (contrat.isCopiable) %}
                     <a href="{{ path('contrat_copie', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de créer un nouveau contrat avec les infos de ce contrat ?');"><span class="glyphicon glyphicon-duplicate"></span> Dupliquer</a>

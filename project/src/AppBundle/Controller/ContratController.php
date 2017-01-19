@@ -209,22 +209,29 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function reconductionAction(Request $request, Contrat $contrat) {
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        if ($contrat->isReconductible()) {
-            $etablissements = $contrat->getEtablissements();
-            $contratReconduit = $contrat->reconduire();
-            $dm->persist($contratReconduit);
-            $dm->flush();
-            $this->get('contrat.manager')->copyPassagesForContratReconduit($contratReconduit,$contrat);
-            $dm->persist($contratReconduit);
-            $contrat->setReconduit(true);
-
-            $dm->persist($contratReconduit);
-            $dm->flush();
-            return $this->redirectToRoute('contrats_societe', array('id' => $contratReconduit->getSociete()->getId()));
-        } else {
+        if (!$contrat->isReconductible()) {
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
+        $augmentation = $request->get("augmentation", 0);
+
+        if(!is_float($augmentation)) {
+
+            throw new \Exception("L'augmentation n'est pas un nombre");
+        }
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $etablissements = $contrat->getEtablissements();
+        $contratReconduit = $contrat->reconduire($augmentation);
+        $dm->persist($contratReconduit);
+        $dm->flush();
+        $this->get('contrat.manager')->copyPassagesForContratReconduit($contratReconduit,$contrat);
+        $dm->persist($contratReconduit);
+        $contrat->setReconduit(true);
+
+        $dm->persist($contratReconduit);
+        $dm->flush();
+
+        return $this->redirectToRoute('contrat_visualisation', array('id' => $contratReconduit->getId()));
     }
 
 

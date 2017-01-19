@@ -182,6 +182,14 @@ class Facture implements DocumentSocieteInterface {
         $this->updateCalcul();
         $this->storeDestinataire();
         $this->setDateLimitePaiement($this->calculDateLimitePaiement());
+        $this->updateMouvementsContrat();
+        $this->updateMontantPaye();
+    }
+
+    public function updateMouvementsContrat() {
+        foreach ($this->getLignes() as $ligne) {
+            $ligne->updateMouvementContrat();
+        }
     }
 
     public function storeDestinataire() {

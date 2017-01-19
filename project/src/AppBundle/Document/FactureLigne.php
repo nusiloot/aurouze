@@ -66,6 +66,15 @@ class FactureLigne {
         $this->montantTaxe = round($this->getMontantHT() * $this->getTauxTaxe(), 2);
     }
 
+    public function updateMouvementContrat() {
+        if(!$this->isOrigineContrat()) {
+            continue;
+        }
+
+        $this->getMouvement()->setPrixUnitaire($this->getPrixUnitaire());
+        $this->getMouvement()->setTauxTaxe($this->getTauxTaxe());
+    }
+
     public function isOrigineContrat() {
 
         return $this->getOrigineDocument() && $this->getOrigineDocument() instanceof \AppBundle\Document\Contrat;
