@@ -179,7 +179,7 @@ public static $export_stats_libelle = array(
         return $this->mm->getMouvements(true, false);
     }
 
-    public function getStatsForCsv($dateDebut = null, $dateFin = null){
+    public function getStatsForCsv($dateDebut = null, $dateFin = null, $commercialFiltre = null){
       if(!$dateDebut){
         $dateDebut = new \DateTime();
         $dateFin = new \DateTime();
@@ -200,7 +200,7 @@ public static $export_stats_libelle = array(
 
       $facturesObjs = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
 
-      $this->fillCaStatsArray($ca_stats,$facturesObjs);
+      $this->fillCaStatsArray($ca_stats,$facturesObjs, false, $commercialFiltre);
 
       $dateDebutMoinsOneYear = \DateTime::createFromFormat('Y-m-d', $dateDebut->format('Y-m-d'));
       $dateDebutMoinsOneYear->modify("-1 year");
@@ -209,7 +209,7 @@ public static $export_stats_libelle = array(
       $dateFinMoinsOneYear->modify("-1 year");
 
       $facturesLastYearObjs = $this->getRepository()->exportOneMonthByDate($dateDebutMoinsOneYear,$dateFinMoinsOneYear);
-      $this->fillCaStatsArray($ca_stats,$facturesLastYearObjs,true);
+      $this->fillCaStatsArray($ca_stats,$facturesLastYearObjs,true, $commercialFiltre);
 
       //Calcul des Totaux
     foreach ($ca_stats as $commercial => $stat_row) {
@@ -256,7 +256,7 @@ public static $export_stats_libelle = array(
     return array_merge(array('ENTETE_TITRE' => $ca_stats['ENTETE_TITRE']) , array('ENTETE' => $ca_stats['ENTETE']),$results);
   }
 
-  private function fillCaStatsArray(&$ca_stats,$facturesObjs,$last_year = false){
+  private function fillCaStatsArray(&$ca_stats,$facturesObjs,$last_year = false, $commercialFiltre = null){
 
     foreach ($facturesObjs as $facture) {
         if(!$facture->getContrat()){
@@ -266,12 +266,18 @@ public static $export_stats_libelle = array(
             $ca_stats['PAS DE CONTRAT'][$stats_index] = 0.0;
           }
         }
-          $commercial = ($facture->getCommercial())? $facture->getCommercial()->getId() : 'PAS DE CONTRAT';
-          if(!array_key_exists($commercial,$ca_stats)){
-                  foreach (array_keys(self::$export_stats_libelle) as $stats_index) {
+            $commercial = ($facture->getCommercial())? $facture->getCommercial()->getId() : 'PAS DE CONTRAT';
+
+            if(!is_null($commercialFiltre) && $commercial != $commercialFiltre) {
+
+                continue;
+            }
+
+            if(!array_key_exists($commercial,$ca_stats)){
+                foreach (array_keys(self::$export_stats_libelle) as $stats_index) {
                     $ca_stats[$commercial][$stats_index] = 0.0;
-                  }
                 }
+            }
 
           if($last_year){
             $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT_PREC] += $facture->getMontantHT();
@@ -281,6 +287,10 @@ public static $export_stats_libelle = array(
       }else{
 
         $commercial = ($facture->getContrat()->getCommercial()) ? $facture->getContrat()->getCommercial()->getId() : "VIDE";
+
+        if(!is_null($commercialFiltre) && $commercial != $commercialFiltre) {
+            continue;
+        }
 
         if(!array_key_exists($commercial,$ca_stats)){
           foreach (array_keys(self::$export_stats_libelle) as $stats_index) {

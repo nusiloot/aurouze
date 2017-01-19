@@ -12,9 +12,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 
-class StatistiquesController extends Controller 
+class StatistiquesController extends Controller
 {
-	
+
 	/**
 	 * @Route("/statistiques", name="statistiques")
 	 */
@@ -56,7 +56,7 @@ class StatistiquesController extends Controller
             ));
           }
 
-          if($exporttype == PaiementsManager::TYPE_EXPORT_COMMERCIAUX){
+          if(in_array($exporttype, array(PaiementsManager::TYPE_EXPORT_COMMERCIAUX, PaiementsManager::TYPE_EXPORT_STATS))) {
             $commerciaux =$this->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:Compte')->findAllUtilisateursCommercial();
             $formBuilder->add('commercial', DocumentType::class, array(
                 'required' => false,
