@@ -56,7 +56,15 @@
         <p class="text-muted"><i>Aucun mouvement</i></p>
     {% endif %}
 
-    <h3>Liste des Factures et Devis <div class="btn-group pull-right"><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis' })}}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer un devis</a><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture' })}}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer une facture</a></div></h3>
+    <h3>Liste des Factures et Devis
+                      <div class="btn-group pull-right"><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis' })}}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer un devis</a>
+                        <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture' } ) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer une facture</a></div>
+                        <div class="btn-group pull-right">
+                          <a data-toggle="modal" data-target="#exportSocieteForm" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-usd"></span> Export des factures
+                          </a>&nbsp;
+                        </div>
+                      </h3>
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -82,6 +90,9 @@
                                 {% for origine in facture.origines %}
                                     - <a href="{{ path('contrat_visualisation', {'id': origine.id })}}">Contrat n° {{ origine.numeroArchive }}</a>
                                 {% endfor %}
+                                {% if(facture.isEnRetardPaiement() and facture.relanceCommentaire) %}
+                                  &nbsp;<span style="cursor: pointer;" data-toggle="tooltip" title="{{ facture.relanceCommentaire }}" class="pull-right label label-xs label-danger"><span class="glyphicon glyphicon-info-sign"></span></span>
+                                {% endif %}
                             </td>
                             <td class="col-xs-1">{{ facture.dateLimitePaiement | localizeddate("short", "none", null, null, "dd/MM/Y")  }}</td>
                             <td class="text-right">{{ "%0.2f" | format(facture.montantTTC)  }}&nbsp;€</td>

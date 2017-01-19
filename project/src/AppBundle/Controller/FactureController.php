@@ -572,7 +572,7 @@ class FactureController extends Controller {
       }
     }
 
-    public function exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin){
+    public function exportStatsForDates($dateDebutString, $dateFinString, $dateDebut, $dateFin, $commercialFiltre = null){
 
       $dateDebutFirstOfMonth = \DateTime::createFromFormat('d/m/Y H:i:s', $dateDebutString);
       $dateDebutFirstOfMonth->modify('first day of this month');
@@ -607,7 +607,8 @@ class FactureController extends Controller {
 
       $totalArray = array();
       foreach ($arrayOfDates as $dates) {
-          $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin']);
+          $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin'], $commercialFiltre);
+
           foreach ($facturesStatsForCsv as $rowId => $paiement) {
             if($rowId == "ENTETE_TITRE"){
               $totalArray[$rowId] = array();
@@ -655,6 +656,7 @@ class FactureController extends Controller {
         }
         $completeArray[] =  array("","","","","","","","","","");
       }
+
       return $completeArray;
     }
 
@@ -674,7 +676,7 @@ class FactureController extends Controller {
         $dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
         $dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
 
-        $exportStatsArray = $this->exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin);
+        $exportStatsArray = $this->exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin, ($formRequest['commercial']) ? $formRequest['commercial'] : null);
 
         if(!$pdf){
           $handle = fopen('php://memory', 'r+');
