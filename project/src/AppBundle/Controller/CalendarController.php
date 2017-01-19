@@ -73,6 +73,20 @@ class CalendarController extends Controller {
         }
 
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
+        $techniciensOnglet = $techniciens;
+        $techniciensFinal = array();
+
+        $techniciensFiltre = $request->get("techniciens", array());
+
+        foreach($techniciens as $technicien) {
+            if(in_array($technicien->getId(), $techniciensFiltre)) {
+                $techniciensFinal[$technicien->getId()] = $technicien;
+            }
+        }
+
+        if(count($techniciensFinal) > 0) {
+            $techniciens = $techniciensFinal;
+        }
 
         $passagesCalendar = array();
         $index = 0;
@@ -131,7 +145,8 @@ class CalendarController extends Controller {
                 }
             }
         }
-        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage, 'date' => $request->get('date')));
+
+        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'techniciensOnglet' => $techniciensOnglet, 'technicien' => null, 'passage' => $passage, 'date' => $request->get('date')));
     }
 
     /**

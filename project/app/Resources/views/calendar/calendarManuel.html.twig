@@ -13,7 +13,7 @@
                     <a href="{{ path('calendarManuel', {'date': calendarTool.getDateDebut('Y-m-d'), 'passage': ((passage) ? passage.id : null), 'mode': calendarTool.mode }) }}" role="tab" style="color: black;"><i class="mdi mdi-apps mdi-lg"></i> Résumé</a>
                 </li>
                 {% set i=0 %}
-                {% for tech in techniciens %}
+                {% for tech in techniciensOnglet %}
                     <li role="presentation">
                         <a href="{{ path('calendar',{'technicien': tech.getId(), 'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" role="tab" style="color: {{ tech.getCouleur() }};">
                             <i class="mdi mdi-face mdi-lg"></i> <strong>{% autoescape false %}{{ tech.getIdentiteCourt() | replace({' ' : '&nbsp;'})  }}{% endautoescape %}</strong>
@@ -74,7 +74,7 @@
                                                         color: #fff;
                                                         width: {{ ((100 / nbTechniciens))|round(0, 'floor') - 5 }}%;"
                                                         class="fc-time-grid-event fc-v-event fc-event fc-start fc-end">
-                                                        <strong>{{ techniciens["COMPTE-"~technicien].prenom | slice(0,2) | upper }}</strong>
+                                                        <strong>{{ techniciens["COMPTE-"~technicien].prenom | slice(0,10) | upper }}</strong>
                                                     </a>{% endfor %}
                                                     </th>
 													{% endfor %}
