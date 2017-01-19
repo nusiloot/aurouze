@@ -90,6 +90,9 @@
                                 {% for origine in facture.origines %}
                                     - <a href="{{ path('contrat_visualisation', {'id': origine.id })}}">Contrat n° {{ origine.numeroArchive }}</a>
                                 {% endfor %}
+                                {% if(facture.isEnRetardPaiement() and facture.relanceCommentaire) %}
+                                  &nbsp;<span style="cursor: pointer;" data-toggle="tooltip" title="{{ facture.relanceCommentaire }}" class="pull-right label label-xs label-danger"><span class="glyphicon glyphicon-info-sign"></span></span>
+                                {% endif %}
                             </td>
                             <td class="col-xs-1">{{ facture.dateLimitePaiement | localizeddate("short", "none", null, null, "dd/MM/Y")  }}</td>
                             <td class="text-right">{{ "%0.2f" | format(facture.montantTTC)  }}&nbsp;€</td>
