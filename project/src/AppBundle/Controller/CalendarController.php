@@ -15,6 +15,7 @@ use AppBundle\Document\CompteInfos;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\PassageCreationType;
 use AppBundle\Type\RendezVousType;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class CalendarController extends Controller {
 
@@ -53,6 +54,7 @@ class CalendarController extends Controller {
      * @Route("/calendrier/global", name="calendarManuel")
      */
     public function calendarManuelAction(Request $request) {
+        $response = new Response();
         $dm = $this->get('doctrine_mongodb')->getManager();
         $passage = null;
         if ($request->get('passage')) {
@@ -76,7 +78,9 @@ class CalendarController extends Controller {
         $techniciensOnglet = $techniciens;
         $techniciensFinal = array();
 
-        $techniciensFiltre = $request->get("techniciens", array());
+        $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
+
+        $response->headers->setCookie(new Cookie('techniciens', serialize($techniciensFiltre)));
 
         foreach($techniciens as $technicien) {
             if(in_array($technicien->getId(), $techniciensFiltre)) {
@@ -146,7 +150,7 @@ class CalendarController extends Controller {
             }
         }
 
-        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'techniciensOnglet' => $techniciensOnglet, 'technicien' => null, 'passage' => $passage, 'date' => $request->get('date')));
+        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'techniciensOnglet' => $techniciensOnglet, 'technicien' => null, 'passage' => $passage, 'date' => $request->get('date')), $response);
     }
 
     /**
