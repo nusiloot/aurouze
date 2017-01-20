@@ -378,6 +378,12 @@ public static $export_stats_libelle = array(
         $debit = 0;
         $credit = 0;
         foreach ($facturesObjs as $facture) {
+              if($facture->isAvoir() && $facture->getOrigineAvoir()){
+                  $factureOrigine = $facture->getOrigineAvoir();
+                  $facturesArray[$factureOrigine->getId()] = new \stdClass();
+                  $facturesArray[$factureOrigine->getId()]->facture = $factureOrigine;
+                  $facturesArray[$factureOrigine->getId()]->row = $this->buildFactureSocieteLigne($factureOrigine,$debit,$credit);
+              }
               $facturesArray[$facture->getId()] = new \stdClass();
               $facturesArray[$facture->getId()]->facture = $facture;
               $facturesArray[$facture->getId()]->row = $this->buildFactureSocieteLigne($facture,$debit,$credit);
@@ -400,7 +406,14 @@ public static $export_stats_libelle = array(
             if ($paiement->getFacture()->getId() == $facture->getId()) {
               $factureLigne[self::EXPORT_SOCIETE_DATE] = $facture->getDateFacturation()->format('d/m/Y');
               $factureLigne[self::EXPORT_SOCIETE_PIECE] =  $facture->getNumeroFacture();
-              $factureLigne[self::EXPORT_SOCIETE_TYPE] =  ($facture->isAvoir())? "Prestation Avoir" : "Prestation Facture" ;
+              if($facture->isAvoir()){
+                $factureLigne[self::EXPORT_SOCIETE_TYPE] =  "Avoir";
+                if($facture->getOrigineAvoir()){
+                  $factureLigne[self::EXPORT_SOCIETE_TYPE] .= " (facture ".$facture->getOrigineAvoir()->getNumeroFacture().')';
+                }
+              }else{
+                $factureLigne[self::EXPORT_SOCIETE_TYPE] = "Prestation Facture" ;
+              }
               $factureLigne[self::EXPORT_SOCIETE_ECHEANCE] =  $facture->getDateLimitePaiement()->format('d/m/Y');
               $factureLigne[self::EXPORT_SOCIETE_DEBIT] =  number_format($facture->getMontantTTC(), 2, ",", "");
               $factureLigne[self::EXPORT_SOCIETE_CREDIT] =  ($facture->isAvoir())? number_format($facture->getMontantTTC() , 2, ",", "") : number_format($paiement->getMontant() , 2, ",", "");
@@ -417,7 +430,14 @@ public static $export_stats_libelle = array(
         if(!count($facture->getPaiements())){
           $factureLigne[self::EXPORT_SOCIETE_DATE] = $facture->getDateFacturation()->format('d/m/Y');
           $factureLigne[self::EXPORT_SOCIETE_PIECE] =  $facture->getNumeroFacture();
-          $factureLigne[self::EXPORT_SOCIETE_TYPE] =  ($facture->isAvoir())? "Prestation Avoir" : "Prestation Facture" ;
+          if($facture->isAvoir()){
+            $factureLigne[self::EXPORT_SOCIETE_TYPE] =  "Avoir";
+            if($facture->getOrigineAvoir()){
+              $factureLigne[self::EXPORT_SOCIETE_TYPE] .= " (facture ".$facture->getOrigineAvoir()->getNumeroFacture().')';
+            }
+          }else{
+            $factureLigne[self::EXPORT_SOCIETE_TYPE] = "Prestation Facture" ;
+          }
           $factureLigne[self::EXPORT_SOCIETE_ECHEANCE] =  $facture->getDateLimitePaiement()->format('d/m/Y');
           $factureLigne[self::EXPORT_SOCIETE_DEBIT] =  number_format($facture->getMontantTTC(), 2, ",", "");
           $factureLigne[self::EXPORT_SOCIETE_CREDIT] =  ($facture->isAvoir())? number_format($facture->getMontantTTC() , 2, ",", "") : "0";
