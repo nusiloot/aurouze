@@ -378,17 +378,24 @@ public static $export_stats_libelle = array(
         $debit = 0;
         $credit = 0;
         foreach ($facturesObjs as $facture) {
+              if($facture->isAvoir() && $facture->getOrigineAvoir()){
+                  $factureOrigine = $facture->getOrigineAvoir();
+                  $facturesArray[$factureOrigine->getId()] = new \stdClass();
+                  $facturesArray[$factureOrigine->getId()]->facture = $factureOrigine;
+                  $facturesArray[$factureOrigine->getId()]->row = $this->buildFactureSocieteLigne($factureOrigine,$debit,$credit);
+              }
               $facturesArray[$facture->getId()] = new \stdClass();
               $facturesArray[$facture->getId()]->facture = $facture;
               $facturesArray[$facture->getId()]->row = $this->buildFactureSocieteLigne($facture,$debit,$credit);
         }
 
-        $facturesArray["Z"] = new \stdClass();
-        $facturesArray["Z"]->facture = null;
-        $facturesArray["Z"]->row = array("","","","Total",$debit,$credit,"");
-        $facturesArray["ZZ"] = new \stdClass();
-        $facturesArray["ZZ"]->facture = null;
-        $facturesArray["ZZ"]->row = array("","","","Restant à payer",$debit-$credit,"","");
+        $facturesArray["za"] = new \stdClass();
+        $facturesArray["za"]->facture = null;
+        $facturesArray["za"]->row = array("","","","Total",$debit,$credit,"");
+        $facturesArray["zz"] = new \stdClass();
+        $facturesArray["zz"]->facture = null;
+        $facturesArray["zz"]->row = array("","","","Restant à payer",$debit-$credit,"","");
+        ksort($facturesArray);
         return $facturesArray;
     }
 
@@ -399,11 +406,22 @@ public static $export_stats_libelle = array(
             if ($paiement->getFacture()->getId() == $facture->getId()) {
               $factureLigne[self::EXPORT_SOCIETE_DATE] = $facture->getDateFacturation()->format('d/m/Y');
               $factureLigne[self::EXPORT_SOCIETE_PIECE] =  $facture->getNumeroFacture();
-              $factureLigne[self::EXPORT_SOCIETE_TYPE] =  ($facture->isAvoir())? "Prestation Avoir" : "Prestation Facture" ;
+              if($facture->isAvoir()){
+                $factureLigne[self::EXPORT_SOCIETE_TYPE] =  "Avoir";
+                if($facture->getOrigineAvoir()){
+                  $factureLigne[self::EXPORT_SOCIETE_TYPE] .= " (facture ".$facture->getOrigineAvoir()->getNumeroFacture().')';
+                }
+              }else{
+                $factureLigne[self::EXPORT_SOCIETE_TYPE] = "Prestation Facture" ;
+              }
               $factureLigne[self::EXPORT_SOCIETE_ECHEANCE] =  $facture->getDateLimitePaiement()->format('d/m/Y');
               $factureLigne[self::EXPORT_SOCIETE_DEBIT] =  number_format($facture->getMontantTTC(), 2, ",", "");
               $factureLigne[self::EXPORT_SOCIETE_CREDIT] =  ($facture->isAvoir())? number_format($facture->getMontantTTC() , 2, ",", "") : number_format($paiement->getMontant() , 2, ",", "");
-              $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  $paiement->getMoyenPaiementLibelle();
+              if($facture->isAvoir() && $facture->getAvoirPartielRemboursementCheque()){
+                $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  $paiement->getMoyenPaiementLibelle();
+              }else{
+                $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  $paiement->getMoyenPaiementLibelle();
+              }
               $debit += $facture->getMontantTTC();
               $credit += $paiement->getMontant();
             }
@@ -412,11 +430,18 @@ public static $export_stats_libelle = array(
         if(!count($facture->getPaiements())){
           $factureLigne[self::EXPORT_SOCIETE_DATE] = $facture->getDateFacturation()->format('d/m/Y');
           $factureLigne[self::EXPORT_SOCIETE_PIECE] =  $facture->getNumeroFacture();
-          $factureLigne[self::EXPORT_SOCIETE_TYPE] =  ($facture->isAvoir())? "Prestation Avoir" : "Prestation Facture" ;
+          if($facture->isAvoir()){
+            $factureLigne[self::EXPORT_SOCIETE_TYPE] =  "Avoir";
+            if($facture->getOrigineAvoir()){
+              $factureLigne[self::EXPORT_SOCIETE_TYPE] .= " (facture ".$facture->getOrigineAvoir()->getNumeroFacture().')';
+            }
+          }else{
+            $factureLigne[self::EXPORT_SOCIETE_TYPE] = "Prestation Facture" ;
+          }
           $factureLigne[self::EXPORT_SOCIETE_ECHEANCE] =  $facture->getDateLimitePaiement()->format('d/m/Y');
           $factureLigne[self::EXPORT_SOCIETE_DEBIT] =  number_format($facture->getMontantTTC(), 2, ",", "");
           $factureLigne[self::EXPORT_SOCIETE_CREDIT] =  ($facture->isAvoir())? number_format($facture->getMontantTTC() , 2, ",", "") : "0";
-          $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  "-";
+          $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] = ($facture->getAvoirPartielRemboursementCheque())? "Remboursement par chèque le ".$facture->getDateFacturation()->format('d/m/Y') : "-";
           $debit += $facture->getMontantTTC();
           $credit += ($facture->isAvoir())? $facture->getMontantTTC() : 0;
         }
