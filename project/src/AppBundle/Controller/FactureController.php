@@ -183,14 +183,17 @@ class FactureController extends Controller {
     }
 
   /**
-    * @Route("/avoir/{id}/{factureId}/{mouvement}", name="facture_avoir", defaults={"mouvement" = "1"})
+    * @Route("/avoir/{id}/{factureId}/{mouvement}/{remboursement}", name="facture_avoir", defaults={"mouvement" = "1", "remboursement" = "0"})
    * @ParamConverter("societe", class="AppBundle:Societe")
    */
-  public function avoirAction(Request $request, Societe $societe, $factureId,$mouvement) {
+  public function avoirAction(Request $request, Societe $societe, $factureId, $mouvement, $remboursement) {
       $dm = $this->get('doctrine_mongodb')->getManager();
 
       $facture = $this->get('facture.manager')->getRepository()->findOneById($factureId);
       $avoir = $facture->genererAvoir();
+      if($remboursement){
+        $avoir->setAvoirPartielRemboursementCheque(true);
+      }
 
       $dm->persist($avoir);
       $dm->flush();
@@ -542,9 +545,32 @@ class FactureController extends Controller {
 
           return $response;
       }else{
+
+          $nbPages = 0;
+          $facturesForPdf = array();
+          $currentPage = 0;
+          $cpt = 0;
+          foreach ($facturesForCsv as $key => $factureObj) {
+            if($cpt > 27){
+              $currentPage++;
+              $cpt = 0;
+            }
+            if(!array_key_exists($currentPage,$facturesForPdf)){
+              $facturesForPdf[$currentPage] = array();
+            }
+              $facturesForPdf[$currentPage][$key] = $factureObj;
+            if($factureObj->facture){
+              if($factureObj->facture->getAvoirPartielRemboursementCheque()){
+                $cpt+=2;
+              }else{
+                $cpt++;
+              }
+            }
+          }
+
           $html = $this->renderView('facture/pdfSociete.html.twig', array(
             'societe' => $societe,
-            'facturesArray' => $facturesForCsv,
+            'facturesForPdf' => $facturesForPdf,
             'dateDebut' => $dateDebut,
             'dateFin' => $dateFin,
             'parameters' => $fm->getParameters()

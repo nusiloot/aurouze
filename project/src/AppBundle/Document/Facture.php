@@ -148,12 +148,18 @@ class Facture implements DocumentSocieteInterface {
      */
     protected $relanceCommentaire;
 
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $avoirPartielRemboursementCheque;
+
     public function __construct() {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->emetteur = new FactureSoussigne();
         $this->destinataire = new FactureSoussigne();
         $this->paiements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cloture = false;
+        $this->avoirPartielRemboursementCheque = false;
     }
 
     /** @MongoDB\PreUpdate */
@@ -1035,5 +1041,27 @@ class Facture implements DocumentSocieteInterface {
     public function getRelanceCommentaire()
     {
         return $this->relanceCommentaire;
+    }
+
+    /**
+     * Set avoirPartielRemboursementCheque
+     *
+     * @param boolean $avoirPartielRemboursementCheque
+     * @return self
+     */
+    public function setAvoirPartielRemboursementCheque($avoirPartielRemboursementCheque)
+    {
+        $this->avoirPartielRemboursementCheque = $avoirPartielRemboursementCheque;
+        return $this;
+    }
+
+    /**
+     * Get avoirPartielRemboursementCheque
+     *
+     * @return boolean $avoirPartielRemboursementCheque
+     */
+    public function getAvoirPartielRemboursementCheque()
+    {
+        return $this->avoirPartielRemboursementCheque;
     }
 }
