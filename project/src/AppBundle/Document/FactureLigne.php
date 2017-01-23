@@ -68,7 +68,7 @@ class FactureLigne {
 
     public function updateMouvementContrat() {
         if(!$this->isOrigineContrat()) {
-            continue;
+            return;
         }
 
         $this->getMouvement()->setPrixUnitaire($this->getPrixUnitaire());
