@@ -123,8 +123,8 @@
                                 </div>
                             </div>
                             {% if passagesEtablissement %}
-							{{ include('passage/listingPassages.html.twig', { 'passages': passagesEtablissement.getPassagesSorted(true) }) }}
-							{% endif %}
+              							       {{ include('passage/listingPassages.html.twig', { 'passages': passagesEtablissement.getPassagesDateSorted(true) }) }}
+              							{% endif %}
                         </div>
                     </div>
 
