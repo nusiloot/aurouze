@@ -38,27 +38,26 @@ class PassageController extends Controller {
         ));
         $passageManager = $this->get('passage.manager');
 
-        $moisCourrant = ($request->get('mois') == "courant");
+        $moisCourant = ($request->get('mois') == "courant");
         $dateFin = new \DateTime();
         $dateFinCourant = clone $dateFin;
         $dateFinCourant->modify("+1 month");
 
-        $dateDebut = new \DateTime();
-        $passages = null;
-        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur);
         $anneeMois = null;
+        $dateDebut = null;
+        $dateFin = $dateFinCourant;
+        $anneeMois = 'courant';
 
-        if($moisCourrant){
-          $dateFin = $dateFinCourant;
-          $passages = $passageManager->getRepository()->findToPlan($secteur, null, $dateFin);
-          $anneeMois = 'courant';
-        }else{
+        if(!$moisCourant){
           $anneeMois = $request->get('mois');
           $dateDebut = \DateTime::createFromFormat('Ymd',$anneeMois.'01');
           $dateFin = clone $dateDebut;
           $dateFin->modify("last day of this month");
-          $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, $dateFin);
         }
+
+        $passages = null;
+        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFin);
+        $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, clone $dateFin);
 
         $geojson = $this->buildGeoJson($passages);
 

@@ -188,10 +188,12 @@ class PassageManager {
         return null;
     }
 
-    public function getNbPassagesToPlanPerMonth($secteur = EtablissementManager::SECTEUR_PARIS) {
-        $lastDayOfNextMonth = new \DateTime();
-        $lastDayOfNextMonth->modify("last day of next month");
-        return $this->getRepository()->findNbPassagesToPlanPerMonthUntil($secteur, $lastDayOfNextMonth);
+    public function getNbPassagesToPlanPerMonth($secteur = EtablissementManager::SECTEUR_PARIS, $dateUntil = null) {
+        if(is_null($dateUntil)) {
+            $dateUntil = new \DateTime();
+            $dateUntil->modify("last day of next month");
+        }
+        return $this->getRepository()->findNbPassagesToPlanPerMonthUntil($secteur, $dateUntil);
     }
 
     public function sortPassagesByTechnicien($passagesForAllTechniciens){
