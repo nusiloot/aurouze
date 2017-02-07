@@ -7,9 +7,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Configuration;
+use AppBundle\Document\Produit;
 use AppBundle\Type\ConfigurationPrestationsType;
-use AppBundle\Type\ConfigurationProduitsType;
+use AppBundle\Type\ConfigurationProduitType;
 use AppBundle\Type\ConfigurationProvenancesType;
+use Behat\Transliterator\Transliterator;
 
 class ConfigurationController extends Controller {
 
@@ -26,33 +28,42 @@ class ConfigurationController extends Controller {
         return $this->render('configuration/visualisation.html.twig', array('configuration' => $configuration));
     }
 
+
     /**
-     * @Route("/configuration-modification-produits", name="configuration_modification_produits")
+     * @Route("/configuration-modification-produit/{identifiant}", name="configuration_modification_produit",defaults={"identifiant" = "0"} )
      */
-    public function modificationProduitsAction(Request $request) {
+    public function modificationProduitAction(Request $request,$identifiant) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $configuration = $dm->getRepository('AppBundle:Configuration')->findConfiguration();
+        $identifiantProduit = $request->get('identifiant');
+
         if (!$configuration) {
             $configuration = new Configuration();
             $configuration->setId(Configuration::PREFIX);
             $dm->persist($configuration);
             $dm->flush();
         }
-
-
-        $form = $this->createForm(new ConfigurationProduitsType($this->container, $dm), $configuration, array(
-            'action' => $this->generateUrl('configuration_modification_produits'),
+        $configurationProduit = $configuration->getProduitByIdentifiant($identifiantProduit);
+        if(!$configurationProduit){
+          $configurationProduit = new Produit();
+          $configurationProduit->setNom('Nouveau Produit');
+          $configuration->addProduit($configurationProduit);
+        }
+        $form = $this->createForm(new ConfigurationProduitType($this->container, $dm), $configurationProduit, array(
+            'action' => $this->generateUrl('configuration_modification_produit',array("identifiant" => $identifiant)),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $configuration = $form->getData();
+            if(!$configurationProduit->getIdentifiant()){
+                $configurationProduit->setIdentifiant(strtoupper(Transliterator::urlize(trim($configurationProduit->getNom()))));
+            }
             $dm->persist($configuration);
             $dm->flush();
             return $this->redirectToRoute('configuration');
         }
-        return $this->render('configuration/modificationProduits.html.twig', array('configuration' => $configuration, 'form' => $form->createView()));
+        return $this->render('configuration/modificationProduit.html.twig', array('configuration' => $configuration,'produit' => $configurationProduit, 'form' => $form->createView()));
     }
 
     /**
@@ -132,7 +143,7 @@ class ConfigurationController extends Controller {
         }
         foreach ($passages as $passage) {
             foreach ($passage->getPrestations() as $passagePresta) {
-                
+
                 if (!array_key_exists($passage->getContrat()->getId(), $prestationsNb[$passagePresta->getIdentifiant()])) {
                     $prestationsNb[$passagePresta->getIdentifiant()][$passage->getContrat()->getId()] = 0;
                 }
