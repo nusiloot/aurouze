@@ -25,7 +25,7 @@ class PaiementsController extends Controller {
      */
     public function indexAction(Request $request) {
 
-        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(40);
+        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(50);
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $societe = $dm->getRepository('AppBundle:Societe')->findAurouze();
