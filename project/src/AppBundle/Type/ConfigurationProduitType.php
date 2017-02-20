@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
@@ -15,6 +16,7 @@ class ConfigurationProduitType extends AbstractType {
 
 	protected $container;
 	protected $dm;
+	protected $identifiantProduit;
 
 	public function __construct(ContainerInterface $container, DocumentManager $documentManager)
 	{
@@ -35,6 +37,7 @@ class ConfigurationProduitType extends AbstractType {
 								->add('prixPrestation', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2))
 								->add('prixVente', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2))
 								->add('actif', CheckboxType::class, array('label' => ' ', 'required' => false, "attr" => array("class" => "switcher", "data-size" => "mini")))
+								->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")));
 
         ;
 	}

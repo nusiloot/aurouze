@@ -212,8 +212,7 @@ class ContratController extends Controller {
         if (!$contrat->isReconductible()) {
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
-        $augmentation = $request->get("augmentation", 0);
-
+        $augmentation = floatval($request->get("augmentation", 0));
         if(!is_float($augmentation)) {
 
             throw new \Exception("L'augmentation n'est pas un nombre");

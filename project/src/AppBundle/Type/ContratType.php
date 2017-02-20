@@ -105,11 +105,11 @@ class ContratType extends AbstractType {
                 }));
 
                 $builder->add('frequencePaiement', ChoiceType::class, array(
-                		'label' => 'Fréquence de paiement : ',
+                		'label' => 'Fréquence de paiement* : ',
                 		'choices' => $this->getFrequences(),
                 		'expanded' => false,
                 		'multiple' => false,
-                		'required' => false,
+                		'required' => true,
                 		'attr' => array("class" => "select2 select2-simple"),
                 ));
 
