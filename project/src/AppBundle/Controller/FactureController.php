@@ -13,6 +13,7 @@ use AppBundle\Document\FactureLigne;
 use AppBundle\Type\FactureType;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Societe;
+use AppBundle\Document\Relance;
 use AppBundle\Type\FactureChoiceType;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\RelanceType;
@@ -752,44 +753,61 @@ class FactureController extends Controller {
     }
 
     /**
+     * @Route("/retards-de-facture-societe/{id}", name="factures_retard_societe")
+      * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+
+     public function retardsSocieteAction(Request $request, Societe $societe) {
+       $societe = $societe->getId();
+       return $this->retardsFilters($request, $societe);
+     }
+
+
+    /**
      * @Route("/retards-de-facture", name="factures_retard")
      */
     public function retardsAction(Request $request) {
 
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $fm = $this->get('facture.manager');
-        $sm = $this->get('societe.manager');
-        $pdf = $request->get('pdf',null);
-        $dateFactureBasse = null;
-        $dateFactureHaute = null;
-
-
-        $nbRelances = null;
         $societe = null;
+        return $this->retardsFilters($request, $societe);
 
-        $formFacturesEnRetard = $this->createForm(new FacturesEnRetardFiltresType(), null, array(
-            'action' => $this->generateUrl('factures_retard'),
-            'method' => 'post',
-        ));
-        $formFacturesEnRetard->handleRequest($request);
-        if ($formFacturesEnRetard->isSubmitted() && $formFacturesEnRetard->isValid()) {
+    }
 
-          $formValues =  $formFacturesEnRetard->getData();
-          $dateFactureBasse = $formValues["dateFactureBasse"];
-          $dateFactureHaute = $formValues["dateFactureHaute"];
-          $nbRelances = intval($formValues["nbRelances"]) -1;
-          $societe = $formValues["societe"];
+    private function retardsFilters($request, $societe = null, $route = 'factures_retard'){
 
-        }
-        $facturesEnRetard = $fm->getRepository()->findFactureRetardDePaiement($dateFactureBasse, $dateFactureHaute, $nbRelances, $societe);
+      $dm = $this->get('doctrine_mongodb')->getManager();
+      $fm = $this->get('facture.manager');
+      $sm = $this->get('societe.manager');
 
-        $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
-            'action' => $this->generateUrl('factures_relance_massive'),
-            'method' => 'post',
-        ));
+      $pdf = $request->get('pdf',null);
 
-        return $this->render('facture/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(), 'nbRelances' => $nbRelances, 'pdf' => $pdf,
-        'formFacturesARelancer' => $formFacturesEnRetard->createView()));
+      $dateFactureBasse = null;
+      $dateFactureHaute = null;
+      $nbRelances = null;
+
+      $formFacturesEnRetard = $this->createForm(new FacturesEnRetardFiltresType(), null, array(
+          'action' => $this->generateUrl('factures_retard'),
+          'method' => 'post',
+      ));
+      $formFacturesEnRetard->handleRequest($request);
+      if ($formFacturesEnRetard->isSubmitted() && $formFacturesEnRetard->isValid()) {
+
+        $formValues =  $formFacturesEnRetard->getData();
+        $dateFactureBasse = $formValues["dateFactureBasse"];
+        $dateFactureHaute = $formValues["dateFactureHaute"];
+        $nbRelances = intval($formValues["nbRelances"]) -1;
+        $societe = $formValues["societe"];
+
+      }
+      $facturesEnRetard = $fm->getRepository()->findFactureRetardDePaiement($dateFactureBasse, $dateFactureHaute, $nbRelances, $societe);
+
+      $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
+          'action' => $this->generateUrl('factures_relance_massive'),
+          'method' => 'post',
+      ));
+
+      return $this->render('facture/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(), 'nbRelances' => $nbRelances, 'pdf' => $pdf,
+      'formFacturesARelancer' => $formFacturesEnRetard->createView()));
     }
 
 
@@ -827,6 +845,12 @@ class FactureController extends Controller {
           }
           $nbRelance = intval($facture->getNbRelance()) + 1;
           $facture->setNbRelance($nbRelance);
+          $dm->flush();
+
+          $relance = new Relance();
+          $relance->setDateRelance(new \DateTime());
+          $relance->setNumeroRelance($nbRelance);
+          $facture->addRelance($relance);
           $dm->flush();
       }
 
@@ -867,16 +891,23 @@ class FactureController extends Controller {
           $lignes[] = $ligne;
       }
 
+      $relance = $facture->getRelanceObjNumero($numeroRelance);
+      $fileDate = (new \DateTime())->format("Y-m-d_His");
+      if($relance){
+        $fileDate = $relance->getDateRelance()->format("Y-m-d_His");
+      }
+
       $html = $this->renderView('facture/pdfGeneriqueRelance.html.twig', array(
           'facture' => $facture,
           'lignes' => $lignes,
           'numeroRelance' => $numeroRelance,
+          'relance' => $relance,
           'parameters' => $fm->getParameters()
       ));
 
       $terme_relance = FactureManager::$types_nb_relance[$numeroRelance];
 
-      $filename = sprintf("relance_%s_facture_%s_%s.pdf",$terme_relance, $facture->getNumeroFacture(), (new \DateTime())->format("Y-m-d_His"));
+      $filename = sprintf("relance_%s_facture_%s_%s.pdf",$terme_relance, $facture->getNumeroFacture(), $fileDate);
 
       if ($request->get('output') == 'html') {
 

@@ -144,6 +144,11 @@ class Facture implements DocumentSocieteInterface {
     protected $nbRelance;
 
     /**
+     * @MongoDB\EmbedMany(targetDocument="Relance")
+     */
+    protected $relances;
+
+    /**
      * @MongoDB\String
      */
     protected $relanceCommentaire;
@@ -1063,5 +1068,44 @@ class Facture implements DocumentSocieteInterface {
     public function getAvoirPartielRemboursementCheque()
     {
         return $this->avoirPartielRemboursementCheque;
+    }
+
+    /**
+     * Add relance
+     *
+     * @param AppBundle\Document\Relance $relance
+     */
+    public function addRelance(\AppBundle\Document\Relance $relance)
+    {
+        $this->relances[] = $relance;
+    }
+
+    /**
+     * Remove relance
+     *
+     * @param AppBundle\Document\Relance $relance
+     */
+    public function removeRelance(\AppBundle\Document\Relance $relance)
+    {
+        $this->relances->removeElement($relance);
+    }
+
+    /**
+     * Get relances
+     *
+     * @return \Doctrine\Common\Collections\Collection $relances
+     */
+    public function getRelances()
+    {
+        return $this->relances;
+    }
+
+    public function getRelanceObjNumero($numeroRelance){
+      foreach ($this->getRelances() as $relanceObj) {
+        if($numeroRelance == $relanceObj->getNumeroRelance()){
+          return $relanceObj;
+        }
+      }
+      return null;
     }
 }
