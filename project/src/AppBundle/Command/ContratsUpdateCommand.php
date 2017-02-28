@@ -36,23 +36,13 @@ class ContratsUpdateCommand extends ContainerAwareCommand {
 
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
 
-        $contrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
+        //$contrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
+        $contrats = array($this->dm->getRepository('AppBundle:Contrat')->find("CONTRAT-004832-20170109-0005"));
 
         $i = 0;
         foreach ($contrats as $contrat) {
-            echo $contrat->getId()."\n";
-            $contrat->preUpdate();
-            foreach($contrat->getContratPassages() as $passages) {
-                foreach($passages->getPassages() as $passage) {
-                    if($passage->isAPlanifie()) {
-                        $passagePrec = $this->getContainer()->get('passage.manager')->passagePrecedentRealiseSousContrat($passage);
-                        if($passagePrec) {
-                            $passage->setDureePrecedente($passagePrec->getDureeDate());
-                            $passage->setDatePrecedente($passagePrec->getDateDebut());
-                        }
-                    }
-                }
-            }
+            $this->getContainer()->get('contrat.manager')->updateInfosPassagePrecedent($contrat);
+
             if($i > 500) {
                 $this->dm->flush();
                 $i=0;

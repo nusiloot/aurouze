@@ -226,7 +226,6 @@ class ContratController extends Controller {
         $this->get('contrat.manager')->copyPassagesForContratReconduit($contratReconduit,$contrat);
         $dm->persist($contratReconduit);
         $contrat->setReconduit(true);
-
         $dm->persist($contratReconduit);
         $dm->flush();
 
@@ -256,7 +255,7 @@ class ContratController extends Controller {
             $passageList = $this->get('contrat.manager')->getPassagesByNumeroArchiveContrat($contrat);
 
             foreach ($passageList as $etb => $passagesByEtb) {
-                foreach ($passagesByEtb as $id => $passage) {
+                foreach ($passagesByEtb as $passage) {
                     if (!$passage->isRealise() && !$passage->isAnnule() && ($passage->getDatePrevision()->format('Ymd') > $contrat->getDateResiliation()->format('Ymd'))) {
                         $passage->setStatut(PassageManager::STATUT_ANNULE);
                         $passage->getContrat()->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
