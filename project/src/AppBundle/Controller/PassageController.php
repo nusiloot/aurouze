@@ -27,9 +27,9 @@ use AppBundle\Manager\EtablissementManager;
 class PassageController extends Controller {
 
     /**
-     * @Route("/passage/{secteur}/visualisation/{mois}", name="passage" , defaults={"secteur" = "PARIS", "mois" = "courant"})
+     * @Route("/passage/{secteur}/visualisation/{mois}", name="passage" , defaults={"secteur" = "PARIS"})
      */
-    public function indexAction(Request $request, $secteur) {
+    public function indexAction(Request $request, $secteur, $mois = null) {
         ini_set('memory_limit', '64M');
 
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
@@ -38,7 +38,7 @@ class PassageController extends Controller {
         ));
         $passageManager = $this->get('passage.manager');
 
-        $moisCourant = ($request->get('mois') == "courant");
+        $moisCourant = ($request->get('mois', null) == "courant");
         $dateFin = new \DateTime();
         $dateFinCourant = clone $dateFin;
         $dateFinCourant->modify("+1 month");
@@ -46,10 +46,10 @@ class PassageController extends Controller {
         $anneeMois = null;
         $dateDebut = null;
         $dateFin = $dateFinCourant;
-        $anneeMois = 'courant';
+        $anneeMois = "courant";
 
         if(!$moisCourant){
-          $anneeMois = $request->get('mois');
+          $anneeMois = ($request->get('mois',null))? $request->get('mois') : date('Ym', strtotime("+1 month", strtotime(date('Y-m-d'))));
           $dateDebut = \DateTime::createFromFormat('Ymd',$anneeMois.'01');
           $dateFin = clone $dateDebut;
           $dateFin->modify("last day of this month");
@@ -57,7 +57,9 @@ class PassageController extends Controller {
 
         $passages = null;
         $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFin);
-        $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, clone $dateFin);
+        $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, clone $dateFin)->toArray();
+
+        usort($passages, array("AppBundle\Document\Passage", "triPerHourPrecedente"));
 
         $geojson = $this->buildGeoJson($passages);
 
