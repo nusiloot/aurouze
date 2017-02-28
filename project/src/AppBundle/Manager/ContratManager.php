@@ -512,7 +512,7 @@ class ContratManager implements MouvementManagerInterface {
     	$contrats = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
     	$csv = array();
     	$cpt = 0;
-    	$csv["AAAaaa_0_0000000000"] = array("Commercial","Client","Contacts", "Num. contrat", "Type contrat","Statut contrat","Montant HT","Facturé HT", "Pourcent. facturé");
+    	$csv["AAAaaa_0_0000000000"] = array("Commercial","Client","Contacts", "Com.", "Num.", "Type", "Presta.", "Statut","Montant HT","Facturé HT", "% facturé");
     	foreach ($contrats as $contrat) {
     		if($contrat->getCommercial()){
     			$commercialFacture = $contrat->getCommercial();
@@ -526,8 +526,10 @@ class ContratManager implements MouvementManagerInterface {
     			$arr_ligne[] = $identite;
     			$arr_ligne[] = $contrat->getSociete()->getRaisonSociale();
     			$arr_ligne[] = str_replace(' / ', "\n", $contrat->getSociete()->getComptesLibelle(true));
+    			$arr_ligne[] = $contrat->getCommentaire();
     			$arr_ligne[] = $contrat->getNumeroArchive();
     			$arr_ligne[] = $contrat->getTypeContratLibelle();
+    			$arr_ligne[] = implode(', ', $contrat->getUniquePrestations());
     			$arr_ligne[] = $contrat->getStatutLibelle();
     			$arr_ligne[] = number_format($contrat->getPrixHT(), 2, ',', '');
     			$arr_ligne[] = number_format($contrat->getPrixFactures(), 2, ',', '');
@@ -539,9 +541,11 @@ class ContratManager implements MouvementManagerInterface {
     			$csv[$keyTotal][3] = "";
     			$csv[$keyTotal][4] = "";
     			$csv[$keyTotal][5] = "";
-    			$csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
-    			$csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
-    			$csv[$keyTotal][8] = ($csv[$keyTotal][6] > 0)? round((100 * str_replace(',', '.', $csv[$keyTotal][7]) / str_replace(',', '.', $csv[$keyTotal][6]))) : 0;
+    			$csv[$keyTotal][6] = "";
+    			$csv[$keyTotal][7] = "";
+    			$csv[$keyTotal][8] = (isset($csv[$keyTotal][8]))? number_format(str_replace(',', '.', $csv[$keyTotal][8]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
+    			$csv[$keyTotal][9] = (isset($csv[$keyTotal][9]))? number_format(str_replace(',', '.', $csv[$keyTotal][9]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
+    			$csv[$keyTotal][10] = ($csv[$keyTotal][8] > 0)? round((100 * str_replace(',', '.', $csv[$keyTotal][9]) / str_replace(',', '.', $csv[$keyTotal][8]))) : 0;
     		}else{
     			$arr_ligne = array();
     			$key = "zZ_".$cpt."_". $contrat->getNumeroArchive();
@@ -565,9 +569,11 @@ class ContratManager implements MouvementManagerInterface {
     			$csv[$keyTotal][3] = "";
     			$csv[$keyTotal][4] = "";
     			$csv[$keyTotal][5] = "";
-    			$csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
-    			$csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
-    			$csv[$keyTotal][8] = ($csv[$keyTotal][6] > 0)? round((100 * str_replace(',', '.', $csv[$keyTotal][7]) / str_replace(',', '.', $csv[$keyTotal][6]))) : 0;
+    			$csv[$keyTotal][6] = "";
+    			$csv[$keyTotal][7] = "";
+    			$csv[$keyTotal][8] = (isset($csv[$keyTotal][8]))? number_format(str_replace(',', '.', $csv[$keyTotal][8]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
+    			$csv[$keyTotal][9] = (isset($csv[$keyTotal][9]))? number_format(str_replace(',', '.', $csv[$keyTotal][9]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
+    			$csv[$keyTotal][10] = ($csv[$keyTotal][8] > 0)? round((100 * str_replace(',', '.', $csv[$keyTotal][9]) / str_replace(',', '.', $csv[$keyTotal][8]))) : 0;
     		}
     		$csv['zzzZZZ_TOTAL'][0] = "TOTAL";
     		$csv['zzzZZZ_TOTAL'][1] = "";
@@ -575,9 +581,11 @@ class ContratManager implements MouvementManagerInterface {
     		$csv['zzzZZZ_TOTAL'][3] = "";
     		$csv['zzzZZZ_TOTAL'][4] = "";
     		$csv['zzzZZZ_TOTAL'][5] = "";
-    		$csv['zzzZZZ_TOTAL'][6] = (isset($csv['zzzZZZ_TOTAL'][6]))? number_format(str_replace(',', '.', $csv['zzzZZZ_TOTAL'][6]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
-    		$csv['zzzZZZ_TOTAL'][7] = (isset($csv['zzzZZZ_TOTAL'][7]))? number_format(str_replace(',', '.', $csv['zzzZZZ_TOTAL'][7]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
-    		$csv['zzzZZZ_TOTAL'][8] = ($csv['zzzZZZ_TOTAL'][6] > 0)? round((100 * str_replace(',', '.', $csv['zzzZZZ_TOTAL'][7]) / str_replace(',', '.', $csv['zzzZZZ_TOTAL'][6]))) : 0;
+    		$csv['zzzZZZ_TOTAL'][6] = "";
+    		$csv['zzzZZZ_TOTAL'][7] = "";
+    		$csv['zzzZZZ_TOTAL'][8] = (isset($csv['zzzZZZ_TOTAL'][8]))? number_format(str_replace(',', '.', $csv['zzzZZZ_TOTAL'][8]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
+    		$csv['zzzZZZ_TOTAL'][9] = (isset($csv['zzzZZZ_TOTAL'][9]))? number_format(str_replace(',', '.', $csv['zzzZZZ_TOTAL'][9]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
+    		$csv['zzzZZZ_TOTAL'][10] = ($csv['zzzZZZ_TOTAL'][8] > 0)? round((100 * str_replace(',', '.', $csv['zzzZZZ_TOTAL'][9]) / str_replace(',', '.', $csv['zzzZZZ_TOTAL'][8]))) : 0;
     		$cpt++;
     	}
     	ksort($csv);
