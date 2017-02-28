@@ -96,6 +96,7 @@
                                     <span style="cursor: help;" title=""
                                         data-toggle="tooltip"
                                         class="badge badge-default {% if(passage.mouvement_declenchable) %}badge-inverse{% endif %} btn-xs">{{ (loop.length - loop.index) + 1 }}</span>
+                                    {% if(passage.audit) %}&nbsp;<span class="glyphicon glyphicon-user text-danger" data-toggle="tooltip" data-placement="top" title="Audit {{ passage.audit }}">&nbsp;</span>{% endif %}
                                 </div>
                                 <div class="col-xs-3">
                                     prévu le <strong>{{ date|date("d/m/Y") }}</strong>

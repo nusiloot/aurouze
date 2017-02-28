@@ -46,6 +46,7 @@
 				{% elseif(not passage.isRealise) %}
 					<a class="btn btn-link btn-xs" href="{{ path('passage_modification', {'id': passage.id}) }}"><span class="glyphicon glyphicon-pencil"></span></a>
 				{% endif %}
+			{% if(passage.audit) %} <span class="glyphicon glyphicon-user text-danger" data-toggle="tooltip" data-placement="top" title="Audit {{ passage.audit }}">&nbsp;</span>{% endif %}
 		</div>
 		<div class="col-xs-2">
 			{% for prestation in passage.prestations %} {% if(prestation.wordToPicto)

@@ -43,6 +43,7 @@ class ContratType extends AbstractType {
                 ->add('typeContrat', ChoiceType::class, array('label' => 'Type de contrat* :', 'choices' => array_merge(array('' => ''), ContratManager::$types_contrat_libelles), "attr" => array("class" => "select2 select2-simple")))
                 ->add('nomenclature', TextareaType::class, array('label' => 'Nomenclature* :', "attr" => array("class" => "form-control", "rows" => 6)))
                 ->add('duree', TextType::class, array('label' => 'Durée du contrat* :'))
+                ->add('auditPassage', TextType::class, array('label' => 'Audit commercial au passage :', 'required' => false))
                 ->add('duree_garantie', TextType::class, array('required' => false, 'label' => 'Durée de la garantie :'))
                 ->add('nbFactures', TextType::class, array('label' => 'Nombre de factures* :'))
                 ->add('dureePassage', TextType::class, array('label' => 'Durée estimative d\'un passage* :', 'attr' => array('class' => 'input-timepicker')))

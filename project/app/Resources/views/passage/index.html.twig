@@ -99,9 +99,11 @@
                                             <small> ({{ passage.etablissementInfos.libelle }})</small>
                                             {% endif %}
                                         {% endif %}
+                                        
                                         <span title="{{ passage.libelle }}"
                                               class="pull-right badge {% if(passage.isGarantie) %}badge-warning{% elseif(passage.isControle)%}badge-warning{% else %}badge-default{% endif %} {% if(passage.mouvementDeclenchable) %}badge-inverse{% endif %} btn-xs">{{
                                                     passage.getNumeroPassage() }}</span>
+                                        {% if(passage.audit) %}<span class="pull-right glyphicon glyphicon-user text-danger" data-toggle="tooltip" data-placement="top" title="Audit {{ passage.audit }}">&nbsp;</span> {% endif %}
                                     </div>
                                 </div>
                                 <div class="row" style="margin-top:10px;">

@@ -207,6 +207,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $signatureBase64;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $audit;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
@@ -1376,6 +1381,28 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getSignatureBase64()
     {
         return $this->signatureBase64;
+    }
+
+    /**
+     * Set audit
+     *
+     * @param string $audit
+     * @return self
+     */
+    public function setAudit($audit)
+    {
+        $this->audit = $audit;
+        return $this;
+    }
+
+    /**
+     * Get audit
+     *
+     * @return string $audit
+     */
+    public function getAudit()
+    {
+        return $this->audit;
     }
 
     public function isTransmis(){
