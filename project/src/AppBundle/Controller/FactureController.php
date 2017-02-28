@@ -445,13 +445,13 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/facture/rechercher", name="facture_search")
+     * @Route("/facture/rechercher/{filter}", name="facture_search", defaults={"filter" = "0"})
      */
-    public function factureSearchAction(Request $request) {
+    public function factureSearchAction(Request $request, $filter) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $response = new Response();
         $facturesResult = array();
-        $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term')), $facturesResult);
+        $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term'),$filter), $facturesResult);
         $data = json_encode($facturesResult);
         $response->headers->set('Content-Type', 'application/json');
         $response->setContent($data);

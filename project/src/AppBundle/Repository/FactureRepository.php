@@ -22,7 +22,7 @@ class FactureRepository extends DocumentRepository {
                         ->execute();
     }
 
-    public function findByTerms($queryString) {
+    public function findByTerms($queryString, $filter = false) {
         $terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $queryString)));
         $results = null;
         foreach ($terms as $term) {
@@ -41,6 +41,9 @@ class FactureRepository extends DocumentRepository {
             } else {
                 $q->addOr($q->expr()->field('destinataire.nom')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')))
                         ->addOr($q->expr()->field('numeroFacture')->equals(new \MongoRegex('/.*' . $term . '.*/i')));
+            }
+            if($filter){
+              $q->field('avoir')->equals(null);
             }
             $factures = $q->limit(1000)->getQuery()->execute();
 

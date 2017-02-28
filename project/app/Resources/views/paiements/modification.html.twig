@@ -29,7 +29,7 @@
                     <div class="row">
                         <div class="col-xs-5" style="padding-left : 5px; padding-right: 5px;">
                             {{ form_errors(form.facture) }}
-                            {{ form_widget(form.facture, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher une facture', 'data-url' : path('facture_search'), 'aria-hidden': true } }) }}
+                            {{ form_widget(form.facture, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher une facture', 'data-url' : path('facture_search', {'filter' : '1'}), 'aria-hidden': true } }) }}
                         </div>
                         <div class="col-xs-3" style="padding-left : 5px; padding-right: 5px;">
 
@@ -51,7 +51,7 @@
 
                                {{ form_errors(form.factureMontantTTC) }}
                                {{ form_widget(form.factureMontantTTC) }}
-                               <strong>{{ form.factureMontantTTC.vars.value }}</strong>
+                               <strong>{{ form.factureMontantTTC.vars.value | number_format(2, ',', ' ')}}</strong>
                              </div>
                             <div class="col-xs-3" style="padding-left : 5px; padding-right: 15px;">
                                 <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove pull-right" style=""><span class="glyphicon glyphicon-remove"></span></button>
