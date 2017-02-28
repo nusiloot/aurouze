@@ -689,6 +689,8 @@ class ContratController extends Controller {
     				$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
     						'disable-smart-shrinking' => null,
     						'encoding' => 'utf-8',
+    						'orientation' => 'landscape',
+    						'default-header' => false,
     						'margin-left' => 10,
     						'margin-right' => 10,
     						'margin-top' => 10,

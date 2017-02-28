@@ -62,12 +62,12 @@
                         <li class="{%if (_menu_active == 'passage') %}active{% endif %}">
                             <a href="{% if(app.request.get('etablissement') and _menu_active != 'passage') %}{{ path('passage_etablissement', { id: app.request.get('etablissement').id }) }}{% elseif(app.request.get('societe') and _menu_active != 'passage') %}{{ path('passage_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('passage') }}{% endif %}">Passages / Planif.</a>
                         </li>
-                        <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}" >Factures
-                          {% if(retard > 0) %}&nbsp;<span class="badge badge-danger">{{ retard }}</span>{% endif %}
-                          </a>
+                        <li class="{%if (_menu_active == 'facture') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'facture') %}{{ path('facture_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('facture') }}{% endif %}" >Factures</a>
                         </li>
                         <li class="{%if (_menu_active == 'paiements') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'paiements') %}{{ path('paiements_societe', { id: app.request.get('societe').id }) }}{% else %}{{ path('paiements_liste') }}{% endif %}">Paiements</a></li>
-
+                        <li class="{%if (_menu_active == 'paiementsRetard') %}active{% endif %}"><a href="{% if(app.request.get('societe') and _menu_active != 'paiementsRetard') %}
+                      {{ path('factures_retard_societe',{ id : app.request.get('societe').id }) }}
+                      {% else %}  {{ path('factures_retard') }}{% endif %}"></span>Retard{% if(retard > 0) %}&nbsp;<span class="badge badge-danger">{{ retard }}</span>{% endif %}</a></li>
                     </ul>
 
                     {% if(app.request.get('etablissement')) %}<p id="nav_nom_etablissement" class="navbar-text truncate visible-lg-block"><strong>{{ app.request.get('etablissement').societe.raisonSociale }}</strong></p>{% endif %}
@@ -76,14 +76,13 @@
                         <li class="{%if (_menu_active == 'recherche') %}active{% endif %}"><a href="{{ path('recherche')}}"><span class="glyphicon glyphicon-search"></span></a></li>
                         <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}"><span class="glyphicon glyphicon-calendar"></span> Calendrier</a></li>
                         <li class="{%if (_menu_active == 'statistiques') %}active{% endif %}"><a href="{{ path('statistiques') }}"><span class="glyphicon glyphicon-stats"></span></a></li>
-                        <li class="dropdown {%if (_menu_active == 'configuration' or _menu_active == 'erreurs' or _menu_active == 'paiementsRetard') %}active{% endif %}">
+                        <li class="dropdown {%if (_menu_active == 'configuration' or _menu_active == 'erreurs' ) %}active{% endif %}">
 
                           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" ></span></a>
                           <ul class="dropdown-menu dropdown-menu-right">
                             <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Paramètres</a></li>
                             <li class="{%if (_menu_active == 'erreurs') %}active{% endif %}"><a href="{{ path('passage_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Passages en erreur</li>
                             <li class="{%if (_menu_active == 'erreurs') %}active{% endif %}"><a href="{{ path('contrats_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Contrats en erreur</li>
-                            <li class="{%if (_menu_active == 'paiementsRetard') %}active{% endif %}"><a href="{{ path('factures_retard') }}"><span class="mdi mdi-lg mdi-local-atm"></span>&nbsp;Retard de paiements</a></li>
                             <li><a href="{{ path('contrats_reconduction_massive') }}" ><span class="glyphicon glyphicon-refresh"></span>&nbsp;Reconduction massive</a></li>
                           </ul>
                     </li>

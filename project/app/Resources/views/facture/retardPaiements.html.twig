@@ -127,13 +127,19 @@
 							</td>
               <td class="text-left">
 								{% if factureEnRetard.has1ereRelance %}
-										<a data-toggle="tooltip" title="1ère relance" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 1 })}}"><span class="glyphicon glyphicon-file text-info"></span></a>&nbsp;
+										<a data-toggle="tooltip"
+										 title="{% if(factureEnRetard.getRelanceObjNumero(1)) %}1ère relance du {{ factureEnRetard.getRelanceObjNumero(1).dateRelance | localizeddate("medium", "none", null, null,  "dd/MM/yyyy") }} {% else %}1ère relance (non datée){% endif %}"
+										 href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 1 })}}"><span class="glyphicon glyphicon-file text-info"></span></a>&nbsp;
 								{% endif %}
 								{% if factureEnRetard.has2ndRelance %}
-									<a data-toggle="tooltip" title="2nd relance" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 2 })}}"><span class="glyphicon glyphicon-file text-warning"></span></a>&nbsp;
+									<a data-toggle="tooltip"
+									title="{% if(factureEnRetard.getRelanceObjNumero(2)) %}2nd relance du {{ factureEnRetard.getRelanceObjNumero(2).dateRelance | localizeddate("medium", "none", null, null,  "dd/MM/yyyy") }} {% else %}2nd relance (non datée){% endif %}"
+								  href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 2 })}}"><span class="glyphicon glyphicon-file text-warning"></span></a>&nbsp;
 								{% endif %}
 								{% if factureEnRetard.has3emeRelance %}
-									<a data-toggle="tooltip" title="mise en demeure avec AR" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 3 })}}"><span class="glyphicon glyphicon-file text-danger"></span></a>&nbsp;
+									<a data-toggle="tooltip"
+									title="{% if(factureEnRetard.getRelanceObjNumero(3)) %}mise en demeure avec AR du {{ factureEnRetard.getRelanceObjNumero(3).dateRelance | localizeddate("medium", "none", null, null,  "dd/MM/yyyy") }}{% else %}mise en demeure avec AR (non datée){% endif %}" 
+									href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 3 })}}"><span class="glyphicon glyphicon-file text-danger"></span></a>&nbsp;
 								{% endif %}
 							</td>
               <td class="text-center">

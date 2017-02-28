@@ -9,18 +9,18 @@
     <div class="row form-group dynamic-collection-item" class="paiements" style="margin-left: 0px; margin-right: 0px; position:relative;">
 	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
 	            {{ form_widget(form.typeReglement) }}
-	        </div> 
+	        </div>
 	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
 	            {{ form_widget(form.moyenPaiement) }}
-	        </div> 
+	        </div>
 	        <div class="col-xs-3" style="padding-left : 5px; padding-right: 5px;">
-				{{ form_widget(form.facture, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher une facture', 'data-url' : path('facture_search'), 'aria-hidden': true } }) }}
-	        </div> 
+				{{ form_widget(form.facture, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher une facture', 'data-url' : path('facture_search', {'filter' : '1'}), 'aria-hidden': true } }) }}
+	        </div>
 	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
 	            {{ form_widget(form.libelle) }}
 	        </div>
 	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
-	            
+
                         <div class="form-group">
                             {{ form_errors(form.datePaiement) }}
                             <div class="input-group">
@@ -28,7 +28,7 @@
                                 <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
                             </div>
                         </div>
-	        </div> 
+	        </div>
 	        <div class="col-xs-1" style="padding-left : 5px; padding-right: 5px;">
 	            {{ form_widget(form.montant) }}
 	        </div>
@@ -41,7 +41,7 @@
     <ol class="breadcrumb">
         {#        <li><a href="{{ path('paiements') }}">Paiements</a></li>#}
         {#        <li><a href="{{ path('paiements_visualisation',{ 'id' : paiements.id }) }}">&nbsp;{{ paiements.id }}</a></li>#}
-        <li><small>Nouveau</small></li>        
+        <li><small>Nouveau</small></li>
     </ol>
 
     <div id="wrapper">
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
-		
+
 		<div>
                  {{ form_widget(form.paiement, { 'attr': {'class': 'dynamic-collection'} }) }}
                 <div class="row form-group" style="margin-left: 0px; margin-right: 0px; position:relative;">
