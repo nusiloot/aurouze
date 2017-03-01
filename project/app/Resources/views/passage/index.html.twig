@@ -60,14 +60,14 @@
                             {% if(passage.techniciens | length == 0) %}
                                 {% set words = [dptKeyWord, "Sans technicien", passage.etablissementInfos.adresse.codePostal | trim, passage.etablissementInfos.adresse.commune | trim, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM yyyy") | capitalize, passage.etablissementInfos.nom] | merge(passage.prestationsNom) |json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
                                 {% set techColor = 'white' %}
-                                {% set techBgColor = 'black' %}
-                                {% set techIdentite = "Sans technicien" %}
+                                {% set techBgColor = 'transparent' %}
+                                {% set techIdentite = "" %}
                                 {% set urlPlanif = path('calendarManuel') %}
                             {% else %}
                                 {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal | trim, passage.etablissementInfos.adresse.commune | trim, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM yyyy") | capitalize, passage.etablissementInfos.nom, passage] | merge(passage.prestationsNom) | json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
                                 {% set techColor = passage.techniciens[0].couleurText %}
                                 {% set techBgColor = passage.techniciens[0].couleur %}
-                                {% set techIdentite = passage.techniciens[0].identite %}
+                                {% set techIdentite = passage.techniciens[0].identiteCourt %}
                                 {% set urlPlanif = path('calendar', {'passage' : passage.id, 'id': passage.etablissement.id ,'technicien' : passage.techniciens[0].id, 'date' : passage.dateForPlanif|date('d-m-Y')}) %}
                             {% endif %}
                             <a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item hide-print">
@@ -80,9 +80,9 @@
                                     <div class="col-sm-3 text-right">
                                         {% for prestation in passage.prestations %}
                                             {% if(prestation.wordToPicto) %}
-                                                <span class="step size-24" title="{{  prestation.nomToString }}" >
+                                                <span class="step size-21" title="{{  prestation.nomToString }}">
                                                     <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i></span>
-                                                {%else%}
+                                                {% else %}
                                                 <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
                                             {%endif%}
                                         {% endfor %}
@@ -108,7 +108,7 @@
                                 </div>
                                 <div class="row" style="margin-top:10px;">
                                     <div class="col-sm-3 text-left">
-                                        <span class="label" style="background-color: {{ techBgColor }};color: {{ techColor }};"><small>{{ techIdentite }}</small></span>
+                                        <span class="label" style="background-color: {{ techBgColor }};color: {{ techColor }};"><small>{{ techIdentite }}</small></span>{% if passage.multiTechnicien > 1 %}&nbsp;<span data-toggle="tooltip" title="{{ passage.multiTechnicien }} techniciens nécessaire sur ce passage"><i class="mdi mdi-group mdi-lg"></i></span>{% endif %}
                                     </div>
                                     <div class="col-sm-6 text-center">
                                             {% if passage.datePrecedente %}
