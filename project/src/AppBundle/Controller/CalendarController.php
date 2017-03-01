@@ -79,7 +79,6 @@ class CalendarController extends Controller {
         $techniciensFinal = array();
 
         $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
-
         $response->headers->setCookie(new Cookie('techniciens', serialize($techniciensFiltre)));
 
         foreach($techniciens as $technicien) {

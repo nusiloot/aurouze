@@ -211,8 +211,7 @@ class ContratController extends Controller {
         if (!$contrat->isReconductible()) {
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
-        $augmentation = $request->get("augmentation", 0);
-
+        $augmentation = floatval($request->get("augmentation", 0));
         if(!is_float($augmentation)) {
 
             throw new \Exception("L'augmentation n'est pas un nombre");
@@ -226,7 +225,6 @@ class ContratController extends Controller {
         $this->get('contrat.manager')->copyPassagesForContratReconduit($contratReconduit,$contrat);
         $dm->persist($contratReconduit);
         $contrat->setReconduit(true);
-
         $dm->persist($contratReconduit);
         $dm->flush();
 
@@ -256,7 +254,7 @@ class ContratController extends Controller {
             $passageList = $this->get('contrat.manager')->getPassagesByNumeroArchiveContrat($contrat);
 
             foreach ($passageList as $etb => $passagesByEtb) {
-                foreach ($passagesByEtb as $id => $passage) {
+                foreach ($passagesByEtb as $passage) {
                     if (!$passage->isRealise() && !$passage->isAnnule() && ($passage->getDatePrevision()->format('Ymd') > $contrat->getDateResiliation()->format('Ymd'))) {
                         $passage->setStatut(PassageManager::STATUT_ANNULE);
                         $passage->getContrat()->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);

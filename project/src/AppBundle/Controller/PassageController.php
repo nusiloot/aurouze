@@ -27,9 +27,9 @@ use AppBundle\Manager\EtablissementManager;
 class PassageController extends Controller {
 
     /**
-     * @Route("/passage/{secteur}/visualisation/{mois}", name="passage" , defaults={"secteur" = "PARIS", "mois" = "courant"})
+     * @Route("/passage/{secteur}/visualisation/{mois}", name="passage" , defaults={"secteur" = "PARIS"})
      */
-    public function indexAction(Request $request, $secteur) {
+    public function indexAction(Request $request, $secteur, $mois = null) {
         ini_set('memory_limit', '64M');
 
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
@@ -38,27 +38,28 @@ class PassageController extends Controller {
         ));
         $passageManager = $this->get('passage.manager');
 
-        $moisCourrant = ($request->get('mois') == "courant");
+        $moisCourant = ($request->get('mois', null) == "courant");
         $dateFin = new \DateTime();
         $dateFinCourant = clone $dateFin;
         $dateFinCourant->modify("+1 month");
 
-        $dateDebut = new \DateTime();
-        $passages = null;
-        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur);
         $anneeMois = null;
+        $dateDebut = null;
+        $dateFin = $dateFinCourant;
+        $anneeMois = "courant";
 
-        if($moisCourrant){
-          $dateFin = $dateFinCourant;
-          $passages = $passageManager->getRepository()->findToPlan($secteur, null, $dateFin);
-          $anneeMois = 'courant';
-        }else{
-          $anneeMois = $request->get('mois');
+        if(!$moisCourant){
+          $anneeMois = ($request->get('mois',null))? $request->get('mois') : date('Ym', strtotime("+1 month", strtotime(date('Y-m-d'))));
           $dateDebut = \DateTime::createFromFormat('Ymd',$anneeMois.'01');
           $dateFin = clone $dateDebut;
           $dateFin->modify("last day of this month");
-          $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, $dateFin);
         }
+
+        $passages = null;
+        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFin);
+        $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, clone $dateFin)->toArray();
+
+        usort($passages, array("AppBundle\Document\Passage", "triPerHourPrecedente"));
 
         $geojson = $this->buildGeoJson($passages);
 
@@ -302,12 +303,8 @@ class PassageController extends Controller {
         $dm->persist($contrat);
         $dm->flush();
 
-        if ($next = $passageManager->getNextPassageFromPassage($passage)) {
-        	$next->setDureePrecedente($passage->getDureeDate());
-        	$next->setDatePrecedente($passage->getDateDebut());
-        }
-
-        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        $contrat = $passage->getContrat();
+        $this->get('contrat.manager')->updateInfosPassagePrecedent($contrat, $passage->getEtablissement());
         $contrat->verifyAndClose();
 
         $dm->flush();
@@ -327,16 +324,13 @@ class PassageController extends Controller {
      * @ParamConverter("passage", class="AppBundle:Passage")
      */
     public function pdfBonAction(Request $request, Passage $passage) {
-        $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
 
         $html = $this->renderView('passage/pdfBons.html.twig', array(
             'passage' => $passage,
             'parameters' => $fm->getParameters(),
         ));
-        $passage->setImprime(true);
 
-        $dm->flush();
         $filename = sprintf("bon_passage_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getTechniciens()->first()->getIdentite())));
 
         if ($request->get('output') == 'html') {
@@ -362,7 +356,7 @@ class PassageController extends Controller {
 
         if ($request->get('technicien')) {
             $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
-            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien, false);
+            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien, true);
             $filename = sprintf("bons_passage_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
         } else {
             $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'), true);
@@ -379,11 +373,6 @@ class PassageController extends Controller {
             return new Response($html, 200);
         }
 
-        foreach ($passages as $passage) {
-            $passage->setImprime(true);
-        }
-        $dm->flush();
-
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
             'Content-Type' => 'application/pdf',
@@ -398,8 +387,12 @@ class PassageController extends Controller {
      */
     public function pdfMissionAction(Request $request, Passage $passage) {
         $pm = $this->get('passage.manager');
+        $dm = $this->get('doctrine_mongodb')->getManager();
 
         $passagesHistory = $pm->getRepository()->findHistoriqueByEtablissementAndPrestationsAndNumeroContrat($passage->getContrat(), $passage->getEtablissement(), $passage->getPrestations());
+
+        $passage->setImprime(true);
+        $dm->flush();
 
         $filename = sprintf("suivi_client_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getTechniciens()->first()->getIdentite())));
 
@@ -442,11 +435,11 @@ class PassageController extends Controller {
 
         if ($request->get('technicien')) {
             $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
-            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien);
+            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien, true);
             $filename = sprintf("suivis_client_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
         } else {
             $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'));
-            $filename = sprintf("suivis_client_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'));
+            $filename = sprintf("suivis_client_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), true);
         }
 
         $passagesHistories = array();
@@ -464,6 +457,11 @@ class PassageController extends Controller {
 
             return new Response($html, 200);
         }
+
+        foreach ($passages as $passage) {
+            $passage->setImprime(true);
+        }
+        $dm->flush();
 
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(

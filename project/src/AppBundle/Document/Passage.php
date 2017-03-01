@@ -627,7 +627,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getDatePrevision() {
         return $this->datePrevision;
     }
-    
+
     public function getDateForPlanif() {
     	$today = new \DateTime();
     	if ($this->datePrevision && $this->datePrevision->format('Ymd') < $today->format('Ymd')) {
@@ -1148,7 +1148,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
        return $this->duree->format('H').'h'.$this->duree->format('i');
     }
-    
+
     public function getDureeMinute() {
        if($duree = $this->getDuree()) {
        	if (strpos($duree, 'h') !== false) {
@@ -1429,5 +1429,21 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getDateModification()
     {
         return $this->dateModification;
+    }
+
+    public static function triPerHourPrecedente($p_0, $p_1) {
+        if(!$p_0->getDatePrecedente() && !$p_1->getDatePrecedente()){
+          return 0;
+        }
+        if(!$p_0->getDatePrecedente()){
+          return -1;
+        }
+        if(!$p_1->getDatePrecedente()){
+          return +1;
+        }
+        if ($p_0->getDatePrecedente()->format('Hi') == $p_1->getDatePrecedente()->format('Hi')) {
+                return 0;
+        }
+        return ($p_0->getDatePrecedente()->format('Hi') > $p_1->getDatePrecedente()->format('Hi')) ? +1 : -1;
     }
 }

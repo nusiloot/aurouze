@@ -40,19 +40,8 @@ class ContratsUpdateCommand extends ContainerAwareCommand {
 
         $i = 0;
         foreach ($contrats as $contrat) {
-            echo $contrat->getId()."\n";
-            $contrat->preUpdate();
-            foreach($contrat->getContratPassages() as $passages) {
-                foreach($passages->getPassages() as $passage) {
-                    if($passage->isAPlanifie()) {
-                        $passagePrec = $this->getContainer()->get('passage.manager')->passagePrecedentRealiseSousContrat($passage);
-                        if($passagePrec) {
-                            $passage->setDureePrecedente($passagePrec->getDureeDate());
-                            $passage->setDatePrecedente($passagePrec->getDateDebut());
-                        }
-                    }
-                }
-            }
+            $this->getContainer()->get('contrat.manager')->updateInfosPassagePrecedent($contrat);
+
             if($i > 500) {
                 $this->dm->flush();
                 $i=0;

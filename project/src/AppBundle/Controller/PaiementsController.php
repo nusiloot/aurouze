@@ -25,8 +25,8 @@ class PaiementsController extends Controller {
      */
     public function indexAction(Request $request) {
 
-        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(20);
-        
+        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(50);
+
         $dm = $this->get('doctrine_mongodb')->getManager();
         $societe = $dm->getRepository('AppBundle:Societe')->findAurouze();
         $form = $this->createForm(new SocieteCommentaireType(), $societe, array(
@@ -36,10 +36,10 @@ class PaiementsController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
         	$dm->flush();
-        
+
         	return $this->redirectToRoute('paiements_liste');
         }
-        
+
         return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs, 'form' => $form->createView()));
     }
 
@@ -50,7 +50,7 @@ class PaiementsController extends Controller {
     public function societeAction(Request $request, Societe $societe) {
 
         $paiementsDocs = $this->get('paiements.manager')->getRepository()->getBySociete($societe);
-        
+
 
         return $this->render('paiements/societe.html.twig', array('paiementsDocs' => $paiementsDocs, 'societe' => $societe));
     }
