@@ -223,6 +223,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     protected $frequencePaiement;
 
+    /**
+     * @MongoDB\Int
+     */
+    protected $auditPassage;
+
     public function __construct() {
         $this->etablissements = new ArrayCollection();
         $this->prestations = new ArrayCollection();
@@ -673,6 +678,26 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->statut;
     }
 
+    /**
+     * Set auditPassage
+     *
+     * @param int $auditPassage
+     * @return self
+     */
+    public function setAuditPassage($auditPassage) {
+        $this->auditPassage = $auditPassage;
+        return $this;
+    }
+
+    /**
+     * Get auditPassage
+     *
+     * @return int $auditPassage
+     */
+    public function getAuditPassage() {
+        return $this->auditPassage;
+    }
+
     public function updateObject() {
             $max = 0;
             foreach ($this->getPrestations() as $prestation) {
@@ -857,7 +882,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->mouvement_declenchable = 1;
             }
         }
-
+        
         for ($index = 1; $index < $maxNbPrestations; $index++) {
             $monthDate = clone $dateLastPassage;
             $nextMonth = $monthDate->modify("+" . $nb_month . " month");
@@ -868,7 +893,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations = array();
             $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $typePrestationPrincipal;
         }
-
+        
         foreach ($this->getPrestations() as $prestation) {
             if (($prestation->getIdentifiant() != $typePrestationPrincipal->getIdentifiant()) && $prestation->getNbPassages() > 1) {
                 $nbPassagesPrestationRestant = $prestation->getNbPassages();
@@ -889,7 +914,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 }
             }
         }
-
+        
         $facturationInterval = (floatval($maxNbPrestations) / floatval($this->getNbFactures()));
         $compteurFacturation = $facturationInterval;
         $cpt = 0;
@@ -906,6 +931,14 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 $passagesDatesArray[$date]->mouvement_declenchable = 0;
             }
             $cpt++;
+        }
+        $cpt = 0;
+        foreach ($passagesDatesArray as $date => $passage) {
+        	$passagesDatesArray[$date]->audit = 0;
+        	if ($cpt == ($this->getAuditPassage()-1)) {
+        		$passagesDatesArray[$date]->audit = ($this->getCommercial()->getIdentite())? $this->getCommercial()->getIdentite() : 'Commercial';
+        	}
+        	$cpt++;
         }
         krsort($passagesDatesArray);
         return $passagesDatesArray;

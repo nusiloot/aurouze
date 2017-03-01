@@ -282,6 +282,9 @@ class ContratManager implements MouvementManagerInterface {
                 if ($firstEtb) {
                     $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
                 }
+                if ($audit = $passageInfos->audit) {
+                	$passage->setAudit($audit);
+                }
 
                 $passage->setContrat($contrat);
                 $passage->setTypePassage(PassageManager::TYPE_PASSAGE_CONTRAT);

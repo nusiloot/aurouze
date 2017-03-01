@@ -127,7 +127,6 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function acceptationAction(Request $request, Contrat $contrat) {
-
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $contratManager = new ContratManager($dm);

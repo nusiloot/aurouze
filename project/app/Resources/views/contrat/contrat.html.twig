@@ -76,7 +76,18 @@
         {% if (contrat.nomenclature) %}
         {{ contrat.nomenclature | nl2br }}
         {% else %}
-        Aucune nomenclature définie
+        <em>Aucune nomenclature définie</em>
+        {% endif %}
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Commentaire</h3></div>
+    <div class="panel-body">
+        {% if (contrat.commentaire) %}
+        {{ contrat.commentaire | nl2br }}
+        {% else %}
+        <em>Aucun commentaire défini</em>
         {% endif %}
     </div>
 </div>
@@ -96,6 +107,7 @@
                                     <span style="cursor: help;" title=""
                                         data-toggle="tooltip"
                                         class="badge badge-default {% if(passage.mouvement_declenchable) %}badge-inverse{% endif %} btn-xs">{{ (loop.length - loop.index) + 1 }}</span>
+                                    {% if(passage.audit) %}&nbsp;<span class="glyphicon glyphicon-user text-danger" data-toggle="tooltip" data-placement="top" title="Audit {{ passage.audit }}">&nbsp;</span>{% endif %}
                                 </div>
                                 <div class="col-xs-3">
                                     prévu le <strong>{{ date|date("d/m/Y") }}</strong>

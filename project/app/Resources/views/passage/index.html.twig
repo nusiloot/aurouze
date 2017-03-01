@@ -99,9 +99,11 @@
                                             <small> ({{ passage.etablissementInfos.libelle }})</small>
                                             {% endif %}
                                         {% endif %}
+                                        
                                         <span title="{{ passage.libelle }}"
                                               class="pull-right badge {% if(passage.isGarantie) %}badge-warning{% elseif(passage.isControle)%}badge-warning{% else %}badge-default{% endif %} {% if(passage.mouvementDeclenchable) %}badge-inverse{% endif %} btn-xs">{{
                                                     passage.getNumeroPassage() }}</span>
+                                        {% if(passage.audit) %}<span class="pull-right glyphicon glyphicon-user text-danger" data-toggle="tooltip" data-placement="top" title="Audit {{ passage.audit }}">&nbsp;</span> {% endif %}
                                     </div>
                                 </div>
                                 <div class="row" style="margin-top:10px;">
@@ -110,7 +112,7 @@
                                     </div>
                                     <div class="col-sm-6 text-center">
                                             {% if passage.datePrecedente %}
-                                            <small>Préc.&nbsp;à&nbsp;{{passage.datePrecedente | date("H") }}h{{passage.datePrecedente | date("i") }}</small>
+                                            <small>Préc.&nbsp;le&nbsp;{{ passage.datePrecedente | localizeddate("medium", "none", null, null, "dd/MM/YYYY") | capitalize }}&nbsp;à&nbsp;{{passage.datePrecedente | date("H") }}h{{passage.datePrecedente | date("i") }}</small>
                                             {% endif %}
                                             {% if passage.dureePrecedente %}
                                             <i class="mdi mdi-schedule mdi-lg"></i>
@@ -126,7 +128,7 @@
                                     </div>
                                 </div>
                             </a>
-                            
+
                             <div data-words='{{ words }}' class="hamzastyle-item show-print">
 								<div class="row">
 									<div class="col-sm-6">
@@ -168,7 +170,7 @@
                     </div>
                 </div>
                 <div class="col-xs-6 hide-print">
-                    <div id="map" class="well" style="width: 100%; height: 650px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}"></div>
+                    <div id="map" class="well" style="width: 100%; height: 650px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}" data-lat="{{ coordinatesCenter.lat }}" data-lon="{{ coordinatesCenter.lon }}" data-zoom="{{ coordinatesCenter.zoom }}" data-historyrewrite="1" ></div>
                 </div>
             </div>
         </div>

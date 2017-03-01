@@ -4,7 +4,7 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
-/** 
+/**
  * @MongoDB\EmbeddedDocument
  */
 class Coordonnees
@@ -18,6 +18,11 @@ class Coordonnees
      * @MongoDB\Float
      */
     public $lon;
+
+    /**
+     * @MongoDB\Float
+     */
+    public $zoom;
 
     /**
      * Set lat
@@ -61,5 +66,27 @@ class Coordonnees
     public function getLon()
     {
         return $this->lon;
+    }
+
+    /**
+     * Set zoom
+     *
+     * @param float $zoom
+     * @return self
+     */
+    public function setZoom($zoom)
+    {
+        $this->zoom = $zoom;
+        return $this;
+    }
+
+    /**
+     * Get zoom
+     *
+     * @return float $zoom
+     */
+    public function getZoom()
+    {
+        return $this->zoom;
     }
 }

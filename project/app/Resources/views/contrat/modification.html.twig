@@ -142,6 +142,15 @@
                         <a href="javascript:void(0);" data-collection-target="#contrat_prestations" class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <div class="form-group">
+                            {{ form_label(form.auditPassage) }}
+                            {{ form_errors(form.auditPassage) }}
+                            {{ form_widget(form.auditPassage) }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
