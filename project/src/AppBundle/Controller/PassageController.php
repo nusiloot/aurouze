@@ -324,16 +324,13 @@ class PassageController extends Controller {
      * @ParamConverter("passage", class="AppBundle:Passage")
      */
     public function pdfBonAction(Request $request, Passage $passage) {
-        $dm = $this->get('doctrine_mongodb')->getManager();
         $fm = $this->get('facture.manager');
 
         $html = $this->renderView('passage/pdfBons.html.twig', array(
             'passage' => $passage,
             'parameters' => $fm->getParameters(),
         ));
-        $passage->setImprime(true);
 
-        $dm->flush();
         $filename = sprintf("bon_passage_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getTechniciens()->first()->getIdentite())));
 
         if ($request->get('output') == 'html') {
@@ -359,7 +356,7 @@ class PassageController extends Controller {
 
         if ($request->get('technicien')) {
             $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
-            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien, false);
+            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien, true);
             $filename = sprintf("bons_passage_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
         } else {
             $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'), true);
@@ -376,11 +373,6 @@ class PassageController extends Controller {
             return new Response($html, 200);
         }
 
-        foreach ($passages as $passage) {
-            $passage->setImprime(true);
-        }
-        $dm->flush();
-
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
             'Content-Type' => 'application/pdf',
@@ -395,8 +387,12 @@ class PassageController extends Controller {
      */
     public function pdfMissionAction(Request $request, Passage $passage) {
         $pm = $this->get('passage.manager');
+        $dm = $this->get('doctrine_mongodb')->getManager();
 
         $passagesHistory = $pm->getRepository()->findHistoriqueByEtablissementAndPrestationsAndNumeroContrat($passage->getContrat(), $passage->getEtablissement(), $passage->getPrestations());
+
+        $passage->setImprime(true);
+        $dm->flush();
 
         $filename = sprintf("suivi_client_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getTechniciens()->first()->getIdentite())));
 
@@ -439,11 +435,11 @@ class PassageController extends Controller {
 
         if ($request->get('technicien')) {
             $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
-            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien);
+            $passages = $pm->getRepository()->findAllPlanifieByPeriodeAndIdentifiantTechnicien($request->get('dateDebut'), $request->get('dateFin'), $technicien, true);
             $filename = sprintf("suivis_client_%s_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), strtoupper(Transliterator::urlize($technicien->getIdentite())));
         } else {
             $passages = $pm->getRepository()->findAllPlanifieByPeriode($request->get('dateDebut'), $request->get('dateFin'));
-            $filename = sprintf("suivis_client_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'));
+            $filename = sprintf("suivis_client_%s_%s.pdf", $request->get('dateDebut'), $request->get('dateFin'), true);
         }
 
         $passagesHistories = array();
@@ -461,6 +457,11 @@ class PassageController extends Controller {
 
             return new Response($html, 200);
         }
+
+        foreach ($passages as $passage) {
+            $passage->setImprime(true);
+        }
+        $dm->flush();
 
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
