@@ -36,8 +36,7 @@ class ContratsUpdateCommand extends ContainerAwareCommand {
 
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
 
-        //$contrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
-        $contrats = array($this->dm->getRepository('AppBundle:Contrat')->find("CONTRAT-004832-20170109-0005"));
+        $contrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
 
         $i = 0;
         foreach ($contrats as $contrat) {
