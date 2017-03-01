@@ -12,6 +12,7 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Passage;
+use AppBundle\Document\Coordonnees;
 use AppBundle\Type\PassageType;
 use AppBundle\Type\PassageCreationType;
 use AppBundle\Type\PassageModificationType;
@@ -27,7 +28,7 @@ use AppBundle\Manager\EtablissementManager;
 class PassageController extends Controller {
 
     /**
-     * @Route("/passage/{secteur}/visualisation/{mois}", name="passage" , defaults={"secteur" = "PARIS"})
+     * @Route("/passage/{secteur}/visualisation/{mois}", name="passage" , defaults={"secteur"="PARIS"})
      */
     public function indexAction(Request $request, $secteur, $mois = null) {
         ini_set('memory_limit', '64M');
@@ -60,7 +61,14 @@ class PassageController extends Controller {
         $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, clone $dateFin)->toArray();
 
         usort($passages, array("AppBundle\Document\Passage", "triPerHourPrecedente"));
+        $lat = $request->get('lat', 48.8593829);
+        $lon = $request->get('lon', 2.347227);
+        $zoom = $request->get('zoom', 0);
 
+        $coordinatesCenter = new Coordonnees();
+        $coordinatesCenter->setLat($lat);
+        $coordinatesCenter->setLon($lon);
+        $coordinatesCenter->setZoom($zoom);
         $geojson = $this->buildGeoJson($passages);
 
         return $this->render('passage/index.html.twig', array('passages' => $passages,
@@ -72,7 +80,8 @@ class PassageController extends Controller {
                     'moisPassagesArray' => $moisPassagesArray,
                     'passageManager' => $passageManager,
                     'etablissementManager' => $this->get('etablissement.manager'),
-                    'secteur' => $secteur));
+                    'secteur' => $secteur,
+                    'coordinatesCenter' => $coordinatesCenter));
     }
 
     /**
@@ -490,7 +499,6 @@ class PassageController extends Controller {
             $feature->properties = new \stdClass();
             $feature->properties->_id = $document->getId();
             $etbInfos = $document;
-            $coordinates = null;
             if (!($document instanceof Etablissement)) {
                 $allTechniciens = $document->getTechniciens();
                 $firstTechnicien = null;

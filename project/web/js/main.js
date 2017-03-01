@@ -640,12 +640,15 @@
         if ($('#map').length) {
             var lat = 48.8593829;
             var lon = 2.347227;
+            var zoom = 0;
             if ($('#map').attr('data-lat') && $('#map').attr('data-lon')) {
                 lat = $('#map').data('lat');
                 lon = $('#map').data('lon');
             }
-
-            var map = L.map('map').setView([lat, lon], 2);
+            if($('#map').attr('data-zoom')){
+                zoom = $('#map').data('zoom');
+            }
+            var map = L.map('map').setView([lat, lon], zoom);
 
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -654,7 +657,10 @@
             var geojson = JSON.parse($('#map').attr('data-geojson'));
             var markers = [];
             var hoverTimeout = null;
-
+            var hasHistoryRewrite = false;
+            if ($('#map').attr('data-historyrewrite')){
+              hasHistoryRewrite = $('#map').data('historyrewrite');
+            }
             L.geoJson(geojson,
                     {
                         onEachFeature: function (feature, layer) {
@@ -704,40 +710,82 @@
                     }
             ).addTo(map);
 
-            var markersArr = [];
-            for (id in markers) {
-                var latlng = markers[id]._latlng;
-                markersArr.push(latlng);
+            var refreshListFromMapBounds = function(){
+              var excludeListNoMarkers = (map.getZoom() > 11);
+              $('div#liste_passage a').each(function(){
+                  var hasMarker = markers[$(this).attr('id')] != undefined ;
+                  if(!hasMarker){
+                    if(excludeListNoMarkers){
+                      $(this).hide();
+                    }else{
+                      $(this).show();
+                    }
+                  }
+              });
+              for (var id in markers) {
+                var marker = markers[id];
+                if(map.getBounds().contains(marker._latlng)){
+                  $('div#liste_passage a#'+id).show();
+                }else{
+                  $('div#liste_passage a#'+id).hide();
+                }
+              }
             }
-            var bounds = new L.LatLngBounds(markersArr);
 
-            map.fitBounds(bounds);
+            if(!zoom){
+              var markersArr = [];
+              for (id in markers) {
+                  var latlng = markers[id]._latlng;
+                  markersArr.push(latlng);
+              }
+              var bounds = new L.LatLngBounds(markersArr);
+              map.fitBounds(bounds);
+            }else{
+              refreshListFromMapBounds();
+            }
 
             $('#liste_passage .list-group-item').hover(function () {
                 var marker = markers[$(this).attr('id')];
-                $('.leaflet-marker-icon').css('opacity', '0.3');
-                $(marker._icon).css('opacity', '1');
-                marker.setZIndexOffset(1001);
+                if(typeof marker != 'undefined' && marker){
+                  $('.leaflet-marker-icon').css('opacity', '0.3');
+                  $(marker._icon).css('opacity', '1');
+                  marker.setZIndexOffset(1001);
+                }
             }, function () {
                 var marker = markers[$(this).attr('id')];
-                marker.setZIndexOffset(900);
-                $('.leaflet-marker-icon').css('opacity', '1');
+                if(typeof marker != 'undefined' && marker){
+                  marker.setZIndexOffset(900);
+                  $('.leaflet-marker-icon').css('opacity', '1');
+                }
             });
+
+            if(hasHistoryRewrite){
+              map.on('moveend', function(){
+                var center = map.getCenter();
+                history.pushState(null, null, "?lat="+center.lat+"&lon="+center.lng+"&zoom="+ map.getZoom());
+                refreshListFromMapBounds();
+              });
+            }
+
 
             $(window).on('hashchange', function () {
                 $('#liste_passage .list-group-item').each(function () {
                     if (!$(this).is(':visible')) {
                         var marker = markers[$(this).attr('id')];
-                        $(marker._icon).css('opacity', '0');
-                        $(marker._icon).addClass('hidden');
-                        $(marker._shadow).addClass('hidden');
-                        marker.setZIndexOffset(1001);
+                        if(typeof marker != 'undefined' && marker){
+                          $(marker._icon).css('opacity', '0');
+                          $(marker._icon).addClass('hidden');
+                          $(marker._shadow).addClass('hidden');
+                          marker.setZIndexOffset(1001);
+                        }
                     } else {
                         var marker = markers[$(this).attr('id')];
-                        $(marker._icon).css('opacity', '1');
-                        $(marker._icon).removeClass('hidden');
-                        $(marker._shadow).removeClass('hidden');
-                        marker.setZIndexOffset(900);
+                        if(typeof marker != 'undefined' && marker){
+                          $(marker._icon).css('opacity', '1');
+                          $(marker._icon).removeClass('hidden');
+                          $(marker._shadow).removeClass('hidden');
+                          marker.setZIndexOffset(900);
+                        }
                     }
 
                 });
