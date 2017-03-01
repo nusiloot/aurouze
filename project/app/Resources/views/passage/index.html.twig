@@ -108,7 +108,7 @@
                                 </div>
                                 <div class="row" style="margin-top:10px;">
                                     <div class="col-sm-3 text-left">
-                                        <span class="label" style="background-color: {{ techBgColor }};color: {{ techColor }};"><small>{{ techIdentite }}</small></span>{% if passage.multiTechnicien > 1 %}&nbsp;<i class="mdi mdi-group mdi-lg"></i>{% endif %}
+                                        <span class="label" style="background-color: {{ techBgColor }};color: {{ techColor }};"><small>{{ techIdentite }}</small></span>{% if passage.multiTechnicien > 1 %}&nbsp;<span data-toggle="tooltip" title="{{ passage.multiTechnicien }} techniciens nécessaire sur ce passage"><i class="mdi mdi-group mdi-lg"></i></span>{% endif %}
                                     </div>
                                     <div class="col-sm-6 text-center">
                                             {% if passage.datePrecedente %}
