@@ -60,8 +60,8 @@
                             {% if(passage.techniciens | length == 0) %}
                                 {% set words = [dptKeyWord, "Sans technicien", passage.etablissementInfos.adresse.codePostal | trim, passage.etablissementInfos.adresse.commune | trim, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM yyyy") | capitalize, passage.etablissementInfos.nom] | merge(passage.prestationsNom) |json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
                                 {% set techColor = 'white' %}
-                                {% set techBgColor = 'black' %}
-                                {% set techIdentite = "Sans technicien" %}
+                                {% set techBgColor = 'transparent' %}
+                                {% set techIdentite = "" %}
                                 {% set urlPlanif = path('calendarManuel') %}
                             {% else %}
                                 {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal | trim, passage.etablissementInfos.adresse.commune | trim, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM yyyy") | capitalize, passage.etablissementInfos.nom, passage] | merge(passage.prestationsNom) | json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
@@ -80,9 +80,9 @@
                                     <div class="col-sm-3 text-right">
                                         {% for prestation in passage.prestations %}
                                             {% if(prestation.wordToPicto) %}
-                                                <span class="step size-24" title="{{  prestation.nomToString }}" >
+                                                <span class="step size-21" title="{{  prestation.nomToString }}">
                                                     <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i></span>
-                                                {%else%}
+                                                {% else %}
                                                 <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
                                             {%endif%}
                                         {% endfor %}
