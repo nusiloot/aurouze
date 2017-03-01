@@ -150,7 +150,21 @@
                 $(this).html(content);
             }
         });
+        $('.fc-time-grid-event .fc-bg').each(function(){
+          console.log('ici');
+          console.log(this);
+        });
     };
+
+    $.callbackCalendarDynamicButton = function(){
+        $("#calendrier").find('.fc-event-container').each(function(){
+          $(this).mouseover(function(){
+           $(this).find('.fc-content .fc-title a').css('opacity',1);
+         }).mouseout(function(){
+             $(this).find('.fc-content .fc-title a').css('opacity',0.2);
+           });
+        });
+    }
 
     $.initListingPassage = function () {
         $('.calendar_lien').click(function (event) {
