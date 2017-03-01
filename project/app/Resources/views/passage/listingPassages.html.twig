@@ -61,11 +61,11 @@
 				passage.duree }}</span>{% endif %}
 		</div>
 		<div class="col-xs-2">
-			<ul class="list-inline list-unstyled">
-				{% for technicien in passage.techniciens %}
-				<li><i class="mdi mdi-face mdi-lg"></i>&nbsp;{{ technicien.identite
-					}}</li> {% endfor %}
-			</ul>
+			{% if passage.multiTechnicien > 1 %}<i class="mdi mdi-group mdi-lg"></i>{% else %}<i class="mdi mdi-face mdi-lg"></i>{% endif %}
+			{% for technicien in passage.techniciens %}
+				{{ technicien.identite | join(',') }}
+
+			{% endfor %}
 		</div>
 		<div class="col-xs-2 text-right">
 			{% if passage.planifie %} <a class="btn btn-sm btn-block btn-warning"

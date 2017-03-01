@@ -212,6 +212,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $audit;
 
+    /**
+     * @MongoDB\Int
+     */
+    protected $multiTechnicien;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
@@ -1429,6 +1434,26 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getDateModification()
     {
         return $this->dateModification;
+    }
+
+    /**
+     * Set multiTechnicien
+     *
+     * @param int $multiTechnicien
+     * @return self
+     */
+    public function setMultiTechnicien($multiTechnicien) {
+        $this->multiTechnicien = $multiTechnicien;
+        return $this;
+    }
+
+    /**
+     * Get multiTechnicien
+     *
+     * @return int $multiTechnicien
+     */
+    public function getMultiTechnicien() {
+        return $this->multiTechnicien;
     }
 
     public static function triPerHourPrecedente($p_0, $p_1) {

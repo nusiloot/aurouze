@@ -67,7 +67,7 @@
                                 {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal | trim, passage.etablissementInfos.adresse.commune | trim, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM yyyy") | capitalize, passage.etablissementInfos.nom, passage] | merge(passage.prestationsNom) | json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
                                 {% set techColor = passage.techniciens[0].couleurText %}
                                 {% set techBgColor = passage.techniciens[0].couleur %}
-                                {% set techIdentite = passage.techniciens[0].identite %}
+                                {% set techIdentite = passage.techniciens[0].identiteCourt %}
                                 {% set urlPlanif = path('calendar', {'passage' : passage.id, 'id': passage.etablissement.id ,'technicien' : passage.techniciens[0].id, 'date' : passage.dateForPlanif|date('d-m-Y')}) %}
                             {% endif %}
                             <a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item hide-print">
@@ -99,7 +99,7 @@
                                             <small> ({{ passage.etablissementInfos.libelle }})</small>
                                             {% endif %}
                                         {% endif %}
-                                        
+
                                         <span title="{{ passage.libelle }}"
                                               class="pull-right badge {% if(passage.isGarantie) %}badge-warning{% elseif(passage.isControle)%}badge-warning{% else %}badge-default{% endif %} {% if(passage.mouvementDeclenchable) %}badge-inverse{% endif %} btn-xs">{{
                                                     passage.getNumeroPassage() }}</span>
@@ -108,7 +108,7 @@
                                 </div>
                                 <div class="row" style="margin-top:10px;">
                                     <div class="col-sm-3 text-left">
-                                        <span class="label" style="background-color: {{ techBgColor }};color: {{ techColor }};"><small>{{ techIdentite }}</small></span>
+                                        <span class="label" style="background-color: {{ techBgColor }};color: {{ techColor }};"><small>{{ techIdentite }}</small></span>{% if passage.multiTechnicien > 1 %}&nbsp;<i class="mdi mdi-group mdi-lg"></i>{% endif %}
                                     </div>
                                     <div class="col-sm-6 text-center">
                                             {% if passage.datePrecedente %}
