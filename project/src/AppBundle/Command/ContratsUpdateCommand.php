@@ -37,7 +37,6 @@ class ContratsUpdateCommand extends ContainerAwareCommand {
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
 
         $contrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
-
         $i = 0;
         foreach ($contrats as $contrat) {
             $this->getContainer()->get('contrat.manager')->updateInfosPassagePrecedent($contrat);
