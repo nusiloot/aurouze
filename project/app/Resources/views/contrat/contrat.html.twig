@@ -76,7 +76,18 @@
         {% if (contrat.nomenclature) %}
         {{ contrat.nomenclature | nl2br }}
         {% else %}
-        Aucune nomenclature définie
+        <em>Aucune nomenclature définie</em>
+        {% endif %}
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Commentaire</h3></div>
+    <div class="panel-body">
+        {% if (contrat.commentaire) %}
+        {{ contrat.commentaire | nl2br }}
+        {% else %}
+        <em>Aucun commentaire défini</em>
         {% endif %}
     </div>
 </div>
