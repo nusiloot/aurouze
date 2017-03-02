@@ -88,19 +88,25 @@
 												<tr>
 													<th class="fc-axis fc-widget-header" style="width: 17px;"></th>
 													{% for date, eventDate in eventsDates %}
-													<th data-date="{{ date }}" class="fc-day-header fc-widget-header fc-mon">{{ calendarTool.getShortLibelleJour(date|date("N")) }} {{ date|date("j") }}/{{ date|date("n") }}<br />{% for technicien, events in eventDate %}<a href="{{ path('calendar',{'technicien': techniciens["COMPTE-"~technicien].id, 'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" data-toggle="tooltip" title="{{ techniciens["COMPTE-"~technicien].identite }}" style="
+													<th data-date="{{ date }}" class="fc-day-header fc-widget-header fc-mon">
+                                                        <div>{{ calendarTool.getShortLibelleJour(date|date("N")) }} {{ date|date("j") }}/{{ date|date("n") }}</div>
+                                                        <div style="text-align:left; padding: 0 2px;">
+                                                        {% for technicien, events in eventDate %}<a href="{{ path('calendar',{'technicien': techniciens["COMPTE-"~technicien].id, 'passage': ((passage) ? passage.id : null), 'id': ((passage) ? passage.etablissement.id : "0"), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" data-toggle="tooltip" title="{{ techniciens["COMPTE-"~technicien].identite }}" style="
                                                         display:inline-block;
-                                                        margin-right: 1px;
+                                                        margin-right: 0;
                                                         border-radius: 0;
-                                                        padding: 2px 8px 2px 2px;
-                                                        text-align: center;
-                                                        border: 0;
+                                                        padding: 0px 0px;
+                                                        border: 0px none;
+                                                        font-size: 0.75em;
                                                         background-color: {{ techniciens["COMPTE-"~technicien].couleur }};
                                                         color: #fff;
-                                                        width: {{ ((100 / nbTechniciens))|round(0, 'floor') - 5 }}%;"
+                                                        overflow:hidden;
+                                                        text-overflow: '';
+                                                        width: {{ ((100 / nbTechniciens))|round(0, 'floor') }}%;"
                                                         class="fc-time-grid-event fc-v-event fc-event fc-start fc-end">
-                                                        <strong>{{ techniciens["COMPTE-"~technicien].prenom | slice(0,10) | upper }}</strong>
-                                                    </a>{% endfor %}
+                                                        &nbsp;<strong>{{ techniciens["COMPTE-"~technicien].prenom | slice(0,10) | upper }}</strong>
+                                                        </a>{% endfor %}
+                                                    </div>
                                                     </th>
 													{% endfor %}
 												</tr>
@@ -158,7 +164,8 @@
 																			<a style="cursor: pointer;
 																				background-color: {{ event.backgroundColor }};
                                                                                 border: 1px dotted #fff;
-																				color: #000;
+                                                                                font-size: 0.75em;
+																				color: {{ event.textColor }};
 																				z-index: {{ index + 1 }};
 																				top: {{ (event.coefStart * 26) + 1 }}px;
 																				bottom: -{{ (event.coefEnd * 26) + 3 }}px;
