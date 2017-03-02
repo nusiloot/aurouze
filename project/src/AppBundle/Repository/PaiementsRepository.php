@@ -57,7 +57,7 @@ class PaiementsRepository extends DocumentRepository {
     
 
 
-    public function findByPeriode($periode, $limit) {
+    public function findByPeriode($periode) {
     	if (!preg_match('/^([0-9]{2})\/([0-9]{4})$/', $periode, $items)) {
             return array();
         }
