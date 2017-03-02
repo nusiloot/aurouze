@@ -22,7 +22,7 @@ class FactureRepository extends DocumentRepository {
                         ->execute();
     }
 
-    public function findByTerms($queryString, $filter = false) {
+    public function findByTerms($queryString, $filter = false, $withCloture = false) {
         $terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $queryString)));
         $results = null;
         foreach ($terms as $term) {
@@ -30,8 +30,9 @@ class FactureRepository extends DocumentRepository {
                 continue;
             }
             $q = $this->createQueryBuilder();
-
-            $q->field('cloture')->equals(false);
+			if (!$withCloture) {
+            	$q->field('cloture')->equals(false);
+			}
             $q->field('numeroFacture')->notEqual(null);
             if (preg_match('/^[0-9]+\.[0-9]+$/', $term)) {
                 $nbInf = $term - 0.0001;

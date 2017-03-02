@@ -458,6 +458,20 @@ class FactureController extends Controller {
         return $response;
     }
 
+    /**
+     * @Route("/facture/all/rechercher/{filter}", name="all_facture_search", defaults={"filter" = "0"})
+     */
+    public function allFactureSearchAction(Request $request, $filter) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $response = new Response();
+        $facturesResult = array();
+        $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term'),$filter, true), $facturesResult);
+        $data = json_encode($facturesResult);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setContent($data);
+        return $response;
+    }
+
     public function contructSearchResult($criterias, &$result) {
 
         foreach ($criterias as $id => $nom) {
