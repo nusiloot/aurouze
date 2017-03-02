@@ -151,6 +151,20 @@
                         </div>
                     </div>
                 </div>
+                <div class="checkbox">
+                    <label>
+                      <input id="checkbox_multi_technicien" type="checkbox" {% if form.vars.value.multiTechnicien and form.vars.value.multiTechnicien > 1 %}checked="checked" {% endif %} /> Toutes les interventions de passages nécessitent plusieurs techniciens
+                    </label>
+                </div>
+                <div id="bloc_multi_technicien" class="row {% if not form.vars.value.multiTechnicien or form.vars.value.multiTechnicien < 2 %}hidden{% endif %}">
+                    <div class="col-xs-4">
+                        <div class="form-group">
+                            {{ form_label(form.multiTechnicien) }}
+                            {{ form_errors(form.multiTechnicien) }}
+                            {{ form_widget(form.multiTechnicien) }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -224,5 +238,20 @@
         <br />
         <br />
     </div>
+{% endblock %}
 
+{% block javascripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#checkbox_multi_technicien').on('click', function() {
+            if($(this).prop('checked')) {
+                $('#bloc_multi_technicien').removeClass('hidden');
+                $('#bloc_multi_technicien input').val(2);
+            } else {
+                $('#bloc_multi_technicien').addClass('hidden');
+                $('#bloc_multi_technicien input').val(null);
+            }
+        });
+    });
+</script>
 {% endblock %}

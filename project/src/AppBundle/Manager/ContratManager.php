@@ -225,6 +225,34 @@ class ContratManager implements MouvementManagerInterface {
         $contrat->reInitContratPassages();
     }
 
+    public function updateInfosPassagePrecedent($contrat, $etablissement = null) {
+        $passagesByEtablissement = $this->getPassagesByNumeroArchiveContrat($contrat, true);
+
+        foreach($passagesByEtablissement as $etablissementId => $passages) {
+            $dernierPassageNonRealise = null;
+            if($etablissement && $etablissement->getId() != $etablissementId) {
+                continue;
+            }
+            foreach($passages as $passage)  {
+                if(!$passage->isSousContrat()) {
+                    continue;
+                }
+                if($passage->isAnnule()) {
+                    continue;
+                }
+                if($passage->isRealise() && !$dernierPassageNonRealise) {
+                    break;
+                }
+                if($passage->isRealise()) {
+                    $dernierPassageNonRealise->setDureePrecedente($passage->getDureeDate());
+                	$dernierPassageNonRealise->setDatePrecedente($passage->getDateDebut());
+                    break;
+                }
+                $dernierPassageNonRealise = $passage;
+            }
+        }
+    }
+
     public function generateAllPassagesForContrat($contrat) {
         $this->removeAllPassagesForContrat($contrat);
 
@@ -239,7 +267,6 @@ class ContratManager implements MouvementManagerInterface {
         $firstEtb = true;
         foreach ($contrat->getEtablissements() as $etablissement) {
             $cpt = 0;
-        	$firstPass = true;
             foreach ($passagesArray as $datePassage => $passageInfos) {
                 $datePrevision = new \DateTime($datePassage);
                 $passage = new Passage();
@@ -258,6 +285,8 @@ class ContratManager implements MouvementManagerInterface {
                 if ($audit = $passageInfos->audit) {
                 	$passage->setAudit($audit);
                 }
+
+                $passage->setMultiTechnicien($contrat->getMultiTechnicien());
 
                 $passage->setContrat($contrat);
                 $passage->setTypePassage(PassageManager::TYPE_PASSAGE_CONTRAT);
@@ -278,18 +307,12 @@ class ContratManager implements MouvementManagerInterface {
                     $contrat->addPassage($etablissement, $passage);
                     $this->dm->persist($passage);
                 }
-                if ($firstPass) {
-                	$passagePrec = $this->getPassageManager()->passagePrecedentRealiseSousContrat($passage);
-                	if($passagePrec) {
-                		$passage->setDureePrecedente($passagePrec->getDureeDate());
-                		$passage->setDatePrecedente($passagePrec->getDateDebut());
-                	}
-                	$firstPass = false;
-                }
                 $cpt++;
             }
             $firstEtb = false;
         }
+
+        $this->updateInfosPassagePrecedent($contrat);
 
         $contrat->updateNumeroOrdrePassage();
 
@@ -401,7 +424,7 @@ class ContratManager implements MouvementManagerInterface {
                     $passagesByNumero[$idEtb] = array();
                 }
                 foreach ($contratPassages->getPassages() as $passage) {
-                    $passagesByNumero[$idEtb][$passage->getDatePrevision()->format('Ymd')] = $passage;
+                    $passagesByNumero[$idEtb][$passage->getDatePrevision()->format('Ymd').uniqid()] = $passage;
                 }
             }
         }
