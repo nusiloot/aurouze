@@ -124,9 +124,12 @@ class Paiements {
         return $this->paiement;
     }
     
-    public function getAggregatePaiements() {
+    public function getAggregatePaiements($societe = null) {
     	$result = array();
     	foreach ($this->getPaiement() as $paiement) {
+    		if ($societe && $paiement->getFacture()->getSociete()->getId() != $societe->getId()) {
+    			continue;
+    		}
     		$k = ($paiement->getMoyenPaiement())? $paiement->getMoyenPaiement() : md5(microtime().rand());
     		if (!isset($result[$k])) {
     			$result[$k] = array();
