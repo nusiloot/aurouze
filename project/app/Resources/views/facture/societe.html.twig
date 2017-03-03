@@ -114,7 +114,9 @@
                           </td>
                           <td class="col-xs-1 text-right">
                             {% if not facture.isAvoir %}
-                              <span class="text-muted">{{ "%0.2f" | format(facture.montantAPayer) }}&nbsp;€</span>
+                              {% if facture.montantAPayer < 0 %}<span class="label label-info" data-toggle="tooltip" title="Trop perçu {{ "%0.2f" | format(facture.montantAPayer*-1) }} €">{% endif %}
+                                <span class="{% if facture.montantAPayer >= 0 %}text-muted{% endif %}">{{ "%0.2f" | format(facture.montantAPayer) }}&nbsp;€</span>
+                              {% if facture.montantAPayer < 0 %}</span>{% endif %}
                             {% endif %}
                           </td>
                             <td class="text-left">
