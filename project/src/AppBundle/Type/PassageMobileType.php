@@ -84,7 +84,7 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-icon"=>"grid", "data-iconpos"=>"left" ),
+        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-icon"=>"grid", "data-iconpos"=>"left" , "data-native-menu" => "false"),
         ));
         //$builder->get('nettoyages')->resetViewTransformers();
 
@@ -94,7 +94,7 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-icon"=>"grid", "data-iconpos"=>"left" ),
+        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-icon"=>"grid", "data-iconpos"=>"left", "data-native-menu" => "false" ),
         ));
       //  $builder->get('applications')->resetViewTransformers();
 

@@ -22,6 +22,10 @@
         $.initVersion();
     });
 
+    $(document).bind('mobileinit',function(){
+		    $.mobile.selectmenu.prototype.options.nativeMenu = false;
+	  });
+
     $.initPhoenix = function(){
       $('.phoenix').each(function(){
         $(this).phoenix();
@@ -94,6 +98,7 @@
           [].forEach.call(divs, function(div) {
               var idCanva = div.id;
               signaturesPad[idCanva] = new SignaturePad(div);
+              console.log(signaturesPad[idCanva]);
               var input = $("#"+idCanva).parent().find("input");
 
               if (input.val()) {
@@ -108,7 +113,7 @@
           forms[$(this).closest('.passage_rapport').attr('data-id')] = $(this);
       });
 
-      $('.passage_rapport_signature').on("click",function(){
+      $('.passage_signature_valider').on("click",function(){
         var signaturePadIndex = "signature_pad_"+$(this).attr('data-id');
         var signatureHiddenCible = "input[data-cible='passage_mobile_"+$(this).attr('data-id')+"_signatureBase64']";
         signaturePad = signaturesPad[signaturePadIndex];

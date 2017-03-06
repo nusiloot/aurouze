@@ -60,5 +60,7 @@
     </div>
   </div>
   {{ include('tournee/passageRapport.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[passage.id]}) }}
+  {{ include('tournee/passageSignature.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[passage.id]}) }}
+  
 {% endfor %}
 {% endblock %}
