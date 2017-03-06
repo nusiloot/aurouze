@@ -169,7 +169,7 @@ class Facture implements DocumentSocieteInterface {
 
     /** @MongoDB\PreUpdate */
     public function preUpdate() {
-        if ($this->getMontantTTC() == $this->getMontantPaye()) {
+        if ($this->getMontantTTC() <= $this->getMontantPaye()) {
             $this->cloture = true;
         } else {
             $this->cloture = false;

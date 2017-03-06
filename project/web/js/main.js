@@ -12,6 +12,7 @@
         $.initQueryHash();
         $.initDynamicCollection();
         $.initDatePicker();
+        $.initPeriodePicker();
         $.initTimePicker();
         $.initFormEventAjax();
         $.initSwitcher();
@@ -33,7 +34,33 @@
         $.initButtonLoading();
         $.initPopupRelancePdf();
         $.initAcceptationContrat();
+        $.initAllFactureSearch();
+        $.initTrCollapse();
     });
+    
+    $.initTrCollapse = function() {
+    	$('.tr-collapse').click(function(){
+    		if ($($(this).data('show')).is(':visible')) {
+    			$($(this).data('hide')).hide();
+    			$(this).find('.glyphicon').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+    		} else {
+    			$($(this).data('show')).show();
+    			$(this).find('.glyphicon').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+    		}
+    	});
+    }
+    
+    $.initAllFactureSearch = function() {
+    	$('body').on('click', '.all-factures', function(){
+    		var parent = $(this).parent().siblings('.select2-ajax');
+    		if($(this).prop('checked')) {
+    			parent.attr('data-url', parent.attr('data-url').replace('facture/rechercher', 'facture/all/rechercher'));
+    		} else {
+    			parent.attr('data-url', parent.attr('data-url').replace('facture/all/rechercher', 'facture/rechercher'));
+    		}
+    		$.initSelect2Ajax();
+    	});
+    }
 
     $.initAcceptationContrat = function() {
     	 $.updateAcceptationContratButton();
@@ -150,7 +177,21 @@
                 $(this).html(content);
             }
         });
+        $('.fc-time-grid-event .fc-bg').each(function(){
+          console.log('ici');
+          console.log(this);
+        });
     };
+
+    $.callbackCalendarDynamicButton = function(){
+        $("#calendrier").find('.fc-event-container').each(function(){
+          $(this).mouseover(function(){
+           $(this).find('.fc-content .fc-title a').css('opacity',1);
+         }).mouseout(function(){
+             $(this).find('.fc-content .fc-title a').css('opacity',0.2);
+           });
+        });
+    }
 
     $.initListingPassage = function () {
         $('.calendar_lien').click(function (event) {
@@ -245,6 +286,17 @@
         $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "right"});
     }
 
+    $.initPeriodePicker = function () {
+        var periodePicker = $('.periodepicker').datepicker({format: "mm/yyyy", viewMode: "months", minViewMode: "months", autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "right"});
+        periodePicker
+	        .on('changeDate', function(e) {
+	            $('.periodepicker').parent('form').submit();
+	        })
+	        .on('clearDate', function(e) {
+	            $('.periodepicker').parent('form').submit();
+	        });
+    }
+
     $.initTimePicker = function () {
         $('.input-timepicker').each(function () {
             var defaultTiming = ($(this).attr('data-default')) ? $(this).attr('data-default') : '';
@@ -260,12 +312,11 @@
     }
 
     $.initDynamicCollection = function () {
-        var addLink = $('.dynamic-collection-add');
         $('.dynamic-collection-item').on('click', '.dynamic-collection-remove', function (e) {
             e.preventDefault();
             $(e.delegateTarget).remove();
         });
-        addLink.on('click', function (e) {
+        $('body').on('click', '.dynamic-collection-add', function (e) {
             e.preventDefault();
             var collectionTarget = $(this).data('collection-target');
             var collectionHolder = $(collectionTarget);

@@ -123,6 +123,41 @@ class Paiements {
     public function getPaiement() {
         return $this->paiement;
     }
+    
+    public function getAggregatePaiements($societe = null) {
+    	$result = array();
+    	foreach ($this->getPaiement() as $paiement) {
+    		if ($societe && $paiement->getFacture()->getSociete()->getId() != $societe->getId()) {
+    			continue;
+    		}
+    		$k = ($paiement->getMoyenPaiement())? $paiement->getMoyenPaiement() : md5(microtime().rand());
+    		if (!isset($result[$k])) {
+    			$result[$k] = array();
+    			$result[$k]['items'] = array();
+    			$result[$k]['montant'] = 0;
+    			$result[$k]['factures'] = 0;
+    		}
+    		
+    		$result[$k]['libelle'] = ($paiement->getMoyenPaiement())? PaiementsManager::$moyens_paiement_libelles[$k] : '';
+    		$result[$k]['factures'] += 1;
+    		$result[$k]['montant'] += $paiement->getMontant();
+    		
+    		$key = ($paiement->getLibelle())? Transliterator::urlize($paiement->getLibelle()) : md5(microtime().rand());
+    		if (!isset($result[$k]['items'][$key])) {
+    			$result[$k]['items'][$key] = array();
+    			$result[$k]['items'][$key]['items'] = array();
+    			$result[$k]['items'][$key]['montant'] = 0;
+    			$result[$k]['items'][$key]['factures'] = 0;
+    		}
+
+    		$result[$k]['items'][$key]['libelle'] = $paiement->getLibelle();
+    		$result[$k]['items'][$key]['montant'] += $paiement->getMontant();
+    		$result[$k]['items'][$key]['factures'] += 1;
+    		
+    		$result[$k]['items'][$key]['items'][] = $paiement;
+    	}
+    	return $result;
+    }
 
     /**
      * Set imprime

@@ -19,7 +19,7 @@
           <ul class="nav nav-pills">
                 {% for key,moisPassage in moisPassagesArray %}
                 <li role="presentation" class="{% if key == anneeMois %} active {% endif %}">
-                    <a href='{{ path('passage',{"secteur" : secteur, "mois" : key }) }}' >
+                    <a href='{{ path('passage',{"secteur" : secteur, "mois" : key, "lat" : coordinatesCenter.lat, "lon" : coordinatesCenter.lon, "zoom": coordinatesCenter.zoom }) }}' >
                         <small><strong>
                           {% if key == 'courant' %}
                             D'ici le {{ dateFinCourant | localizeddate("medium", "none", null, null, "d/MM/Y") }}
