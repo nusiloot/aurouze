@@ -20,9 +20,6 @@
     }
 }
 
-[data-icon]:before { content: attr(data-icon); }
-
-[data-icon]:before,
 .mdi-cafard:before,
 .mdi-chenille:before,
 .mdi-marker:before,

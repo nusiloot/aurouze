@@ -101,12 +101,12 @@ class Prestation {
           if($this->isPictoForLibelles($nom_libelles,array('SURMULOTS'))){
               return "surmulots";
           }
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_cafard)){
+          return 'cafard';
       }elseif($this->isPictoForLibelles($nom_libelles, $mot_puce)){
           return 'puce';
       }elseif($this->isPictoForLibelles($nom_libelles, $mot_moustique)){
           return 'moustique';
-      }elseif($this->isPictoForLibelles($nom_libelles, $mot_cafard)){
-          return 'cafard';
       }elseif($this->isPictoForLibelles($nom_libelles, $mot_chenille)){
           return 'chenille';
       }elseif($this->isPictoForLibelles($nom_libelles, $mot_pigeon)){
@@ -120,7 +120,7 @@ class Prestation {
       }elseif($this->isPictoForLibelles($nom_libelles, $mot_desinfection)){
           return 'déinfection assainissement';
       }
-      
+
       return "";
     }
 

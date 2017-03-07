@@ -1,6 +1,6 @@
 {% set _menu_active = 'tournee' %}
 {% extends 'base_mobile.html.twig' %}
-{% block manifest %}{{path('manifest',{ 'technicien' : technicien.id })}}{% endblock manifest %}
+
 {% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
 {% block body %}
 <div id="version" data-version="{{version}}" data-url="{{ path('tournee_version',{ 'technicien' : technicien.id }) }}" ></div>
@@ -61,6 +61,6 @@
   </div>
   {{ include('tournee/passageRapport.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[passage.id]}) }}
   {{ include('tournee/passageSignature.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[passage.id]}) }}
-  
+
 {% endfor %}
 {% endblock %}

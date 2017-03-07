@@ -84,7 +84,7 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-icon"=>"grid", "data-iconpos"=>"left" , "data-native-menu" => "false"),
+        		'attr' => array("class" => "phoenix ui-li-has-count", "multiple" => "multiple", "data-native-menu" => "false"),
         ));
         //$builder->get('nettoyages')->resetViewTransformers();
 
@@ -94,13 +94,13 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-icon"=>"grid", "data-iconpos"=>"left", "data-native-menu" => "false" ),
+        		'attr' => array("class" => "phoenix ui-li-has-count", "multiple" => "multiple", "data-native-menu" => "false"),
         ));
       //  $builder->get('applications')->resetViewTransformers();
 
         $builder->add('emailTransmission', EmailType::class, array('label' => 'Email :','required' => false, 'attr' => array('class' => " phoenix")));
         $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'required' => false, 'attr' => array('class' => " phoenix")));
-        $builder->add('signatureBase64', HiddenType::class, array('attr' => array('class' => "phoenix", "data-cible" => "passage_mobile_".$passageId."_signatureBase64")));
+        $builder->add('signatureBase64', HiddenType::class, array('required' => false, 'attr' => array('class' => "phoenix", "data-cible" => "passage_mobile_".$passageId."_signatureBase64")));
     }
 
     /**

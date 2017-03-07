@@ -1411,7 +1411,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function isTransmis(){
-      return boolval($this->signatureBase64);
+      return boolval($this->signatureBase64) || boolval($this->emailTransmission);
     }
 
     /**
