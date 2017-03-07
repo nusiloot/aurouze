@@ -136,7 +136,7 @@ class TourneeController extends Controller {
 
         $dm->flush();
 
-        return $this->redirectToRoute('tournee_technicien', array('passage' => $passage->getId(),"technicien" => $technicienObj->getId()));
+        return $this->redirectToRoute('tournee_technicien', array("technicien" => $technicienObj->getId()));
     }
 
     /**

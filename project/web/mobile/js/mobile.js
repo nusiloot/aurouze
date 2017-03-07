@@ -15,6 +15,7 @@
 
     $(document).ready(function ()
     {
+        $.initTourneeDate();
         $.initPhoenix();
         $.initNiveauInfestation();
         $.initProduits();
@@ -182,10 +183,9 @@
     }
 
     $.initVersion = function () {
-      if(version == null){
-        version = $("#version").attr('data-version');
-        console.log(version);
-      }
+
+      version = $("#version").attr('data-version');
+      $.checkVersion();
       var urlVersion = $("#version").attr("data-url");
       if (urlVersion) {
          setInterval(function(){
@@ -205,7 +205,6 @@
 
     $.checkVersion = function () {
       versionDiv = $("#version").attr('data-version');
-      console.log(versionDiv);
       if(versionDiv != version){
         $(".reloadWarning").each(function(){
           $(this).show();
@@ -215,6 +214,14 @@
           $(this).hide();
         });
       }
+    }
+
+    $.initTourneeDate = function(){
+      $("#tourneesDate").on('change',function(){
+        var date = $(this).val();
+        var dateiso = date.split('/').reverse().join('-');
+        window.location = $(this).attr('data-url-cible')+"/"+dateiso;
+      })
     }
 }
 )(jQuery);
