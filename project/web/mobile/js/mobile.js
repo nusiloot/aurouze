@@ -92,22 +92,6 @@
            });
     }
 
-    function resizeCanvas() {
-      setCanvasSize();
-      var divs = document.querySelectorAll('canvas');
-      [].forEach.call(divs, function(canvas) {
-        var idCanva = canvas.id;
-        var input = $("#"+idCanva).parent().find("input");
-        if(typeof signaturesPad != undefined){
-          console.log('ici',signaturesPad[idCanva]);
-          signaturesPad[idCanva].clear();
-          if (input.val()) {
-            signaturesPad[idCanva].fromDataURL(input.val());
-          }
-        }
-      });
-    }
-
     function updateSignaturesPads(){
       var divs = document.querySelectorAll('canvas');
       [].forEach.call(divs, function(canvas) {
@@ -123,8 +107,9 @@
       });
       var divs = document.querySelectorAll('canvas');
       [].forEach.call(divs, function(canvas) {
-        var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+        var ratio =  1;
         var idCanva = canvas.id;
+        console.log(ratio, $("#"+idCanva).parent().height(), $("#"+idCanva).parent().width());
         canvas.height = $("#"+idCanva).parent().height() ;
         canvas.width = $("#"+idCanva).parent().width() ;
         canvas.getContext("2d").scale(ratio, ratio);
