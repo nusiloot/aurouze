@@ -100,23 +100,24 @@
         $("#"+idCanva).remove();
         parent.append("<canvas id='"+idCanva+"'></canvas>");
       });
-      var newHeight = ($(document).width() < 400)? '250' : $(document).height()*0.50;
+
+      var newwidth = $(document).width()*0.85;
+      var ratio = 1.0/2.90;
       $('.signature-pad').each(function(){
-        $(this).css('height',newHeight);
-        $(this).css('width',$(document).width()*0.92);
+        $(this).css('width',newwidth);
+        $(this).css('height',newwidth*ratio);
       });
       var divs = document.querySelectorAll('canvas');
       [].forEach.call(divs, function(canvas) {
-        var ratio =  1;
+
         var idCanva = canvas.id;
-        console.log(ratio, $("#"+idCanva).parent().height(), $("#"+idCanva).parent().width());
-        canvas.height = $("#"+idCanva).parent().height() ;
-        canvas.width = $("#"+idCanva).parent().width() ;
-        canvas.getContext("2d").scale(ratio, ratio);
+        canvas.width = $("#"+idCanva).parent().width();
+        canvas.height = $("#"+idCanva).parent().height();
       });
       var divs = document.querySelectorAll('canvas');
       [].forEach.call(divs, function(div) {
           var idCanva = div.id;
+          delete signaturesPad[idCanva];
           signaturesPad[idCanva] = new SignaturePad(div);
           var idPassage = $("#"+idCanva).parents('.passage_signature').attr('data-id');
           var signatureHiddenCible = "input[data-cible='passage_mobile_"+idPassage+"_signatureBase64']";
