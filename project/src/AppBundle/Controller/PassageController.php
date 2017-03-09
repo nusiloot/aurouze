@@ -43,6 +43,7 @@ class PassageController extends Controller {
         $dateFin = new \DateTime();
         $dateFinCourant = clone $dateFin;
         $dateFinCourant->modify("+1 month");
+        $dateFinMax = clone $dateFinCourant;
 
         $anneeMois = null;
         $dateDebut = null;
@@ -57,7 +58,7 @@ class PassageController extends Controller {
         }
 
         $passages = null;
-        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFin);
+        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFinMax);
         $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, clone $dateFin)->toArray();
 
         usort($passages, array("AppBundle\Document\Passage", "triPerHourPrecedente"));

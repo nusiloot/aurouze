@@ -115,29 +115,28 @@ class TourneeController extends Controller {
         $form->handleRequest($request);
         if (!$form->isSubmitted() || !$form->isValid()) {
 
-            //return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
         }
         $passageManager = $this->get('passage.manager');
 
-        // $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
 
-        // if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
-        //     if ($contrat->generateMouvement($passage)) {
-        //         $passage->setMouvementDeclenche(true);
-        //     }
-        // }
+        if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
+            if ($contrat->generateMouvement($passage)) {
+                $passage->setMouvementDeclenche(true);
+            }
+        }
 
         $passage->setDateRealise($passage->getDateDebut());
         $dm->persist($passage);
         // $dm->persist($contrat);
         $dm->flush();
 
-        // $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
-        // $contrat->verifyAndClose();
-        //
-        // $dm->flush();
+        $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+        $contrat->verifyAndClose();
 
-        return $this->redirectToRoute('tournee_technicien', array('passage' => $passage->getId(),"technicien" => $technicienObj->getId()));
+        $dm->flush();
+
+        return $this->redirectToRoute('tournee_technicien', array("technicien" => $technicienObj->getId()));
     }
 
     /**

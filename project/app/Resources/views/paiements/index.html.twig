@@ -1,78 +1,87 @@
 {% set _menu_active = 'paiements' %}
 {% extends 'base.html.twig' %}
-{% block title %}Liste des 10 dernières campagnes de paiements{% endblock title %}
+{% block title %}Campagnes de paiements{% endblock title %}
 
 {% block body %}
     <ol class="breadcrumb">
         <li><a href="{{ path('paiements_liste') }}">Paiements</a></li>
 
     </ol>
+
+	<h2>
+		Campagnes de paiements 
+		<a class="btn btn-default pull-right" href="{{ path('paiements_nouveau') }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Nouvelle saisie</a>
+	</h2>
+	
     {{ form_start(form) }}
-    <h2>Mémo</h2>
-    <div class="row" style="margin-bottom: 20px;">
-		<div class="col-xs-10">
+    <div class="row">
+		<div class="col-xs-12">
 			{{ form_widget(form.commentaire) }}
 		</div>
-		<div class="col-xs-2">{{ form_widget(form.save) }}</div>
+		<div class="col-xs-12 pull-right" style="margin: 10px 0 0 0;">{{ form_widget(form.save) }}</div>
 	</div>
     {{ form_end(form) }}
+    
+    
+	
+	
+	<form action="" method="get" class="form-inline" style="margin: 0 0 10px 0;">
+		<label for="periode">Période : </label>
+        <input style="width: auto;" type="text" id="periode" name="periode" class="periodepicker form-control" value="{{ periode }}" placeholder="Sélection période" />
+    </form>
 
-    <a class="btn btn-sm btn-default pull-right" href="{{ path('paiements_nouveau') }}" style="margin-bottom: 10px;"><strong><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Créer une nouvelle saisie</strong></a>
-    <br/>
+
     <div id="wrapper">
-        <h1>Liste des 10 dernières campagnes de paiements</h1>
-
-        <table class="table table-bordered">
+    {% if paiementsDocs|length > 0 %}
+    	{% for paiements in paiementsDocs %}
+    	<table class="table table-hover">
             <thead>
                 <tr>
-                    <th class="col-xs-2">Date</th>
-                    <th class="col-xs-1 text-right">Nombre</th>
-                    <th class="col-xs-7">Societes</th>
-                    <th class="col-xs-2 text-right">Total</th>
+                	<th class="col-xs-2 text-right">
+                		{% if(not paiements.isImprime) %}
+                			<a class="btn btn-xs btn-warning btn" href="{{ path('paiements_modification', {'id': paiements.id })}}"><span class="glyphicon glyphicon-pencil"></span></a>
+                		{% else %}
+                			<a class="btn btn-xs btn-default" href="{{ path('paiements_export_banque', {'id': paiements.id }) }}">
+                            	<span class="glyphicon glyphicon-print"></span>&nbsp;{% if(paiements.isRemiseEspece) %}Espèce{% else %}{{ paiements.nbPaiementUniqueParMoyen }} chèq.{% endif %}
+                          	</a>
+                		{% endif %}
+                	</th>
+                	<th class="col-xs-9">{{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM yyyy") }} - Règlement de {{ paiements.paiement | length }} facture{% if paiements.paiement | length > 1 %}s{% endif %}</th>
+                	<th class="col-xs-2 text-right">{{ paiements.getMontantTotal | number_format(2, ',', ' ') }}&nbsp;€</th>
                 </tr>
             </thead>
             <tbody>
-                {% for paiements in paiementsDocs %}
-                    <tr class="" {% if(paiements.isImprime) %} style="opacity:0.7" {% endif %}>
-                        <th class="col-xs-2">
-                          {% if(not paiements.isImprime) %}<a href="{{ path('paiements_modification', {'id': paiements.id })}}">{% endif %}
-                            {{ paiements.dateCreation | localizeddate("medium", "none", null, null, "d MMM yyyy") }}
-                          {% if(not paiements.isImprime) %}</a>{% endif %}
-                          {% if(paiements.isImprime) %}
-                          <br/>
-                          <br/>
-                          <a class="btn btn-sm btn-default" href="{{ path('paiements_export_banque', {'id': paiements.id }) }}">
-                              <span class="glyphicon glyphicon-print"></span>
-                              {% if(paiements.isRemiseEspece) %}
-                                Imprimé de 1 espèce
-                              {% else %}
-                              Imprimé de {{ paiements.nbPaiementUniqueParMoyen }} chèque(s)
-
-                              {% endif %}
-                          </a>{% endif %}
-                          </a>
-                        </th>
-                        <th class="col-xs-1 text-right">{{ paiements.paiement | length }}</th>
-                        <th class="col-xs-7">
-                            {% for paiement in paiements.paiement %}
-                                <div class="row">
-                                    <div class="col-xs-10" style="height: 30px;">
-                                        <a title="Voir la société" href="{{ path('societe_visualisation', {'id': paiement.facture.societe.id })}}">
-                                            {% if paiement.facture.societe.raisonSociale | length > 40 %}{{ paiement.facture.societe.raisonSociale | slice(0, 40)~"..." }}{%else%}{{ paiement.facture.societe.raisonSociale }}{% endif %}</a>&nbsp;(Facture n°{{ paiement.facture.numeroFacture }})
-                                            {% if paiement.moyenPaiement == 'CHEQUE' %}&nbsp;<span class="label label-warning">Chèque</span>{% endif %}
-                                    </div>
-                                    <div class="col-xs-2 text-right">
-                                        {{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€&nbsp;
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </th>
-                        <th class="col-xs-2 text-right">{{ paiements.getMontantTotal | number_format(2, ',', ' ') }}&nbsp;€&nbsp;<br/>
-                        (Chèques : {{ paiements.getMontantTotalByMoyenPaiement('CHEQUE') | number_format(2, ',', ' ')}}&nbsp;€&nbsp;)</th>
-                    </tr>
-                {% endfor %}
+            {% for regKey, reglement in paiements.aggregatePaiements %}
+            	<tr class="active tr-collapse" data-show=".show_{{ paiements.id }}_{{ regKey }}" data-hide=".hide_{{ paiements.id }}_{{ regKey }}">
+            		<td><span class="glyphicon glyphicon-chevron-down"></span>&nbsp;{{ reglement.libelle }} ({{ reglement.items | length }})</td>
+            		<td>{{ reglement.factures }} facture{% if reglement.factures > 1 %}s{% endif %}</td>
+            		<td class="text-right">{{ reglement.montant | number_format(2, ',', ' ') }}&nbsp;€</td>
+            	</tr>
+            	{% for libKey, libelle in reglement.items %}
+            	<tr style="display: none;" class="hide_{{ paiements.id }}_{{ regKey }} show_{{ paiements.id }}_{{ regKey }} tr-collapse" data-show=".{{ paiements.id }}_{{ regKey }}_{{ libKey }}" data-hide=".{{ paiements.id }}_{{ regKey }}_{{ libKey }}">
+            		<td></td>
+            		<td><span class="glyphicon glyphicon-chevron-down"></span>&nbsp;<strong>{{ libelle.libelle }}</strong> <small>{{ libelle.factures }} facture{% if libelle.factures > 1 %}s{% endif %}</small></td>
+            		<td class="text-right">{{ libelle.montant | number_format(2, ',', ' ') }}&nbsp;€</td>
+            	</tr>
+            	{% for paiement in libelle.items %}
+            	<tr style="display: none;" class="hide_{{ paiements.id }}_{{ regKey }} {{ paiements.id }}_{{ regKey }}_{{ libKey }}">
+            		<td></td>
+            		<td>
+            			<small>
+            			<a title="Voir la société" href="{{ path('societe_visualisation', {'id': paiement.facture.societe.id })}}">{% if paiement.facture.societe.raisonSociale | length > 40 %}{{ paiement.facture.societe.raisonSociale | slice(0, 40)~"..." }}{%else%}{{ paiement.facture.societe.raisonSociale }}{% endif %}</a> Facture n°<a href="{{ path('facture_pdf', {'id': paiement.facture.id })}}">{{ paiement.facture.numeroFacture }}</a>
+                    	</small>
+                    </td>
+            		<td class="text-right">{{ paiement.montant | number_format(2, ',', ' ')}}&nbsp;€</td>
+            	</tr>
+            	{% endfor %}
+            	{% endfor %}
+            {% endfor %}
             </tbody>
-        </table>
+		</table>
+		{% endfor %}
+		{% else %}
+		<p class="bg-warning text-center" style="padding: 10px;"><i>Aucune campagne de paiement pour la période <strong>{{ periode }}</strong></i></p>
+		{% endif %}
     </div>
 
 {% endblock %}

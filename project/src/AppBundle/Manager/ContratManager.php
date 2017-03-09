@@ -288,6 +288,8 @@ class ContratManager implements MouvementManagerInterface {
                 	$passage->setAudit($audit);
                 }
 
+                $passage->setMultiTechnicien($contrat->getMultiTechnicien());
+
                 $passage->setContrat($contrat);
                 $passage->setTypePassage(PassageManager::TYPE_PASSAGE_CONTRAT);
                 foreach ($passageInfos->prestations as $prestationPrevu) {

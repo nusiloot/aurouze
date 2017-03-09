@@ -108,6 +108,7 @@ $(function () {
                 event.id = data.id;
                 event.backgroundColor = data.backgroundColor;
                 event.textColor = data.textColor;
+                event.retourMap = data.retourMap;
                 $('#calendrier').fullCalendar('updateEvent', event);
             }
             );
@@ -131,5 +132,13 @@ $(function () {
                 end: event.end.format()
             });
         },
+        eventRender: function(event, element) {
+          if(event.retourMap){
+             element.find(".fc-title").append('<a style="position:absolute; top: 0; right:0; opacity:0.2;" class="btn btn-default btn-xs " href="'+event.retourMap+'"><span class="mdi mdi-map"></span></a>');
+          }
+        },
+        eventAfterRender: function(event, element) {
+          $.callbackCalendarDynamicButton();
+        }
     });
 });

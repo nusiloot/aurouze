@@ -12,6 +12,7 @@ use AppBundle\Document\Compte;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\RendezVous;
 use AppBundle\Document\CompteInfos;
+use AppBundle\Manager\EtablissementManager;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\PassageCreationType;
 use AppBundle\Type\RendezVousType;
@@ -175,7 +176,7 @@ class CalendarController extends Controller {
       //  $pm->updateNextPassageAPlannifier($rdv->getPassage());
         $dm->flush();
 
-        $response = new Response(json_encode($rdv->getEventJson($technicien->getCouleur())));
+        $response = new Response(json_encode($this->buildEventObjCalendar($rdv,$technicien)));
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
@@ -232,7 +233,7 @@ class CalendarController extends Controller {
 
         $dm->flush();
 
-        $response = new Response(json_encode($rdv->getEventJson($technicien->getCouleur())));
+        $response = new Response(json_encode($this->buildEventObjCalendar($rdv,$technicien)));
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
@@ -252,7 +253,7 @@ class CalendarController extends Controller {
         $calendarData = array();
 
         foreach ($rdvs as $rdv) {
-            $calendarData[] = $rdv->getEventJson($technicien->getCouleur());
+            $calendarData[] = $this->buildEventObjCalendar($rdv,$technicien);
         }
 
         $response = new Response(json_encode($calendarData));
@@ -330,6 +331,18 @@ class CalendarController extends Controller {
         $dm->flush();
 
         return $this->redirect($this->generateUrl('calendarManuel'));
+    }
+
+    public function buildEventObjCalendar($rdv,$technicien){
+      $event = $rdv->getEventJson($technicien->getCouleur());
+      $em = $this->get('etablissement.Manager');
+      if($rdv->getPassage() && $rdv->getPassage()->getEtablissement()){
+        $passageCoord = $rdv->getPassage()->getEtablissement()->getAdresse()->getCoordonnees();
+        $secteur = EtablissementManager::getRegion($rdv->getPassage()->getEtablissement()->getAdresse()->getCodePostal());
+        if(!$secteur){ $secteur = EtablissementManager::SECTEUR_PARIS; }
+        $event->retourMap = $this->generateUrl('passage',array('secteur' => $secteur, 'mois' => $rdv->getPassage()->getDatePrevision()->format('Ym'),'lat' => $passageCoord->getLat(),'lon' => $passageCoord->getLon(),'zoom' => ($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE)? '10' : '15'));
+      }
+      return $event;
     }
 
 }
