@@ -1,4 +1,4 @@
-<html lang="{{ app.request.locale }}" manifest="{% block manifest %}{% endblock manifest %}" class="ui-mobile" >
+<html lang="{{ app.request.locale }}"  class="ui-mobile" >
     <head>
         <meta charset="{{ _charset }}">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,6 @@
 
         <title>{% block title %}Aurouze{% endblock title %}</title>
 
-        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile-1.4.5.css') }}">
         <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile-1.4.5.min.css') }}">
         <link rel="stylesheet" href="{{ asset('/component/aurouze/aurouze.css') }}">
         <link rel="stylesheet" href="{{ asset('/css/main.css') }}" />
@@ -18,6 +17,7 @@
     </head>
 
     <body>
+
         <div id="ajax_notifications">
             <div class="alert alert-info text-center" id="ajax_form_progress_notification">
                 Traitement en cours...
@@ -41,8 +41,8 @@
         <script type="text/javascript" src="{{ asset('/mobile/js/jquery.mobile-1.4.5.js') }}"></script>
 
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.phoenix.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/mobile/js/signature_pad.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/mobile/js/mobile.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.phoenix.min.js?20170307') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/signature_pad.js?20170307') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/mobile.js?20170307') }}"></script>
     </body>
 </html>

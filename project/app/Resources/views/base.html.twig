@@ -98,9 +98,6 @@
 
         <div class="modal" id="modal-calendrier-infos" tabindex="-1" role="dialog"></div>
 
-
-        {% block javascripts %}{% endblock %}
-
         <script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -119,6 +116,8 @@
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/calendar-settings.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/main.js?date=20170119') }}"></script>
+
+        {% block javascripts %}{% endblock %}
 
     </body>
 </html>

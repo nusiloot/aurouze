@@ -24,8 +24,9 @@ class PaiementsController extends Controller {
      * @Route("/paiements/liste", name="paiements_liste")
      */
     public function indexAction(Request $request) {
-
-        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(50);
+    	$periode = ($request->get('periode'))? $request->get('periode') : date('m/Y');
+    	
+        $paiementsDocs = $this->get('paiements.manager')->getRepository()->findByPeriode($periode);
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $societe = $dm->getRepository('AppBundle:Societe')->findAurouze();
@@ -39,8 +40,7 @@ class PaiementsController extends Controller {
 
         	return $this->redirectToRoute('paiements_liste');
         }
-
-        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs, 'form' => $form->createView()));
+        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs, 'periode' => $periode, 'form' => $form->createView()));
     }
 
     /**

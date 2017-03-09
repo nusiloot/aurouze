@@ -5,6 +5,8 @@
       $('div.ui-loader').hide();
     });
 
+    window.onresize = updateSignaturesPads;
+
     var signaturesPad = [];
     var forms = [];
     var produitsCount = [];
@@ -13,13 +15,15 @@
 
     $(document).ready(function ()
     {
+        $.initTourneeDate();
         $.initPhoenix();
         $.initNiveauInfestation();
         $.initProduits();
-        $.signatureCanvas();
+        updateSignaturesPads();
         $.initSaisie();
         $.initTransmission();
         $.initVersion();
+
     });
 
     $.initPhoenix = function(){
@@ -88,18 +92,41 @@
            });
     }
 
-    $.signatureCanvas = function () {
+    function updateSignaturesPads(){
+      var divs = document.querySelectorAll('canvas');
+      [].forEach.call(divs, function(canvas) {
+        var idCanva = canvas.id;
+        var parent = $("#"+idCanva).parent();
+        $("#"+idCanva).remove();
+        parent.append("<canvas id='"+idCanva+"'></canvas>");
+      });
 
-          var divs = document.querySelectorAll('canvas');
-          [].forEach.call(divs, function(div) {
-              var idCanva = div.id;
-              signaturesPad[idCanva] = new SignaturePad(div);
-              var input = $("#"+idCanva).parent().find("input");
+      var newwidth = $(document).width()*0.85;
+      var ratio = 1.0/2.90;
+      $('.signature-pad').each(function(){
+        $(this).css('width',newwidth);
+        $(this).css('height',newwidth*ratio);
+      });
+      var divs = document.querySelectorAll('canvas');
+      [].forEach.call(divs, function(canvas) {
 
-              if (input.val()) {
-                signaturesPad[idCanva].fromDataURL(input.val());
-              }
+        var idCanva = canvas.id;
+        canvas.width = $("#"+idCanva).parent().width();
+        canvas.height = $("#"+idCanva).parent().height();
+      });
+      var divs = document.querySelectorAll('canvas');
+      [].forEach.call(divs, function(div) {
+          var idCanva = div.id;
+          delete signaturesPad[idCanva];
+          signaturesPad[idCanva] = new SignaturePad(div);
+          var idPassage = $("#"+idCanva).parents('.passage_signature').attr('data-id');
+          var signatureHiddenCible = "input[data-cible='passage_mobile_"+idPassage+"_signatureBase64']";
+          $(signatureHiddenCible).each(function(){
+            if ($(this).val()) {
+              signaturesPad[idCanva].fromDataURL($(this).val());
+            }
           });
+       });
     }
 
     $.initSaisie = function () {
@@ -108,14 +135,27 @@
           forms[$(this).closest('.passage_rapport').attr('data-id')] = $(this);
       });
 
-      $('.passage_rapport_signature').on("click",function(){
+      $('.passage_signature_valider').on("click",function(){
         var signaturePadIndex = "signature_pad_"+$(this).attr('data-id');
         var signatureHiddenCible = "input[data-cible='passage_mobile_"+$(this).attr('data-id')+"_signatureBase64']";
-        signaturePad = signaturesPad[signaturePadIndex];
-        if (!signaturePad.isEmpty()) {
-          $(signatureHiddenCible).val(signaturePad.toDataURL());
-        }
+
+        var signaturePad = signaturesPad[signaturePadIndex];
+        if(typeof signaturePad != undefined)
+        $(signatureHiddenCible).each(function(){ $(this).val(signaturePad.toDataURL()); });
       });
+
+      $('.passage_signature_vider').on("click",function(){
+        var signaturePadIndex = "signature_pad_"+$(this).attr('data-id');
+        var divs = document.querySelectorAll('canvas');
+        [].forEach.call(divs, function(div) {
+            if(signaturePadIndex == div.id){
+              var idCanva = div.id;
+              signaturesPad[idCanva].clear();
+              var signatureHiddenCible = "input[data-cible='passage_mobile_"+$(this).attr('data-id')+"_signatureBase64']";
+              $(signatureHiddenCible).each(function(){ $(this).val(""); });
+            }
+          });
+        });
     }
 
     $.initTransmission = function () {
@@ -129,9 +169,9 @@
     }
 
     $.initVersion = function () {
-      if(version == null){
-        version = $("#version").attr('data-version');
-      }
+
+      version = $("#version").attr('data-version');
+      $.checkVersion();
       var urlVersion = $("#version").attr("data-url");
       if (urlVersion) {
          setInterval(function(){
@@ -160,6 +200,14 @@
           $(this).hide();
         });
       }
+    }
+
+    $.initTourneeDate = function(){
+      $("#tourneesDate").on('change',function(){
+        var date = $(this).val();
+        var dateiso = date.split('/').reverse().join('-');
+        window.location = $(this).attr('data-url-cible')+"/"+dateiso;
+      })
     }
 }
 )(jQuery);

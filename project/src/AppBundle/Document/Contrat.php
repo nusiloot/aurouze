@@ -68,7 +68,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $numeroArchive;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Int
      */
     protected $multiTechnicien;
 
@@ -882,7 +882,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->mouvement_declenchable = 1;
             }
         }
-        
+
         for ($index = 1; $index < $maxNbPrestations; $index++) {
             $monthDate = clone $dateLastPassage;
             $nextMonth = $monthDate->modify("+" . $nb_month . " month");
@@ -893,7 +893,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations = array();
             $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $typePrestationPrincipal;
         }
-        
+
         foreach ($this->getPrestations() as $prestation) {
             if (($prestation->getIdentifiant() != $typePrestationPrincipal->getIdentifiant()) && $prestation->getNbPassages() > 1) {
                 $nbPassagesPrestationRestant = $prestation->getNbPassages();
@@ -914,7 +914,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 }
             }
         }
-        
+
         $facturationInterval = (floatval($maxNbPrestations) / floatval($this->getNbFactures()));
         $compteurFacturation = $facturationInterval;
         $cpt = 0;
@@ -1209,7 +1209,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     /**
      * Set multiTechnicien
      *
-     * @param boolean $multiTechnicien
+     * @param int $multiTechnicien
      * @return self
      */
     public function setMultiTechnicien($multiTechnicien) {
@@ -1220,7 +1220,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     /**
      * Get multiTechnicien
      *
-     * @return boolean $multiTechnicien
+     * @return int $multiTechnicien
      */
     public function getMultiTechnicien() {
         return $this->multiTechnicien;
@@ -1434,6 +1434,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
         $contrat->setDateCreationAuto(new \DateTime());
+        $contrat->setAudit(null);
 
         if($contrat->isTypeReconductionTacite()){
           $contrat->setStatut(ContratManager::STATUT_EN_COURS);
@@ -1895,8 +1896,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     {
         return $this->dateReconduction;
     }
-
-
 
     public function getNbPassagePrevu() {
     	$nbPrevus = 0;

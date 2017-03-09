@@ -458,6 +458,20 @@ class FactureController extends Controller {
         return $response;
     }
 
+    /**
+     * @Route("/facture/all/rechercher/{filter}", name="all_facture_search", defaults={"filter" = "0"})
+     */
+    public function allFactureSearchAction(Request $request, $filter) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $response = new Response();
+        $facturesResult = array();
+        $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term'),$filter, true), $facturesResult);
+        $data = json_encode($facturesResult);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setContent($data);
+        return $response;
+    }
+
     public function contructSearchResult($criterias, &$result) {
 
         foreach ($criterias as $id => $nom) {
@@ -527,7 +541,7 @@ class FactureController extends Controller {
         $pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
 
         if(!$pdf){
-          $filename = sprintf("export_%s_factures_du_%s_au_%s.csv",$societe->getRaisonSociale(), $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+          $filename = sprintf("export_%s_factures_du_%s_au_%s.csv",str_replace(array("'"," ",'"'),array('','',''),$societe->getRaisonSociale()), $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
           $handle = fopen('php://memory', 'r+');
 
           foreach ($facturesForCsv as $factureObj) {
@@ -578,7 +592,7 @@ class FactureController extends Controller {
         ));
 
 
-        $filename = sprintf("export_%s_factures_du_%s_au_%s.pdf",$societe->getRaisonSociale(),  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+        $filename = sprintf("export_%s_factures_du_%s_au_%s.pdf",str_replace(array("'"," ",'"'),array('','',''),$societe->getRaisonSociale()), $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
 
         if ($request->get('output') == 'html') {
 
