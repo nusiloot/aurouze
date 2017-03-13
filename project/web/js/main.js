@@ -28,6 +28,7 @@
         $.initMap();
         $.initTypeheadFacture();
         $.initTypeheadSearchable();
+        $.initTypeheadSearchableCheckbox();
         $.initSomme();
         $.initReconduction();
         $.initRelance();
@@ -37,7 +38,7 @@
         $.initAllFactureSearch();
         $.initTrCollapse();
     });
-    
+
     $.initTrCollapse = function() {
     	$('.tr-collapse').click(function(){
     		if ($($(this).data('show')).is(':visible')) {
@@ -49,7 +50,7 @@
     		}
     	});
     }
-    
+
     $.initAllFactureSearch = function() {
     	$('body').on('click', '.all-factures', function(){
     		var parent = $(this).parent().siblings('.select2-ajax');
@@ -504,14 +505,27 @@
         });
     }
 
+    $.initTypeheadSearchableCheckbox = function () {
+        if (!$('#searchable').length || !$('#searchable').find("input[type=checkbox]").length) {
+            return;
+        }
+
+        $('#searchable').find("input[type=checkbox]").on('click', function() {
+            $('#searchable .typeahead').typeahead('destroy');
+            $.initTypeheadSearchable();
+        });
+    }
+
     $.initTypeheadSearchable = function () {
         if (!$('#searchable').length) {
             return;
         }
-        var url = $('#searchable').data('url')+"?q=%QUERY&inactif="+((checkbox && checkbox.is(':checked'))? "1" : "0");
+
+        var checkbox = $('#searchable').find("input[type=checkbox]");
+        console.log(checkbox.prop('checked'));
+        var url = $('#searchable').data('url')+"?q=%QUERY&inactif="+((checkbox && checkbox.prop('checked'))? "1" : "0");
         var type = $('#searchable').data('type');
         var target = $('#searchable').data('target');
-        var checkbox = $('#searchable').find("input[type=checkbox]");
 
         $('#searchable .typeahead').typeahead({
     	  hint: false,
