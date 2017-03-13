@@ -43,9 +43,16 @@ class FactureManager {
     const CODE_TVA_20 = "44571200";
     const CODE_TVA_10 = "44571010";
 
+    const CODE_TVA_196 = "44571190";
+    const CODE_TVA_07 = "44571070";
+
     const CODE_HT_20_PRODUIT = "70732000";
     const CODE_HT_20 = "70612000";
     const CODE_HT_10 = "70631000";
+
+    const CODE_HT_196_PRODUIT = "7061000";
+    const CODE_HT_196 = "7061000";
+    const CODE_HT_07 = "7063000";
 
 
     const EXPORT_STATS_REPRESENTANT = 0 ;
@@ -462,7 +469,12 @@ public static $export_stats_libelle = array(
           $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_20;
       }elseif($facture->getTva() == 0.1){
         $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_10;
+      }elseif($facture->getTva() == 0.196){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_196;
+      }elseif($facture->getTva() == 0.07){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_07;
       }
+
       $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? (-1*$facture->getMontantTaxe()) : "0", 2, ",", "");
       $factureLigne[self::EXPORT_CREDIT] =  number_format(($facture->isAvoir())? "0" :$facture->getMontantTaxe(), 2, ",", "");
     }elseif($typeLigne == self::EXPORT_LIGNE_HT){
@@ -472,6 +484,12 @@ public static $export_stats_libelle = array(
           $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_20_PRODUIT;
       } elseif($facture->getTva() == 0.1){
         $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_10;
+      } elseif($facture->getTva() == 0.196 && $facture->getContrat()){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_196;
+      } elseif($facture->getTva() == 0.196){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_196_PRODUIT;
+      } elseif($facture->getTva() == 0.07){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_07;
       }
       $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? (-1*$facture->getMontantHt()) : "0", 2, ",", "");
       $factureLigne[self::EXPORT_CREDIT] =  number_format(($facture->isAvoir())? "0" : $facture->getMontantHt(), 2, ",", "");
