@@ -1043,7 +1043,7 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return string $relanceCommentaire
      */
-    public function getRelanceCommentaire()
+      public function getRelanceCommentaire()
     {
         return $this->relanceCommentaire;
     }
