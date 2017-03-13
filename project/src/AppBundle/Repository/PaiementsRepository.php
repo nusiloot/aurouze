@@ -4,6 +4,8 @@ namespace AppBundle\Repository;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use AppBundle\Document\Societe;
+use AppBundle\Tool\RechercheTool;
+use Behat\Transliterator\Transliterator;
 
 class PaiementsRepository extends DocumentRepository {
 
@@ -69,5 +71,49 @@ class PaiementsRepository extends DocumentRepository {
     	$q->sort('dateCreation', 'desc');
     	$query = $q->getQuery();
         return $query->execute();
+    }
+    
+
+
+    public function findByQuery($q)
+    {
+    	$q = "\"".str_replace(" ", "\" \"", $q)."\"";
+    	$resultSet = array();
+    	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Paiements')->command([
+    			'find' => 'Paiements',
+    			'filter' => ['$text' => ['$search' => $q]],
+    			'projection' => ['score' => [ '$meta' => "textScore" ]],
+    			'sort' => ['score' => [ '$meta' => "textScore" ]],
+    			'limit' => 100
+    
+    	]);
+    	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
+    		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
+    			$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Paiements', $itemResult), "score" => $itemResult['score']);
+    		}
+    	}
+    	return $resultSet;
+    }
+    
+    public function findPaiementByQuery($q)
+    {
+    	$terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $q)));
+    	$items = $this->findByQuery($q);
+    	$resultSet = array();
+    	foreach ($items as $item) {
+    		$paiements = $item['doc'];
+    		foreach ($paiements->getPaiement() as $paiement) {
+    			foreach($terms as $term) {
+    				if(strlen($term) < 2) {
+    					continue;
+    				}
+		    		if (preg_match('/.*'.RechercheTool::getCorrespondances($term).'.*/i', $paiement->getLibelle()) || preg_match('/.*'.RechercheTool::getCorrespondances($term).'.*/i', $paiement->getMontant())) {
+		    			$key = ($paiement->getLibelle())? $paiement->getFacture()->getId().'-'.Transliterator::urlize($paiement->getLibelle()) : $paiement->getFacture()->getId().'-'.md5(microtime().rand());
+		    			$resultSet[$key] = array("doc" => $item['doc'], "paiement" => $paiement, "doc" => $item['doc']);
+		    		}
+    			}
+    		}
+    	}
+    	return $resultSet;
     }
 }
