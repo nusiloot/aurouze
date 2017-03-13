@@ -28,11 +28,16 @@ class RechercheController extends Controller {
 							"Contrat" => "Contrat",
 							"Passage" => "Passage",
 							"Facture" => "Facture",
+							"Paiements" => "Paiements",
 						);
 
 		$resultats = array();
 		foreach($searchable as $collection => $libelle) {
-			$items = $dm->getRepository('AppBundle:'.$collection)->findByQuery($query);
+			if ($collection == 'Paiements') {
+				$items = $dm->getRepository('AppBundle:'.$collection)->findPaiementByQuery($query);
+			} else {
+				$items = $dm->getRepository('AppBundle:'.$collection)->findByQuery($query);
+			}
 			if(!count($items)) {
 				continue;
 			}
