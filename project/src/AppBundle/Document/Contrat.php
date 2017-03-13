@@ -1434,7 +1434,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
         $contrat->setDateCreationAuto(new \DateTime());
-        $contrat->setAudit(null);
+        $contrat->setAuditPassage(null);
 
         if($contrat->isTypeReconductionTacite()){
           $contrat->setStatut(ContratManager::STATUT_EN_COURS);
@@ -1455,7 +1455,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateReconduction(new \DateTime());
         $contrat->setReferenceClient(null);
         if(!$contrat->getTechnicien()){
-          $contrat->setTechnicien($this->getTechnicienPlusUtilise());
+            $technicien = $this->getTechnicienPlusUtilise();
+            if($technicien) {
+                $contrat->setTechnicien($technicien);
+            }
         }
         $contrat->updateObject();
         return $contrat;
