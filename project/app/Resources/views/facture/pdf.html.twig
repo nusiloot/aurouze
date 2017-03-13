@@ -148,7 +148,7 @@ Condition de réglement : {{ facture.frequencePaiementLibelle }}
     </small>
 </p>
 </small>
-{% if(facture.isFacture or facture.isDevis) %}
+{% if(not facture.isAvoir) %}
 <div style="border-top: 1px dashed #ccc; margin-top: 15px;">
     <div class="row">
         <div class="col-xs-12 text-center">
