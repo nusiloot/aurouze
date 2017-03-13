@@ -1,24 +1,25 @@
-<div class="passage_signature" data-role="page" id="passage_signature_{{ passage.id }}" data-id="{{ passage.id }}" style="text-align: center;">
+<div class="passage_signature" data-role="page" id="passage_signature_{{ passage.id }}" data-id="{{ passage.id }}">
   <div data-role="header" style="overflow:hidden;" data-position="fixed">
-  <a href="#passage_rapport_{{ passage.id }}" class="ui-btn ui-icon-arrow-l ui-btn-icon-left" >
-        &nbsp;Retour
-  </a>
-  <a href="#passage_rapport_{{ passage.id }}" class="ui-btn ui-icon-recycle ui-btn-icon-left" >
-    &nbsp;vider
-  </a>
-  <a  class="passage_signature_valider ui-btn ui-icon-check ui-btn-icon-right passage_rapport"  href="#passage_rapport_{{ passage.id }}" >
-      Signer&nbsp;
-  </a>
-  <div class="reloadWarning ui-bar ui-bar-b" style="display:none;"></div>
+    <h1>Tournée {{ technicien.identite }}</h1>
+    <a href="#passage_rapport_{{ passage.id }}" class="passage_signature_valider ui-btn ui-icon-arrow-l ui-btn-icon-left" data-id="{{ passage.id }}" >
+          &nbsp;Retour
+    </a>
+    <a data-id="{{ passage.id }}" class="passage_signature_vider ui-btn ui-icon-recycle ui-btn-icon-right" data-id="{{ passage.id }}" >
+      vider&nbsp;
+    </a>
+    <div class="reloadWarning ui-bar ui-bar-b" style="display:none;"></div>
   </div>
-  <div data-role="main" class="ui-content">
-  {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
-{% set passageId = passage.id %}
-<div class="signature-pad ui-body ui-body-a ui-corner-all" style="padding:10px;">
-    {{ form_errors(form.signatureBase64) }}
-    {{ form_widget(form.signatureBase64) }}
-    <canvas style="width:100%;" id="signature_pad_{{ passage.id }}" ></canvas>
-</div>
-</form>
-</div>
+    <div data-role="main" class="ui-content" style="padding:3px">
+    {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
+    {% set passageId = passage.id %}
+      <div class="signature-pad ui-body ui-body-a ui-corner-all" id="signature_pad_content_{{ passage.id }}">
+          {{ form_errors(form.signatureBase64) }}
+          {{ form_widget(form.signatureBase64) }}
+          <canvas id="signature_pad_{{ passage.id }}"></canvas>
+      </div>
+      <a  class="passage_signature_valider ui-btn ui-icon-check ui-btn-icon-right passage_rapport"  href="#passage_rapport_{{ passage.id }}" data-id="{{ passage.id }}" >
+          Valider la saisie&nbsp;
+      </a>
+    </form>
+  </div>
 </div>

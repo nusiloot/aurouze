@@ -1,6 +1,6 @@
 {% set _menu_active = 'tournee' %}
 {% extends 'base_mobile.html.twig' %}
-{% block manifest %}{{path('manifest',{ 'technicien' : technicien.id })}}{% endblock manifest %}
+
 {% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
 {% block body %}
 <div id="version" data-version="{{version}}" data-url="{{ path('tournee_version',{ 'technicien' : technicien.id }) }}" ></div>
@@ -15,7 +15,7 @@
 
 <div class="reloadWarning ui-bar ui-bar-b" style="display:none;">
 	<h3>Votre tournée a été modifiée. Il est préférable de la recharger.&nbsp;
-      <a href="{{path('tournee_technicien',{ 'technicien' : technicien.id })}}" class="ui-btn ui-icon-back ui-btn-icon-left" data-role="button" data-mini="true" >
+      <a onclick="window.location.reload()" class="ui-btn ui-icon-back ui-btn-icon-left" data-role="button" data-mini="true" >
         &nbsp;Recharger
       </a>
   </h3>
@@ -25,7 +25,7 @@
 <div data-role="main" class="ui-content">
 <ul data-role="listview" data-ajax="false" data-inset="true" data-theme="a">
   <li data-role="list-divider">
-    <h3>{{ date | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</h3>
+    <h3>  <input id="tourneesDate" data-url-cible="{{ path('tournee_technicien',{ 'technicien' : technicien.id }) }}" data-role="date" value="{{date | localizeddate("medium", "none", null, null, "YYYY-MM-dd") }}" data-inline="true" type="text" ></h3>
     <span class="ui-li-count">{{ passagesByTechnicien | length }}</span>
   </li>
   {% for passage in passagesByTechnicien %}
@@ -61,6 +61,6 @@
   </div>
   {{ include('tournee/passageRapport.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[passage.id]}) }}
   {{ include('tournee/passageSignature.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[passage.id]}) }}
-  
+
 {% endfor %}
 {% endblock %}

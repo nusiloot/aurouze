@@ -19,6 +19,8 @@ class PassageManager {
     const TYPE_PASSAGE_GARANTIE = "GARANTIE";
     const TYPE_PASSAGE_CONTROLE = "CONTROLE";
 
+
+    const TYPE_INFESTATION_AUCUNE = "AUCUNE";
     const TYPE_INFESTATION_FAIBLE = "FAIBLE";
     const TYPE_INFESTATION_PRESENCE = "PRESENCE";
     const TYPE_INFESTATION_ELEVE = "ELEVE";
@@ -43,6 +45,7 @@ class PassageManager {
     );
 
     public static $typesInfestationLibelles = array(
+        self::TYPE_INFESTATION_AUCUNE => "Aucune infestation",
         self::TYPE_INFESTATION_FAIBLE => "Faible",
         self::TYPE_INFESTATION_PRESENCE => "Présence moyenne",
         self::TYPE_INFESTATION_ELEVE => "Élevé",
