@@ -1,6 +1,6 @@
 {% extends 'base_pdf.html.twig' %}
 {% block body %}
-  <h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Rapport de visite du {{ passage.dateDebut | localizeddate("full", "none") }} à {{ passage.dateDebut | date("H") }}h{{ passage.dateDebut | date("i") }}</strong> n° {{ passage.numeroArchive }}
+  <h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Rapport de visite du {{ passage.dateDebut | localizeddate("full", "none") }} </strong> n° {{ passage.numeroArchive }}
   </h2>
   <hr style="border-color: #ddd; margin-bottom: 30px;" />
   {% set emetteur = parameters.emetteur %}
