@@ -1,10 +1,15 @@
+{% set title = title | default("Rechercher par société") %}
+
 <div class="row" id="searchable" data-type="societe" data-url="{{ path('recherche_societe')  }}" data-target="{{ urlTarget }}">
     <div class="col-xs-12">
-        <h3 style="margin-top: 10px;">Rechercher par société</h3>
+        <h3 style="margin-top: 10px;">{{ title }}</h3>
         <form action="{{ path('recherche') }}" method="get" class="form-horizontal">
             <div class="form-group">
     			<div class="col-xs-12">
 					<input type="text" name="q" placeholder="{% if(societe is defined and societe) %}{{ societe.libelleComplet }}{% else %}Rechercher une société{% endif %}" class="form-control typeahead" {% if autofocus is defined and autofocus %}autofocus="autofocus"{% endif %} id="q" value="" />
+                    <div class="checkbox">
+                        <label><input type="checkbox"> Inclure les sociétés suspendues</label>
+                    </div>
     			</div>
     		</div>
         </form>

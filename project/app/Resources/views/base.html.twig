@@ -70,7 +70,7 @@
                       {% else %}  {{ path('factures_retard') }}{% endif %}"></span>Retard{% if(retard > 0) %}&nbsp;<span class="badge badge-danger">{{ retard }}</span>{% endif %}</a></li>
                     </ul>
 
-                    {% if(app.request.get('etablissement')) %}<p id="nav_nom_etablissement" class="navbar-text truncate visible-lg-block"><strong>{{ app.request.get('etablissement').societe.raisonSociale }}</strong></p>{% endif %}
+                    {% if(app.request.get('etablissement')) %}<!--<p id="nav_nom_etablissement" class="navbar-text truncate visible-lg-block"><strong>{{ app.request.get('etablissement').societe.raisonSociale }}</strong></p>-->{% endif %}
 
                     <ul class="nav navbar-nav pull-right">
                         <li class="{%if (_menu_active == 'recherche') %}active{% endif %}"><a href="{{ path('recherche')}}"><span class="glyphicon glyphicon-search"></span></a></li>
