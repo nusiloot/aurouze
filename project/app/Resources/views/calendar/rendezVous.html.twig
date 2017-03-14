@@ -248,12 +248,12 @@
                         {% elseif form is defined %}
                             <button data-loading-text="En cours ..." autocomplete="off" class="btn btn-primary btn-block" type="submit">{% if(rdv.passage) %}Ajouter le RDV{% else %}Ajouter le RDV{% endif %}</button>
                         {% endif %}
-                      {% if (rdv.passage.isValideTechnicien and rdv.passage.isSaisieTechnicien and rdv.passage.isPdfNonEnvoye) %}
+                      {% if (rdv.passage.isValideTechnicien and rdv.passage.isSaisieTechnicien) %}
                         <div class="btn-group">
                             <a class="btn btn-sm {% if (rdv.passage.emailTransmission) %}btn-default{% else %}btn-success{% endif %}" href="{{ path('passage_pdf_rapport', {'id': rdv.passage.id })}}" title="Pdf du rapport de visite"
                                   data-toggle="tooltip" ><span class="glyphicon glyphicon-file"></span></a>
                             {% if (rdv.passage.emailTransmission) %}
-                            <a onclick="return confirm('Êtes vous de vouloir envoyer le rapport de visite à l\'email suivant : "{{rdv.passage.emailTransmission}}"  ?')" class="btn btn-sm btn-success" href="{{ path('passage_transmission_email', {'id': rdv.passage.id })}}"><span class="glyphicon glyphicon-send"></span> Envoyer mail</a>
+                            <a onclick="return confirm('Êtes vous de vouloir envoyer le rapport de visite à l\'email suivant : {{rdv.passage.emailTransmission}}  ?')" class="btn btn-sm {% if rdv.passage.isPdfNonEnvoye() %}btn-success{% else %}btn-default{% endif %}" href="{{ path('passage_transmission_email', {'id': rdv.passage.id })}}"><span class="glyphicon glyphicon-send"></span> Envoyer mail</a>
                             {% endif %}
                           </div>
                         {% endif %}

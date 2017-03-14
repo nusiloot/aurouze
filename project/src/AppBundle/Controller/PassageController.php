@@ -367,13 +367,13 @@ class PassageController extends Controller {
 
             return new Response($rapportVisitePdf->html, 200);
         }
+        if(!$passage->getEmailTransmission()){
+          $dm = $this->get('doctrine_mongodb')->getManager();
+          $passage->setPdfNonEnvoye(false);
+          $dm->flush();
+        }
 
-        return new Response(
-                $this->get('knp_snappy.pdf')->getOutputFromHtml($rapportVisitePdf->html, $this->getPdfGenerationOptions()), 200, array(
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $rapportVisitePdf->filename . '"'
-                )
-        );
+        return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
     }
 
     /**
@@ -388,6 +388,7 @@ class PassageController extends Controller {
             return new Response($rapportVisitePdf->html, 200);
         }
 
+        $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('passage.manager');
         $parameters = $pm->getParameters();
         if(!$parameters['coordonnees'] || !$parameters['coordonnees']['email'] || !$parameters['coordonnees']['nom']){
@@ -414,6 +415,8 @@ class PassageController extends Controller {
 
        try {
           $this->get('mailer')->send($message);
+          $passage->setPdfNonEnvoye(false);
+          $dm->flush();
         }
         catch(Exception $e) {
           var_dump('NO mailer config'); exit;
