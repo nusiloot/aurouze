@@ -708,6 +708,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             $this->setNbPassages($max);
     }
 
+    public function updatePassages() {
+
+    }
+
     public function updatePrestations($dm) {
         $cm = new ConfigurationManager($dm);
         $configuration = $cm->getRepository()->findOneById(Configuration::PREFIX);
@@ -1776,9 +1780,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function updateNumeroOrdrePassage() {
+        $this->nbPassages = null;
+        $this->getNbPassages();
         foreach($this->getContratPassages() as $etablissementPassages) {
             $numero = 1;
-            foreach ($etablissementPassages->getPassagesSorted() as $passage) {
+            foreach ($etablissementPassages->getPassagesDateSorted() as $passage) {
                 if ($passage->isControle()) {
                     $passage->setNumeroOrdre("C");
                 } elseif ($passage->isGarantie()) {
@@ -1787,6 +1793,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                     $passage->setNumeroOrdre($numero);
                     $numero++;
                 }
+
+                $passage->setLibelle(null);
                 $passage->getLibelle();
             }
         }

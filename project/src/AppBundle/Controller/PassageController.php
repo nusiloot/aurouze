@@ -106,10 +106,14 @@ class PassageController extends Controller {
             $passage->setDateDebut($passage->getDatePrevision());
             $dm->persist($passage);
             $contrat->addPassage($etablissement, $passage);
-
             $dm->flush();
 
-            return $this->redirectToRoute('passage_planifier', array('passage' => $passage->getId()));
+            if($request->get('action') == "creer_planifier") {
+
+                return $this->redirectToRoute('passage_planifier', array('passage' => $passage->getId()));
+            }
+
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
 
         return $this->render('passage/creation.html.twig', array('passage' => $passage, 'form' => $form->createView()));
@@ -155,10 +159,11 @@ class PassageController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $passage = $form->getData();
+            $contrat = $passage->getContrat();
             if(!$passage->getRendezVous()) {
                 $passage->setDateDebut($passage->getDatePrevision());
             }
-            $dm->persist($passage);
+            $contrat->preUpdate();
             $dm->flush();
 
             if($request->get('service')) {
