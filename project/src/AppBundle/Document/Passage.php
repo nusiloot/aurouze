@@ -217,6 +217,16 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $multiTechnicien;
 
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $saisieTechnicien;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $pdfNonEnvoye;
+
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
@@ -1471,4 +1481,63 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         }
         return ($p_0->getDatePrecedente()->format('Hi') > $p_1->getDatePrecedente()->format('Hi')) ? +1 : -1;
     }
+
+    /**
+     * Set saisieTechnicien
+     *
+     * @param boolean $saisieTechnicien
+     * @return self
+     */
+    public function setSaisieTechnicien($saisieTechnicien)
+    {
+        $this->saisieTechnicien = $saisieTechnicien;
+        return $this;
+    }
+
+    /**
+     * Get saisieTechnicien
+     *
+     * @return boolean $saisieTechnicien
+     */
+    public function getSaisieTechnicien()
+    {
+        return $this->saisieTechnicien;
+    }
+
+    public function isSaisieTechnicien(){
+      return $this->saisieTechnicien;
+    }
+
+    public function isValideTechnicien()
+    {
+        return $this->getSignatureBase64() || $this->getNomTransmission() || $this->getEmailTransmission();
+    }
+
+    /**
+     * Set pdfNonEnvoye
+     *
+     * @param boolean $pdfNonEnvoye
+     * @return self
+     */
+    public function setPdfNonEnvoye($pdfNonEnvoye)
+    {
+        $this->pdfNonEnvoye = $pdfNonEnvoye;
+        return $this;
+    }
+
+    /**
+     * Get pdfNonEnvoye
+     *
+     * @return boolean $pdfNonEnvoye
+     */
+    public function getPdfNonEnvoye()
+    {
+        return $this->pdfNonEnvoye;
+    }
+
+    public function isPdfNonEnvoye()
+    {
+        return $this->pdfNonEnvoye;
+    }
+
 }

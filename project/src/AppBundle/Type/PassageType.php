@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Doctrine\ODM\MongoDB\DocumentManager;
@@ -60,6 +61,8 @@ class PassageType extends AbstractType
         		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
         ));
         $builder->get('applications')->resetViewTransformers();
+        $builder->add('emailTransmission', EmailType::class, array('label' => 'Email :','required' => false, 'attr' => array("placeholder" => 'Email de transmission')));
+        $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'required' => false, 'attr' => array("placeholder" => 'Nom du responsable')));
     }
 
     /**

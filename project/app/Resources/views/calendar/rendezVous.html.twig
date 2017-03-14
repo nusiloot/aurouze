@@ -16,8 +16,21 @@
                         <span><span class="glyphicon glyphicon-print"></span> Bon Imprimé</span>
                     {% endif %}
                 {% elseif (rdv.passage and rdv.passage.realise) %}
-                    <button class="btn btn-md btn-block btn-success">{{
-                    rdv.passage.getStatutLibelle() }}</button>
+                    {% if (rdv.passage.isSaisieTechnicien and rdv.passage.isSaisieTechnicien) %}
+                      {% if (rdv.passage.getPdfNonEnvoye) %}
+                        <button class="btn btn-md btn-block" style="background-color:{{rdv.getStatusColor()}}; color:{{rdv.getTextColor()}};">
+                          Pdf non envoyé
+                        </button>
+                      {% else %}
+                        <button class="btn btn-md btn-block" style="background-color:{{rdv.getStatusColor()}}; color:{{rdv.getTextColor()}};;">
+                          Pdf envoyé
+                        </button>
+                      {% endif %}
+                    {% else %}
+                      <button class="btn btn-md btn-block btn-success">
+                        {{ rdv.passage.getStatutLibelle() }}
+                      </button>
+                    {% endif %}
                     {% else %}
                     <button class="btn btn-md btn-block">Libre</button>
                 {% endif %}
@@ -119,6 +132,27 @@
                                 </p>
                             </div>
                         </div>
+                        {% if(rdv.passage.nomTransmission or rdv.passage.emailTransmission) %}
+                          <div class="form-group" style="margin-bottom: 0">
+                              <label class="control-label col-xs-2">Nom / Email</label>
+                              <div class="col-xs-10">
+                                  <p class="form-control-static">
+                                    {% if(rdv.passage.nomTransmission) %}{{ rdv.passage.nomTransmission }}{% else %}pas de nom{% endif %}&nbsp;/&nbsp;
+                                      {% if(rdv.passage.emailTransmission) %}{{ rdv.passage.emailTransmission }}{% else %}pas d'email{% endif %}
+                                  </p>
+                              </div>
+                          </div>
+                        {% endif %}
+                        {% if(rdv.passage.signatureBase64) %}
+                          <div class="form-group" style="margin-bottom: 0">
+                              <label class="control-label col-xs-2">Signature</label>
+                              <div class="col-xs-6">
+                                    <div class="well" height="100px;" width="290px;" >
+                                      <img src="{{ rdv.passage.signatureBase64   }}" height="100px;" width="290px;" >
+                                    </div>
+                              </div>
+                          </div>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
                 {% if (form is defined) %}
@@ -188,31 +222,40 @@
                     <div class="col-xs-2 text-left">
                         <button type="button" class="btn btn-block btn-default" data-dismiss="modal">{% if rdv.id or form is not defined %}Fermer{% else %}Annuler{% endif %}</button>
                     </div>
-                    <div class="col-xs-8 text-center">
+                    <div class="col-xs-7 text-center">
                         <div class="btn-group">
                             {% if rdv.id and form is defined %}
-                                <a class="btn btn-sm btn-default text-danger rdv-deplanifier-link" onclick="return confirm('Êtes vous sûr de vouloir supprimer ce rendez-vous ?')" href="{{ path('calendarDelete', {'id': rdv.id }) }}"><span class="text-danger"><span class="glyphicon glyphicon-trash"></span> Supprimer le RDV</span></a>
+                                <a class="btn btn-sm btn-default text-danger rdv-deplanifier-link" onclick="return confirm('Êtes vous sûr de vouloir supprimer ce rendez-vous ?')" href="{{ path('calendarDelete', {'id': rdv.id }) }}"><span class="text-danger"><span class="glyphicon glyphicon-trash"></span> Supprimer RDV</span></a>
                             {% endif %}
                             {% if (rdv.id and rdv.passage and form is defined) %}
                                 <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_bon', { id: rdv.passage.id })}}"><span class="glyphicon glyphicon-print"></span> Bon de passage</a>
-                                <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_mission', { id: rdv.passage.id })}}"><span class="glyphicon glyphicon-print"></span> Fiche de suivi client</a>
+                                <a class="btn btn-sm btn-default" href="{{ path('passage_pdf_mission', { id: rdv.passage.id })}}"><span class="glyphicon glyphicon-print"></span> Fiche suivi client</a>
                             {% endif %}
                             {% if (rdv.id and rdv.passage and rdv.passage.realise and form is not defined) %}
                                 <a class="btn btn-sm btn-default rdv-modifier-link" href="{{ path('calendarRead', {'id': rdv.id, 'forceEdition': true}) }}"><span class="glyphicon glyphicon-calendar"></span> Modifier le RDV</a>
                             {% endif %}
                             {% if (rdv.id and rdv.passage) %}
-                                <a class="btn btn-sm btn-default" href="{{ path('passage_edition', {'id': rdv.passage.id })}}"><span class="glyphicon glyphicon-pencil"></span> Rapport de visite</a>
+                                <a class="btn btn-sm btn-default" href="{{ path('passage_edition', {'id': rdv.passage.id })}}"><span class="glyphicon glyphicon-pencil"></span> Rapport visite</a>
                             {% endif %}
                             {% if (rdv.passage and not rdv.id) %}
                                 <a href="{{ path('passage_annulation',{ 'id': rdv.passage.id }) }}" class="btn btn-sm btn-default text-danger" onclick="return confirm('Êtes vous sûr de vouloir passer ce passage en annuler ?')"><span class="text-danger">Annuler le passage</span></a>
                             {% endif %}
                         </div>
                     </div>
-                    <div class="col-xs-2 text-right">
+                    <div class="col-xs-3 text-right">
                         {% if rdv.id and form is defined %}
                             <button data-loading-text="En cours ..." autocomplete="off" class="btn btn-primary btn-block" type="submit">Modifier</button>
                         {% elseif form is defined %}
                             <button data-loading-text="En cours ..." autocomplete="off" class="btn btn-primary btn-block" type="submit">{% if(rdv.passage) %}Ajouter le RDV{% else %}Ajouter le RDV{% endif %}</button>
+                        {% endif %}
+                      {% if (rdv.passage.isValideTechnicien and rdv.passage.isSaisieTechnicien and rdv.passage.isPdfNonEnvoye) %}
+                        <div class="btn-group">
+                            <a class="btn btn-sm {% if (rdv.passage.emailTransmission) %}btn-default{% else %}btn-success{% endif %}" href="{{ path('passage_pdf_rapport', {'id': rdv.passage.id })}}" title="Pdf du rapport de visite"
+                                  data-toggle="tooltip" ><span class="glyphicon glyphicon-file"></span></a>
+                            {% if (rdv.passage.emailTransmission) %}
+                            <a onclick="return confirm('Êtes vous de vouloir envoyer le rapport de visite à l\'email suivant : "{{rdv.passage.emailTransmission}}"  ?')" class="btn btn-sm btn-success" href="{{ path('passage_transmission_email', {'id': rdv.passage.id })}}"><span class="glyphicon glyphicon-send"></span> Envoyer mail</a>
+                            {% endif %}
+                          </div>
                         {% endif %}
                     </div>
                 </div>

@@ -307,7 +307,6 @@ class CalendarController extends Controller {
             $dm->persist($rdv);
             if($rdv->getPassage()) {
                 $rdv->pushToPassage();
-              //  $pm->updateNextPassageAPlannifier($rdv->getPassage());
             }
         }
 

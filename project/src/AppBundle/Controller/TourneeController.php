@@ -127,8 +127,12 @@ class TourneeController extends Controller {
         }
 
         $passage->setDateRealise($passage->getDateDebut());
+
+        $passage->setSaisieTechnicien(true);
+        if(!$passage->getPdfNonEnvoye()){
+          $passage->setPdfNonEnvoye(true);
+        }
         $dm->persist($passage);
-        // $dm->persist($contrat);
         $dm->flush();
 
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());

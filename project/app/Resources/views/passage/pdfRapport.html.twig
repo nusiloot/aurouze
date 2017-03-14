@@ -1,0 +1,68 @@
+{% extends 'base_pdf.html.twig' %}
+{% block body %}
+  <h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Rapport de visite du {{ passage.dateDebut | localizeddate("full", "none") }} à {{ passage.dateDebut | date("H") }}h{{ passage.dateDebut | date("i") }}</strong> n° {{ passage.numeroArchive }}
+  </h2>
+  <hr style="border-color: #ddd; margin-bottom: 30px;" />
+  {% set emetteur = parameters.emetteur %}
+  {% if parameters["emetteur_"~passage.region] is defined %}
+      {% set emetteur = parameters["emetteur_"~passage.region] %}
+  {% endif %}
+  <div class="row">
+      <div class="col-xs-6">
+          <p>
+              <span class="lead" style="font-weight: 400; font-size: 18px">{{ emetteur.nom }}</span><br />
+              {{ emetteur.adresse }}<br />
+              {{ emetteur.code_postal }} {{ emetteur.commune }} <br />
+              Tél : {{ emetteur.telephone }}<br />
+              Email : {{ emetteur.email }}
+          </p>
+      </div>
+      <div class="col-xs-6 text-left form-horizontal">
+          <p>
+              <span class="lead" style="font-weight: 400; font-size: 18px"><strong>{{ passage.societe.raisonSociale }}</strong></span><br />
+              {% if(passage.etablissement.nom != passage.societe.raisonSociale) %}
+              <span class="lead" style="font-weight: 400; font-size: 18px">{{ passage.etablissement.nom }}</span><br />
+              {% endif %}
+              {{ passage.etablissement.adresse.adresseFormatee | nl2br }}<br />
+              {{ passage.etablissement.adresse.codePostal }}
+              {{ passage.etablissement.adresse.Commune }}
+          </p>
+      </div>
+  </div>
+  <br />
+  <div class="row">
+      <div class="col-xs-12">
+          <p class="lead" style="font-weight: 400;">{{ passage.libelle }} effectué par {{ passage.getTechniciensIdentite() | join(", ")}} <small> - Contrat n° {{ passage.contrat.numeroArchive }}</small></p>
+          <p>{% for prestation in passage.prestations %}
+              <span class="btn btn-sm btn-default">{{ prestation.nomToString }}</span>
+          {% endfor %}</p>
+      </div>
+  </div>
+  <br />
+  <div class="row">
+      <div class="col-xs-12">
+          <div class="well">
+              Observations :
+              <br />
+              {{ passage.description | nl2br }}
+          </div>
+      </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+          <div class="well" style="background: #fff; padding: 10px;">
+              <p>Heure d'arrivée : {{ passage.dateDebut | date('H') }}h{{ passage.dateDebut | date('i') }}</p>
+              <p>Heure de départ : {{ passage.dateFin | date('H') }}h{{ passage.dateFin | date('i') }}</p>
+              <br />
+          </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-8">
+              <p>Signature du client :<br /></p>
+            <div class="well" height="200px;" >
+              <img src="{{ passage.signatureBase64   }}" height="200px;" width="580px;" >
+            </div>
+      </div>
+  </div>
+{% endblock %}

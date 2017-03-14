@@ -43,7 +43,7 @@ services:
 
     passage.manager:
         class: AppBundle\Manager\PassageManager
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, "%passage%"]
 
     rendezvous.manager:
         class: AppBundle\Manager\RendezVousManager

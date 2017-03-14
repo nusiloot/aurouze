@@ -357,6 +357,74 @@ class PassageController extends Controller {
     }
 
     /**
+     * @Route("/passage/pdf-rapport/{id}", name="passage_pdf_rapport")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function pdfRapportAction(Request $request, Passage $passage) {
+        $rapportVisitePdf = $this->createRapportVisitePdf($passage);
+
+        if ($request->get('output') == 'html') {
+
+            return new Response($rapportVisitePdf->html, 200);
+        }
+
+        return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($rapportVisitePdf->html, $this->getPdfGenerationOptions()), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $rapportVisitePdf->filename . '"'
+                )
+        );
+    }
+
+    /**
+     * @Route("/passage/passage-transmission-email/{id}", name="passage_transmission_email")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function transmissionEmailAction(Request $request, Passage $passage) {
+
+        $rapportVisitePdf = $this->createRapportVisitePdf($passage);
+        if ($request->get('output') == 'html') {
+
+            return new Response($rapportVisitePdf->html, 200);
+        }
+
+        $pm = $this->get('passage.manager');
+        $parameters = $pm->getParameters();
+        if(!$parameters['coordonnees'] || !$parameters['coordonnees']['email'] || !$parameters['coordonnees']['nom']){
+          throw new Exception("Le paramétrage pour le mail d'envoie n'est pas correct.");
+        }
+
+        $fromEmail = $parameters['coordonnees']['email'];
+        $fromName = $parameters['coordonnees']['nom'];
+
+        $suject = "Aurouze - Rapport de visite du ".$passage->getDateDebut()->format("d/m/Y")." à ".$passage->getDateDebut()->format("H\hi");
+        $body = $this->renderView(
+            'passage/rapportEmail.html.twig',
+            array('passage' => $passage)
+        );
+
+        $message = \Swift_Message::newInstance()
+       ->setSubject($suject)
+       ->setFrom(array($fromEmail => $fromName))
+       ->setTo($passage->getEmailTransmission())
+       ->setBody($body,'text/plain');
+
+       $attachment = \Swift_Attachment::newInstance($this->get('knp_snappy.pdf')->getOutputFromHtml($rapportVisitePdf->html, $this->getPdfGenerationOptions()), $rapportVisitePdf->filename, 'application/pdf');
+       $message->attach($attachment);
+
+       try {
+          $this->get('mailer')->send($message);
+        }
+        catch(Exception $e) {
+          var_dump('NO mailer config'); exit;
+        }
+        return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
+    }
+
+
+
+
+    /**
      * @Route("/passage/pdf-bons-massif", name="passage_pdf_bons_massif")
      */
     public function pdfBonsMassifAction(Request $request) {
@@ -479,6 +547,20 @@ class PassageController extends Controller {
             'Content-Disposition' => 'attachment; filename="' . $filename . '"'
                 )
         );
+    }
+
+    private function createRapportVisitePdf(Passage $passage){
+      $createRapportVisitePdf = new \stdClass();
+      $fm = $this->get('facture.manager');
+      $createRapportVisitePdf->html = $this->renderView('passage/pdfRapport.html.twig', array(
+          'passage' => $passage,
+          'parameters' => $fm->getParameters(),
+      ));
+
+      $createRapportVisitePdf->filename = sprintf("passage_rapport_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getEtablissement()->getIntitule())));
+
+      return $createRapportVisitePdf;
+
     }
 
     /**
