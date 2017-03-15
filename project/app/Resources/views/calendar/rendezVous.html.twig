@@ -132,6 +132,16 @@
                                 </p>
                             </div>
                         </div>
+                        {% if(rdv.passage.commentaireInterne) %}
+                        <div class="form-group" style="margin-bottom: 0">
+                              <label class="control-label col-xs-2">Com. interne</label>
+                              <div class="col-xs-10">
+                                  <p class="form-control-static">
+                                    {{ rdv.passage.commentaireInterne | nl2br }}
+                                  </p>
+                              </div>
+                          </div>
+                        {% endif %}
                         {% if(rdv.passage.nomTransmission or rdv.passage.emailTransmission) %}
                           <div class="form-group" style="margin-bottom: 0">
                               <label class="control-label col-xs-2">Nom / Email</label>

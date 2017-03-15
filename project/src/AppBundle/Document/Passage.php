@@ -210,6 +210,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /**
      * @MongoDB\String
      */
+    protected $commentaireInterne;
+
+    /**
+     * @MongoDB\String
+     */
     protected $audit;
 
     /**
@@ -1539,4 +1544,26 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->pdfNonEnvoye;
     }
 
+
+    /**
+     * Set commentaireInterne
+     *
+     * @param string $commentaireInterne
+     * @return self
+     */
+    public function setCommentaireInterne($commentaireInterne)
+    {
+        $this->commentaireInterne = $commentaireInterne;
+        return $this;
+    }
+
+    /**
+     * Get commentaireInterne
+     *
+     * @return string $commentaireInterne
+     */
+    public function getCommentaireInterne()
+    {
+        return $this->commentaireInterne;
+    }
 }

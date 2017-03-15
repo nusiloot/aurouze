@@ -84,8 +84,13 @@
         </div>
         {% if (passage.isValideTechnicien and passage.isSaisieTechnicien) %}
         <div class="panel panel-default">
-                <div class="panel-heading"><strong>Transmission Client</strong></div>
+                <div class="panel-heading"><strong>Information Client</strong></div>
                 <div class="panel-body col-xs-offset-2">
+                  <div class="row">
+                      <div class="col-xs-10">
+                          {{ form_row(form.commentaireInterne) }}
+                      </div>
+                  </div>
                   <div class="row">
                       <div class="col-xs-10">
                           {{ form_row(form.nomTransmission) }}

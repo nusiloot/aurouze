@@ -61,8 +61,11 @@ class PassageType extends AbstractType
         		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
         ));
         $builder->get('applications')->resetViewTransformers();
-        $builder->add('emailTransmission', EmailType::class, array('label' => 'Email :','required' => false, 'attr' => array("placeholder" => 'Email de transmission')));
-        $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'required' => false, 'attr' => array("placeholder" => 'Nom du responsable')));
+        if($builder->getData()->isValideTechnicien() && $builder->getData()->isSaisieTechnicien()){
+          $builder->add('commentaireInterne', TextareaType::class, array('label' => 'Commentaire interne (non transmis au client) :', 'required' => false, "attr" => array("class" => "form-control", "rows" => 3)));
+          $builder->add('emailTransmission', EmailType::class, array('label' => 'Email :','required' => false, 'attr' => array("placeholder" => 'Email de transmission')));
+          $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'required' => false, 'attr' => array("placeholder" => 'Nom du responsable')));
+      }
     }
 
     /**

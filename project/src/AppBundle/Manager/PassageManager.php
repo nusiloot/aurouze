@@ -150,6 +150,9 @@ class PassageManager {
     }
 
     public function getInfestationLibelle($infestation){
+      if(!$infestation || !isset(self::$typesInfestationLibelles[$infestation])){
+        return "NC";
+      }
       return self::$typesInfestationLibelles[$infestation];
     }
 }
