@@ -286,7 +286,7 @@ class CalendarController extends Controller {
 
         if(!$edition && !$request->get('forceEdition', false)) {
 
-            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv));
+            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'service' => $request->get('service')));
         }
 
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
@@ -300,7 +300,7 @@ class CalendarController extends Controller {
 
         if (!$form->isSubmitted() || !$form->isValid()) {
 
-            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
+            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView(), 'service' => $request->get('service')));
         }
 
         if(!$rdv->getId()) {
@@ -328,6 +328,11 @@ class CalendarController extends Controller {
         $dm->remove($rdv);
 
         $dm->flush();
+
+        if($request->get('service')) {
+
+            return $this->redirect($request->get('service'));
+        }
 
         return $this->redirect($this->generateUrl('calendarManuel'));
     }

@@ -207,27 +207,32 @@ class PassageController extends Controller {
         $pm = $this->get('passage.manager');
 
         $form = $this->createForm(new PassageAnnulationType($dm, $passage), $passage, array(
-            'action' => $this->generateUrl('passage_annulation', array('id' => $passage->getId())),
+            'action' => $this->generateUrl('passage_annulation', array('id' => $passage->getId(), 'service' => $request->get('service'))),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-          $statut = $passage->getStatut();
-          $passage->setStatut(PassageManager::STATUT_ANNULE);
-          $dm->persist($passage);
-          // if ($statut == PassageManager::STATUT_A_PLANIFIER) {
-          //   $pm->updateNextPassageAPlannifier($passage);
-          // }
-          $dm->flush();
-          $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
-          $contrat->verifyAndClose();
+            $statut = $passage->getStatut();
+            $passage->setStatut(PassageManager::STATUT_ANNULE);
+            $dm->persist($passage);
+            // if ($statut == PassageManager::STATUT_A_PLANIFIER) {
+            //   $pm->updateNextPassageAPlannifier($passage);
+            // }
+            $dm->flush();
+            $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+            $contrat->verifyAndClose();
 
-          $dm->flush();
+            $dm->flush();
+
+            if($request->get('service')) {
+
+                return $this->redirect($request->get('service'));
+            }
 
           return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
         }
 
-        return $this->render('passage/annulation.html.twig', array('form' => $form->createView(), 'passage' => $passage));
+        return $this->render('passage/annulation.html.twig', array('form' => $form->createView(), 'passage' => $passage, 'service' => $request->get('service')));
     }
 
     /**
@@ -273,10 +278,10 @@ class PassageController extends Controller {
     public function visualisationAction(Request $request, Passage $passage) {
 
         if ($passage->getRendezVous()) {
-            return $this->redirectToRoute('calendarRead', array('id' => $passage->getRendezVous()->getId()));
+            return $this->redirectToRoute('calendarRead', array('id' => $passage->getRendezVous()->getId(), 'service' => $request->get('service')));
         }
 
-        return $this->forward('AppBundle:Calendar:calendarRead', array('passage' => $passage->getId()));
+        return $this->forward('AppBundle:Calendar:calendarRead', array('passage' => $passage->getId(), 'service' => $request->get('service')));
     }
 
     /**
@@ -288,7 +293,7 @@ class PassageController extends Controller {
 
 
         $form = $this->createForm(new PassageType($dm), $passage, array(
-            'action' => $this->generateUrl('passage_edition', array('id' => $passage->getId())),
+            'action' => $this->generateUrl('passage_edition', array('id' => $passage->getId(), 'service' => $request->get('service'))),
             'method' => 'POST',
         ));
 
@@ -296,7 +301,7 @@ class PassageController extends Controller {
 
         if (!$form->isSubmitted() || !$form->isValid()) {
 
-            return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+            return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView(), 'service' => $request->get('service')));
         }
         $passageManager = $this->get('passage.manager');
 
@@ -319,8 +324,13 @@ class PassageController extends Controller {
 
         $dm->flush();
         if ($passage->getMouvementDeclenchable()) {
+
             return $this->redirectToRoute('facture_societe', array('id' => $passage->getSociete()->getId()));
+        } elseif($request->get('service')) {
+
+            return  $this->redirect($request->get('service'));
         } else {
+
             return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
         }
     }
@@ -373,6 +383,11 @@ class PassageController extends Controller {
           $dm->flush();
         }
 
+        if($request->get('service')) {
+
+            return $this->redirect($request->get('service'));
+        }
+
         return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
     }
 
@@ -421,6 +436,12 @@ class PassageController extends Controller {
         catch(Exception $e) {
           var_dump('NO mailer config'); exit;
         }
+
+        if($request->get('service')) {
+
+            return $this->redirect($request->get('service'));
+        }
+
         return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
     }
 

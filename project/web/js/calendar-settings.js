@@ -16,7 +16,8 @@ $(function () {
             var passage = $(this).data('passage');
             $.get(
             $('#calendrier').data('urlRead'), {
-                passage: passage
+                passage: passage,
+                service: encodeURI(location.href)
             }, function (response) {
                 $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
@@ -76,7 +77,8 @@ $(function () {
         eventClick: function (event) {
             $.get(
                 $('#calendrier').data('urlRead'), {
-                id: event.id
+                id: event.id,
+                service: encodeURI(location.href)
             }, function (response) {
                 $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
