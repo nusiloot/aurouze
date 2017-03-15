@@ -106,6 +106,7 @@ class PassageController extends Controller {
             $passage->setDateDebut($passage->getDatePrevision());
             $dm->persist($passage);
             $contrat->addPassage($etablissement, $passage);
+            $contrat->preUpdate();
             $dm->flush();
 
             if($request->get('action') == "creer_planifier") {
