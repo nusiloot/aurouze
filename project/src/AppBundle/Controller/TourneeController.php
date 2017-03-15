@@ -23,6 +23,7 @@ class TourneeController extends Controller {
         }else{
           $date = \DateTime::createFromFormat('Y-m-d',$date);
         }
+        
         $passageManager = $this->get('passage.manager');
         $passagesForAllTechniciens = $passageManager->getRepository()->findAllPassagesForTechnicien($date);
         $passagesByTechniciens = $passageManager->sortPassagesByTechnicien($passagesForAllTechniciens);
