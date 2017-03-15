@@ -5,8 +5,22 @@
     <ol class="breadcrumb">
         <li><a href="{{ path('tournees') }}">Tournees</a></li>
     </ol>
-
-    <h2>Tournées du {{ date | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</h2>
+    	<div class="row">
+        <div class="col-xs-9">
+            <h2>Tournées du {{ date | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</h2></span>
+        </div>
+        <div class="col-xs-3">
+            <h3><div class="form-group">
+                <div class='input-group date' id='tournees-choice-datetimepicker'>
+                    <input type='text' class="form-control datepicker" value="{{ date | localizeddate("medium", "none", null, null, "dd/MM/yyyy") }}" data-url="{{path('tournees')}}" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+          </h3>
+        </div>
+      </div>
   {% for technicienId,passagesTechnicien in passagesByTechniciens %}
   <div class="panel panel-default">
   	<div class="panel-body">
@@ -21,43 +35,47 @@
         </div>
     		<div class="col-xs-8">
           {% for passage in passagesTechnicien.passages %}
-          <div class="list-group-item {% if( passage.isTransmis ) %}list-group-item-success{% endif %}">
-          <div class="row">
-            <div class="col-xs-2">{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</div>
-            <div class="col-xs-7"><strong>{{ passage.etablissementInfos.nom }}</strong></div>
-            <div class="col-xs-3"><small>{{ passage.contrat.commercial.identite }}</small></div>
+            <div class="list-group-item" {% if passage.isValideTechnicien() and passage.isSaisieTechnicien() %} style="background-color:{{ passage.rendezVous.getStatusColor() }}; color:{{ passage.rendezVous.getTextColor() }}" {% endif %}>
+              <a data-toggle="modal" data-remote="false"
+              data-target="#modal-calendrier-infos"
+              href="{{ path('passage_visualisation', { 'id': passage.id, 'service': app.request.uri }) }}" class="deco-none">
+              <div class="row">
+                <div class="col-xs-2">{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</div>
+                <div class="col-xs-7"><strong>{{ passage.etablissementInfos.nom }}</strong></div>
+                <div class="col-xs-3"><small>{{ passage.contrat.commercial.identite }}</small></div>
+              </div>
+              <div class="row">
+                <div class="col-xs-2"></div>
+                <div class="col-xs-7">{{ passage.etablissementInfos.adresse.adresse }}
+                    {{ passage.etablissementInfos.adresse.codePostal }}
+                    {{ passage.etablissementInfos.adresse.commune }}</div>
+                <div class="col-xs-3"></div>
+              </div>
+              <div class="row">
+                <div class="col-xs-2">
+                  {% if(passage.isGarantie or passage.isControle) %}
+                    <span class="badge badge-warning">{% if(passage.isGarantie) %}ganrantie{% elseif(passage.isControle) %}contrôle{% endif %}</span>
+                  {% endif %}
+                  {% if(passage.mouvementDeclenchable) %}
+                  <a href="{{ path('facture_societe', { 'id': passage.societe.id }) }}" class="deco-none"><span class="badge badge-inverse">facturant</span></a>
+                  {% endif %}
+                </div>
+                <div class="col-xs-7">
+                  {% for prestation in passage.prestations %}
+                  {% if(prestation.wordToPicto) %}
+                  <span class="step size-24" title="{{  prestation.nomToString }}"
+                  data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
+                  style="cursor: pointer;">&nbsp;</i></span>
+                  {% else %}
+                  <span class="label label-xs label-primary">{{ prestation.nomToString }}</span>
+                  {% endif %}
+                  {% endfor %}
+                </div>
+                <div class="col-xs-3">
+                      {% if(passage.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{passage.duree }}</span>{% endif %}
+                </div>
           </div>
-          <div class="row">
-            <div class="col-xs-2"></div>
-            <div class="col-xs-7">{{ passage.etablissementInfos.adresse.adresse }}
-                {{ passage.etablissementInfos.adresse.codePostal }}
-                {{ passage.etablissementInfos.adresse.commune }}</div>
-            <div class="col-xs-3"></div>
-          </div>
-          <div class="row">
-            <div class="col-xs-2">
-              {% if(passage.isGarantie or passage.isControle) %}
-                <span class="badge badge-warning">{% if(passage.isGarantie) %}ganrantie{% elseif(passage.isControle) %}contrôle{% endif %}</span>
-              {% endif %}
-              {% if(passage.mouvementDeclenchable) %}
-                <span class="badge badge-inverse">facturant</span>
-              {% endif %}
-            </div>
-            <div class="col-xs-7">
-              {% for prestation in passage.prestations %}
-              {% if(prestation.wordToPicto) %}
-              <span class="step size-24" title="{{  prestation.nomToString }}"
-              data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
-              style="cursor: pointer;">&nbsp;</i></span>
-              {% else %}
-              <span class="label label-xs label-primary">{{ prestation.nomToString }}</span>
-              {% endif %}
-              {% endfor %}
-            </div>
-            <div class="col-xs-3">
-                  {% if(passage.duree) %}<span><i class="mdi mdi-schedule mdi-lg"></i>&nbsp;{{passage.duree }}</span>{% endif %}
-            </div>
-        </div>
+        </a>
     </div>
   {% endfor %}
     		</div>

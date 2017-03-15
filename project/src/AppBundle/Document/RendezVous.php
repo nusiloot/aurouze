@@ -118,7 +118,7 @@ class RendezVous {
 
         if($this->getPassage() && ($this->getPassage()->isValideTechnicien() && $this->getPassage()->isSaisieTechnicien() && !$this->getPassage()->isPdfNonEnvoye())) {
 
-          return "#f3fbf0";
+          return "#3c763d";
         }
 
         if($this->getPassage() && $this->getPassage()->isRealise()) {
@@ -152,7 +152,7 @@ class RendezVous {
 
         if($this->getPassage() && ($this->getPassage()->isValideTechnicien() && $this->getPassage()->isSaisieTechnicien() && !$this->getPassage()->isPdfNonEnvoye())) {
 
-          return "#009900";
+          return "#dff0d8";
         }
 
         if($this->getPassage() && $this->getPassage()->isRealise()) {

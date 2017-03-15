@@ -394,12 +394,17 @@ class PassageController extends Controller {
           $dm->flush();
         }
 
+        return new Response(
+          $this->get('knp_snappy.pdf')->getOutputFromHtml($rapportVisitePdf->html, $this->getPdfGenerationOptions()), 200, array(
+          'Content-Type' => 'application/pdf',
+          'Content-Disposition' => 'attachment; filename="' . $rapportVisitePdf->filename . '"'
+          )
+        );
         if($request->get('service')) {
 
             return $this->redirect($request->get('service'));
         }
 
-        return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
     }
 
     /**

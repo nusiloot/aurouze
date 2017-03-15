@@ -37,6 +37,7 @@
         $.initAcceptationContrat();
         $.initAllFactureSearch();
         $.initTrCollapse();
+        $.initTourneeDatepicker();
     });
 
     $.initTrCollapse = function() {
@@ -857,6 +858,15 @@
                 });
             });
         }
+    }
+
+    $.initTourneeDatepicker = function () {
+      $("#tournees-choice-datetimepicker").change(function(){
+        var url = $(this).find('input').attr('data-url');
+        var date = $(this).find('input').val();
+        var dateiso = date.split('/').reverse().join('-');
+        window.location = url+'/'+dateiso;
+      });
     }
 
 }
