@@ -37,6 +37,7 @@ class ConfigurationProduitType extends AbstractType {
 								->add('prixPrestation', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2))
 								->add('prixVente', NumberType::class, array('label' => 'Prix HT :', 'scale' => 2))
 								->add('actif', CheckboxType::class, array('label' => ' ', 'required' => false, "attr" => array("class" => "switcher", "data-size" => "mini")))
+								->add('ordre', NumberType::class, array('label' => 'Ordre :', "required" => false))
 								->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")));
 
         ;

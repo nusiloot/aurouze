@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use AppBundle\Transformer\ProduitTransformer;
 
 class PassageType extends AbstractType
 {

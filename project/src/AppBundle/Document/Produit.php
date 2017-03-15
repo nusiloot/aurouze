@@ -64,6 +64,11 @@ class Produit {
     protected $statut;
 
     /**
+     * @MongoDB\Int
+     */
+    protected $ordre;
+
+    /**
      * Set nom
      *
      * @param string $nom
@@ -297,5 +302,27 @@ class Produit {
          $this->setStatut(self::PRODUIT_INACTIF);
       }
       return $this;
+    }
+
+    /**
+     * Set ordre
+     *
+     * @param int $ordre
+     * @return self
+     */
+    public function setOrdre($ordre)
+    {
+        $this->ordre = $ordre;
+        return $this;
+    }
+
+    /**
+     * Get ordre
+     *
+     * @return int $ordre
+     */
+    public function getOrdre()
+    {
+        return $this->ordre;
     }
 }
