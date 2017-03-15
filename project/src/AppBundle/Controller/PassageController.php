@@ -591,10 +591,15 @@ class PassageController extends Controller {
 
     private function createRapportVisitePdf(Passage $passage){
       $createRapportVisitePdf = new \stdClass();
+      $dm = $this->get('doctrine_mongodb')->getManager();
       $fm = $this->get('facture.manager');
+      $pm = $this->get('passage.manager');
+      $prestationArray = $dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
       $createRapportVisitePdf->html = $this->renderView('passage/pdfRapport.html.twig', array(
           'passage' => $passage,
           'parameters' => $fm->getParameters(),
+          'pm' => $pm,
+          'prestationArray' => $prestationArray
       ));
 
       $createRapportVisitePdf->filename = sprintf("passage_rapport_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getEtablissement()->getIntitule())));

@@ -148,4 +148,8 @@ class PassageManager {
         }
       }
     }
+
+    public function getInfestationLibelle($infestation){
+      return self::$typesInfestationLibelles[$infestation];
+    }
 }

@@ -42,7 +42,7 @@
   <div class="row">
       <div class="col-xs-12">
           <div class="well">
-              Observations :
+              <p style="text-decoration:underline;">Observations :</p>
               <br />
               {{ passage.description | nl2br }}
           </div>
@@ -50,13 +50,49 @@
   </div>
   <div class="row">
     <div class="col-xs-12">
-          <div class="well" style="background: #fff; padding: 10px;">
-              <p>Heure d'arrivée : {{ passage.dateDebut | date('H') }}h{{ passage.dateDebut | date('i') }}</p>
-              <p>Heure de départ : {{ passage.dateFin | date('H') }}h{{ passage.dateFin | date('i') }}</p>
-              <br />
+          <div class="well" style="background: #fff;">
+              <p><span>Heure d'arrivée : </span>{{ passage.dateDebut | date('H') }}h{{ passage.dateDebut | date('i') }}</p>
+              <p><span>Heure de départ : </span>{{ passage.dateFin | date('H') }}h{{ passage.dateFin | date('i') }}</p>
           </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col-xs-12">
+          <div class="well" style="background: #fff;">
+              {% for niveauInfestation in passage.niveauInfestation %}
+                <div class="row" style="padding-bottom:5px;">
+                  <div class="col-xs-6 text-right">
+                    <span>{{ prestationArray[niveauInfestation.identifiant].nom }}&nbsp;:</span>
+                  </div>
+                  <div class="col-xs-6">
+                    <span class="btn btn-xs btn-default">{{ pm.getInfestationLibelle(niveauInfestation.infestation) }}</span>
+                  </div>
+                </div>
+              {% endfor %}
+        </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-6">
+          <div class="well" style="background: #fff;">
+            <p style="text-decoration:underline;">Nettoyages :</p>
+            <br />
+            <p>{% for nettoyage in passage.nettoyages %}
+                <span class="btn btn-sm btn-default">{{ nettoyage }}</span>
+            {% endfor %}</p>
+          </div>
+    </div>
+    <div class="col-xs-6">
+          <div class="well" style="background: #fff;">
+            <p style="text-decoration:underline;">Applications :</p>
+            <br />
+            <p>{% for application in passage.applications %}
+                <span class="btn btn-sm btn-default">{{ application }}</span>
+            {% endfor %}</p>
+          </div>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-xs-8">
               <p>Signature du client :<br /></p>
