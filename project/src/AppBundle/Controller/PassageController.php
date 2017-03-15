@@ -106,10 +106,14 @@ class PassageController extends Controller {
             $passage->setDateDebut($passage->getDatePrevision());
             $dm->persist($passage);
             $contrat->addPassage($etablissement, $passage);
-
             $dm->flush();
 
-            return $this->redirectToRoute('passage_planifier', array('passage' => $passage->getId()));
+            if($request->get('action') == "creer_planifier") {
+
+                return $this->redirectToRoute('passage_planifier', array('passage' => $passage->getId()));
+            }
+
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
 
         return $this->render('passage/creation.html.twig', array('passage' => $passage, 'form' => $form->createView()));
@@ -123,7 +127,7 @@ class PassageController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $form = $this->createForm(new PassageCommentaireType($dm), $passage, array(
-            'action' => $this->generateUrl('passage_commentaire', array('id' => $passage->getId())),
+            'action' => $this->generateUrl('passage_commentaire', array('id' => $passage->getId(), 'service' => $request->get('service'))),
             'method' => 'POST',
         ));
 
@@ -131,10 +135,15 @@ class PassageController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $passage = $form->getData();
             $dm->flush();
+
+            if($request->get('service')) {
+
+                return $this->redirect($request->get('service'));
+            }
             return $this->redirectToRoute('passage');
         }
 
-        return $this->render('passage/commentaire.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+        return $this->render('passage/commentaire.html.twig', array('passage' => $passage, 'form' => $form->createView(), 'service' => $request->get('service')));
     }
 
     /**
@@ -155,10 +164,11 @@ class PassageController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $passage = $form->getData();
+            $contrat = $passage->getContrat();
             if(!$passage->getRendezVous()) {
                 $passage->setDateDebut($passage->getDatePrevision());
             }
-            $dm->persist($passage);
+            $contrat->preUpdate();
             $dm->flush();
 
             if($request->get('service')) {

@@ -888,6 +888,11 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function isEnRetardPaiement() {
+        if($this->isDevis()) {
+
+            return false;
+        }
+
         if (!$this->isCloture() && ($this->getDateLimitePaiement()->format('Ymd') < (new \DateTime())->format('Ymd'))) {
             return true;
         }

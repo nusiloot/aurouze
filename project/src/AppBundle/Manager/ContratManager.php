@@ -227,9 +227,9 @@ class ContratManager implements MouvementManagerInterface {
 
     public function updateInfosPassagePrecedent($contrat, $etablissement = null) {
         $passagesByEtablissement = $this->getPassagesByNumeroArchiveContrat($contrat, true);
-
         foreach($passagesByEtablissement as $etablissementId => $passages) {
-            $dernierPassageNonRealise = null;
+            $passagesNonRealises = array();
+            $dernierPassageRealise = null;
             if($etablissement && $etablissement->getId() != $etablissementId) {
                 continue;
             }
@@ -240,15 +240,17 @@ class ContratManager implements MouvementManagerInterface {
                 if($passage->isAnnule()) {
                     continue;
                 }
-                if($passage->isRealise() && !$dernierPassageNonRealise) {
-                    break;
-                }
                 if($passage->isRealise()) {
-                    $dernierPassageNonRealise->setDureePrecedente($passage->getDureeDate());
-                	$dernierPassageNonRealise->setDatePrecedente($passage->getDateDebut());
+                    $dernierPassageRealise = $passage;
                     break;
                 }
-                $dernierPassageNonRealise = $passage;
+                $passagesNonRealises[] = $passage;
+            }
+            if($dernierPassageRealise) {
+                foreach($passagesNonRealises as $passageNonRealise) {
+                    $passageNonRealise->setDureePrecedente($dernierPassageRealise->getDureeDate());
+                    $passageNonRealise->setDatePrecedente($dernierPassageRealise->getDateDebut());
+                }
             }
         }
     }

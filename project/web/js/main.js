@@ -202,7 +202,8 @@
         });
         $('.commentaire_lien').click(function (event) {
             event.preventDefault();
-            var url = $(this).attr('data-url');
+            var url = $(this).attr('data-url')+"?service="+encodeURIComponent(window.location.href);
+            console.log(window.location.pathname);
             window.location.href = url;
         });
     };

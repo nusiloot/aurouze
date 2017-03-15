@@ -26,7 +26,8 @@ class PassageRepository extends DocumentRepository {
                 ->field('techniciens')->equals($technicien->getId())
                 ->sort('dateDebut', 'asc');
         if ($onlyNonImprime) {
-        	$query->field('imprime')->equals(false);
+            $query->addOr($query->expr()->field('imprime')->equals(false));
+            $query->addOr($query->expr()->field('imprime')->exists(false));
         }
         $query = $query->getQuery();
 

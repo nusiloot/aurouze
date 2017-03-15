@@ -114,7 +114,7 @@ class CalendarController extends Controller {
                     'start' => $rdv->getDateDebut()->format('Y-m-d\TH:i:s'),
                     'end' => $rdv->getDateFin()->format('Y-m-d\TH:i:s'),
                     'backgroundColor' => $compte->getCouleur(),
-                    'textColor' => $rdv->getTextColor(),
+                    'textColor' => '#000',
                     'coefStart' => round($diffDebut / 30, 1),
                     'coefEnd' => round($diffFin / 30, 1),
                     'resume' => $rdv->getTitre(),

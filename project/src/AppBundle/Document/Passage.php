@@ -338,7 +338,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function deplanifier() {
-
         $this->setDateDebut($this->getDatePrevision());
         $this->setDateFin(null);
         if($this->isRealise()) {

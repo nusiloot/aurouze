@@ -708,6 +708,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             $this->setNbPassages($max);
     }
 
+    public function updatePassages() {
+
+    }
+
     public function updatePrestations($dm) {
         $cm = new ConfigurationManager($dm);
         $configuration = $cm->getRepository()->findOneById(Configuration::PREFIX);
@@ -1434,7 +1438,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
         $contrat->setDateCreationAuto(new \DateTime());
-        $contrat->setAudit(null);
+        $contrat->setAuditPassage(null);
 
         if($contrat->isTypeReconductionTacite()){
           $contrat->setStatut(ContratManager::STATUT_EN_COURS);
@@ -1455,7 +1459,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateReconduction(new \DateTime());
         $contrat->setReferenceClient(null);
         if(!$contrat->getTechnicien()){
-          $contrat->setTechnicien($this->getTechnicienPlusUtilise());
+            $technicien = $this->getTechnicienPlusUtilise();
+            if($technicien) {
+                $contrat->setTechnicien($technicien);
+            }
         }
         $contrat->updateObject();
         return $contrat;
@@ -1773,9 +1780,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function updateNumeroOrdrePassage() {
+        $this->nbPassages = null;
+        $this->getNbPassages();
         foreach($this->getContratPassages() as $etablissementPassages) {
             $numero = 1;
-            foreach ($etablissementPassages->getPassagesSorted() as $passage) {
+            foreach ($etablissementPassages->getPassagesDateSorted() as $passage) {
                 if ($passage->isControle()) {
                     $passage->setNumeroOrdre("C");
                 } elseif ($passage->isGarantie()) {
@@ -1784,6 +1793,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                     $passage->setNumeroOrdre($numero);
                     $numero++;
                 }
+
+                $passage->setLibelle(null);
                 $passage->getLibelle();
             }
         }
