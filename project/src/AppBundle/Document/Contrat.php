@@ -588,6 +588,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 $this->setNbPassages(0);
             }
         }
+
         return $this->nbPassages;
     }
 

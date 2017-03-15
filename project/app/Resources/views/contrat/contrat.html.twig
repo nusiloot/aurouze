@@ -20,7 +20,12 @@
             				data-toggle="tooltip"> <i class="mdi-{{prestation.wordToPicto}}"
             				style="cursor: pointer;">&nbsp;</i></span> {%else%} <span
             				class="label label-xs label-primary">{{ prestation.nomToString }}</span>
-            			{%endif%} {% endfor %} {{ contrat.getNbPassages() }} passage(s)
+            			{%endif%} {% endfor %}
+                        {% if(contrat.isEnAttenteAcceptation() and contrat.contratPassages | length == 0 ) %}
+                        {{ contrat.previsionnel | length }} passage(s)
+                        {% else %}
+                            {{ contrat.nbPassages }}  passage(s)
+                        {% endif %}
                         </p>
                         <p class="text-center">
                             {% if contrat.getDureeGarantie() %}Garantie {{ contrat.getDureeGarantie() }}  mois{% else %}Sans garantie{% endif %}
