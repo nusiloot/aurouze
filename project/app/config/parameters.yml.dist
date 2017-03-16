@@ -26,6 +26,7 @@ parameters:
       coordonnees:
         email : "emailTransmission@dns.fr"
         nom : 'Nom du mail'
+        numero : '00000000'
 
     facture:
         emetteur:

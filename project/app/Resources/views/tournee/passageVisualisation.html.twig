@@ -41,6 +41,7 @@
         <br/>{% if passage.etablissementInfos.telephoneFixe %}<i class="mdi mdi-call mdi-lg"></i>&nbsp;<a href="tel:{{ passage.etablissementInfos.telephoneFixe }}">{{ passage.etablissementInfos.telephoneFixe }}</a>{% endif %}
         {% if passage.etablissementInfos.telephonePortable %}<a href="tel:{{ passage.etablissementInfos.telephonePortable }}">{{ passage.etablissementInfos.telephonePortable }}</a>{% endif %}
     {% endif %}
+    <a href="tel:{{telephoneSecretariat}}">Tél Secrétariat</a>
       <br/><br/><span><strong>Com : {{ passage.contrat.commercial.identite }}</strong></span>
   </div>
   <div class="ui-body ui-body-a">

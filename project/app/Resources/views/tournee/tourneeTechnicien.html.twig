@@ -56,7 +56,7 @@
 {% for passage in passagesByTechnicien %}
   <div class="passage_visualisation" data-role="page" id="passage_visualisation_{{ passage.id }}">
     <div data-role="main" class="ui-content">
-      {{ include('tournee/passageVisualisation.html.twig', { 'passage' : passage, "technicien" : technicien, "historiquePassages" : historiqueAllPassages[passage.id]}) }}
+      {{ include('tournee/passageVisualisation.html.twig', { 'passage' : passage, "technicien" : technicien, "historiquePassages" : historiqueAllPassages[passage.id],'telephoneSecretariat' : telephoneSecretariat}) }}
     </div>
   </div>
   {{ include('tournee/passageRapport.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[passage.id]}) }}

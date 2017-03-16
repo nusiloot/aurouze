@@ -46,6 +46,14 @@ class TourneeController extends Controller {
         if ($technicien) {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
+
+        $pm = $this->get('passage.manager');
+        $parameters = $pm->getParameters();
+        if(!$parameters['coordonnees'] || !$parameters['coordonnees']['numero']){
+          throw new Exception("Le paramétrage du numéro de téléphone n'est pas correct.");
+        }
+        $telephoneSecretariat = $parameters['coordonnees']['numero'];
+
         $passagesByTechnicien = $this->get('passage.manager')->getRepository()->findAllPassagesForTechnicien($date,$technicienObj);
 
         $historiqueAllPassages = array();
@@ -70,6 +78,7 @@ class TourneeController extends Controller {
                                                                           "date" => $date,
                                                                           "version" => $version,
                                                                           "historiqueAllPassages" => $historiqueAllPassages,
+                                                                          'telephoneSecretariat' => $telephoneSecretariat,
                                                                           "passagesForms" => $passagesForms));
     }
 
