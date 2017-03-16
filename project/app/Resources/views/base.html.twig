@@ -84,9 +84,9 @@
                             <li class="{%if (_menu_active == 'erreurs') %}active{% endif %}"><a href="{{ path('passage_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Passages en erreur</li>
                             <li class="{%if (_menu_active == 'erreurs') %}active{% endif %}"><a href="{{ path('contrats_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Contrats en erreur</li>
                             <li><a href="{{ path('contrats_reconduction_massive') }}" ><span class="glyphicon glyphicon-refresh"></span>&nbsp;Reconduction massive</a></li>
+                             <li class="{%if (_menu_active == 'tournee') %}active{% endif %}"><a href="{{ path('tournees') }}"><span class="glyphicon glyphicon-road" data-toggle="tooltip" title="Tournées"></span>&nbsp;Tournées</a></li>
                           </ul>
                     </li>
-                    <!-- <li class="{%if (_menu_active == 'tournee') %}active{% endif %}"><a href="{{ path('tournees') }}"><span class="glyphicon glyphicon-road" data-toggle="tooltip" title="Tournées"></span></a></li> -->
                   </ul>
                 </div>
             </div>
@@ -114,7 +114,7 @@
         <script type="text/javascript" src="{{ asset('/component/leaflet-extra-markers/js/leaflet.extra-markers.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/typeahead/typeahead.bundle.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/js/calendar-settings.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/js/calendar-settings.js?date=201703151048') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/main.js?date=201703141935') }}"></script>
 
         {% block javascripts %}{% endblock %}

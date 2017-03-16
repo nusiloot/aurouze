@@ -47,6 +47,6 @@ class FactureLigneType extends AbstractType {
 
 	public function getProduits() {
 
-		return $this->cm->getConfiguration()->getProduitsArray();
+		return $this->cm->getConfiguration()->getProduitsArrayOrdered();
 	}
 }

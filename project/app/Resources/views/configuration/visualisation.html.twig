@@ -43,6 +43,7 @@
                         <th>Prix d'achat HT</th>
                         <th>Prix prestation HT</th>
                         <th>Prix de vente HT</th>
+                        <th>Ordre</th>
                         <th class="text-center" >Modification</th>
                     </tr>
                 </thead>
@@ -54,6 +55,7 @@
                         <td class="text-right">{{ produit.prixHt | number_format(2, '.', ' ') }}</td>
                         <td class="text-right">{{ produit.prixPrestation| number_format(2, '.', ' ') }}</td>
                         <td class="text-right">{{ produit.prixVente| number_format(2, '.', ' ') }}</td>
+                        <td class="text-right">{{ produit.ordre }}</td>
                         <td class="text-center">
                           <a href="{{ path('configuration_modification_produit',{'identifiant': produit.identifiant }) }}" data-toggle="tooltip" title="Modifier le produit {{ produit.nom }}" class="pull-right btn btn-default">
                             <span class="glyphicon glyphicon-pencil"></span>

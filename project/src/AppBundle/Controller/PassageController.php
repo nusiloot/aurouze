@@ -218,27 +218,32 @@ class PassageController extends Controller {
         $pm = $this->get('passage.manager');
 
         $form = $this->createForm(new PassageAnnulationType($dm, $passage), $passage, array(
-            'action' => $this->generateUrl('passage_annulation', array('id' => $passage->getId())),
+            'action' => $this->generateUrl('passage_annulation', array('id' => $passage->getId(), 'service' => $request->get('service'))),
             'method' => 'POST',
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-          $statut = $passage->getStatut();
-          $passage->setStatut(PassageManager::STATUT_ANNULE);
-          $dm->persist($passage);
-          // if ($statut == PassageManager::STATUT_A_PLANIFIER) {
-          //   $pm->updateNextPassageAPlannifier($passage);
-          // }
-          $dm->flush();
-          $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
-          $contrat->verifyAndClose();
+            $statut = $passage->getStatut();
+            $passage->setStatut(PassageManager::STATUT_ANNULE);
+            $dm->persist($passage);
+            // if ($statut == PassageManager::STATUT_A_PLANIFIER) {
+            //   $pm->updateNextPassageAPlannifier($passage);
+            // }
+            $dm->flush();
+            $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
+            $contrat->verifyAndClose();
 
-          $dm->flush();
+            $dm->flush();
+
+            if($request->get('service')) {
+
+                return $this->redirect($request->get('service'));
+            }
 
           return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
         }
 
-        return $this->render('passage/annulation.html.twig', array('form' => $form->createView(), 'passage' => $passage));
+        return $this->render('passage/annulation.html.twig', array('form' => $form->createView(), 'passage' => $passage, 'service' => $request->get('service')));
     }
 
     /**
@@ -284,10 +289,10 @@ class PassageController extends Controller {
     public function visualisationAction(Request $request, Passage $passage) {
 
         if ($passage->getRendezVous()) {
-            return $this->redirectToRoute('calendarRead', array('id' => $passage->getRendezVous()->getId()));
+            return $this->redirectToRoute('calendarRead', array('id' => $passage->getRendezVous()->getId(), 'service' => $request->get('service')));
         }
 
-        return $this->forward('AppBundle:Calendar:calendarRead', array('passage' => $passage->getId()));
+        return $this->forward('AppBundle:Calendar:calendarRead', array('passage' => $passage->getId(), 'service' => $request->get('service')));
     }
 
     /**
@@ -299,7 +304,7 @@ class PassageController extends Controller {
 
 
         $form = $this->createForm(new PassageType($dm), $passage, array(
-            'action' => $this->generateUrl('passage_edition', array('id' => $passage->getId())),
+            'action' => $this->generateUrl('passage_edition', array('id' => $passage->getId(), 'service' => $request->get('service'))),
             'method' => 'POST',
         ));
 
@@ -307,7 +312,7 @@ class PassageController extends Controller {
 
         if (!$form->isSubmitted() || !$form->isValid()) {
 
-            return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView()));
+            return $this->render('passage/edition.html.twig', array('passage' => $passage, 'form' => $form->createView(), 'service' => $request->get('service')));
         }
         $passageManager = $this->get('passage.manager');
 
@@ -330,8 +335,13 @@ class PassageController extends Controller {
 
         $dm->flush();
         if ($passage->getMouvementDeclenchable()) {
+
             return $this->redirectToRoute('facture_societe', array('id' => $passage->getSociete()->getId()));
+        } elseif($request->get('service')) {
+
+            return  $this->redirect($request->get('service'));
         } else {
+
             return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
         }
     }
@@ -366,6 +376,93 @@ class PassageController extends Controller {
                 )
         );
     }
+
+    /**
+     * @Route("/passage/pdf-rapport/{id}", name="passage_pdf_rapport")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function pdfRapportAction(Request $request, Passage $passage) {
+        $rapportVisitePdf = $this->createRapportVisitePdf($passage);
+
+        if ($request->get('output') == 'html') {
+
+            return new Response($rapportVisitePdf->html, 200);
+        }
+        if(!$passage->getEmailTransmission()){
+          $dm = $this->get('doctrine_mongodb')->getManager();
+          $passage->setPdfNonEnvoye(false);
+          $dm->flush();
+        }
+
+        return new Response(
+          $this->get('knp_snappy.pdf')->getOutputFromHtml($rapportVisitePdf->html, $this->getPdfGenerationOptions()), 200, array(
+          'Content-Type' => 'application/pdf',
+          'Content-Disposition' => 'attachment; filename="' . $rapportVisitePdf->filename . '"'
+          )
+        );
+        if($request->get('service')) {
+
+            return $this->redirect($request->get('service'));
+        }
+
+    }
+
+    /**
+     * @Route("/passage/passage-transmission-email/{id}", name="passage_transmission_email")
+     * @ParamConverter("passage", class="AppBundle:Passage")
+     */
+    public function transmissionEmailAction(Request $request, Passage $passage) {
+
+        $rapportVisitePdf = $this->createRapportVisitePdf($passage);
+        if ($request->get('output') == 'html') {
+
+            return new Response($rapportVisitePdf->html, 200);
+        }
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $pm = $this->get('passage.manager');
+        $parameters = $pm->getParameters();
+        if(!$parameters['coordonnees'] || !$parameters['coordonnees']['email'] || !$parameters['coordonnees']['nom']){
+          throw new Exception("Le paramétrage pour le mail d'envoie n'est pas correct.");
+        }
+
+        $fromEmail = $parameters['coordonnees']['email'];
+        $fromName = $parameters['coordonnees']['nom'];
+
+        $suject = "Aurouze - Rapport de visite du ".$passage->getDateDebut()->format("d/m/Y")." à ".$passage->getDateDebut()->format("H\hi");
+        $body = $this->renderView(
+            'passage/rapportEmail.html.twig',
+            array('passage' => $passage)
+        );
+
+        $message = \Swift_Message::newInstance()
+       ->setSubject($suject)
+       ->setFrom(array($fromEmail => $fromName))
+       ->setTo($passage->getEmailTransmission())
+       ->setBody($body,'text/plain');
+
+       $attachment = \Swift_Attachment::newInstance($this->get('knp_snappy.pdf')->getOutputFromHtml($rapportVisitePdf->html, $this->getPdfGenerationOptions()), $rapportVisitePdf->filename, 'application/pdf');
+       $message->attach($attachment);
+
+       try {
+          $this->get('mailer')->send($message);
+          $passage->setPdfNonEnvoye(false);
+          $dm->flush();
+        }
+        catch(Exception $e) {
+          var_dump('NO mailer config'); exit;
+        }
+
+        if($request->get('service')) {
+
+            return $this->redirect($request->get('service'));
+        }
+
+        return $this->redirectToRoute('passage_etablissement', array('id' => $passage->getEtablissement()->getId()));
+    }
+
+
+
 
     /**
      * @Route("/passage/pdf-bons-massif", name="passage_pdf_bons_massif")
@@ -490,6 +587,25 @@ class PassageController extends Controller {
             'Content-Disposition' => 'attachment; filename="' . $filename . '"'
                 )
         );
+    }
+
+    private function createRapportVisitePdf(Passage $passage){
+      $createRapportVisitePdf = new \stdClass();
+      $dm = $this->get('doctrine_mongodb')->getManager();
+      $fm = $this->get('facture.manager');
+      $pm = $this->get('passage.manager');
+      $prestationArray = $dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
+      $createRapportVisitePdf->html = $this->renderView('passage/pdfRapport.html.twig', array(
+          'passage' => $passage,
+          'parameters' => $fm->getParameters(),
+          'pm' => $pm,
+          'prestationArray' => $prestationArray
+      ));
+
+      $createRapportVisitePdf->filename = sprintf("passage_rapport_%s_%s.pdf", $passage->getDateDebut()->format("Y-m-d_H:i"), strtoupper(Transliterator::urlize($passage->getEtablissement()->getIntitule())));
+
+      return $createRapportVisitePdf;
+
     }
 
     /**

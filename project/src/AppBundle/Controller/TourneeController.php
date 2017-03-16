@@ -23,6 +23,7 @@ class TourneeController extends Controller {
         }else{
           $date = \DateTime::createFromFormat('Y-m-d',$date);
         }
+
         $passageManager = $this->get('passage.manager');
         $passagesForAllTechniciens = $passageManager->getRepository()->findAllPassagesForTechnicien($date);
         $passagesByTechniciens = $passageManager->sortPassagesByTechnicien($passagesForAllTechniciens);
@@ -127,8 +128,12 @@ class TourneeController extends Controller {
         }
 
         $passage->setDateRealise($passage->getDateDebut());
+
+        $passage->setSaisieTechnicien(true);
+        if(!$passage->getPdfNonEnvoye()){
+          $passage->setPdfNonEnvoye(true);
+        }
         $dm->persist($passage);
-        // $dm->persist($contrat);
         $dm->flush();
 
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
@@ -136,7 +141,7 @@ class TourneeController extends Controller {
 
         $dm->flush();
 
-        return $this->redirectToRoute('tournee_technicien', array("technicien" => $technicienObj->getId()));
+        return $this->redirectToRoute('tournee_technicien', array("technicien" => $technicienObj->getId(), "date" => $passage->getDateDebut()->format("Y-m-d")));
     }
 
     /**

@@ -34,16 +34,19 @@
     <strong>{{ passage.etablissementInfos.nom }}</strong><br/>
     {{ passage.etablissementInfos.adresse.adresse }}<br/>
     {{ passage.etablissementInfos.adresse.codePostal }}&nbsp;{{ passage.etablissementInfos.adresse.commune }}
+    {% if(passage.etablissement.commentaire) %}
+      <br/><br/>{{ passage.etablissement.commentaire }}
+    {% endif %}
     {% if passage.etablissementInfos.telephoneFixe or passage.etablissementInfos.telephonePortable %}
         <br/>{% if passage.etablissementInfos.telephoneFixe %}<i class="mdi mdi-call mdi-lg"></i>&nbsp;<a href="tel:{{ passage.etablissementInfos.telephoneFixe }}">{{ passage.etablissementInfos.telephoneFixe }}</a>{% endif %}
         {% if passage.etablissementInfos.telephonePortable %}<a href="tel:{{ passage.etablissementInfos.telephonePortable }}">{{ passage.etablissementInfos.telephonePortable }}</a>{% endif %}
     {% endif %}
-  {% if(passage.commentaire) %}
-    <br/> Commentaire : {{ passage.commentaire }}
-  {% endif %}
-      <br/><span><strong>Com : {{ passage.contrat.commercial.identite }}</strong></span>
+      <br/><br/><span><strong>Com : {{ passage.contrat.commercial.identite }}</strong></span>
   </div>
   <div class="ui-body ui-body-a">
+    {% if(passage.commentaire) %}
+      <p><span class="ui-btn ui-btn-a ui-icon-info ui-btn-icon-notext ui-btn-inline ui-shadow"></span>{{ passage.commentaire }}</p>
+    {% endif %}
     <p>
       {{passage.libelle | capitalize }}
     </p>
