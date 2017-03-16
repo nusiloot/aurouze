@@ -7,11 +7,13 @@
 
         <title>{% block title %}Aurouze{% endblock title %}</title>
 
-        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile-1.4.5.min.css?20170313') }}">
-        <link rel="stylesheet" href="{{ asset('/component/aurouze/aurouze.css?20170313') }}">
-        <link rel="stylesheet" href="{{ asset('/css/main.css?20170313') }}" />
-        <link rel="stylesheet" href="{{ asset('/mobile/css/mobile.css?20170313') }}">
-        <link rel="stylesheet" media="print" href="{{ asset('/css/print.css?20170313') }}" />
+        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile-1.4.5.min.css?20170316') }}">
+        <link rel="stylesheet" href="{{ asset('/component/aurouze/aurouze.css?20170316') }}">
+        <link rel="stylesheet" href="{{ asset('/css/main.css?20170316') }}" />
+        <link rel="stylesheet" href="{{ asset('/mobile/css/mobile.css?20170316') }}">
+        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile.datepicker.css?20170316') }}" />
+        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile.datepicker.theme.css?20170316') }}" />
+        <link rel="stylesheet" media="print" href="{{ asset('/css/print.css?20170316') }}" />
 
         {% block stylesheets %}{% endblock %}
     </head>
@@ -41,8 +43,10 @@
         <script type="text/javascript" src="{{ asset('/mobile/js/jquery.mobile-1.4.5.js') }}"></script>
 
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.phoenix.min.js?20170307') }}"></script>
-        <script type="text/javascript" src="{{ asset('/mobile/js/signature_pad.js?20170307') }}"></script>
-        <script type="text/javascript" src="{{ asset('/mobile/js/mobile.js?20170307') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.phoenix.min.js?20170316') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/datepicker.js?20170316') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.mobile.datepicker.js?20170316') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/signature_pad.js?20170316') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/mobile.js?20170316') }}"></script>
     </body>
 </html>
