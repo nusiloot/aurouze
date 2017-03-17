@@ -31,7 +31,7 @@ class TourneeController extends Controller {
     }
 
     /**
-     * @Route("/tournee-technicien/{technicien}/{date}", name="tournee_technicien", defaults={"date" = "0"})
+     * @Route("/tournee-technicien/tournee/{technicien}/{date}", name="tournee_technicien", defaults={"date" = "0"})
      */
     public function tourneeTechnicienAction(Request $request,$technicien, $date) {
 
@@ -41,12 +41,12 @@ class TourneeController extends Controller {
         }else{
           $date = \DateTime::createFromFormat('Y-m-d',$date);
         }
+
         $technicien = $request->get('technicien');
         $technicienObj = null;
         if ($technicien) {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
-
         $pm = $this->get('passage.manager');
         $parameters = $pm->getParameters();
         if(!$parameters['coordonnees'] || !$parameters['coordonnees']['numero']){
@@ -54,26 +54,27 @@ class TourneeController extends Controller {
         }
         $telephoneSecretariat = $parameters['coordonnees']['numero'];
 
-        $passagesByTechnicien = $this->get('passage.manager')->getRepository()->findAllPassagesForTechnicien($date,$technicienObj);
+        $rendezVousByTechnicien = $this->get('rendezvous.manager')->getRepository()->findByDateDebutAndParticipant($date->format('Y-m-d'),$technicienObj);
 
         $historiqueAllPassages = array();
         $passagesForms = array();
 
         $version = $this->getVersionManifest($technicienObj->getId(),$date->format('Y-m-d'));
 
-        foreach ($passagesByTechnicien as $passage) {
-          $historiqueAllPassages[$passage->getId()] = $this->get('contrat.manager')->getHistoriquePassagesByNumeroArchive($passage, 2);
-          foreach ($historiqueAllPassages[$passage->getId()] as $hPassage) {
-            $this->get('passage.manager')->synchroniseProduitsWithConfiguration($hPassage);
+        foreach ($rendezVousByTechnicien as $rendezVous) {
+          if($passage = $rendezVous->getPassage()){
+            $historiqueAllPassages[$passage->getId()] = $this->get('contrat.manager')->getHistoriquePassagesByNumeroArchive($passage, 2);
+            foreach ($historiqueAllPassages[$passage->getId()] as $hPassage) {
+              $this->get('passage.manager')->synchroniseProduitsWithConfiguration($hPassage);
+            }
+            $passagesForms[$passage->getId()] = $this->createForm(new PassageMobileType($dm, $passage->getId()), $passage, array(
+              'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
+              'method' => 'POST',
+              ))->createView();
           }
-          $passagesForms[$passage->getId()] = $this->createForm(new PassageMobileType($dm, $passage->getId()), $passage, array(
-            'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
-            'method' => 'POST',
-          ))->createView();
-
         }
 
-        return $this->render('tournee/tourneeTechnicien.html.twig', array('passagesByTechnicien' => $passagesByTechnicien,
+        return $this->render('tournee/tourneeTechnicien.html.twig', array('rendezVousByTechnicien' => $rendezVousByTechnicien,
                                                                           "technicien" => $technicienObj,
                                                                           "date" => $date,
                                                                           "version" => $version,
@@ -83,7 +84,7 @@ class TourneeController extends Controller {
     }
 
     /**
-     * @Route("/tournee-version/{technicien}", name="tournee_version")
+     * @Route("/tournee-technicien/version/{technicien}", name="tournee_version")
      */
      public function tourneeVersionAction(Request $request,$technicien) {
 
@@ -105,7 +106,7 @@ class TourneeController extends Controller {
      }
 
     /**
-     * @Route("/tournee-passage-rapport/{passage}/{technicien}", name="tournee_passage_rapport")
+     * @Route("/tournee-technicien/passage-rapport/{passage}/{technicien}", name="tournee_passage_rapport")
      * @ParamConverter("passage", class="AppBundle:Passage")
      */
     public function tourneePassageRapportAction(Request $request, Passage $passage) {
@@ -154,7 +155,7 @@ class TourneeController extends Controller {
     }
 
     /**
-     * @Route("/manifest/{technicien}", name="manifest")
+     * @Route("/tournee-technicien/manifest/{technicien}", name="manifest")
      */
     public function manifestAction(Request $request) {
       $dm = $this->get('doctrine_mongodb')->getManager();
