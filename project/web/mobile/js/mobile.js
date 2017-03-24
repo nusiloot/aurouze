@@ -23,6 +23,7 @@
         $.initSaisie();
         $.initTransmission();
         $.initVersion();
+        $.unactiveNotStaticLi();
 
     });
 
@@ -60,6 +61,10 @@
                $(newIdRow).find('input').textinput();
                produitsCount[passageId] = produitsCount[passageId] + 1;
            });
+      }
+
+      $.unactiveNotStaticLi = function(){
+        $("li.notStatic").removeClass("ui-li-static");        
       }
 
   $.initNiveauInfestation = function(){
