@@ -29,9 +29,9 @@
     <span class="ui-li-count">{{ rendezVousByTechnicien | length }}</span>
   </li>
   {% for rendezvous in rendezVousByTechnicien %}
-    <li>
       {% if rendezvous.passage %}
         {% set passage = rendezvous.passage %}
+        <li>
         <a class="tournee_passage_visualisation anchor-link {% if( passage.isTransmis ) %}transmis{% endif %}" href="#passage_visualisation_{{ passage.id }}"  >
           <h2>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}&nbsp;-&nbsp;{{ passage.etablissementInfos.nom }}</h2>
           <p>
@@ -50,17 +50,21 @@
               {% endfor %}
             </p>
         </a>
+        </li>
       {% else %}
+      <li class="notStatic" style="padding:15px">
         <h2>{{rendezvous.dateDebut | date("H") }}h{{rendezvous.dateDebut | date("i") }}</h2>
-        <p>
-          <strong>{{rendezvous.titre }}</strong>
-        </p>
-        <p>
-          {{rendezvous.description | nl2br }}
-        </p>
+          <div class="row">
+            <div class="col-xs-12">
+            <span>
+              <strong>{{rendezvous.titre }}</strong>
+            </span>
+            <span>
+              {{rendezvous.description | nl2br }}
+            </span>
+        </li>
       {% endif %}
-    </li>
-{% endfor %}
+  {% endfor %}
 </ul>
 </div>
 </div>
