@@ -104,6 +104,7 @@
             </div>
             <div class="col-xs-4 text-center">
                 <a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon glyphicon-file"></span> Voir le PDF</a>
+
                 {% if contrat.isEnAttenteAcceptation %}
                 <button class="btn btn-default btn" name="{{ "brouillon" }}"  type="submit" value="1"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Enregistrer en brouillon</button>
                 {% endif %}

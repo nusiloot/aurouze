@@ -20,13 +20,23 @@
         <h2>Rapport de visite</h2>
         <h3><strong>{{ passage.etablissementInfos.nom }}</strong></h3>
         <h4><strong>{{ passage.etablissementInfos.adresse.adresse }}&nbsp;{{ passage.etablissementInfos.adresse.codePostal }}&nbsp;{{ passage.etablissementInfos.adresse.commune }}
-        </strong></h4>
+        </strong>
+        {% if(passage.etablissement.commentaire) %}
+          <br/><br/>{{ passage.etablissement.commentaire }}
+        {% endif %}
+        </h4>
         <br/>
 {% set passageId = passage.id %}
 <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Durée intervention</strong></h3>
 <div class="ui-body ui-body">
   {{ form_errors(form.dureeRaw) }}
   {{ form_widget(form.dureeRaw) }}
+</div>
+
+<h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Commentaire interne</strong></h3>
+<div class="ui-body ui-body">
+  {{ form_errors(form.commentaireInterne) }}
+  {{ form_widget(form.commentaireInterne) }}
 </div>
 
 <h3 class="ui-bar ui-bar-a ui-corner-all"><strong>Niveau infestation</strong></h3>

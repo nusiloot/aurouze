@@ -111,10 +111,21 @@ class RendezVous {
             return "#8a6d3b";
         }
 
+        if($this->getPassage() && ($this->getPassage()->isValideTechnicien() && $this->getPassage()->isSaisieTechnicien() && $this->getPassage()->isPdfNonEnvoye())) {
+
+          return "#7D5E09";
+        }
+
+        if($this->getPassage() && ($this->getPassage()->isValideTechnicien() && $this->getPassage()->isSaisieTechnicien() && !$this->getPassage()->isPdfNonEnvoye())) {
+
+          return "#3c763d";
+        }
+
         if($this->getPassage() && $this->getPassage()->isRealise()) {
 
             return "#3c763d";
         }
+
 
         if($this->getPassage() && $this->getPassage()->isAnnule()) {
 
@@ -135,10 +146,20 @@ class RendezVous {
             return "#fcf8e3";
         }
 
+        if($this->getPassage() && ($this->getPassage()->isValideTechnicien() && $this->getPassage()->isSaisieTechnicien() && $this->getPassage()->isPdfNonEnvoye())) {
+          return "#FFD55F";
+        }
+
+        if($this->getPassage() && ($this->getPassage()->isValideTechnicien() && $this->getPassage()->isSaisieTechnicien() && !$this->getPassage()->isPdfNonEnvoye())) {
+
+          return "#dff0d8";
+        }
+
         if($this->getPassage() && $this->getPassage()->isRealise()) {
 
             return "#dff0d8";
         }
+
 
         if($this->getPassage() && $this->getPassage()->isAnnule()) {
 

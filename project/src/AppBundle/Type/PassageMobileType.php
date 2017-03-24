@@ -35,6 +35,7 @@ class PassageMobileType extends AbstractType
     {
         $passageId = $builder->getData()->getId();
         $builder->add('description', TextareaType::class, array('label' => 'Constat :', 'required' => false, "attr" => array("class" => " phoenix", "rows" => 10)))
+        ->add('commentaireInterne', TextareaType::class, array('label' => 'Commentaire Interne :', 'required' => false, "attr" => array("class" => " phoenix", "rows" => 5)))
             ->add('dureeRaw', 'time', array(
             'input' => 'string',
             'widget' => 'single_text',
