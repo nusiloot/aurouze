@@ -92,10 +92,6 @@ class ContratController extends Controller {
 
         $contratManager = new ContratManager($dm);
 
-        // if (!$contrat->isModifiable()) {
-        //     throw $this->createNotFoundException();
-        // }
-
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
             'action' => "",
             'method' => 'POST',
@@ -110,9 +106,7 @@ class ContratController extends Controller {
             $contrat->updateObject();
             $contrat->updatePrestations($dm);
             $contrat->updateProduits($dm);
-            if($contrat->isEnCours() && $contrat->isModifiable()) {
-                $contratManager->generateAllPassagesForContrat($contrat);
-            }
+
             if(!$contrat->getId()) {
                 $dm->persist($contrat);
             }
@@ -131,7 +125,6 @@ class ContratController extends Controller {
 
         $contratManager = new ContratManager($dm);
         $oldTechnicien = $contrat->getTechnicien();
-        $oldNbFactures = $contrat->getNbFactures();
         $isBrouillon = $request->get('brouillon');
         $form = $this->createForm(new ContratAcceptationType($dm, $contrat), $contrat, array(
             'action' => $this->generateUrl('contrat_acceptation', array('id' => $contrat->getId())),
@@ -145,7 +138,7 @@ class ContratController extends Controller {
               throw new \Exception("Le contrat doit avoir date d'acceptation et date de début");
             }
 
-            if ($contrat->isModifiable() && !$isBrouillon && $contrat->getDateDebut()) {
+            if ($contrat->isEnAttenteAcceptation() && !$isBrouillon && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $dateFin = clone $contrat->getDateDebut();
                 $dateFin = $dateFin->modify("+" . $contrat->getDuree() . " month");
@@ -158,17 +151,13 @@ class ContratController extends Controller {
                 if ((!$oldTechnicien) || $oldTechnicien->getId() != $contrat->getTechnicien()->getId()) {
                     $contrat->changeTechnicien($contrat->getTechnicien());
                 }
-                if ($oldNbFactures != $contrat->getNbFactures()) {
-
-                    $contratManager->updateNbFactureForContrat($contrat);
-                }
                 if ($contrat->getDateDebut()) {
                 	$dateFinCalcule = \DateTime::createFromFormat('Y-m-d H:i:s',$contrat->getDateDebut()->format('Y-m-d')." 00:00:00");
                 	$contrat->setDateFin($dateFinCalcule->modify("+" . $contrat->getDuree() . " month"));
                 }
                 $dm->persist($contrat);
                 $dm->flush();
-                return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
+                return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
             }
 
             $dm->persist($contrat);
