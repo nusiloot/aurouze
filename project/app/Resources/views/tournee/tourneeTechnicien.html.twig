@@ -56,12 +56,11 @@
         <h2>{{rendezvous.dateDebut | date("H") }}h{{rendezvous.dateDebut | date("i") }}</h2>
           <div class="row">
             <div class="col-xs-12">
-            <span>
               <strong>{{rendezvous.titre }}</strong>
-            </span>
-            <span>
+            </div>
+            <div class="col-xs-12">
               {{rendezvous.description | nl2br }}
-            </span>
+            </div>
         </li>
       {% endif %}
   {% endfor %}
