@@ -28,15 +28,14 @@ class PaiementType extends AbstractType {
         $this->container = $container;
         $this->dm = $documentManager;
     }
-    
+
     public function buildForm(FormBuilderInterface $builder, array $options) {
     	$builder->add('moyenPaiement', ChoiceType::class, array('label' => 'Moyen de paiement', 'choices' => array_merge(array(null => null), PaiementsManager::$moyens_paiement_libelles), "attr" => array("class" => "select2 select2-simple")));
     	$builder->add('typeReglement', ChoiceType::class, array('label' => 'Type de paiement', 'choices' => array_merge(array(null => null), PaiementsManager::$nouveau_types_reglements_libelles), 'data' => PaiementsManager::TYPE_REGLEMENT_FACTURE, "attr" => array("class" => "select2 select2-simple")));
     	$builder->add('libelle', TextType::class, array('label' => 'Libellé',"required" => false, "attr" => array("placeholder" => 'Libellé')));
-    	$builder->add('datePaiement', DateType::class, 
+    	$builder->add('datePaiement', DateType::class,
     		array(
-    			'label' => 'Date de paiement',
-    			'data' => new \DateTime(),
+    			'label' => 'Date de paiement',    			
     			'attr' => array('class' => 'input-inline datepicker text-center', 'data-provide' => 'datepicker', 'data-date-format' => 'dd/mm/yyyy', 'placeholder' => 'Date de paiement'),
     			'widget' => 'single_text',
     			'format' => 'dd/MM/yyyy'
@@ -84,7 +83,7 @@ class PaiementType extends AbstractType {
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array('data_class' => 'AppBundle\Document\Paiement'));
     }
-    
+
     public function getName() {
         return 'paiement_modification';
     }
