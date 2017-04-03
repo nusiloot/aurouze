@@ -100,9 +100,30 @@ class PassageMobileType extends AbstractType
         		'attr' => array("class" => "phoenix ui-li-has-count", "multiple" => "multiple", "data-native-menu" => "false","placeholder" => 'Applications')
         ));
       //  $builder->get('applications')->resetViewTransformers();
+        $defaultEmail = $builder->getData()->getEmailTransmission();
+        if(!$defaultEmail && $builder->getData()->getPrevious()){
+          if($builder->getData()->getPrevious()->getEmailTransmission()){
+            $defaultEmail = $builder->getData()->getPrevious()->getEmailTransmission();
+          }
+        }
+        $defaultNomResp = $builder->getData()->getNomTransmission();
+        if(!$defaultNomResp && $builder->getData()->getPrevious()){
+          if($builder->getData()->getPrevious()->getNomTransmission()){
+            $defaultNomResp = $builder->getData()->getPrevious()->getNomTransmission();
+          }
+        }
+        $builder->add('emailTransmission', EmailType::class, array(
+          'label' => 'Email :',
+          'required' => false,
+          'data' => $defaultEmail,
+          'attr' => array('class' => " phoenix","placeholder" => 'Email de transmission')));
 
-        $builder->add('emailTransmission', EmailType::class, array('label' => 'Email :','required' => false, 'attr' => array('class' => " phoenix","placeholder" => 'Email de transmission')));
-        $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'required' => false, 'attr' => array('class' => " phoenix","placeholder" => 'Nom du responsable')));
+        $builder->add('nomTransmission', TextType::class, array(
+          'label' => 'Nom :',
+           'required' => false,
+           'data' => $defaultNomResp,
+           'attr' => array('class' => " phoenix","placeholder" => 'Nom du signataire')));
+           
         $builder->add('signatureBase64', HiddenType::class, array('required' => false, 'attr' => array('class' => "phoenix", "data-cible" => "passage_mobile_".$passageId."_signatureBase64")));
     }
 

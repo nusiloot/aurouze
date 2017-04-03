@@ -63,6 +63,30 @@
       <span style="text-decoration: underline">Nomenclature</span><br/><br/>
       {{ passage.contrat.nomenclature | nl2br }}
     </div>
+    {% if (passage.contrat.produits | length)  %}
+    <br/>
+    <div class="ui-body ui-body-a ui-corner-all">
+      <span style="text-decoration: underline">Produits prévus au contrat</span><br/><br/>
+      <table data-role="table" id="table-column-toggle" class="ui-responsive table-stroke">
+          <thead>
+              <tr>
+                  <th>Produit</th>
+                  <th>Qte 1er passage</th>
+                  <th>Qteç_è totale</th>
+              </tr>
+          </thead>
+      <tbody>
+          {% for produit in passage.contrat.produits  %}
+          <tr>
+              <td>{{ produit.nom }} {% if produit.conditionnement %}<small class="text-muted">({{ produit.conditionnement }})</small>{% endif %}</td>
+              <td class="text-right"> {{ produit.nbPremierPassage }} </td>
+              <td>{{ produit.nbTotalContrat }}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+        </table>
+    </div>
+    {% endif %}
     <p>
       <a class="passage_rapport_saisie ui-link ui-btn ui-shadow ui-corner-all" href="#passage_rapport_{{ passage.id }}" >SAISIR LE RAPPORT</a>
     </p>
