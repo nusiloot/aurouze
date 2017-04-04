@@ -166,14 +166,14 @@ class PassageRepository extends DocumentRepository {
 
     public function findToPlan($secteur = EtablissementManager::SECTEUR_PARIS, \DateTime $dateDebut = null, \DateTime $dateFin) {
         $date = new \DateTime();
-        $mongoEndDate = new MongoDate(strtotime($dateFin->format('Y-m-d')));
+        $mongoEndDate = new MongoDate(strtotime($dateFin->format('Y-m-d H:i:s')));
 
         $q = $this->createQueryBuilder();
         $q->field('statut')->equals(PassageManager::STATUT_A_PLANIFIER)
                 ->field('datePrevision')->lte($mongoEndDate);
 
         if($dateDebut){
-          $mongoStartDate = new MongoDate(strtotime($dateDebut->format('Y-m-d')));
+          $mongoStartDate = new MongoDate(strtotime($dateDebut->format('Y-m-d H:i:s')));
           $q->field('datePrevision')->gte($mongoStartDate);
         }
 
