@@ -62,7 +62,7 @@
                                 {% set techColor = 'white' %}
                                 {% set techBgColor = 'transparent' %}
                                 {% set techIdentite = "" %}
-                                {% set urlPlanif = path('calendarManuel') %}
+                                {% set urlPlanif = path('calendarManuel',{'passage' : passage.id, 'id': passage.etablissement.id , 'date' : passage.dateForPlanif|date('d-m-Y')}) %}
                             {% else %}
                                 {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal | trim, passage.etablissementInfos.adresse.commune | trim, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM yyyy") | capitalize, passage.etablissementInfos.nom, passage] | merge(passage.prestationsNom) | json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
                                 {% set techColor = passage.techniciens[0].couleurText %}
