@@ -1566,4 +1566,19 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     {
         return $this->commentaireInterne;
     }
+
+    public function getMouvementFacture(){
+      foreach ($this->getContrat()->getMouvements() as $mouvement) {
+        if($mouvement->getOrigineDocumentGeneration() && ($mouvement->getOrigineDocumentGeneration()->getId() == $this->getId())){
+          return $mouvement;
+        }
+      }
+      return null;
+    }
+
+    public function isMouvementAlreadyFacture(){
+      $mvtPassage = $this->getMouvementFacture();
+      if(!$mvtPassage) { return false; }
+      return $mvtPassage->getFacture();
+    }
 }
