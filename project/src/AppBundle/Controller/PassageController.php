@@ -59,7 +59,7 @@ class PassageController extends Controller {
         }
 
         $passages = null;
-        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFinMax);
+        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFin);
         $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, clone $dateFin)->toArray();
 
         usort($passages, array("AppBundle\Document\Passage", "triPerHourPrecedente"));
