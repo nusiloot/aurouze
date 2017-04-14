@@ -1581,4 +1581,8 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
       if(!$mvtPassage) { return false; }
       return $mvtPassage->getFacture();
     }
+
+    public function getWordingsArrFacturant(){
+      return ($this->getMouvementDeclenchable())? array("facturant") : array("nonfacturant");
+    }
 }
