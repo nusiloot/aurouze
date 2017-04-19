@@ -165,7 +165,8 @@ class ContratRepository extends DocumentRepository {
           	$q->field('typeContrat')->in(array_keys(ContratManager::$types_contrats_reconductibles));
           }
           $q->field('dateFin')->lte($date);
-          $q->field('reconduit')->equals(false);
+          $q->addOr($q->expr()->field('reconduit')->equals(false))
+            ->addOr($q->expr()->field('reconduit')->exists(false));
           $q->field('statut')->notEqual(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
           $q->sort('dateFin', 'desc');
           $query = $q->getQuery();
