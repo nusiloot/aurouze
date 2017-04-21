@@ -94,6 +94,10 @@
   </div>
 
   <div class="row">
+    {% if (passage.nomTransmission) %}
+    <div class="col-xs-8">  <p>Signé par : {{ passage.nomTransmission   }}<br /></p>
+    </div>
+    {% endif %}
     <div class="col-xs-8">
               <p>Signature du client :<br /></p>
             <div height="200px;" >
