@@ -29,7 +29,7 @@ Sur Safari :
 1. Aller sur https://aurouze.24eme.fr
 2. L'ajouter dans les signets : Menu Partage -> Ajouter au signet
 3. Le renommer en "Aurouze Gestion" 
-4. Aller dans les signet et modifier le signet, puis ajouter dans l'url le login / mot de passe
+4. Modifier le signet pour ajouter dans l'url le login et le mot de passe
 5. Accéder au signet (le login / mot de passe doivent apparaitre dans l'url)
 6. L'ajouter à l'écran d'accueil : Menu Partage -> sur l'écran d'eccueil
 
