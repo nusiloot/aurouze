@@ -17,3 +17,8 @@ Installation
 ------------
 
 [Via ansible](https://github.com/24eme/aurouze/tree/master/ansible)
+
+Téléphone
+---------
+
+[Installer l'application sur téléphone](doc/Telephone.md)
