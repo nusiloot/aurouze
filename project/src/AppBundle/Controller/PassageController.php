@@ -51,10 +51,10 @@ class PassageController extends Controller {
         $anneeMois = "courant";
 
         if(!$moisCourant){
-          $anneeMois = ($request->get('mois',null))? $request->get('mois') : date('Ym', strtotime("+1 month", strtotime(date('Y-m-d'))));
+          $anneeMois = ($request->get('mois',null))? $request->get('mois') : date('Ym', strtotime(date('Y-m-d')));
           $dateDebut = \DateTime::createFromFormat('Ymd H:i:s',$anneeMois.'01 00:00:00');
           $dateFin = clone $dateDebut;
-          $dateFin->modify("last day of this month");
+          $dateFin->modify("last day of next month");
           $dateFin->setTime(23,59,59);
         }
 
