@@ -23,7 +23,7 @@
         <link rel="stylesheet" href="{{ asset('/component/aurouze/aurouze.css') }}">
         <link rel="stylesheet" href="{{ asset('/component/leaflet-extra-markers/css/leaflet.extra-markers.css') }}">
         <link rel="stylesheet" media="print" href="{{ asset('/component/fullcalendar/css/fullcalendar.print.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/css/main.css') }}?date=20170119" />
+        <link rel="stylesheet" href="{{ asset('/css/main.css') }}?date=20170426" />
         <link rel="stylesheet" media="print" href="{{ asset('/css/print.css') }}?date=20160622" />
 
         {% block stylesheets %}{% endblock %}
@@ -45,12 +45,12 @@
             <div class="container">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
+                        <span class="sr-only">Voir le menu</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a href="{{ path('accueil') }}" alt="aurouze" style="margin: 5px 10px 5px 0; height: 40px;"><img src="{{ asset('/images/logo.svg') }}" height="40" style="margin-top: 5px;"  /></a>
+                    <a id="logo" href="{{ path('accueil') }}" alt="aurouze"><img src="{{ asset('/images/logo.svg') }}" height="40" style="margin-top: 5px;"  class="hidden-sm" /> <img src="{{ asset('/apple-touch-icon.png') }}" height="40" style="margin-top: 5px;"  class="visible-sm" /></a>
                 </div>
                 {% set retard = 0 %}
                 {% if(app.request.get('societe')) %}
@@ -76,13 +76,12 @@
                     {% if(app.request.get('etablissement')) %}<!--<p id="nav_nom_etablissement" class="navbar-text truncate visible-lg-block"><strong>{{ app.request.get('etablissement').societe.raisonSociale }}</strong></p>-->{% endif %}
 
                     <ul class="nav navbar-nav pull-right">
-                        <li class="{%if (_menu_active == 'recherche') %}active{% endif %}"><a href="{{ path('recherche')}}"><span class="glyphicon glyphicon-search"></span></a></li>
-                        <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}"><span class="glyphicon glyphicon-calendar"></span> Calendrier</a></li>
-                        <li class="{%if (_menu_active == 'statistiques') %}active{% endif %}"><a href="{{ path('statistiques') }}"><span class="glyphicon glyphicon-stats"></span></a></li>
-                        <li class="{%if (_menu_active == 'tournee') %}active{% endif %}"><a href="{{ path('tournees') }}"><span class="glyphicon glyphicon-road"></span></a></li>
+                        <li class="{%if (_menu_active == 'recherche') %}active{% endif %}"><a href="{{ path('recherche')}}"><span class="glyphicon glyphicon-search"></span><span class="hidden-lg hidden-md hidden-sm"> Recherche</span></a></li>
+                        <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}"><span class="glyphicon glyphicon-calendar"></span><span class="hidden-md hidden-sm"> Calendrier</a></span></li>
+                        <li class="{%if (_menu_active == 'statistiques') %}active{% endif %}"><a href="{{ path('statistiques') }}"><span class="glyphicon glyphicon-stats"></span><span class="hidden-lg hidden-md hidden-sm"> Statistiques</span></a></li>
+                        <li class="{%if (_menu_active == 'tournee') %}active{% endif %}"><a href="{{ path('tournees') }}"><span class="glyphicon glyphicon-road"></span><span class="hidden-lg hidden-md hidden-sm"> Tournées</span></a></li>
                         <li class="dropdown {%if (_menu_active == 'configuration' or _menu_active == 'erreurs' ) %}active{% endif %}">
-
-                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" ></span></a>
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" ></span><span class="hidden-lg hidden-md hidden-sm">  Paramètres</span></a>
                           <ul class="dropdown-menu dropdown-menu-right">
                             <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Paramètres</a></li>
                             <li class="{%if (_menu_active == 'erreurs') %}active{% endif %}"><a href="{{ path('passage_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Passages en erreur</li>
