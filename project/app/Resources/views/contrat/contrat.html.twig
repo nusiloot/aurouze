@@ -6,7 +6,7 @@
                 <div class="row">
                     <div class="col-xs-7">
                     	{% if contrat.isAnnule() %}
-                        <p class="bg-danger" style="padding: 10px;">{{ contrat.commentaire }}</p>
+                        <p class="bg-danger" style="padding: 10px;">Contrat annulé le {{ contrat.getDateResiliation() | localizeddate("medium", "none", null, null, "dd/MM/y") }} {% if contrat.commentaire %}pour le motif : {{ contrat.commentaire }}{% endif %}</p>
                     	{% endif %}
                         <p class="lead text-center">
                             {{ contrat.getTypeContratLibelle() }} de {{ contrat.getDuree() }} mois {% if contrat.reconduit %}<button class="btn btn-xs btn-success">Reconduit</button>{% endif %}<br />

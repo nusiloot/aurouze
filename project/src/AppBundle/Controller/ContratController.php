@@ -241,16 +241,20 @@ class ContratController extends Controller {
             $contratForm = $form->getData();
             $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
             $passageList = $this->get('contrat.manager')->getPassagesByNumeroArchiveContrat($contrat);
-
+            $forcerAnnulationPassages = $form['forcerAnnulationPassages']->getData() == 1;
             foreach ($passageList as $etb => $passagesByEtb) {
                 foreach ($passagesByEtb as $passage) {
-                    if (!$passage->isRealise() && !$passage->isAnnule() && ($passage->getDatePrevision()->format('Ymd') > $contrat->getDateResiliation()->format('Ymd'))) {
-                        $passage->setStatut(PassageManager::STATUT_ANNULE);
-                        $passage->getContrat()->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
+                    if ($passage->isRealise() || $passage->isAnnule()) {
+                        continue;
                     }
+                    if($passage->getDatePrevision()->format('Ymd') <= $contrat->getDateResiliation()->format('Ymd') && !$forcerAnnulationPassages) {
+                        continue;
+                    }
+                    $passage->setStatut(PassageManager::STATUT_ANNULE);
+                    $passage->setCommentaire("Annuler suite à l'annulation du contrat");
+                    $passage->getContrat()->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
                 }
             }
-
             foreach ($contrat->getMouvements() as $mouvement) {
             	if (!$mouvement->isFacture()) {
             		$contrat->removeMouvement($mouvement);
@@ -265,7 +269,7 @@ class ContratController extends Controller {
             $contrat->setCommentaire($commentaire);
             $contrat->setReconduit(true);
             $dm->flush();
-            return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
         return $this->render('contrat/annulation.html.twig', array('form' => $form->createView(), 'contrat' => $contrat, 'societe' => $contrat->getSociete()));
     }

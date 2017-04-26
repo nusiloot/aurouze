@@ -54,7 +54,7 @@
             <div class="modal-body form-horizontal">
                 {% if(rdv.passage) %}
                 	{% if (rdv.passage.annule) %}
-                	<p class="bg-danger" style="padding: 10px;">{{ rdv.passage.commentaire }}</p>
+                	<p class="bg-danger" style="padding: 10px;">Passage annulé {% if rdv.passage.commentaire %}pour le motif : {{ rdv.passage.commentaire }}{% endif %}</p>
                 	{% endif %}
                     <div class="form-group" style="margin-bottom: 0">
                         <label class="control-label col-xs-2">Contrat</label>
