@@ -71,8 +71,10 @@ class FactureController extends Controller {
             $facture->setDateEmission(new \DateTime());
         }
 
-        $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant('003480005');
-        $facture->setCommercial($commercial);
+        if(!$facture->getCommercial()) {
+            $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant('003480005');
+            $facture->setCommercial($commercial);
+        }
         if ($type == "devis" && !$facture->getDateDevis()) {
             $facture->setDateDevis(new \DateTime());
 
