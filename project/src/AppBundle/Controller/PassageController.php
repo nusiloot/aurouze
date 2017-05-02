@@ -54,12 +54,16 @@ class PassageController extends Controller {
           $anneeMois = ($request->get('mois',null))? $request->get('mois') : date('Ym', strtotime(date('Y-m-d')));
           $dateDebut = \DateTime::createFromFormat('Ymd H:i:s',$anneeMois.'01 00:00:00');
           $dateFin = clone $dateDebut;
-          $dateFin->modify("last day of next month");
+          $dateFin->modify("last day of this month");
           $dateFin->setTime(23,59,59);
+
+          $dateFinAll = clone $dateDebut;
+          $dateFinAll->modify("last day of next month");
+          $dateFinAll->setTime(23,59,59);
         }
 
         $passages = null;
-        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFin);
+        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFinAll);
         $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, clone $dateFin)->toArray();
 
         usort($passages, array("AppBundle\Document\Passage", "triPerHourPrecedente"));
