@@ -295,6 +295,19 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $techniciens;
     }
 
+    public function getTechniciensWithout($technicien) {
+        $techniciens = array();
+
+        foreach ($this->getTechniciens() as $t) {
+            if($t->getId() == $technicien->getId()) {
+                continue;
+            }
+            $techniciens[$t->getId()] = $t->getIdentite();
+        }
+
+        return $techniciens;
+    }
+
     public function getTechniciensIds() {
         $techniciens = array();
 

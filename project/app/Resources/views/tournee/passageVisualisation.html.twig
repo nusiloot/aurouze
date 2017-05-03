@@ -42,7 +42,14 @@
         {% if passage.etablissementInfos.telephonePortable %}<a href="tel:{{ passage.etablissementInfos.telephonePortable }}">{{ passage.etablissementInfos.telephonePortable }}</a>{% endif %}
     {% endif %}
     <a href="tel:{{telephoneSecretariat}}">Tél Secrétariat</a>
-      <br/><br/><span><strong>Com : {{ passage.contrat.commercial.identite }}</strong></span>
+    <br/>
+    {% if passage.techniciensWithout(technicien) | length > 0 %}
+    Autres techniciens : {{ passage.techniciensWithout(technicien) | join(', ') }}
+    {% else %}
+    <span style="font-weight: normal">Pas d'autres techniciens</span>
+    {% endif %}
+    <br/><br/>
+    <span><strong>Commercial : {{ passage.contrat.commercial.identite }}</strong></span>
   </div>
   <div class="ui-body ui-body-a">
     {% if(passage.commentaire) %}
@@ -56,7 +63,7 @@
           {% if(prestation.wordToPicto) %}
             <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
           {% endif %}
-          &nbsp;{{ prestation.getNomSimplifieToString }}
+          &nbsp;{{ prestation.nom }}<br />
       {% endfor %}
     </p>
     <div class="ui-body ui-body-a ui-corner-all">
