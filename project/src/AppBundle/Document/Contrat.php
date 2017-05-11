@@ -85,6 +85,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     /**
      * @MongoDB\String
      */
+    protected $typeContratOriginal;
+
+    /**
+     * @MongoDB\String
+     */
     protected $nomenclature;
 
     /**
@@ -297,6 +302,28 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getTypeContrat() {
         return $this->typeContrat;
+    }
+
+    /**
+     * Set typeContratOriginal
+     *
+     * @param string $typeContratOriginal
+     * @return self
+     */
+    public function setTypeContratOriginal($typeContrat) {
+        $this->typeContratOriginal = $typeContrat;
+
+        return $this;
+    }
+
+    /**
+     * Get typeContrat
+     *
+     * @return string $typeContratOriginal
+     */
+    public function getTypeContratOriginal() {
+
+        return $this->typeContratOriginal;
     }
 
     /**
@@ -956,6 +983,13 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return ContratManager::$types_contrat_libelles[$this->getTypeContrat()];
     }
 
+    public function getTypeContratOriginalLibelle() {
+        if (!$this->getTypeContratOriginal()) {
+            return "";
+        }
+        return ContratManager::$types_contrat_libelles[$this->getTypeContratOriginal()];
+    }
+
     public function getStatutLibelle() {
         $today = new \DateTime();
         if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))){
@@ -1345,6 +1379,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
     public function isAnnulable() {
         return (($this->isEnCours()  || $this->isFini()) && !$this->isAnnule());
+    }
+
+    public function isReactivable() {
+        return ($this->isAnnule() && $this->getTypeContratOriginal());
     }
 
     /*

@@ -78,14 +78,13 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_EN_COURS => 'En cours',
         self::STATUT_FINI => 'Terminé',
         self::STATUT_RESILIE => 'Résilié',
-        self::STATUT_ANNULE => 'Annulé'
     );
     public static $statuts_libelles_long = array(
         self::STATUT_BROUILLON => 'en brouillon',
         self::STATUT_EN_ATTENTE_ACCEPTATION => "en attente d'acceptation",
         self::STATUT_EN_COURS => 'en cours',
         self::STATUT_FINI => 'terminé',
-        self::STATUT_RESILIE => 'résilié'
+        self::STATUT_RESILIE => 'résilié',
     );
     public static $statuts_couleurs = array(
         self::STATUT_BROUILLON => 'info',

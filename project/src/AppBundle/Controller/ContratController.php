@@ -239,11 +239,11 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contratForm = $form->getData();
+            $contrat->setTypeContratOriginal($contrat->getTypeContrat());
             $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
-            $passageList = $this->get('contrat.manager')->getPassagesByNumeroArchiveContrat($contrat);
             $forcerAnnulationPassages = $form['forcerAnnulationPassages']->getData() == 1;
-            foreach ($passageList as $etb => $passagesByEtb) {
-                foreach ($passagesByEtb as $passage) {
+            foreach($contrat->getContratPassages() as $etb => $passagesByEtb) {
+                foreach ($passagesByEtb->getPassages() as $passage) {
                     if ($passage->isRealise() || $passage->isAnnule()) {
                         continue;
                     }
@@ -252,7 +252,6 @@ class ContratController extends Controller {
                     }
                     $passage->setStatut(PassageManager::STATUT_ANNULE);
                     $passage->setCommentaire("Annuler suite à l'annulation du contrat");
-                    $passage->getContrat()->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
                 }
             }
             foreach ($contrat->getMouvements() as $mouvement) {
@@ -260,18 +259,50 @@ class ContratController extends Controller {
             		$contrat->removeMouvement($mouvement);
             	}
             }
-
             $commentaire = "";
-            if ($contratForm->getCommentaire()) {
+            if ($contrat->getCommentaire()) {
                 $commentaire.= $contrat->getCommentaire() . "\n";
             }
             $commentaire.= $form['commentaireResiliation']->getData();
             $contrat->setCommentaire($commentaire);
-            $contrat->setReconduit(true);
             $dm->flush();
+
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
+
         return $this->render('contrat/annulation.html.twig', array('form' => $form->createView(), 'contrat' => $contrat, 'societe' => $contrat->getSociete()));
+    }
+
+    /**
+     * @Route("/contrat/{id}/reactivation", name="contrat_reactivation")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function reactivationAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $contrat->setTypeContrat($contrat->getTypeContratOriginal());
+        $contrat->setTypeContratOriginal(null);
+        $contrat->setDateResiliation(null);
+        $commentaire = null;
+        if($contrat->getCommentaire()) {
+            $commentaire = $contrat->getCommentaire()."\n";
+        }
+        $commentaire .= "Contrat réactivé le ".date("d/m/Y");
+        $contrat->setCommentaire($commentaire);
+
+        foreach($contrat->getContratPassages() as $etb => $passagesByEtb) {
+            foreach ($passagesByEtb->getPassages() as $passage) {
+                if (!$passage->isAnnule()) {
+                    continue;
+                }
+
+                $passage->setStatut(PassageManager::STATUT_A_PLANIFIER);
+            }
+        }
+
+        $dm->flush();
+
+        return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
     }
 
     /**
@@ -543,15 +574,11 @@ class ContratController extends Controller {
                                                                             'formReconduction' => $formReconduction->createView()));
     }
 
-
-
-
-
     /**
      * @Route("/contrat/export-rentabilite", name="rentabilite_export")
      */
 	public function exportRentabiliteAction(Request $request) {
-
+        ini_set('memory_limit', '256M');
     	// $response = new StreamedResponse();
     	$formRequest = $request->request->get('form');
     	$client = (isset($formRequest['societe']) && $formRequest['societe'] && ($formRequest['societe']!= ""))? $formRequest['societe'] : null;
