@@ -406,10 +406,11 @@ class Facture implements DocumentSocieteInterface {
      * @param AppBundle\Document\Societe $societe
      * @return self
      */
-    public function setSociete(\AppBundle\Document\Societe $societe) {
+    public function setSociete(\AppBundle\Document\Societe $societe, $store = true) {
         $this->societe = $societe;
-        $this->storeDestinataire();
-
+        if($store) {
+            $this->storeDestinataire();
+        }
         return $this;
     }
 
