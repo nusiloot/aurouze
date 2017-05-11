@@ -23,6 +23,9 @@
                     <small>&nbsp;n° {{ contrat.getNumeroArchive() }}</small> <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span></h3>
             </div>
             <div class="col-xs-4 text-right">
+                {%  if (contrat.isCopiable) %}
+                    <a href="{{ path('contrat_copie', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de créer un nouveau contrat avec les infos de ce contrat ?');"><span class="glyphicon glyphicon-duplicate"></span> Dupliquer</a>
+                {% endif %}
                 {% if contrat.isEnAttenteAcceptation() %}
                 <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" onclick="return confirm('Etes-vous sûr de vouloir supprimer ce contrat ?')" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer le contrat</a>
                 {% else %}

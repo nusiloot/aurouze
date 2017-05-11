@@ -1518,7 +1518,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
     public function isCopiable() {
 
-        return (!$this->isBrouillon());
+        return true;
     }
 
     public function isTypeReconductionTacite() {
