@@ -43,7 +43,7 @@ class FactureRepository extends DocumentRepository {
                 $q->addOr($q->expr()->field('destinataire.nom')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')))
                         ->addOr($q->expr()->field('numeroFacture')->equals(new \MongoRegex('/.*' . $term . '.*/i')));
             }
-            if($filter){
+            if($filter && !$withCloture){
               $q->field('avoir')->equals(null);
             }
             $factures = $q->limit(1000)->getQuery()->execute();
