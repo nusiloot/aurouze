@@ -444,7 +444,6 @@ class PassageController extends Controller {
        ->setSubject($suject)
        ->setFrom(array($fromEmail => $fromName))
        ->setTo($passage->getEmailTransmission())
-       ->setCci($fromEmail)
        ->setBody($body,'text/plain');
 
        $attachment = \Swift_Attachment::newInstance($this->get('knp_snappy.pdf')->getOutputFromHtml($rapportVisitePdf->html, $this->getPdfGenerationOptions()), $rapportVisitePdf->filename, 'application/pdf');
