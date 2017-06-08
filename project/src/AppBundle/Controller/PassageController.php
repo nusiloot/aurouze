@@ -434,6 +434,8 @@ class PassageController extends Controller {
         $fromEmail = $parameters['coordonnees']['email'];
         $fromName = $parameters['coordonnees']['nom'];
 
+        $replyEmail = $parameters['coordonnees']['replyEmail'];
+
         $suject = "Aurouze - Rapport de visite du ".$passage->getDateDebut()->format("d/m/Y")." à ".$passage->getDateDebut()->format("H\hi");
         $body = $this->renderView(
             'passage/rapportEmail.html.twig',
@@ -444,7 +446,7 @@ class PassageController extends Controller {
        ->setSubject($suject)
        ->setFrom(array($fromEmail => $fromName))
        ->setTo($passage->getEmailTransmission())
-       ->setBcc($fromEmail)
+       ->setReplyTo($replyEmail)
        ->setBody($body,'text/plain');
 
        $attachment = \Swift_Attachment::newInstance($this->get('knp_snappy.pdf')->getOutputFromHtml($rapportVisitePdf->html, $this->getPdfGenerationOptions()), $rapportVisitePdf->filename, 'application/pdf');
