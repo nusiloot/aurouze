@@ -56,7 +56,7 @@ class PaiementsRepository extends DocumentRepository {
 
         return $query->execute();
     }
-    
+
 
 
     public function findByPeriode($periode) {
@@ -72,29 +72,38 @@ class PaiementsRepository extends DocumentRepository {
     	$query = $q->getQuery();
         return $query->execute();
     }
-    
+
 
 
     public function findByQuery($q)
     {
-    	$q = "\"".str_replace(" ", "\" \"", $q)."\"";
+    	$qSearch = "\"".str_replace(" ", "\" \"", $q)."\"";
     	$resultSet = array();
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Paiements')->command([
     			'find' => 'Paiements',
-    			'filter' => ['$text' => ['$search' => $q]],
+    			'filter' => ['$text' => ['$search' => $qSearch]],
     			'projection' => ['score' => [ '$meta' => "textScore" ]],
     			'sort' => ['score' => [ '$meta' => "textScore" ]],
     			'limit' => 100
-    
+
     	]);
     	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
     		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
     			$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Paiements', $itemResult), "score" => $itemResult['score']);
     		}
+        if(!count($itemResultSet['cursor']['firstBatch'])){
+          $itemResultSet = $this->createQueryBuilder()
+                          ->field('paiement.libelle')->equals(new \MongoRegex('/' . $q . '.*/i'))
+                          ->getQuery()
+                          ->execute();
+          foreach ($itemResultSet as $key => $paiements) {
+              $resultSet[] = array("doc" => $paiements, "score" => "1");
+          }
+        }
     	}
     	return $resultSet;
     }
-    
+
     public function findPaiementByQuery($q)
     {
     	$terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $q)));
