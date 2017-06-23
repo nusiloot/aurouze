@@ -22,7 +22,10 @@
         <h4><strong>{{ passage.etablissementInfos.adresse.adresse }}&nbsp;{{ passage.etablissementInfos.adresse.codePostal }}&nbsp;{{ passage.etablissementInfos.adresse.commune }}
         </strong>
         {% if(passage.etablissement.commentaire) %}
-          <br/><br/>{{ passage.etablissement.commentaire }}
+            <br/><br/><span class="ui-btn ui-btn-a ui-icon-info ui-btn-icon-notext ui-btn-inline ui-shadow"></span><span style="text-decoration: underline;">Etablissement : </span><br/>{{ passage.etablissement.commentaire | nl2br}}
+        {% endif %}
+        {% if(passage.commentaire) %}
+          <br/><br/><span class="ui-btn ui-btn-a ui-icon-info ui-btn-icon-notext ui-btn-inline ui-shadow"></span><span style="text-decoration: underline;">Informations : </span><br/>{{ passage.commentaire | nl2br}}
         {% endif %}
         </h4>
         <br/>

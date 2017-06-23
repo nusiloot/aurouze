@@ -35,7 +35,7 @@ class RendezVousType extends AbstractType {
             $builder->add('titre', TextType::class, array('attr' => array('placeholder' => "Titre de l'évenement")));
         }
 
-        $builder->add('description', TextareaType::class, array('required' => false, 'attr' => array('rows' => 2)));
+        $builder->add('description', TextareaType::class, array('required' => false, 'attr' => array('rows' => 3  )));
         $builder->add('dateDebut', DateType::class, array(
             "attr" => array(
                     'class' => 'input-inline datepicker',

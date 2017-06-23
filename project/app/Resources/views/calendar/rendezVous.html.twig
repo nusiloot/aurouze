@@ -80,6 +80,16 @@
                         </div>
                     </div>
                     <div class="form-group" style="margin-bottom: 0">
+                      {% if(rdv.passage.commentaire) %}
+                          <label class="control-label col-xs-2">Com. technicien</label>
+                          <div class="col-xs-10">
+                              <p class="form-control-static">
+                                {{ rdv.passage.commentaire | replace({'\n': " / " })  }}
+                              </p>
+                          </div>
+                      {% endif %}
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
                         <label class="control-label col-xs-2">Lieu</label>
                         <div class="col-xs-10">
                             <p class="form-control-static">
