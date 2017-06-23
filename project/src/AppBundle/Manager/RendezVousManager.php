@@ -47,7 +47,7 @@ class RendezVousManager {
             $rdv->setDateFin($passage->getDateFin());
         }
 
-        $rdv->setDescription($passage->getCommentaire());
+        $rdv->setDescription($passage->getEtablissement()->getCommentaire());
 
         return $rdv;
     }

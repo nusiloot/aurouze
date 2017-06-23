@@ -79,6 +79,11 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $commentaire;
 
     /**
+     * @MongoDB\String
+     */
+    protected $commentairePlanification;
+
+    /**
      * @MongoDB\Boolean
      */
     protected $actif;
@@ -506,5 +511,27 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function getRegion() {
 
         return EtablissementManager::getRegion($this->getAdresse()->getCodePostal());
+    }
+
+    /**
+     * Set commentairePlanification
+     *
+     * @param string $commentairePlanification
+     * @return self
+     */
+    public function setCommentairePlanification($commentairePlanification)
+    {
+        $this->commentairePlanification = $commentairePlanification;
+        return $this;
+    }
+
+    /**
+     * Get commentairePlanification
+     *
+     * @return string $commentairePlanification
+     */
+    public function getCommentairePlanification()
+    {
+        return $this->commentairePlanification;
     }
 }

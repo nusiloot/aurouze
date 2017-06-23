@@ -11,6 +11,7 @@ use AppBundle\Manager\PassageManager;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Type\EtablissementChoiceType;
 use AppBundle\Type\EtablissementType;
+use AppBundle\Type\EtablissementCommentaireType;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Coordonnees;
@@ -88,6 +89,35 @@ class EtablissementController extends Controller {
         }
 
         return $this->render('etablissement/modification.html.twig', array('societe' => $societe, 'form' => $form->createView(), 'etablissement' => $etablissement));
+    }
+
+    /**
+     * @Route("/etablissement/commentaire/{id}/{passageId}", name="etablissement_commentaire")
+     * @ParamConverter("etablissement", class="AppBundle:Etablissement")
+     */
+    public function commentaireAction(Request $request, Etablissement $etablissement, $passageId) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $passage = $this->get('passage.manager')->getRepository()->find($passageId);
+        $passageCommentaireArr = ($passage->getCommentaire())? array('passageCommentaire' => $passage->getCommentaire()) : null;
+        $form = $this->createForm(new EtablissementCommentaireType($dm,$passageCommentaireArr), $etablissement, array(
+            'action' => $this->generateUrl('etablissement_commentaire', array('id' => $etablissement->getId(), 'passageId' => $passage->getId(), 'service' => $request->get('service'))),
+            'method' => 'POST',
+        ));
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $passage = $form->getData();
+            $dm->flush();
+
+            if($request->get('service')) {
+
+                return $this->redirect($request->get('service'));
+            }
+            return $this->redirectToRoute('passage');
+        }
+
+        return $this->render('passage/commentaire.html.twig', array('etablissement' => $etablissement,'passage' => $passage, 'form' => $form->createView(), 'service' => $request->get('service')));
     }
 
 }

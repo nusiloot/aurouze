@@ -8,14 +8,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <a href="{{ path('passage') }}" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></a>
-        <h4 class="modal-title">Passage {{ passage.etablissementInfos.nom }} en {{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }} pour  {% for prestation in passage.prestations %}
-            {% if(prestation.wordToPicto) %}
-                <span class="step size-16" data-toggle="tooltip" title="{{  prestation.nomToString }}" >
-                    <i class="mdi-{{prestation.wordToPicto}}">&nbsp;</i></span>
-                {%else%}
-                <span class="label label-xs label-primary">{{  prestation.nomToString }}</span>
-            {%endif%}
-        {% endfor %}</h4>
+        <h4 class="modal-title">Commentaires de l'établissement {{ passage.etablissementInfos.nom }}</h4>
       </div>
       <div class="modal-body">
 

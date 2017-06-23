@@ -383,7 +383,7 @@
     }
 
     $.initTooltips = function () {
-        $('[data-toggle="tooltip"], .toggle-tooltip').tooltip();
+        $('[data-toggle="tooltip"], .toggle-tooltip').tooltip({ 'html' : true });
     }
 
     $.initAjaxPost = function ()

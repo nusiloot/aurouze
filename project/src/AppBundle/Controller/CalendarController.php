@@ -196,7 +196,7 @@ class CalendarController extends Controller {
         if($request->get('technicien')) {
             $rdv->addParticipant($dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien')));
         }
-
+        
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
             'action' => $this->generateUrl('calendarAddLibre'),
             'method' => 'POST',
