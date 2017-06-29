@@ -84,7 +84,7 @@
                           <label class="control-label col-xs-2">Com. technicien</label>
                           <div class="col-xs-10">
                               <p class="form-control-static">
-                                {{ rdv.passage.commentaire | replace({'\n': " / " })  }}
+                                {{ rdv.passage.commentaire  | nl2br  }}
                               </p>
                           </div>
                       {% endif %}
