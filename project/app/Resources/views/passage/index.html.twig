@@ -122,13 +122,13 @@
                                             <span
                                             title="{% if(hasOneCommentaire) %}
                                                               {% if(passage.etablissement.commentairePlanification) %}
-                                                                {{ '<h4 style="text-decoration:underline;">Commentaire récurrent planif : </h4><br/>'~passage.etablissement.commentairePlanification~'<br/><br/>' }}
+                                                                {{ '<h4 style="text-decoration:underline;">Commentaire récurrent planif : </h4><br/>'~passage.etablissement.commentairePlanification | nl2br ~'<br/><br/>' }}
                                                               {% endif %}
                                                               {% if(passage.etablissement.commentaire) %}
-                                                                {{ '<h4 style="text-decoration:underline;">Commentaire récurrent technicien : </h4><br/>'~passage.etablissement.commentaire~'<br/><br/>' }}
+                                                                {{ '<h4 style="text-decoration:underline;">Commentaire récurrent technicien : </h4><br/>'~passage.etablissement.commentaire | nl2br ~'<br/><br/>' }}
                                                               {% endif %}
                                                               {% if(passage.commentaire) %}
-                                                                {{ '<h4 style="text-decoration:underline;">Commentaire de passage à déplacer : </h4><br/>'~passage.commentaire~'<br/><br/>' }}
+                                                                {{ '<h4 style="text-decoration:underline;">Commentaire de passage à déplacer : </h4><br/>'~passage.commentaire | nl2br ~'<br/><br/>' }}
                                                               {% endif %}
                                                   {% else %}Ajouter un commentaire{% endif %}"
                                             data-url="{{ path('etablissement_commentaire', {'id': passage.etablissement.id , 'passageId': passage.id}) }}" data-toggle="tooltip" class="{% if(hasOneCommentaire) %}text-primary{% endif %} commentaire_lien" style="{% if(not hasOneCommentaire) %}opacity: 0.3;{% endif %}"><span class="glyphicon glyphicon-comment"></span></span>
