@@ -24,9 +24,8 @@ class EtablissementCommentaireType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-      $defaultCommentairePlanif = ($this->options && isset($this->options['passageCommentaire']))? $this->options['passageCommentaire'] : '';
         $builder
-            ->add('commentairePlanification', TextareaType::class, array('label' => 'Commentaire récurrent planification :', 'required' => false, 'data' => $defaultCommentairePlanif,'attr' => array('rows' => '3')))
+            ->add('commentairePlanification', TextareaType::class, array('label' => 'Commentaire récurrent planification :', 'required' => false, 'attr' => array('rows' => '3')))
             ->add('commentaire', TextareaType::class, array('label' => 'Commentaire récurrent techniciens :', 'required' => false , 'attr' => array('rows' => '3')));
 
     }
