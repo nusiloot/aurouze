@@ -10,8 +10,12 @@
         <a href="{{ path('passage') }}" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></a>
         <h4 class="modal-title">Commentaires de l'établissement {{ passage.etablissementInfos.nom }}</h4>
       </div>
-      <div class="modal-body">
 
+      <div class="modal-body">
+        {% if (passage.commentaire) %}
+            <h4>Ce commentaire est un commentaire de passage (peut-être à déplacer dans l'établissement) </h4>
+            <p>{{ passage.commentaire | nl2br }}</p>
+        {% endif %}
         {{ form_rest(form) }}
       </div>
       <div class="modal-footer">
