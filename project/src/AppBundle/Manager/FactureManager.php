@@ -209,10 +209,10 @@ public static $export_stats_libelle = array(
 
       $this->fillCaStatsArray($ca_stats,$facturesObjs, false, $commercialFiltre);
 
-      $dateDebutMoinsOneYear = \DateTime::createFromFormat('Y-m-d', $dateDebut->format('Y-m-d'));
+      $dateDebutMoinsOneYear = \DateTime::createFromFormat('Y-m-d H:i:s', $dateDebut->format('Y-m-d H:i:s'));
       $dateDebutMoinsOneYear->modify("-1 year");
 
-      $dateFinMoinsOneYear = \DateTime::createFromFormat('Y-m-d', $dateFin->format('Y-m-d'));
+      $dateFinMoinsOneYear = \DateTime::createFromFormat('Y-m-d H:i:s', $dateFin->format('Y-m-d H:i:s'));
       $dateFinMoinsOneYear->modify("-1 year");
 
       $facturesLastYearObjs = $this->getRepository()->exportOneMonthByDate($dateDebutMoinsOneYear,$dateFinMoinsOneYear);
