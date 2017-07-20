@@ -16,7 +16,6 @@
                         <span><span class="glyphicon glyphicon-print"></span> Bon Imprimé</span>
                     {% endif %}
                 {% elseif (rdv.passage and rdv.passage.realise) %}
-                    {% if (rdv.passage.isSaisieTechnicien and rdv.passage.isSaisieTechnicien) %}
                       {% if (rdv.passage.getPdfNonEnvoye) %}
                         <button class="btn btn-md btn-block" style="background-color:{{rdv.getStatusColor()}}; color:{{rdv.getTextColor()}};">
                           Pdf non envoyé
@@ -26,11 +25,6 @@
                           Pdf envoyé
                         </button>
                       {% endif %}
-                    {% else %}
-                      <button class="btn btn-md btn-block btn-success">
-                        {{ rdv.passage.getStatutLibelle() }}
-                      </button>
-                    {% endif %}
                     {% else %}
                     <button class="btn btn-md btn-block">Libre</button>
                 {% endif %}
