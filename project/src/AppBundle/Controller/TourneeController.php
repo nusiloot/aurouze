@@ -138,8 +138,9 @@ class TourneeController extends Controller {
         }
 
         $passage->setDateRealise($passage->getDateDebut());
-
-        $passage->setSaisieTechnicien(true);
+        if(($passage->getEmailTransmission() || $passage->getNomTransmission() || $passage->getSignatureBase64()) && $passage->getDescription()){
+          $passage->setSaisieTechnicien(true);
+        }
         if(!$passage->getPdfNonEnvoye()){
           $passage->setPdfNonEnvoye(true);
         }
