@@ -106,7 +106,7 @@ class RendezVous {
             return "#31708f";
         }
 
-       if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise())) {
+       if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise())) {
 
             return "#8a6d3b";
         }
@@ -136,7 +136,7 @@ class RendezVous {
             return "#d9edf7";
         }
 
-        if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise())) {
+        if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise())) {
 
             return "#fcf8e3";
         }
