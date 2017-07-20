@@ -101,14 +101,15 @@ class RendezVous {
     }
 
     public function getTextColor() {
-        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime()) {
+
+       if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise()) && !$this->getPassage()->isSaisieTechnicien()) {
 
             return "#31708f";
         }
 
-       if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise())) {
+        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime() && !$this->getPassage()->isSaisieTechnicien()) {
 
-            return "#8a6d3b";
+          return "#8a6d3b";
         }
 
         if($this->getPassage() && ($this->getPassage()->isSaisieTechnicien() && $this->getPassage()->isPdfNonEnvoye())) {
@@ -131,14 +132,15 @@ class RendezVous {
     }
 
     public function getStatusColor() {
-        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime()) {
+
+        if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise()) && !$this->getPassage()->isSaisieTechnicien()) {
 
             return "#d9edf7";
         }
 
-        if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise())) {
+        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime() && !$this->getPassage()->isSaisieTechnicien()) {
 
-            return "#fcf8e3";
+          return "#fcf8e3";
         }
 
         if($this->getPassage() && ($this->getPassage()->isSaisieTechnicien() && $this->getPassage()->isPdfNonEnvoye())) {
