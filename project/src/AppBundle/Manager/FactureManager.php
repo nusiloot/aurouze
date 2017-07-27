@@ -171,7 +171,7 @@ public static $export_stats_libelle = array(
         }
 
         $facture->update();
-        $fatcure->updateRestantAPayer();
+        $facture->updateRestantAPayer();
         $facture->facturerMouvements();
 
         return $facture;
