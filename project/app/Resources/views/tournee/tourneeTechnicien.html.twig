@@ -33,7 +33,7 @@
         {% set passage = rendezvous.passage %}
         <li>
         <a class="tournee_passage_visualisation anchor-link {% if( passage.isTransmis ) %}transmis{% endif %}" href="#passage_visualisation_{{ passage.id }}"  >
-          <h2>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}&nbsp;-&nbsp;{{ passage.etablissementInfos.nom }}</h2>
+          <h2>{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}&nbsp;-&nbsp;{% if passage.etablissement.societe.raisonSociale != passage.etablissementInfos.nom %}{{ passage.etablissement.societe.raisonSociale }}, {% endif %}{{ passage.etablissementInfos.nom }}</h2>
           <p>
             <strong>{{ passage.etablissementInfos.adresse.adresse }}
             {{ passage.etablissementInfos.adresse.codePostal }}

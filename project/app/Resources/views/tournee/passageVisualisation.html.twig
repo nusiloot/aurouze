@@ -31,7 +31,7 @@
 
 <div class="ui-corner-all custom-corners">
   <div class="ui-bar ui-bar-a">
-    <strong>{{ passage.etablissementInfos.nom }}</strong><br/>
+    <strong>{% if passage.etablissement.societe.raisonSociale != passage.etablissementInfos.nom %}{{ passage.etablissement.societe.raisonSociale }}, {% endif %}{{ passage.etablissementInfos.nom }}</strong><br/>
     {{ passage.etablissementInfos.adresse.adresse }}<br/>
     {{ passage.etablissementInfos.adresse.codePostal }}&nbsp;{{ passage.etablissementInfos.adresse.commune }}
     {% if(passage.etablissement.commentaire) %}
