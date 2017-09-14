@@ -286,7 +286,7 @@
     }
 
     $.initDatePicker = function () {
-        $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "right"});
+        $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr"});
     }
 
     $.initPeriodePicker = function () {
