@@ -37,7 +37,7 @@ class ContratChangeSocieteCommand extends ContainerAwareCommand {
 
       $dialog = $this->getHelperSet()->get('dialog');
 
-      $contratId = $dialog->askHiddenResponse($output, 'Identifiant complet du contrat dont la société change (CONTRAT-XXXXXX-XXXXXXXX-XXXX) ? ');
+      $contratId = $dialog->ask($output, 'Identifiant complet du contrat dont la société change (CONTRAT-XXXXXX-XXXXXXXX-XXXX) ? ');
       $output->writeln("Le contrat dont la société change est ".$contratId."\n");
 
       $dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
@@ -67,7 +67,7 @@ class ContratChangeSocieteCommand extends ContainerAwareCommand {
           $output->writeln("Facture associée ".$facture->getId());
         }
         $output->writeln("");
-        $nouvelleSocieteId = $dialog->askHiddenResponse($output, 'Nouvelle Société (SOCIETE-XXXXXX) ? ');
+        $nouvelleSocieteId = $dialog->ask($output, 'Nouvelle Société (SOCIETE-XXXXXX) ? ');
         $output->writeln("\nLa nouvelle société est ".$nouvelleSocieteId);
         $nouvelleSociete = $sm->getRepository()->find($nouvelleSocieteId);
         if(!$nouvelleSociete){
@@ -78,13 +78,16 @@ class ContratChangeSocieteCommand extends ContainerAwareCommand {
 
         $descr = "La société $nouvelleSocieteId a les établissements suivants : ";
         foreach ($nouvelleSociete->getEtablissements() as $etablissement) {
+          if(!$etablissement->getActif()){
+            continue;
+          }
           $descr.="\n".$etablissement->getId()." **** ".$etablissement->getIntitule()." ****";
         }
         $output->writeln($descr);
         $output->writeln("");
 
         foreach ($etablissementsArr as $etbSrc) {
-          $newEtbId = $dialog->askHiddenResponse($output, $etbSrc->getId().' **** Ou vont les passages de cet Etb ? ');
+          $newEtbId = $dialog->ask($output, $etbSrc->getId().' **** Ou vont les passages de cet Etb ? ');
           $this->etablissements[$etbSrc->getId()] = $newEtbId;
         }
 
@@ -97,7 +100,7 @@ class ContratChangeSocieteCommand extends ContainerAwareCommand {
             $output->writeln($oldId." =>  ".$newId);
         }
         $output->writeln("");
-        $res = $dialog->askHiddenResponse($output, 'OK ? (tape "y")');
+        $res = $dialog->ask($output, 'OK ? (tape "y")');
         if($res == 'y'){
             //Changement Soc
             $contrat->setSociete($nouvelleSociete);
@@ -122,11 +125,12 @@ class ContratChangeSocieteCommand extends ContainerAwareCommand {
               $contrat->removeContratPassage($contratPassages);
               $contrat->addContratPassage($etbN,$contratPassages);
             }
-
-            foreach ($factures as $facture) {
-              $facture->setSociete($nouvelleSociete);
+          $r = $dialog->ask($output, 'Déplacer aussi les factures ? (tape "y")');
+          if($r == 'y'){
+                foreach ($factures as $facture) {
+                  $facture->setSociete($nouvelleSociete);
+                }
             }
-
             $output->writeln("C'est bon");
 
         }
