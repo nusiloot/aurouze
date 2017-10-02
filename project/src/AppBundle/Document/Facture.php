@@ -768,12 +768,14 @@ class Facture implements DocumentSocieteInterface {
         $this->setMontantPaye(0.0);
         foreach ($this->getPaiements() as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
-                if ($paiement->getFacture()->getId() == $this->getId()) {
+            	if ($p = $paiement->getFacture()) {
+                if ($p->getId() == $this->getId()) {
                     if ($output) {
                         $output->writeln(sprintf("<comment>Ajout d'un paiement de %s euros HT pour facture d'id %s </comment>", $paiement->getMontant(), $this->getId()));
                     }
                     $this->ajoutMontantPaye($paiement->getMontant());
                 }
+            	}
             }
         }
     }
