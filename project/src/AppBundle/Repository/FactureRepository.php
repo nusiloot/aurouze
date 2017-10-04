@@ -138,10 +138,6 @@ class FactureRepository extends DocumentRepository {
         $results = $query->execute();
         $factures = array();
         foreach($results as $facture) {
-            if(round($facture->getMontantTTC() - $facture->getMontantPaye(), 2) <= 0) {
-                continue;
-            }
-
             $factures[$facture->getId()] = $facture;
         }
 
