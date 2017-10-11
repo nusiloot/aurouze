@@ -1427,12 +1427,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
 
         $dateDebut = clone $contrat->getDateDebut();
-        $dateAcceptation = clone $contrat->getDateDebut();
+        $dateAcceptation = clone $contrat->getDateAcceptation();
         $dateFin= clone $contrat->getDateFin();
         $nbMois = $contrat->getDuree();
 
-        $dateDebut = $dateDebut->modify("+" . $nbMois . " month");
-        $dateAcceptation = $dateAcceptation->modify("+" . $nbMois . " month");
+        $dateDebut = $dateDebut->modify("+" . $nbMois . " month");        
         $dateFin = $dateFin->modify("+" . $nbMois . " month");
 
         $contrat->setDateDebut($dateDebut);
