@@ -524,6 +524,11 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         $this->commentairePlanification = $commentairePlanification;
         return $this;
     }
+    
+    public function getAdresseComplete()
+    {
+    	return $this->getAdresse()->getLibelleComplet();
+    }
 
     /**
      * Get commentairePlanification

@@ -1,0 +1,41 @@
+fos_elastica:
+    clients:
+        default: { host: localhost, port: 9200 }
+    indexes:
+        aurouze_prod:
+          finder: ~
+          client: default
+          types:
+            societe:
+              mappings:
+                id: {type: string}
+                raisonSociale: {type: string}
+                identifiant: {type: string}
+                adresseComplete: {type: string}
+                type: {type: string}
+                codeComptable: {type: string}
+                actif: {type: boolean}
+              persistence:
+                driver: mongodb
+                model: AppBundle\Document\Societe
+            etablissement:
+              mappings:
+                id: {type: string}
+                nom: {type: string}
+                identifiant: {type: string}
+                adresseComplete: {type: string}
+                type: {type: string}
+                commentaire: {type: string}
+                actif: {type: boolean}
+              persistence:
+                driver: mongodb
+                model: AppBundle\Document\Etablissement
+            compte:
+              mappings:
+                prenom: {type: string}
+                nom: {type: string}
+                identifiant: {type: string}
+                actif: {type: boolean}
+              persistence:
+                driver: mongodb
+                model: AppBundle\Document\Compte

@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
             new AppBundle\AppBundle(),
         	new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
+        	new FOS\ElasticaBundle\FOSElasticaBundle(),
             
         );
 

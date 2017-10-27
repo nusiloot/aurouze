@@ -511,6 +511,11 @@ class Societe implements InterlocuteurInterface {
     public function getIntitule() {
         return $this->getRaisonSociale() . " " . $this->getAdresse()->getIntitule() . ' (' . $this->identifiant . ')';
     }
+    
+    public function getAdresseComplete()
+    {
+    	return $this->getAdresse()->getLibelleComplet();
+    }
 
     /**
      * Add compte

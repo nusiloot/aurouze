@@ -5,7 +5,7 @@
 
     <div class="row hide-print">
         <div class="col-xs-12">
-            {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+            {{ include('societe/choixForm.html.twig', {'urlTarget': path('passage_societe', {'id': '_id_', 'object': '_object_'}), 'autofocus': true })}}
         </div>
 
     </div>

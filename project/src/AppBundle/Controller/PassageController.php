@@ -229,6 +229,11 @@ class PassageController extends Controller {
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
     public function societeAction(Request $request, Societe $societe) {
+    	
+    	$object = $request->get('object');
+    	if ($object && preg_match('/^ETABLISSEMENT-*/', $object)) {
+    		return $this->redirectToRoute('passage_etablissement', array('id' => $object));
+    	}
 
         $etablissements = $societe->getEtablissementsByStatut(true);
 
