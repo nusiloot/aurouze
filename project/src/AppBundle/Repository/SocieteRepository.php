@@ -96,9 +96,13 @@ class SocieteRepository extends DocumentRepository {
     	if (!$inactif) {
     		$q .= "actif:true";
     	}
+    	
+    	$query = new \Elastica\Query\QueryString();
+    	$query->setDefaultOperator('AND');
+    	$query->setQuery($q);
     	 
     	$resultSet = array();
-    	$results = $service->find($q, $limit);
+    	$results = $service->find($query, $limit);
     	foreach ($results as $result) {
     		$resultSet[$result->getId()] = array("doc" => $result, "score" => 1, "instance" => join('', array_slice(explode('\\', get_class($result)), -1)));
     	}

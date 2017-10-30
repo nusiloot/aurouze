@@ -49,7 +49,7 @@ class RechercheController extends Controller {
 
         //usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
 
-		return $this->render('recherche/index.html.twig', array('query' => $query, 'resultats' => $resultats));
+		return $this->render('recherche/index.html.twig', array('query' => $query, 'resultats' => $resultats, 'searchable' => $searchable));
 	}
 
 	/**

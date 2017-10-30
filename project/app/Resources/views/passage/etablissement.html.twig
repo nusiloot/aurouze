@@ -7,7 +7,12 @@
         <li><a href="{{ path('passage_societe',{ 'id' : etablissement.societe.id }) }}">&nbsp;{{ etablissement.societe.raisonSociale }} </small></a></li>
         <li><a href="{{ path('passage_etablissement',{ 'id' : etablissement.id }) }}">&nbsp;{{ etablissement.getNom(false) }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></a></li>
     </ol>
-    {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+    
+    <div class="row hide-print">
+        <div class="col-xs-12">
+            {{ include('societe/choixForm.html.twig', {'urlTarget': path('passage_societe', {'id': '_id_', 'object': '_object_'}), 'autofocus': true })}}
+        </div>
+    </div>
 
     <div class="row" style="margin-top: 10px; height: 130px;">
         <div class="col-xs-8">
