@@ -78,6 +78,15 @@
                             </div>
                         </div>
                         {% endif %}
+                        {% if exportForm.form.statut is defined %}
+                        <div class="form-group">
+                            {{ form_errors(exportForm.form.statut) }}
+                            {{ form_label(exportForm.form.statut, "Statut", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+                            <div class="col-xs-8">
+                                {{ form_widget(exportForm.form.statut) }}
+                            </div>
+                        </div>
+                        {% endif %}
                 </div>
                 <div class="modal-footer">
                     <div class="row">

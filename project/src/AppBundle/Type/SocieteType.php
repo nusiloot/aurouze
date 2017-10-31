@@ -71,14 +71,16 @@ class SocieteType extends AbstractType {
         ));
         $builder->get('tags')->resetViewTransformers();
 
-        /* $builder->get('actif')->addModelTransformer(new CallbackTransformer(
-          function ($originalDescription) {
-          return ($originalDescription)? true : false;
-          },
-          function ($submittedDescription) {
-          return (int)$submittedDescription;
-          }
-          )); */
+        
+
+                $builder->add('frequencePaiement', ChoiceType::class, array(
+                		'label' => 'Fréquence de paiement* : ',
+                		'choices' => $this->getFrequences(),
+                		'expanded' => false,
+                		'multiple' => false,
+                		'required' => true,
+                		'attr' => array("class" => "select2 select2-simple"),
+                ));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
@@ -109,6 +111,11 @@ class SocieteType extends AbstractType {
 
     public function getTypes() {
         return EtablissementManager::$type_libelles;
+    }
+
+    public function getFrequences() {
+    	$tags = $this->dm->getRepository('AppBundle:Contrat')->findAllFrequences();
+    	return array_merge(array(null => null), $tags);
     }
 
 

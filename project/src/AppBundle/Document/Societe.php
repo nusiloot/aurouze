@@ -7,6 +7,7 @@ use AppBundle\Manager\EtablissementManager;
 use AppBundle\Model\InterlocuteurInterface;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints as AssertMongo;
 use Symfony\Component\Validator\Constraints as AssertDoctrine;
+use AppBundle\Manager\ContratManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\SocieteRepository")
@@ -107,6 +108,11 @@ class Societe implements InterlocuteurInterface {
      * @MongoDB\Boolean
      */
     protected $actif;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $frequencePaiement;
 
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
@@ -576,6 +582,31 @@ class Societe implements InterlocuteurInterface {
     public function getActif()
     {
         return $this->actif;
+    }
+
+    /**
+     * Set frequencePaiement
+     *
+     * @param string $frequencePaiement
+     * @return self
+     */
+    public function setFrequencePaiement($frequencePaiement) {
+        $this->frequencePaiement = $frequencePaiement;
+        return $this;
+    }
+
+    /**
+     * Get frequencePaiement
+     *
+     * @return string $frequencePaiement
+     */
+    public function getFrequencePaiement() {
+        return $this->frequencePaiement;
+    }
+
+    public function getFrequencePaiementLibelle() {
+
+        return ContratManager::$frequences[$this->frequencePaiement];
     }
     
     public function getSociete() {

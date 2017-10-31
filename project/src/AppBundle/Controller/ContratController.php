@@ -657,6 +657,8 @@ class ContratController extends Controller {
     	$formRequest = $request->request->get('form');
     	$commercial = (isset($formRequest['commercial']) && $formRequest['commercial'] && ($formRequest['commercial']!= ""))?
     	$formRequest['commercial'] : null;
+
+    	$statut = (isset($formRequest['statut']) && $formRequest['statut'] && ($formRequest['statut']!= ""))? $formRequest['statut'] : null;
     	$pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
 
     	$dateDebutString = $formRequest['dateDebut']." 00:00:00";
@@ -667,7 +669,7 @@ class ContratController extends Controller {
 
     	$cm = $this->get('contrat.manager');
 
-    	$statsForCommerciaux = $cm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial);
+    	$statsForCommerciaux = $cm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial,$statut);
 
     	if(!$pdf){
     		$filename = sprintf("export_details_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));

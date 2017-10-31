@@ -345,6 +345,17 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getNomenclature() {
         return $this->nomenclature;
     }
+    
+
+
+    /**
+     * Get nomenclature
+     *
+     * @return string $nomenclature
+     */
+    public function getHtmlNomenclature() {
+    	return preg_replace('/\*\*(.+)\*\*/', '<strong>$1</strong>', $this->nomenclature);
+    }
 
     /**
      * Add prestation

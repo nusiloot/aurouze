@@ -68,7 +68,7 @@
     </p>
     <div class="ui-body ui-body-a ui-corner-all">
       <span style="text-decoration: underline">Nomenclature</span><br/><br/>
-      {{ passage.contrat.nomenclature | nl2br }}
+      {{ passage.contrat.getHtmlNomenclature() | raw | nl2br }}
     </div>
     {% if (passage.contrat.produits | length)  %}
     <br/>
