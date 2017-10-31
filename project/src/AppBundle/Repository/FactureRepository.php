@@ -128,11 +128,13 @@ class FactureRepository extends DocumentRepository {
             ->addOr($q->expr()->field('nbRelance')->equals(0));
         }
       }
-        $societeRepo = $this->getDocumentManager()->getRepository('AppBundle:Societe');
-        $societeTab = explode(', ', $societe);
-		$societe = $societeRepo->findOneBy(array('identifiant' => $societeTab[count($societeTab)-1]));
-      	if ($societe) {
+      	if ($societe && !preg_match('/^SOCIETE-[0-9]*$/', $societe)) {
+      		$societeRepo = $this->getDocumentManager()->getRepository('AppBundle:Societe');
+      		$societeTab = explode(', ', $societe);
+      		$societe = $societeRepo->findOneBy(array('identifiant' => $societeTab[count($societeTab)-1]));
         	$q->field('societe')->equals($societe->getId());
+      	} elseif ($societe) {
+        	$q->field('societe')->equals($societe);
       	}
         $q->sort('dateFacturation', 'desc')->sort('societe', 'asc');
         $query = $q->getQuery();
