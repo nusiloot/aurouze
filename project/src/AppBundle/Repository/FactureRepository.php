@@ -131,9 +131,9 @@ class FactureRepository extends DocumentRepository {
         $societeRepo = $this->getDocumentManager()->getRepository('AppBundle:Societe');
         $societeTab = explode(', ', $societe);
 		$societe = $societeRepo->findOneBy(array('identifiant' => $societeTab[count($societeTab)-1]));
-      if ($societe) {
-        $q->field('societe')->equals($societe->getId());
-      }
+      	if ($societe) {
+        	$q->field('societe')->equals($societe->getId());
+      	}
         $q->sort('dateFacturation', 'desc')->sort('societe', 'asc');
         $query = $q->getQuery();
         $results = $query->execute();
