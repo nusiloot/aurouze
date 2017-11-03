@@ -88,7 +88,7 @@ class CalendarController extends Controller {
             $periodeStart = date("Y-m-d", strtotime("+1 day", strtotime($periodeStart)));
         }
 
-        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
+        $allTechniciens = $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
         $techniciensFinal = array();
 
         $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
@@ -163,7 +163,7 @@ class CalendarController extends Controller {
             }
         }
 
-        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'techniciensOnglet' => $techniciensOnglet, 'technicien' => null, 'passage' => $passage, 'date' => $request->get('date')), $response);
+        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'techniciensOnglet' => $techniciensOnglet, 'technicien' => null, 'allTechniciens' => $allTechniciens, 'passage' => $passage, 'date' => $request->get('date')), $response);
     }
 
     /**
