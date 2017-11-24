@@ -735,6 +735,16 @@ class Facture implements DocumentSocieteInterface {
         return "N°" . $this->getNumeroFacture() . " " . $this->getDestinataire()->getNom() . " (" . $this->getMontantAPayer() . "€ / " . $this->getMontantTTC() . "€ TTC)";
     }
 
+    public function __clone() {
+        $this->removeId();
+
+        $lignes = $this->lignes;
+        $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
+        foreach($lignes as $ligne) {
+            $this->lignes[] = clone $ligne;
+        }
+    }
+
     /**
      * Set montantPaye
      *
@@ -935,7 +945,6 @@ class Facture implements DocumentSocieteInterface {
 
     public function genererAvoir(){
         $avoir = clone $this;
-        $avoir->removeId();
         $avoir->removeNumeroFacture();
         $avoir->setCloture(true);
         $avoir->setOrigineAvoir($this);
