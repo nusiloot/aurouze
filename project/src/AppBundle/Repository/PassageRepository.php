@@ -52,9 +52,11 @@ class PassageRepository extends DocumentRepository {
 
     public function findAllErreurs() {
         $mongoEndDate = new MongoDate(strtotime("now"));
+        $mongoStartDate = new MongoDate(strtotime("2016-01-01 00:00:00"));
         $query = $this->createQueryBuilder('Passage')
                 ->field('statut')->equals(PassageManager::STATUT_PLANIFIE)
                 ->field('dateFin')->lte($mongoEndDate)
+                ->field('dateDebut')->gte($mongoStartDate)
                 ->sort('dateDebut', 'asc');
         $query = $query->getQuery();
         return $query->execute();
