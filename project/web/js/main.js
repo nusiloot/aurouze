@@ -180,7 +180,7 @@
             }
         });
         $('.fc-time-grid-event .fc-bg').each(function(){
-          console.log('ici');
+
           console.log(this);
         });
     };
@@ -204,7 +204,6 @@
         $('.commentaire_lien').click(function (event) {
             event.preventDefault();
             var url = $(this).attr('data-url')+"?service="+encodeURIComponent(window.location.href);
-            console.log(window.location.pathname);
             window.location.href = url;
         });
     };
@@ -636,6 +635,7 @@
                 }
             }
 
+
             select2.select2({
                 theme: 'bootstrap',
                 multiple: true,
@@ -674,6 +674,7 @@
                     select2Data.push(filtres[key]);
                 }
 
+                $(document).find('.hamzastyle').trigger("change");
                 $(document).find('.hamzastyle').val(select2Data).trigger("change");
                 $(document).find('.hamzastyle-item').each(function () {
                     var words = JSON.parse($(this).attr('data-words'));
@@ -715,6 +716,7 @@
             if($('#map').attr('data-zoom')){
                 zoom = $('#map').data('zoom');
             }
+
             var map = L.map('map').setView([lat, lon], zoom);
 
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -778,23 +780,26 @@
             ).addTo(map);
 
             var refreshListFromMapBounds = function(){
-              var excludeListNoMarkers = (map.getZoom() > 11);
-              $('div#liste_passage a').each(function(){
-                  var hasMarker = markers[$(this).attr('id')] != undefined ;
-                  if(!hasMarker){
-                    if(excludeListNoMarkers){
-                      $(this).hide();
-                    }else{
-                      $(this).show();
+              var filtre = window.location.hash;
+              if(!filtre){
+                var excludeListNoMarkers = (map.getZoom() > 11);
+                $('div#liste_passage a').each(function(){
+                    var hasMarker = markers[$(this).attr('id')] != undefined ;
+                    if(!hasMarker){
+                      if(excludeListNoMarkers){
+                        $(this).hide();
+                      }else{
+                        $(this).show();
+                      }
                     }
+                });
+                for (var id in markers) {
+                  var marker = markers[id];
+                  if(map.getBounds().contains(marker._latlng)){
+                    $('div#liste_passage a#'+id).show();
+                  }else{
+                    $('div#liste_passage a#'+id).hide();
                   }
-              });
-              for (var id in markers) {
-                var marker = markers[id];
-                if(map.getBounds().contains(marker._latlng)){
-                  $('div#liste_passage a#'+id).show();
-                }else{
-                  $('div#liste_passage a#'+id).hide();
                 }
               }
             }
@@ -829,7 +834,8 @@
             if(hasHistoryRewrite){
               map.on('moveend', function(){
                 var center = map.getCenter();
-                history.pushState(null, null, "?lat="+center.lat+"&lon="+center.lng+"&zoom="+ map.getZoom());
+                var hash = window.location.hash;
+                history.pushState(null, null, "?lat="+center.lat+"&lon="+center.lng+"&zoom="+ map.getZoom()+hash);
                 refreshListFromMapBounds();
               });
             }
