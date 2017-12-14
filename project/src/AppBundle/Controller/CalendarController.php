@@ -209,7 +209,7 @@ class CalendarController extends Controller {
         if($request->get('technicien')) {
             $rdv->addParticipant($dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien')));
         }
-        
+
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
             'action' => $this->generateUrl('calendarAddLibre'),
             'method' => 'POST',
@@ -357,7 +357,8 @@ class CalendarController extends Controller {
         $passageCoord = $rdv->getPassage()->getEtablissement()->getAdresse()->getCoordonnees();
         $secteur = EtablissementManager::getRegion($rdv->getPassage()->getEtablissement()->getAdresse()->getCodePostal());
         if(!$secteur){ $secteur = EtablissementManager::SECTEUR_PARIS; }
-        $event->retourMap = $this->generateUrl('passage',array('secteur' => $secteur, 'mois' => $rdv->getPassage()->getDatePrevision()->format('Ym'),'lat' => $passageCoord->getLat(),'lon' => $passageCoord->getLon(),'zoom' => ($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE)? '10' : '15'));
+        $z = ($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE)? '10' : '15';
+        $event->retourMap = $this->generateUrl('passage',array('secteur' => $secteur, 'mois' => $rdv->getPassage()->getDatePrevision()->format('Ym'),'lat' => $passageCoord->getLat(),'lon' => $passageCoord->getLon(),'zoom' => $z));
       }
       return $event;
     }
