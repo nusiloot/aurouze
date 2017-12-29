@@ -27,8 +27,16 @@ class RendezVousRepository extends DocumentRepository
         $mongoEndDate = new \MongoDate(strtotime($endDateTime->format('Y-m-d')." midnight")-1);
 
         $query = $this->createQueryBuilder('RendezVous');
-        $query->addAnd($query->expr()->field('dateDebut')->gte($mongoStartDate));
-        $query->addAnd($query->expr()->field('dateDebut')->lte($mongoEndDate));
+        $query->addOr(
+                $query->expr()->addAnd($query->expr()->field('dateDebut')->gte($mongoStartDate))
+                              ->addAnd($query->expr()->field('dateDebut')->lte($mongoEndDate))
+                      )
+              ->addOr(
+                $query->expr()->addAnd($query->expr()->field('dateFin')->gte($mongoStartDate))
+                              ->addAnd($query->expr()->field('dateFin')->lte($mongoEndDate)))
+              ->addOr(
+                $query->expr()->addAnd($query->expr()->field('dateDebut')->lte($mongoStartDate))
+                              ->addAnd($query->expr()->field('dateFin')->gte($mongoEndDate)));
         $query->field('participants')->equals($participant->getId())
                 ->sort('dateDebut', 'asc');
 
