@@ -58,7 +58,33 @@ class ContratRepository extends DocumentRepository {
     	return ContratManager::$frequences;
     }
 
-    public function findAllErreurs() {
+    public function findAllErreursEnCours() {
+        $dateMin = (new \DateTime())->modify("-1 year -6 month");
+        $contratsTacites = $this->findAllTaciteSortedByNumeroArchive($dateMin);
+        $contratsErreurs = array();
+        foreach ($contratsTacites as $key => $contrat) {
+          if(!$contrat->getDateDebut()){
+            continue;
+          }
+          if($contrat->getDateDebut()->format('Ymd') < "20150101"){
+            continue;
+          }
+            foreach ($contrat->getContratPassages() as $etb => $contratPassages) {
+              foreach ($contratPassages->getPassages() as $key => $p){
+                if($p->getDateRealise()){
+                  if(($contrat->getDateDebut()->format('Ym') > $p->getDateRealise()->format('Ym')) || ($p->getDateRealise()->format('Ym') > $contrat->getDateFin()->format('Ym'))){
+                    $contratsErreurs[$contrat->getId()] = new \stdClass();
+                    $contratsErreurs[$contrat->getId()]->contrat = $contrat;
+                    break;
+                  }
+                }
+              }
+            }
+         }
+        return $contratsErreurs;
+    }
+
+    public function findAllDecalage() {
         $contratsTacites = array();
         $num_arch = null;
         $dateFin = null;
@@ -100,6 +126,7 @@ class ContratRepository extends DocumentRepository {
         }
         return $contratsErreurs;
     }
+
 
     public function findByQuery($q)
     {
