@@ -502,15 +502,26 @@ class ContratController extends Controller {
     }
 
     /**
+     * @Route("/contrats/decalage", name="contrats_decalage")
+     */
+    public function contratsDecalageAction(Request $request) {
+        ini_set('memory_limit', '1024M');
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrats = $dm->getRepository('AppBundle:Contrat')->findAllDecalage();
+
+        return $this->render('contrat/erreurs.html.twig', array('contrats' => $contrat,'erreurTitre' => "Contrats décalés", 'erreur' => 0));
+    }
+
+    /**
      * @Route("/contrats/erreurs", name="contrats_erreurs")
      */
     public function contratsErreursAction(Request $request) {
         ini_set('memory_limit', '1024M');
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contrats = $dm->getRepository('AppBundle:Contrat')->findAllErreurs();
+        $contrats = $dm->getRepository('AppBundle:Contrat')->findAllErreursEnCours();
 
-        return $this->render('contrat/erreurs.html.twig', array('contrats' => $contrats));
+        return $this->render('contrat/erreurs.html.twig', array('contrats' => $contrats ,'erreurTitre' => "Contrats en erreurs", 'erreur' => 1 ));
     }
 
 
