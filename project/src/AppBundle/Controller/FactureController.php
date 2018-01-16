@@ -486,7 +486,7 @@ class FactureController extends Controller {
      * @Route("/facture/export", name="factures_export")
      */
     public function exportComptableAction(Request $request) {
-
+        ini_set('memory_limit', '-1');
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
 

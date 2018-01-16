@@ -193,7 +193,6 @@ public static $export_stats_libelle = array(
         $dateFin = new \DateTime();
         $dateFin->modify("+1month");
       }
-
       $ca_stats = array();
       $ca_stats["ENTETE_TITRE"] = array("Exports statistiques du ".$dateDebut->format("d/m/Y")." au ".$dateFin->format("d/m/Y"));
       $ca_stats['ENTETE'] = self::$export_stats_libelle;
@@ -205,18 +204,20 @@ public static $export_stats_libelle = array(
         }
       }
 
-
       $facturesObjs = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
+
 
       $this->fillCaStatsArray($ca_stats,$facturesObjs, false, $commercialFiltre);
 
-      $dateDebutMoinsOneYear = \DateTime::createFromFormat('Y-m-d', $dateDebut->format('Y-m-d'));
+      $dateDebutMoinsOneYear = \DateTime::createFromFormat('Y-m-d H:i:s', $dateDebut->format('Y-m-d')." 00:00:00");
       $dateDebutMoinsOneYear->modify("-1 year");
+      $dateDebutMoinsOneYear->modify('first day of this month');
 
-      $dateFinMoinsOneYear = \DateTime::createFromFormat('Y-m-d', $dateFin->format('Y-m-d'));
+      $dateFinMoinsOneYear = \DateTime::createFromFormat('Y-m-d H:i:s', $dateFin->format('Y-m-d')." 23:59:59");
       $dateFinMoinsOneYear->modify("-1 year");
-
+      $dateFinMoinsOneYear->modify('last day of this month');
       $facturesLastYearObjs = $this->getRepository()->exportOneMonthByDate($dateDebutMoinsOneYear,$dateFinMoinsOneYear);
+
       $this->fillCaStatsArray($ca_stats,$facturesLastYearObjs,true, $commercialFiltre);
 
       //Calcul des Totaux
@@ -260,7 +261,6 @@ public static $export_stats_libelle = array(
       }
     }
     ksort($results);
-
     return array_merge(array('ENTETE_TITRE' => $ca_stats['ENTETE_TITRE']) , array('ENTETE' => $ca_stats['ENTETE']),$results);
   }
 
