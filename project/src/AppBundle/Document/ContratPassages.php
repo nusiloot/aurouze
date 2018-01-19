@@ -172,7 +172,7 @@ class ContratPassages {
     public function getNbPassagesRealisesOuAnnule($exclude_garanti = false) {
         $realisesOuAnnules = 0;
         foreach ($this->getPassages() as $passage) {
-            if($exclude_garanti && $passage->isGarantie()){
+            if($exclude_garanti && ($passage->isGarantie() || $passage->isControle())){
               continue;
             }
             $realisesOuAnnules+=($passage->isRealise() || $passage->isAnnule());
