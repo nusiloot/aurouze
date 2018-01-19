@@ -501,7 +501,7 @@ class ContratManager implements MouvementManagerInterface {
                 $pcaArr[self::EXPORT_PCA_RATIO_FACTURE] = sprintf("%01.02f",($calculPca['ratioFacture'] * 100))."%";
 
                 $pcaArr[self::EXPORT_PCA_NB_PASSAGE] = $contratObj->getNbPassages();
-                $pcaArr[self::EXPORT_PCA_NB_PASSAGE_EFFECTUE] = ($contratObj->getContratPassages()->first())? $contratObj->getContratPassages()->first()->getNbPassagesRealisesOuAnnule() : "pas de passages";
+                $pcaArr[self::EXPORT_PCA_NB_PASSAGE_EFFECTUE] = ($contratObj->getContratPassages()->first())? $contratObj->getContratPassages()->first()->getNbPassagesRealisesOuAnnule(true) : "pas de passages";
                 $pcaArr[self::EXPORT_PCA_RATIO_PASSAGE] = sprintf("%01.02f",($calculPca['ratioActivite'] * 100))."%";
 
                 $pcaArr[self::EXPORT_PCA_PCA_VALEUR] = sprintf("%01.02f",$calculPca['pca']);
