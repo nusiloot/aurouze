@@ -56,6 +56,30 @@
         <p class="text-muted"><i>Aucun mouvement</i></p>
     {% endif %}
 
+{% if hasDevis %}
+    <h3>Devis</h3>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th class="col-xs-2">Date</th>
+                <th class="col-xs-2">Document</th>
+                <th class="col-xs-3">Contenu</th>
+                <th class="col-xs-1">Écheance</th>
+                <th class="col-xs-1 text-right">Montant&nbsp;TTC</th>
+                <th class="col-xs-1 text-right">Montant&nbsp;payé</th>
+                <th class="col-xs-1 text-right">Restant</th>
+                <th class="col-xs-1 text-right"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for facture in factures %}
+             {% if facture.isDevis %}
+              {{ include('facture/factureLigne.html.twig', {'facture': facture, 'societe' : societe}) }}
+              {% endif %}
+            {% endfor %}
+        </tbody>
+      </table>
+{% endif %}
     <h3>Liste des Factures et Devis <strong>non cloturées</strong>
                       <div class="btn-group pull-right"><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis' })}}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer un devis</a>
                         <a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture' } ) }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Créer une facture</a></div>
@@ -79,11 +103,21 @@
             </tr>
         </thead>
         <tbody>
+            {% set totalRestant = 0.0 %}
             {% for facture in factures %}
-             {% if not (facture.paye or facture.isAvoir or facture.isRedressee) %}
+             {% if not facture.isDevis and not (facture.paye or facture.isAvoir or facture.isRedressee) %}
+                {% set totalRestant = totalRestant + facture.montantAPayer %}
               {{ include('facture/factureLigne.html.twig', {'facture': facture, 'societe' : societe}) }}
               {% endif %}
             {% endfor %}
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="text-right"><strong>Total :</strong></td>
+            <td class="text-right"><strong>{{ "%0.2f" | format(totalRestant) }}&nbsp;€</strong></td>
+            <td></td>
         </tbody>
       </table>
 

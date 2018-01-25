@@ -132,6 +132,16 @@ public static $export_stats_libelle = array(
         return $this->getRepository()->findBy(array('societe' => $societe->getId()), array('dateEmission' => 'desc'));
     }
 
+    public function hasDevisSociete(Societe $societe) {
+        $factures = $this->findBySociete($societe);
+        foreach ($factures as $facture) {
+          if($facture->isDevis()){
+            return true;
+          }
+        }
+        return false;
+    }
+
     public function createVierge(Societe $societe) {
         $facture = new Facture();
         $facture->setSociete($societe);
