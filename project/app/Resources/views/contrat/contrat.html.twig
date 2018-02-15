@@ -12,9 +12,11 @@
                         <p class="lead text-center">
                             {{ contrat.getTypeContratLibelle() }} {% if(contrat.typeContratOriginal and contrat.typeContrat != contrat.typeContratOriginal) %}({{ contrat.typeContratOriginalLibelle }}){% endif %} de {{ contrat.getDuree() }} mois {% if contrat.reconduit %}<button class="btn btn-xs btn-success">Reconduit</button>{% endif %}<br />
                         </p>
+                        {%  if contrat.getDateDebut() %}
                         <p class="lead text-center">
-                            Du {{ contrat.getDateDebut() | localizeddate("medium", "none", null, null, "dd/MM/y") }} au {{ contrat.getDateFin() | localizeddate("medium", "none", null, null, "dd/MM/y") }}
+                            Du {{ contrat.getDateDebut() | localizeddate("medium", "none", null, null, "dd/MM/y") }} au {% if contrat.getDateFin() %}{{ contrat.getDateFin() | localizeddate("medium", "none", null, null, "dd/MM/y") }}{% else %}{{ contrat.getDateDebut()|date_modify("+"~contrat.getDuree()~" month")|date("d/m/Y") }}{% endif %}
                         </p>
+                    	{% endif %}
                         <p class="text-center">
                         {% for prestation in contrat.prestations %} {% if(prestation.wordToPicto)
             			%} <span class="step size-24" title="{{  prestation.nomToString }}"
