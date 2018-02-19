@@ -8,7 +8,7 @@
     </ol>
 
     {{ include('societe/choixForm.html.twig', {'urlTarget': path('societe_visualisation', {'id': '_id_'})}) }}
-    
+
     <div class="row">
         <div class="col-xs-12">
             <div class="panel panel-default">
@@ -61,6 +61,18 @@
                             <li>Code comptable : {{ societe.codeComptable }}</li>
                         </ul>
                     </div>
+                  </div>
+                    <div class="row" style="padding: 15px">
+                      {% if(societe.attachements) %}
+                              {% for attachement in societe.attachements %}
+                                {{ include('attachement/attachementItem.html.twig', {'attachement' : attachement, 'attachementModifForm' : uploadModifAttachementForms[attachement.id]}) }}
+                              {% endfor %}
+                        {% endif %}
+                        <div class="col-xs-12" >
+                            <a class="btn btn-lg btn-default" data-toggle="modal" data-target="#document-modal-{{societe.id}}" ><span class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter document</a>
+                        </div>
+                    </div>
+                    <div class="list-group">
                     {% if(societe.tags | length > 0) %}
                         <div class="list-group-item">
                             {% for tag in societe.tags %}
@@ -76,10 +88,12 @@
                 </div>
             </div>
         </div>
+        {{ include('attachement/attachementAjoutModal.html.twig', {'type' : 'societe', 'societe' : societe, 'uploadAttachementForm' : uploadAttachementForm}) }}
     </div>
     <h3 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un établissement</a>Etablissements <span class="badge">{{ societe.getEtablissementsByStatut(true) | length }}</span></h3>
 
-    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(true), 'modifLink': true}) }}
+    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(true), 'uploadEtbsAttachementForms' : uploadEtbsAttachementForms,
+    'uploadModifAttachementForms' : uploadModifAttachementForms, 'modifLink': true}) }}
 
     <h3 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('compte_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un interlocuteur</a>Interlocuteurs <span class="badge">{{ societe.getComptesByStatut(true) | length }}</span></h3>
 

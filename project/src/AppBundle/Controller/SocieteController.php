@@ -9,9 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\SocieteType;
+use AppBundle\Type\AttachementType;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Etablissement;
 use AppBundle\Manager\EtablissementManager;
+use AppBundle\Document\Attachement;
 
 class SocieteController extends Controller {
 
@@ -45,10 +47,41 @@ class SocieteController extends Controller {
     public function visualisationAction(Request $request, $societe) {
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
+      $attachement = new Attachement();
+      $uploadAttachementForm = $this->createForm(new AttachementType($this->container, $dm), $attachement, array(
+          'action' => $this->generateUrl('societe_upload_attachement', array('id' => $societe->getId())),
+          'method' => 'POST',
+      ));
 
-        $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
+      $uploadModifAttachementForms = array();
+      foreach ($societe->getAttachements() as $att) {
+        $f = $this->createForm(new AttachementType($this->container, $dm), $att, array(
+            'action' => $this->generateUrl('attachement_modification', array('id' => $att->getId())),
+            'method' => 'POST',
+        ));
+        $uploadModifAttachementForms[$att->getId()] = $f->createView();
+      }
 
-    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe, 'nbContratsSociete' => $nbContratsSociete));
+      $uploadEtbsAttachementForms = array();
+      foreach ($societe->getEtablissements() as $etablissement) {
+        $attachement = new Attachement();
+        $f = $this->createForm(new AttachementType($this->container, $dm), $attachement, array(
+            'action' => $this->generateUrl('etablissement_upload_attachement', array('id' => $etablissement->getId())),
+            'method' => 'POST',
+        ));
+        $uploadEtbsAttachementForms[$etablissement->getId()] = $f->createView();
+
+        foreach ($etablissement->getAttachements() as $att) {
+          $f = $this->createForm(new AttachementType($this->container, $dm), $att, array(
+              'action' => $this->generateUrl('attachement_modification', array('id' => $att->getId())),
+              'method' => 'POST',
+          ));
+          $uploadModifAttachementForms[$att->getId()] = $f->createView();
+        }
+      }
+      $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
+
+    	return $this->render('societe/visualisation.html.twig', array('societe' => $societe, 'nbContratsSociete' => $nbContratsSociete, 'uploadAttachementForm' => $uploadAttachementForm->createView(), 'uploadEtbsAttachementForms' => $uploadEtbsAttachementForms, 'uploadModifAttachementForms' => $uploadModifAttachementForms));
     }
 
     /**
@@ -100,6 +133,102 @@ class SocieteController extends Controller {
          return $response;
      }
 
+     /**
+     * @Route("/societe/attachement/{id}/ajout", name="societe_upload_attachement")
+     */
+     public function attachementUploadAction(Request $request, $id) {
+        $attachement = new Attachement();
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $societe = $this->get('societe.manager')->getRepository()->find($id);
+        $uploadAttachementForm = $this->createForm(new AttachementType($this->container, $dm), $attachement, array(
+      			'action' => $this->generateUrl('societe_upload_attachement', array('id' => $id)),
+      			'method' => 'POST',
+      	));
+
+        if ($request->isMethod('POST')) {
+            $uploadAttachementForm->handleRequest($request);
+            if($uploadAttachementForm->isValid()){
+              $attachement->setSociete($societe);
+              $dm->persist($attachement);
+              $societe->addAttachement($attachement);
+
+              $dm->flush();
+
+            }
+            return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
+        }
+    }
+
+    /**
+    * @Route("/attachement/{id}/supprimer", name="attachement_delete")
+    */
+    public function attachementDeleteAction(Request $request, $id) {
+       $attachement = $this->get('attachement.manager')->getRepository()->find($id);
+
+       $societe = $attachement->getSociete();
+       if(!$societe){
+         $societe = $attachement->getEtablissement()->getSociete();
+       }
+       if(!$societe){
+         throw new \Exception('Une erreur s\'est produite : le document '.$attachement->getId().' ne semble être relié à rien!');
+
+       }
+       $dm = $this->get('doctrine_mongodb')->getManager();
+
+       try {
+          $attachement->removeFile();
+       } catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
+         //do nothing
+       }
+
+       $dm->remove($attachement);
+       $dm->flush();
+
+       return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
+   }
+
+   /**
+   * @Route("/attachement/{id}/modification", name="attachement_modification")
+   */
+   public function attachementModificationAction(Request $request, $id) {
+      $attachement = $this->get('attachement.manager')->getRepository()->find($id);
+
+      $societe = $attachement->getSociete();
+      if(!$societe){
+        $societe = $attachement->getEtablissement()->getSociete();
+      }
+      if(!$societe){
+        throw new \Exception('Une erreur s\'est produite : le document '.$attachement->getId().' ne semble être relié à rien!');
+
+      }
+      $dm = $this->get('doctrine_mongodb')->getManager();
+
+      if ($request->isMethod('POST')) {
+          $attachementNew = new Attachement();
+          $uploadAttachementForm = $this->createForm(new AttachementType($this->container, $dm), $attachementNew, array(
+            'action' => $this->generateUrl('societe_upload_attachement', array('id' => $id)),
+            'method' => 'POST',
+          ));
+          $uploadAttachementForm->handleRequest($request);
+          if($uploadAttachementForm->isValid()){
+            if($attachement->getSociete()){
+              $attachementNew->setSociete($attachement->getSociete());
+            }
+            if($attachement->getEtablissement()){
+              $attachementNew->setEtablissement($attachement->getEtablissement());
+            }
+            $dm->persist($attachementNew);
+            $societe->addAttachement($attachementNew);
+            $dm->flush();
+          }
+          return $this->redirectToRoute('attachement_delete', array('id' => $attachement->getId()));
+      }
+  }
+
+
+
+
+
     public function contructSearchResult($criterias, &$result) {
 
         foreach ($criterias as $id => $nom) {
@@ -109,5 +238,6 @@ class SocieteController extends Controller {
             $result[] = $newResult;
         }
     }
+
 
 }

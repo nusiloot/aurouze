@@ -70,4 +70,15 @@ knp_snappy:
         binary:     "%knp_snappy_imagebinary%"
         options:    []
 
+vich_uploader:
+    db_driver: mongodb
+    mappings:
+        attachement_image:
+            uri_prefix: /documents
+            upload_destination: '%kernel.root_dir%/../web/documents'
+            namer: vich_uploader.namer_uniqid
+            inject_on_load: true
+            delete_on_update: true
+            delete_on_remove: true
+
 #    temporary_folder: %kernel.cache_dir%/snappy

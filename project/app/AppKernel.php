@@ -17,8 +17,9 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle(),
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
             new AppBundle\AppBundle(),
-        	new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
-            
+        	  new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
+            new Vich\UploaderBundle\VichUploaderBundle(),
+
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

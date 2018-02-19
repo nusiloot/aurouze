@@ -35,6 +35,23 @@
             {% endif %}
             </td>
         </tr>
+        <tr>
+          <td colspan="4">
+            <div class="row" style="padding: 15px">
+              {% if(etablissement.attachements) %}
+                      {% for attachement in etablissement.attachements %}
+                      {{ include('attachement/attachementItem.html.twig', {'attachement' : attachement}) }}
+                      {% endfor %}
+                {% endif %}
+                <div class="col-xs-12" >
+                    <a class="btn btn-lg btn-default" data-toggle="modal" data-target="#document-modal-{{etablissement.id}}" ><span class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter document</a>
+                </div>
+            </div>
+          </td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
+{% for etablissement in etablissements %}
+{{ include('attachement/attachementAjoutModal.html.twig', {'type' : 'etablissement', 'etablissement' : etablissement, 'uploadAttachementForm' : uploadEtbsAttachementForms[etablissement.id]}) }}
+{% endfor %}

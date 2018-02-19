@@ -1,0 +1,61 @@
+<div class="modal fade" id="{% if type == 'etablissement' %}document-modal-{{etablissement.id}}{% endif %}{% if type == 'societe'%}document-modal-{{societe.id}}{% endif %}{% if type == 'attachement'%}document-modal-{{attachement.id}}{% endif %}" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          {% if type == 'etablissement' %}
+            {% set url = path("etablissement_upload_attachement", { 'id': etablissement.id }) %}
+          {% endif %}
+          {% if type == 'societe' %}
+            {% set url = path("societe_upload_attachement", { 'id': societe.id }) %}
+          {% endif %}
+          {% if type == 'attachement' %}
+            {% set url = path("attachement_modification", { 'id': attachement.id }) %}
+          {% endif %}
+            <form class="eventPicture-form" action="{{ url }}" method="post" {{ form_enctype(uploadAttachementForm) }} >
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="eventPicture-modal-label">
+                      {% if type == 'attachement'%}Remplacer le document actuel{% else %}
+                      Ajouter un document {% if type == 'etablissement' %}au lieu de passage{% endif %}{% if type == 'societe'%}à la société{% endif %}
+                      {% endif %}
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                          <div class="form-group">
+                              {{ form_label(uploadAttachementForm.imageFile, "Fichier :", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+                              <div class="col-xs-8">
+                                  {{ form_widget(uploadAttachementForm.imageFile) }}
+                              </div>
+                          </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="form-group">
+                        {{ form_label(uploadAttachementForm.titre, "Titre :", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+                          <div class="col-xs-8">
+                              {{ form_widget(uploadAttachementForm.titre) }}
+                          </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="form-group">
+                        <label class="col-xs-4 control-label control-label required" for="attachement_titre">Visible des techniciens :</label>
+                          <div class="col-xs-8 text-right">
+                              {{ form_widget(uploadAttachementForm.visibleTechnicien) }}
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">Fermer</button>
+                    <button class="btn btn-primary" type="submit">Sauvegarder</button>
+                </div>
+          {{ form_end(uploadAttachementForm) }}
+        </div>
+    </div>
+</div><!-- /.modal -->
+
+<!-- Loading state -->
+<div class="loading" tabindex="-1" role="img" aria-label="Loading"></div>

@@ -6,8 +6,6 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Model\InterlocuteurInterface;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints as AssertMongo;
-use Symfony\Component\Validator\Constraints as AssertDoctrine;
-
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\SocieteRepository")
  */
@@ -102,6 +100,11 @@ class Societe implements InterlocuteurInterface {
      * @MongoDB\Collection
      */
     protected $tags;
+
+    /**
+     *  @MongoDB\ReferenceMany(targetDocument="Attachement", mappedBy="societe")
+     */
+    protected $attachements;
 
     /**
      * @MongoDB\Boolean
@@ -417,7 +420,7 @@ class Societe implements InterlocuteurInterface {
 
         return $comptes;
     }
-    
+
     public function getComptesLibelle($statut)
     {
     	$comptes = $this->getComptesByStatut($statut);
@@ -572,8 +575,40 @@ class Societe implements InterlocuteurInterface {
     {
         return $this->actif;
     }
-    
+
     public function getSociete() {
     	return $this;
+    }
+
+
+
+    /**
+     * Add attachement
+     *
+     * @param AppBundle\Document\Attachement $attachement
+     */
+    public function addAttachement(\AppBundle\Document\Attachement $attachement)
+    {
+        $this->attachements[] = $attachement;
+    }
+
+    /**
+     * Remove attachement
+     *
+     * @param AppBundle\Document\Attachement $attachement
+     */
+    public function removeAttachement(\AppBundle\Document\Attachement $attachement)
+    {
+        $this->attachements->removeElement($attachement);
+    }
+
+    /**
+     * Get attachements
+     *
+     * @return \Doctrine\Common\Collections\Collection $attachements
+     */
+    public function getAttachements()
+    {
+        return $this->attachements;
     }
 }

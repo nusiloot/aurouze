@@ -10,6 +10,7 @@ use AppBundle\Model\InterlocuteurInterface;
 use AppBundle\Document\Adresse;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Document\Contrat;
+use AppBundle\Document\Attachement;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository") @HasLifecycleCallbacks
@@ -87,6 +88,11 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
      * @MongoDB\Boolean
      */
     protected $actif;
+
+    /**
+     *  @MongoDB\ReferenceMany(targetDocument="Attachement", mappedBy="etablissement")
+     */
+    protected $attachements;
 
     public function __construct() {
         $this->adresse = new Adresse();
@@ -533,5 +539,35 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function getCommentairePlanification()
     {
         return $this->commentairePlanification;
+    }
+
+    /**
+     * Add attachement
+     *
+     * @param AppBundle\Document\Attachement $attachement
+     */
+    public function addAttachement(\AppBundle\Document\Attachement $attachement)
+    {
+        $this->attachements[] = $attachement;
+    }
+
+    /**
+     * Remove attachement
+     *
+     * @param AppBundle\Document\Attachement $attachement
+     */
+    public function removeAttachement(\AppBundle\Document\Attachement $attachement)
+    {
+        $this->attachements->removeElement($attachement);
+    }
+
+    /**
+     * Get attachements
+     *
+     * @return \Doctrine\Common\Collections\Collection $attachements
+     */
+    public function getAttachements()
+    {
+        return $this->attachements;
     }
 }

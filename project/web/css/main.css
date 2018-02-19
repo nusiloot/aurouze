@@ -168,12 +168,52 @@ body {
   text-decoration: inherit;
 }
 
-/*.deco-none:link {
-  color: inherit;
-  text-decoration: inherit;
-}*/
+.thumbnail-overlayed {
+  position: relative;
+}
 
-/*.deco-none:hover {
-  color: inherit;
-  text-decoration: inherit;
-}*/
+.vignette {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: #b5e8ff;
+}
+
+.thumbnail-overlayed:hover .overlay {
+  opacity: 0.9;
+}
+
+.overlay-text {
+  color: black;
+  font-size: 14px;
+  position: absolute;
+  top: 10%;
+  left: 10%;
+}
+
+.overlay-remove {
+  position: absolute;
+  top: 5%;
+  left: 80%;
+}
+.overlay-titre{
+  font-size: 16px;
+}
+
+.visible-technicien {
+  border-style: solid;
+  border-width: 2px;
+  border-color: darkred;
+}
