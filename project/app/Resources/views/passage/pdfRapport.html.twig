@@ -7,7 +7,7 @@
   {% if parameters["emetteur_"~passage.region] is defined %}
       {% set emetteur = parameters["emetteur_"~passage.region] %}
   {% endif %}
-  <div class="row">
+  <div class="row" style="padding-top: 110px;">
       <div class="col-xs-6">
           <p>
               <span class="lead" style="font-weight: 400; font-size: 18px">{{ emetteur.nom }}</span><br />
