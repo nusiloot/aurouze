@@ -67,7 +67,7 @@ class FactureLigne {
     }
 
     public function updateMouvementContrat() {
-        if(!$this->isOrigineContrat()) {
+        if(!$this->isOrigineContrat() || !$this->getMouvement()) {
             return;
         }
 
@@ -114,7 +114,8 @@ class FactureLigne {
 				return $mvt;
 			}
 		}
-        throw new \Exception("Mouvement non trouvé");
+
+        return null;
     }
 
     /**
