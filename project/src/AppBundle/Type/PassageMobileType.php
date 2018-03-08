@@ -21,10 +21,12 @@ class PassageMobileType extends AbstractType
 
     protected $dm;
     protected $passageId;
+    protected $previousPassage;
 
-    public function __construct(DocumentManager $documentManager,$passageId) {
+    public function __construct(DocumentManager $documentManager,$passageId,$previousPassage) {
         $this->dm = $documentManager;
         $this->passageId = $passageId;
+        $this->previousPassage = $previousPassage;
     }
 
     /**
@@ -101,15 +103,15 @@ class PassageMobileType extends AbstractType
         ));
       //  $builder->get('applications')->resetViewTransformers();
         $defaultEmail = $builder->getData()->getEmailTransmission();
-        if(!$defaultEmail && $builder->getData()->getPrevious()){
-          if($builder->getData()->getPrevious()->getEmailTransmission()){
-            $defaultEmail = $builder->getData()->getPrevious()->getEmailTransmission();
+        if(!$defaultEmail && $this->previousPassage){
+          if($this->previousPassage->getEmailTransmission()){
+            $defaultEmail = $this->previousPassage->getEmailTransmission();
           }
         }
         $defaultNomResp = $builder->getData()->getNomTransmission();
-        if(!$defaultNomResp && $builder->getData()->getPrevious()){
-          if($builder->getData()->getPrevious()->getNomTransmission()){
-            $defaultNomResp = $builder->getData()->getPrevious()->getNomTransmission();
+        if(!$defaultNomResp && $this->previousPassage){
+          if($this->previousPassage->getNomTransmission()){
+            $defaultNomResp = $this->previousPassage->getNomTransmission();
           }
         }
         $builder->add('emailTransmission', EmailType::class, array(
@@ -123,7 +125,7 @@ class PassageMobileType extends AbstractType
            'required' => false,
            'data' => $defaultNomResp,
            'attr' => array('class' => " phoenix","placeholder" => 'Nom du signataire')));
-           
+
         $builder->add('signatureBase64', HiddenType::class, array('required' => false, 'attr' => array('class' => "phoenix", "data-cible" => "passage_mobile_".$passageId."_signatureBase64")));
     }
 
