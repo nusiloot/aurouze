@@ -64,10 +64,15 @@ class TourneeController extends Controller {
         foreach ($rendezVousByTechnicien as $rendezVous) {
           if($passage = $rendezVous->getPassage()){
             $historiqueAllPassages[$passage->getId()] = $this->get('contrat.manager')->getHistoriquePassagesByNumeroArchive($passage, 2);
+            $previousPassage = null;
             foreach ($historiqueAllPassages[$passage->getId()] as $hPassage) {
               $this->get('passage.manager')->synchroniseProduitsWithConfiguration($hPassage);
+              if(!$previousPassage || !$previousPassage->getDateDebut() || ($previousPassage->getDateDebut() < $hPassage->getDateDebut())){
+                  $previousPassage = $hPassage;
+              }
             }
-            $passagesForms[$passage->getId()] = $this->createForm(new PassageMobileType($dm, $passage->getId()), $passage, array(
+
+            $passagesForms[$passage->getId()] = $this->createForm(new PassageMobileType($dm, $passage->getId(), $previousPassage), $passage, array(
               'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
               'method' => 'POST',
               ))->createView();
