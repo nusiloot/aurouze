@@ -65,7 +65,7 @@
                     <div class="row" style="padding: 15px">
                       {% if(societe.attachements) %}
                               {% for attachement in societe.attachements %}
-                                {{ include('attachement/attachementItem.html.twig', {'attachement' : attachement, 'attachementModifForm' : uploadModifAttachementForms[attachement.id]}) }}
+                                {{ include('attachement/attachementItem.html.twig', {'attachement' : attachement}) }}
                               {% endfor %}
                         {% endif %}
                         <div class="col-xs-12" >
@@ -92,8 +92,7 @@
     </div>
     <h3 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un établissement</a>Etablissements <span class="badge">{{ societe.getEtablissementsByStatut(true) | length }}</span></h3>
 
-    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(true), 'uploadEtbsAttachementForms' : uploadEtbsAttachementForms,
-    'uploadModifAttachementForms' : uploadModifAttachementForms, 'modifLink': true}) }}
+    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(true)}) }}
 
     <h3 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('compte_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un interlocuteur</a>Interlocuteurs <span class="badge">{{ societe.getComptesByStatut(true) | length }}</span></h3>
 

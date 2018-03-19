@@ -8,7 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Passage;
+use AppBundle\Document\Attachement;
 use AppBundle\Type\PassageMobileType;
+use AppBundle\Type\AttachementType;
 
 class TourneeController extends Controller {
 
@@ -58,6 +60,7 @@ class TourneeController extends Controller {
 
         $historiqueAllPassages = array();
         $passagesForms = array();
+        $attachementsForms = array();
 
         $version = $this->getVersionManifest($technicienObj->getId(),$date->format('Y-m-d'));
 
@@ -76,6 +79,13 @@ class TourneeController extends Controller {
               'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
               'method' => 'POST',
               ))->createView();
+
+            $etbId = $passage->getEtablissement()->getId();
+            $attachementsForms[$etbId] = array('form' => $this->createForm(new AttachementType($dm, false), new Attachement(), array(
+                  'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId,'retour' => 'passage_visualisation_'.$passage->getId())),
+                  'method' => 'POST',
+              ))->createView(),
+              'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId, 'retour' => 'passage_visualisation_'.$passage->getId())));
           }
         }
 
@@ -85,7 +95,8 @@ class TourneeController extends Controller {
                                                                           "version" => $version,
                                                                           "historiqueAllPassages" => $historiqueAllPassages,
                                                                           'telephoneSecretariat' => $telephoneSecretariat,
-                                                                          "passagesForms" => $passagesForms));
+                                                                          "passagesForms" => $passagesForms,
+                                                                          "attachementsForms" => $attachementsForms));
     }
 
     /**
@@ -161,6 +172,37 @@ class TourneeController extends Controller {
     }
 
     /**
+     * @Route("/tournee-technicien/attachement/{technicien}/{date}/{idetablissement}/ajout/{retour}", name="tournee_attachement_upload", defaults={"date" = "0"})
+     */
+    public function attachementUploadAction(Request $request, $technicien,$date,$idetablissement,$retour) {
+       $technicien = $request->get('technicien');
+       $date = $request->get('date');
+       $retour = $request->get('retour');
+       $attachement = new Attachement();
+       $dm = $this->get('doctrine_mongodb')->getManager();
+       $etablissement = $this->get('etablissement.manager')->getRepository()->find($idetablissement);
+       $uploadAttachementForm = $this->createForm(new AttachementType($dm,false), $attachement, array(
+           'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date,'idetablissement' => $idetablissement,'retour' => $retour)),
+           'method' => 'POST',
+       ));
+       if ($request->isMethod('POST')) {
+           $uploadAttachementForm->handleRequest($request);
+           if($uploadAttachementForm->isValid()){
+             $f = $uploadAttachementForm->getData()->getImageFile();
+             if($f){
+                 $attachement->setVisibleTechnicien(true);
+                 $attachement->setEtablissement($etablissement);
+                 $dm->persist($attachement);
+                 $etablissement->addAttachement($attachement);
+                 $dm->flush();
+             }
+           }
+           $urlRetour = $this->generateUrl('tournee_technicien', array('technicien' => $technicien, 'date' => $date))."#".$retour;
+           return $this->redirect($urlRetour);
+       }
+   }
+
+    /**
      * @Route("/tournee-technicien/manifest/{technicien}", name="manifest")
      */
     public function manifestAction(Request $request) {
@@ -184,6 +226,8 @@ class TourneeController extends Controller {
 
       return $this->render('tournee/manifest.twig', array('version' => $versionManifest),$response);
     }
+
+
 
     private function getVersionManifest($technicien,$date){
       return $this->get('passage.manager')->getRepository()->findLastDateModificationPassagesForTechnicien($technicien,$date);

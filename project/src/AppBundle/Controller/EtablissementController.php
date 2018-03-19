@@ -137,9 +137,12 @@ class EtablissementController extends Controller {
        if ($request->isMethod('POST')) {
            $uploadAttachementForm->handleRequest($request);
            if($uploadAttachementForm->isValid()){
-             $attachement->setEtablissement($etablissement);
-             $dm->persist($attachement);
-             $etablissement->addAttachement($attachement);
+             $f = $uploadAttachementForm->getData()->getImageFile();
+             if($f){
+                 $attachement->setEtablissement($etablissement);
+                 $dm->persist($attachement);
+                 $etablissement->addAttachement($attachement);
+             }
 
              $dm->flush();
 

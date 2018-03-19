@@ -78,7 +78,7 @@ vich_uploader:
             upload_destination: '%kernel.root_dir%/../web/documents'
             namer: vich_uploader.namer_uniqid
             inject_on_load: true
-            delete_on_update: true
-            delete_on_remove: true
+            delete_on_update: false
+            delete_on_remove: false
 
 #    temporary_folder: %kernel.cache_dir%/snappy

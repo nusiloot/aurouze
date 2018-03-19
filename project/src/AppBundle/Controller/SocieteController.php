@@ -165,6 +165,7 @@ class SocieteController extends Controller {
     public function attachementDeleteAction(Request $request, $id) {
        $attachement = $this->get('attachement.manager')->getRepository()->find($id);
 
+       $noremove = $request->get('noremove',false);
        $societe = $attachement->getSociete();
        if(!$societe){
          $societe = $attachement->getEtablissement()->getSociete();
@@ -176,7 +177,9 @@ class SocieteController extends Controller {
        $dm = $this->get('doctrine_mongodb')->getManager();
 
        try {
-          $attachement->removeFile();
+           if($noremove){
+               $attachement->removeFile();
+           }
        } catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
          //do nothing
        }
@@ -192,11 +195,17 @@ class SocieteController extends Controller {
    */
    public function attachementModificationAction(Request $request, $id) {
       $attachement = $this->get('attachement.manager')->getRepository()->find($id);
+      $lastFile = $attachement->getImageFile();
+
+      $lastName = $attachement->getImageName();
 
       $societe = $attachement->getSociete();
       if(!$societe){
-        $societe = $attachement->getEtablissement()->getSociete();
-      }
+            $societe = $attachement->getEtablissement()->getSociete();
+            $url = $this->generateUrl('etablissement_upload_attachement', array('id' => $attachement->getEtablissement()->getId()));
+        }else{
+            $url = $this->generateUrl('societe_upload_attachement', array('id' => $societe->getId()));
+        }
       if(!$societe){
         throw new \Exception('Une erreur s\'est produite : le document '.$attachement->getId().' ne semble être relié à rien!');
 
@@ -206,11 +215,17 @@ class SocieteController extends Controller {
       if ($request->isMethod('POST')) {
           $attachementNew = new Attachement();
           $uploadAttachementForm = $this->createForm(new AttachementType($this->container, $dm), $attachementNew, array(
-            'action' => $this->generateUrl('societe_upload_attachement', array('id' => $id)),
+            'action' => $url,
             'method' => 'POST',
           ));
           $uploadAttachementForm->handleRequest($request);
+
           if($uploadAttachementForm->isValid()){
+              $upData = $uploadAttachementForm->getData();
+            if($upData->getImageFile() == null){
+                  $attachementNew->setImageName($lastName);
+                  $attachementNew->setImageFile($lastFile);
+            }
             if($attachement->getSociete()){
               $attachementNew->setSociete($attachement->getSociete());
             }
@@ -221,7 +236,7 @@ class SocieteController extends Controller {
             $societe->addAttachement($attachementNew);
             $dm->flush();
           }
-          return $this->redirectToRoute('attachement_delete', array('id' => $attachement->getId()));
+          return $this->redirectToRoute('attachement_delete', array('id' => $attachement->getId(),'noremove' => 1));
       }
   }
 
