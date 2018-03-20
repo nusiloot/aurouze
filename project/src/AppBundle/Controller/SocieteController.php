@@ -48,14 +48,14 @@ class SocieteController extends Controller {
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
       $attachement = new Attachement();
-      $uploadAttachementForm = $this->createForm(new AttachementType($this->container, $dm), $attachement, array(
+      $uploadAttachementForm = $this->createForm(new AttachementType($dm), $attachement, array(
           'action' => $this->generateUrl('societe_upload_attachement', array('id' => $societe->getId())),
           'method' => 'POST',
       ));
 
       $uploadModifAttachementForms = array();
       foreach ($societe->getAttachements() as $att) {
-        $f = $this->createForm(new AttachementType($this->container, $dm), $att, array(
+        $f = $this->createForm(new AttachementType($dm), $att, array(
             'action' => $this->generateUrl('attachement_modification', array('id' => $att->getId())),
             'method' => 'POST',
         ));
@@ -65,14 +65,14 @@ class SocieteController extends Controller {
       $uploadEtbsAttachementForms = array();
       foreach ($societe->getEtablissements() as $etablissement) {
         $attachement = new Attachement();
-        $f = $this->createForm(new AttachementType($this->container, $dm), $attachement, array(
+        $f = $this->createForm(new AttachementType($dm), $attachement, array(
             'action' => $this->generateUrl('etablissement_upload_attachement', array('id' => $etablissement->getId())),
             'method' => 'POST',
         ));
         $uploadEtbsAttachementForms[$etablissement->getId()] = $f->createView();
 
         foreach ($etablissement->getAttachements() as $att) {
-          $f = $this->createForm(new AttachementType($this->container, $dm), $att, array(
+          $f = $this->createForm(new AttachementType($dm), $att, array(
               'action' => $this->generateUrl('attachement_modification', array('id' => $att->getId())),
               'method' => 'POST',
           ));
@@ -140,7 +140,7 @@ class SocieteController extends Controller {
         $attachement = new Attachement();
         $dm = $this->get('doctrine_mongodb')->getManager();
         $societe = $this->get('societe.manager')->getRepository()->find($id);
-        $uploadAttachementForm = $this->createForm(new AttachementType($this->container, $dm), $attachement, array(
+        $uploadAttachementForm = $this->createForm(new AttachementType($dm), $attachement, array(
       			'action' => $this->generateUrl('societe_upload_attachement', array('id' => $id)),
       			'method' => 'POST',
       	));
@@ -214,7 +214,7 @@ class SocieteController extends Controller {
 
       if ($request->isMethod('POST')) {
           $attachementNew = new Attachement();
-          $uploadAttachementForm = $this->createForm(new AttachementType($this->container, $dm), $attachementNew, array(
+          $uploadAttachementForm = $this->createForm(new AttachementType($dm), $attachementNew, array(
             'action' => $url,
             'method' => 'POST',
           ));
