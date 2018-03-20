@@ -129,7 +129,7 @@ class EtablissementController extends Controller {
        $attachement = new Attachement();
        $dm = $this->get('doctrine_mongodb')->getManager();
        $etablissement = $this->get('etablissement.manager')->getRepository()->find($id);
-       $uploadAttachementForm = $this->createForm(new AttachementType($this->container, $dm), $attachement, array(
+       $uploadAttachementForm = $this->createForm(new AttachementType($dm), $attachement, array(
            'action' => $this->generateUrl('societe_upload_attachement', array('id' => $id)),
            'method' => 'POST',
        ));
