@@ -2,10 +2,10 @@
   <div class="thumbnail thumbnail-overlayed {% if attachement.visibleTechnicien %}visible-technicien{% endif %}" data-cible="modal-viewer-{{attachement.id }}">
     {% if attachement.isPdf %}
       <object type="application/pdf" width="100%" height="100%" style="min-height: 200px; max-height:200px; margin-bottom:0" class="vignette">
-        <param name="src" value="{{ vich_uploader_asset(attachement, 'imageFile') }}" />
+        <param name="src" value="{{ attachement.getBase64Src() }}" />
       </object>
   {% else %}
-    <img src="{{ vich_uploader_asset(attachement, 'imageFile') }}" alt="{{ attachement.imageName }}" class="img-thumbnail vignette" style="min-height: 200px; max-height:200px; margin-bottom:0"/>
+    <img src="{{ attachement.getBase64Src() }}" alt="{{ attachement.imageName }}" class="img-thumbnail vignette" style="min-height: 200px; max-height:200px; margin-bottom:0"/>
     {% endif %}
     <div class="overlay">
         <div class="content-overlay" style="min-height: 100px; width:100%;">
@@ -24,7 +24,7 @@
           <div class="caption">
             <div class="row">
               <div class="col-xs-12">
-                <a href="{{ vich_uploader_asset(attachement, 'imageFile') }}" download="{{ vich_uploader_asset(attachement, 'imageFile') }}">
+                <a href="{{ attachement.getBase64Src() }}" download="{{ attachement.getBase64Src() }}">
                   <p><span class="glyphicon glyphicon-download-alt"></span>&nbsp;{{ attachement.titre }}</p>
                 </a>
               </div>
@@ -38,7 +38,7 @@
   <span class="modal-viewer-close">&times;</span>
   {% if attachement.isPdf %}
     <object type="application/pdf" width="100%" height="100%" style="margin-bottom:0" >
-      <param name="src" value="{{ vich_uploader_asset(attachement, 'imageFile') }}" />
+      <param name="src" value="{{ attachement.getBase64Src() }}" />
     </object>
   {% else %}
   <img class="modal-viewer-content" id="img">

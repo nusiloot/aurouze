@@ -151,7 +151,9 @@ class SocieteController extends Controller {
               $attachement->setSociete($societe);
               $dm->persist($attachement);
               $societe->addAttachement($attachement);
+              $dm->flush();
 
+              $attachement->convertBase64AndRemove();
               $dm->flush();
 
             }

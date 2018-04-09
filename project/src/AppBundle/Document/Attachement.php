@@ -47,6 +47,18 @@ class Attachement
    protected $imageName;
 
    /**
+    * @MongoDB\string
+    *
+    */
+   protected $base64;
+
+   /**
+    * @MongoDB\string
+    *
+    */
+   protected $ext;
+
+   /**
     * @MongoDB\Int
     *
     */
@@ -220,7 +232,7 @@ class Attachement
           $this->updatedAt = new \DateTime('now');
       }
       if($imageFile instanceof \Symfony\Component\HttpFoundation\File\UploadedFile && $imageFile->getClientOriginalName()){
-        $this->setOriginalName($imageFile->getClientOriginalName());
+         $this->setOriginalName($imageFile->getClientOriginalName());
       }
     }
 
@@ -305,6 +317,64 @@ class Attachement
     }
 
     public function removeFile(){
-        unlink($this->getImageFile()->getPathName());
+        unlink(realpath('../web/documents/'.$this->getImageName()));
+    }
+
+    /**
+     * Set base64
+     *
+     * @param string $base64
+     * @return $this
+     */
+    public function setBase64($base64)
+    {
+        $this->base64 = $base64;
+        return $this;
+    }
+
+    /**
+     * Get base64
+     *
+     * @return string $base64
+     */
+    public function getBase64()
+    {
+        return $this->base64;
+    }
+
+    /**
+     * Set ext
+     *
+     * @param string $ext
+     * @return $this
+     */
+    public function setExt($ext)
+    {
+        $this->ext = $ext;
+        return $this;
+    }
+
+    /**
+     * Get ext
+     *
+     * @return string $ext
+     */
+    public function getExt()
+    {
+        return $this->ext;
+    }
+
+
+
+
+    public function convertBase64AndRemove(){
+        $file = '../web/documents/'.$this->getImageName();
+        $this->setExt(mime_content_type($file));
+        $this->setBase64(base64_encode(file_get_contents(realpath($file))));
+        $this->removeFile();
+    }
+
+    public function getBase64Src(){
+        return 'data: '.$this->getExt().';base64,'.$this->getBase64();
     }
 }
