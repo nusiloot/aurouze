@@ -41,6 +41,7 @@ twig:
     globals:
         kernelRootDir: %kernel.root_dir%
         facture_manager: "@facture.manager"
+        attachement_manager: "@attachement.manager"
 
 doctrine_mongodb:
     connections:

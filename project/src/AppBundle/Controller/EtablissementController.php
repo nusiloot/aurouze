@@ -122,33 +122,4 @@ class EtablissementController extends Controller {
         return $this->render('passage/commentaire.html.twig', array('etablissement' => $etablissement,'passage' => $passage, 'form' => $form->createView(), 'service' => $request->get('service')));
     }
 
-    /**
-    * @Route("/etablissement/attachement/{id}/ajout", name="etablissement_upload_attachement")
-    */
-    public function attachementUploadAction(Request $request, $id) {
-       $attachement = new Attachement();
-       $dm = $this->get('doctrine_mongodb')->getManager();
-       $etablissement = $this->get('etablissement.manager')->getRepository()->find($id);
-       $uploadAttachementForm = $this->createForm(new AttachementType($dm), $attachement, array(
-           'action' => $this->generateUrl('societe_upload_attachement', array('id' => $id)),
-           'method' => 'POST',
-       ));
-
-       if ($request->isMethod('POST')) {
-           $uploadAttachementForm->handleRequest($request);
-           if($uploadAttachementForm->isValid()){
-             $f = $uploadAttachementForm->getData()->getImageFile();
-             if($f){
-                 $attachement->setEtablissement($etablissement);
-                 $dm->persist($attachement);
-                 $etablissement->addAttachement($attachement);
-             }
-
-             $dm->flush();
-
-           }
-           return $this->redirectToRoute('societe_visualisation', array('id' => $etablissement->getSociete()->getId()));
-       }
-   }
-
 }

@@ -17,4 +17,8 @@ class AttachementManager {
         return $this->dm->getRepository('AppBundle:Attachement');
     }
 
+    public function getAttachementsByEtablissement($etablissement){
+        return $this->getRepository()->findByEtablissement($etablissement);
+    }
+
 }

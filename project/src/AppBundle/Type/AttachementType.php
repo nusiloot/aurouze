@@ -32,7 +32,7 @@ class AttachementType extends AbstractType {
             'allow_delete' => false,
             'label' => 'Choisir un document (.jpg, .png, .pdf)',
           ))
-          ->add('titre', TextType::class, array('label' => 'Nom* :'));
+          ->add('titre', TextType::class, array('label' => 'Nom* :','required' => false));
           if($this->visibleTechnicienOption){
               $builder->add('visibleTechnicien', CheckboxType::class, array('label' => ' ', 'required' => false, "attr" => array("class" => "switcher", "data-size" => "mini")));
           }

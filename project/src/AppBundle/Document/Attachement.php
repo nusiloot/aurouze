@@ -294,6 +294,10 @@ class Attachement
       return preg_match('/\.pdf$/',$this->getImageName());
     }
 
+    public function isImage(){
+      return preg_match('/(\.jpg|\.jpeg|\.gif|\.flv|\.png|\.bmp)$/i',$this->getImageName());
+    }
+
     /**
      * Set originalName
      *

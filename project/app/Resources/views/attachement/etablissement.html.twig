@@ -1,0 +1,66 @@
+{% set _menu_active = 'attachements' %}
+{% extends 'base.html.twig' %}
+{% block title %}Passages {{ etablissement.nom }}{% endblock title %}
+{% block body %}
+<ol class="breadcrumb">
+    <li><a href="{{ path('passage') }}">Passage</a></li>
+    <li><a href="{{ path('passage_societe',{ 'id' : etablissement.societe.id }) }}">&nbsp;{{ etablissement.societe.raisonSociale }} </small></a></li>
+    <li><a href="{{ path('passage_etablissement',{ 'id' : etablissement.id }) }}">&nbsp;{{ etablissement.getNom(false) }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></a></li>
+</ol>
+{{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+
+<div class="row" style="margin-top: 10px; height: 130px;">
+    <div class="col-xs-8">
+        <h3 style="margin-top: 0;"><i style="cursor: default;" class="mdi mdi-{{ etablissement.icon }} mdi-lg" title="{{ etablissement.type }}" data-toggle="tooltip" ></i> {{ etablissement.nom }} <small class="text-muted">({{ etablissement.raisonSociale }})</small></h3>
+        <p class="lead">{{ etablissement.adresse.adresse }} {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}</p>
+        <p>
+            {% if etablissement.contactCoordonnee.telephoneFixe or etablissement.contactCoordonnee.telephoneMobile or etablissement.contactCoordonnee.libelle %} <strong>Contact : </strong>{% endif %}{{ etablissement.contactCoordonnee.telephoneFixe }}{% if etablissement.contactCoordonnee.telephoneFixe and etablissement.contactCoordonnee.telephoneMobile %} / {% endif %}{{ etablissement.contactCoordonnee.telephoneMobile }}{% if  etablissement.contactCoordonnee.libelle %} ({{ etablissement.contactCoordonnee.libelle }}){% endif %}
+        </p>
+        {% if etablissement.commentaire %}
+            <p>
+                <strong>Commentaire de planification : </strong> <br/>{{ etablissement.commentairePlanification | nl2br }} <br/> <br/>
+                <strong>Commentaire pour les techniciens: </strong> <br/>{{ etablissement.commentaire | nl2br }} <br/>
+                <a href="{{ path('etablissement_modification', {'societe': etablissement.getSociete().getId(),'id': etablissement.getId()}) }}"><small>(Modifier)</small></a>
+            </p>
+        {% else %}
+        <p>
+            <a href="{{ path('etablissement_modification', {'societe': etablissement.getSociete().getId(),'id': etablissement.getId()}) }}"><small>Ajouter un commentaire</small></a>
+        </p>
+        {% endif %}
+    </div>
+    <div class="col-xs-4">
+        {% set lat = '' %}
+        {% set lon = '' %}
+        {% if(etablissement.adresse.coordonnees is defined)  %}
+            {% set lat = etablissement.adresse.coordonnees.lat  %}
+            {% set lon = etablissement.adresse.coordonnees.lon  %}
+        {%  endif  %}
+        <div id="map" style="width: 100%; height: 130px;" data-geojson="{{ geojson | json_encode(constant('JSON_HEX_QUOT')) }}" data-lat="{{ lat }}" data-lon="{{ lon }}"></div>
+    </div>
+</div>
+
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-xs-12">
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                  <td>
+                    <div class="row" style="padding: 15px">
+                        {% if(etablissement.attachements) %}
+                                {% for attachement in etablissement.attachements %}
+                                {{ include('attachement/attachementItem.html.twig', {'attachement' : attachement}) }}
+                                {% endfor %}
+                          {% endif %}
+                        <div class="col-xs-12" >
+                            <a class="btn btn-lg btn-default" data-toggle="modal" data-target="#document-modal-{{etablissement.id}}" ><span class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter document</a>
+                        </div>
+                    </div>
+                  </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    </div>
+{{ include('attachement/attachementAjoutModal.html.twig', {'type' : 'etablissement', 'etablissement' : etablissement, 'uploadAttachementForm' : form}) }}
+{% endblock %}
