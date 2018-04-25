@@ -104,11 +104,18 @@
               <div class="ui-block-{% if loop.index is odd %}a{% else %}b{% endif %}">
                   {% if attachement.isPdf %}
                     <object type="application/pdf" width="100%" height="100%" style="min-height: 200px; max-height:200px; margin-bottom:0" class="vignette">
-                      <param name="src" value="{{ vich_uploader_asset(attachement, 'imageFile') }}" />
+                      <param name="src" value="{{ attachement.getBase64Src() }}" />
                     </object>
+                {% elseif attachement.isImage %}
+                <a href="#popupPhoto-{{ attachement.id }}" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-transition="fade">
+                  <img src="{{ attachement.getBase64Src() }}" alt="{{ attachement.originalName }}" class="img-thumbnail vignette" style="min-height: 200px; max-height:200px; margin-bottom:0"/>
+                </a>
+                <div data-role="popup" id="popupPhoto-{{ attachement.id }}" class="photopopup" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+                    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><img src="{{ attachement.getBase64Src() }}" alt="{{ attachement.originalName }}">
+                </div>
                 {% else %}
-                  <img src="{{ vich_uploader_asset(attachement, 'imageFile') }}" alt="{{ attachement.imageName }}" class="img-thumbnail vignette" style="min-height: 200px; max-height:200px; margin-bottom:0"/>
-                  {% endif %}
+                  <div class="img-thumbnail vignette" style="min-height: 200px; max-height:200px; margin-bottom:0">{{ attachement.originalName }}</div>
+                {% endif %}
               </div>
           {% endif %}
       {% endfor %}
