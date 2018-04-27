@@ -137,6 +137,7 @@ class SocieteController extends Controller {
      * @Route("/societe/attachement/{id}/ajout", name="societe_upload_attachement")
      */
      public function attachementUploadAction(Request $request, $id) {
+        ini_set ('gd.jpeg_ignore_warning', 1);
         $attachement = new Attachement();
         $dm = $this->get('doctrine_mongodb')->getManager();
         $societe = $this->get('societe.manager')->getRepository()->find($id);
@@ -152,12 +153,11 @@ class SocieteController extends Controller {
               $dm->persist($attachement);
               $societe->addAttachement($attachement);
               $dm->flush();
-
               $attachement->convertBase64AndRemove();
               $dm->flush();
+              }
 
-            }
-            return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
+          return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
         }
     }
 

@@ -295,8 +295,21 @@ class Attachement
     }
 
     public function isImage(){
-      return preg_match('/(\.jpg|\.jpeg|\.gif|\.flv|\.png|\.bmp)$/i',$this->getImageName());
+      return preg_match('/(\.jpg|\.jpeg|\.gif|\.png)$/i',$this->getImageName());
     }
+
+    public function isJpg(){
+      return preg_match('/(\.jpg|\.jpeg)$/i',$this->getImageName());
+    }
+
+    public function isPng(){
+      return preg_match('/(\.png)$/i',$this->getImageName());
+    }
+
+    public function isGif(){
+      return preg_match('/(\.gif)$/i',$this->getImageName());
+    }
+
 
     /**
      * Set originalName
@@ -368,17 +381,59 @@ class Attachement
         return $this->ext;
     }
 
-
-
-
     public function convertBase64AndRemove(){
         $file = '../web/documents/'.$this->getImageName();
         $this->setExt(mime_content_type($file));
-        $this->setBase64(base64_encode(file_get_contents(realpath($file))));
+        if($this->isImage()){
+            list($width, $height, $type, $attr) = getimagesize(realpath($file));
+            $attent_width = 1024;
+            $attent_height = ($attent_width * $height) / $attent_width;
+            $dstImg = $this->resize_image(realpath($file), $attent_width, $attent_height);
+            $this->setBase64(base64_encode(file_get_contents(realpath($file))));
+        }else{
+            $this->setBase64(base64_encode(file_get_contents(realpath($file))));
+        }
         $this->removeFile();
     }
 
     public function getBase64Src(){
         return 'data: '.$this->getExt().';base64,'.$this->getBase64();
+    }
+
+    private function resize_image($file, $w, $h) {
+        list($width, $height) = getimagesize($file);
+        $r = $width / $height;
+        if ($w/$h > $r) {
+            $newwidth = $h*$r;
+            $newheight = $h;
+        } else {
+            $newheight = $w/$r;
+            $newwidth = $w;
+        }
+
+        $resultImg = null;
+        if($this->isJpg()){
+            $src = imagecreatefromjpeg($file);
+            $dst = imagecreatetruecolor($newwidth, $newheight);
+            imagecopyresampled($dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+
+            $resultImg = imagejpeg($dst,realpath($file));
+        }
+        if($this->isPng()){
+            $src = imagecreatefrompng($file);
+            $dst = imagecreatetruecolor($newwidth, $newheight);
+            imagecopyresampled($dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+
+            $resultImg = imagepng($dst,realpath($file));
+        }
+        if($this->isGif()){
+            $src = imagecreatefromgif($file);
+            $dst = imagecreatetruecolor($newwidth, $newheight);
+            imagecopyresampled($dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+
+            $resultImg = imagegif($dst,realpath($file));
+        }
+
+        return $resultImg;
     }
 }

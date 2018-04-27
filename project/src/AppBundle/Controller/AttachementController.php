@@ -23,8 +23,8 @@ class AttachementController extends Controller {
     public function indexAction(Request $request) {
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
-
-    	return $this->render('societe/index.html.twig');
+        $lastAttachements = $this->get('attachement.manager')->getRepository()->findBy(array(), array('updatedAt' => 'DESC'), 10);
+    	return $this->render('attachement/index.html.twig',array('lastAttachements' => $lastAttachements));
     }
 
 
@@ -85,6 +85,7 @@ class AttachementController extends Controller {
    * @Route("/etablissement/attachement/{id}/ajout", name="etablissement_upload_attachement")
    */
    public function attachementUploadAction(Request $request, $id) {
+      ini_set ('gd.jpeg_ignore_warning', 1);
       $attachement = new Attachement();
       $dm = $this->get('doctrine_mongodb')->getManager();
       $etablissement = $this->get('etablissement.manager')->getRepository()->find($id);

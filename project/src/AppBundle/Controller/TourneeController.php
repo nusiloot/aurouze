@@ -195,6 +195,8 @@ class TourneeController extends Controller {
                  $dm->persist($attachement);
                  $etablissement->addAttachement($attachement);
                  $dm->flush();
+                 $attachement->convertBase64AndRemove();
+                 $dm->flush();
              }
            }
            $urlRetour = $this->generateUrl('tournee_technicien', array('technicien' => $technicien, 'date' => $date))."#".$retour;
