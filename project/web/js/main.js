@@ -876,10 +876,7 @@
     }
 
     $.initAttachements = function(){
-        $(".attachement-remove").click(function(){
-            window.location.href = $('#'+$(this).data('cible')).attr('href');
-        });
-
+        
         $('.thumbnail').each(function(){
             var modal = $('#'+$(this).data('cible'));
             var img = $(this).find('img');
