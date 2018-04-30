@@ -21,4 +21,8 @@ class AttachementManager {
         return $this->getRepository()->findByEtablissement($etablissement);
     }
 
+    public function getAttachementsBySociete($societe){
+        return $this->getRepository()->findBySociete($societe);
+    }
+
 }

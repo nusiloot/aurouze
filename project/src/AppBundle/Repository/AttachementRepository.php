@@ -14,5 +14,24 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class AttachementRepository extends DocumentRepository {
 
-	
+	public function findBySocieteAndEtablissement($societe)
+	{
+		$qb = $this->createQueryBuilder();
+		$attachementsSociete = $qb->field('societe')->equals($societe)->getQuery()->execute();
+
+		$res = array();
+		foreach ($attachementsSociete as $attachement) {
+			$res[$attachement->getId()] = $attachement;
+		}
+
+		foreach ($societe->getEtablissements() as $etablissement) {
+			$attachementsEtb = $this->createQueryBuilder()->field('etablissement')->equals($etablissement)->getQuery()->execute();
+			foreach ($attachementsEtb as $attachement) {
+				$res[$attachement->getId()] = $attachement;
+			}
+		}
+		return $res;
+	}
+
+
 }

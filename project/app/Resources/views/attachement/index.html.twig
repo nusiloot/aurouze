@@ -1,92 +1,64 @@
-{% set _menu_active = 'societe' %}
+{% set _menu_active = 'attachements' %}
 {% extends 'base.html.twig' %}
 {% block title %}Sociétés{% endblock title %}
 {% block body %}
 	<ol class="breadcrumb">
-		<li><a href="{{ path('societe') }}">Société</a></li>
+		<li><a href="{{ path('attachements_last') }}">Documents</a></li>
 	</ol>
 
 	{{ include('societe/choixForm.html.twig', {'urlTarget': path('societe_visualisation', {'id': '_id_'}), 'autofocus': true })}}
-	<div class="row" style="padding: 15px">
+
+	<div class="row" style="padding: 10px">
 		<h2>10 derniers documents ajoutés</h2>
 	</div>
+
 	<div class="row" style="padding: 15px">
 		<div class="col-xs-12">
-			  {% for attachement in lastAttachements %}
-			  <div class="row">
-				{{ include('attachement/attachementItem.html.twig', {'attachement' : attachement}) }}
-				<div class="col-xs-9">
-					{% if attachement.societe %}
-						{% set societe = attachement.societe %}
-						<div class="panel panel-default">
-							<div class="list-group">
-								<div class="list-group-item">
-									<h4>Société</h4>
-								</div>
-								<div class="list-group-item">
-									<h3 style="margin-top:0; margin-bottom: 0;">
-										<i class="mdi mdi-business mdi-lg"></i>
-										<a href="{{ path('societe_visualisation',{ 'id' : societe.id }) }}">&nbsp;{{  societe.raisonSociale }}</a>
-										{% if not societe.actif %} <small><label class="label label-xs label-danger">SUSPENDU</label></small>{% endif %}
-									</h3>
-								</div>
-								<div class="list-group-item text-center">
-									<span class="lead" style="font-size: 19px;">
-										{{ societe.adresse.adresseFormatee | nl2br }} <br />
-										{{ societe.adresse.codePostal }} {{ societe.adresse.commune }}
-									</span>
-								</div>
-
-								<div class="list-group-item">
-									{% if (societe.contactCoordonnee.telephoneFixe or societe.contactCoordonnee.telephoneMobile or societe.contactCoordonnee.fax or societe.contactCoordonnee.email or societe.contactCoordonnee.siteInternet or societe.contactCoordonnee.libelle)  %}
-										{% if(societe.contactCoordonnee.libelle is defined and societe.contactCoordonnee.libelle)%}{{ societe.contactCoordonnee.libelle }}&nbsp;{%endif%}
-										{% if (societe.contactCoordonnee.telephoneFixe is defined and societe.contactCoordonnee.telephoneFixe)%}
-											<i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ societe.contactCoordonnee.telephoneFixe }}&nbsp;
-										{%endif%}
-										{% if (societe.contactCoordonnee.telephoneMobile is defined and societe.contactCoordonnee.telephoneMobile)%}
-											<i class="glyphicon glyphicon-phone"></i>&nbsp;{{ societe.contactCoordonnee.telephoneMobile }}&nbsp;
-										{% endif %}
-										{% if (societe.contactCoordonnee.fax is defined and societe.contactCoordonnee.fax)%}
-											<i class="glyphicon glyphicon-print"></i>&nbsp;{{ societe.contactCoordonnee.fax }}&nbsp;
-										{% endif %}
-										{% if(societe.contactCoordonnee.email is defined and societe.contactCoordonnee.email)%}
-											<i class="glyphicon glyphicon-envelope"></i>&nbsp;{{ societe.contactCoordonnee.email }}&nbsp;
-										{% endif %}
-										{% if(societe.contactCoordonnee.siteInternet is defined and societe.contactCoordonnee.siteInternet)%}
-											<i class="glyphicon glyphicon-globe"></i>&nbsp;{{ societe.contactCoordonnee.siteInternet }}&nbsp;
-										{% endif %}
-									{% else %}
-										<em class="text-muted">Aucune information de contact définie</em>
-									{% endif %}
-								</div>
-							  </div>
+			  <table class="table table-bordered">
+			  	<thead>
+			  		<tr>
+						<th class="col-xs-4">Société / Lieu d'application</th>
+			  			<th class="col-xs-1">Document</th>
+			  			<th class="col-xs-4">Titre</th>
+			  			<th class="col-xs-1 text-center"><span class="glyphicon glyphicon-user"></th>
+			  		</tr>
+			  	</thead>
+			  	{% for attachement in lastAttachements %}
+			  	<tr>
+					<td>
+						{% if attachement.etablissement %}
+						<div class="list-group-item">
+							<h4><strong>Lieu d'application</strong></h4>
+							<a href="{{ path('attachements_entite',{ 'id' : attachement.etablissement.id }) }}">
+							{{ attachement.etablissement.nom }}&nbsp;<br/><small>{{attachement.etablissement.adresse.intitule }}
+							</a>
 						</div>
-					{% endif %}
-					{% if attachement.etablissement %}
-						{% set etablissement = attachement.etablissement %}
-						<div class="panel panel-default">
-							<div class="list-group">
-								<div class="list-group-item">
-									<h4>Lieu d'application</h4>
-								</div>
-								<div class="list-group-item">
-									<h3 style="margin-top: 0;"><i style="cursor: default;" class="mdi mdi-{{ etablissement.icon }} mdi-lg" title="{{ etablissement.type }}" data-toggle="tooltip" ></i> <a href="{{ path('attachements_etablissement',{ 'id' : etablissement.id }) }}">&nbsp;{{ etablissement.nom }} <small class="text-muted">({{ etablissement.raisonSociale }})</small></a>
-									</h3>
-								</div>
-								<div class="list-group-item">
-									<p class="lead">{{ etablissement.adresse.adresse }} {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}</p>
-								</div>
-								<div class="list-group-item">
-									<p>
-										{% if etablissement.contactCoordonnee.telephoneFixe or etablissement.contactCoordonnee.telephoneMobile or etablissement.contactCoordonnee.libelle %} <strong>Contact : </strong>{% endif %}{{ etablissement.contactCoordonnee.telephoneFixe }}{% if etablissement.contactCoordonnee.telephoneFixe and etablissement.contactCoordonnee.telephoneMobile %} / {% endif %}{{ etablissement.contactCoordonnee.telephoneMobile }}{% if  etablissement.contactCoordonnee.libelle %} ({{ etablissement.contactCoordonnee.libelle }}){% endif %}
-									</p>
-								</div>
+						{% endif %}
+						{% if attachement.societe %}
+						<div class="list-group-item">
+							<h4><strong>Société</strong></h4>
+							<a href="{{ path('attachements_entite',{ 'id' : attachement.societe.id }) }}">
+							{{ attachement.societe.raisonSociale }}&nbsp;<br/><small>{{attachement.societe.adresse.intitule }}
+							</a>
 						</div>
-					</div>
-					{% endif %}
-				</div>
-			 </div>
-			  {% endfor %}
+						{% endif %}
+					</td>
+			  		<td style="max-width : 150px; max-height : 150px; ">
+			  			{{ include('attachement/attachementItem.html.twig', {'attachement' : attachement}) }}
+			  		</td>
+			  		<td>
+			  			<a style="cursor:pointer;" href="{{ attachement.getBase64Src() }}" download="{{ attachement.getBase64Src() }}">
+			  				<p><span class="glyphicon glyphicon-download-alt"></span>&nbsp;{% if attachement.titre %}{{ attachement.titre }}{% else %}{{ attachement.originalName }}{% endif %}</p>
+			  			</a>
+			  			<p class="text-muted">{{ attachement.updatedAt | localizeddate("medium", "none", null, null, "dd MMMM yyyy") }}</p>
+			  			<p class="text-right"><a href="{{ path('attachement_delete', {'id': attachement.id }) }}" onclick="return confirm('Êtes vous sûr de vouloir supprimer ce document?')" class="attachement-remove" style="border-radius: 10%; z-index: 10; cursor:pointer;" >supprimer</a><p>
+			  		</td>
+			  		<td class="text-center">
+			  			{% if attachement.visibleTechnicien %}<span class="glyphicon glyphicon-ok"></span>{% endif %}
+			  		</td>
+			  	</tr>
+			  	{% endfor %}
+			  </table>
 		  </div>
 	   </div>
 

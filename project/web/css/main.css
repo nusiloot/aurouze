@@ -188,11 +188,22 @@ body {
   width: 100%;
   opacity: 0;
   transition: .5s ease;
-  background-color: #b5e8ff;
+  background-color: #bbbbbb;
 }
 
 .content-overlay {
     position: relative;
+}
+.thumbnail {
+    margin-bottom: 0px;
+    padding: 0px;
+    border: none;
+}
+
+.img-thumbnail {
+    margin-bottom: 0px;
+    padding: 0px;
+    border: none;
 }
 
 .thumbnail-overlayed:hover .overlay {
@@ -207,19 +218,9 @@ body {
   left: 10%;
 }
 
-.attachement-remove {
-  position: absolute;
-  top: 5%;
-  left: 84%;
-}
+
 .overlay-titre{
   font-size: 16px;
-}
-
-.visible-technicien {
-  border-style: solid;
-  border-width: 2px;
-  border-color: darkred;
 }
 
 .thumbnail-overlayed{
