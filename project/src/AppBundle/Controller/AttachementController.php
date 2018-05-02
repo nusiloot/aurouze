@@ -57,7 +57,8 @@ class AttachementController extends Controller {
 
       $allAttachements = $attachementRepository->findBySocieteAndEtablissement($societe);
 
-      $attachements = ($all)? $allAttachements : $attachementRepository->findBySociete($societe);
+
+      $attachements = ($all)? $allAttachements : $attachementRepository->findBy(array('societe' => $societe), array('updatedAt' => 'DESC'));
       $nbTotalAttachements = count($allAttachements);
       $urlForm = $this->generateUrl('societe_upload_attachement', array('id' => $societe->getId()));
 
@@ -65,7 +66,6 @@ class AttachementController extends Controller {
               'action' => $urlForm,
               'method' => 'POST',
       ));
-
       return $this->render('attachement/listing.html.twig', array('attachements'  => $attachements, 'societe' => $societe, 'etablissement' => null, 'actif' => $actif, 'urlForm' => $urlForm, 'form' => $form->createView(), 'all' => $all, 'nbTotalAttachements' => $nbTotalAttachements));
     }
 
@@ -79,7 +79,7 @@ class AttachementController extends Controller {
       $attachement = new Attachement();
       $attachementRepository = $this->get('attachement.manager')->getRepository();
       $societe = $etablissement->getSociete();
-      $attachements = $attachementRepository->findByEtablissement($etablissement);
+      $attachements = $attachementRepository->findBy(array('etablissement' => $etablissement), array('updatedAt' => 'DESC'));
       $actif = $etablissement;
       $urlForm = $this->generateUrl('etablissement_upload_attachement', array('id' => $etablissement->getId()));
 
@@ -142,13 +142,11 @@ class AttachementController extends Controller {
           $uploadAttachementForm->handleRequest($request);
           if($uploadAttachementForm->isValid()){
             $attachement->setSociete($societe);
-            $dm->persist($attachement);
             $societe->addAttachement($attachement);
-            $dm->flush();
             $attachement->convertBase64AndRemove();
             $dm->flush();
             }
-
+            exit;
         return $this->redirectToRoute('attachements_entite', array('id' => $societe->getId()));
       }
   }

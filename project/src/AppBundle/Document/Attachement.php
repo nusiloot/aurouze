@@ -228,7 +228,7 @@ class Attachement
     {
       $this->imageFile = $imageFile;
 
-      if ($imageFile) {
+      if ($imageFile && !$this->getBase64()) {
           $this->updatedAt = new \DateTime('now');
       }
       if($imageFile instanceof \Symfony\Component\HttpFoundation\File\UploadedFile && $imageFile->getClientOriginalName()){
@@ -435,5 +435,13 @@ class Attachement
         }
 
         return $resultImg;
+    }
+
+    public static function cmpUpdateAt($a, $b) {
+        if ($a->getUpdatedAt() == $b->getUpdatedAt()) {
+                return "0";
+            } else {
+                return ($b->getUpdatedAt() > $a->getUpdatedAt())? "+1" : "-1";
+            }
     }
 }

@@ -13,7 +13,7 @@
             {% for attachement in attachements %}
             <tr>
                 <td>
-                    {{ attachement.updatedAt | localizeddate("medium", "none", null, null, "dd MMMM yyyy") }}
+                    {{ attachement.updatedAt | localizeddate("medium", "none", null, null, "dd MMMM yyyy HH:mm") }}
                 </td>
                 <td>
                     <a style="cursor:pointer;" href="{{ attachement.getBase64Src() }}" download="{{ attachement.getBase64Src() }}">

@@ -30,6 +30,7 @@ class AttachementRepository extends DocumentRepository {
 				$res[$attachement->getId()] = $attachement;
 			}
 		}
+		uasort($res,array("AppBundle\Document\Attachement", "cmpUpdateAt"));
 		return $res;
 	}
 
