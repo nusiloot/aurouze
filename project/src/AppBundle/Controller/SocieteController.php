@@ -9,9 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\SocieteType;
+use AppBundle\Type\AttachementType;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Etablissement;
 use AppBundle\Manager\EtablissementManager;
+use AppBundle\Document\Attachement;
 
 class SocieteController extends Controller {
 
@@ -44,9 +46,9 @@ class SocieteController extends Controller {
      */
     public function visualisationAction(Request $request, $societe) {
 
-    	$dm = $this->get('doctrine_mongodb')->getManager();
+      $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
+      $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
 
     	return $this->render('societe/visualisation.html.twig', array('societe' => $societe, 'nbContratsSociete' => $nbContratsSociete));
     }
@@ -107,6 +109,61 @@ class SocieteController extends Controller {
          return $response;
      }
 
+
+   /**
+   * @Route("/attachement/{id}/modification", name="attachement_modification")
+   */
+   public function attachementModificationAction(Request $request, $id) {
+      $attachement = $this->get('attachement.manager')->getRepository()->find($id);
+      $lastFile = $attachement->getImageFile();
+
+      $lastName = $attachement->getImageName();
+
+      $societe = $attachement->getSociete();
+      if(!$societe){
+            $societe = $attachement->getEtablissement()->getSociete();
+            $url = $this->generateUrl('etablissement_upload_attachement', array('id' => $attachement->getEtablissement()->getId()));
+        }else{
+            $url = $this->generateUrl('societe_upload_attachement', array('id' => $societe->getId()));
+        }
+      if(!$societe){
+        throw new \Exception('Une erreur s\'est produite : le document '.$attachement->getId().' ne semble être relié à rien!');
+
+      }
+      $dm = $this->get('doctrine_mongodb')->getManager();
+
+      if ($request->isMethod('POST')) {
+          $attachementNew = new Attachement();
+          $uploadAttachementForm = $this->createForm(new AttachementType($dm), $attachementNew, array(
+            'action' => $url,
+            'method' => 'POST',
+          ));
+          $uploadAttachementForm->handleRequest($request);
+
+          if($uploadAttachementForm->isValid()){
+              $upData = $uploadAttachementForm->getData();
+            if($upData->getImageFile() == null){
+                  $attachementNew->setImageName($lastName);
+                  $attachementNew->setImageFile($lastFile);
+            }
+            if($attachement->getSociete()){
+              $attachementNew->setSociete($attachement->getSociete());
+            }
+            if($attachement->getEtablissement()){
+              $attachementNew->setEtablissement($attachement->getEtablissement());
+            }
+            $dm->persist($attachementNew);
+            $societe->addAttachement($attachementNew);
+            $dm->flush();
+          }
+          return $this->redirectToRoute('attachement_delete', array('id' => $attachement->getId(),'noremove' => 1));
+      }
+  }
+
+
+
+
+
     public function contructSearchResult($criterias, &$result) {
 
         foreach ($criterias as $id => $nom) {
@@ -116,5 +173,6 @@ class SocieteController extends Controller {
             $result[] = $newResult;
         }
     }
+
 
 }

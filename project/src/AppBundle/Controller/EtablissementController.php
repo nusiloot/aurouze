@@ -12,9 +12,11 @@ use AppBundle\Manager\EtablissementManager;
 use AppBundle\Type\EtablissementChoiceType;
 use AppBundle\Type\EtablissementType;
 use AppBundle\Type\EtablissementCommentaireType;
+use AppBundle\Type\AttachementType;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Coordonnees;
+use AppBundle\Document\Attachement;
 
 class EtablissementController extends Controller {
 

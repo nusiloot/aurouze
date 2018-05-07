@@ -1,0 +1,65 @@
+{% set _menu_active = 'attachements' %}
+{% extends 'base.html.twig' %}
+{% block title %}Sociétés{% endblock title %}
+{% block body %}
+	<ol class="breadcrumb">
+		<li><a href="{{ path('attachements_last') }}">Documents</a></li>
+	</ol>
+
+	{{ include('societe/choixForm.html.twig', {'urlTarget': path('societe_visualisation', {'id': '_id_'}), 'autofocus': true })}}
+
+	<div class="row" style="padding: 10px">
+		<h2>10 derniers documents ajoutés</h2>
+	</div>
+
+	<div class="row" style="padding: 15px">
+		<div class="col-xs-12">
+			  <table class="table table-bordered">
+			  	<thead>
+			  		<tr>
+						<th class="col-xs-4">Société / Lieu d'application</th>
+			  			<th class="col-xs-1">Document</th>
+			  			<th class="col-xs-4">Titre</th>
+			  			<th class="col-xs-1 text-center"><span class="glyphicon glyphicon-user"></th>
+			  		</tr>
+			  	</thead>
+			  	{% for attachement in lastAttachements %}
+			  	<tr>
+					<td>
+						{% if attachement.etablissement %}
+						<div class="list-group-item">
+							<h4><strong>Lieu d'application</strong></h4>
+							<a href="{{ path('attachements_entite',{ 'id' : attachement.etablissement.id }) }}">
+							{{ attachement.etablissement.nom }}&nbsp;<br/><small>{{attachement.etablissement.adresse.intitule }}
+							</a>
+						</div>
+						{% endif %}
+						{% if attachement.societe %}
+						<div class="list-group-item">
+							<h4><strong>Société</strong></h4>
+							<a href="{{ path('attachements_entite',{ 'id' : attachement.societe.id }) }}">
+							{{ attachement.societe.raisonSociale }}&nbsp;<br/><small>{{attachement.societe.adresse.intitule }}
+							</a>
+						</div>
+						{% endif %}
+					</td>
+			  		<td style="max-width : 150px; max-height : 150px; ">
+			  			{{ include('attachement/attachementItem.html.twig', {'attachement' : attachement}) }}
+			  		</td>
+			  		<td>
+			  			<a style="cursor:pointer;" href="{{ attachement.getBase64Src() }}" download="{{ attachement.getBase64Src() }}">
+			  				<p><span class="glyphicon glyphicon-download-alt"></span>&nbsp;{% if attachement.titre %}{{ attachement.titre }}{% else %}{{ attachement.originalName }}{% endif %}</p>
+			  			</a>
+			  			<p class="text-muted">{{ attachement.updatedAt | localizeddate("medium", "none", null, null, "dd MMMM yyyy") }}</p>
+			  			<p class="text-right"><a href="{{ path('attachement_delete', {'id': attachement.id }) }}" onclick="return confirm('Êtes vous sûr de vouloir supprimer ce document?')" class="attachement-remove" style="border-radius: 10%; z-index: 10; cursor:pointer;" >supprimer</a><p>
+			  		</td>
+			  		<td class="text-center">
+			  			{% if attachement.visibleTechnicien %}<span class="glyphicon glyphicon-ok"></span>{% endif %}
+			  		</td>
+			  	</tr>
+			  	{% endfor %}
+			  </table>
+		  </div>
+	   </div>
+
+{% endblock %}

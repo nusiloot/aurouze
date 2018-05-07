@@ -27,6 +27,15 @@
 
     });
 
+    $( document ).on( "pagecreate", function() {
+        $( ".photopopup" ).on({
+        popupbeforeposition: function() {
+            var maxHeight = $( window ).height() - 60 + "px";
+            $( ".photopopup img" ).css( "max-height", maxHeight );
+        }
+    });
+
+
     $.initPhoenix = function(){
       $('.phoenix').each(function(){
         $(this).phoenix();
@@ -64,7 +73,7 @@
       }
 
       $.unactiveNotStaticLi = function(){
-        $("li.notStatic").removeClass("ui-li-static");        
+        $("li.notStatic").removeClass("ui-li-static");
       }
 
   $.initNiveauInfestation = function(){

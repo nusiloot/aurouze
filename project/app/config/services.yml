@@ -81,6 +81,10 @@ services:
         class: AppBundle\Manager\MouvementManager
         arguments: [[@contrat.manager]]
 
+    attachement.manager:
+        class: AppBundle\Manager\AttachementManager
+        arguments: [@doctrine_mongodb.odm.default_document_manager]
+
     facture.manager:
         class: AppBundle\Manager\FactureManager
         arguments: [@doctrine_mongodb.odm.default_document_manager, @mouvement.manager, "%facture%"]

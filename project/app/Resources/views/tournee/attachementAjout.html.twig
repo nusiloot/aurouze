@@ -1,0 +1,46 @@
+<div data-role="page" id="attachement_add" >
+
+  <div data-role="header" style="overflow:hidden;" data-position="fixed">
+  <h1>Tournée {{ technicien.identite }}</h1>
+  <a href="#passage_visualisation_{{ passage.id }}" class="ui-btn ui-icon-arrow-l ui-btn-icon-left" >
+        &nbsp;Retour
+  </a>
+  <a  class="ui-btn ui-icon-check ui-btn-icon-right passage_rapport"  href="#passage_visualisation_{{ passage.id }}" >
+      Valider&nbsp;
+  </a>
+  <div class="reloadWarning ui-bar ui-bar-b" style="display:none;">
+  	<h3>Votre tournée a été modifiée. Il est préférable de la recharger.&nbsp;
+        <a onclick="window.location.reload()" class="ui-btn ui-icon-back ui-btn-icon-left" data-role="button" data-mini="true" >
+          &nbsp;Recharger
+        </a>
+    </h3>
+  </div>
+  </div>
+  <div data-role="main" class="ui-content">
+  <form method="post" action="{{ attachementform.action }}" {{ form_enctype(attachementform.form) }} data-ajax="false" >
+  <div class="row">
+        <div class="form-group">
+            {{ form_label(attachementform.form.imageFile, "Fichier :", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+            <div class="col-xs-8">
+                {{ form_widget(attachementform.form.imageFile,{'attr' : {'accept' : "image/*;capture=camera"}}) }}
+            </div>
+        </div>
+  </div>
+  <hr />
+  <div class="row">
+      <div class="form-group">
+      {{ form_label(attachementform.form.titre, "Titre :", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+        <div class="col-xs-8">
+            {{ form_widget(attachementform.form.titre) }}
+        </div>
+      </div>
+  </div>
+  <hr />
+  <div class="row">
+      <div class="form-group">
+          <button type="submit">Ajouter la photo</button>
+      </div>
+  </div>
+{{ form_end(attachementform.form) }}
+</div>
+</div>

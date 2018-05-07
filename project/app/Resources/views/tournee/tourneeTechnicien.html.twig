@@ -82,6 +82,7 @@
     </div>
   {{ include('tournee/passageRapport.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[passage.id]}) }}
   {{ include('tournee/passageSignature.html.twig', { 'passage' : passage, "technicien" : technicien, "form" : passagesForms[passage.id]}) }}
+  {{ include('tournee/attachementAjout.html.twig', { 'passage' : passage, "technicien" : technicien, "attachementform" : attachementsForms[passage.etablissement.id]}) }}
   {% endif %}
 
 {% endfor %}

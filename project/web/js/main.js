@@ -38,6 +38,7 @@
         $.initAllFactureSearch();
         $.initTrCollapse();
         $.initTourneeDatepicker();
+        $.initAttachements();
     });
 
     $.initTrCollapse = function() {
@@ -523,7 +524,6 @@
         }
 
         var checkbox = $('#searchable').find("input[type=checkbox]");
-        console.log(checkbox.prop('checked'));
         var url = $('#searchable').data('url')+"?q=%QUERY&inactif="+((checkbox && checkbox.prop('checked'))? "1" : "0");
         var type = $('#searchable').data('type');
         var target = $('#searchable').data('target');
@@ -873,6 +873,37 @@
         var dateiso = date.split('/').reverse().join('-');
         window.location = url+'/'+dateiso;
       });
+    }
+
+    $.initAttachements = function(){
+        
+        $('.thumbnail').each(function(){
+            var modal = $('#'+$(this).data('cible'));
+            var img = $(this).find('img');
+            var modalImg = modal.find("#img");
+            var captionText = modal.find(".caption");
+            var close = modal.find(".modal-viewer-close");
+            $(this).click(function(){
+
+                if(modal.css("display") == "none"){
+                    modal.css("display", "block");
+                    modalImg.attr('src',img.attr('src'));
+                }else{
+                    modal.css("display", "none");
+                }
+            });
+
+            modal.click(function(){
+                if($(this).css("display") != "none"){
+                    $(this).css("display", "none");
+                }
+            });
+
+            close.click(function() {
+                modal.css("display", "none");
+            });
+
+        });
     }
 
 }

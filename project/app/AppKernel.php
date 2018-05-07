@@ -16,10 +16,10 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle(),
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
+            new FOS\ElasticaBundle\FOSElasticaBundle(),
+            new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
+            new Vich\UploaderBundle\VichUploaderBundle(),
             new AppBundle\AppBundle(),
-        	new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
-        	new FOS\ElasticaBundle\FOSElasticaBundle(),
-            
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
