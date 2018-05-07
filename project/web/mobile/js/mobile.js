@@ -1,6 +1,6 @@
 (function ($)
 {
-
+    
     $(document).on("pageshow", "[data-role='page']", function () {
       $('div.ui-loader').hide();
     });
@@ -29,12 +29,12 @@
 
     $( document ).on( "pagecreate", function() {
         $( ".photopopup" ).on({
-        popupbeforeposition: function() {
+            popupbeforeposition: function() {
             var maxHeight = $( window ).height() - 60 + "px";
             $( ".photopopup img" ).css( "max-height", maxHeight );
-        }
+            }
+        });
     });
-
 
     $.initPhoenix = function(){
       $('.phoenix').each(function(){
@@ -104,44 +104,7 @@
                $(newIdRow).find('input').textinput();
                niveauInfestationCount[passageId] = niveauInfestationCount[passageId] + 1;
            });
-    }
-
-    function updateSignaturesPads(){
-      var divs = document.querySelectorAll('canvas');
-      [].forEach.call(divs, function(canvas) {
-        var idCanva = canvas.id;
-        var parent = $("#"+idCanva).parent();
-        $("#"+idCanva).remove();
-        parent.append("<canvas id='"+idCanva+"'></canvas>");
-      });
-
-      var newwidth = $(document).width()*0.85;
-      var ratio = 1.0/2.90;
-      $('.signature-pad').each(function(){
-        $(this).css('width',newwidth);
-        $(this).css('height',newwidth*ratio);
-      });
-      var divs = document.querySelectorAll('canvas');
-      [].forEach.call(divs, function(canvas) {
-
-        var idCanva = canvas.id;
-        canvas.width = $("#"+idCanva).parent().width();
-        canvas.height = $("#"+idCanva).parent().height();
-      });
-      var divs = document.querySelectorAll('canvas');
-      [].forEach.call(divs, function(div) {
-          var idCanva = div.id;
-          delete signaturesPad[idCanva];
-          signaturesPad[idCanva] = new SignaturePad(div);
-          var idPassage = $("#"+idCanva).parents('.passage_signature').attr('data-id');
-          var signatureHiddenCible = "input[data-cible='passage_mobile_"+idPassage+"_signatureBase64']";
-          $(signatureHiddenCible).each(function(){
-            if ($(this).val()) {
-              signaturesPad[idCanva].fromDataURL($(this).val());
-            }
-          });
-       });
-    }
+    };
 
     $.initSaisie = function () {
 
@@ -222,6 +185,44 @@
         var dateiso = date.split('/').reverse().join('-');
         window.location = $(this).attr('data-url-cible')+"/"+dateiso;
       })
+    }
+
+
+    function updateSignaturesPads(){
+      var divs = document.querySelectorAll('canvas');
+      [].forEach.call(divs, function(canvas) {
+        var idCanva = canvas.id;
+        var parent = $("#"+idCanva).parent();
+        $("#"+idCanva).remove();
+        parent.append("<canvas id='"+idCanva+"'></canvas>");
+      });
+
+      var newwidth = $(document).width()*0.85;
+      var ratio = 1.0/2.90;
+      $('.signature-pad').each(function(){
+        $(this).css('width',newwidth);
+        $(this).css('height',newwidth*ratio);
+      });
+      var divs = document.querySelectorAll('canvas');
+      [].forEach.call(divs, function(canvas) {
+
+        var idCanva = canvas.id;
+        canvas.width = $("#"+idCanva).parent().width();
+        canvas.height = $("#"+idCanva).parent().height();
+      });
+      var divs = document.querySelectorAll('canvas');
+      [].forEach.call(divs, function(div) {
+          var idCanva = div.id;
+          delete signaturesPad[idCanva];
+          signaturesPad[idCanva] = new SignaturePad(div);
+          var idPassage = $("#"+idCanva).parents('.passage_signature').attr('data-id');
+          var signatureHiddenCible = "input[data-cible='passage_mobile_"+idPassage+"_signatureBase64']";
+          $(signatureHiddenCible).each(function(){
+            if ($(this).val()) {
+              signaturesPad[idCanva].fromDataURL($(this).val());
+            }
+          });
+       });
     }
 }
 )(jQuery);
