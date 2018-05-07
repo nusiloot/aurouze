@@ -142,9 +142,10 @@ class AttachementController extends Controller {
           $uploadAttachementForm->handleRequest($request);
           if($uploadAttachementForm->isValid()){
             $attachement->setSociete($societe);
+            $dm->persist($attachement);
             $societe->addAttachement($attachement);
             $dm->flush();
-            
+
             $attachement->convertBase64AndRemove();
             $dm->flush();
             }
