@@ -143,10 +143,11 @@ class AttachementController extends Controller {
           if($uploadAttachementForm->isValid()){
             $attachement->setSociete($societe);
             $societe->addAttachement($attachement);
+            $dm->flush();
+            
             $attachement->convertBase64AndRemove();
             $dm->flush();
             }
-            exit;
         return $this->redirectToRoute('attachements_entite', array('id' => $societe->getId()));
       }
   }
