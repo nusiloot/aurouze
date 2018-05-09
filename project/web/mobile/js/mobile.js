@@ -1,6 +1,6 @@
 (function ($)
 {
-    
+
     $(document).on("pageshow", "[data-role='page']", function () {
       $('div.ui-loader').hide();
     });
@@ -34,6 +34,22 @@
             $( ".photopopup img" ).css( "max-height", maxHeight );
             }
         });
+    });
+
+    $('.ajoutImage').click(function(e) {
+        setTimeout(function() {
+            $(this).removeClass("disabled");
+        }, 1000);
+        console.log($(this).hasClass('disabled'));
+        if($(this).hasClass('disabled')){
+            e.preventDefault();
+            return false;
+        }else{
+            $(this).addClass('disabled');
+            setTimeout(function() {
+                $(this).removeClass("disabled");
+            }, 1000);
+        }
     });
 
     $.initPhoenix = function(){
