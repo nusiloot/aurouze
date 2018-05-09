@@ -36,6 +36,25 @@
         });
     });
 
+<<<<<<< HEAD
+=======
+    $('.ajoutImage').click(function(e) {
+        setTimeout(function() {
+            $(this).removeClass("disabled");
+        }, 1000);
+        console.log($(this).hasClass('disabled'));
+        if($(this).hasClass('disabled')){
+            e.preventDefault();
+            return false;
+        }else{
+            $(this).addClass('disabled');
+            setTimeout(function() {
+                $(this).removeClass("disabled");
+            }, 1000);
+        }
+    });
+
+>>>>>>> master
     $.initPhoenix = function(){
       $('.phoenix').each(function(){
         $(this).phoenix();
