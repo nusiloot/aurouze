@@ -1,6 +1,6 @@
 (function ($)
 {
-    
+
     $(document).on("pageshow", "[data-role='page']", function () {
       $('div.ui-loader').hide();
     });
@@ -36,8 +36,6 @@
         });
     });
 
-<<<<<<< HEAD
-=======
     $('.ajoutImage').click(function(e) {
         setTimeout(function() {
             $(this).removeClass("disabled");
@@ -54,7 +52,6 @@
         }
     });
 
->>>>>>> master
     $.initPhoenix = function(){
       $('.phoenix').each(function(){
         $(this).phoenix();
