@@ -81,7 +81,7 @@
     </div>
     <h3 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('etablissement_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un établissement</a>Etablissements <span class="badge">{{ societe.getEtablissementsByStatut(true) | length }}</span></h3>
 
-    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(true)}) }}
+    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(true), 'modifLink': true }) }}
 
     <h3 style="margin-top: 0;"><a class="btn btn-sm btn-default pull-right" href="{{ path('compte_modification', {'societe': societe.id}) }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Ajouter un interlocuteur</a>Interlocuteurs <span class="badge">{{ societe.getComptesByStatut(true) | length }}</span></h3>
 
@@ -90,7 +90,7 @@
     {% if (societe.getEtablissementsByStatut(false) | length > 0)%}
     <h3 style="margin-top: 0;">Etablissements inactifs <span class="badge">{{ societe.getEtablissementsByStatut(false) | length }}</span></h3>
     <div style="opacity: 0.4;">
-    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(false), 'modifLink': true}) }}
+    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(false)}) }}
     </div>
     {% endif %}
     {% if (societe.getComptesByStatut(false) | length > 0) %}

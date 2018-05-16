@@ -168,6 +168,31 @@ body {
   text-decoration: inherit;
 }
 
+.navbar-header #logo {
+    margin-right: 10px;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    #navbar .navbar-nav > li > a {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .navbar-header #logo {
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .navbar-header #logo {
+        margin-left: 15px;
+    }
+
+    #navbar .navbar-nav.pull-right {
+        float: none !important;
+    }
+}
+
+
 .thumbnail-overlayed {
   position: relative;
 }
@@ -228,7 +253,7 @@ body {
 }
 
 /* The Modal VIEWER */
-.modal-viewer {
+.modalViewer {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1000; /* Sit on top */
@@ -243,27 +268,16 @@ body {
 }
 
 /* Modal Content (image) */
-.modal-viewer-content {
+.modalViewerContent {
     margin: auto;
     display: block;
     width: 80%;
     max-width: 700px;
 }
 
-/* Caption of Modal Image */
-.modal-viewer-caption {
-    margin: auto;
-    display: block;
-    width: 80%;
-    max-width: 700px;
-    text-align: center;
-    color: #ccc;
-    padding: 10px 0;
-    height: 150px;
-}
 
 /* Add Animation */
-.modal-viewer-content, #caption {
+.modalViewerContent, #caption {
     -webkit-animation-name: zoom;
     -webkit-animation-duration: 0.6s;
     animation-name: zoom;
@@ -281,7 +295,7 @@ body {
 }
 
 /* The modal-viewer-close Button */
-.modal-viewer-close {
+.modalViewerClose {
     position: absolute;
     top: 50px;
     right: 35px;
@@ -291,8 +305,8 @@ body {
     transition: 0.3s;
 }
 
-.modal-viewer-close:hover,
-.modal-viewer-close:focus {
+.modalViewerClose:hover,
+.modalViewerClose:focus {
     color: #bbb;
     text-decoration: none;
     cursor: pointer;
@@ -300,7 +314,7 @@ body {
 
 /* 100% Image Width on Smaller Screens */
 @media only screen and (max-width: 700px){
-    .modal-viewer-content {
+    .modalViewerContent {
         width: 100%;
     }
 }

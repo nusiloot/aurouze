@@ -35,3 +35,10 @@
 
       </div>
   </div>
+{% for attachement in attachements %}
+  <!-- The Modal -->
+  <div id="modal-viewer-{{attachement.id }}" class="modalViewer">
+    <span class="modalViewerClose">&times;</span>
+    <img class="modalViewerContent" id="img" />
+  </div>
+{% endfor %}
