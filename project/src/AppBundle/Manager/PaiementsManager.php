@@ -14,6 +14,7 @@ class PaiementsManager {
     const TYPE_REGLEMENT_FACTURE = 'FACTURE';
     const TYPE_REGLEMENT_ACCOMPTE_COMMANDE = 'ACCOMPTE_COMMANDE';
     const TYPE_REGLEMENT_REGULARISATION = 'REGULARISATION';
+    const TYPE_REGLEMENT_REGULARISATION_HUISSIER  = 'REGULARISATION_HUISSIER';
     const TYPE_REGLEMENT_REGULARISATION_AVOIR = 'REGULARISATION_AVOIR';
     const TYPE_REGLEMENT_PERTE = 'PERTE';
     const TYPE_REGLEMENT_GAIN = 'GAIN';
@@ -58,12 +59,14 @@ class PaiementsManager {
         self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
         self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",
         self::TYPE_REGLEMENT_REGULARISATION => "Règlement de régularisation",
+        self::TYPE_REGLEMENT_REGULARISATION_HUISSIER => "Commission Huissier",
         self::TYPE_REGLEMENT_REGULARISATION_AVOIR => "Régularisation par avoir",
         self::TYPE_REGLEMENT_PERTE => "Perte",
         self::TYPE_REGLEMENT_GAIN => "Gain");
     public static $nouveau_types_reglements_libelles = array(
         self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
         self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",
+        self::TYPE_REGLEMENT_REGULARISATION_HUISSIER => "Régularisation de commission de huissier",
         self::TYPE_REGLEMENT_REGULARISATION => "Règlement de régularisation");
     public static $types_reglements_index = array(
         "1" => self::TYPE_REGLEMENT_FACTURE,
