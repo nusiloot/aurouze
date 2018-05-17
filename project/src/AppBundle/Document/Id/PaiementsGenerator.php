@@ -14,12 +14,12 @@ class PaiementsGenerator extends AbstractIdGenerator
         $db = $dm->getDocumentDatabase($className);
 
         if($document->getIdentifiant()) {
-            
+
             return "PAIEMENTS-".$document->getIdentifiant();
         }
-        
-        $document->setIdentifiant(sprintf("%s", $document->getDateCreation()->format('Ymd')));
-        
+
+        $document->setIdentifiant(sprintf("%s-%s", $document->getDateCreation()->format('Ymd'),uniqid()));
+
         return "PAIEMENTS-".$document->getIdentifiant();
     }
 }
