@@ -1,7 +1,13 @@
-{% if attachement.isImage %}
+{% if attachement.isPdf %}
+    <div class="thumbnail thumbnail-overlayed">
+        <a style="cursor:pointer;" href="{{ attachement.getBase64Src() }}" download="{{ attachement.getBase64Src() }}">
+            <img src="{{asset('/images/pdf.jpg') }}" alt="{{ attachement.originalName }}" style="margin-bottom:0; max-width : 50px; max-height : 50px;" class="vignette" />
+        </a>
+    </div>
+{% elseif attachement.isImage %}
   <div class="thumbnail thumbnail-overlayed" data-cible="modal-viewer-{{attachement.id }}" >
     <img src="{{ attachement.getBase64Src() }}" alt="{{ attachement.originalName }}" class="img-thumbnail vignette" style="margin-bottom:0; max-width : 100px; max-height : 100px;"/>
     <div class="overlay">
     </div>
   </div>
-{% endif %}
+  {% endif %}
