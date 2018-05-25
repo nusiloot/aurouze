@@ -48,7 +48,7 @@ class PassageController extends Controller {
         $dateDebut = null;
         $dateFin = $dateFinCourant;
         $anneeMois = "courant";
-
+        $dateFinAll = $dateFin;
         if(!$moisCourant){
           $anneeMois = ($request->get('mois',null))? $request->get('mois') : date('Ym', strtotime(date('Y-m-d')));
           $dateDebut = \DateTime::createFromFormat('Ymd H:i:s',$anneeMois.'01 00:00:00');
@@ -231,6 +231,12 @@ class PassageController extends Controller {
      */
     public function societeAction(Request $request, Societe $societe) {
     	
+    	$object = $request->get('object');
+    	if ($object && preg_match('/^ETABLISSEMENT-*/', $object)) {
+    		return $this->redirectToRoute('passage_etablissement', array('id' => $object));
+    	}
+
+
     	$object = $request->get('object');
     	if ($object && preg_match('/^ETABLISSEMENT-*/', $object)) {
     		return $this->redirectToRoute('passage_etablissement', array('id' => $object));
