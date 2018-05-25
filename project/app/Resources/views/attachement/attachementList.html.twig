@@ -4,8 +4,9 @@
             <thead>
                 <tr>
                     <th class="col-xs-2">Date</th>
-                    <th class="col-xs-6">Titre</th>
-                    <th class="col-xs-2">Document</th>
+                    <th class="col-xs-3">Titre</th>
+                    <th class="col-xs-4">Société/Lieu</th>
+                    <th class="col-xs-1">Document</th>
                     <th class="col-xs-1 text-center"><span class="glyphicon glyphicon-user"></th>
                     <th class="col-xs-1 text-center"></th>
                 </tr>
@@ -19,6 +20,18 @@
                     <a style="cursor:pointer;" href="{{ attachement.getBase64Src() }}" download="{{ attachement.getBase64Src() }}">
                         <p><span class="glyphicon glyphicon-download-alt"></span>&nbsp;{% if attachement.titre %}{{ attachement.titre }}{% else %}{{ attachement.originalName }}{% endif %}</p>
                     </a>
+                </td>
+                <td>
+                {% if attachement.societe %}
+                    <a href="{{ path('attachements_entite',{ 'id' : attachement.societe.id }) }}">
+            		      <strong>Société&nbsp;:&nbsp;</strong><small>{{ attachement.societe.raisonSociale }}</small>
+            		</a>
+                {% endif %}
+                {% if attachement.etablissement %}
+                    <a href="{{ path('attachements_entite',{ 'id' : attachement.etablissement.id }) }}">
+            			<strong>Lieu&nbsp;:&nbsp;</strong><small>{{ attachement.etablissement.adresse.intitule }}</small>
+                    </a>
+                {% endif %}
                 </td>
                 <td>
                     {{ include('attachement/attachementItem.html.twig', {'attachement' : attachement}) }}
