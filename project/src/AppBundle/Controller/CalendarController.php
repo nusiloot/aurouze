@@ -53,6 +53,20 @@ class CalendarController extends Controller {
         	$techniciensOnglet = $techniciensFinal;
         }
 
+
+        $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
+        $techniciensFinal = array();
+        $techniciensOnglet = $techniciens;
+        foreach($techniciens as $t) {
+        	if(in_array($t->getId(), $techniciensFiltre)) {
+        		$techniciensFinal[$t->getId()] = $t;
+        	}
+        }
+
+        if(count($techniciensFinal) > 0) {
+        	$techniciensOnglet = $techniciensFinal;
+        }
+
         $date = $request->get('date', new \DateTime());
         $calendarTool = new CalendarDateTool($date, $request->get('mode', CalendarDateTool::MODE_WEEK));
 
@@ -358,7 +372,11 @@ class CalendarController extends Controller {
         $secteur = EtablissementManager::getRegion($rdv->getPassage()->getEtablissement()->getAdresse()->getCodePostal());
         if(!$secteur){ $secteur = EtablissementManager::SECTEUR_PARIS; }
         $z = ($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE)? '10' : '15';
-        $event->retourMap = $this->generateUrl('passage',array('secteur' => $secteur, 'mois' => $rdv->getPassage()->getDatePrevision()->format('Ym'),'lat' => $passageCoord->getLat(),'lon' => $passageCoord->getLon(),'zoom' => $z));
+        $dateRetour = $rdv->getPassage()->getDatePrevision()->format('Ym');
+        if($rdv->getPassage()->getDateDebut()){
+            $dateRetour = $rdv->getPassage()->getDateDebut()->format('Ym');
+        }
+        $event->retourMap = $this->generateUrl('passage',array('secteur' => $secteur, 'mois' => $dateRetour,'lat' => $passageCoord->getLat(),'lon' => $passageCoord->getLon(),'zoom' => $z));
       }
       return $event;
     }
