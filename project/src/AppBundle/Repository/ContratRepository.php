@@ -227,4 +227,18 @@ class ContratRepository extends DocumentRepository {
         return $query->execute();
     }
 
+    public function exportAccepteOrResilieByDates(\DateTime $dateDebut,\DateTime $dateFin) {
+
+        $q = $this->createQueryBuilder();
+
+        $q->addOr($q->expr()->field('dateAcceptation')->gte($dateDebut)->lte($dateFin))
+          ->addOr($q->expr()->field('dateResiliation')->gte($dateDebut)->lte($dateFin));
+
+        $q->sort('dateAcceptation', 'asc');
+        $query = $q->getQuery();
+
+        return $query->execute();
+
+    }
+
 }
