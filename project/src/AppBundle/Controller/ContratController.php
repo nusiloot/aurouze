@@ -640,9 +640,9 @@ class ContratController extends Controller {
 
 
     /**
-     * @Route("/contrats-commerciaux/export", name="commerciaux_export")
+     * @Route("/contrats-commerciaux/export", name="contrats_export")
      */
-    public function exportCommerciauxAction(Request $request) {
+    public function exportContratsAction(Request $request) {
 
     	// $response = new StreamedResponse();
     	$formRequest = $request->request->get('form');
