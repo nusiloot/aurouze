@@ -72,9 +72,6 @@ class StatistiquesController extends Controller
         if($exporttype == PaiementsManager::TYPE_EXPORT_RENTABILITE){
         	$formBuilder->add('societe', TextType::class, array('required' => false, "attr" => array("class" => "typeahead form-control", "placeholder" => "Rechercher une société")));
         }
-        if($exporttype == PaiementsManager::TYPE_EXPORT_COMMERCIAUX){
-        	$formBuilder->add('statut', ChoiceType::class, array('required' => false, 'label' => 'Statut :', 'choices' => array_merge(array('' => ''), ContratManager::$statuts_libelles), "attr" => array("class" => "select2 select2-simple")));
-        }
           if($type_export['pdf']){
             $formBuilder->add('pdf', CheckboxType::class, array('label' => 'PDF', 'required' => false, 'label_attr' => array('class' => 'small')));
           }
