@@ -58,7 +58,7 @@ class StatistiquesController extends Controller
             ));
           }
 
-          if(in_array($exporttype, array(PaiementsManager::TYPE_EXPORT_COMMERCIAUX, PaiementsManager::TYPE_EXPORT_STATS))) {
+          if(in_array($exporttype, array(PaiementsManager::TYPE_EXPORT_CONTRATS, PaiementsManager::TYPE_EXPORT_STATS))) {
             $commerciaux =$this->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:Compte')->findAllUtilisateursCommercial();
             $formBuilder->add('commercial', DocumentType::class, array(
                 'required' => false,

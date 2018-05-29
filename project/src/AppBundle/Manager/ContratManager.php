@@ -539,20 +539,18 @@ class ContratManager implements MouvementManagerInterface {
     		$dateFin->modify("+1month");
     	}
 
-    	$contrats = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
+    	$contrats = $this->getRepository()->exportAccepteOrResilieByDates($dateDebut,$dateFin);
     	$csv = array();
     	$cpt = 0;
-    	$csv["AAAaaa_0_0000000000"] = array("Commercial","Client","Contacts", "Com.", "Num.", "Type", "Presta.", "Statut","Montant HT","Facturé HT", "% facturé");
+    	$csv["AAAaaa_0_0000000000"] = array("Commercial","Client","Contacts", "Com.", "Num.", "Type", "Presta.", "Statut","Montant HT", "Facturé HT", "% Facturé");
     	foreach ($contrats as $contrat) {
     		if($contrat->getCommercial()){
-    			$commercialFacture = $contrat->getCommercial();
-    			if($commercial && ($commercial != $commercialFacture->getId())) {
+    			$commercialContrat = $contrat->getCommercial();
+    			if($commercial && ($commercial != $commercialContrat->getId())) {
     				continue;
     			}
-    			if ($statut && $contrat->getStatut() != $statut) {
-    				continue;
-    			}
-    			$identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialFacture->getId())->getIdentite();
+
+    			$identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialContrat->getId())->getIdentite();
     			$arr_ligne = array();
     			$key = $identite."_".$cpt."_".$contrat->getNumeroArchive();
     			$keyTotal = $identite."_9_9999999999_TOTAL";
@@ -563,7 +561,20 @@ class ContratManager implements MouvementManagerInterface {
     			$arr_ligne[] = $contrat->getNumeroArchive();
     			$arr_ligne[] = $contrat->getTypeContratLibelle();
     			$arr_ligne[] = implode(', ', $contrat->getUniquePrestations());
-    			$arr_ligne[] = $contrat->getStatutLibelle();
+                $changementStatutStr = "";
+                if($contrat->getDateAcceptation()){
+                    $acceptationDate = $contrat->getDateAcceptation();
+                    if(($acceptationDate->format('Ymd') >= $dateDebut->format('Ymd')) && ($acceptationDate->format('Ymd') <= $dateFin->format('Ymd'))){
+                        $changementStatutStr.=" Accepté le ".$acceptationDate->format('d/m/Y')."\n";
+                    }
+                }
+                if($contrat->getDateResiliation()){
+                    $resiliationDate = $contrat->getDateResiliation();
+                    if(($resiliationDate->format('Ymd') >= $dateDebut->format('Ymd')) && ($resiliationDate->format('Ymd') <= $dateFin->format('Ymd'))){
+                        $changementStatutStr.=" Résilié le ".$resiliationDate->format('d/m/Y');
+                    }
+                }
+    			$arr_ligne[] = $changementStatutStr;
     			$arr_ligne[] = number_format($contrat->getPrixHT(), 2, ',', '');
     			$arr_ligne[] = number_format($contrat->getPrixFactures(), 2, ',', '');
     			$arr_ligne[] = ($contrat->getPrixHT() > 0)? round((100 * $contrat->getPrixFactures() / $contrat->getPrixHT())) : 0;

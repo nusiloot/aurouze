@@ -659,78 +659,78 @@ class ContratController extends Controller {
 
 
 
-    /**
-     * @Route("/contrats-commerciaux/export", name="commerciaux_export")
-     */
-    public function exportCommerciauxAction(Request $request) {
+        /**
+         * @Route("/stats/export-commerciaux", name="contrats_export")
+         */
+        public function exportContratsAction(Request $request) {
 
-    	// $response = new StreamedResponse();
-    	$formRequest = $request->request->get('form');
-    	$commercial = (isset($formRequest['commercial']) && $formRequest['commercial'] && ($formRequest['commercial']!= ""))?
-    	$formRequest['commercial'] : null;
+        	// $response = new StreamedResponse();
+        	$formRequest = $request->request->get('form');
+        	$commercial = (isset($formRequest['commercial']) && $formRequest['commercial'] && ($formRequest['commercial']!= ""))?
+        	$formRequest['commercial'] : null;
+        	$pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
 
-    	$statut = (isset($formRequest['statut']) && $formRequest['statut'] && ($formRequest['statut']!= ""))? $formRequest['statut'] : null;
-    	$pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
+        	$dateDebutString = $formRequest['dateDebut']." 00:00:00";
+        	$dateFinString = $formRequest['dateFin']." 23:59:59";
 
-    	$dateDebutString = $formRequest['dateDebut']." 00:00:00";
-    	$dateFinString = $formRequest['dateFin']." 23:59:59";
+        	$dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
+        	$dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
 
-    	$dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
-    	$dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
+        	$cm = $this->get('contrat.manager');
 
-    	$cm = $this->get('contrat.manager');
+        	$statsForCommerciaux = $cm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial);
 
-    	$statsForCommerciaux = $cm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial,$statut);
+        	if(!$pdf){
+        		$filename = sprintf("export_contrats_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+        		$handle = fopen('php://memory', 'r+');
 
-    	if(!$pdf){
-    		$filename = sprintf("export_details_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
-    		$handle = fopen('php://memory', 'r+');
+        		foreach ($statsForCommerciaux as $stat) {
+        			fputcsv($handle, $stat,';');
+        		}
 
-    		foreach ($statsForCommerciaux as $stat) {
-    			fputcsv($handle, $stat,';');
-    		}
+        		rewind($handle);
+        		$content = stream_get_contents($handle);
+        		fclose($handle);
 
-    		rewind($handle);
-    		$content = stream_get_contents($handle);
-    		fclose($handle);
+        		$response = new Response(utf8_decode($content), 200, array(
+        				'Content-Type' => 'text/csv',
+        				'Content-Disposition' => 'attachment; filename=' . $filename,
+        		));
+        		$response->setCharset('UTF-8');
 
-    		$response = new Response(utf8_decode($content), 200, array(
-    				'Content-Type' => 'text/csv',
-    				'Content-Disposition' => 'attachment; filename=' . $filename,
-    		));
-    		$response->setCharset('UTF-8');
-
-    		return $response;
-    	}else{
-    		$html = $this->renderView('contrat/pdfStatsCommerciaux.html.twig', array(
-    				'statsForCommerciaux' => $statsForCommerciaux,
-    				'dateDebut' => $dateDebut,
-    				'dateFin' => $dateFin
-    		));
+        		return $response;
+        	}else{
+        		$html = $this->renderView('contrat/pdfStatsCommerciaux.html.twig', array(
+        				'statsForCommerciaux' => $statsForCommerciaux,
+        				'dateDebut' => $dateDebut,
+        				'dateFin' => $dateFin
+        		));
 
 
-    		$filename = sprintf("export_stats_commerciaux_du_%s_au_%s.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+        		$filename = sprintf("export_stats_commerciaux_du_%s_au_%s.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
 
-    		if ($request->get('output') == 'html') {
+        		if ($request->get('output') == 'html') {
 
-    			return new Response($html, 200);
-    		}
+        			return new Response($html, 200);
+        		}
 
-    		return new Response(
-    				$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
-    						'disable-smart-shrinking' => null,
-    						'encoding' => 'utf-8',
-    						'orientation' => 'landscape',
-    						'default-header' => false,
-    						'margin-left' => 10,
-    						'margin-right' => 10,
-    						'margin-top' => 10,
-    						'margin-bottom' => 10),$this->getPdfGenerationOptions()), 200, array(
-    								'Content-Type' => 'application/pdf',
-    								'Content-Disposition' => 'attachment; filename="' . $filename . '"'
-    						));
-    	}
-    }
+        		return new Response(
+        				$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+        						'disable-smart-shrinking' => null,
+        						'encoding' => 'utf-8',
+        						'orientation' => 'landscape',
+        						'default-header' => false,
+        						'margin-left' => 10,
+        						'margin-right' => 10,
+        						'margin-top' => 10,
+        						'margin-bottom' => 10),$this->getPdfGenerationOptions()), 200, array(
+        								'Content-Type' => 'application/pdf',
+        								'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+        						));
+        	}
+        }
+
+
 
 
     public function getPdfGenerationOptions() {
