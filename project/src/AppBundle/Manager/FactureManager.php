@@ -371,6 +371,58 @@ public static $export_stats_libelle = array(
         return $facturesArray;
     }
 
+
+    public function getDetailCaFromFactures($dateDebut = null, $dateFin = null, $commercial = null){
+        if(!$dateDebut){
+          $dateDebut = new \DateTime();
+          $dateFin = new \DateTime();
+          $dateFin->modify("+1 month");
+        }
+        $factures = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
+        $csv = array();
+        $cpt = 0;
+        $csv["AAAaaa_0_0000000000"] = array("Commercial","Client", "Numéro facture", "Type Contrat", "Presta.","Date Facturation", "Montant facturé HT", "Contrat Prix HT");
+        foreach ($factures as $facture) {
+            if($facture->getContrat()){
+                $c = $facture->getContrat();
+                $commercialContrat = $c->getCommercial();
+                if($commercial && ($commercial != $commercialContrat->getId())) {
+                    continue;
+                }
+                $identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialContrat->getId())->getIdentite();
+                $arr_ligne = array();
+                $resiliation = 0;
+                $key = $identite."_".$facture->getDateFacturation()->format('Ymd')."_".$facture->getNumeroFacture();
+                $keyTotal = $identite."_9_9999999999_TOTAL";
+                $arr_ligne[] = $identite;
+                $arr_ligne[] = $facture->getSociete()->getRaisonSociale();
+                $arr_ligne[] = $facture->getNumeroFacture();
+                $arr_ligne[] = $c->getTypeContratLibelle();
+                $arr_ligne[] = implode(', ', $facture->getContrat()->getUniquePrestations());
+
+                $arr_ligne[] = $facture->getDateFacturation()->format('d/m/Y');
+                $arr_ligne[] = number_format($facture->getMontantHT(), 2, ',', '');
+
+                $prix_ht = ($c)? $c->getPrixHT() : $facture->getMontantHT();
+                $arr_ligne[] = number_format($prix_ht, 2, ',', '');
+
+                $csv[$key] = $arr_ligne;
+
+                $csv[$keyTotal][0] = $identite;
+                $csv[$keyTotal][1] = "TOTAL";
+                $csv[$keyTotal][2] = "";
+                $csv[$keyTotal][3] = "";
+                $csv[$keyTotal][4] = "";
+                $csv[$keyTotal][5] = "";
+                $csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $facture->getMontantHT(), 2, ',', '') : number_format($facture->getMontantHT(), 2, ',', '');
+                $csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $prix_ht, 2, ',', '') : number_format($facture->getContrat()->getPrixHT(), 2, ',', '');
+            }
+        }
+        ksort($csv);
+        return $csv;
+
+    }
+
     public function getFacturesSocieteForCsv($societe, $dateDebut = null,$dateFin = null) {
         if(!$dateDebut){
           $dateDebut = new \DateTime();

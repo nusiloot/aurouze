@@ -56,7 +56,7 @@ class StatistiquesController extends Controller
             ));
           }
 
-          if(in_array($exporttype, array(PaiementsManager::TYPE_EXPORT_CONTRATS, PaiementsManager::TYPE_EXPORT_STATS))) {
+          if(in_array($exporttype, array(PaiementsManager::TYPE_EXPORT_CONTRATS, PaiementsManager::TYPE_EXPORT_STATS, PaiementsManager::TYPE_EXPORT_DETAIL_CA))) {
             $commerciaux =$this->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:Compte')->findAllUtilisateursCommercial();
             $formBuilder->add('commercial', DocumentType::class, array(
                 'required' => false,
@@ -66,10 +66,8 @@ class StatistiquesController extends Controller
                 'expanded' => false,
                 'multiple' => false,
                 "attr" => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner un commercial", "style"=> "width:100%;")));
-        }
-        if($exporttype == PaiementsManager::TYPE_EXPORT_RENTABILITE){
-        	$formBuilder->add('societe', TextType::class, array('required' => false, "attr" => array("class" => "typeahead form-control", "placeholder" => "Rechercher une société")));
-        }
+
+        	}
           if($type_export['pdf']){
             $formBuilder->add('pdf', CheckboxType::class, array('label' => 'PDF', 'required' => false, 'label_attr' => array('class' => 'small')));
           }

@@ -549,7 +549,12 @@ class ContratManager implements MouvementManagerInterface {
     			}
     			$identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialContrat->getId())->getIdentite();
     			$arr_ligne = array();
-    			$key = $identite."_".$cpt."_".$contrat->getNumeroArchive();
+                $resiliation = 0;
+                $key = $identite."_0_".$contrat->getDateAcceptation()->format('Ymd');
+                if($contrat->getDateResiliation() && ($contrat->getDateResiliation()->format('Ymd') >= $dateDebut->format('Ymd') && $contrat->getDateResiliation()->format('Ymd') <= $dateFin->format('Ymd'))){
+                    $resiliation = 1;
+                    $key = $identite."_1_".$contrat->getDateResiliation()->format('Ymd');
+                }
     			$keyTotal = $identite."_9_9999999999_TOTAL";
     			$arr_ligne[] = $identite;
     			$arr_ligne[] = $contrat->getSociete()->getRaisonSociale();
@@ -560,10 +565,7 @@ class ContratManager implements MouvementManagerInterface {
     			$arr_ligne[] = implode(', ', $contrat->getUniquePrestations());
                 $changementStatutStr = "";
                 if($contrat->getDateAcceptation()){
-                    $acceptationDate = $contrat->getDateAcceptation();
-                    if(($acceptationDate->format('Ymd') >= $dateDebut->format('Ymd')) && ($acceptationDate->format('Ymd') <= $dateFin->format('Ymd'))){
-                        $changementStatutStr.=" Accepté le ".$acceptationDate->format('d/m/Y')."\n";
-                    }
+                    $changementStatutStr.=" Accepté le ".$contrat->getDateAcceptation()->format('d/m/Y')."\n";
                 }
                 if($contrat->getDateResiliation()){
                     $resiliationDate = $contrat->getDateResiliation();
@@ -635,7 +637,7 @@ class ContratManager implements MouvementManagerInterface {
     }
 
 
-
+/*
     public function getStatsForRentabiliteForCsv($dateDebut = null, $dateFin = null, $client = null){
     	if(!$dateDebut){
     		$dateDebut = new \DateTime();
@@ -694,6 +696,6 @@ class ContratManager implements MouvementManagerInterface {
     	}
     	ksort($csv);
     	return $csv;
-    }
+    }*/
 
 }

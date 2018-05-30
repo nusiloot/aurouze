@@ -234,7 +234,7 @@ class ContratRepository extends DocumentRepository {
         $q->addOr($q->expr()->field('dateAcceptation')->gte($dateDebut)->lte($dateFin))
           ->addOr($q->expr()->field('dateResiliation')->gte($dateDebut)->lte($dateFin));
 
-        $q->sort('dateAcceptation', 'asc');
+        $q->sort('dateAcceptation', 'ASC');
         $query = $q->getQuery();
 
         return $query->execute();
