@@ -119,7 +119,7 @@ class PaiementsManager {
     self::TYPE_EXPORT_STATS  => array("libelle" =>  "Export Statistiques", "picto" =>  "glyphicon glyphicon-stats", "pdf" =>  true),
     self::TYPE_EXPORT_CONTRATS  => array("libelle" =>  "Export Contrats", "picto" =>  "glyphicon glyphicon-user", "pdf" =>  true),
     self::TYPE_EXPORT_PCA  => array("libelle" =>  "Export PCA", "picto" =>  "glyphicon glyphicon-send", "pdf" =>  false),
-    self::TYPE_EXPORT_DETAIL_CA  => array("libelle" =>  "Détail du CA", "picto" =>  "glyphicon glyphicon-usd", "pdf" =>  true),
+    self::TYPE_EXPORT_DETAIL_CA  => array("libelle" =>  "Détail du CA", "picto" =>  "glyphicon glyphicon-user", "pdf" =>  true),
     );
 
 
