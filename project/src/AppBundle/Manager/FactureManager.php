@@ -381,7 +381,7 @@ public static $export_stats_libelle = array(
         $factures = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
         $csv = array();
         $cpt = 0;
-        $csv["AAAaaa_0_0000000000"] = array("Commercial","Client", "Numéro facture", "Type Contrat", "Presta.","Date Facturation", "Montant facturé HT", "Contrat Prix HT");
+        $csv["AAAaaa_0_0000000000"] = array("Commercial","Client", "Numéro facture", "Type Contrat", "Presta.","Date Facturation", "Montant facturé HT", "Prix integral Contrat HT");
         foreach ($factures as $facture) {
             if($facture->getContrat()){
                 $c = $facture->getContrat();
