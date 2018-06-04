@@ -549,7 +549,7 @@ class FactureController extends Controller {
 
 
         	if(!$pdf){
-        		$filename = sprintf("export_details_rentabilite_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+        		$filename = sprintf("export_details_chiffre_affaire_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
         		$handle = fopen('php://memory', 'r+');
 
         		foreach ($detailCaFromFactures as $stat) {
