@@ -39,8 +39,6 @@ twig:
     strict_variables: "%kernel.debug%"
     form:
         resources: ['bootstrap_3_layout.html.twig']
-    form_themes:
-        - "IbanBundle:Form:fields.html.twig"
     globals:
         kernelRootDir: %kernel.root_dir%
         facture_manager: "@facture.manager"
