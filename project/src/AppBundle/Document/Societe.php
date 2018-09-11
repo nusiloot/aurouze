@@ -636,25 +636,6 @@ class Societe implements InterlocuteurInterface {
         return $this->frequencePaiement;
     }
 
-    /**
-     * Set iban
-     *
-     * @param string $iban
-     * @return self
-     */
-    public function setIban($iban) {
-        $this->iban = $iban;
-        return $this;
-    }
-
-    /**
-     * Get iban
-     *
-     * @return string $iban
-     */
-    public function getIban() {
-        return $this->iban;
-    }
 
     public function getFrequencePaiementLibelle() {
 

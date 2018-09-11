@@ -19,41 +19,19 @@
             <div class="panel-body col-xs-offset-2">
                 <div class="row">
                     <div class="col-xs-10">
-                    	<div class="form-group{% if form_errors(form.iban) %} has-error{%  endif %}">
-	                        {{ form_label(form.iban) }}
-	                        <div class="form-inline">
-						      <div class="input-group">
-						        {{ form_widget(form.iban.cccd, { 'attr': {'placeholder': ""}}) }}
-						        {{ form_widget(form.iban.a, { 'attr': {'placeholder': ""}}) }}
-						        {{ form_widget(form.iban.b, { 'attr': {'placeholder': ""}}) }}
-						        {{ form_widget(form.iban.c, { 'attr': {'placeholder': ""}}) }}
-						        {{ form_widget(form.iban.d, { 'attr': {'placeholder': ""}}) }}
-						        {{ form_widget(form.iban.e, { 'attr': {'placeholder': ""}}) }}
-						        {{ form_widget(form.iban.f, { 'attr': {'placeholder': ""}}) }}
-						      </div>
-						      {{ form_errors(form.iban) }}
-						    </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-10">
                         {{ form_row(form.type) }}
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-xs-10">
                         {{ form_row(form.raisonSociale) }}
-                    </div>
-                    <div class="col-xs-4">
-                    	{{ form_row(form.frequencePaiement) }}
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-xs-5">
                         {{ form_row(form.codeComptable) }}
                     </div>
-                    <div class="col-xs-4">
+                    <div class="col-xs-5">
                         {{ form_row(form.provenance) }}
                     </div>
                 </div>
