@@ -52,6 +52,11 @@ class Societe implements InterlocuteurInterface {
     protected $adresse;
 
     /**
+     * @MongoDB\EmbedOne(targetDocument="Sepa")
+     */
+    protected $sepa;
+
+    /**
      * @MongoDB\EmbedOne(targetDocument="ContactCoordonnee")
      */
     protected $contactCoordonnee;
@@ -117,14 +122,10 @@ class Societe implements InterlocuteurInterface {
      */
     protected $frequencePaiement;
 
-    /**
-     * @MongoDB\string
-     */
-    protected $iban;
-
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->adresse = new Adresse();
+        $this->sepa = new Sepa();
         $this->contactCoordonnee = new ContactCoordonnee();
         $this->setActif(true);
     }
@@ -286,6 +287,26 @@ class Societe implements InterlocuteurInterface {
      */
     public function getAdresse() {
         return $this->adresse;
+    }
+
+    /**
+     * Set sepa
+     *
+     * @param AppBundle\Document\Sepa $sepa
+     * @return self
+     */
+    public function setSepa(\AppBundle\Document\Sepa $sepa) {
+        $this->sepa = $sepa;
+        return $this;
+    }
+
+    /**
+     * Get sepa
+     *
+     * @return AppBundle\Document\Sepa $sepa
+     */
+    public function getSepa() {
+        return $this->sepa;
     }
 
     /**
@@ -606,26 +627,6 @@ class Societe implements InterlocuteurInterface {
      */
     public function getFrequencePaiement() {
         return $this->frequencePaiement;
-    }
-
-    /**
-     * Set iban
-     *
-     * @param string $iban
-     * @return self
-     */
-    public function setIban($iban) {
-        $this->iban = $iban;
-        return $this;
-    }
-
-    /**
-     * Get iban
-     *
-     * @return string $iban
-     */
-    public function getIban() {
-        return $this->iban;
     }
 
     public function getFrequencePaiementLibelle() {

@@ -18,8 +18,6 @@ use AppBundle\Transformer\ProvenanceTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Constraints\Iban;
-use MakinaCorpus\IbanBundle\Form\Type\IbanType;
 
 class SocieteType extends AbstractType {
 
@@ -47,13 +45,7 @@ class SocieteType extends AbstractType {
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")))
                 ->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
                 ->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'))
-                ->add('iban', IbanType::class, [
-                		'label'       => "IBAN :",
-                		'required'    => false,
-                		'constraints' => [
-                				new Iban(),
-                		],
-                ]);
+                ->add('sepa', SepaType::class, array('data_class' => 'AppBundle\Document\Sepa'));
         if ($this->isNew) {
             $builder->add('generer', CheckboxType::class, array('label' => 'Générer l\'établissement lié, à partir des données de la société', 'required' => false, 'empty_data' => null, 'mapped' => false, 'data' => false));
         }

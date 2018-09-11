@@ -158,6 +158,11 @@ class Facture implements DocumentSocieteInterface {
      */
     protected $avoirPartielRemboursementCheque;
 
+    /**
+     * @MongoDB\EmbedOne(targetDocument="Sepa")
+     */
+    protected $sepa;
+
     public function __construct() {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->emetteur = new FactureSoussigne();
