@@ -82,7 +82,7 @@ class SocieteRepository extends DocumentRepository {
     	}
     	return $resultSet;
     }
-    
+
 
 
     public function findByElasticQuery($service, $q, $inactif = false, $limit = 150)
@@ -96,11 +96,11 @@ class SocieteRepository extends DocumentRepository {
     	if (!$inactif) {
     		$q .= "actif:true";
     	}
-    	
+
     	$query = new \Elastica\Query\QueryString();
     	$query->setDefaultOperator('AND');
     	$query->setQuery($q);
-    	 
+
     	$resultSet = array();
     	$results = $service->find($query, $limit);
     	foreach ($results as $result) {
@@ -109,12 +109,13 @@ class SocieteRepository extends DocumentRepository {
     	return $resultSet;
     }
 
+
     public function getSocieteIdsWithIban()
     {
     	$ids = array();
     	$q = $this->createQueryBuilder();
-        $q->addAnd($q->expr()->field('iban')->exists(true));
-        $q->addAnd($q->expr()->field('actif')->equals(true));
+        $q->addAnd($q->expr()->field('sepa.iban')->exists(true));
+        $q->addAnd($q->expr()->field('sepa.actif')->equals(true));
         $query = $q->getQuery();
         $items = $query->execute();
         foreach ($items as $item) {
@@ -131,7 +132,16 @@ class SocieteRepository extends DocumentRepository {
                 ->execute();
         return $request->toArray();
     }
-    
+
+    public function getIdsByIban() {
+    	$ids = array();
+    	foreach ($items as $item) {
+    		$obj = $item["doc"];
+    		$ids[] = $obj->getId();
+    	}
+    	return $ids;
+    }
+
     public function getIdsByIban() {
     	$ids = array();
     	foreach ($items as $item) {

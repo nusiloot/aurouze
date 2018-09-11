@@ -47,13 +47,7 @@ class SocieteType extends AbstractType {
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")))
                 ->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
                 ->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'))
-                ->add('iban', IbanType::class, [
-                		'label'       => "IBAN :",
-                		'required'    => false,
-                		'constraints' => [
-                				new Iban(),
-                		],
-                ]);
+                ->add('sepa', SepaType::class, array('data_class' => 'AppBundle\Document\Sepa'));
         if ($this->isNew) {
             $builder->add('generer', CheckboxType::class, array('label' => 'Générer l\'établissement lié, à partir des données de la société', 'required' => false, 'empty_data' => null, 'mapped' => false, 'data' => false));
         }
@@ -80,7 +74,7 @@ class SocieteType extends AbstractType {
         ));
         $builder->get('tags')->resetViewTransformers();
 
-        
+
 
                 $builder->add('frequencePaiement', ChoiceType::class, array(
                 		'label' => 'Fréquence de paiement* : ',

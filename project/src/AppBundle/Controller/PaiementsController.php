@@ -14,6 +14,7 @@ use AppBundle\Type\RelanceType;
 use AppBundle\Type\FacturesEnRetardFiltresType;
 use AppBundle\Document\Paiements;
 use AppBundle\Document\Societe;
+use AppBundle\Tool\PrelevementXml;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
@@ -25,7 +26,7 @@ class PaiementsController extends Controller {
      */
     public function indexAction(Request $request) {
     	$periode = ($request->get('periode'))? $request->get('periode') : date('m/Y');
-    	
+
         $paiementsDocs = $this->get('paiements.manager')->getRepository()->findByPeriode($periode);
 
         $dm = $this->get('doctrine_mongodb')->getManager();
@@ -211,7 +212,31 @@ class PaiementsController extends Controller {
     }
 
     public function getPdfGenerationOptions() {
-        return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4, 'zoom' => 1);
+        return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4, 'zoom' => 0.7);
+    }
+
+    /**
+     * @Route("/paiements/prelevement", name="paiements_prelevement")
+     */
+    public function paiementPrelevementAction(Request $request) {
+
+        ini_set('memory_limit', '-1');
+        $banqueParameters = $this->getParameter('banque');
+
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+    	$fm = $this->get('facture.manager');
+
+    	$facturesForCsv = $fm->getFacturesPrelevementsForCsv();
+
+        $prelevement = new PrelevementXml($facturesForCsv,$banqueParameters);
+        $filename = $prelevement->createPrelevement();
+
+        return new Response(
+                $prelevement->getXml(), 200, array(
+                'Content-Type' => 'xml',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '.xml"'
+                )
+        );
     }
 
 }

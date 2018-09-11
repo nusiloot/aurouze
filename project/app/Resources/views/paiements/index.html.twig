@@ -8,11 +8,16 @@
 
     </ol>
 
+    <h2>
+		Export pour prélévement
+		<a class="btn btn-default pull-right" href="{{ path('paiements_prelevement') }}">&nbsp;Exporter les factures pour la banque</a>
+	</h2>
+
 	<h2>
-		Campagnes de paiements 
+		Campagnes de paiements
 		<a class="btn btn-default pull-right" href="{{ path('paiements_nouveau') }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Nouvelle saisie</a>
 	</h2>
-	
+
     {{ form_start(form) }}
     <div class="row">
 		<div class="col-xs-12">
@@ -21,10 +26,10 @@
 		<div class="col-xs-12 pull-right" style="margin: 10px 0 0 0;">{{ form_widget(form.save) }}</div>
 	</div>
     {{ form_end(form) }}
-    
-    
-	
-	
+
+
+
+
 	<form action="" method="get" class="form-inline" style="margin: 0 0 10px 0;">
 		<label for="periode">Période : </label>
         <input style="width: auto;" type="text" id="periode" name="periode" class="periodepicker form-control" value="{{ periode }}" placeholder="Sélection période" />

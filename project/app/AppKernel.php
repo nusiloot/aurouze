@@ -19,8 +19,8 @@ class AppKernel extends Kernel
             new FOS\ElasticaBundle\FOSElasticaBundle(),
             new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
-        	new MakinaCorpus\IbanBundle\IbanBundle(),
             new AppBundle\AppBundle(),
+
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

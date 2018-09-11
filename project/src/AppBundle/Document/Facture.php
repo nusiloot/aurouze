@@ -158,6 +158,11 @@ class Facture implements DocumentSocieteInterface {
      */
     protected $avoirPartielRemboursementCheque;
 
+    /**
+     * @MongoDB\EmbedOne(targetDocument="Sepa")
+     */
+    protected $sepa;
+
     public function __construct() {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->emetteur = new FactureSoussigne();
@@ -583,6 +588,30 @@ class Facture implements DocumentSocieteInterface {
      */
     public function setAvoir($avoir) {
         $this->avoir = $avoir;
+        return $this;
+    }
+
+    /**
+     * Get sepa
+     *
+     * @return AppBundle\Document\Sepa $sepa
+     */
+    public function getSepa() {
+        $sepa = $this->sepa;
+        if(!$sepa){
+            $sepa = $this->getSociete()->getSepa();
+        }
+        return $sepa;
+    }
+
+    /**
+     * Set sepa
+     *
+     * @param AppBundle\Document\Sepa $sepa
+     * @return self
+     */
+    public function setSepa(\AppBundle\Document\FactureSoussigne $sepa) {
+        $this->sepa = $sepa;
         return $this;
     }
 

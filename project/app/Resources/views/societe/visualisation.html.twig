@@ -20,8 +20,13 @@
                         	{% if not societe.actif %} <small><label class="label label-xs label-danger">SUSPENDU</label></small>{% endif %}
                             <a class="btn btn-sm btn-default pull-right" href="{{ path('societe_modification', {'id': societe.id}) }}">Modifier</a>
                             <small class="pull-right" style="padding-top: 5px; padding-right: 10px;">
-                                        <label class="label label-xs label-info ">{{  nbContratsSociete }} contrat(s)</label>
+                                <label class="label label-xs label-info ">{{  nbContratsSociete }} contrat(s)</label>
                             </small>&nbsp;
+                            {% if societe.sepa and societe.sepa.actif %}
+                            <small class="pull-right" style="padding-top: 5px; padding-right: 10px;" data-toggle="tooltip" title="{{ societe.sepa.iban }} <br/> {{ societe.sepa.bic }} <br/> {{ societe.sepa.rum }} <br/> ({{ societe.sepa.date | date("d/m/Y") }})">
+                                <label class="label label-xs label-primary" style="cursor:pointer;">SEPA</label>
+                            </small>&nbsp;
+                            {% endif %}
                         </h3>
                     </div>
                     <div class="list-group-item text-center">

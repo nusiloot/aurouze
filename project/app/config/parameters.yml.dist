@@ -22,6 +22,12 @@ parameters:
     osm.url_search: "http://URL_DE_RECUPERATION"
     osm.return_format: "json"
 
+    banque:
+        creditorId: 'XXXXXXXXXXX'
+        creditorName: 'ETABLISSEMENTS XXXX XXXXXXXXX'
+        creditorAccountIBAN: 'FRXXXXXXXXXXXXXXXXXXXXXXX'
+        creditorAgentBIC: 'XXXXXXX'
+
     passage:
       coordonnees:
         email : "emailTransmission@dns.fr"
