@@ -27,8 +27,6 @@ parameters:
         creditorName: 'ETABLISSEMENTS XXXX XXXXXXXXX'
         creditorAccountIBAN: 'FRXXXXXXXXXXXXXXXXXXXXXXX'
         creditorAgentBIC: 'XXXXXXX'
-        debtorMandate: 'XXXXXXXXXXXXXXXXXXXXXXXXXX'
-        dateMandate: '1900.01.01'
 
     passage:
       coordonnees:

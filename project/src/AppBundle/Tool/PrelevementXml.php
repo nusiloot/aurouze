@@ -17,8 +17,6 @@ protected $creditorId;
 protected $creditorName;
 protected $creditorAccountIBAN;
 protected $creditorAgentBIC;
-protected $debtorMandate;
-protected $dateMandate;
 
 protected $factures;
 protected $directDebit;
@@ -33,8 +31,6 @@ protected $xml;
         $this->creditorName = $banqueParameters['creditorName'];
         $this->creditorAccountIBAN = $banqueParameters['creditorAccountIBAN'];
         $this->creditorAgentBIC = $banqueParameters['creditorAgentBIC'];
-        $this->debtorMandate = $banqueParameters['debtorMandate'];
-        $this->dateMandate = $banqueParameters['dateMandate'];
 
     }
 
@@ -65,6 +61,7 @@ protected $xml;
         // Retrieve the resulting XML
         $this->xml = $this->directDebit->asXML();
         file_put_contents(realpath('..').'/data/'.$idPrelevement.'.xml',$this->xml);
+        return $idPrelevement;
 
     }
 
@@ -77,14 +74,12 @@ protected $xml;
         foreach ($this->factures as $key => $facture) {
             $this->directDebit->addTransfer($idPrelevement, array(
                 'amount'                => ''.intval($facture->getMontantAPayer()*100),
-                'debtorIban'            => $facture->getSociete()->getIban(),
-                'debtorBic'             => $facture->getSociete()->getBic(),
-                'debtorName'            => $facture->getSociete()->getRaisonSociale(),
-
-                'debtorMandate'         => $this->debtorMandate, // MANDAT RUM /!\/!\/!\/!\/!\
-                'debtorMandateSignDate' => $this->dateMandate, // MANDAT DATE /!\/!\/!\/!\/!\
-                
-                'remittanceInformation' => $facture->getNumeroFacture().' '.$this->dateFacturation().' '. str_replace(",",'EUR',"".$facture->getMontantAPayer()),
+                'debtorIban'            => str_ireplace(" ","",$facture->getSepa()->getIban()),
+                'debtorBic'             => str_ireplace(" ","",$facture->getSepa()->getBic()),
+                'debtorName'            => str_ireplace(" ","",$facture->getSociete()->getRaisonSociale()),
+                'debtorMandate'         => str_ireplace(" ","",$facture->getSepa()->getRum()),
+                'debtorMandateSignDate' => $facture->getSepa()->getDate(),
+                'remittanceInformation' => 'FACT '.$facture->getNumeroFacture().' du '.$facture->getDateEmission()->format("d/m/Y").' '. str_ireplace(".",",",sprintf("%0.2f",$facture->getMontantAPayer())),
                 'endToEndId'            => 'Aurouze Facture'
             ));
         }

@@ -100,8 +100,8 @@ class SocieteRepository extends DocumentRepository {
     {
     	$ids = array();
     	$q = $this->createQueryBuilder();
-        $q->addAnd($q->expr()->field('iban')->exists(true));
-        $q->addAnd($q->expr()->field('actif')->equals(true));
+        $q->addAnd($q->expr()->field('sepa.iban')->exists(true));
+        $q->addAnd($q->expr()->field('sepa.actif')->equals(true));
         $query = $q->getQuery();
         $items = $query->execute();
         foreach ($items as $item) {
@@ -118,7 +118,7 @@ class SocieteRepository extends DocumentRepository {
                 ->execute();
         return $request->toArray();
     }
-    
+
     public function getIdsByIban() {
     	$ids = array();
     	foreach ($items as $item) {

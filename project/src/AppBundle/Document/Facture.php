@@ -591,6 +591,30 @@ class Facture implements DocumentSocieteInterface {
     }
 
     /**
+     * Get sepa
+     *
+     * @return AppBundle\Document\Sepa $sepa
+     */
+    public function getSepa() {
+        $sepa = $this->sepa;
+        if(!$sepa){
+            $sepa = $this->getSociete()->getSepa();
+        }
+        return $sepa;
+    }
+
+    /**
+     * Set sepa
+     *
+     * @param AppBundle\Document\Sepa $sepa
+     * @return self
+     */
+    public function setSepa(\AppBundle\Document\FactureSoussigne $sepa) {
+        $this->sepa = $sepa;
+        return $this;
+    }
+
+    /**
      * Get avoir
      *
      * @return string $avoir

@@ -220,13 +220,23 @@ class PaiementsController extends Controller {
      */
     public function paiementPrelevementAction(Request $request) {
 
+        ini_set('memory_limit', '-1');
         $banqueParameters = $this->getParameter('banque');
-        $prelevement = new PrelevementXml(array(),$banqueParameters);
-        $prelevement->createPrelevement();
-        $response = new Response($prelevement->getXml());
-        $response->headers->set('Content-Type', 'xml');
 
-        return $response;
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+    	$fm = $this->get('facture.manager');
+
+    	$facturesForCsv = $fm->getFacturesPrelevementsForCsv();
+
+        $prelevement = new PrelevementXml($facturesForCsv,$banqueParameters);
+        $filename = $prelevement->createPrelevement();
+
+        return new Response(
+                $prelevement->getXml(), 200, array(
+                'Content-Type' => 'xml',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '.xml"'
+                )
+        );
     }
 
 }
