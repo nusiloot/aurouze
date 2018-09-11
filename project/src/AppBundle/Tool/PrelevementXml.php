@@ -80,8 +80,10 @@ protected $xml;
                 'debtorIban'            => $facture->getSociete()->getIban(),
                 'debtorBic'             => $facture->getSociete()->getBic(),
                 'debtorName'            => $facture->getSociete()->getRaisonSociale(),
+
                 'debtorMandate'         => $this->debtorMandate, // MANDAT RUM /!\/!\/!\/!\/!\
                 'debtorMandateSignDate' => $this->dateMandate, // MANDAT DATE /!\/!\/!\/!\/!\
+                
                 'remittanceInformation' => $facture->getNumeroFacture().' '.$this->dateFacturation().' '. str_replace(",",'EUR',"".$facture->getMontantAPayer()),
                 'endToEndId'            => 'Aurouze Facture'
             ));
