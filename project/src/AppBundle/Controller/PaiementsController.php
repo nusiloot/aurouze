@@ -14,7 +14,7 @@ use AppBundle\Type\RelanceType;
 use AppBundle\Type\FacturesEnRetardFiltresType;
 use AppBundle\Document\Paiements;
 use AppBundle\Document\Societe;
-use AppBundle\Document\PrelevementXml;
+use AppBundle\Tool\PrelevementXml;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;

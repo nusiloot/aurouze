@@ -21,8 +21,6 @@ class AppKernel extends Kernel
             new Vich\UploaderBundle\VichUploaderBundle(),
         	new MakinaCorpus\IbanBundle\IbanBundle(),
             new AppBundle\AppBundle(),
-        	  new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
-            new Vich\UploaderBundle\VichUploaderBundle(),
 
         );
 
