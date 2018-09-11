@@ -111,6 +111,17 @@ class Societe implements InterlocuteurInterface {
      */
     protected $actif;
 
+
+    /**
+     * @MongoDB\String
+     */
+    protected $frequencePaiement;
+
+    /**
+     * @MongoDB\string
+     */
+    protected $iban;
+
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->adresse = new Adresse();
@@ -574,6 +585,52 @@ class Societe implements InterlocuteurInterface {
     public function getActif()
     {
         return $this->actif;
+    }
+
+
+    /**
+     * Set frequencePaiement
+     *
+     * @param string $frequencePaiement
+     * @return self
+     */
+    public function setFrequencePaiement($frequencePaiement) {
+        $this->frequencePaiement = $frequencePaiement;
+        return $this;
+    }
+
+    /**
+     * Get frequencePaiement
+     *
+     * @return string $frequencePaiement
+     */
+    public function getFrequencePaiement() {
+        return $this->frequencePaiement;
+    }
+
+    /**
+     * Set iban
+     *
+     * @param string $iban
+     * @return self
+     */
+    public function setIban($iban) {
+        $this->iban = $iban;
+        return $this;
+    }
+
+    /**
+     * Get iban
+     *
+     * @return string $iban
+     */
+    public function getIban() {
+        return $this->iban;
+    }
+
+    public function getFrequencePaiementLibelle() {
+
+        return ContratManager::$frequences[$this->frequencePaiement];
     }
 
     public function getSociete() {

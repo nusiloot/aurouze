@@ -29,8 +29,10 @@
         "h4cc/wkhtmltoimage-amd64":"0.12.x",
         "behat/transliterator": "^1.1",
         "knplabs/knp-markdown-bundle": "~1.3",
+        "friendsofsymfony/elastica-bundle": "^4.0",
         "vich/uploader-bundle": "1.0",
-        "digitick/sepa-xml" : "dev-master"
+        "digitick/sepa-xml" : "dev-master",
+        "makinacorpus/iban-bundle": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",
