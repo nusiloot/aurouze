@@ -142,15 +142,6 @@ class SocieteRepository extends DocumentRepository {
     	return $ids;
     }
 
-    public function getIdsByIban() {
-    	$ids = array();
-    	foreach ($items as $item) {
-    		$obj = $item["doc"];
-    		$ids[] = $obj->getId();
-    	}
-    	return $ids;
-    }
-
     public function findAllPassages($societe) {
         $societe = $this->findOneById($societe->getId());
         $passagesArray = array();
