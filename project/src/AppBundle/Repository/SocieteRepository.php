@@ -109,17 +109,18 @@ class SocieteRepository extends DocumentRepository {
     	return $resultSet;
     }
 
-    public function getIdsByQuery($q, $inactif = false, $limit = 100)
+    public function getSocieteIdsWithIban()
     {
     	$ids = array();
-    	$itemsQuery = $this->findByQuery($q, $inactif, $limit);
-    	$itemsTerms = $this->findByTerms($q, $inactif, $limit, true);
-    	$items = array_merge($itemsQuery,$itemsTerms);
-    	foreach ($items as $item) {
-    		$obj = $item["doc"];
-    		$ids[] = $obj->getId();
-    	}
-    	return $ids;
+    	$q = $this->createQueryBuilder();
+        $q->addAnd($q->expr()->field('iban')->exists(true));
+        $q->addAnd($q->expr()->field('actif')->equals(true));
+        $query = $q->getQuery();
+        $items = $query->execute();
+        foreach ($items as $item) {
+        	$ids[] = $item->getId();
+        }
+        return $ids;
     }
 
     public function findAllTags() {
@@ -129,6 +130,15 @@ class SocieteRepository extends DocumentRepository {
                 ->getQuery()
                 ->execute();
         return $request->toArray();
+    }
+    
+    public function getIdsByIban() {
+    	$ids = array();
+    	foreach ($items as $item) {
+    		$obj = $item["doc"];
+    		$ids[] = $obj->getId();
+    	}
+    	return $ids;
     }
 
     public function findAllPassages($societe) {

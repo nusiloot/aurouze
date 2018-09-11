@@ -73,6 +73,14 @@ class FactureRepository extends DocumentRepository {
         return $query->execute();
     }
 
+    public function exportByPrelevements($clients) {
+    	$q = $this->createQueryBuilder();
+    	$q->addAnd($q->expr()->field('societe')->in($clients));
+    	$q->addAnd($q->expr()->field('cloture')->equals(false));
+    	$query = $q->getQuery();
+    	return $query->execute();
+    }
+
     public function exportBySocieteAndDate($societe, \DateTime $dateDebut,\DateTime $dateFin) {
 
         $q = $this->createQueryBuilder();

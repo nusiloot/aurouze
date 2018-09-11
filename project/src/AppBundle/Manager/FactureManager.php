@@ -373,6 +373,11 @@ public static $export_stats_libelle = array(
         return $facturesArray;
     }
 
+    public function getFacturesPrelevementsForCsv() {
+    	$clients = $this->dm->getRepository('AppBundle:Societe')->getSocieteIdsWithIban();
+        return $this->getRepository()->exportByPrelevements($clients);
+    }
+
 
     public function getDetailCaFromFactures($dateDebut = null, $dateFin = null, $commercial = null){
         if(!$dateDebut){

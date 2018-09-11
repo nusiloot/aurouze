@@ -120,6 +120,11 @@ class Societe implements InterlocuteurInterface {
      */
     protected $frequencePaiement;
 
+    /**
+     * @MongoDB\string
+     */
+    protected $iban;
+
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->adresse = new Adresse();
@@ -608,6 +613,26 @@ class Societe implements InterlocuteurInterface {
      */
     public function getFrequencePaiement() {
         return $this->frequencePaiement;
+    }
+
+    /**
+     * Set iban
+     *
+     * @param string $iban
+     * @return self
+     */
+    public function setIban($iban) {
+        $this->iban = $iban;
+        return $this;
+    }
+
+    /**
+     * Get iban
+     *
+     * @return string $iban
+     */
+    public function getIban() {
+        return $this->iban;
     }
 
     public function getFrequencePaiementLibelle() {

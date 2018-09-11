@@ -522,6 +522,22 @@ class FactureController extends Controller {
 
         return $response;
     }
+    
+
+
+    /**
+     * @Route("/prelevements/export", name="factures_prelevements")
+     */
+    public function exportPrelevementsAction(Request $request) {
+    	ini_set('memory_limit', '-1');
+    
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+    	$fm = $this->get('facture.manager');
+    	
+    	$facturesForCsv = $fm->getFacturesPrelevementsForCsv();
+    	
+    	var_dump(count($facturesForCsv));exit;
+    }
 
 
 
