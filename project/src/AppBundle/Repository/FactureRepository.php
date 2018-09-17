@@ -82,6 +82,7 @@ class FactureRepository extends DocumentRepository {
     	$q->addAnd($q->expr()->field('cloture')->equals(false));
         $q->addAnd($q->expr()->field('montantHT')->gt(0.0));
         $q->addAnd($q->expr()->field('avoir')->equals(null));
+        $q->addAnd($q->expr()->field('inPrelevement')->equals(null));
         $q->addAnd($q->expr()->field('dateEmission')->gt($date));
     	$query = $q->getQuery();
     	return $query->execute();

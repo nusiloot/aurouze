@@ -163,6 +163,11 @@ class Facture implements DocumentSocieteInterface {
      */
     protected $sepa;
 
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $inPrelevement;
+
     public function __construct() {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->emetteur = new FactureSoussigne();
@@ -611,7 +616,7 @@ class Facture implements DocumentSocieteInterface {
      * @param AppBundle\Document\Sepa $sepa
      * @return self
      */
-    public function setSepa(\AppBundle\Document\FactureSoussigne $sepa) {
+    public function setSepa(\AppBundle\Document\Sepa $sepa) {
         $this->sepa = $sepa;
         return $this;
     }
@@ -1154,5 +1159,27 @@ class Facture implements DocumentSocieteInterface {
         }
       }
       return null;
+    }
+
+    /**
+     * Set inPrelevement
+     *
+     * @param boolean $inPrelevement
+     * @return $this
+     */
+    public function setInPrelevement($inPrelevement)
+    {
+        $this->inPrelevement = $inPrelevement;
+        return $this;
+    }
+
+    /**
+     * Get inPrelevement
+     *
+     * @return boolean $inPrelevement
+     */
+    public function getInPrelevement()
+    {
+        return $this->inPrelevement;
     }
 }

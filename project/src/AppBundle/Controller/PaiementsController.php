@@ -231,10 +231,11 @@ class PaiementsController extends Controller {
 
     	$facturesForCsv = $fm->getFacturesPrelevementsForCsv();
 
-        $prelevement = new PrelevementXml($facturesForCsv,$banqueParameters);
-        $filename = $prelevement->createPrelevement();
-
-        $this->createPaiementsPrelevement($facturesForCsv,$prelevement);
+        if(count($facturesForCsv)){
+            $prelevement = new PrelevementXml($facturesForCsv,$banqueParameters);
+            $prelevement->createPrelevement();
+            $this->createPaiementsPrelevement($facturesForCsv,$prelevement);
+        }
 
         return $this->redirectToRoute('paiements_liste');
 
@@ -280,6 +281,7 @@ class PaiementsController extends Controller {
             if($facture->getSociete()->getSepa()->isFirst()){
                 $societesInFirstPrev[$facture->getSociete()->getId()] = $facture->getSociete();
             }
+            $facture->setInPrelevement(true);
         }
 
 

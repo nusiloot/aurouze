@@ -25,7 +25,6 @@ protected $xml;
     public function __construct($factures,$banqueParameters)
     {
         $this->factures = $factures;
-
         $this->banqueParameters = $banqueParameters;
         $this->creditorId = $banqueParameters['creditorId'];
         $this->creditorName = $banqueParameters['creditorName'];
@@ -35,9 +34,8 @@ protected $xml;
     }
 
     public function createPrelevement(){
-
         $header = new GroupHeader(date('Y-m-d-H-i-s'), 'Aurouze');
-        $header->setInitiatingPartyId($this->creditorAccountIBAN); 
+        $header->setInitiatingPartyId($this->creditorAccountIBAN);
 
         $this->directDebit = TransferFileFacadeFactory::createDirectDebitWithGroupHeader($header, 'pain.008.001.02');
 
