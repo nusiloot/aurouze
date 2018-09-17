@@ -77,7 +77,7 @@
                     {% endif %}
                     {% if(societe.commentaire) %}
                         <div class="list-group-item">
-                            {{ societe.commentaire }}
+                            {{ societe.commentaire | nl2br }}
                         </div>
                     {% endif %}
                 </div>

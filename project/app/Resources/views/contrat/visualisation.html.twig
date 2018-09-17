@@ -18,6 +18,9 @@
         </div>
         <div class="col-xs-5 text-right" style="padding-top: 22px; ">
             <div class="btn-group">
+                {%  if (contrat.isReactivable()) %}
+                    <a href="{{ path('contrat_reactivation', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de vouloir réactiver le contrat n° '+{{ contrat.numeroArchive }}+'?');"><span class=" glyphicon glyphicon-ok"></span> Réactiver</a>
+                {%  endif %}
                 {%  if (contrat.isReconductible) %}
                     <a href="{{ path('contrat_reconduction', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="var a = prompt('Pourcentage d\'augmentation (%) :', 0); if(a === null) { return false; } a = a.replace(',', '.'); a = parseFloat(a); if(isNaN(a)) { a = parseInt(a); } if(isNaN(a)) { console.log(a); return false;} this.href = this.href + '?augmentation=' + a;"><span class="glyphicon glyphicon-log-in"></span> Reconduire</a>
                 {% endif %}

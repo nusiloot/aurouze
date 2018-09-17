@@ -7,10 +7,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Manager\PaiementsManager;
+use AppBundle\Manager\ContratManager;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class StatistiquesController extends Controller
 {
@@ -66,7 +68,6 @@ class StatistiquesController extends Controller
                 'expanded' => false,
                 'multiple' => false,
                 "attr" => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner un commercial", "style"=> "width:100%;")));
-
         	}
           if($type_export['pdf']){
             $formBuilder->add('pdf', CheckboxType::class, array('label' => 'PDF', 'required' => false, 'label_attr' => array('class' => 'small')));

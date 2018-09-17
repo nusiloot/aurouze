@@ -12,8 +12,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Manager\FactureManager;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 
 class FacturesEnRetardFiltresType extends AbstractType {
+
+    protected $container;
+    protected $dm;
+
+    public function __construct(ContainerInterface $container, DocumentManager $documentManager) {
+        $this->container = $container;
+        $this->dm = $documentManager;
+    }
 
 	/**
 	 * @param FormBuilderInterface $builder
@@ -47,6 +56,16 @@ class FacturesEnRetardFiltresType extends AbstractType {
                 		'widget' => 'single_text',
                 		'format' => 'dd/MM/yyyy',
 		));
+    $commerciaux = $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursCommercial();
+    $builder->add('commercial', DocumentType::class, array(
+                'required' => false,
+                "choices" => array_merge(array('' => ''), $commerciaux),
+                'label' => 'Commercial :',
+                'class' => 'AppBundle\Document\Compte',
+                'expanded' => false,
+                'multiple' => false,
+                "attr" => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner un commercial", "style"=> "width:100%;")));
+        
 		$builder->add('societe', TextType::class, array("required" => false, "attr" => array("class" => "typeahead form-control", "placeholder" => (isset($options['data']) && isset($options['data']['societe']) && $options['data']['societe']->getIntitule()) ? $options['data']['societe']->getIntitule() : "Rechercher une société")));
 		$builder->add('save', SubmitType::class, array('label' => 'Filtrer', "attr" => array("class" => "btn btn-success pull-right")));
 	}

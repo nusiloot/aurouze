@@ -6,6 +6,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Model\InterlocuteurInterface;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints as AssertMongo;
+
+use Symfony\Component\Validator\Constraints as AssertDoctrine;
+use AppBundle\Manager\ContratManager;
+
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\SocieteRepository")
  */
@@ -115,7 +119,6 @@ class Societe implements InterlocuteurInterface {
      * @MongoDB\Boolean
      */
     protected $actif;
-
 
     /**
      * @MongoDB\String
@@ -554,6 +557,11 @@ class Societe implements InterlocuteurInterface {
         return $this->getRaisonSociale() . " " . $this->getAdresse()->getIntitule() . ' (' . $this->identifiant . ')';
     }
 
+    public function getAdresseComplete()
+    {
+    	return $this->getAdresse()->getLibelleComplet();
+    }
+
     /**
      * Add compte
      *
@@ -615,7 +623,6 @@ class Societe implements InterlocuteurInterface {
         return $this->actif;
     }
 
-
     /**
      * Set frequencePaiement
      *
@@ -635,6 +642,7 @@ class Societe implements InterlocuteurInterface {
     public function getFrequencePaiement() {
         return $this->frequencePaiement;
     }
+
 
     public function getFrequencePaiementLibelle() {
 

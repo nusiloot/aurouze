@@ -41,7 +41,7 @@
               href="{{ path('passage_visualisation', { 'id': passage.id, 'service': app.request.uri }) }}" class="deco-none">
               <div class="row">
                 <div class="col-xs-2">{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}</div>
-                <div class="col-xs-7"><strong>{{ passage.etablissementInfos.nom }}</strong></div>
+                <div class="col-xs-7"><strong>{% if passage.etablissement.societe.raisonSociale != passage.etablissementInfos.nom %}{{ passage.etablissement.societe.raisonSociale }}, {% endif %}{{ passage.etablissementInfos.nom }}</strong></div>
                 <div class="col-xs-3"><small>{{ passage.contrat.commercial.identite }}</small></div>
               </div>
               <div class="row">

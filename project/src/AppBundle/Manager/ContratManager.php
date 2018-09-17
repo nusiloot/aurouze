@@ -85,7 +85,8 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_EN_ATTENTE_ACCEPTATION => "en attente d'acceptation",
         self::STATUT_EN_COURS => 'en cours',
         self::STATUT_FINI => 'terminé',
-        self::STATUT_RESILIE => 'résilié'
+        self::STATUT_RESILIE => 'résilié',
+        self::STATUT_ANNULE => 'annulé',
     );
     public static $statuts_couleurs = array(
         self::STATUT_BROUILLON => 'info',
@@ -154,6 +155,7 @@ class ContratManager implements MouvementManagerInterface {
         $contrat->setStatut(self::STATUT_BROUILLON);
         $contrat->addPrestation(new Prestation());
         $contrat->addProduit(new Produit());
+        $contrat->setFrequencePaiement($societe->getFrequencePaiement());
 
         if ($etablissement) {
             $contrat->addEtablissement($etablissement);
@@ -530,7 +532,7 @@ class ContratManager implements MouvementManagerInterface {
 
 
 
-    public function getStatsForCommerciauxForCsv($dateDebut = null, $dateFin = null, $commercial = null){
+    public function getStatsForCommerciauxForCsv($dateDebut = null, $dateFin = null, $commercial = null, $statut = null){
     	if(!$dateDebut){
     		$dateDebut = new \DateTime();
     		$dateFin = new \DateTime();
@@ -547,6 +549,7 @@ class ContratManager implements MouvementManagerInterface {
     			if($commercial && ($commercial != $commercialContrat->getId())) {
     				continue;
     			}
+
     			$identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialContrat->getId())->getIdentite();
     			$arr_ligne = array();
                 $resiliation = 0;

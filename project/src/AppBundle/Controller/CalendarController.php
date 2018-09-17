@@ -39,6 +39,19 @@ class CalendarController extends Controller {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
+        
+        $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
+        $techniciensFinal = array();
+        $techniciensOnglet = $techniciens;
+        foreach($techniciens as $t) {
+        	if(in_array($t->getId(), $techniciensFiltre)) {
+        		$techniciensFinal[$t->getId()] = $t;
+        	}
+        }
+        
+        if(count($techniciensFinal) > 0) {
+        	$techniciensOnglet = $techniciensFinal;
+        }
 
 
         $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
@@ -62,7 +75,7 @@ class CalendarController extends Controller {
             $etablissement = $passage->getEtablissement();
         }
 
-        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement, 'date' => $date, 'mode' => $request->get('mode')));
+        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciensOnglet' => $techniciensOnglet, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement, 'date' => $date, 'mode' => $request->get('mode')));
     }
 
     /**
@@ -89,12 +102,11 @@ class CalendarController extends Controller {
             $periodeStart = date("Y-m-d", strtotime("+1 day", strtotime($periodeStart)));
         }
 
-        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
-        $techniciensOnglet = $techniciens;
+        $allTechniciens = $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
         $techniciensFinal = array();
 
         $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
-        $response->headers->setCookie(new Cookie('techniciens', serialize($techniciensFiltre)));
+        $response->headers->setCookie(new Cookie('techniciens', serialize($techniciensFiltre), time() + (365 * 24 * 60 * 60)));
 
         foreach($techniciens as $technicien) {
             if(in_array($technicien->getId(), $techniciensFiltre)) {
@@ -105,6 +117,7 @@ class CalendarController extends Controller {
         if(count($techniciensFinal) > 0) {
             $techniciens = $techniciensFinal;
         }
+        $techniciensOnglet = $techniciens;
 
         $passagesCalendar = array();
         $index = 0;
@@ -164,7 +177,7 @@ class CalendarController extends Controller {
             }
         }
 
-        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'techniciensOnglet' => $techniciensOnglet, 'technicien' => null, 'passage' => $passage, 'date' => $request->get('date')), $response);
+        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'techniciensOnglet' => $techniciensOnglet, 'technicien' => null, 'allTechniciens' => $allTechniciens, 'passage' => $passage, 'date' => $request->get('date')), $response);
     }
 
     /**

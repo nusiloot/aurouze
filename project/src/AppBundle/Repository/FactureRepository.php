@@ -74,6 +74,7 @@ class FactureRepository extends DocumentRepository {
     }
 
     public function exportByPrelevements($clients) {
+
         $date = new \DateTime();
         $date->modify("-1 year");
     	$q = $this->createQueryBuilder();
@@ -116,7 +117,7 @@ class FactureRepository extends DocumentRepository {
     	return $resultSet;
     }
 
-    public function findFactureRetardDePaiement($dateFactureBasse = null, $dateFactureHaute = null, $nbRelance = null, $societe = null){
+    public function findFactureRetardDePaiement($dateFactureBasse = null, $dateFactureHaute = null, $nbRelance = null, $societe = null, $commercial = null){
       $today = new \DateTime();
       $q = $this->createQueryBuilder();
       $q->field('numeroFacture')->notEqual(null);
@@ -141,20 +142,32 @@ class FactureRepository extends DocumentRepository {
             ->addOr($q->expr()->field('nbRelance')->equals(0));
         }
       }
-      if ($societe) {
-        $societeRepo = $this->getDocumentManager()->getRepository('AppBundle:Societe');
-
-        $q->field('societe')->in($societeRepo->getIdsByQuery($societe));
-      }
+      	if ($societe && !preg_match('/^SOCIETE-[0-9]*$/', $societe)) {
+      		$societeRepo = $this->getDocumentManager()->getRepository('AppBundle:Societe');
+      		$societeTab = explode(', ', $societe);
+      		$societe = $societeRepo->findOneBy(array('identifiant' => $societeTab[count($societeTab)-1]));
+        	$q->field('societe')->equals($societe->getId());
+      	} elseif ($societe) {
+        	$q->field('societe')->equals($societe);
+      	}
         $q->sort('dateFacturation', 'desc')->sort('societe', 'asc');
         $query = $q->getQuery();
         $results = $query->execute();
         $factures = array();
         foreach($results as $facture) {
-            if(round($facture->getMontantTTC() - $facture->getMontantPaye(), 2) <= 0) {
-                continue;
-            }
-
+        	if ($commercial) {
+        		if (!$facture->getContrat()) {
+        			continue;
+        		} else {
+        			if (!$facture->getContrat()->getCommercial()) {
+        				continue;
+        			} else {
+        				if ($facture->getContrat()->getCommercial()->getId() != $commercial->getId()) {
+        					continue;
+        				}
+        			}
+        		}
+        	}
             $factures[$facture->getId()] = $facture;
         }
 

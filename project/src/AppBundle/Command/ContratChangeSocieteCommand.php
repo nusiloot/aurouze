@@ -54,7 +54,10 @@ class ContratChangeSocieteCommand extends ContainerAwareCommand {
         $passagesContrat = $contrat->getContratPassages();
         $etablissementsArr = array();
         foreach ($passagesContrat as $etbId => $passagesEtb) {
-          $etablissementsArr[] = $etbm->getRepository()->find($etbId);
+          $etablissementsArr[$etbId] = $etbm->getRepository()->find($etbId);
+        }
+        foreach ($contrat->getEtablissements() as $etab) {
+          $etablissementsArr[$etab->getId()] = $etab;
         }
         $descr = "Ce contrat s'applique à la société ".$societeContrat->getId()." ".$societeContrat->getRaisonSociale()." et aux établissements :";
         foreach ($etablissementsArr as $etablissement) {

@@ -61,7 +61,7 @@ class PaiementType extends AbstractType {
     function onPreSubmit(FormEvent $event) {
     	$form = $event->getForm();
     	$values = $event->getData();
-    	$facture = ($values['facture'])? $this->dm->getRepository('AppBundle:Facture')->find($values['facture']) : null;
+    	$facture = (isset($values['facture']) && $values['facture'])? $this->dm->getRepository('AppBundle:Facture')->find($values['facture']) : null;
     	$this->addElement($form, $facture);
     }
 

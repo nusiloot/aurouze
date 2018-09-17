@@ -31,7 +31,7 @@
 
 <div class="ui-corner-all custom-corners">
   <div class="ui-bar ui-bar-a">
-    <strong>{{ passage.etablissementInfos.nom }}</strong><br/>
+    <strong>{% if passage.etablissement.societe.raisonSociale != passage.etablissementInfos.nom %}{{ passage.etablissement.societe.raisonSociale }}, {% endif %}{{ passage.etablissementInfos.nom }}</strong><br/>
     {{ passage.etablissementInfos.adresse.adresse }}<br/>
     {{ passage.etablissementInfos.adresse.codePostal }}&nbsp;{{ passage.etablissementInfos.adresse.commune }}
     {% if(passage.etablissement.commentaire) %}
@@ -45,7 +45,14 @@
         {% if passage.etablissementInfos.telephonePortable %}<a href="tel:{{ passage.etablissementInfos.telephonePortable }}">{{ passage.etablissementInfos.telephonePortable }}</a>{% endif %}
     {% endif %}
     <a href="tel:{{telephoneSecretariat}}">Tél Secrétariat</a>
-      <br/><br/><span><strong>Com : {{ passage.contrat.commercial.identite }}</strong></span>
+    <br/>
+    {% if passage.techniciensWithout(technicien) | length > 0 %}
+    Autres techniciens : {{ passage.techniciensWithout(technicien) | join(', ') }}
+    {% else %}
+    <span style="font-weight: normal">Pas d'autres techniciens</span>
+    {% endif %}
+    <br/><br/>
+    <span><strong>Commercial : {{ passage.contrat.commercial.identite }}</strong></span>
   </div>
   <div class="ui-body ui-body-a">
     <p>
@@ -56,12 +63,12 @@
           {% if(prestation.wordToPicto) %}
             <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
           {% endif %}
-          &nbsp;{{ prestation.getNomSimplifieToString }}
+          &nbsp;{{ prestation.nom }}<br />
       {% endfor %}
     </p>
     <div class="ui-body ui-body-a ui-corner-all">
       <span style="text-decoration: underline">Nomenclature</span><br/><br/>
-      {{ passage.contrat.nomenclature | nl2br }}
+      {{ passage.contrat.getHtmlNomenclature() | raw | nl2br }}
     </div>
     {% if (passage.contrat.produits | length)  %}
     <br/>

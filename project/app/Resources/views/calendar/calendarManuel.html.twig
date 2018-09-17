@@ -56,7 +56,7 @@
                     <h4 class="modal-title">Filtrer les techniciens</h4>
                 </div>
                 <div class="modal-body">
-                    {% for tech in techniciensOnglet %}
+                    {% for tech in allTechniciens %}
                     <div class="checkbox">
                       <label>
                         <input type="checkbox" {% if(techniciens[tech.id] is defined) %}checked="checked"{% endif %} name="techniciens[]" value="{{ tech.id }}">

@@ -50,16 +50,20 @@ class PassageController extends Controller {
         $anneeMois = "courant";
         $dateFinAll = $dateFin;
         if(!$moisCourant){
-          $anneeMois = ($request->get('mois',null))? $request->get('mois') : date('Ym', strtotime("+1 month", strtotime(date('Y-m-d'))));
+          $anneeMois = ($request->get('mois',null))? $request->get('mois') : date('Ym', strtotime(date('Y-m-d')));
           $dateDebut = \DateTime::createFromFormat('Ymd H:i:s',$anneeMois.'01 00:00:00');
           $dateDebut = \DateTime::createFromFormat('Ymd',$anneeMois.'01');
           $dateFin = clone $dateDebut;
           $dateFin->modify("last day of this month");
           $dateFin->setTime(23,59,59);
+
+          $dateFinAll = clone $dateDebut;
+          $dateFinAll->modify("last day of next month");
+          $dateFinAll->setTime(23,59,59);
         }
 
         $passages = null;
-        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFin);
+        $moisPassagesArray = $passageManager->getNbPassagesToPlanPerMonth($secteur, clone $dateFinAll);
         $passages = $passageManager->getRepository()->findToPlan($secteur, $dateDebut, clone $dateFin)->toArray();
 
         usort($passages, array("AppBundle\Document\Passage", "triPerHourPrecedente"));
@@ -226,6 +230,11 @@ class PassageController extends Controller {
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
     public function societeAction(Request $request, Societe $societe) {
+
+    	$object = $request->get('object');
+    	if ($object && preg_match('/^ETABLISSEMENT-*/', $object)) {
+    		return $this->redirectToRoute('passage_etablissement', array('id' => $object));
+    	}
 
 
     	$object = $request->get('object');

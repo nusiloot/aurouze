@@ -23,6 +23,9 @@
                     <small>&nbsp;n° {{ contrat.getNumeroArchive() }}</small> <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span></h3>
             </div>
             <div class="col-xs-4 text-right">
+                {%  if (contrat.isCopiable) %}
+                    <a href="{{ path('contrat_copie', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default" onclick="return confirm('Êtes-vous sûre de créer un nouveau contrat avec les infos de ce contrat ?');"><span class="glyphicon glyphicon-duplicate"></span> Dupliquer</a>
+                {% endif %}
                 {% if contrat.isEnAttenteAcceptation() %}
                 <a href="{{ path('contrat_suppression', {'id': contrat.getId()}) }}" onclick="return confirm('Etes-vous sûr de vouloir supprimer ce contrat ?')" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Supprimer le contrat</a>
                 {% else %}
@@ -93,11 +96,7 @@
             </div>
         </div>
         <hr />
-        {% if(contrat.isModifiable and not contrat.isEnAttenteAcceptation) %}
-        <div class="alert alert-warning">
-            Lors de l'acception du contrat les passages seront régénérés
-        </div>
-        {% endif %}
+
         <div class="row">
             <div class="col-xs-4 text-left">
                 {% if contrat.isEnAttenteAcceptation %}
@@ -107,11 +106,18 @@
                 {% endif %}
             </div>
             <div class="col-xs-4 text-center">
-                <a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon-file"></span> Voir le PDF</a>
+                <a class="btn btn-primary" href="{{ path('contrat_markdown', {'id': contrat.id }) }}"><span class="glyphicon glyphicon glyphicon-file"></span> Voir le PDF</a>
+
+                {% if contrat.isEnAttenteAcceptation %}
                 <button class="btn btn-default btn" name="{{ "brouillon" }}"  type="submit" value="1"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Enregistrer en brouillon</button>
+                {% endif %}
             </div>
             <div id="contrat_acceptation_button_row" class="col-xs-4 text-right">
+                {% if contrat.isEnAttenteAcceptation %}
                 <button id="contrat_acceptation_save" onclick="return confirm('Êtes vous sûr de vouloir accepter ce contrat ?');" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Accepter le contrat</button>
+                {% else %}
+                <button id="contrat_acceptation_save" type="submit" class="btn btn-default">Modifier</button>
+                {% endif %}
             </div>
         </div>
         <br/>

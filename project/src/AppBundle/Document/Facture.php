@@ -174,7 +174,7 @@ class Facture implements DocumentSocieteInterface {
 
     /** @MongoDB\PreUpdate */
     public function preUpdate() {
-        if ($this->getMontantTTC() <= $this->getMontantPaye()) {
+        if (round($this->getMontantTTC() - $this->getMontantPaye(), 2) <= 0) {
             $this->cloture = true;
         } else {
             $this->cloture = false;
@@ -411,9 +411,11 @@ class Facture implements DocumentSocieteInterface {
      * @param AppBundle\Document\Societe $societe
      * @return self
      */
-    public function setSociete(\AppBundle\Document\Societe $societe) {
+    public function setSociete(\AppBundle\Document\Societe $societe, $store = true) {
         $this->societe = $societe;
-        $this->storeDestinataire();
+        if($store) {
+            $this->storeDestinataire();
+        }
         $this->setSepa($this->societe->getSepa());
         return $this;
     }
@@ -763,6 +765,16 @@ class Facture implements DocumentSocieteInterface {
         return "N°" . $this->getNumeroFacture() . " " . $this->getDestinataire()->getNom() . " (" . $this->getMontantAPayer() . "€ / " . $this->getMontantTTC() . "€ TTC)";
     }
 
+    public function __clone() {
+        $this->removeId();
+
+        $lignes = $this->lignes;
+        $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
+        foreach($lignes as $ligne) {
+            $this->lignes[] = clone $ligne;
+        }
+    }
+
     /**
      * Set montantPaye
      *
@@ -796,12 +808,14 @@ class Facture implements DocumentSocieteInterface {
         $this->setMontantPaye(0.0);
         foreach ($this->getPaiements() as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
-                if ($paiement->getFacture()->getId() == $this->getId()) {
+            	if ($p = $paiement->getFacture()) {
+                if ($p->getId() == $this->getId()) {
                     if ($output) {
                         $output->writeln(sprintf("<comment>Ajout d'un paiement de %s euros HT pour facture d'id %s </comment>", $paiement->getMontant(), $this->getId()));
                     }
                     $this->ajoutMontantPaye($paiement->getMontant());
                 }
+            	}
             }
         }
     }
@@ -961,7 +975,6 @@ class Facture implements DocumentSocieteInterface {
 
     public function genererAvoir(){
         $avoir = clone $this;
-        $avoir->removeId();
         $avoir->removeNumeroFacture();
         $avoir->setCloture(true);
         $avoir->setOrigineAvoir($this);

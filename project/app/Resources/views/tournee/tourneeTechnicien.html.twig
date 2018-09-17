@@ -33,7 +33,12 @@
         {% set passage = rendezvous.passage %}
         <li>
         <a class="tournee_passage_visualisation anchor-link {% if( passage.isTransmis ) %}transmis{% endif %}" href="#passage_visualisation_{{ passage.id }}"  >
-          <h2>{% if(passage.dateDebut | date('Ymd') < date | date('Ymd')) %}Début le {{passage.dateDebut | localizeddate("medium", "none", null, null, "dd MMMM")}}{% else %}{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}{% endif %}&nbsp;-&nbsp;{{ passage.etablissementInfos.nom }}</h2>
+          <h2>{% if(passage.dateDebut | date('Ymd') < date | date('Ymd')) %}Début le {{passage.dateDebut | localizeddate("medium", "none", null, null, "dd MMMM")}}
+              {% else %}{{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}
+              {% endif %}
+              &nbsp;-&nbsp;{% if passage.etablissement.societe.raisonSociale != passage.etablissementInfos.nom %}{{ passage.etablissement.societe.raisonSociale }}, {% endif %}{{ passage.etablissementInfos.nom }}
+          </h2>
+
           <p>
             <strong>{{ passage.etablissementInfos.adresse.adresse }}
             {{ passage.etablissementInfos.adresse.codePostal }}
@@ -45,7 +50,7 @@
                 {% if(prestation.wordToPicto) %}
                   <span class="step size-18"><i class="mdi-{{prestation.wordToPicto}}" style="cursor: pointer;"></i></span>
                 {% endif %}
-                &nbsp;<strong>{{ prestation.getNomSimplifieToString }}</strong>&nbsp;&nbsp;
+                &nbsp;<strong>{{ prestation.nom }}</strong>&nbsp;&nbsp;
 
               {% endfor %}
             </p>

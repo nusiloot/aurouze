@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use AppBundle\Tool\ColorType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Type\ContactCoordonneeType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -49,6 +50,7 @@ class CompteType extends AbstractType {
                     'required' => false,
                     'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple"),
                 ))
+                ->add('couleur',  TextType::class, array('label' => 'Couleur :', 'required' => false))
                 ->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'));
 
         $builder->add('sameContact', CheckboxType::class, array('label' => 'Même contact société', 'required' => false, 'empty_data' => null, "attr" => array("class" => "collapse-checkbox", "data-target" => "#collapseContact")));

@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use AppBundle\Type\PaiementType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
 class PaiementsType extends AbstractType {
@@ -27,7 +29,6 @@ class PaiementsType extends AbstractType {
         $builder->add('dateCreation', DateType::class,
         	array(
             	'label' => 'Date création :',
-        		'data' => new \DateTime(),
             	'attr' => array('class' => 'input-inline datepicker', 'data-provide' => 'datepicker', 'data-date-format' => 'dd/mm/yyyy', 'placeholder' => 'Date des paiements'),
             	'widget' => 'single_text',
             	'format' => 'dd/MM/yyyy'
@@ -47,6 +48,15 @@ class PaiementsType extends AbstractType {
         	)
         );
         $builder->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success")));
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
+    }
+    
+    function onPreSetData(FormEvent $event) {
+    	$form = $event->getForm();
+    	$document = $event->getData();
+    	if (!$document->getDateCreation()) {
+    		$document->setDateCreation(new \DateTime());
+    	}
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {

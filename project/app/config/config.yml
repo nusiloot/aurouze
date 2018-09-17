@@ -3,6 +3,7 @@ imports:
     - { resource: security.yml }
     - { resource: services.yml }
     - { resource: aurouze.yml }
+    - { resource: elasticsearch.yml }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -81,5 +82,3 @@ vich_uploader:
             inject_on_load: true
             delete_on_update: false
             delete_on_remove: false
-
-#    temporary_folder: %kernel.cache_dir%/snappy

@@ -86,6 +86,13 @@ class SocieteController extends Controller {
     			 $etablissement->setCommentaire($societe->getCommentaire());
     			 $dm->persist($etablissement);
     			 $dm->flush();
+    		} elseif (!$societe->getActif()) {
+    			foreach ($societe->getEtablissements() as $etablissement) {
+    				if ($etablissement->getActif()) {
+    					$etablissement->setActif(false);
+    				}
+    			}
+    			$dm->flush();
     		}
     		return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
     	}

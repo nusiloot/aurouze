@@ -487,7 +487,7 @@
             minLength: 1
         },
         {
-            limit: 10,
+            limit: 9,
             name: 'produits',
             display: 'libelle',
             source: produitsSource,
@@ -534,7 +534,7 @@
     	  minLength: 1
     	},
     	{
-          limit: 5,
+          limit: 9,
     	  source: new Bloodhound({
               datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
               queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -553,7 +553,7 @@
 	            		  result = result+' <small><label class="label label-xs label-danger">SUSPENDU</label></small>';
 	            	  }
 	            	  if (target) {
-	            		  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+	            		  return $('<div class="searchable_result"><a href="'+(target.replace('_id_', e.id)).replace('_object_', e.object)+'">'+result+'</a></div>');
 	            	  } else {
 	            		  return $('<div class="searchable_result">'+result+'</div>');
 	            	  }
@@ -570,13 +570,13 @@
               },
               notFound: function(query) {
             	  if (target) {
-            		  return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</a></div>";
+            		  return "<div class=\"searchable_result tt-suggestion tt-selectable\"><span class=\"glyphicon glyphicon-search\"></span> <a id=\"search_more_submit\" href=\"\">Cliquez ici pour optimiser la recherche \""+query.query+"\" dans la recherche avancée</a></div>";
             	  }
 
               },
               footer: function(query, suggestions) {
             	  if (target) {
-	                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</div></a>";
+	                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><span class=\"glyphicon glyphicon-search\"></span> <a id=\"search_more_submit\" href=\"\">Cliquez ici pour optimiser la recherche \""+query.query+"\" dans la recherche avancée</div></a>";
 	              }
               }
           }
@@ -597,7 +597,7 @@
 
         $('#searchable .typeahead').bind('typeahead:select', function(ev, suggestion) {
         	if (target) {
-        		document.location.href=target.replace('_id_', suggestion.id);
+        		document.location.href=(target.replace('_id_', suggestion.id)).replace('_object_', suggestion.object);
         	}
         });
 

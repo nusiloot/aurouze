@@ -5,7 +5,7 @@
 
     <div class="row hide-print">
         <div class="col-xs-12">
-            {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+            {{ include('societe/choixForm.html.twig', {'urlTarget': path('passage_societe', {'id': '_id_', 'object': '_object_'}), 'autofocus': true })}}
         </div>
 
     </div>
@@ -50,7 +50,7 @@
             </div>
             <div class="row">
                 <div class="col-xs-6 enlarge-print">
-                    <div id="liste_passage" class="list-group well" style="height: 650px; overflow: auto; position: relative;">
+                    <div id="liste_passage" class="list-group well" style="height: 650px; overflow: auto; overflow-x: hidden; position: relative;">
                         {% for passage in passages %}
                             {% set words = "" %}
                             {% set techColor = "" %}

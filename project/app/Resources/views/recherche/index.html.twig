@@ -6,6 +6,8 @@
 		<li><a href="{{ path('recherche') }}">Recherche</a></li>
 	</ol>
 
+	<h3 style="margin-top: 20px;">Recherche avancée sur tous les documents</h3>
+	
 	<form action="{{ path('recherche') }}" method="get" class="form-horizontal" style="margin-top: 20px; margin-bottom: 20px;">
 		<div class="form-group">
 			<div class="col-xs-12">
@@ -22,8 +24,14 @@
 
 	{% if resultats is defined and resultats | length %}
 		<ul class="nav nav-pills nav-justified">
-		{% for key, items in resultats %}
-		    <li class="{% if loop.first %}active{% endif %}" role="presentation"><a href="#{{ key }}" aria-controls="{{ key }}" role="tab" data-toggle="tab">{{ key }} <span class="badge">{{ items | length}}</span></a></li>
+		{% set active = 1 %}
+		{% for key, items in searchable %}
+			{% if resultats[key] is defined %}
+		    	<li class="{% if active %}active{% endif %}" role="presentation"><a href="#{{ key }}" aria-controls="{{ key }}" role="tab" data-toggle="tab">{{ key }} <span class="badge">{{ resultats[key] | length }}</span></a></li>
+				{% set active = 0 %}
+			{% else %}
+		    	<li role="presentation"><p role="tab" data-toggle="tab" class="text-center text-muted" style="cursor: not-allowed;">{{ key }} <span class="badge">0</span></p></li>
+		    {% endif %}
 		{% endfor %}
 		</ul>
 

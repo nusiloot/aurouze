@@ -281,7 +281,9 @@ class Paiements {
     public function getFacturesArray() {
         $factureArray = array();
         foreach ($this->getPaiement() as $paiement) {
-            $factureArray[$paiement->getFacture()->getId()] = $paiement->getFacture();
+        	if ($p = $paiement->getFacture()) {
+        		$factureArray[$p->getId()] = $p;
+        	}
         }
         return $factureArray;
     }

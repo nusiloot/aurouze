@@ -92,10 +92,6 @@ class ContratController extends Controller {
 
         $contratManager = new ContratManager($dm);
 
-        // if (!$contrat->isModifiable()) {
-        //     throw $this->createNotFoundException();
-        // }
-
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
             'action' => "",
             'method' => 'POST',
@@ -110,9 +106,7 @@ class ContratController extends Controller {
             $contrat->updateObject();
             $contrat->updatePrestations($dm);
             $contrat->updateProduits($dm);
-            if($contrat->isEnCours() && $contrat->isModifiable()) {
-                $contratManager->generateAllPassagesForContrat($contrat);
-            }
+
             if(!$contrat->getId()) {
                 $dm->persist($contrat);
             }
@@ -131,7 +125,6 @@ class ContratController extends Controller {
 
         $contratManager = new ContratManager($dm);
         $oldTechnicien = $contrat->getTechnicien();
-        $oldNbFactures = $contrat->getNbFactures();
         $isBrouillon = $request->get('brouillon');
         $form = $this->createForm(new ContratAcceptationType($dm, $contrat), $contrat, array(
             'action' => $this->generateUrl('contrat_acceptation', array('id' => $contrat->getId())),
@@ -145,7 +138,7 @@ class ContratController extends Controller {
               throw new \Exception("Le contrat doit avoir date d'acceptation et date de début");
             }
 
-            if ($contrat->isModifiable() && !$isBrouillon && $contrat->getDateDebut()) {
+            if ($contrat->isEnAttenteAcceptation() && !$isBrouillon && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $dateFin = clone $contrat->getDateDebut();
                 $dateFin = $dateFin->modify("+" . $contrat->getDuree() . " month");
@@ -158,17 +151,13 @@ class ContratController extends Controller {
                 if ((!$oldTechnicien) || $oldTechnicien->getId() != $contrat->getTechnicien()->getId()) {
                     $contrat->changeTechnicien($contrat->getTechnicien());
                 }
-                if ($oldNbFactures != $contrat->getNbFactures()) {
-
-                    $contratManager->updateNbFactureForContrat($contrat);
-                }
                 if ($contrat->getDateDebut()) {
                 	$dateFinCalcule = \DateTime::createFromFormat('Y-m-d H:i:s',$contrat->getDateDebut()->format('Y-m-d')." 00:00:00");
                 	$contrat->setDateFin($dateFinCalcule->modify("+" . $contrat->getDuree() . " month"));
                 }
                 $dm->persist($contrat);
                 $dm->flush();
-                return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
+                return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
             }
 
             $dm->persist($contrat);
@@ -250,35 +239,70 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contratForm = $form->getData();
+            $contrat->setTypeContratOriginal($contrat->getTypeContrat());
             $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
-            $passageList = $this->get('contrat.manager')->getPassagesByNumeroArchiveContrat($contrat);
-
-            foreach ($passageList as $etb => $passagesByEtb) {
-                foreach ($passagesByEtb as $passage) {
-                    if (!$passage->isRealise() && !$passage->isAnnule() && ($passage->getDatePrevision()->format('Ymd') > $contrat->getDateResiliation()->format('Ymd'))) {
-                        $passage->setStatut(PassageManager::STATUT_ANNULE);
-                        $passage->getContrat()->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
+            $forcerAnnulationPassages = $form['forcerAnnulationPassages']->getData() == 1;
+            foreach($contrat->getContratPassages() as $etb => $passagesByEtb) {
+                foreach ($passagesByEtb->getPassages() as $passage) {
+                    if ($passage->isRealise() || $passage->isAnnule()) {
+                        continue;
                     }
+                    if($passage->getDatePrevision()->format('Ymd') <= $contrat->getDateResiliation()->format('Ymd') && !$forcerAnnulationPassages) {
+                        continue;
+                    }
+                    $passage->setStatut(PassageManager::STATUT_ANNULE);
+                    $passage->setCommentaire("Annuler suite à l'annulation du contrat");
                 }
             }
-
             foreach ($contrat->getMouvements() as $mouvement) {
             	if (!$mouvement->isFacture()) {
             		$contrat->removeMouvement($mouvement);
             	}
             }
-
             $commentaire = "";
-            if ($contratForm->getCommentaire()) {
+            if ($contrat->getCommentaire()) {
                 $commentaire.= $contrat->getCommentaire() . "\n";
             }
             $commentaire.= $form['commentaireResiliation']->getData();
             $contrat->setCommentaire($commentaire);
-            $contrat->setReconduit(true);
             $dm->flush();
-            return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));
+
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
+
         return $this->render('contrat/annulation.html.twig', array('form' => $form->createView(), 'contrat' => $contrat, 'societe' => $contrat->getSociete()));
+    }
+
+    /**
+     * @Route("/contrat/{id}/reactivation", name="contrat_reactivation")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function reactivationAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $contrat->setTypeContrat($contrat->getTypeContratOriginal());
+        $contrat->setTypeContratOriginal(null);
+        $contrat->setDateResiliation(null);
+        $commentaire = null;
+        if($contrat->getCommentaire()) {
+            $commentaire = $contrat->getCommentaire()."\n";
+        }
+        $commentaire .= "Contrat réactivé le ".date("d/m/Y");
+        $contrat->setCommentaire($commentaire);
+
+        foreach($contrat->getContratPassages() as $etb => $passagesByEtb) {
+            foreach ($passagesByEtb->getPassages() as $passage) {
+                if (!$passage->isAnnule()) {
+                    continue;
+                }
+
+                $passage->setStatut(PassageManager::STATUT_A_PLANIFIER);
+            }
+        }
+
+        $dm->flush();
+
+        return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
     }
 
     /**
@@ -560,7 +584,6 @@ class ContratController extends Controller {
                                                                             'formContratsAReconduire' => $formContratsAReconduire->createView(),
                                                                             'formReconduction' => $formReconduction->createView()));
     }
-
 
 
         /**

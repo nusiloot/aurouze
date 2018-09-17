@@ -24,7 +24,7 @@
                     <a href="{{ path('calendarManuel', {'date': calendarTool.getDateDebut('Y-m-d'), 'passage': ((passage) ? passage.id : null), 'mode': calendarTool.mode }) }}" role="tab" style="color: black;"><i class="mdi mdi-apps mdi-lg"></i> Résumé</a>
                 </li>
                 {% set i=0 %}
-                {% for tech in techniciens %}
+                {% for tech in techniciensOnglet %}
                     <li role="presentation"{% if tech.getId() == technicien %} class="active"{% endif %}>
                         <a href="{{ path('calendar',{'technicien': tech.getId(), 'id': ((passage) ? passage.etablissement.id : "0"), 'passage': ((passage) ? passage.id : null), 'date': calendarTool.getDateDebut('Y-m-d'), 'mode': calendarTool.mode }) }}" role="tab" style="color: {{ tech.getCouleur() }};">
                             <i class="mdi mdi-face mdi-lg"></i> <strong>{% autoescape false %}{{ tech.getIdentiteCourt() | replace({' ' : '&nbsp;'})  }}{% endautoescape %}</strong>

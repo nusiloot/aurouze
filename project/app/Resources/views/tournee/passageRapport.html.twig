@@ -18,7 +18,7 @@
   <div data-role="main" class="ui-content">
   {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
         <h2>Rapport de visite</h2>
-        <h3><strong>{{ passage.etablissementInfos.nom }}</strong></h3>
+        <h3><strong>{% if passage.etablissement.societe.raisonSociale != passage.etablissementInfos.nom %}{{ passage.etablissement.societe.raisonSociale }}, {% endif %}{{ passage.etablissementInfos.nom }}</strong></h3>
         <h4><strong>{{ passage.etablissementInfos.adresse.adresse }}&nbsp;{{ passage.etablissementInfos.adresse.codePostal }}&nbsp;{{ passage.etablissementInfos.adresse.commune }}
         </strong>
         {% if(passage.etablissement.commentaire) %}

@@ -219,9 +219,11 @@ public static $export_stats_libelle = array(
 
       $this->fillCaStatsArray($ca_stats,$facturesObjs, false, $commercialFiltre);
 
+
       $dateDebutMoinsOneYear = \DateTime::createFromFormat('Y-m-d H:i:s', $dateDebut->format('Y-m-d')." 00:00:00");
       $dateDebutMoinsOneYear->modify("-1 year");
       $dateDebutMoinsOneYear->modify('first day of this month');
+
 
       $dateFinMoinsOneYear = \DateTime::createFromFormat('Y-m-d H:i:s', $dateFin->format('Y-m-d')." 23:59:59");
       $dateFinMoinsOneYear->modify("-1 year");

@@ -51,14 +51,6 @@
   <div class="row">
     <div class="col-xs-12">
           <div class="well" style="background: #fff;">
-              <p><span>Heure d'arrivée : </span>{{ passage.dateDebut | date('H') }}h{{ passage.dateDebut | date('i') }}</p>
-              <p><span>Heure de départ : </span>{{ passage.dateFin | date('H') }}h{{ passage.dateFin | date('i') }}</p>
-          </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-          <div class="well" style="background: #fff;">
               {% for niveauInfestation in passage.niveauInfestation %}
                 <div class="row" style="padding-bottom:5px;">
                   <div class="col-xs-6 text-right">

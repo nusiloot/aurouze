@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Compte;
@@ -30,7 +31,6 @@ class ContratAnnulationType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
-
         $builder->add('dateResiliation', DateType::class, array(
                     'label' => 'Date résiliation :',
                     "attr" => array(
@@ -40,7 +40,8 @@ class ContratAnnulationType extends AbstractType {
                     ),
                     'widget' => 'single_text',
                     'format' => 'dd/MM/yyyy'))
-                ->add('commentaireResiliation', TextareaType::class, array('label' => 'Commentaire :', "required" => false, 'mapped' => false, "attr" => array("class" => "form-control", "rows" => 12)));
+                 ->add('forcerAnnulationPassages', CheckboxType::class, array('label' => "Forcer l'annulation de tous les passages non réalisés", "mapped" => false, 'required' => false))
+                 ->add('commentaireResiliation', TextareaType::class, array('label' => 'Commentaire :', "required" => false, 'mapped' => false, "attr" => array("class" => "form-control", "rows" => 12)));
 
 
         $builder->add('save', SubmitType::class, array('label' => 'Annuler le contrat', "attr" => array("class" => "btn btn-danger pull-right")));
@@ -56,6 +57,7 @@ class ContratAnnulationType extends AbstractType {
      * @return string
      */
     public function getName() {
+
         return 'contrat_annulation';
     }
 

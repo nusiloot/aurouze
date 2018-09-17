@@ -174,5 +174,22 @@ Condition de réglement : {{ facture.frequencePaiementLibelle }}
         </div>
     </div>
 </div>
+{% else %}
+<div style="border-top: 1px dashed #ccc; margin-top: 15px;">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <small><small><small>&nbsp;</small></small></small>
+        </div>
+        <div class="col-xs-6">
+            <p>
+            <span class="lead" style="font-size: 15px;">Avoir n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
+            <small>Client : {{ facture.destinataire.raisonSociale }} ({{ facture.destinataire.codeComptable }})</small>
+            </p>
+        </div>
+        <div class="col-xs-6 text-right">
+            <p>&nbsp;</p>
+        </div>
+    </div>
+</div>
 {% endif %}
 {% endblock %}
