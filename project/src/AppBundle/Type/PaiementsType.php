@@ -22,9 +22,9 @@ class PaiementsType extends AbstractType {
         $this->container = $container;
         $this->dm = $documentManager;
     }
-    
+
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('dateCreation', DateType::class, 
+        $builder->add('dateCreation', DateType::class,
         	array(
             	'label' => 'Date création :',
         		'data' => new \DateTime(),
@@ -33,9 +33,11 @@ class PaiementsType extends AbstractType {
             	'format' => 'dd/MM/yyyy'
         	)
         );
-        $builder->add('numeroRemise', TextType::class, array('label' => 'Numéro remise de chèque :',"required" => false,"attr" => array("placeholder" => 'Numéro remise de chèque')));
+        if(!$builder->getData()->getPrelevement()){
+            $builder->add('numeroRemise', TextType::class, array('label' => 'Numéro remise de chèque :',"required" => false,"attr" => array("placeholder" => 'Numéro remise de chèque')));
+        }
 
-        $builder->add('paiement', CollectionType::class, 
+        $builder->add('paiement', CollectionType::class,
         	array(
         		'entry_type' => new PaiementType($this->container, $this->dm),
         		'allow_add' => true,
@@ -50,7 +52,7 @@ class PaiementsType extends AbstractType {
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array('data_class' => 'AppBundle\Document\Paiements'));
     }
-    
+
     public function getName() {
         return 'paiements';
     }

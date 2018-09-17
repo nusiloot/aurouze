@@ -74,6 +74,9 @@ class SocieteController extends Controller {
     	if ($form->isSubmitted() && $form->isValid()) {
     		$societe = $form->getData();
     		$dm->persist($societe);
+            if ($isNew) {
+                $societe->preInitRum();
+            }
     		$dm->flush();
     		if ($isNew && $form->get("generer")->getData()) {
     			 $etablissement = new Etablissement();

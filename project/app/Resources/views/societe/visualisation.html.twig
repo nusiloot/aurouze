@@ -23,7 +23,7 @@
                                 <label class="label label-xs label-info ">{{  nbContratsSociete }} contrat(s)</label>
                             </small>&nbsp;
                             {% if societe.sepa and societe.sepa.actif %}
-                            <small class="pull-right" style="padding-top: 5px; padding-right: 10px;" data-toggle="tooltip" title="{{ societe.sepa.iban }} <br/> {{ societe.sepa.bic }} <br/> {{ societe.sepa.rum }} <br/> ({{ societe.sepa.date | date("d/m/Y") }})">
+                            <small class="pull-right" style="padding-top: 5px; padding-right: 10px;" data-toggle="tooltip" title="{{ societe.sepa.iban }} <br/> {{ societe.sepa.bic }} <br/> {{ societe.sepa.rum }} <br/> ({{ societe.sepa.date | date("d/m/Y") }}) <br/> {% if societe.sepa.first %}Premier prélèvement{% else %}Prélèvements récurrents{% endif %}">
                                 <label class="label label-xs label-primary" style="cursor:pointer;">SEPA</label>
                             </small>&nbsp;
                             {% endif %}

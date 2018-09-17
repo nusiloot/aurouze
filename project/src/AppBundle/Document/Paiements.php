@@ -43,6 +43,17 @@ class Paiements {
      */
     protected $imprime;
 
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $prelevement;
+
+    /**
+     * @MongoDB\string
+     *
+     */
+    protected $xmlbase64;
+
     public function __construct() {
         $this->paiement = new ArrayCollection();
         $this->imprime = false;
@@ -123,7 +134,7 @@ class Paiements {
     public function getPaiement() {
         return $this->paiement;
     }
-    
+
     public function getAggregatePaiements($societe = null) {
     	$result = array();
     	foreach ($this->getPaiement() as $paiement) {
@@ -137,11 +148,11 @@ class Paiements {
     			$result[$k]['montant'] = 0;
     			$result[$k]['factures'] = 0;
     		}
-    		
+
     		$result[$k]['libelle'] = ($paiement->getMoyenPaiement())? PaiementsManager::$moyens_paiement_libelles[$k] : '';
     		$result[$k]['factures'] += 1;
     		$result[$k]['montant'] += $paiement->getMontant();
-    		
+
     		$key = ($paiement->getLibelle())? Transliterator::urlize($paiement->getLibelle()) : md5(microtime().rand());
     		if (!isset($result[$k]['items'][$key])) {
     			$result[$k]['items'][$key] = array();
@@ -153,7 +164,7 @@ class Paiements {
     		$result[$k]['items'][$key]['libelle'] = $paiement->getLibelle();
     		$result[$k]['items'][$key]['montant'] += $paiement->getMontant();
     		$result[$k]['items'][$key]['factures'] += 1;
-    		
+
     		$result[$k]['items'][$key]['items'][] = $paiement;
     	}
     	return $result;
@@ -296,5 +307,49 @@ class Paiements {
     public function getNumeroRemise()
     {
         return $this->numeroRemise;
+    }
+
+    /**
+     * Set prelevement
+     *
+     * @param boolean $prelevement
+     * @return $this
+     */
+    public function setPrelevement($prelevement)
+    {
+        $this->prelevement = $prelevement;
+        return $this;
+    }
+
+    /**
+     * Get prelevement
+     *
+     * @return boolean $prelevement
+     */
+    public function getPrelevement()
+    {
+        return $this->prelevement;
+    }
+
+    /**
+     * Set xmlbase64
+     *
+     * @param string $xmlbase64
+     * @return $this
+     */
+    public function setXmlbase64($xmlbase64)
+    {
+        $this->xmlbase64 = $xmlbase64;
+        return $this;
+    }
+
+    /**
+     * Get xmlbase64
+     *
+     * @return string $xmlbase64
+     */
+    public function getXmlbase64()
+    {
+        return $this->xmlbase64;
     }
 }

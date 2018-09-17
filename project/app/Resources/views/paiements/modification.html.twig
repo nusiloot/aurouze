@@ -53,6 +53,7 @@
                         {{ form_row(form.dateCreation) }}
                     </div>
                 </div>
+				{% if not paiements.prelevement %}
                 <div class="row">
                     <div class="col-xs-10">
                         {{ form_row(form.numeroRemise) }}
@@ -63,6 +64,7 @@
                         <a class="btn btn-sm btn-default pull-right" href="{{ path('paiements_export_banque', {'id': paiements.id }) }}" onclick="return confirm('Êtes vous sûr de vouloir effectuer l\'impression pour la banque?')" ><span class="glyphicon glyphicon-print"></span> Impression banque</a>
                 	</div>
                 </div>
+				{% endif %}
                 </div>
             </div>
         <div>

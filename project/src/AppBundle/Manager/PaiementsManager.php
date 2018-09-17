@@ -20,6 +20,7 @@ class PaiementsManager {
     const TYPE_REGLEMENT_GAIN = 'GAIN';
     const MOYEN_PAIEMENT_CHEQUE = 'CHEQUE';
     const MOYEN_PAIEMENT_VIREMENT = 'VIREMENT';
+    const MOYEN_PAIEMENT_PRELEVEMENT_BANQUAIRE  = 'PRELEVEMENT_BANQUAIRE';
     const MOYEN_PAIEMENT_ESPECE = 'ESPECE';
     const MOYEN_PAIEMENT_TRAITE = 'TRAITE';
     const MOYEN_PAIEMENT_CB = 'CB';
@@ -78,6 +79,7 @@ class PaiementsManager {
     public static $moyens_paiement_libelles = array(
         self::MOYEN_PAIEMENT_CHEQUE => "Chèque",
         self::MOYEN_PAIEMENT_VIREMENT => "Virement",
+        self::MOYEN_PAIEMENT_PRELEVEMENT_BANQUAIRE => "Prélèvement bancaire",
         self::MOYEN_PAIEMENT_ESPECE => "Espèces",
         self::MOYEN_PAIEMENT_TRAITE => "Traite",
         self::MOYEN_PAIEMENT_CB => "Carte Bleue",
@@ -88,8 +90,9 @@ class PaiementsManager {
         "3" => self::MOYEN_PAIEMENT_ESPECE,
         "4" => self::MOYEN_PAIEMENT_TRAITE,
         "5" => self::MOYEN_PAIEMENT_CB,
-        "6" => self::MOYEN_PAIEMENT_REGULARISATION_COMPTABLE);
-
+        "6" => self::MOYEN_PAIEMENT_REGULARISATION_COMPTABLE,
+        "7" => self::MOYEN_PAIEMENT_PRELEVEMENT_BANQUAIRE
+        );
         public static $export_paiement_libelle = array(
             self::EXPORT_DATE_PAIEMENT => "Date de la pièce de banque",
             self::EXPORT_CODE_COMPTABLE => "Code Client tronqué à 8 caractères",

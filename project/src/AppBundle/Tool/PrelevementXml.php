@@ -37,7 +37,7 @@ protected $xml;
     public function createPrelevement(){
 
         $header = new GroupHeader(date('Y-m-d-H-i-s'), 'Aurouze');
-        $header->setInitiatingPartyId($this->creditorAccountIBAN); // ID Aurouze ?
+        $header->setInitiatingPartyId($this->creditorAccountIBAN); 
 
         $this->directDebit = TransferFileFacadeFactory::createDirectDebitWithGroupHeader($header, 'pain.008.001.02');
 
@@ -77,10 +77,10 @@ protected $xml;
                 'amount'                => ''.intval($facture->getMontantAPayer()*100),
                 'debtorIban'            => str_ireplace(" ","",$facture->getSepa()->getIban()),
                 'debtorBic'             => str_ireplace(" ","",$facture->getSepa()->getBic()),
-                'debtorName'            => str_ireplace(" ","",$facture->getSepa()->getNomBancaire()),
+                'debtorName'            => $facture->getSepa()->getNomBancaire(),
                 'debtorMandate'         => str_ireplace(" ","",$facture->getSepa()->getRum()),
                 'debtorMandateSignDate' => $facture->getSepa()->getDate(),
-                'remittanceInformation' => 'FACT '.$facture->getNumeroFacture().' du '.$facture->getDateEmission()->format("d/m/Y").' '. str_ireplace(".",",",sprintf("%0.2f",$facture->getMontantAPayer())),
+                'remittanceInformation' => 'FACT '.$facture->getNumeroFacture().' du '.$facture->getDateEmission()->format("d m Y").' '. str_ireplace(array(".",","),"EUR",sprintf("%0.2f",$facture->getMontantAPayer())),
                 'endToEndId'            => 'Aurouze Facture'
             ));
         }

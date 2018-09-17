@@ -116,6 +116,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     }
 
     public function updatePassages() {
+        if(count($this->getPassages()))
         foreach($this->getPassages() as $passage) {
             if($passage->isRealise() || $passage->isAnnule()) {
                 continue;
