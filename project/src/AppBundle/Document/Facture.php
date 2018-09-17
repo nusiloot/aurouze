@@ -414,7 +414,7 @@ class Facture implements DocumentSocieteInterface {
     public function setSociete(\AppBundle\Document\Societe $societe) {
         $this->societe = $societe;
         $this->storeDestinataire();
-
+        $this->setSepa($this->societe->getSepa());
         return $this;
     }
 

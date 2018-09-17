@@ -152,7 +152,7 @@ public static $export_stats_libelle = array(
         $facture->getEmetteur()->setCommune($this->parameters['emetteur']['commune']);
         $facture->getEmetteur()->setTelephone($this->parameters['emetteur']['telephone']);
         $facture->getEmetteur()->setFax($this->parameters['emetteur']['fax']);
-        $facture->getEmetteur()->setEmail($this->parameters['emetteur']['email']);
+        $facture->getEmetteur()->setEmail($this->parameters['emetteur']['email']);        
 
         return $facture;
     }
