@@ -23,6 +23,7 @@ class SepaType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
+                ->add('nomBancaire', TextType::class, array('label' => 'Nom Bancaire :', 'required' => false, 'empty_data'  => null))
                 ->add('iban', TextType::class, array('label' => 'IBAN :', 'required' => false, 'constraints' => array(new Iban()), 'empty_data'  => null))
                 ->add('bic', TextType::class, array('label' => 'BIC :', 'required' => false, 'constraints' => array(new Bic()), 'empty_data'  => null))
                 ->add('rum', TextType::class, array('label' => 'RUM :', 'required' => false, 'empty_data'  => null))
@@ -38,7 +39,7 @@ class SepaType extends AbstractType {
                 		'format' => 'dd/MM/yyyy'
                 ));
     }
-    
+
     public function isOk(FormInterface $form)
     {
 	    if ($form->get('actif')) {

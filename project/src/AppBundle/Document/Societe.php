@@ -130,6 +130,14 @@ class Societe implements InterlocuteurInterface {
         $this->setActif(true);
     }
 
+    public function preInitRum(){
+        if(!$this->getSepa() || !$this->getSepa()->getRum()){
+            $sepa = new Sepa();
+            $sepa->setRum("AUROUZE".$this->getIdentifiant());
+            $this->setSepa($sepa);
+        }
+    }
+
     public function getDestinataire() {
 
         return $this->getRaisonSociale();
@@ -668,5 +676,12 @@ class Societe implements InterlocuteurInterface {
     public function getAttachements()
     {
         return $this->attachements;
+    }
+
+    public function isFirstPrelevement(){
+        if(!$this->sepa){
+            throw new sfException("La societe ".$societe->getId()." ne posssède aucun SEPA");
+        }
+        return $this->sepa->isFirst();
     }
 }

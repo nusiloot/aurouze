@@ -8,10 +8,6 @@
 
     </ol>
 
-    <h2>
-		Export pour prélévement
-		<a class="btn btn-default pull-right" href="{{ path('paiements_prelevement') }}">&nbsp;Exporter les factures pour la banque</a>
-	</h2>
 
 	<h2>
 		Campagnes de paiements
@@ -88,5 +84,10 @@
 		<p class="bg-warning text-center" style="padding: 10px;"><i>Aucune campagne de paiement pour la période <strong>{{ periode }}</strong></i></p>
 		{% endif %}
     </div>
+
+    <h2>
+        Export pour prélévement
+        <a class="btn btn-default pull-right" href="{{ path('paiements_prelevement') }}" onclick="return confirm('Voulez vous générer le fichier bancaire?');" >&nbsp;Exporter les factures pour la banque</a>
+    </h2>
 
 {% endblock %}

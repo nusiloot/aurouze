@@ -23,6 +23,11 @@ class Sepa {
     /**
      * @MongoDB\String
      */
+    protected $nomBancaire;
+
+    /**
+     * @MongoDB\String
+     */
     protected $iban;
 
     /**
@@ -45,8 +50,14 @@ class Sepa {
      */
     protected $actif;
 
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $first;
+
     public function __construct() {
         $this->setActif(false);
+        $this->setFirst(true);
     }
 
     /**
@@ -57,6 +68,7 @@ class Sepa {
      */
     public function setIban($iban)
     {
+        $this->setFirst(true);
         $this->iban = $iban;
         return $this;
     }
@@ -79,6 +91,7 @@ class Sepa {
      */
     public function setBic($bic)
     {
+        $this->setFirst(true);
         $this->bic = $bic;
         return $this;
     }
@@ -101,6 +114,7 @@ class Sepa {
      */
     public function setRum($rum)
     {
+        $this->setFirst(true);
         $this->rum = $rum;
         return $this;
     }
@@ -122,6 +136,7 @@ class Sepa {
      * @return self
      */
     public function setDate($date) {
+        $this->setFirst(true);
         $this->date = $date;
         return $this;
     }
@@ -157,5 +172,60 @@ class Sepa {
         return $this->actif;
     }
 
-   
+
+
+    /**
+     * Set first
+     *
+     * @param boolean $first
+     * @return $this
+     */
+    public function setFirst($first)
+    {
+        $this->first = $first;
+        return $this;
+    }
+
+    /**
+     * Get first
+     *
+     * @return boolean $first
+     */
+    public function getFirst()
+    {
+        return $this->first;
+    }
+
+    /**
+     * Is first
+     *
+     * @return boolean $first
+     */
+    public function isFirst()
+    {
+        return $this->first;
+    }
+
+    /**
+     * Set nomBancaire
+     *
+     * @param string $nomBancaire
+     * @return $this
+     */
+    public function setNomBancaire($nomBancaire)
+    {
+        $this->setFirst(true);
+        $this->nomBancaire = $nomBancaire;
+        return $this;
+    }
+
+    /**
+     * Get nomBancaire
+     *
+     * @return string $nomBancaire
+     */
+    public function getNomBancaire()
+    {
+        return $this->nomBancaire;
+    }
 }

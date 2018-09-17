@@ -69,6 +69,11 @@
             <div class="panel-heading"><strong>Sepa</strong><div class="pull-right">{{ form_row(form.sepa.actif) }}</div></div>
             <div class="panel-body col-xs-offset-2">
                 <div class="row">
+                    <div class="col-xs-10">
+                        {{ form_row(form.sepa.nomBancaire) }}
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-xs-4">
                         {{ form_row(form.sepa.bic) }}
                     </div>
@@ -88,7 +93,7 @@
 	    	            </div>
                     </div>
                     <div class="col-xs-6">
-                        {{ form_row(form.sepa.rum) }}
+                        {{ form_row(form.sepa.rum,{attr: { "disabled" : "disabled"}}) }}
                     </div>
                 </div>
             </div>

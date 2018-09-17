@@ -62,6 +62,9 @@ class SocieteController extends Controller {
 
     	$isNew = ($id)? false : true;
     	$societe = (!$isNew)? $this->get('societe.manager')->getRepository()->find($id) : new Societe();
+        if(!$isNew){
+            $societe->preInitRum();
+        }
 
     	$form = $this->createForm(new SocieteType($this->container, $dm, $isNew), $societe, array(
     			'action' => $this->generateUrl('societe_modification', array('id' => $id)),
