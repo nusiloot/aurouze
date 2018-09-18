@@ -616,7 +616,7 @@ class Facture implements DocumentSocieteInterface {
      * @param AppBundle\Document\Sepa $sepa
      * @return self
      */
-    public function setSepa(\AppBundle\Document\Sepa $sepa) {
+    public function setSepa($sepa = null) {
         $this->sepa = $sepa;
         return $this;
     }
