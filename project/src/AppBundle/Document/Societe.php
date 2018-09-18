@@ -134,9 +134,12 @@ class Societe implements InterlocuteurInterface {
     }
 
     public function preInitRum(){
-        if(!$this->getSepa() || !$this->getSepa()->getRum()){
+        if(!$this->getSepa()){
+            $this->sepa = new Sepa();
+        }
+        if(!$this->getSepa()->getRum()){
             $sepa = $this->getSepa();
-            $sepa->setRum("AUROUZE".$this->getIdentifiant());            
+            $sepa->setRum("AUROUZE".$this->getIdentifiant());
         }
     }
 
