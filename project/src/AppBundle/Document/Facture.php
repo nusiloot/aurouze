@@ -421,7 +421,9 @@ class Facture implements DocumentSocieteInterface {
         if($store) {
             $this->storeDestinataire();
         }
-        $this->setSepa($this->societe->getSepa());
+        if($this->societe->getSepa()){
+            $this->setSepa($this->societe->getSepa());
+        }
         return $this;
     }
 
@@ -616,7 +618,7 @@ class Facture implements DocumentSocieteInterface {
      * @param AppBundle\Document\Sepa $sepa
      * @return self
      */
-    public function setSepa($sepa = null) {
+    public function setSepa(\AppBundle\Document\Sepa $sepa) {
         $this->sepa = $sepa;
         return $this;
     }
