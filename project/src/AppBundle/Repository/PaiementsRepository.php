@@ -59,7 +59,7 @@ class PaiementsRepository extends DocumentRepository {
 
 
 
-    public function findByPeriode($periode,$prelevement = null) {
+    public function findByPeriode($periode,$prelevement = false) {
     	if (!preg_match('/^([0-9]{2})\/([0-9]{4})$/', $periode, $items)) {
             return array();
         }
@@ -68,7 +68,12 @@ class PaiementsRepository extends DocumentRepository {
     	$q = $this->createQueryBuilder();
     	$q->field('dateCreation')->gte($dateDebut);
     	$q->field('dateCreation')->lte($dateFin);
-    	$q->field('prelevement')->equals($prelevement);
+        if($prelevement){
+    	       $q->field('prelevement')->equals($prelevement);
+        }else{
+            $q->addOr($q->expr()->field('prelevement')->gte($prelevement))
+               ->addOr($q->expr()->field('prelevement')->equals(null));
+        }
     	$q->sort('dateCreation', 'desc');
     	$query = $q->getQuery();
         return $query->execute();
