@@ -10,6 +10,7 @@ use Digitick\Sepa\PaymentInformation;
 use Digitick\Sepa\DomBuilder\CustomerCreditTransferDomBuilder;
 use Digitick\Sepa\TransferFile\Factory\TransferFileFacadeFactory;
 
+
 class PrelevementXml {
 
 protected $banqueParameters;
@@ -60,13 +61,29 @@ protected $xml;
             $isFirst = $facture->getSociete()->isFirstPrelevement();
             $seqType = ($isFirst)? PaymentInformation::S_FIRST : PaymentInformation::S_RECURRING;
 
+            $dateEmission = clone $facture->getDateEmission();
+            if($dateEmission->format('m') > 20){
+                $dateEmission->modify("+2 month");
+            }else{
+                $dateEmission->modify("+1 month");
+            }
+            $dueDate = \DateTime::createFromFormat("Ymd",$dateEmission->format("Y").$dateEmission->format("m")."20");
+            $now = new \DateTime();
+            if($dueDate < $now){
+                if($now->format('m') > 20){
+                    $now->modify("+1 month");
+                }
+                $dueDate = \DateTime::createFromFormat("Ymd",$now->format("Y").$now->format("m")."20");
+            }
+            
+            $facture->setInPrelevement($dueDate);
             $this->directDebit->addPaymentInfo($idPrelevement, array(
                 'id'                    => $idPrelevement,
-                'dueDate'               => $date,
+                'dueDate'               => $dueDate,
                 'creditorName'          => $this->creditorName,
                 'creditorAccountIBAN'   => $this->creditorAccountIBAN,
                 'creditorAgentBIC'      => $this->creditorAgentBIC,
-                'seqType'               =>$seqType,
+                'seqType'               => $seqType,
                 'creditorId'            => $this->creditorId,
                 'localInstrumentCode'   => 'CORE'
             ));

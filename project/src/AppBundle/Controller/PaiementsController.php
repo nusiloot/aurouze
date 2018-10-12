@@ -280,8 +280,7 @@ class PaiementsController extends Controller {
             $paiements->addPaiement($paiement);
             if($facture->getSociete()->getSepa()->isFirst()){
                 $societesInFirstPrev[$facture->getSociete()->getId()] = $facture->getSociete();
-            }
-            $facture->setInPrelevement(true);
+            }            
         }
 
 

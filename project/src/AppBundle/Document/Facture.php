@@ -164,7 +164,7 @@ class Facture implements DocumentSocieteInterface {
     protected $sepa;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Date
      */
     protected $inPrelevement;
 
@@ -1166,7 +1166,7 @@ class Facture implements DocumentSocieteInterface {
     /**
      * Set inPrelevement
      *
-     * @param boolean $inPrelevement
+     * @param date $inPrelevement
      * @return $this
      */
     public function setInPrelevement($inPrelevement)
@@ -1178,7 +1178,7 @@ class Facture implements DocumentSocieteInterface {
     /**
      * Get inPrelevement
      *
-     * @return boolean $inPrelevement
+     * @return date $inPrelevement
      */
     public function getInPrelevement()
     {

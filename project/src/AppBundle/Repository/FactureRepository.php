@@ -77,6 +77,7 @@ class FactureRepository extends DocumentRepository {
 
         $date = new \DateTime();
         $date->modify("-1 year");
+                
     	$q = $this->createQueryBuilder();
     	$q->addAnd($q->expr()->field('societe')->in($clients));
     	$q->addAnd($q->expr()->field('cloture')->equals(false));

@@ -71,7 +71,7 @@ class PaiementsRepository extends DocumentRepository {
         if($prelevement){
     	       $q->field('prelevement')->equals($prelevement);
         }else{
-            $q->addOr($q->expr()->field('prelevement')->gte($prelevement))
+            $q->addOr($q->expr()->field('prelevement')->equals($prelevement))
                ->addOr($q->expr()->field('prelevement')->equals(null));
         }
     	$q->sort('dateCreation', 'desc');
