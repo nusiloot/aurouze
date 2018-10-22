@@ -38,18 +38,18 @@ class EtablissementCsvImporter extends CsvFile {
     const CSV_CP = 6;
     const CSV_VILLE = 7;
     const CSV_PAYS = 8;
-    
+
     const CSV_TEL_FIXE = 9;
     const CSV_TEL_MOBILE = 10;
     const CSV_FAX = 11;
     const CSV_SITE_WEB = 12;
     const CSV_EMAIL = 13;
-    
+
     const CSV_ACTIF = 16;
     const CSV_RAISON_SOCIALE = 23;
     const CSV_TYPE_ETABLISSEMENT = 27;
-    
-    
+
+
     const CSV_CMT = 38;
     const CSV_COORD_LAT = 39;
     const CSV_COORD_LON = 40;
@@ -79,7 +79,7 @@ class EtablissementCsvImporter extends CsvFile {
             if ($cptTotal % (count($csv) / 100) == 0) {
                 $progress->advance();
             }
-            if ($cpt > 1000) {
+            if ($cpt > 10) {
                 $this->dm->flush();
                 $this->dm->clear();
                 gc_collect_cycles();
@@ -114,7 +114,7 @@ class EtablissementCsvImporter extends CsvFile {
             $adresse_str .= ', ' . $ligne[self::CSV_ADRESS_2];
         }
         $etablissement->setCommentaire(str_replace('#', "\n", $ligne[self::CSV_CMT]));
-        $etablissement->setRaisonSociale($ligne[self::CSV_RAISON_SOCIALE]);
+        $etablissement->setNom($ligne[self::CSV_RAISON_SOCIALE]);
 
         $adresse = new Adresse();
         $adresse->setAdresse($adresse_str);
@@ -128,26 +128,28 @@ class EtablissementCsvImporter extends CsvFile {
             $lon = $ligne[self::CSV_COORD_LON];
             $adresse->getCoordonnees()->setLat($lat);
             $adresse->getCoordonnees()->setLon($lon);
-            //echo "lat=$lat lon=$lon déjà enregistré \n";
-        } else {
-            $msg = $this->em->getOSMAdresse()->calculCoordonnees($adresse);
-            sleep(0.5);
-            if ($msg && is_string($msg)) {
-                //echo $msg . "\n";
-            }
+            echo "lat=$lat lon=$lon déjà enregistré \n";
         }
+        else {
+            // echo "pas de calcul des coordonnées pour l'instant \n";
+                // $msg = $this->em->getOSMAdresse()->calculCoordonnees($adresse);
+                // sleep(0.5);
+                // if ($msg && is_string($msg)) {
+                //     echo $msg . "\n";
+                // }
+            }
         $etablissement->setAdresse($adresse);
 
-        
+
         $contactCoordonnee = new ContactCoordonnee();
         $contactCoordonnee->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
         $contactCoordonnee->setTelephoneMobile($ligne[self::CSV_TEL_MOBILE]);
         $contactCoordonnee->setFax($ligne[self::CSV_FAX]);
         $contactCoordonnee->setSiteInternet($ligne[self::CSV_SITE_WEB]);
         $contactCoordonnee->setEmail($ligne[self::CSV_EMAIL]);
-        
+
          $etablissement->setContactCoordonnee($contactCoordonnee);
-        
+
         if ($ligne[self::CSV_TYPE_ETABLISSEMENT] == "") {
             $etablissement->setType(EtablissementManager::TYPE_ETB_NON_SPECIFIE);
         } else {

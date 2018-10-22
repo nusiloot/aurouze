@@ -39,8 +39,9 @@ class FactureCsvImporter {
     const CSV_NUMERO_FACTURE = 1;
     const CSV_IS_AVOIR = 2;
     const CSV_REF_AVOIR = 3;
+    const CSV_SOCIETE_ID = 6;
     const CSV_CONTRAT_ID = 7;
-    const CSV_SOCIETE_ID = 5;
+
     const CSV_TVA_REDUITE = 21;
     const CSV_DESCRIPTION = 12;
     const CSV_FACTURE_LIGNE_ID = 27;
@@ -153,7 +154,6 @@ class FactureCsvImporter {
         }
 
         $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $ligneFacture[self::CSV_SOCIETE_ID]));
-
         if (!$societe) {
             $output->writeln(sprintf("<error>La societe %s n'existe pas</error>", $ligneFacture[self::CSV_SOCIETE_ID]));
             return;
@@ -162,7 +162,6 @@ class FactureCsvImporter {
         $mouvements = array();
         foreach($lignes as $ligne) {
             $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($ligne[self::CSV_CONTRAT_ID]);
-
             if($ligne[self::CSV_CONTRAT_ID] && !$contrat) {
                 $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $ligneFacture[self::CSV_CONTRAT_ID]));
                 return;
@@ -187,7 +186,7 @@ class FactureCsvImporter {
                 $mouvement->setTauxTaxe(0.1);
             }
             $mouvement->setIdentifiant($ligne[self::CSV_FACTURE_LIGNE_ID]);
-            $mouvement->setSociete($societe->getId());
+            $mouvement->setSociete($societe);
             $mouvement->setLibelle(preg_replace('/^".*"$/', "", str_replace('#', "\n", $ligne[self::CSV_FACTURE_LIGNE_LIBELLE])));
 
             if ($ligne[self::CSV_FACTURE_LIGNE_PASSAGE]) {

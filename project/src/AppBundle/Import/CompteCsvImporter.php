@@ -44,9 +44,9 @@ class CompteCsvImporter extends CsvFile {
         $nom = substr(strrchr($prenomNom, " "), 1);
         $prenom = trim(str_replace($nom, '', $prenomNom));
 
-        $societeAurouze = $this->dm->getRepository('AppBundle:Societe')->findOneByRaisonSociale("AUROUZE");
-        if (!$societeAurouze) {
-            $output->writeln(sprintf("<error>La société Aurouze n'a pas été trouvée</error>"));
+        $societeMere = $this->dm->getRepository('AppBundle:Societe')->findOneByRaisonSociale("TUENET");
+        if (!$societeMere) {
+            $output->writeln(sprintf("<error>La société TUENET n'a pas été trouvée</error>"));
             return false;
         }
         $compte = $this->dm->getRepository('AppBundle:Compte')->findOneByIdentifiantReprise($ligne[self::CSV_IDENTIFIANT]);
@@ -59,7 +59,7 @@ class CompteCsvImporter extends CsvFile {
                 $this->dm->persist($tag);
 
 
-                $compte = new Compte($societeAurouze);
+                $compte = new Compte($societeMere);
                 $compte->setIdentifiantReprise($ligne[self::CSV_IDENTIFIANT]);
                 $compte->setNom($nom);
                 $compte->setPrenom($prenom);

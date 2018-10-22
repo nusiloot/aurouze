@@ -21,7 +21,7 @@ class CsvFile {
         return $this->file;
     }
 
-    public function __construct($file = null, $ignore_first_if_comment = 1) {
+    public function __construct($file = null, $ignore_first_if_comment = 1, $exludeVirgule = false) {
         $this->ignore = $ignore_first_if_comment;
         $this->separator = ';';
         if (!$file)
@@ -44,8 +44,10 @@ class CsvFile {
         if (!$buffer) {
             throw new \Exception('invalid csv file; ' . $this->file);
         }
-
-        $virgule = explode(',', $buffer);
+        $virgule = array();
+        if(!$exludeVirgule){
+            $virgule = explode(',', $buffer);
+        }
         $ptvirgule = explode(';', $buffer);
         $tabulation = explode('\t', $buffer);
         if (count($virgule) > count($ptvirgule) && count($virgule) > count($tabulation))

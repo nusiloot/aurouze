@@ -101,7 +101,6 @@ class PassageCsvImporter {
                 $output->writeln(sprintf("<error>Le passage %s ne possède aucune date de prévision!</error>", $data[self::CSV_OLD_ID]));
                 continue;
             }
-
             $passage->setDatePrevision(new \DateTime($data[self::CSV_DATE_PREVISION]));
 
             $passage->setIdentifiantReprise($data[self::CSV_OLD_ID]);
@@ -216,10 +215,14 @@ class PassageCsvImporter {
                     return $this->updateStatutPlanifie($data, $passage, $output);
                     break;
                 }
-            case PassageManager::STATUT_EN_ATTENTE: {
+            case PassageManager::STATUT_A_PLANIFIER: {
                     return $this->updateStatutEnAttente($data, $passage, $output);
                     break;
                 }
+            case "EN_ATTENTE": {
+                        return $this->updateStatutEnAttente($data, $passage, $output);
+                        break;
+            }
             default:
                 return false;
                 break;

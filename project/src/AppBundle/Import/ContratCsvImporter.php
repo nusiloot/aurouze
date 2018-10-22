@@ -67,7 +67,7 @@ class ContratCsvImporter {
     }
 
     public function import($file, OutputInterface $output) {
-        $csvFile = new CsvFile($file);
+        $csvFile = new CsvFile($file,1,true);
 
         $progress = new ProgressBar($output, 100);
         $progress->start();

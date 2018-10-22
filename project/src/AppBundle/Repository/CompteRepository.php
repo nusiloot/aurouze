@@ -9,7 +9,7 @@ use AppBundle\Manager\CompteManager;
 class CompteRepository extends DocumentRepository {
 
     public function findAllUtilisateurs() {
-        $societe = $this->dm->getRepository('AppBundle:Societe')->findAurouze();
+        $societe = $this->dm->getRepository('AppBundle:Societe')->findSocieteMere();
         return $this->findBy(array('societe' => $societe->getId()));
     }
 
