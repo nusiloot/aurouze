@@ -6,24 +6,24 @@ REMOTE_DATA=$1
 IMPORT_TOTAL=$2
 
 SYMFODIR=$(pwd);
-DATA_DIR=$TMP/AUROUZE_DATAS
+DATA_DIR=$TMP;
 
 if test "$REMOTE_DATA"; then
     echo "Récupération de l'archive"
-    scp $REMOTE_DATA:AUROUZE_DATAS_FINAL.tar.gz $TMP/AUROUZE_DATAS.tar.gz
+    cp $REMOTE_DATA $TMP/DATAS.tar.gz
 
     echo "Désarchivage"
     cd $TMP
-    tar zxvf $TMP/AUROUZE_DATAS.tar.gz
+    tar zxvf $TMP/DATAS.tar.gz
 
-    rm $TMP/AUROUZE_DATAS.tar.gz
+    rm $TMP/DATAS.tar.gz
 
     cd $SYMFODIR
 fi
 
-##### Récupération des Comptes AUROUZE #####
+##### Récupération des Comptes TUENET #####
 
-echo "Récupération des comptes AUROUZE"
+echo "Récupération des comptes TUENET"
 
 cat $DATA_DIR/tblUtilisateur.csv | tr -d "\r" | sort -t ";" -k 1,1 > $DATA_DIR/tblUtilisateur.csv.sorted
 
@@ -91,10 +91,10 @@ cat $DATA_DIR/produits.csv | sort -t ";" -k 1,1 > $DATA_DIR/produits.sorted.csv
 echo "Récupération des sociétés"
 
 # gère les retours charriots dans les champs
-cat  $DATA_DIR/tblEntite.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 1,1 > $DATA_DIR/entite.csv.temp
+cat  $DATA_DIR/tblEntite.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sed -r "s|(#)([0-9]+;[0-9]+)|\n\2|g" | sort -t ";" -k 1,1 > $DATA_DIR/entite.csv.temp
 
 # Gère les retours charriots dans les champs
-cat  $DATA_DIR/tblAdresse.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sort -t ";" -k 2,2 > $DATA_DIR/adresse.csv.temp
+cat  $DATA_DIR/tblAdresse.csv | tr "\r" '~' | tr "\n" '#' | sed -r 's/~#([0-9]+;[0-9]+;)/\n\1/g' | sed -r 's/~#/\\n/g' | sed -r "s|(#)([0-9]+;[0-9]+)|\n\2|g" | sort -t ";" -k 2,2 > $DATA_DIR/adresse.csv.temp
 
 cat $DATA_DIR/adresse.csv.temp > $DATA_DIR/adresse_facturation.csv
 
@@ -175,11 +175,11 @@ cat $DATA_DIR/tblPassageAdresse.csv | tr -d '\r' | sort -t ";" -k 2,2 > $DATA_DI
 
 echo "Import des types de prestations"
 
-php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestations_utilises.csv -vvv
+php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestations_utilises.csv
 
 echo "Import des types de produits"
 
-php app/console importer:csv configurationProduit.importer $DATA_DIR/produits.csv -vvv
+php app/console importer:csv configurationProduit.importer $DATA_DIR/produits.csv
 
 echo "Import des sociétés"
 

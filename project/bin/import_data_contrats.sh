@@ -3,7 +3,7 @@
 . bin/config.inc
 
 SYMFODIR=$(pwd);
-DATA_DIR=$TMP/AUROUZE_DATAS
+DATA_DIR=$TMP;
 
 echo -e "\n\nRécupération des contrats"
 
@@ -132,4 +132,3 @@ join -t ';' -a 1 -1 3 -2 1 $DATA_DIR/contratsPrestationType.tmp.csv $DATA_DIR/pr
 cat $DATA_DIR/contratsPrestationType.csv | sed -r 's/(.*)/\1#/g' | sed -f $DATA_DIR/sed_prestations_utilises > $DATA_DIR/contratsPrestation.csv
 
 php app/console importer:csv contratPrestation.importer $DATA_DIR/contratsPrestation.csv -vvv --no-debug
-

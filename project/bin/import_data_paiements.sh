@@ -9,7 +9,7 @@ echo -e "\n****************************************************\n";
 
 REMOTE_DATA=$1
 SYMFODIR=$(pwd);
-DATA_DIR=$TMP/AUROUZE_DATAS
+DATA_DIR=$TMP;
 
 if test "$REMOTE_DATA"; then
     echo "Récupération de l'archive"
@@ -44,5 +44,3 @@ php app/console importer:csv paiements.importer $DATA_DIR/paiements.csv -vvv
 
 
 php app/console update:facture-update-montantfacture -vvv
-
-
