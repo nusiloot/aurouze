@@ -75,7 +75,7 @@ protected $xml;
                 }
                 $dueDate = \DateTime::createFromFormat("Ymd",$now->format("Y").$now->format("m")."20");
             }
-            
+
             $facture->setInPrelevement($dueDate);
             $this->directDebit->addPaymentInfo($idPrelevement, array(
                 'id'                    => $idPrelevement,
@@ -102,7 +102,7 @@ protected $xml;
     }
 
     public function createPrelevementId($facture, $date){
-        return 'prelevement_aurouze_'.$facture->getNumeroFacture().'_'.$date->format('Ymd-His');
+        return $facture->getNumeroFacture().'_'.$date->format('Ymd-His');
     }
 
 
