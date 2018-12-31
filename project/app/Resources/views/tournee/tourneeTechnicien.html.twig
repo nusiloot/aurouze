@@ -25,7 +25,7 @@
 <div data-role="main" class="ui-content">
 <ul data-role="listview" data-ajax="false" data-inset="true" data-theme="a">
   <li data-role="list-divider">
-    <h3>  <input id="tourneesDate" data-url-cible="{{ path('tournee_technicien',{ 'technicien' : technicien.id }) }}" data-role="date" value="{{date | localizeddate("medium", "none", null, null, "dd/MM/YYYY") }}" data-inline="false" type="text" /></h3>
+    <h3>  <input id="tourneesDate" data-url-cible="{{ path('tournee_technicien',{ 'technicien' : technicien.id }) }}" data-role="date" value="{{date | localizeddate("medium", "none", null, null, "dd/MM/yyyy") }}" data-inline="false" type="text" /></h3>
     <span class="ui-li-count">{{ rendezVousByTechnicien | length }}</span>
   </li>
   {% for rendezvous in rendezVousByTechnicien %}

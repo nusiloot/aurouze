@@ -112,7 +112,7 @@
                                     </div>
                                     <div class="col-sm-6 text-center">
                                             {% if passage.datePrecedente %}
-                                            <small>Préc.&nbsp;le&nbsp;{{ passage.datePrecedente | localizeddate("medium", "none", null, null, "dd/MM/YYYY") | capitalize }}&nbsp;à&nbsp;{{passage.datePrecedente | date("H") }}h{{passage.datePrecedente | date("i") }}</small>
+                                            <small>Préc.&nbsp;le&nbsp;{{ passage.datePrecedente | localizeddate("medium", "none", null, null, "dd/MM/yyyy") | capitalize }}&nbsp;à&nbsp;{{passage.datePrecedente | date("H") }}h{{passage.datePrecedente | date("i") }}</small>
                                             {% endif %}
                                             {% if passage.dureePrecedente %}
                                             <i class="mdi mdi-schedule mdi-lg"></i>

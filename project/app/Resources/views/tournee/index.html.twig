@@ -31,7 +31,7 @@
             <i class="mdi mdi-face mdi-lg" ></i><br/><strong>{{ passagesTechnicien.technicien.identite }}</strong>
           </h4>
           <br/><br/>
-          <a href="{{ path('calendar',{ 'technicien': passagesTechnicien.technicien.id, 'date': date | localizeddate('medium', 'none', null, null, 'YYYY-MM-dd') , 'id': '0' }) }}" ><span class="glyphicon glyphicon-calendar"></span>&nbsp;calendrier</a>
+          <a href="{{ path('calendar',{ 'technicien': passagesTechnicien.technicien.id, 'date': date | localizeddate('medium', 'none', null, null, 'yyyy-MM-dd') , 'id': '0' }) }}" ><span class="glyphicon glyphicon-calendar"></span>&nbsp;calendrier</a>
         </div>
     		<div class="col-xs-8">
           {% for passage in passagesTechnicien.passages %}
@@ -80,7 +80,7 @@
   {% endfor %}
     		</div>
     		<div class="col-xs-2 text-right">
-          <a title="Accéder à la tournée" href="{{ path('tournee_technicien', {'technicien': passagesTechnicien.technicien.id, 'date': date | localizeddate('medium', 'none', null, null, 'YYYY-MM-dd') })}}" class="btn btn-success">Tournée&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></a>
+          <a title="Accéder à la tournée" href="{{ path('tournee_technicien', {'technicien': passagesTechnicien.technicien.id, 'date': date | localizeddate('medium', 'none', null, null, 'yyyy-MM-dd') })}}" class="btn btn-success">Tournée&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></a>
     		</div>
     	</div>
     </div>
