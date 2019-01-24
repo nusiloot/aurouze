@@ -7,7 +7,7 @@
 	</ol>
 
 	<h3 style="margin-top: 20px;">Recherche avancée sur tous les documents</h3>
-	
+
 	<form action="{{ path('recherche') }}" method="get" class="form-horizontal" style="margin-top: 20px; margin-bottom: 20px;">
 		<div class="form-group">
 			<div class="col-xs-12">
@@ -38,7 +38,7 @@
 		<div class="tab-content">
 			{% for key, items in resultats %}
 		    <div role="tabpanel" class="tab-pane {% if loop.first %}active{% endif %}" id="{{ key }}" style="margin-top: 20px;">
-				{% include 'recherche/list'~key~'.html.twig' with {'items': items} only %}
+				{% include 'recherche/list'~key~'.html.twig' with {'items': items,'paiements' : paiements} only %}
 			</div>
 			{% endfor %}
 		</div>
