@@ -12,32 +12,32 @@ use AppBundle\Document\Societe;
 class Mouvement {
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixUnitaire;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $quantite;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $tauxTaxe;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $facturable;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $facture;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $libelle;
 
@@ -47,7 +47,7 @@ class Mouvement {
     protected $societe;
 
     /**
-    * @MongoDB\String
+    * @MongoDB\Field(type="string")
     */
     protected $identifiant;
 

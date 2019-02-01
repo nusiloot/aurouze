@@ -25,32 +25,32 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
     protected $id;
 
     /**
-     * @MongoDB\string
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $fonction;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nom;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $prenom;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identite;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $couleur;
 
@@ -80,22 +80,22 @@ class Compte implements DocumentSocieteInterface, InterlocuteurInterface {
     protected $facturesProduit = array();
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $actif;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $civilite;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $titre;
 

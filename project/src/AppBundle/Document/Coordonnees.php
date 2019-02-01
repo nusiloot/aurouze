@@ -10,17 +10,17 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 class Coordonnees
 {
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     public $lat;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     public $lon;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     public $zoom;
 

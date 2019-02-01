@@ -58,52 +58,52 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $devisInterlocuteur;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroArchive;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $multiTechnicien;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $reconduit;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $typeContrat;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $typeContratOriginal;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nomenclature;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commentaire;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $markdown;
 
@@ -154,32 +154,32 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $duree;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $dureeGarantie;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $nbPassages;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $dureePassage;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $nbFactures;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixHt;
 
@@ -189,47 +189,47 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $mouvements;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $statut;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $tvaReduite;
 
     /**
-     * @MongoDB\Collection
+     * @MongoDB\Field(type="collection")
      */
     protected $moyens;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $conditionsParticulieres;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $referenceClient;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $factureDestinataire;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $frequencePaiement;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $auditPassage;
 

@@ -28,7 +28,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
@@ -43,7 +43,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $produits;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $societeIdentifiant;
 
@@ -73,7 +73,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $dateModification;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $etablissementIdentifiant;
 
@@ -88,17 +88,17 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $etablissementInfos;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $libelle;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commentaire;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
@@ -108,7 +108,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $techniciens;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $statut;
 
@@ -118,37 +118,37 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $contrat;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroArchive;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroContratArchive;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $mouvement_declenchable;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $mouvement_declenche;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $imprime;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $typePassage;
 
@@ -158,12 +158,12 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $rendezVous;
 
     /**
-     *  @MongoDB\Collection
+     *  @MongoDB\Field(type="collection")
      */
     protected $nettoyages;
 
     /**
-     *  @MongoDB\Collection
+     *  @MongoDB\Field(type="collection")
      */
     protected $applications;
 
@@ -183,7 +183,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $datePrecedente;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroOrdre;
 
@@ -193,42 +193,42 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $niveauInfestation;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $emailTransmission;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nomTransmission;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $signatureBase64;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commentaireInterne;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $audit;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $multiTechnicien;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $saisieTechnicien;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $pdfNonEnvoye;
 

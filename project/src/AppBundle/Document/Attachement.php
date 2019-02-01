@@ -41,25 +41,25 @@ class Attachement
    protected $imageFile;
 
    /**
-    * @MongoDB\string
+    * @MongoDB\Field(type="string")
     *
     */
    protected $imageName;
 
    /**
-    * @MongoDB\string
+    * @MongoDB\Field(type="string")
     *
     */
    protected $base64;
 
    /**
-    * @MongoDB\string
+    * @MongoDB\Field(type="string")
     *
     */
    protected $ext;
 
    /**
-    * @MongoDB\Int
+    * @MongoDB\Field(type="int")
     *
     */
    protected $imageSize;
@@ -71,13 +71,13 @@ class Attachement
    protected $updatedAt;
 
    /**
-    * @MongoDB\string
+    * @MongoDB\Field(type="string")
     *
     */
    protected $titre;
 
    /**
-    * @MongoDB\string
+    * @MongoDB\Field(type="string")
     *
     */
    protected $originalName;
@@ -93,7 +93,7 @@ class Attachement
    protected $etablissement;
 
    /**
-    * @MongoDB\Boolean
+    * @MongoDB\Field(type="bool")
     */
    protected $visibleTechnicien;
 

@@ -14,7 +14,7 @@ class Intervention {
     protected $prestations;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $facturable;
 

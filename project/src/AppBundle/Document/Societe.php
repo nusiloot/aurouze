@@ -21,32 +21,32 @@ class Societe implements InterlocuteurInterface {
     protected $id;
 
     /**
-     * @MongoDB\string
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $raisonSociale;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $sousTraitant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commentaire;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $type;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $codeComptable;
 
@@ -66,27 +66,27 @@ class Societe implements InterlocuteurInterface {
     protected $contactCoordonnee;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
     /**
-     * @MongoDB\Increment
+     * @MongoDB\Field(type="increment")
      */
     protected $etablissementIncrement;
 
     /**
-     * @MongoDB\Increment
+     * @MongoDB\Field(type="increment")
      */
     protected $contratIncrement;
 
     /**
-     * @MongoDB\Increment
+     * @MongoDB\Field(type="increment")
      */
     protected $compteIncrement;
 
     /**
-     * @MongoDB\Increment
+     * @MongoDB\Field(type="increment")
      */
     protected $factureIncrement;
 
@@ -106,7 +106,7 @@ class Societe implements InterlocuteurInterface {
     protected $provenance;
 
     /**
-     * @MongoDB\Collection
+     * @MongoDB\Field(type="collection")
      */
     protected $tags;
 
@@ -116,12 +116,12 @@ class Societe implements InterlocuteurInterface {
     protected $attachements;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $actif;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $frequencePaiement;
 

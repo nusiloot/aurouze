@@ -9,37 +9,37 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 class FactureLigne {
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $libelle;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixUnitaire;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $tauxTaxe;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $quantite;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantHT;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantTaxe;
 
@@ -49,12 +49,12 @@ class FactureLigne {
     protected $origineDocument;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $origineMouvement;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $referenceClient;
 
