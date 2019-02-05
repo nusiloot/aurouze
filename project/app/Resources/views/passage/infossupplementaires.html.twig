@@ -3,42 +3,44 @@
 {% block body %}
 <div class="well">
   <h4>Informations supplémentaires :</h4>
-  {% if infossup.facture.retard | length %}
+  {% if retard  %}
     <div class="alert alert-danger" role="alert">
       <i class="mdi mdi-lg mdi-money-off" ></i>
       <strong>Attention !</strong> Mauvais payeur.
     </div>
   {% endif %}
-  <h5><i class="mdi mdi-location-on"></i> Coordonnées :</h5>
+  <h5><i class="mdi mdi-lg mdi-location-on"></i> Coordonnées :</h5>
   <ul class="list-inline">
-    {% if infossup.etablissement.contact.telephone %}
-      <li class="list-inline-item"><i class="mdi mdi-call mdi-lg"></i> {{ infossup.etablissement.contact.telephone }}</li>
+    {% if etablissement.contactCoordonnee.telephoneFixe %}
+      <li class="list-inline-item"><i class="mdi mdi-call mdi-lg"></i> {{ etablissement.contactCoordonnee.telephoneFixe }}</li>
     {% endif %}
-    {% if infossup.etablissement.contact.portable %}
-      <li class="list-inline-item"><i class="mdi mdi-smartphone mdi-lg"></i> {{ infossup.etablissement.contact.portable }}</li>
+    {% if etablissement.contactCoordonnee.telephoneMobile %}
+      <li class="list-inline-item"><i class="mdi mdi-smartphone mdi-lg"></i> {{ etablissement.contactCoordonnee.telephoneMobile }}</li>
     {% endif %}
-    {% if infossup.etablissement.contact.fax %}
-      <li class="list-inline-item"><i class="mdi mdi-print mdi-lg"></i> {{ infossup.etablissement.contact.fax }}</li>
-    {% endif %}
-    {% if infossup.etablissement.contact.email %}
+    {% if etablissement.contactCoordonnee.email %}
       <li class="list-inline-item"><i class="mdi mdi-mail mdi-lg"></i>
-        <a href="mailto:{{ infossup.etablissement.contact.email }}">
-          {% if infossup.etablissement.contact.libelle %}
-            {{ infossup.etablissement.contact.libelle }}
+        <a href="mailto:{{ etablissement.contactCoordonnee.email }}">
+          {% if etablissement.contactCoordonnee.libelle %}
+            {{ etablissement.contactCoordonnee.libelle }}
           {% else %}
-            {{ infossup.etablissement.contact.email }}
+            {{ etablissement.contactCoordonnee.email }}
           {% endif %}
         </a>
       </li>
     {% endif %}
   </ul>
   <hr />
-  <h5><i class="mdi mdi-info"></i> Nomenclature :</h5>
-  {{ infossup.contrat.nomenclature | nl2br }}
+  <h5><i class="mdi mdi-lg mdi-info"></i> Nomenclature :</h5>
+  {{ contrat.nomenclature | nl2br }}
   <hr />
-  <h5><i class="mdi mdi-{{ infossup.societe.icon }}"></i> Société :</h5>
-  <a href="{{path("societe_visualisation", {'id': 'SOCIETE-'~infossup.societe.id})}}">
-    {{ infossup.societe.nom }}
+  <h5><i class="mdi mdi-lg mdi-comment"></i> Commentaires :</h5>
+    {{ passage.commentaire }}
+    {{ etablissement.commentaire }}
+    {{ etablissement.commentairePlanification }}
+  <hr />
+  <h5><i class="mdi mdi-lg mdi-{{ societe.icon }}"></i> Société :</h5>
+  <a href="{{path("societe_visualisation", {'id': 'SOCIETE-'~societe.id})}}">
+    {{ societe.raisonsociale }}
   </a>
 </div>
 {% endblock %}
