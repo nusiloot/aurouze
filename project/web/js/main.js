@@ -39,6 +39,7 @@
         $.initTrCollapse();
         $.initTourneeDatepicker();
         $.initAttachements();
+        $.initMoreInfo();
     });
 
     $.initTrCollapse = function() {
@@ -864,6 +865,23 @@
                 });
             });
         }
+    }
+
+    $.initMoreInfo = function () {
+      $(".btn-more-info").on("click", function () {
+        var button = $(this);
+        var div = button.prev();
+
+        div.removeClass('hidden');
+        div.html("<pre>Chargement...</pre>");
+
+        $.get(div.data('url'), function (result) {
+              div.html(result);
+          })
+            .fail(function () {
+              div.html("<pre>Erreur lors du chargement des informations</pre>");
+          });
+      });
     }
 
     $.initTourneeDatepicker = function () {
