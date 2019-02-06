@@ -66,16 +66,16 @@
                                     {% set techIdentite = passage.techniciens[0].identiteCourt %}
                                     {% set urlPlanif = path('calendar', {'passage' : passage.id, 'id': passage.etablissement.id ,'technicien' : passage.techniciens[0].id, 'date' : passage.dateForPlanif|date('d-m-Y')}) %}
                                 {% endif %}
-                                <a data-words='{{ words }}' href="{{path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant })}}" id="{{ passage.id }}" class="list-group-item hamzastyle-item hide-print">
-                                    <div class="row">
-                                        <div class="col-sm-12">
+                                <div data-words='{{ words }}' id="{{ passage.id }}" data-url="{{ path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant }) }}" style="margin-bottom: 4px" class="panel panel-default hamzastyle-item hide-print">
+                                    <div class="panel-heading">
+                                        <div class="panel-title">
                                             <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
                                             <strong>{{ passage.etablissementInfos.nom|capitalize }}</strong>
                                             <small>{{ passage.etablissementInfos.adresse.codePostal }} {{ passage.etablissementInfos.adresse.commune }}</small>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-sm-9">
+                                    <div class="panel-body">
+                                        <div class="clearfix">
                                             {% for prestation in passage.prestations %}
                                                 {% if prestation.wordToPicto %}
                                                     <span class="size-21" title="{{ prestation.nomToString }}">
@@ -85,29 +85,13 @@
                                                     <span class="label label-xs label-primary">{{ prestation.nomToString }}</span>
                                                 {%endif%}
                                             {% endfor %}
-                                        </div>
-                                        <div class="col-sm-3" style="min-height: 21px; margin-top:10px;">
-                                            <span title="{{ passage.libelle }}"
-                                                  class="pull-right badge 
-                                                  {% if(passage.isGarantie) %}
-                                                      badge-warning
-                                                  {% elseif passage.isControle %}
-                                                      badge-warning
-                                                  {% else %}
-                                                      badge-default
-                                                  {% endif %}
-                                                  {% if passage.mouvementDeclenchable %}
-                                                      badge-inverse
-                                                  {% endif %}
-                                                  btn-xs">{{ passage.getNumeroPassage }}</span>
+                                            <span title="{{ passage.libelle }}" class="pull-right badge {% if passage.isGarantie or passage.isControle %} badge-warning {% else %} badge-default {% endif %} {% if passage.mouvementDeclenchable %} badge-inverse {% endif %} btn-xs">{{ passage.getNumeroPassage }}</span>
 
                                             {% if passage.audit %}
                                                 <span class="pull-right mdi mdi-person text-danger" data-toggle="tooltip" data-placement="top" title="Audit {{ passage.audit }}"></span>
                                             {% endif %}
                                         </div>
-                                    </div>
-                                    <div class="row" style="margin-top:10px;">
-                                        <div class="col-sm-3 text-left">
+                                        <div class="clearfix">
                                             <span class="label" style="background-color: {{ techBgColor }};color: {{ techColor }};">
                                                 <small>{{ techIdentite }}</small>
                                             </span>
@@ -116,24 +100,24 @@
                                                     <i class="mdi mdi-group mdi-lg"></i>
                                                 </span>
                                             {% endif %}
-                                        </div>
-                                        <div class="col-sm-6 text-center">
-                                            {% if passage.datePrecedente %}
-                                                <small>Préc.&nbsp;le&nbsp;{{ passage.datePrecedente | localizeddate("medium", "none", null, null, "dd/MM/yyyy") | capitalize }}&nbsp;à&nbsp;{{ passage.datePrecedente | date("H") }}h{{ passage.datePrecedente | date("i") }}</small>
-                                            {% endif %}
-
-                                            {% if passage.dureePrecedente %}
-                                                <i class="mdi mdi-schedule mdi-lg"></i><small>{{ passage.dureePrecedente }}</small>
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-sm-3 text-right">
                                             <div data-url="{{ urlPlanif }}" class="btn btn-link calendar_lien" >
                                                 <i class="mdi mdi-date-range mdi-lg"></i>
                                                 {{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}
                                             </div>
+                                            <span class="pull-right">
+                                                {% if passage.datePrecedente %}
+                                                    <small>Préc.&nbsp;le&nbsp;{{ passage.datePrecedente | localizeddate("medium", "none", null, null, "dd/MM/yyyy") | capitalize }}&nbsp;à&nbsp;{{ passage.datePrecedente | date("H") }}h{{ passage.datePrecedente | date("i") }}</small>
+                                                {% endif %}
+
+                                                {% if passage.dureePrecedente %}
+                                                    <i title="Durée" class="mdi mdi-schedule mdi-lg"></i><small>{{ passage.dureePrecedente }}</small>
+                                                {% endif %}
+                                            </span>
                                         </div>
+                                        <div class="hidden" data-url="{{ path('ajax_more_infos_passage', {'passage': passage.id }) }}"></div>
+                                        <button type="button" class="btn btn-block"><i class="mdi mdi-lg mdi-vertical-align-bottom"></i> Plus d'informations</button>
                                     </div>
-                                </a>
+                                </div>
 
                                 <div data-words='{{ words }}' class="hamzastyle-item show-print">
                                     <div class="row">
