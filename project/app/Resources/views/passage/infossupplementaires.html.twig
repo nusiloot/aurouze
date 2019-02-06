@@ -7,7 +7,7 @@
   {% endif %}
   <h5>
     <i class="mdi mdi-lg mdi-{{ societe.icon }}"></i> Société :
-    <a href="{{path("societe_visualisation", {'id': 'SOCIETE-'~societe.id})}}">
+    <a href="{{path("societe_visualisation", {'id': societe.id})}}">
       {{ societe.raisonsociale }}
     </a>
   </h5>
