@@ -27,6 +27,31 @@ use AppBundle\Manager\EtablissementManager;
 class PassageController extends Controller
 {
     /**
+     * Retourne des informations supplémentaires sur l'établissement,
+     * la société, le passage,... pour accélérer le chargement de la
+     * page d'index
+     *
+     * @Route("/ajax/passage/{passage}/infos", name="ajax_more_infos_passage")
+     */
+    public function showInformationsAction(Passage $passage)
+    {
+        $etablissement = $passage->getEtablissement();
+        $contrat = $passage->getContrat();
+        $societe = $contrat->getSociete();
+        $facture = $this->get('facture.manager');
+
+        return $this->render('passage/infossupplementaires.html.twig',
+            [
+                'passage' => $passage,
+                'etablissement' => $etablissement,
+                'contrat' => $contrat,
+                'societe' => $societe,
+                'retard' => count($facture->getRetardDePaiementBySociete($societe)) > 0
+            ]
+        );
+    }
+
+    /**
      * @Route("/passage/{secteur}/visualisation/{mois}", name="passage" , defaults={"secteur"="PARIS"})
      */
     public function indexAction(Request $request, $secteur, $mois = null) {
