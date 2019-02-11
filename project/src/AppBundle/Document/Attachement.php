@@ -65,7 +65,7 @@ class Attachement
    protected $imageSize;
 
    /**
-    * @MongoDB\Date
+    * @MongoDB\Field(type="date")
     *
     */
    protected $updatedAt;

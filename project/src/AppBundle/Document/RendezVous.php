@@ -28,13 +28,13 @@ class RendezVous {
     protected $description;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      * @Assert\NotBlank()
      */
     protected $dateDebut;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      * @Assert\NotBlank()
      * @Assert\Expression(
      *     "this.getDateDebut() <= this.getDateFin()",

@@ -41,7 +41,7 @@ class Sepa {
     protected $rum;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $date;
 
