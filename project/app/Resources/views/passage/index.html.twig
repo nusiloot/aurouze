@@ -100,17 +100,17 @@
                                                     <i class="mdi mdi-group mdi-lg"></i>
                                                 </span>
                                             {% endif %}
-                                            <div data-url="{{ urlPlanif }}" class="btn btn-link calendar_lien" >
+                                            <a href="{{ urlPlanif }}" class="btn btn-link calendar_lien" >
                                                 <i class="mdi mdi-date-range mdi-lg"></i>
                                                 {{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}
-                                            </div>
-                                            <span class="pull-right">
+                                            </a>
+                                            <span class="small pull-right">
                                                 {% if passage.datePrecedente %}
-                                                    <small>Préc.&nbsp;le&nbsp;{{ passage.datePrecedente | localizeddate("medium", "none", null, null, "dd/MM/yyyy") | capitalize }}&nbsp;à&nbsp;{{ passage.datePrecedente | date("H") }}h{{ passage.datePrecedente | date("i") }}</small>
+                                                    Préc.&nbsp;le&nbsp;{{ passage.datePrecedente | localizeddate("medium", "none", null, null, "dd/MM/yyyy") | capitalize }}&nbsp;à&nbsp;{{ passage.datePrecedente | date("H") }}h{{ passage.datePrecedente | date("i") }}
                                                 {% endif %}
 
                                                 {% if passage.dureePrecedente %}
-                                                    <i title="Durée" class="mdi mdi-schedule mdi-lg"></i><small>{{ passage.dureePrecedente }}</small>
+                                                    <i title="Durée" class="mdi mdi-schedule mdi-lg"></i>{{ passage.dureePrecedente }}
                                                 {% endif %}
                                             </span>
                                         </div>
