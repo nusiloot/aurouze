@@ -1,0 +1,53 @@
+<div class="well">
+  {% if retard  %}
+    <div class="alert alert-danger" role="alert">
+      <i class="mdi mdi-lg mdi-money-off"></i>
+      <strong>Attention !</strong> Mauvais payeur.
+    </div>
+  {% endif %}
+  <a class="btn btn-default" href="{{ path("passage_etablissement", {'id': etablissement.id}) }}">Voir l'établissement</a>
+  <a class="btn btn-primary" href="{{ path("passage_planifier", {'passage': passage.id}) }}">Planifier</a>
+  <h5>
+    <i class="mdi mdi-lg mdi-{{ societe.icon }}"></i> Société :
+    <a href="{{path("societe_visualisation", {'id': societe.id})}}">
+      {{ societe.raisonsociale }}
+    </a>
+  </h5>
+  <ul class="list-inline">
+    {% if etablissement.contactCoordonnee.libelle %}
+      <li class="list-inline-item"><i class="mdi mdi-contacts mdi-lg"></i> {{ etablissement.contactCoordonnee.libelle }}</li>
+    {% endif %}
+    {% if etablissement.contactCoordonnee.telephoneFixe %}
+      <li class="list-inline-item"><i class="mdi mdi-call mdi-lg"></i> {{ etablissement.contactCoordonnee.telephoneFixe }}</li>
+    {% endif %}
+    {% if etablissement.contactCoordonnee.telephoneMobile %}
+      <li class="list-inline-item"><i class="mdi mdi-smartphone mdi-lg"></i> {{ etablissement.contactCoordonnee.telephoneMobile }}</li>
+    {% endif %}
+    {% if etablissement.contactCoordonnee.email %}
+      <li class="list-inline-item"><i class="mdi mdi-mail mdi-lg"></i>
+        <a href="mailto:{{ etablissement.contactCoordonnee.email }}">
+          {{ etablissement.contactCoordonnee.email }}
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+  <br />
+  <div class="row">
+    <div class="col-xs-6">
+      <h5><i class="mdi mdi-lg mdi-info"></i> Nomenclature :</h5>
+      {{ contrat.nomenclature | nl2br }}
+    </div>
+    <div class="col-xs-6 commentaires">
+      <h5><i class="mdi mdi-lg mdi-comment"></i> Commentaires :</h5>
+        {% if passage.commentaire %}
+            <div title="Commentaire du passage">{{ passage.commentaire | nl2br }}</div>
+        {% endif %}
+        {% if etablissement.commentaire %}
+            <div title="Commentaire établissement">{{ etablissement.commentaire | nl2br }}</div>
+        {% endif %}
+        {% if etablissement.commentairePlanification %}
+            <div title="Commentaire plannification">{{ etablissement.commentairePlanification | nl2br }}</div>
+        {% endif %}
+    </div>
+  </div>
+</div>

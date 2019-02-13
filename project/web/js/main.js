@@ -39,6 +39,7 @@
         $.initTrCollapse();
         $.initTourneeDatepicker();
         $.initAttachements();
+        $.initMoreInfo();
     });
 
     $.initTrCollapse = function() {
@@ -742,7 +743,7 @@
                                         clearTimeout(hoverTimeout);
                                     }
                                     hoverTimeout = setTimeout(function () {
-                                        $('#liste_passage .list-group-item').blur();
+                                        $('#liste_passage .panel').blur();
                                         var element = $('#' + e.target.feature.properties._id);
                                         var list = $('#liste_passage');
                                         list.scrollTop(0);
@@ -760,7 +761,7 @@
                                 });
 
                                 layer.on('click', function (e) {
-                                    document.location.href = $('#' + e.target.feature.properties._id).attr('href');
+                                    document.location.href = $('#' + e.target.feature.properties._id).data('url');
                                 });
                             }
                         },
@@ -783,7 +784,7 @@
               var filtre = window.location.hash;
               if(!filtre){
                 var excludeListNoMarkers = (map.getZoom() > 11);
-                $('div#liste_passage a').each(function(){
+                $('div#liste_passage div.panel').each(function(){
                     var hasMarker = markers[$(this).attr('id')] != undefined ;
                     if(!hasMarker){
                       if(excludeListNoMarkers){
@@ -796,9 +797,9 @@
                 for (var id in markers) {
                   var marker = markers[id];
                   if(map.getBounds().contains(marker._latlng)){
-                    $('div#liste_passage a#'+id).show();
+                    $('div#liste_passage div#'+id).show();
                   }else{
-                    $('div#liste_passage a#'+id).hide();
+                    $('div#liste_passage div#'+id).hide();
                   }
                 }
               }
@@ -816,7 +817,7 @@
               refreshListFromMapBounds();
             }
 
-            $('#liste_passage .list-group-item').hover(function () {
+            $('#liste_passage .panel').hover(function () {
                 var marker = markers[$(this).attr('id')];
                 if(typeof marker != 'undefined' && marker){
                   $('.leaflet-marker-icon').css('opacity', '0.3');
@@ -842,7 +843,7 @@
 
 
             $(window).on('hashchange', function () {
-                $('#liste_passage .list-group-item').each(function () {
+                $('#liste_passage .panel').each(function () {
                     if (!$(this).is(':visible')) {
                         var marker = markers[$(this).attr('id')];
                         if(typeof marker != 'undefined' && marker){
@@ -866,6 +867,23 @@
         }
     }
 
+    $.initMoreInfo = function () {
+      $(".btn-more-info").on("click", function () {
+        var button = $(this);
+        var div = button.prev();
+
+        div.removeClass('hidden');
+        div.html("<pre>Chargement...</pre>");
+
+        $.get(div.data('url'), function (result) {
+              div.html(result);
+          })
+            .fail(function () {
+              div.html("<pre>Erreur lors du chargement des informations</pre>");
+          });
+      });
+    }
+
     $.initTourneeDatepicker = function () {
       $("#tournees-choice-datetimepicker").change(function(){
         var url = $(this).find('input').attr('data-url');
@@ -876,7 +894,7 @@
     }
 
     $.initAttachements = function(){
-        
+
         $('.thumbnail').each(function(){
             var modal = $('#'+$(this).data('cible'));
             var img = $(this).find('img');
