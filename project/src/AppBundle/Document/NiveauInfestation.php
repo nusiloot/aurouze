@@ -11,12 +11,12 @@ use Behat\Transliterator\Transliterator;
 class NiveauInfestation {
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $infestation;
 

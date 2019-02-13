@@ -19,7 +19,7 @@ class Paiements {
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
@@ -34,22 +34,22 @@ class Paiements {
     protected $paiement;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroRemise;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $imprime;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $prelevement;
 
     /**
-     * @MongoDB\string
+     * @MongoDB\Field(type="string")
      *
      */
     protected $xmlbase64;

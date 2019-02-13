@@ -24,17 +24,17 @@ use AppBundle\Document\Coordonnees;
 class Adresse {
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $adresse;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $codePostal;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commune;
 

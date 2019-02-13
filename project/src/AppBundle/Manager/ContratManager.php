@@ -31,6 +31,7 @@ class ContratManager implements MouvementManagerInterface {
     const MOYEN_PIGEONS = 'MOYEN_PIGEONS';
     const MOYEN_BOIS = 'MOYEN_BOIS';
     const MOYEN_VO = 'MOYEN_VO';
+    const FREQUENCE_PRELEVEMENT = 'PRELEVEMENT';
     const FREQUENCE_RECEPTION = 'RECEPTION';
     const FREQUENCE_30J = '30J';
     const FREQUENCE_30JMOIS = '30JMOIS';
@@ -105,6 +106,7 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_ANNULE => 6
     );
     public static $frequences = array(
+        self::FREQUENCE_PRELEVEMENT => 'Par Prélèvement (après 30 jours le 20 du mois)',
         self::FREQUENCE_RECEPTION => 'À réception',
         self::FREQUENCE_30J => '30 jours',
         self::FREQUENCE_30JMOIS => '30 jours fin de mois',

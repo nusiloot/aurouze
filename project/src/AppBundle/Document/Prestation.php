@@ -11,22 +11,22 @@ use Behat\Transliterator\Transliterator;
 class Prestation {
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nom;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nomCourt;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nbPassages;
 

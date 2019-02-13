@@ -18,12 +18,12 @@ class RendezVous {
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $titre;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
@@ -49,7 +49,7 @@ class RendezVous {
     protected $participants;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $lieu;
 

@@ -25,7 +25,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $id;
 
     /**
-     * @MongoDB\string
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
@@ -35,7 +35,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $societe;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nom;
 
@@ -50,12 +50,12 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $contactCoordonnee;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $type;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
@@ -70,22 +70,22 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $passages;
 
     /**
-     * @MongoDB\Increment
+     * @MongoDB\Field(type="increment")
      */
     protected $numeroPassageIncrement;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commentaire;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commentairePlanification;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $actif;
 
@@ -531,7 +531,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
         $this->commentairePlanification = $commentairePlanification;
         return $this;
     }
-    
+
     public function getAdresseComplete()
     {
     	return $this->getAdresse()->getLibelleComplet();

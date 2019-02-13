@@ -12,12 +12,12 @@ class CompteTag {
 
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nom;
 

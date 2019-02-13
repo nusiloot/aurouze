@@ -14,57 +14,57 @@ class Produit {
     const PRODUIT_INACTIF = "INACTIF";
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nom;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixHt;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixPrestation;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixVente;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $conditionnement;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $nbTotalContrat;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $nbUtilisePassage;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $nbPremierPassage;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $statut;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $ordre;
 

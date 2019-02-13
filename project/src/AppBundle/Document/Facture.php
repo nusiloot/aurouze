@@ -64,27 +64,27 @@ class Facture implements DocumentSocieteInterface {
     protected $dateLimitePaiement;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantHT;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantTTC;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantTaxe;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantPaye;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantAPayer;
 
@@ -94,27 +94,27 @@ class Facture implements DocumentSocieteInterface {
     protected $lignes;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroFacture;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroDevis;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $avoir;
 
@@ -129,17 +129,17 @@ class Facture implements DocumentSocieteInterface {
     protected $paiements;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $frequencePaiement;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $cloture;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $nbRelance;
 
@@ -149,12 +149,12 @@ class Facture implements DocumentSocieteInterface {
     protected $relances;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $relanceCommentaire;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $avoirPartielRemboursementCheque;
 
@@ -679,6 +679,13 @@ class Facture implements DocumentSocieteInterface {
         $date = ($date) ? $date : clone $this->getDateEmission();
         $date = ($date) ? $date : new \DateTime();
         switch ($frequence) {
+            case ContratManager::FREQUENCE_PRELEVEMENT :
+                $date->modify('+1 month');
+                if($date->format('d') > 20){
+                    $date->modify('+1 month');
+                }
+                $date->modify('first day of')->modify('+19 day');
+                break;
             case ContratManager::FREQUENCE_30J :
                 $date->modify('+30 day');
                 break;

@@ -21,27 +21,27 @@ use AppBundle\Manager\CompteManager;
 class CompteInfos {
 
     /**
-     * @MongoDB\string
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nom;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $prenom;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identite;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $couleur;
 

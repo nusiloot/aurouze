@@ -16,7 +16,7 @@ class Relance {
     protected $dateRelance;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $numeroRelance;
 

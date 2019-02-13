@@ -17,6 +17,7 @@ class RechercheController extends Controller {
 		$dm = $this->get('doctrine_mongodb')->getManager();
         $query = $request->get('q');
 
+		$pmr = $this->get('paiements.manager')->getRepository();
 		if(!$query) {
 			return $this->render('recherche/index.html.twig', array('query' => $query));
 		}
@@ -32,10 +33,17 @@ class RechercheController extends Controller {
 						);
 
 		$resultats = array();
+		$paiements = array();
 		foreach($searchable as $collection => $libelle) {
 			if ($collection == 'Paiements') {
 				$items = $dm->getRepository('AppBundle:'.$collection)->findPaiementByQuery($query);
-			} else {
+			}elseif ($collection == 'Facture') {
+				$items = $dm->getRepository('AppBundle:'.$collection)->findByQuery($query);
+				foreach ($items as $item) {
+					$d = $item["doc"];
+					$paiements[$d->getId()] = $pmr->findPaiementsByFacture($d);
+				}
+			}	else {
 				$items = $dm->getRepository('AppBundle:'.$collection)->findByQuery($query);
 			}
 			if(!count($items)) {
@@ -49,7 +57,7 @@ class RechercheController extends Controller {
 
         //usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
 
-		return $this->render('recherche/index.html.twig', array('query' => $query, 'resultats' => $resultats, 'searchable' => $searchable));
+		return $this->render('recherche/index.html.twig', array('query' => $query, 'resultats' => $resultats, 'searchable' => $searchable, 'paiements' => $paiements));
 	}
 
 	/**
@@ -59,7 +67,7 @@ class RechercheController extends Controller {
 	{
 		$dm = $this->get('doctrine_mongodb')->getManager();
         $query = $request->get('q');
-        
+
         $inactif = $request->get('inactif', false);
         $inactif = ($inactif)? true : false;
 		$result = $dm->getRepository('AppBundle:Societe')->findByElasticQuery($this->container->get('fos_elastica.finder.aurouze_prod'), $query, $inactif, 10);
