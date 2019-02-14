@@ -9,17 +9,18 @@ SYMFODIR=$(pwd);
 DATA_DIR=$TMP;
 
 if test "$REMOTE_DATA"; then
-    echo "Récupération de l'archive"
+    echo "Récupération de l'archive et copie dans $TMP/DATAS.tar.gz"
     cp $REMOTE_DATA $TMP/DATAS.tar.gz
 
-    echo "Désarchivage"
+    echo "Désarchivage de $TMP/DATAS.tar.gz"
     cd $TMP
-    tar zxvf $TMP/DATAS.tar.gz
+    echo $TMP;
+    tar -zxvf $TMP/DATAS.tar.gz -C $TMP
 
     rm $TMP/DATAS.tar.gz
-
-    cd $SYMFODIR
 fi
+
+cd $SYMFODIR;
 
 ##### Récupération des Comptes TUENET #####
 
@@ -175,11 +176,11 @@ cat $DATA_DIR/tblPassageAdresse.csv | tr -d '\r' | sort -t ";" -k 2,2 > $DATA_DI
 
 echo "Import des types de prestations"
 
-php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestations_utilises.csv
+php app/console importer:csv configurationPrestation.importer $DATA_DIR/prestations_utilises.csv -vvv
 
 echo "Import des types de produits"
 
-php app/console importer:csv configurationProduit.importer $DATA_DIR/produits.csv
+php app/console importer:csv configurationProduit.importer $DATA_DIR/produits.csv -vvv
 
 echo "Import des sociétés"
 
