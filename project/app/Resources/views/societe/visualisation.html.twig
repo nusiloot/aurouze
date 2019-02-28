@@ -95,7 +95,7 @@
     {% if (societe.getEtablissementsByStatut(false) | length > 0)%}
     <h3 style="margin-top: 0;">Etablissements inactifs <span class="badge">{{ societe.getEtablissementsByStatut(false) | length }}</span></h3>
     <div style="opacity: 0.4;">
-    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(false)}) }}
+    {{ include('etablissement/list.html.twig', {'etablissements': societe.getEtablissementsByStatut(false), 'modifLink': true}) }}
     </div>
     {% endif %}
     {% if (societe.getComptesByStatut(false) | length > 0) %}
