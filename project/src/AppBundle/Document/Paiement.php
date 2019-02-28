@@ -36,7 +36,7 @@ class Paiement {
     protected $montant;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $datePaiement;
 

@@ -24,7 +24,7 @@ class Paiements {
     protected $identifiant;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateCreation;
 

@@ -48,27 +48,27 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $societeIdentifiant;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $datePrevision;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateDebut;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateFin;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateRealise;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateModification;
 
@@ -168,17 +168,17 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $applications;
 
     /**
-     *  @MongoDB\Date
+     *  @MongoDB\Field(type="date")
      */
     protected $duree;
 
     /**
-     *  @MongoDB\Date
+     *  @MongoDB\Field(type="date")
      */
     protected $dureePrecedente;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $datePrecedente;
 

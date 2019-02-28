@@ -39,27 +39,27 @@ class Facture implements DocumentSocieteInterface {
     protected $destinataire;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateEmission;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateFacturation;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateDevis;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $datePaiement;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateLimitePaiement;
 
@@ -164,7 +164,7 @@ class Facture implements DocumentSocieteInterface {
     protected $sepa;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $inPrelevement;
 

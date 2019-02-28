@@ -870,17 +870,26 @@
     $.initMoreInfo = function () {
       $(".btn-more-info").on("click", function () {
         var button = $(this);
+        var icon = button.children('i').first();
         var div = button.prev();
 
-        div.removeClass('hidden');
-        div.html("<pre>Chargement...</pre>");
+	if (div.children().length > 0) {
+            div.empty();
+            icon.addClass('mdi-vertical-align-bottom');
+            icon.removeClass('mdi-vertical-align-top');
+	} else {
+            div.html("<pre>Chargement...</pre>");
 
-        $.get(div.data('url'), function (result) {
-              div.html(result);
-          })
+            $.get(div.data('url'), function (result) {
+                div.html(result);
+                icon.removeClass('mdi-vertical-align-bottom');
+                icon.addClass('mdi-vertical-align-top');
+            })
             .fail(function () {
-              div.html("<pre>Erreur lors du chargement des informations</pre>");
-          });
+                div.html("<pre>Erreur lors du chargement des informations</pre>");
+                button.text(' Réessayer');
+            });
+	}
       });
     }
 
