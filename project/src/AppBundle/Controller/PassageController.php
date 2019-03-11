@@ -35,18 +35,22 @@ class PassageController extends Controller
      */
     public function showInformationsAction(Passage $passage)
     {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        
         $etablissement = $passage->getEtablissement();
         $contrat = $passage->getContrat();
         $societe = $contrat->getSociete();
         $facture = $this->get('facture.manager');
-
+        $lastPassage = $dm->getRepository('AppBundle:Passage')->findLastPassage($etablissement, $passage);
+        
         return $this->render('passage/infossupplementaires.html.twig',
             [
                 'passage' => $passage,
                 'etablissement' => $etablissement,
                 'contrat' => $contrat,
                 'societe' => $societe,
-                'retard' => count($facture->getRetardDePaiementBySociete($societe)) > 0
+                'retard' => count($facture->getRetardDePaiementBySociete($societe)) > 0,
+                'lastPassage' => $lastPassage
             ]
         );
     }

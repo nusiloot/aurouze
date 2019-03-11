@@ -111,6 +111,25 @@ class PassageRepository extends DocumentRepository {
                 ->getQuery();
         return$query->execute();
     }
+    
+    public function findLastPassage($etablissement, $passage = null) {
+        $query = $this->createQueryBuilder('Passage')
+                ->field('dateFin')->exists(true)
+                ->field('dateFin')->notEqual(null)
+                ->field('etablissement')->equals($etablissement->getId())
+                ->sort('dateFin', 'desc')
+                ->limit(1);
+        if ($passage && $passage->getDateDebut()) {
+            $mongoStartDate = new MongoDate(strtotime($passage->getDateDebut()->format('Y-m-d')));
+            $query->field('dateFin')->lte($mongoStartDate);
+            $query->field('_id')->notEqual($passage->getId());
+        }
+        
+        $query = $query->getQuery();
+        
+        return $query->execute()->getSingleResult();
+        
+    }
 
     public function findPassagesForEtablissementSortedByContrat($etablissementIdentifiant) {
         $query = $this->createQueryBuilder('Passage')

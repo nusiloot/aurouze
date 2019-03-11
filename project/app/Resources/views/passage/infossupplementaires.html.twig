@@ -30,6 +30,19 @@
         </a>
       </li>
     {% endif %}
+    {% if lastPassage %}
+    <li class="list-inline-item">
+    	Contrat n°{{ contrat.numeroArchive }} du {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "d MMMM yyyy") | capitalize }} au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM yyyy") | capitalize }}
+    </li>
+    {% set tech = passage.techniciens[0] %}
+    <li class="list-inline-item">
+    	Dernier passage : 
+    	<span class="label" style="background-color: {{ tech.couleur }};color: {{ tech.couleurText }};">
+            <small>{{ tech.identiteCourt }}</small> 
+        </span>&nbsp;
+         à {{ lastPassage.getDateDebut()|date("H:i") }}
+    </li>
+    {% endif %}
   </ul>
   <br />
   <div class="row">
