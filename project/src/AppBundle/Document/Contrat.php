@@ -1811,6 +1811,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getDevisInterlocuteur()
     {
+        if($this->getCommanditaire()) {
+
+            return $this->getCommanditaire();
+        }
+
         if(is_null($this->devisInterlocuteur)) {
 
             return $this->getSociete();
@@ -1968,7 +1973,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      * @param AppBundle\Document\Societe $commanditaire
      * @return self
      */
-    public function setCommanditaire(\AppBundle\Document\Societe $commanditaire) {
+    public function setCommanditaire($commanditaire = null) {
         $this->commanditaire = $commanditaire;
         return $this;
     }
@@ -1980,6 +1985,16 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getCommanditaire() {
         return $this->commanditaire;
+    }
+
+    public function getDestinataireFacturation() {
+
+        if($this->getCommanditaire()) {
+
+            return $this->getCommanditaire();
+        }
+
+        return $this->getSociete();
     }
 
     public function getNbPassagePrevu() {
