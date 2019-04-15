@@ -16,7 +16,7 @@ class ContactCsvImporter extends CsvFile {
 
     protected $dm;
 
-    const CSV_IDENTIFIANT_REPRISE_ETABLISSEMENT = 0;
+    const CSV_IDENTIFIANT_REPRISE_ADDRESSE = 0;
     const CSV_IDENTIFIANT_REPRISE_CONTACT = 1;
     const CSV_CIVILITE = 2;
     const CSV_PRENOM = 3;
@@ -67,17 +67,21 @@ class ContactCsvImporter extends CsvFile {
     }
 
     public function createContactFromImport($ligne, $output) {
-        
-        $identifiantRepriseEtablissement = $ligne[self::CSV_IDENTIFIANT_REPRISE_ETABLISSEMENT];
+
+        $identifiantRepriseEtablissement = $ligne[self::CSV_IDENTIFIANT_REPRISE_ADDRESSE];
+        $identifiantRepriseAdresseSociete = $ligne[self::CSV_IDENTIFIANT_REPRISE_ADDRESSE];
         $identifiantRepriseSociete = $ligne[self::CSV_IDENTIFIANT_REPRISE_SOCIETE];
         $etablissement = $this->dm->getRepository('AppBundle:Etablissement')->findOneByIdentifiantReprise($identifiantRepriseEtablissement);
         $societe = null;
         if($etablissement){
             $societe = $etablissement->getSociete();
         }
-        
+
         if (!$societe) {
-            $societe = $this->dm->getRepository('AppBundle:Societe')->findOneByIdentifiantReprise($identifiantRepriseSociete);
+            $societe = $this->dm->getRepository('AppBundle:Societe')->findOneByIdentifiantAdresseReprise($identifiantRepriseAdresseSociete);
+            if(!$societe){
+              $societe = $this->dm->getRepository('AppBundle:Societe')->findOneByIdentifiantReprise($identifiantRepriseSociete);
+            }
         }
 
         if (!$societe) {

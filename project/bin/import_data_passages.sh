@@ -16,7 +16,7 @@ join -t ';' -1 1 -2 2 $DATA_DIR/passages.cleaned.sorted.csv $DATA_DIR/passageAdr
 
 join -t ";" -1 4 -2 1 -a 1 -o auto $DATA_DIR/passagesadresses.csv $DATA_DIR/utilisateurAutre.csv | sort -r > $DATA_DIR/passagesadressestechniciens.tmp.csv
 
-cat $DATA_DIR/passagesadressestechniciens.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
+cat $DATA_DIR/passagesadressestechniciens.tmp.csv | grep -viE "^RefTechnicien;RefPassage;" | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
     date_prevision=$6;
     d=$7;
     date_creation=$19;
@@ -41,7 +41,7 @@ cat $DATA_DIR/passagesadressestechniciens.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0
         }
     }
 
-    if(!date_passage_prevision || (date_passage_prevision < "2012-01-01")) {
+    if(!date_passage_prevision) {
         next;
     }
     print $0 ";" cmt ;

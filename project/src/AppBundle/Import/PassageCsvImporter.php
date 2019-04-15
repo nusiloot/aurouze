@@ -18,6 +18,7 @@ use AppBundle\Document\Contrat;
 use AppBundle\Document\ContratPassages;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Compte;
+use AppBundle\Document\Etablissement;
 use AppBundle\Document\CompteTag;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\PassageManager;
@@ -85,14 +86,30 @@ class PassageCsvImporter {
                 continue;
             }
             if (!preg_match('/^[0-9]+$/', $data[self::CSV_ETABLISSEMENT_ID])) {
-                $output->writeln(sprintf("<error>établissement dont le numéro %s n'est pas correct</error>", $data[self::CSV_ETABLISSEMENT_ID]));
+                $output->writeln(sprintf("\n<error>établissement dont le numéro %s n'est pas correct</error>", $data[self::CSV_ETABLISSEMENT_ID]));
                 continue;
             }
             $etablissement = $this->em->getRepository()->findOneByIdentifiantReprise($data[self::CSV_ETABLISSEMENT_ID]);
 
             if (!$etablissement) {
-                $output->writeln(sprintf("<error>L'établissement %s n'existe pas</error>", $data[self::CSV_ETABLISSEMENT_ID]));
-                continue;
+                $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($data[self::CSV_CONTRAT_ID]);
+                if($contrat){
+                  $societe = $contrat->getSociete();
+                  $idSociete = $societe->getId();
+                  $output->writeln(sprintf("\n<comment>L'établissement %s n'existe pas : on va le créer au sein de la société %s </comment>", $data[self::CSV_ETABLISSEMENT_ID], $idSociete));
+                  $etablissement = new Etablissement();
+                  $etablissement->setSociete($societe);
+                  $etablissement->setIdentifiant($societe->getIdentifiant());
+                  $etablissement->setIdentifiantReprise($data[self::CSV_ETABLISSEMENT_ID]);
+
+                  $etablissement->setNom($societe->getRaisonSociale());
+                  $etablissement->setAdresse($societe->getAdresse());
+                  $this->dm->persist($etablissement);
+                  $this->dm->flush();
+                }else{
+                  $output->writeln(sprintf("\n<error>L'établissement %s n'existe pas et n'est pas créable pas de contrat %s </error>", $data[self::CSV_ETABLISSEMENT_ID], $data[self::CSV_CONTRAT_ID]));
+                  continue;
+                }
             }
 
             $passage = new Passage();

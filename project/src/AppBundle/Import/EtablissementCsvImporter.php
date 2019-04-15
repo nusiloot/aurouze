@@ -28,9 +28,9 @@ class EtablissementCsvImporter extends CsvFile {
     protected $dm;
     protected $sm;
     protected $em;
+    const CSV_ID_ADRESSE = 0;
 
-    const CSV_ID_SOCIETE = 0;
-    const CSV_ID_ADRESSE = 1;
+    const CSV_ID_SOCIETE = 1;
     const CSV_ADRESSE_TYPE = 2;
     const CSV_NOM_ETB = 3;
     const CSV_ADRESS_1 = 4;
@@ -50,9 +50,10 @@ class EtablissementCsvImporter extends CsvFile {
     const CSV_TYPE_ETABLISSEMENT = 27;
 
 
-    const CSV_CMT = 38;
-    const CSV_COORD_LAT = 39;
-    const CSV_COORD_LON = 40;
+    const CSV_CMT = 37;
+    const CSV_ID_ANCIENNE_ADRESSE_SOCIETE = 40;
+    const CSV_COORD_LAT = 41; // ???
+    const CSV_COORD_LON = 42; // ???
 
     public function __construct(DocumentManager $dm, SocieteManager $sm, EtablissementManager $em) {
         $this->dm = $dm;
@@ -92,17 +93,30 @@ class EtablissementCsvImporter extends CsvFile {
     }
 
     public function createFromImport($ligne, $output) {
-        $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $ligne[self::CSV_ID_SOCIETE]));
+        $societe = null;
+        $etablissementPlaceSurEntite = false;
 
+        if(!isset($ligne[self::CSV_ID_ANCIENNE_ADRESSE_SOCIETE])){
+          $output->writeln(sprintf("\n<comment>La ligne %s possède un établissement dont la société n'a pas d'adresse de facturation.  </comment>", implode(";", $ligne)));          
+        }else{
+            $societe = $this->sm->getRepository()->findOneBy(array('identifiantAdresseReprise' => $ligne[self::CSV_ID_ANCIENNE_ADRESSE_SOCIETE]));
+
+        }
         if (!$societe) {
-
-            $output->writeln(sprintf("<error>La société %s n'existe pas</error>", $ligne[self::CSV_ID_SOCIETE]));
-            return;
+            $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $ligne[self::CSV_ID_SOCIETE]));
+            $etablissementPlaceSurEntite = true;
+            if (!$societe) {
+              $output->writeln(sprintf("<error>La société %s n'existe pas</error>", $ligne[self::CSV_ID_SOCIETE]));
+              return;
+            }
         }
 
         $etablissement = $this->em->getRepository()->findOneBy(array('identifiantReprise', $ligne[self::CSV_ID_ADRESSE]));
         if (!$etablissement) {
             $etablissement = new Etablissement();
+        }else{
+          $output->writeln(sprintf("<error>L'établissement existe déjà ! %s </error>", $ligne[self::CSV_ID_ADRESSE]));
+              return;
         }
         $etablissement->setSociete($societe);
         $etablissement->setIdentifiant($societe->getIdentifiant());
@@ -113,8 +127,15 @@ class EtablissementCsvImporter extends CsvFile {
         if ($ligne[self::CSV_ADRESS_2]) {
             $adresse_str .= ', ' . $ligne[self::CSV_ADRESS_2];
         }
-        $etablissement->setCommentaire(str_replace('#', "\n", $ligne[self::CSV_CMT]));
-        $etablissement->setNom($ligne[self::CSV_RAISON_SOCIALE]);
+        if(isset($ligne[self::CSV_CMT]) && trim($ligne[self::CSV_CMT])){
+          $etablissement->setCommentaire(str_replace('#', "\n", $ligne[self::CSV_CMT]));
+        }
+        if($etablissementPlaceSurEntite){
+          $com = $etablissement->getCommentaire();
+          if($com){ $com.="\n\n";}
+          $etablissement->setCommentaire($com."Etablissement placé automatiquement dans cette société, non reliable directement à une adresse de facturation. ");
+        }
+        //$etablissement->setNom($ligne[self::CSV_RAISON_SOCIALE]);
 
         $adresse = new Adresse();
         $adresse->setAdresse($adresse_str);
@@ -132,11 +153,11 @@ class EtablissementCsvImporter extends CsvFile {
         }
         else {
             // echo "pas de calcul des coordonnées pour l'instant \n";
-                // $msg = $this->em->getOSMAdresse()->calculCoordonnees($adresse);
-                // sleep(0.5);
-                // if ($msg && is_string($msg)) {
-                //     echo $msg . "\n";
-                // }
+            //     $msg = $this->em->getOSMAdresse()->calculCoordonnees($adresse);
+            //     sleep(0.5);
+            //     if ($msg && is_string($msg)) {
+            //         echo $msg . "\n";
+            //     }
             }
         $etablissement->setAdresse($adresse);
 
@@ -158,6 +179,9 @@ class EtablissementCsvImporter extends CsvFile {
             $types_etb_keys = array_keys($types_etablissements);
 
             $etablissement->setType($types_etb_keys[intval($ligne[self::CSV_TYPE_ETABLISSEMENT]) - 1]);
+        }
+        if(!$societe->getAdresse()->getAdresse() && !$societe->getAdresse()->getCommune() && !$societe->getAdresse()->getCodePostal()){
+          $societe->setAdresse($adresse);
         }
 
         return $etablissement;

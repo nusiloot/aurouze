@@ -7,22 +7,9 @@ echo -e "\n****************************************************\n";
 
 . bin/config.inc
 
-REMOTE_DATA=$1
 SYMFODIR=$(pwd);
 DATA_DIR=$TMP;
 
-if test "$REMOTE_DATA"; then
-    echo "Récupération de l'archive"
-    scp $REMOTE_DATA:AUROUZE_DATAS_FINAL.tar.gz $TMP/AUROUZE_DATAS.tar.gz
-
-    echo "Désarchivage"
-    cd $TMP
-    tar zxvf $TMP/AUROUZE_DATAS.tar.gz
-
-    rm $TMP/AUROUZE_DATAS.tar.gz
-
-    cd $SYMFODIR
-fi
 
 ##### CONSTRUCTION DES FICHIERS... #####
 
@@ -40,7 +27,7 @@ join -a 1 -t ';' -1 13 -2 1 $DATA_DIR/paiementsClean.csv $DATA_DIR/cheques.clean
 
 echo -e "\n\nImport des types de paiements\n"
 
-php app/console importer:csv paiements.importer $DATA_DIR/paiements.csv -vvv
+php app/console importer:csv paiements.importer $DATA_DIR/paiements.csv -vvv --no-debug
 
 
-php app/console update:facture-update-montantfacture -vvv
+php app/console update:facture-update-montantfacture -vvv --no-debug
