@@ -67,6 +67,9 @@ class RechercheController extends Controller {
 	{
 		$dm = $this->get('doctrine_mongodb')->getManager();
         $query = $request->get('q');
+		if(!$query) {
+			$query = $request->get('term');
+		}
 
         $inactif = $request->get('inactif', false);
         $inactif = ($inactif)? true : false;
@@ -116,6 +119,7 @@ class RechercheController extends Controller {
             $newResult->identifiant = $object->getIdentifiant();
             $newResult->icon = $object->getIcon();
             $newResult->libelle = $object->getLibelleComplet();
+            $newResult->text = $object->getLibelleComplet();
             $newResult->instance = $item['instance'];
             $newResult->actif = ($object->getActif())? 1 : 0;
             $result[] = $newResult;
