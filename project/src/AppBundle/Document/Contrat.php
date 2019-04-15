@@ -53,6 +53,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $societe;
 
     /**
+     * @MongoDB\ReferenceOne(targetDocument="Societe", simple=true)
+     */
+    protected $commanditaire;
+
+    /**
      * @MongoDB\ReferenceOne()
      */
     protected $devisInterlocuteur;
@@ -345,7 +350,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getNomenclature() {
         return $this->nomenclature;
     }
-    
+
 
 
     /**
@@ -1806,6 +1811,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getDevisInterlocuteur()
     {
+        if($this->getCommanditaire()) {
+
+            return $this->getCommanditaire();
+        }
+
         if(is_null($this->devisInterlocuteur)) {
 
             return $this->getSociete();
@@ -1955,6 +1965,36 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     public function getDateReconduction()
     {
         return $this->dateReconduction;
+    }
+
+    /**
+     * Set commanditaire
+     *
+     * @param AppBundle\Document\Societe $commanditaire
+     * @return self
+     */
+    public function setCommanditaire($commanditaire = null) {
+        $this->commanditaire = $commanditaire;
+        return $this;
+    }
+
+    /**
+     * Get commanditaire
+     *
+     * @return AppBundle\Document\Societe $commanditaire
+     */
+    public function getCommanditaire() {
+        return $this->commanditaire;
+    }
+
+    public function getDestinataireFacturation() {
+
+        if($this->getCommanditaire()) {
+
+            return $this->getCommanditaire();
+        }
+
+        return $this->getSociete();
     }
 
     public function getNbPassagePrevu() {

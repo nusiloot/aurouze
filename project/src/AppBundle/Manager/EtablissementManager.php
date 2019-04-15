@@ -115,20 +115,13 @@ class EtablissementManager {
         return $this->osmAdresse;
     }
 
-    public function getAutreSecteurNom($secteur) {
-        return self::$secteurs[$this->getAutreSecteur($secteur)];
-    }
-
-    public function getAutreSecteur($secteur) {
-        $autreSecteur = null;
-        if ($secteur == EtablissementManager::SECTEUR_PARIS) {
-            $autreSecteur = EtablissementManager::SECTEUR_SEINE_ET_MARNE;
-        } elseif ($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE) {
-            $autreSecteur = EtablissementManager::SECTEUR_PARIS;
-        }
-        return $autreSecteur;
-    }
     public function secteursNom($secteur) {
+
+        if(!isset(self::$secteurs[$secteur])) {
+
+            return null;
+        }
+        
         return self::$secteurs[$secteur];
     }
 
