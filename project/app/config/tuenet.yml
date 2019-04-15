@@ -1,0 +1,66 @@
+parameters:
+    type_facturation:
+      "MONO": "Mono"
+      "MULTI": "Multi"
+    contrat_type:
+      "AUTRE": "Autre"
+      "PONCTUEL": "Ponctuel"
+      "TACITE": "Reconduction tacite"
+      "DEMANDE": "Renouvelable sur proposition"
+    prestations:
+      "DERATISATION_RAT": "Dératisation Rat"
+      "DERATISATION_SOURIS": "Dératisation Souris"
+      "DEPIGEONNAGE_PIGEON": "Dépigeonnage Pigeon"
+      "DESINSECTISATION_CAFARD": "Désinsectisation Cafard"
+      "DESINSECTISATION_PUNAISE": "Désinsectisation Punaise"
+      "DESINSECTISATION_BLATTE": "Désinsectisation Blatte"
+      "TRAITEMENT_BOIS_TERMITE": "Traitement des bois Termite"
+    prestations_type:
+      "ASSAINISSEMENT": "Assainissement"
+      "DEPIGEONNAGE": "Dépigeonnage"
+      "DERATISATION": "Dératisation"
+      "DESINFECTION_DESODORISATION": "Désinfection / Désodorisation"
+      "DESINSECTISATION": "Désinsectisation"
+      "LOCATION": "Location materiel"
+      "TRAITEMENT_BOIS": "Traitement des bois"
+      "DIVERS": "Travaux divers"
+    animaux_type:
+      "RONGEUR": "Rongeur"
+      "VOLATILE": "Volatile"
+      "RAMPANT": "Insecte rampant"
+      "VOLANT": "Insecte volant"
+      "BOIS": "Insecte du bois"
+    animaux:
+      "RONGEUR":
+        "MULOT": "Mulot"
+        "CAMPAGNOL": "Campagnol"
+        "RAT": "Rat"
+        "LOIR": "Loir"
+        "LEROT": "Lerot"
+        "SOURIS": "Souris"
+        "TAUPE": "Taupe"
+        "FOUINE": "Fouine"
+        "LAPIN": "Lapin"
+        "RAGONDIN": "Ragondin"
+      "VOLATILE":
+        "PIGEON": "Pigeon"
+      "RAMPANT":
+        "CAFARD": "Cafard"
+        "PUNAISE": "Punaise"
+        "PUCE": "Puce"
+        "BLATTE": "Blatte"
+        "FOURMIS": "Fourmis"
+        "ARAIGNEE": "Araignée"
+        "ACARIEN": "Acarien"
+        "POISSON_ARGENT": "Poisson d'argent"
+      "VOLANT":
+        "MOUCHERON": "Moucheron"
+        "MITE": "Mite"
+        "GUEPE": "Guêpe"
+        "MOUCHE": "Mouche"
+        "MOUSTIQUE": "Moustique"
+        "FRELON": "Frelon"
+      "BOIS":
+        "CAPRICORNE": "Capricorne"
+        "TERMITE": "Termite"
+        "VRILLETTE": "Vrillette"
