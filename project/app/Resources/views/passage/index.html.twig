@@ -11,7 +11,7 @@
         </div>
         <div class="row hide-print">
             <div class="col-xs-12">
-                <h3 class="hide-print">Liste des passages à planifier pour {{ etablissementManager.secteursNom(secteur) }}{% if anneeMois %} en {{ dateFin | localizeddate("medium", "none", null, null, "MMMM yyyy") | capitalize }} {% else %} jusqu'au {{ dateFin | localizeddate("medium", "none", null, null, "d MMMM yyyy") }} {% endif %} </h3>
+                <h3 class="hide-print">Liste des passages à planifier {% if secteur %}pour {{ etablissementManager.secteursNom(secteur) }}{% endif %}{% if anneeMois %} en {{ dateFin | localizeddate("medium", "none", null, null, "MMMM yyyy") | capitalize }} {% else %} jusqu'au {{ dateFin | localizeddate("medium", "none", null, null, "d MMMM yyyy") }} {% endif %} </h3>
             </div>
         </div>
         <div class="row hide-print">
@@ -19,7 +19,7 @@
                 <ul class="nav nav-pills">
                     {% for key,moisPassage in moisPassagesArray %}
                         <li role="presentation" class="{% if key == anneeMois %} active {% endif %}">
-                            <a href='{{ path('passage',{"secteur" : secteur, "mois" : key, "lat" : coordinatesCenter.lat, "lon" : coordinatesCenter.lon, "zoom": coordinatesCenter.zoom }) }}' >
+                            <a href='{{ path('passage_secteur',{"secteur" : secteur, "mois" : key, "lat" : coordinatesCenter.lat, "lon" : coordinatesCenter.lon, "zoom": coordinatesCenter.zoom }) }}' >
                                 <small><strong>
                                         {% if key == 'courant' %}
                                             D'ici le {{ dateFinCourant | localizeddate("medium", "none", null, null, "d/MM/Y") }}
@@ -42,8 +42,10 @@
                         </div>
                         <div class="col-xs-3 text-right">
                             <div class="btn-group">
-                                <a class="btn btn-default {% if secteur == "PARIS" %}active{% endif %}" href="{{ path('passage', {'secteur' :"PARIS"}) }}">{{ etablissementManager.secteursNom("PARIS") }}</a>
-                                <a class="btn btn-default {% if secteur == "SEINE_ET_MARNE" %}active{% endif %}" href="{{ path('passage', {'secteur' :"SEINE_ET_MARNE"}) }}">{{ etablissementManager.secteursNom("SEINE_ET_MARNE") }}</a>
+                                {% if secteur %}
+                                <a class="btn btn-default {% if secteur == "PARIS" %}active{% endif %}" href="{{ path('passage_secteur', {'secteur' :"PARIS"}) }}">{{ etablissementManager.secteursNom("PARIS") }}</a>
+                                <a class="btn btn-default {% if secteur == "SEINE_ET_MARNE" %}active{% endif %}" href="{{ path('passage_secteur', {'secteur' :"SEINE_ET_MARNE"}) }}">{{ etablissementManager.secteursNom("SEINE_ET_MARNE") }}</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

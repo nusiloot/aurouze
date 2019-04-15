@@ -52,9 +52,26 @@ class PassageController extends Controller
     }
 
     /**
-     * @Route("/passage/{secteur}/visualisation/{mois}", name="passage" , defaults={"secteur"="PARIS"})
+     * @Route("/passage", name="passage")
      */
-    public function indexAction(Request $request, $secteur, $mois = null) {
+    public function indexAction(Request $request) {
+
+        $passageManager = $this->get('passage.manager');
+        $secteur = $this->getParameter('secteurs');
+
+        $secteur = "0";
+
+        if($this->getParameter('secteurs')) {
+            $secteur = 'PARIS';
+        }
+
+        return $this->redirectToRoute('passage_secteur', array('secteur' => $secteur));
+    }
+
+    /**
+     * @Route("/passage/{secteur}/visualisation/{mois}", name="passage_secteur")
+     */
+    public function secteurAction(Request $request, $secteur, $mois = null) {
         ini_set('memory_limit', '128M');
 
         $formEtablissement = $this->createForm(EtablissementChoiceType::class, null, array(
