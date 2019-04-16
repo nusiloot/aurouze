@@ -121,5 +121,28 @@ class EtablissementController extends Controller {
 
         return $this->render('passage/commentaire.html.twig', array('etablissement' => $etablissement,'passage' => $passage, 'form' => $form->createView(), 'service' => $request->get('service')));
     }
+    
+
+
+    /**
+     * @Route("/etablissement/{societe}/find", name="etablissements_societe")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+    public function etablissementSearchAction(Request $request, $societe) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $response = new Response();
+        $etablissementsResult = array();
+        foreach ($societe->getEtablissements() as $e) {
+            if(!$e->getActif()){
+                continue;
+            }
+            $etablissementsResult[$e->getId()] = $e->getIntitule();
+        }
+
+        $data = json_encode($etablissementsResult);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setContent($data);
+        return $response;
+    }
 
 }

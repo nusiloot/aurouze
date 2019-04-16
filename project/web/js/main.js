@@ -40,6 +40,7 @@
         $.initTourneeDatepicker();
         $.initAttachements();
         $.initMoreInfo();
+        $.initTransfertContrat();
     });
 
     $.initTrCollapse = function() {
@@ -931,6 +932,33 @@
             });
 
         });
+    }
+    
+    $.initTransfertContrat = function() {
+        $('#contrat_transfert_societe').on('change', function (e) {
+        	var societe = $(this).val();
+        	var url = $(this).data('etablissements');
+            if(societe) {
+            	url = url.replace('__societe_id__', societe);
+            	var opts = '<option value="" selected="selected"></option>';
+                $('#input-etablissements .select2-selection__rendered').attr('title', '');
+                $('#input-etablissements .select2-selection__rendered').html('');
+            	$.get(url, function (result) {
+            		for(i in result) {
+            			console.log(i+' '+result[i]);
+            			opts += '<option value="'+i+'">'+result[i]+'</option>';
+            		}
+                	$('.select2-etablissements').html(opts);
+                    $('.select2-etablissements').removeAttr('disabled', 'disabled');
+                });
+            } else {
+            	$('.select2-etablissements').html('<option value="" selected="selected"></option>');
+                $('.select2-etablissements').attr('disabled', 'disabled');
+                $('#input-etablissements .select2-selection__rendered').attr('title', '');
+                $('#input-etablissements .select2-selection__rendered').html('');
+            }
+        });
+        $('#contrat_transfert_societe').change();
     }
 
 }

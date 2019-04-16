@@ -694,4 +694,7 @@ class Societe implements InterlocuteurInterface {
         }
         return $this->sepa->isFirst();
     }
+    public function __toString() {
+        return $this->getLibelleComplet();
+    }
 }
