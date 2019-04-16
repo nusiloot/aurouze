@@ -51,9 +51,9 @@ class EtablissementCsvImporter extends CsvFile {
 
 
     const CSV_CMT = 37;
-    const CSV_ID_ANCIENNE_ADRESSE_SOCIETE = 40;
-    const CSV_COORD_LAT = 41; // ???
-    const CSV_COORD_LON = 42; // ???
+    const CSV_COORD_LAT = 39;
+    const CSV_COORD_LON = 40;
+    const CSV_ID_ANCIENNE_ADRESSE_SOCIETE = 41;
 
     public function __construct(DocumentManager $dm, SocieteManager $sm, EtablissementManager $em) {
         $this->dm = $dm;
@@ -97,7 +97,7 @@ class EtablissementCsvImporter extends CsvFile {
         $etablissementPlaceSurEntite = false;
 
         if(!isset($ligne[self::CSV_ID_ANCIENNE_ADRESSE_SOCIETE])){
-          $output->writeln(sprintf("\n<comment>La ligne %s possède un établissement dont la société n'a pas d'adresse de facturation.  </comment>", implode(";", $ligne)));          
+          $output->writeln(sprintf("\n<comment>La ligne %s possède un établissement dont la société n'a pas d'adresse de facturation.  </comment>", implode(";", $ligne)));
         }else{
             $societe = $this->sm->getRepository()->findOneBy(array('identifiantAdresseReprise' => $ligne[self::CSV_ID_ANCIENNE_ADRESSE_SOCIETE]));
 
@@ -149,16 +149,8 @@ class EtablissementCsvImporter extends CsvFile {
             $lon = $ligne[self::CSV_COORD_LON];
             $adresse->getCoordonnees()->setLat($lat);
             $adresse->getCoordonnees()->setLon($lon);
-            echo "lat=$lat lon=$lon déjà enregistré \n";
+            //echo "lat=$lat lon=$lon enregistré \n";
         }
-        else {
-            // echo "pas de calcul des coordonnées pour l'instant \n";
-            //     $msg = $this->em->getOSMAdresse()->calculCoordonnees($adresse);
-            //     sleep(0.5);
-            //     if ($msg && is_string($msg)) {
-            //         echo $msg . "\n";
-            //     }
-            }
         $etablissement->setAdresse($adresse);
 
 

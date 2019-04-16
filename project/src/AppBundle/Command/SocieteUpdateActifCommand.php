@@ -56,8 +56,10 @@ class SocieteUpdateActifCommand extends ContainerAwareCommand {
         $allContrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
 
         foreach ($allContrats as $contrat) {
-            foreach ($contrat->getContratPassages() as $contratPassage) {
-                $allEtbWithPassage[$contratPassage->getEtablissement()->getId()] = $contratPassage->getEtablissement()->getId();
+            if($contrat->dateFin() && ($contrat->dateFin()->format("Ymd") > "20090101")){
+              foreach ($contrat->getContratPassages() as $contratPassage) {
+                  $allEtbWithPassage[$contratPassage->getEtablissement()->getId()] = $contratPassage->getEtablissement()->getId();
+              }
             }
         }
 
@@ -94,8 +96,10 @@ class SocieteUpdateActifCommand extends ContainerAwareCommand {
         $allSocWithContrat = array();
 
         foreach ($allContrats as $contrat) {
-            if (!array_key_exists($contrat->getSociete()->getId(), $allSocWithContrat)) {
-                $allSocWithContrat[$contrat->getSociete()->getId()] = $contrat->getSociete()->getId();
+            if($contrat->dateFin() && ($contrat->dateFin()->format("Ymd") > "20090101")){
+              if (!array_key_exists($contrat->getSociete()->getId(), $allSocWithContrat)) {
+                  $allSocWithContrat[$contrat->getSociete()->getId()] = $contrat->getSociete()->getId();
+              }
             }
         }
 
