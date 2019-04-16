@@ -17,7 +17,7 @@ use AppBundle\Document\Adresse;
 class EtablissementInfos implements EtablissementInfosInterface {
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nom;
 
@@ -32,7 +32,7 @@ class EtablissementInfos implements EtablissementInfosInterface {
     protected $contactCoordonnee;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $type;
 

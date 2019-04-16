@@ -17,6 +17,7 @@ use AppBundle\Type\ContratGeneratorType;
 use AppBundle\Type\ContratAcceptationType;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Manager\ContratManager;
+use AppBundle\Manager\EtablissementManager;
 use AppBundle\Manager\PassageManager;
 use Knp\Snappy\Pdf;
 use AppBundle\Type\ContratAnnulationType;
@@ -25,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use AppBundle\Type\ReconductionFiltresType;
+use AppBundle\Type\ContratTransfertType;
 use AppBundle\Type\ReconductionType;
 
 class ContratController extends Controller {
@@ -82,6 +84,77 @@ class ContratController extends Controller {
 
         return $this->modificationAction($request, $contrat);
     }
+    
+
+
+    /**
+     * @Route("/contrat/{id}/transfert", name="contrat_transfert")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function transfertAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        $contratManager = new ContratManager($dm);
+        $etablissementRepository = $dm->getRepository('AppBundle:Etablissement');
+        
+        $form = $this->createForm(new ContratTransfertType($contrat, $dm), null, array(
+            'action' => $this->generateUrl('contrat_transfert', array('id' => $contrat->getId())),
+            'method' => 'post',
+        ));
+        $complete = true;
+        $form->handleRequest($request);
+        $factures = $contratManager->getAllFactureForContrat($contrat);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formValues =  $form->getData();
+            foreach ($formValues as $k => $v) {
+                if ($k != 'factures' && $v === null) {
+                    $complete = false;
+                    break;
+                }
+            }
+            
+            if ($complete) {
+                
+                $contrat->setSociete($formValues['societe']);
+                
+                $etablissementsArr = array();
+                
+                foreach ($contrat->getEtablissements() as $oldEtb) {
+                    $etablissementsArr[$oldEtb->getId()] = $oldEtb;
+                }
+                
+                foreach ($etablissementsArr as $oldEtb) {
+                    $etbN = $etablissementRepository->find($formValues[$oldEtb->getId()]);
+                    $contrat->addEtablissement($etbN);
+                }
+                
+                foreach ($etablissementsArr as $oldEtb) {
+                    $contrat->removeEtablissement($oldEtb);
+                }
+                
+                foreach ($contrat->getContratPassages() as $oldId => $contratPassages) {
+                    $etbN = $etablissementRepository->find($formValues[$oldId]);
+                    foreach ($contratPassages->getPassages() as $passage) {
+                        $passage->setEtablissementIdentifiant($formValues[$oldId]);
+                        $passage->setEtablissement($etbN);
+                    }
+                    $contrat->removeContratPassage($contratPassages);
+                    $contrat->addContratPassage($etbN,$contratPassages);
+                }
+                
+                foreach ($factures as $facture) {
+                    $facture->setSociete($formValues['societe']);
+                }
+                
+                $dm->flush();
+                
+                return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
+            }
+        }
+        
+        return $this->render('contrat/transfert.html.twig', array('contrat' => $contrat, 'form' => $form->createView(), 'societe' => $contrat->getSociete(), 'factures' => $factures, 'complete' => $complete));
+    }
 
     /**
      * @Route("/contrat/{id}/modification", name="contrat_modification")
@@ -91,10 +164,6 @@ class ContratController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $contratManager = new ContratManager($dm);
-
-        // if (!$contrat->isModifiable()) {
-        //     throw $this->createNotFoundException();
-        // }
 
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
             'action' => "",
@@ -110,9 +179,7 @@ class ContratController extends Controller {
             $contrat->updateObject();
             $contrat->updatePrestations($dm);
             $contrat->updateProduits($dm);
-            if($contrat->isEnCours() && $contrat->isModifiable()) {
-                $contratManager->generateAllPassagesForContrat($contrat);
-            }
+
             if(!$contrat->getId()) {
                 $dm->persist($contrat);
             }
@@ -127,12 +194,10 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function acceptationAction(Request $request, Contrat $contrat) {
-
         $dm = $this->get('doctrine_mongodb')->getManager();
 
         $contratManager = new ContratManager($dm);
         $oldTechnicien = $contrat->getTechnicien();
-        $oldNbFactures = $contrat->getNbFactures();
         $isBrouillon = $request->get('brouillon');
         $form = $this->createForm(new ContratAcceptationType($dm, $contrat), $contrat, array(
             'action' => $this->generateUrl('contrat_acceptation', array('id' => $contrat->getId())),
@@ -146,7 +211,7 @@ class ContratController extends Controller {
               throw new \Exception("Le contrat doit avoir date d'acceptation et date de début");
             }
 
-            if ($contrat->isModifiable() && !$isBrouillon && $contrat->getDateDebut()) {
+            if ($contrat->isEnAttenteAcceptation() && !$isBrouillon && $contrat->getDateDebut()) {
                 $contratManager->generateAllPassagesForContrat($contrat);
                 $dateFin = clone $contrat->getDateDebut();
                 $dateFin = $dateFin->modify("+" . $contrat->getDuree() . " month");
@@ -159,17 +224,13 @@ class ContratController extends Controller {
                 if ((!$oldTechnicien) || $oldTechnicien->getId() != $contrat->getTechnicien()->getId()) {
                     $contrat->changeTechnicien($contrat->getTechnicien());
                 }
-                if ($oldNbFactures != $contrat->getNbFactures()) {
-
-                    $contratManager->updateNbFactureForContrat($contrat);
-                }
                 if ($contrat->getDateDebut()) {
                 	$dateFinCalcule = \DateTime::createFromFormat('Y-m-d H:i:s',$contrat->getDateDebut()->format('Y-m-d')." 00:00:00");
                 	$contrat->setDateFin($dateFinCalcule->modify("+" . $contrat->getDuree() . " month"));
                 }
                 $dm->persist($contrat);
                 $dm->flush();
-                return $this->redirectToRoute('passage_etablissement', array('id' => $contrat->getEtablissements()->first()->getId()));
+                return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
             }
 
             $dm->persist($contrat);
@@ -209,22 +270,27 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function reconductionAction(Request $request, Contrat $contrat) {
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        if ($contrat->isReconductible()) {
-            $etablissements = $contrat->getEtablissements();
-            $contratReconduit = $contrat->reconduire();
-            $dm->persist($contratReconduit);
-            $dm->flush();
-            $this->get('contrat.manager')->copyPassagesForContratReconduit($contratReconduit,$contrat);
-            $dm->persist($contratReconduit);
-            $contrat->setReconduit(true);
-
-            $dm->persist($contratReconduit);
-            $dm->flush();
-            return $this->redirectToRoute('contrats_societe', array('id' => $contratReconduit->getSociete()->getId()));
-        } else {
+        if (!$contrat->isReconductible()) {
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
+        $augmentation = floatval($request->get("augmentation", 0));
+        if(!is_float($augmentation)) {
+
+            throw new \Exception("L'augmentation n'est pas un nombre");
+        }
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $etablissements = $contrat->getEtablissements();
+        $contratReconduit = $contrat->reconduire($augmentation);
+        $dm->persist($contratReconduit);
+        $dm->flush();
+        $this->get('contrat.manager')->copyPassagesForContratReconduit($contratReconduit,$contrat);
+        $dm->persist($contratReconduit);
+        $contrat->setReconduit(true);
+        $dm->persist($contratReconduit);
+        $dm->flush();
+
+        return $this->redirectToRoute('contrat_visualisation', array('id' => $contratReconduit->getId()));
     }
 
 
@@ -246,35 +312,70 @@ class ContratController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $contratForm = $form->getData();
+            $contrat->setTypeContratOriginal($contrat->getTypeContrat());
             $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
-            $passageList = $this->get('contrat.manager')->getPassagesByNumeroArchiveContrat($contrat);
-
-            foreach ($passageList as $etb => $passagesByEtb) {
-                foreach ($passagesByEtb as $id => $passage) {
-                    if (!$passage->isRealise() && !$passage->isAnnule() && ($passage->getDatePrevision()->format('Ymd') > $contrat->getDateResiliation()->format('Ymd'))) {
-                        $passage->setStatut(PassageManager::STATUT_ANNULE);
-                        $passage->getContrat()->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
+            $forcerAnnulationPassages = $form['forcerAnnulationPassages']->getData() == 1;
+            foreach($contrat->getContratPassages() as $etb => $passagesByEtb) {
+                foreach ($passagesByEtb->getPassages() as $passage) {
+                    if ($passage->isRealise() || $passage->isAnnule()) {
+                        continue;
                     }
+                    if($passage->getDatePrevision()->format('Ymd') <= $contrat->getDateResiliation()->format('Ymd') && !$forcerAnnulationPassages) {
+                        continue;
+                    }
+                    $passage->setStatut(PassageManager::STATUT_ANNULE);
+                    $passage->setCommentaire("Annuler suite à l'annulation du contrat");
                 }
             }
-
             foreach ($contrat->getMouvements() as $mouvement) {
             	if (!$mouvement->isFacture()) {
             		$contrat->removeMouvement($mouvement);
             	}
             }
-
             $commentaire = "";
-            if ($contratForm->getCommentaire()) {
+            if ($contrat->getCommentaire()) {
                 $commentaire.= $contrat->getCommentaire() . "\n";
             }
             $commentaire.= $form['commentaireResiliation']->getData();
             $contrat->setCommentaire($commentaire);
-            $contrat->setReconduit(true);
             $dm->flush();
-            return $this->redirectToRoute('contrats_societe', array('id' => $contrat->getSociete()->getId()));
+
+            return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
+
         return $this->render('contrat/annulation.html.twig', array('form' => $form->createView(), 'contrat' => $contrat, 'societe' => $contrat->getSociete()));
+    }
+
+    /**
+     * @Route("/contrat/{id}/reactivation", name="contrat_reactivation")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function reactivationAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+
+        $contrat->setTypeContrat($contrat->getTypeContratOriginal());
+        $contrat->setTypeContratOriginal(null);
+        $contrat->setDateResiliation(null);
+        $commentaire = null;
+        if($contrat->getCommentaire()) {
+            $commentaire = $contrat->getCommentaire()."\n";
+        }
+        $commentaire .= "Contrat réactivé le ".date("d/m/Y");
+        $contrat->setCommentaire($commentaire);
+
+        foreach($contrat->getContratPassages() as $etb => $passagesByEtb) {
+            foreach ($passagesByEtb->getPassages() as $passage) {
+                if (!$passage->isAnnule()) {
+                    continue;
+                }
+
+                $passage->setStatut(PassageManager::STATUT_A_PLANIFIER);
+            }
+        }
+
+        $dm->flush();
+
+        return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
     }
 
     /**
@@ -498,15 +599,26 @@ class ContratController extends Controller {
     }
 
     /**
+     * @Route("/contrats/decalage", name="contrats_decalage")
+     */
+    public function contratsDecalageAction(Request $request) {
+        ini_set('memory_limit', '1024M');
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $contrats = $dm->getRepository('AppBundle:Contrat')->findAllDecalage();
+
+        return $this->render('contrat/erreurs.html.twig', array('contrats' => $contrat,'erreurTitre' => "Contrats décalés", 'erreur' => 0));
+    }
+
+    /**
      * @Route("/contrats/erreurs", name="contrats_erreurs")
      */
     public function contratsErreursAction(Request $request) {
         ini_set('memory_limit', '1024M');
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contrats = $dm->getRepository('AppBundle:Contrat')->findAllErreurs();
+        $contrats = $dm->getRepository('AppBundle:Contrat')->findAllErreursEnCours();
 
-        return $this->render('contrat/erreurs.html.twig', array('contrats' => $contrats));
+        return $this->render('contrat/erreurs.html.twig', array('contrats' => $contrats ,'erreurTitre' => "Contrats en erreurs", 'erreur' => 1 ));
     }
 
 
@@ -547,151 +659,78 @@ class ContratController extends Controller {
     }
 
 
+        /**
+         * @Route("/stats/export-commerciaux", name="contrats_export")
+         */
+        public function exportContratsAction(Request $request) {
+
+        	// $response = new StreamedResponse();
+        	$formRequest = $request->request->get('form');
+        	$commercial = (isset($formRequest['commercial']) && $formRequest['commercial'] && ($formRequest['commercial']!= ""))?
+        	$formRequest['commercial'] : null;
+        	$pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
+
+        	$dateDebutString = $formRequest['dateDebut']." 00:00:00";
+        	$dateFinString = $formRequest['dateFin']." 23:59:59";
+
+        	$dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
+        	$dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
+
+        	$cm = $this->get('contrat.manager');
+
+        	$statsForCommerciaux = $cm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial);
+
+        	if(!$pdf){
+        		$filename = sprintf("export_contrats_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+        		$handle = fopen('php://memory', 'r+');
+
+        		foreach ($statsForCommerciaux as $stat) {
+        			fputcsv($handle, $stat,';');
+        		}
+
+        		rewind($handle);
+        		$content = stream_get_contents($handle);
+        		fclose($handle);
+
+        		$response = new Response(utf8_decode($content), 200, array(
+        				'Content-Type' => 'text/csv',
+        				'Content-Disposition' => 'attachment; filename=' . $filename,
+        		));
+        		$response->setCharset('UTF-8');
+
+        		return $response;
+        	}else{
+        		$html = $this->renderView('contrat/pdfStatsCommerciaux.html.twig', array(
+        				'statsForCommerciaux' => $statsForCommerciaux,
+        				'dateDebut' => $dateDebut,
+        				'dateFin' => $dateFin
+        		));
 
 
+        		$filename = sprintf("export_stats_commerciaux_du_%s_au_%s.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
 
-    /**
-     * @Route("/contrat/export-rentabilite", name="rentabilite_export")
-     */
-	public function exportRentabiliteAction(Request $request) {
+        		if ($request->get('output') == 'html') {
 
-    	// $response = new StreamedResponse();
-    	$formRequest = $request->request->get('form');
-    	$client = (isset($formRequest['societe']) && $formRequest['societe'] && ($formRequest['societe']!= ""))? $formRequest['societe'] : null;
-    	if ($client) {
-    		$ec = explode(',', $client);
-    		$client = trim($ec[count($ec) -1]);
-    	}
-    	$pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
+        			return new Response($html, 200);
+        		}
 
-    	$dateDebutString = $formRequest['dateDebut']." 00:00:00";
-    	$dateFinString = $formRequest['dateFin']." 23:59:59";
-
-    	$dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
-    	$dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
-
-    	$cm = $this->get('contrat.manager');
-
-    	$statsForRentabilite = $cm->getStatsForRentabiliteForCsv($dateDebut,$dateFin,$client);
-
-    	if(!$pdf){
-    		$filename = sprintf("export_details_rentabilite_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
-    		$handle = fopen('php://memory', 'r+');
-
-    		foreach ($statsForRentabilite as $stat) {
-    			fputcsv($handle, $stat,';');
-    		}
-
-    		rewind($handle);
-    		$content = stream_get_contents($handle);
-    		fclose($handle);
-
-    		$response = new Response(utf8_decode($content), 200, array(
-    				'Content-Type' => 'text/csv',
-    				'Content-Disposition' => 'attachment; filename=' . $filename,
-    		));
-    		$response->setCharset('UTF-8');
-
-    		return $response;
-    	}else{
-    		$html = $this->renderView('contrat/pdfStatsRentabilite.html.twig', array(
-    				'statsForRentabilite' => $statsForRentabilite,
-    				'dateDebut' => $dateDebut,
-    				'dateFin' => $dateFin
-    		));
+        		return new Response(
+        				$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+        						'disable-smart-shrinking' => null,
+        						'encoding' => 'utf-8',
+        						'orientation' => 'landscape',
+        						'default-header' => false,
+        						'margin-left' => 10,
+        						'margin-right' => 10,
+        						'margin-top' => 10,
+        						'margin-bottom' => 10),$this->getPdfGenerationOptions()), 200, array(
+        								'Content-Type' => 'application/pdf',
+        								'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+        						));
+        	}
+        }
 
 
-    		$filename = sprintf("export_stats_rentabilite_du_%s_au_%s.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
-
-    		if ($request->get('output') == 'html') {
-
-    			return new Response($html, 200);
-    		}
-
-    		return new Response(
-    				$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
-    						'disable-smart-shrinking' => null,
-    						'encoding' => 'utf-8',
-    						'margin-left' => 10,
-    						'margin-right' => 10,
-    						'margin-top' => 10,
-    						'margin-bottom' => 10),$this->getPdfGenerationOptions()), 200, array(
-    								'Content-Type' => 'application/pdf',
-    								'Content-Disposition' => 'attachment; filename="' . $filename . '"'
-    						));
-    	}
-    }
-
-
-
-    /**
-     * @Route("/contrats-commerciaux/export", name="commerciaux_export")
-     */
-    public function exportCommerciauxAction(Request $request) {
-
-    	// $response = new StreamedResponse();
-    	$formRequest = $request->request->get('form');
-    	$commercial = (isset($formRequest['commercial']) && $formRequest['commercial'] && ($formRequest['commercial']!= ""))?
-    	$formRequest['commercial'] : null;
-    	$pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
-
-    	$dateDebutString = $formRequest['dateDebut']." 00:00:00";
-    	$dateFinString = $formRequest['dateFin']." 23:59:59";
-
-    	$dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
-    	$dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
-
-    	$cm = $this->get('contrat.manager');
-
-    	$statsForCommerciaux = $cm->getStatsForCommerciauxForCsv($dateDebut,$dateFin,$commercial);
-
-    	if(!$pdf){
-    		$filename = sprintf("export_details_commerciaux_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
-    		$handle = fopen('php://memory', 'r+');
-
-    		foreach ($statsForCommerciaux as $stat) {
-    			fputcsv($handle, $stat,';');
-    		}
-
-    		rewind($handle);
-    		$content = stream_get_contents($handle);
-    		fclose($handle);
-
-    		$response = new Response(utf8_decode($content), 200, array(
-    				'Content-Type' => 'text/csv',
-    				'Content-Disposition' => 'attachment; filename=' . $filename,
-    		));
-    		$response->setCharset('UTF-8');
-
-    		return $response;
-    	}else{
-    		$html = $this->renderView('contrat/pdfStatsCommerciaux.html.twig', array(
-    				'statsForCommerciaux' => $statsForCommerciaux,
-    				'dateDebut' => $dateDebut,
-    				'dateFin' => $dateFin
-    		));
-
-
-    		$filename = sprintf("export_stats_commerciaux_du_%s_au_%s.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
-
-    		if ($request->get('output') == 'html') {
-
-    			return new Response($html, 200);
-    		}
-
-    		return new Response(
-    				$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
-    						'disable-smart-shrinking' => null,
-    						'encoding' => 'utf-8',
-    						'margin-left' => 10,
-    						'margin-right' => 10,
-    						'margin-top' => 10,
-    						'margin-bottom' => 10),$this->getPdfGenerationOptions()), 200, array(
-    								'Content-Type' => 'application/pdf',
-    								'Content-Disposition' => 'attachment; filename="' . $filename . '"'
-    						));
-    	}
-    }
 
 
     public function getPdfGenerationOptions() {

@@ -1,0 +1,42 @@
+
+<ul class="list-group">
+	<li class="list-group-item {% if all %}list-group-item-success{% endif %}">
+		<a href="{{ path('attachements_entite',{ 'id' : societe.id , 'all': "1" }) }}">
+			<div class="row">
+				<div class="col-xs-10">
+		      		<strong>Tout les documents&nbsp;</strong>
+				</div>
+				<div class="col-xs-2 text-right">
+					<span class="badge badge-muted">{% if (nbTotalAttachements) %}{{ nbTotalAttachements }}{% endif %}</span>
+				</div>
+		  	</div>
+		</a>
+	</li>
+
+	<li class="list-group-item {% if not all and actif.id == societe.id %}list-group-item-success{% endif %}">
+		<a href="{{ path('attachements_entite',{ 'id' : societe.id }) }}">
+			<div class="row">
+				<div class="col-xs-10">
+		      		<strong>Société&nbsp;<br/>{{ societe.raisonSociale }}</strong>&nbsp;<br/><small>{{societe.adresse.intitule }}</small>
+				</div>
+				<div class="col-xs-2 text-right">
+					<span class="badge badge-muted">{% if (societe.attachements | length) %}{{ societe.attachements | length }}{% endif %}</span>
+				</div>
+		  	</div>
+		</a>
+	</li>
+    {% for etablissement in societe.etablissements %}
+    <li class="list-group-item {% if actif.id == etablissement.id %}list-group-item-success{% endif %}">
+		<a href="{{ path('attachements_entite',{ 'id' : etablissement.id }) }}">
+			<div class="row">
+				<div class="col-xs-10">
+					<small>{{ etablissement.adresse.intitule }}</small>
+				</div>
+				<div class="col-xs-2 text-right">
+					<span class="badge badge-muted">{% if (etablissement.attachements | length) %}{{ etablissement.attachements | length }}{% endif %}</span>
+				</div>
+			</div>
+		</a>
+	</li>
+    {% endfor %}
+</ul>

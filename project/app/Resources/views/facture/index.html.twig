@@ -4,16 +4,13 @@
 {% block title %}Factures{% endblock title %}
 
 {% block body %}
-
 	<ol class="breadcrumb">
 		<li><a href="{{ path('facture') }}">Facture</a></li>
 	</ol>
-<a href="{{ path('factures_retard') }}" class="btn btn-sm btn-default pull-right" ><strong><span class="mdi mdi-lg mdi-local-atm"></span>&nbsp;Retard de paiements</strong></a>
-<br/>
+
 	{{ include('societe/choixForm.html.twig', {'urlTarget': path('facture_societe', {'id': '_id_'}), 'autofocus': true }) }}
 
-
-  <h3>Contrats comportant des factures non éditées</h3>
+  	<h3>Contrats comportant des factures non éditées</h3>
 
 	{{ include('contrat/contratTableau.html.twig', {'contrats': contratsFactureAEditer }) }}
 

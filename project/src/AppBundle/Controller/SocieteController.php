@@ -9,9 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\SocieteType;
+use AppBundle\Type\AttachementType;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Etablissement;
 use AppBundle\Manager\EtablissementManager;
+use AppBundle\Document\Attachement;
 
 class SocieteController extends Controller {
 
@@ -44,9 +46,9 @@ class SocieteController extends Controller {
      */
     public function visualisationAction(Request $request, $societe) {
 
-    	$dm = $this->get('doctrine_mongodb')->getManager();
+      $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
+      $nbContratsSociete = count($this->get('contrat.manager')->getRepository()->findBySociete($societe));
 
     	return $this->render('societe/visualisation.html.twig', array('societe' => $societe, 'nbContratsSociete' => $nbContratsSociete));
     }
@@ -60,6 +62,9 @@ class SocieteController extends Controller {
 
     	$isNew = ($id)? false : true;
     	$societe = (!$isNew)? $this->get('societe.manager')->getRepository()->find($id) : new Societe();
+        if(!$isNew){
+            $societe->preInitRum();
+        }
 
     	$form = $this->createForm(new SocieteType($this->container, $dm, $isNew), $societe, array(
     			'action' => $this->generateUrl('societe_modification', array('id' => $id)),
@@ -69,6 +74,9 @@ class SocieteController extends Controller {
     	if ($form->isSubmitted() && $form->isValid()) {
     		$societe = $form->getData();
     		$dm->persist($societe);
+            if ($isNew) {
+                $societe->preInitRum();
+            }
     		$dm->flush();
     		if ($isNew && $form->get("generer")->getData()) {
     			 $etablissement = new Etablissement();
@@ -78,6 +86,13 @@ class SocieteController extends Controller {
     			 $etablissement->setCommentaire($societe->getCommentaire());
     			 $dm->persist($etablissement);
     			 $dm->flush();
+    		} elseif (!$societe->getActif()) {
+    			foreach ($societe->getEtablissements() as $etablissement) {
+    				if ($etablissement->getActif()) {
+    					$etablissement->setActif(false);
+    				}
+    			}
+    			$dm->flush();
     		}
     		return $this->redirectToRoute('societe_visualisation', array('id' => $societe->getId()));
     	}
@@ -100,6 +115,7 @@ class SocieteController extends Controller {
          return $response;
      }
 
+
     public function contructSearchResult($criterias, &$result) {
 
         foreach ($criterias as $id => $nom) {
@@ -109,5 +125,6 @@ class SocieteController extends Controller {
             $result[] = $newResult;
         }
     }
+
 
 }

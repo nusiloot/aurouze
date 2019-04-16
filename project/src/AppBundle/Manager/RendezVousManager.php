@@ -29,7 +29,6 @@ class RendezVousManager {
                 $passage->getEtablissementInfos()->getAdresse()->getCodePostal(), $passage->getEtablissementInfos()->getAdresse()->getCommune()
         ));
 
-        $rdv->setDescription(null);
 
         $rdv->setLieu(sprintf("%s %s %s",
                 $passage->getEtablissementInfos()->getAdresse()->getAdresse(),
@@ -47,6 +46,8 @@ class RendezVousManager {
             $rdv->setDateDebut($passage->getDateDebut());
             $rdv->setDateFin($passage->getDateFin());
         }
+
+        $rdv->setDescription($passage->getEtablissement()->getCommentaire());
 
         return $rdv;
     }

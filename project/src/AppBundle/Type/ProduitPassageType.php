@@ -49,7 +49,7 @@ class ProduitPassageType extends AbstractType {
 	}
 
         public function getProduits() {
-            return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getProduitsArray();
+            return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getProduitsArrayOrdered();
 
         }
 

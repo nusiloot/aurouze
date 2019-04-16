@@ -14,7 +14,7 @@ class SocieteGenerator extends AbstractIdGenerator
         $db = $dm->getDocumentDatabase($className);
 
         if($document->getIdentifiant()) {
-            
+
             return "SOCIETE-".$document->getIdentifiant();
         }
 
@@ -28,7 +28,7 @@ class SocieteGenerator extends AbstractIdGenerator
 
         $identifiant = sprintf("%06d", $result['value']['current_id']);
         $document->setIdentifiant($identifiant);
-
+        
         return "SOCIETE-".$document->getIdentifiant();
     }
 }

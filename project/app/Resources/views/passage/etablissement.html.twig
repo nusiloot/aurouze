@@ -7,18 +7,25 @@
         <li><a href="{{ path('passage_societe',{ 'id' : etablissement.societe.id }) }}">&nbsp;{{ etablissement.societe.raisonSociale }} </small></a></li>
         <li><a href="{{ path('passage_etablissement',{ 'id' : etablissement.id }) }}">&nbsp;{{ etablissement.getNom(false) }}&nbsp;<small>{{etablissement.adresse.intitule }}</small></a></li>
     </ol>
-    {{ include('etablissement/choixForm.html.twig', {'form': formEtablissement}) }}
+
+    <div class="row hide-print">
+        <div class="col-xs-12">
+            {{ include('societe/choixForm.html.twig', {'urlTarget': path('passage_societe', {'id': '_id_', 'object': '_object_'}), 'autofocus': true })}}
+        </div>
+    </div>
 
     <div class="row" style="margin-top: 10px; height: 130px;">
         <div class="col-xs-8">
             <h3 style="margin-top: 0;"><i style="cursor: default;" class="mdi mdi-{{ etablissement.icon }} mdi-lg" title="{{ etablissement.type }}" data-toggle="tooltip" ></i> {{ etablissement.nom }} <small class="text-muted">({{ etablissement.raisonSociale }})</small></h3>
             <p class="lead">{{ etablissement.adresse.adresse }} {{ etablissement.adresse.codePostal }} {{ etablissement.adresse.commune }}</p>
             <p>
-            	Contact : {{ etablissement.contactCoordonnee.telephoneFixe }}{% if etablissement.contactCoordonnee.telephoneFixe and etablissement.contactCoordonnee.telephoneMobile %} / {% endif %}{{ etablissement.contactCoordonnee.telephoneMobile }}{% if  etablissement.contactCoordonnee.libelle %} ({{ etablissement.contactCoordonnee.libelle }}){% endif %}
+                {% if etablissement.contactCoordonnee.telephoneFixe or etablissement.contactCoordonnee.telephoneMobile or etablissement.contactCoordonnee.libelle %} <strong>Contact : </strong>{% endif %}{{ etablissement.contactCoordonnee.telephoneFixe }}{% if etablissement.contactCoordonnee.telephoneFixe and etablissement.contactCoordonnee.telephoneMobile %} / {% endif %}{{ etablissement.contactCoordonnee.telephoneMobile }}{% if  etablissement.contactCoordonnee.libelle %} ({{ etablissement.contactCoordonnee.libelle }}){% endif %}
             </p>
             {% if etablissement.commentaire %}
                 <p>
-                    Commentaire : {{ etablissement.commentaire }} <a href="{{ path('etablissement_modification', {'societe': etablissement.getSociete().getId(),'id': etablissement.getId()}) }}"><small>(Modifier)</small></a>
+                    <strong>Commentaire de planification : </strong> <br/>{{ etablissement.commentairePlanification | nl2br }} <br/> <br/>
+                    <strong>Commentaire pour les techniciens: </strong> <br/>{{ etablissement.commentaire | nl2br }} <br/>
+                    <a href="{{ path('etablissement_modification', {'societe': etablissement.getSociete().getId(),'id': etablissement.getId()}) }}"><small>(Modifier)</small></a>
                 </p>
             {% else %}
             <p>
@@ -101,7 +108,7 @@
                                     <a href="{{ path('contrat_visualisation', {'id': contrat.id })}}">Voir le contrat</a>
                                     </div>
                                     <div class="col-xs-3">
-                                        {{ contrat.nbPassages}} passages prévus sur {{ contrat.duree }} mois
+                                        {% if(contrat.isEnAttenteAcceptation() and contrat.contratPassages | length == 0) %}{{ contrat.previsionnel | length }}{% else %}{{ contrat.nbPassages}}{% endif %} passages prévus sur {{ contrat.duree }} mois
                                     </div>
                                     <div class="col-xs-2">
                                         <a href="" title="{{ contrat.nomenclature | nl2br }}" data-html="true" data-toggle="tooltip">Voir la nomenclature</a>
@@ -123,8 +130,8 @@
                                 </div>
                             </div>
                             {% if passagesEtablissement %}
-							{{ include('passage/listingPassages.html.twig', { 'passages': passagesEtablissement.getPassagesSorted(true) }) }}
-							{% endif %}
+                               {{ include('passage/listingPassages.html.twig', { 'passages': passagesEtablissement.getPassagesDateSorted(true) }) }}
+                            {% endif %}
                         </div>
                     </div>
 

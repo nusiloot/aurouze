@@ -6,46 +6,40 @@
 
 
 {% block _paiements_paiement_entry_row %}
-    <div class="row form-group dynamic-collection-item" class="paiements" style="margin-left: 0px; margin-right: 0px; position:relative;">
-	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
-	            {{ form_widget(form.typeReglement) }}
-	        </div> 
-	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
-	            {{ form_widget(form.moyenPaiement) }}
-	        </div> 
-	        <div class="col-xs-3" style="padding-left : 5px; padding-right: 5px;">
-				{{ form_widget(form.facture, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher une facture', 'data-url' : path('facture_search'), 'aria-hidden': true } }) }}
-	        </div> 
-	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
-	            {{ form_widget(form.libelle) }}
-	        </div>
-	        <div class="col-xs-2" style="padding-left : 5px; padding-right: 5px;">
-	            
-                        <div class="form-group">
-                            {{ form_errors(form.datePaiement) }}
-                            <div class="input-group">
-                                {{ form_widget(form.datePaiement) }}
-                                <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                            </div>
-                        </div>
-	        </div> 
-	        <div class="col-xs-1" style="padding-left : 5px; padding-right: 5px;">
-	            {{ form_widget(form.montant) }}
-	        </div>
-	        <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove pull-right" style="position: absolute;"><span class="glyphicon glyphicon-remove"></span></button>
-
-    </div>
+<div class="row form-group dynamic-collection-item" style="margin-bottom: 5px;">
+	<div class="col-xs-12">
+		<div class="col-xs-2" style="padding: 0 2px 0 0;">
+			{{ form_widget(form.typeReglement) }}
+		</div>
+		<div class="col-xs-2" style="padding: 0 2px;">
+			{{ form_widget(form.moyenPaiement) }}
+		</div>
+		<div class="col-xs-2" style="padding: 0 2px;">
+			{{ form_widget(form.libelle) }}
+		</div>
+		<div class="col-xs-4 checkbox-inline" style="padding: 0 2px;">
+			{{ form_widget(form.facture, {'attr': {'class': 'form-control select2 select2-ajax select2SubmitOnChange', 'data-placeholder': 'Rechercher une facture', 'data-url' : path('facture_search', {'filter' : '1'}), 'aria-hidden': true } }) }}
+			<label for="all-factures" style="margin: 0; font-weight:normal;"><input class="all-factures" type="checkbox" style="margin: 2px 0 0 0;" /><small class="text-muted" style="margin-left: 16px;">Inclure les payées</small></label>
+		</div>
+		<div class="col-xs-1" style="padding: 0 2px;">
+			{{ form_widget(form.datePaiement) }}
+		</div>
+		<div class="col-xs-1" style="padding: 0 0 0 2px;">
+			{{ form_widget(form.montant) }}
+		</div>
+		<button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove pull-right" style="margin-left: 2px; position: absolute;"><span class="glyphicon glyphicon-remove"></span></button>
+	</div>
+</div>
 {% endblock %}
 
 {% block body %}
     <ol class="breadcrumb">
-        {#        <li><a href="{{ path('paiements') }}">Paiements</a></li>#}
-        {#        <li><a href="{{ path('paiements_visualisation',{ 'id' : paiements.id }) }}">&nbsp;{{ paiements.id }}</a></li>#}
-        <li><small>Nouveau</small></li>        
+        <li><a href="{{ path('paiements_liste') }}">Paiements</a></li>
+        <li><small>Nouveau</small></li>
     </ol>
 
     <div id="wrapper">
-        <h1>Nouveau</h1>
+        <h2>Nouveau</h2>
         {{ form_start(form) }}
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Informations</strong><div class="pull-right"></div></div>
@@ -55,20 +49,25 @@
                         {{ form_row(form.dateCreation) }}
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-xs-10">
+                        {{ form_row(form.numeroRemise) }}
+                    </div>
+                </div>
             </div>
         </div>
-		
-		<div>
-                 {{ form_widget(form.paiement, { 'attr': {'class': 'dynamic-collection'} }) }}
-                <div class="row form-group" style="margin-left: 0px; margin-right: 0px; position:relative;">
-                	<div class="col-xs-12" style="padding-left : 5px; padding-right: 5px;">&nbsp;</div>
-                    <a href="javascript:void(0);" data-collection-target="#paiements_paiement" class="btn btn-primary dynamic-collection-add pull-right" style="position: absolute;"><span class="glyphicon glyphicon-plus-sign"></span></a>
-                </div>
-       </div>
+
+		{{ form_widget(form.paiement, { 'attr': {'class': 'dynamic-collection'} }) }}
+		<div class="row form-group">
+			<div class="col-xs-12">
+				<div class="col-xs-12"></div>
+				<a href="javascript:void(0);" style="margin-left: 2px; position: absolute;" data-collection-target="#paiements_paiement" class="btn btn-primary dynamic-collection-add pull-right"><span class="glyphicon glyphicon-plus-sign"></span></a>
+			</div>
+		</div>
 
 
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-12 text-center">
                 {{ form_widget(form.save) }}
             </div>
         </div>

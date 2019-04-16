@@ -2,6 +2,7 @@
 # Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
 # http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
+    instanceapp: null
     database_host: 127.0.0.1
     database_port: 27017
     database_name: aurouze
@@ -21,6 +22,19 @@ parameters:
 
     osm.url_search: "http://URL_DE_RECUPERATION"
     osm.return_format: "json"
+    societeMere: "nom de la maison mère"
+    banque:
+        creditorId: 'XXXXXXXXXXX'
+        creditorName: 'ETABLISSEMENTS XXXX XXXXXXXXX'
+        creditorAccountIBAN: 'FRXXXXXXXXXXXXXXXXXXXXXXX'
+        creditorAgentBIC: 'XXXXXXX'
+
+    passage:
+      coordonnees:
+        email : "emailTransmission@dns.fr"
+        nom : 'Nom du mail'
+        numero : '00000000'
+        replyemail : "emailReplyTransmission@dns.fr"
 
     facture:
         emetteur:

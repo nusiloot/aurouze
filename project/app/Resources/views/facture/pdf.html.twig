@@ -148,7 +148,7 @@ Condition de réglement : {{ facture.frequencePaiementLibelle }}
     </small>
 </p>
 </small>
-{% if(facture.isFacture or facture.isDevis) %}
+{% if(not facture.isAvoir) %}
 <div style="border-top: 1px dashed #ccc; margin-top: 15px;">
     <div class="row">
         <div class="col-xs-12 text-center">
@@ -168,9 +168,26 @@ Condition de réglement : {{ facture.frequencePaiementLibelle }}
             <p>
             <span class="lead" style="font-size: 15px;">Montant {% if facture.isFacture %}dû{% endif %} : {{ facture.montantTTC|number_format(2, ',', ' ')  }}&nbsp;€</span><br />
             {% if facture.isFacture %}
-            <small>Date limite de règlement : {{ facture.dateLimitePaiement|date("d/m/Y") }}</small>
+            <small>{% if facture.sepa and facture.sepa.actif %}Cette facture passera automatiquement en prélèvement le : {% else %}Date limite de règlement : {% endif %}{{ facture.dateLimitePaiement|date("d/m/Y") }}</small>
             {% endif %}
             </p>
+        </div>
+    </div>
+</div>
+{% else %}
+<div style="border-top: 1px dashed #ccc; margin-top: 15px;">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <small><small><small>&nbsp;</small></small></small>
+        </div>
+        <div class="col-xs-6">
+            <p>
+            <span class="lead" style="font-size: 15px;">Avoir n°&nbsp;{{ facture.numeroFacture }} du {{ facture.dateFacturation|date("d/m/Y") }}</span><br />
+            <small>Client : {{ facture.destinataire.raisonSociale }} ({{ facture.destinataire.codeComptable }})</small>
+            </p>
+        </div>
+        <div class="col-xs-6 text-right">
+            <p>&nbsp;</p>
         </div>
     </div>
 </div>

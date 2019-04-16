@@ -28,8 +28,8 @@ class ProduitPassageMobileType extends AbstractType {
 	{
 		$builder
 		->add('identifiant', ChoiceType::class, array('label' => ' ', 'choices'  => array_merge(array('' => ''), $this->getProduits()), "attr" => array("class" => "form-control phoenix","placeholder" => 'Choisir un produit')))
-		->add('nbUtilisePassage', NumberType::class, array('label' => ' ',"required" => false, "attr" => array("class" => "text-right phoenix")));
-		
+		->add('nbUtilisePassage', NumberType::class, array('label' => ' ',"required" => false, "attr" => array("class" => "text-right phoenix","placeholder" => 'Quantité utilisée')));
+
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -40,7 +40,7 @@ class ProduitPassageMobileType extends AbstractType {
 	}
 
         public function getProduits() {
-            return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getProduitsArray();
+            return $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getProduitsArrayOrdered();
 
         }
 

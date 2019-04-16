@@ -5,18 +5,18 @@
 
 {% block body %}
 
-	<ol class="breadcrumb">
+	<ol class="breadcrumb hide-print">
 		<li><a href="{{ path('factures_retard') }}">Factures en retard de paiements</a></li>
 	</ol>
 
-	<div class="row">
+	<div class="row hide-print">
 	  <div class="col-xs-12">
 	    <h3>{{ facturesEnRetard | length }} factures en retard de paiements </h3>
 	  </div>
 	</div>
 	{{ form_start(formFacturesARelancer) }}
 	<br/><br/>
-	<div class="row">
+	<div class="row hide-print">
 		<div class="col-xs-12">
 			<div class="panel panel-default">
 					<div class="panel-heading">
@@ -49,7 +49,13 @@
 						</div>
 						<br/>
 						<div class="row">
-							<div class="col-xs-12 text-right">
+							<div class="col-xs-6">
+								{{ form_label(formFacturesARelancer.commercial) }}
+							{{ form_errors(formFacturesARelancer.commercial) }}
+							{{ form_widget(formFacturesARelancer.commercial) }}
+							</div>
+							<div class="col-xs-6 text-right">
+								<label class="control-label">&nbsp;</label><br />
 									<a class="btn btn-default" href="{{ path('factures_retard') }}"><span class="glyphicon glyphicon-repeat"></span>&nbsp;Ré-initialiser</a>&nbsp;&nbsp;
 								{{ form_widget(formFacturesARelancer.save) }}
 							</div>
@@ -63,7 +69,7 @@
 
 {{ form_start(formRelance) }}
 
-<div class="row" {% if ((nbRelances is null) or (nbRelances == -1)) %} readonly="readonly" disabled="disabled" style="opacity:0.5;" {% endif %} >
+<div class="row hide-print" {% if ((nbRelances is null) or (nbRelances == -1)) %} readonly="readonly" disabled="disabled" style="opacity:0.5;" {% endif %} >
     <div class="col-xs-3 pull-right">
       <div class="input-group">
           <span class="input-group-btn">
@@ -81,7 +87,37 @@
     </div>
 </div>
 <br/>
-  <div class="row">
+<div class="row">
+	{% if commercial %}<h3 class="show-print">Clients {{ commercial.identite }}</h3>{% endif %}
+	{% for factureEnRetard in facturesEnRetard %}      
+    	<div class="row show-print">
+        	<div class="col-sm-3">
+        		{{ factureEnRetard.dateFacturation | localizeddate("medium", "none", null, null, "d MMM yyyy") | capitalize }}<br />
+        		Facture n° <strong>{{ factureEnRetard.numeroFacture }}</strong>{% if(factureEnRetard.isRedressee()) %}&nbsp;<span data-toggle="tooltip" title="{{ factureEnRetard.avoir }}" class="label label-xs label-warning">R</span>{% endif %}<br />
+        		{% if factureEnRetard.nbRelance > 1 %}<strong><small>{{ factureEnRetard.nbRelance }} relances</small></strong>{% elseif factureEnRetard.nbRelance > 0 %}<strong><small>1 relance</small></strong>{% else %}0 relance{% endif %}
+        	</div>
+            <div class="col-sm-6">
+            	<strong>{{ factureEnRetard.societe.raisonSociale }}</strong><br />
+            	<small>{{ factureEnRetard.societe.adresseComplete }}</small><br />
+				{% if (factureEnRetard.societe.contactCoordonnee.telephoneFixe is defined and factureEnRetard.societe.contactCoordonnee.telephoneFixe)%}
+	            	<small><i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ factureEnRetard.societe.contactCoordonnee.telephoneFixe }}</small>&nbsp;
+	            {%endif%}
+	            {% if (factureEnRetard.societe.contactCoordonnee.telephoneMobile is defined and factureEnRetard.societe.contactCoordonnee.telephoneMobile)%}
+	                <small><i class="glyphicon glyphicon-phone"></i>&nbsp;{{ factureEnRetard.societe.contactCoordonnee.telephoneMobile }}</small>&nbsp;
+	            {% endif %}
+				{% if factureEnRetard.societe.contactCoordonnee.email %}
+					<small>{{ factureEnRetard.societe.contactCoordonnee.email }}</small>
+				{% endif %}
+			</div>
+            <div class="col-sm-3">
+            	Payé {{ "%0.2f" | format(factureEnRetard.montantPaye)  }}&nbsp;<small>€</small>&nbsp;/&nbsp;<strong>{{ "%0.2f" | format(factureEnRetard.montantTTC)  }}</strong>&nbsp;<small>€&nbsp;TTC</small></span><br />
+            	<small>{{ factureEnRetard.relanceCommentaire  }}</small>
+            </div>
+        </div>
+	{% endfor %}
+</div>
+	
+  <div class="row hide-print">
     <div class="col-xs-12">
         <table class="table table-bordered">
           <thead>
@@ -96,16 +132,22 @@
             </tr>
           </thead>
           <tbody>
-            {% for factureEnRetard in facturesEnRetard %}
-						{% set idCheckbox = factureEnRetard.id %}
+            {% for factureEnRetard in facturesEnRetard %}           
+            {% set idCheckbox = factureEnRetard.id %}
             <tr style="{{ factureEnRetard.getRelanceColor }}" >
               {{factureEnRetard.isDevis }}
               <td><small>{{ factureEnRetard.dateFacturation | localizeddate("medium", "none", null, null, "d MMM yyyy") | capitalize }}</small></td>
               <td>
 								<small><a href="{{ path('facture_societe', {'id': factureEnRetard.societe.id }) }}">{{ factureEnRetard.societe.raisonSociale }}</a></small>
 								{% if factureEnRetard.societe.contactCoordonnee.email %}
-									<small><a href="mailto:{{ factureEnRetard.societe.contactCoordonnee.email }}">{{ factureEnRetard.societe.contactCoordonnee.email }}</a></small>
+									<br /><small><a href="mailto:{{ factureEnRetard.societe.contactCoordonnee.email }}">{{ factureEnRetard.societe.contactCoordonnee.email }}</a></small>
 								{% endif %}
+								{% if (factureEnRetard.societe.contactCoordonnee.telephoneFixe is defined and factureEnRetard.societe.contactCoordonnee.telephoneFixe)%}
+	                                <br /><small><i class="glyphicon glyphicon-earphone"></i>&nbsp;{{ factureEnRetard.societe.contactCoordonnee.telephoneFixe }}</small>
+	                            {%endif%}
+	                            {% if (factureEnRetard.societe.contactCoordonnee.telephoneMobile is defined and factureEnRetard.societe.contactCoordonnee.telephoneMobile)%}
+	                                <br /><small><i class="glyphicon glyphicon-phone"></i>&nbsp;{{ factureEnRetard.societe.contactCoordonnee.telephoneMobile }}</small>
+	                            {% endif %}
 							</td>
               <td>
 								<a href="{{ path('facture_pdf', {'id': factureEnRetard.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;Facture n° {{ factureEnRetard.numeroFacture }}</a>
@@ -121,13 +163,19 @@
 							</td>
               <td class="text-left">
 								{% if factureEnRetard.has1ereRelance %}
-										<a data-toggle="tooltip" title="1ère relance" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 1 })}}"><span class="glyphicon glyphicon-file text-info"></span></a>&nbsp;
+										<a data-toggle="tooltip"
+										 title="{% if(factureEnRetard.getRelanceObjNumero(1)) %}1ère relance du {{ factureEnRetard.getRelanceObjNumero(1).dateRelance | localizeddate("medium", "none", null, null,  "dd/MM/yyyy") }} {% else %}1ère relance (non datée){% endif %}"
+										 href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 1 })}}"><span class="glyphicon glyphicon-file text-info"></span></a>&nbsp;
 								{% endif %}
 								{% if factureEnRetard.has2ndRelance %}
-									<a data-toggle="tooltip" title="2nd relance" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 2 })}}"><span class="glyphicon glyphicon-file text-warning"></span></a>&nbsp;
+									<a data-toggle="tooltip"
+									title="{% if(factureEnRetard.getRelanceObjNumero(2)) %}2nd relance du {{ factureEnRetard.getRelanceObjNumero(2).dateRelance | localizeddate("medium", "none", null, null,  "dd/MM/yyyy") }} {% else %}2nd relance (non datée){% endif %}"
+								  href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 2 })}}"><span class="glyphicon glyphicon-file text-warning"></span></a>&nbsp;
 								{% endif %}
 								{% if factureEnRetard.has3emeRelance %}
-									<a data-toggle="tooltip" title="mise en demeure avec AR" href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 3 })}}"><span class="glyphicon glyphicon-file text-danger"></span></a>&nbsp;
+									<a data-toggle="tooltip"
+									title="{% if(factureEnRetard.getRelanceObjNumero(3)) %}mise en demeure avec AR du {{ factureEnRetard.getRelanceObjNumero(3).dateRelance | localizeddate("medium", "none", null, null,  "dd/MM/yyyy") }}{% else %}mise en demeure avec AR (non datée){% endif %}" 
+									href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 3 })}}"><span class="glyphicon glyphicon-file text-danger"></span></a>&nbsp;
 								{% endif %}
 							</td>
               <td class="text-center">
@@ -147,8 +195,9 @@
         </table>
         </div>
       </div>
+      <div class="hide-print">
       {{ form_end(formRelance) }}
-
+		</div>
 			{% if pdf %}
 			<div id="relancePdfPopup" class="modal fade" role="dialog">
 			  <div class="modal-dialog">

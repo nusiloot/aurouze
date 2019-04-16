@@ -17,6 +17,7 @@ class RechercheController extends Controller {
 		$dm = $this->get('doctrine_mongodb')->getManager();
         $query = $request->get('q');
 
+		$pmr = $this->get('paiements.manager')->getRepository();
 		if(!$query) {
 			return $this->render('recherche/index.html.twig', array('query' => $query));
 		}
@@ -28,11 +29,23 @@ class RechercheController extends Controller {
 							"Contrat" => "Contrat",
 							"Passage" => "Passage",
 							"Facture" => "Facture",
+							"Paiements" => "Paiements",
 						);
 
 		$resultats = array();
+		$paiements = array();
 		foreach($searchable as $collection => $libelle) {
-			$items = $dm->getRepository('AppBundle:'.$collection)->findByQuery($query);
+			if ($collection == 'Paiements') {
+				$items = $dm->getRepository('AppBundle:'.$collection)->findPaiementByQuery($query);
+			}elseif ($collection == 'Facture') {
+				$items = $dm->getRepository('AppBundle:'.$collection)->findByQuery($query);
+				foreach ($items as $item) {
+					$d = $item["doc"];
+					$paiements[$d->getId()] = $pmr->findPaiementsByFacture($d);
+				}
+			}	else {
+				$items = $dm->getRepository('AppBundle:'.$collection)->findByQuery($query);
+			}
 			if(!count($items)) {
 				continue;
 			}
@@ -44,7 +57,7 @@ class RechercheController extends Controller {
 
         //usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
 
-		return $this->render('recherche/index.html.twig', array('query' => $query, 'resultats' => $resultats));
+		return $this->render('recherche/index.html.twig', array('query' => $query, 'resultats' => $resultats, 'searchable' => $searchable, 'paiements' => $paiements));
 	}
 
 	/**
@@ -54,13 +67,13 @@ class RechercheController extends Controller {
 	{
 		$dm = $this->get('doctrine_mongodb')->getManager();
         $query = $request->get('q');
+		if(!$query) {
+			$query = $request->get('term');
+		}
+
         $inactif = $request->get('inactif', false);
         $inactif = ($inactif)? true : false;
-				$querySearch = $dm->getRepository('AppBundle:Societe')->findByQuery($query, $inactif, 10);
-				$termSearch = $dm->getRepository('AppBundle:Societe')->findByTerms($query, $inactif, 10,true);
-				
-        $result = array_merge($querySearch,$termSearch);
-        usort($result, array("AppBundle\Controller\RechercheController", "cmpContacts"));
+		$result = $dm->getRepository('AppBundle:Societe')->findByElasticQuery($this->container->get('fos_elastica.finder.tuenet_preprod'), $query, $inactif, 10);
 
         $result = $this->contructSearchResultSociete($result);
 
@@ -102,9 +115,11 @@ class RechercheController extends Controller {
         	$object = $item['doc'];
             $newResult = new \stdClass();
             $newResult->id = ($item['instance'] == 'Societe')? $object->getId() : $object->getSociete()->getId();
+            $newResult->object = $object->getId();
             $newResult->identifiant = $object->getIdentifiant();
             $newResult->icon = $object->getIcon();
             $newResult->libelle = $object->getLibelleComplet();
+            $newResult->text = $object->getLibelleComplet();
             $newResult->instance = $item['instance'];
             $newResult->actif = ($object->getActif())? 1 : 0;
             $result[] = $newResult;

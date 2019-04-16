@@ -26,7 +26,8 @@ class PassageRepository extends DocumentRepository {
                 ->field('techniciens')->equals($technicien->getId())
                 ->sort('dateDebut', 'asc');
         if ($onlyNonImprime) {
-        	$query->field('imprime')->equals(false);
+            $query->addOr($query->expr()->field('imprime')->equals(false));
+            $query->addOr($query->expr()->field('imprime')->exists(false));
         }
         $query = $query->getQuery();
 
@@ -51,9 +52,11 @@ class PassageRepository extends DocumentRepository {
 
     public function findAllErreurs() {
         $mongoEndDate = new MongoDate(strtotime("now"));
+        $mongoStartDate = new MongoDate(strtotime("2016-01-01 00:00:00"));
         $query = $this->createQueryBuilder('Passage')
                 ->field('statut')->equals(PassageManager::STATUT_PLANIFIE)
                 ->field('dateFin')->lte($mongoEndDate)
+                ->field('dateDebut')->gte($mongoStartDate)
                 ->sort('dateDebut', 'asc');
         $query = $query->getQuery();
         return $query->execute();
@@ -107,6 +110,25 @@ class PassageRepository extends DocumentRepository {
                 ->sort('datePrevision', 'desc')
                 ->getQuery();
         return$query->execute();
+    }
+    
+    public function findLastPassage($etablissement, $passage = null) {
+        $query = $this->createQueryBuilder('Passage')
+                ->field('dateFin')->exists(true)
+                ->field('dateFin')->notEqual(null)
+                ->field('etablissement')->equals($etablissement->getId())
+                ->sort('dateFin', 'desc')
+                ->limit(1);
+        if ($passage && $passage->getDateDebut()) {
+            $mongoStartDate = new MongoDate(strtotime($passage->getDateDebut()->format('Y-m-d')));
+            $query->field('dateFin')->lte($mongoStartDate);
+            $query->field('_id')->notEqual($passage->getId());
+        }
+        
+        $query = $query->getQuery();
+        
+        return $query->execute()->getSingleResult();
+        
     }
 
     public function findPassagesForEtablissementSortedByContrat($etablissementIdentifiant) {
@@ -174,6 +196,7 @@ class PassageRepository extends DocumentRepository {
         if($dateDebut){
           $mongoStartDate = new MongoDate(strtotime($dateDebut->format('Y-m-d')));
           $q->field('datePrevision')->gte($mongoStartDate);
+
         }
 
         $regex = $this->getRegexForSeineEtMarne();
@@ -202,7 +225,7 @@ class PassageRepository extends DocumentRepository {
       $regex = $this->getRegexForSeineEtMarne();
       if ($secteur == EtablissementManager::SECTEUR_PARIS) {
          $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->operator('$not', new \MongoRegex($regex)));
-      } else {
+     } elseif($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE) {
          $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex($regex)));
       }
       $query = $q->sort('datePrevision', 'asc')->getQuery();

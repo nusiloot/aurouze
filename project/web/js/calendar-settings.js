@@ -16,7 +16,8 @@ $(function () {
             var passage = $(this).data('passage');
             $.get(
             $('#calendrier').data('urlRead'), {
-                passage: passage
+                passage: passage,
+                service: encodeURI(location.href)
             }, function (response) {
                 $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
@@ -31,9 +32,9 @@ $(function () {
      * FullCalendar Settings
      */
     $('#calendrier').fullCalendar({
-        minTime: '06:00:00',
-        maxTime: '19:00:00',
-        height: 703,
+        minTime: '05:00:00',
+        maxTime: '20:00:00',
+        height: 810,
         customButtons: {
             prevButton: {
                 text: '',
@@ -76,7 +77,8 @@ $(function () {
         eventClick: function (event) {
             $.get(
                 $('#calendrier').data('urlRead'), {
-                id: event.id
+                id: event.id,
+                service: encodeURI(location.href)
             }, function (response) {
                 $('#modal-calendrier-infos').html(response);
                 $('#modal-calendrier-infos').modal();
@@ -108,6 +110,7 @@ $(function () {
                 event.id = data.id;
                 event.backgroundColor = data.backgroundColor;
                 event.textColor = data.textColor;
+                event.retourMap = data.retourMap;
                 $('#calendrier').fullCalendar('updateEvent', event);
             }
             );
@@ -131,5 +134,23 @@ $(function () {
                 end: event.end.format()
             });
         },
+        eventRender: function(event, element) {
+          if(event.retourMap){
+             var url = event.retourMap;
+             var dateObj = new Date();
+             var lastParam = url.substring(url.lastIndexOf('/') + 1);
+             var lastOtherP = lastParam.substring(lastParam.lastIndexOf('?') + 1);
+             var dayOfMonth = event.start.format().substr(8,2);
+             var month = event.start.format().substr(0,7).replace('-','');
+             url = url.replace(lastParam,month)+"?"+lastOtherP;
+             if(dayOfMonth > "20"){
+                 url = url.replace(lastParam,'courant')+"?"+lastOtherP;
+             }
+             element.find(".fc-title").append('<a style="position:absolute; top: 0; right:0; opacity:0.2;" class="btn btn-default btn-xs " href="'+url+'"><span class="mdi mdi-map"></span></a>');
+          }
+        },
+        eventAfterRender: function(event, element) {
+          $.callbackCalendarDynamicButton();
+        }
     });
 });

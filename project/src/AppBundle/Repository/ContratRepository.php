@@ -31,7 +31,7 @@ class ContratRepository extends DocumentRepository {
     }
 
     public function findLast() {
-    	return $this->findBy(array(), array('dateCreation' => 'DESC', 'identifiant' => 'DESC'), 300);
+    	return $this->findBy(array(), array('dateCreation' => 'DESC', 'identifiant' => 'DESC'), 100);
     }
 
     public function findAllSortedByNumeroArchive() {
@@ -58,7 +58,33 @@ class ContratRepository extends DocumentRepository {
     	return ContratManager::$frequences;
     }
 
-    public function findAllErreurs() {
+    public function findAllErreursEnCours() {
+        $dateMin = (new \DateTime())->modify("-1 year -6 month");
+        $contratsTacites = $this->findAllTaciteSortedByNumeroArchive($dateMin);
+        $contratsErreurs = array();
+        foreach ($contratsTacites as $key => $contrat) {
+          if(!$contrat->getDateDebut()){
+            continue;
+          }
+          if($contrat->getDateDebut()->format('Ymd') < "20150101"){
+            continue;
+          }
+            foreach ($contrat->getContratPassages() as $etb => $contratPassages) {
+              foreach ($contratPassages->getPassages() as $key => $p){
+                if($p->getDateRealise()){
+                  if(($contrat->getDateDebut()->format('Ym') > $p->getDateRealise()->format('Ym')) || ($p->getDateRealise()->format('Ym') > $contrat->getDateFin()->format('Ym'))){
+                    $contratsErreurs[$contrat->getId()] = new \stdClass();
+                    $contratsErreurs[$contrat->getId()]->contrat = $contrat;
+                    break;
+                  }
+                }
+              }
+            }
+         }
+        return $contratsErreurs;
+    }
+
+    public function findAllDecalage() {
         $contratsTacites = array();
         $num_arch = null;
         $dateFin = null;
@@ -100,6 +126,7 @@ class ContratRepository extends DocumentRepository {
         }
         return $contratsErreurs;
     }
+
 
     public function findByQuery($q)
     {
@@ -165,7 +192,8 @@ class ContratRepository extends DocumentRepository {
           	$q->field('typeContrat')->in(array_keys(ContratManager::$types_contrats_reconductibles));
           }
           $q->field('dateFin')->lte($date);
-          $q->field('reconduit')->equals(false);
+          $q->addOr($q->expr()->field('reconduit')->equals(false))
+            ->addOr($q->expr()->field('reconduit')->exists(false));
           $q->field('statut')->notEqual(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
           $q->sort('dateFin', 'desc');
           $query = $q->getQuery();
@@ -197,6 +225,20 @@ class ContratRepository extends DocumentRepository {
         $query = $q->getQuery();
 
         return $query->execute();
+    }
+
+    public function exportAccepteOrResilieByDates(\DateTime $dateDebut,\DateTime $dateFin) {
+
+        $q = $this->createQueryBuilder();
+
+        $q->addOr($q->expr()->field('dateAcceptation')->gte($dateDebut)->lte($dateFin))
+          ->addOr($q->expr()->field('dateResiliation')->gte($dateDebut)->lte($dateFin));
+
+        $q->sort('dateAcceptation', 'ASC');
+        $query = $q->getQuery();
+
+        return $query->execute();
+
     }
 
 }

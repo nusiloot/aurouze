@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -14,7 +15,6 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use AppBundle\Type\Adresse;
 use AppBundle\Type\ContactCoordonneeType;
 use AppBundle\Manager\EtablissementManager;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class EtablissementType extends AbstractType {
 
@@ -38,8 +38,9 @@ class EtablissementType extends AbstractType {
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success pull-right")))
         		->add('adresse', AdresseType::class, array('data_class' => 'AppBundle\Document\Adresse'))
         		->add('contactCoordonnee', ContactCoordonneeType::class, array('data_class' => 'AppBundle\Document\ContactCoordonnee'))
-                ->add('commentaire', TextareaType::class, array('label' => 'Commentaire :',"required" => false,  "attr" => array("class" => "form-control", "rows" => 6), 'required' => false, 'empty_data'  => null));
-       
+                ->add('commentaire', TextareaType::class, array('label' => 'Commentaire techniciens:',"required" => false,  "attr" => array("class" => "form-control", "rows" => 6), 'required' => false, 'empty_data'  => null))
+                ->add('commentairePlanification', TextareaType::class, array('label' => 'Commentaire planification:',"required" => false,  "attr" => array("class" => "form-control", "rows" => 6), 'required' => false, 'empty_data'  => null));
+
                 $builder->add('sameContact', CheckboxType::class, array('label' => 'Même contact société', 'required' => false,   'empty_data'  => null, "attr" => array("class" => "collapse-checkbox", "data-target" => "#collapseContact")));
                 $builder->add('sameAdresse', CheckboxType::class, array('label' => 'Même adresse société', 'required' => false,   'empty_data'  => null, "attr" => array("class" => "collapse-checkbox", "data-target" => "#collapseAdresse")));
     }

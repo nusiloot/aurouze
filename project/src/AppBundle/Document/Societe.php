@@ -6,7 +6,9 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Model\InterlocuteurInterface;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints as AssertMongo;
+
 use Symfony\Component\Validator\Constraints as AssertDoctrine;
+use AppBundle\Manager\ContratManager;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\SocieteRepository")
@@ -19,32 +21,32 @@ class Societe implements InterlocuteurInterface {
     protected $id;
 
     /**
-     * @MongoDB\string
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $raisonSociale;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $sousTraitant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commentaire;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $type;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $codeComptable;
 
@@ -54,32 +56,42 @@ class Societe implements InterlocuteurInterface {
     protected $adresse;
 
     /**
+     * @MongoDB\EmbedOne(targetDocument="Sepa")
+     */
+    protected $sepa;
+
+    /**
      * @MongoDB\EmbedOne(targetDocument="ContactCoordonnee")
      */
     protected $contactCoordonnee;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
     /**
-     * @MongoDB\Increment
+     * @MongoDB\Field(type="string")
+     */
+    protected $identifiantAdresseReprise;
+
+    /**
+     * @MongoDB\Field(type="increment")
      */
     protected $etablissementIncrement;
 
     /**
-     * @MongoDB\Increment
+     * @MongoDB\Field(type="increment")
      */
     protected $contratIncrement;
 
     /**
-     * @MongoDB\Increment
+     * @MongoDB\Field(type="increment")
      */
     protected $compteIncrement;
 
     /**
-     * @MongoDB\Increment
+     * @MongoDB\Field(type="increment")
      */
     protected $factureIncrement;
 
@@ -99,20 +111,41 @@ class Societe implements InterlocuteurInterface {
     protected $provenance;
 
     /**
-     * @MongoDB\Collection
+     * @MongoDB\Field(type="collection")
      */
     protected $tags;
 
     /**
-     * @MongoDB\Boolean
+     *  @MongoDB\ReferenceMany(targetDocument="Attachement", mappedBy="societe")
+     */
+    protected $attachements;
+
+    /**
+     * @MongoDB\Field(type="bool")
      */
     protected $actif;
+
+    /**
+     * @MongoDB\Field(type="string")
+     */
+    protected $frequencePaiement;
 
     public function __construct() {
         $this->etablissements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->adresse = new Adresse();
+        $this->sepa = new Sepa();
         $this->contactCoordonnee = new ContactCoordonnee();
         $this->setActif(true);
+    }
+
+    public function preInitRum(){
+        if(!$this->getSepa()){
+            $this->sepa = new Sepa();
+        }
+        if(!$this->getSepa()->getRum()){
+            $sepa = $this->getSepa();
+            $sepa->setRum("AUROUZE".$this->getIdentifiant());
+        }
     }
 
     public function getDestinataire() {
@@ -275,6 +308,26 @@ class Societe implements InterlocuteurInterface {
     }
 
     /**
+     * Set sepa
+     *
+     * @param AppBundle\Document\Sepa $sepa
+     * @return self
+     */
+    public function setSepa(\AppBundle\Document\Sepa $sepa) {
+        $this->sepa = $sepa;
+        return $this;
+    }
+
+    /**
+     * Get sepa
+     *
+     * @return AppBundle\Document\Sepa $sepa
+     */
+    public function getSepa() {
+        return $this->sepa;
+    }
+
+    /**
      * Set identifiantReprise
      *
      * @param string $identifiantReprise
@@ -293,6 +346,28 @@ class Societe implements InterlocuteurInterface {
     public function getIdentifiantReprise() {
         return $this->identifiantReprise;
     }
+
+
+    /**
+     * Set identifiantAdresseReprise
+     *
+     * @param string $identifiantAdresseReprise
+     * @return self
+     */
+    public function setIdentifiantAdresseReprise($identifiantAdresseReprise) {
+        $this->identifiantAdresseReprise = $identifiantAdresseReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantAdresseReprise
+     *
+     * @return string $identifiantAdresseReprise
+     */
+    public function getIdentifiantAdresseReprise() {
+        return $this->identifiantAdresseReprise;
+    }
+
 
     /**
      * Set etablissementIncrement
@@ -417,7 +492,7 @@ class Societe implements InterlocuteurInterface {
 
         return $comptes;
     }
-    
+
     public function getComptesLibelle($statut)
     {
     	$comptes = $this->getComptesByStatut($statut);
@@ -512,6 +587,11 @@ class Societe implements InterlocuteurInterface {
         return $this->getRaisonSociale() . " " . $this->getAdresse()->getIntitule() . ' (' . $this->identifiant . ')';
     }
 
+    public function getAdresseComplete()
+    {
+    	return $this->getAdresse()->getLibelleComplet();
+    }
+
     /**
      * Add compte
      *
@@ -572,8 +652,77 @@ class Societe implements InterlocuteurInterface {
     {
         return $this->actif;
     }
-    
+
+    /**
+     * Set frequencePaiement
+     *
+     * @param string $frequencePaiement
+     * @return self
+     */
+    public function setFrequencePaiement($frequencePaiement) {
+        $this->frequencePaiement = $frequencePaiement;
+        return $this;
+    }
+
+    /**
+     * Get frequencePaiement
+     *
+     * @return string $frequencePaiement
+     */
+    public function getFrequencePaiement() {
+        return $this->frequencePaiement;
+    }
+
+
+    public function getFrequencePaiementLibelle() {
+
+        return ContratManager::$frequences[$this->frequencePaiement];
+    }
+
     public function getSociete() {
     	return $this;
+    }
+
+
+
+    /**
+     * Add attachement
+     *
+     * @param AppBundle\Document\Attachement $attachement
+     */
+    public function addAttachement(\AppBundle\Document\Attachement $attachement)
+    {
+        $this->attachements[] = $attachement;
+    }
+
+    /**
+     * Remove attachement
+     *
+     * @param AppBundle\Document\Attachement $attachement
+     */
+    public function removeAttachement(\AppBundle\Document\Attachement $attachement)
+    {
+        $this->attachements->removeElement($attachement);
+    }
+
+    /**
+     * Get attachements
+     *
+     * @return \Doctrine\Common\Collections\Collection $attachements
+     */
+    public function getAttachements()
+    {
+        return $this->attachements;
+    }
+
+    public function isFirstPrelevement(){
+        if(!$this->sepa){
+            throw new sfException("La societe ".$societe->getId()." ne posssède aucun SEPA");
+        }
+        return $this->sepa->isFirst();
+    }
+
+    public function __toString() {
+        return $this->getLibelleComplet();
     }
 }

@@ -12,9 +12,11 @@ use AppBundle\Document\Compte;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\RendezVous;
 use AppBundle\Document\CompteInfos;
+use AppBundle\Manager\EtablissementManager;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\PassageCreationType;
 use AppBundle\Type\RendezVousType;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class CalendarController extends Controller {
 
@@ -37,6 +39,33 @@ class CalendarController extends Controller {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
+        
+        $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
+        $techniciensFinal = array();
+        $techniciensOnglet = $techniciens;
+        foreach($techniciens as $t) {
+        	if(in_array($t->getId(), $techniciensFiltre)) {
+        		$techniciensFinal[$t->getId()] = $t;
+        	}
+        }
+        
+        if(count($techniciensFinal) > 0) {
+        	$techniciensOnglet = $techniciensFinal;
+        }
+
+
+        $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
+        $techniciensFinal = array();
+        $techniciensOnglet = $techniciens;
+        foreach($techniciens as $t) {
+        	if(in_array($t->getId(), $techniciensFiltre)) {
+        		$techniciensFinal[$t->getId()] = $t;
+        	}
+        }
+
+        if(count($techniciensFinal) > 0) {
+        	$techniciensOnglet = $techniciensFinal;
+        }
 
         $date = $request->get('date', new \DateTime());
         $calendarTool = new CalendarDateTool($date, $request->get('mode', CalendarDateTool::MODE_WEEK));
@@ -46,13 +75,14 @@ class CalendarController extends Controller {
             $etablissement = $passage->getEtablissement();
         }
 
-        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement, 'date' => $date, 'mode' => $request->get('mode')));
+        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciensOnglet' => $techniciensOnglet, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement, 'date' => $date, 'mode' => $request->get('mode')));
     }
 
     /**
      * @Route("/calendrier/global", name="calendarManuel")
      */
     public function calendarManuelAction(Request $request) {
+        $response = new Response();
         $dm = $this->get('doctrine_mongodb')->getManager();
         $passage = null;
         if ($request->get('passage')) {
@@ -72,7 +102,22 @@ class CalendarController extends Controller {
             $periodeStart = date("Y-m-d", strtotime("+1 day", strtotime($periodeStart)));
         }
 
-        $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
+        $allTechniciens = $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
+        $techniciensFinal = array();
+
+        $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
+        $response->headers->setCookie(new Cookie('techniciens', serialize($techniciensFiltre), time() + (365 * 24 * 60 * 60)));
+
+        foreach($techniciens as $technicien) {
+            if(in_array($technicien->getId(), $techniciensFiltre)) {
+                $techniciensFinal[$technicien->getId()] = $technicien;
+            }
+        }
+
+        if(count($techniciensFinal) > 0) {
+            $techniciens = $techniciensFinal;
+        }
+        $techniciensOnglet = $techniciens;
 
         $passagesCalendar = array();
         $index = 0;
@@ -96,7 +141,7 @@ class CalendarController extends Controller {
                     'start' => $rdv->getDateDebut()->format('Y-m-d\TH:i:s'),
                     'end' => $rdv->getDateFin()->format('Y-m-d\TH:i:s'),
                     'backgroundColor' => $compte->getCouleur(),
-                    'textColor' => $rdv->getTextColor(),
+                    'textColor' => '#000',
                     'coefStart' => round($diffDebut / 30, 1),
                     'coefEnd' => round($diffFin / 30, 1),
                     'resume' => $rdv->getTitre(),
@@ -131,7 +176,8 @@ class CalendarController extends Controller {
                 }
             }
         }
-        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'technicien' => null, 'passage' => $passage, 'date' => $request->get('date')));
+
+        return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'techniciensOnglet' => $techniciensOnglet, 'technicien' => null, 'allTechniciens' => $allTechniciens, 'passage' => $passage, 'date' => $request->get('date')), $response);
     }
 
     /**
@@ -157,7 +203,7 @@ class CalendarController extends Controller {
       //  $pm->updateNextPassageAPlannifier($rdv->getPassage());
         $dm->flush();
 
-        $response = new Response(json_encode($rdv->getEventJson($technicien->getCouleur())));
+        $response = new Response(json_encode($this->buildEventObjCalendar($rdv,$technicien)));
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
@@ -214,7 +260,7 @@ class CalendarController extends Controller {
 
         $dm->flush();
 
-        $response = new Response(json_encode($rdv->getEventJson($technicien->getCouleur())));
+        $response = new Response(json_encode($this->buildEventObjCalendar($rdv,$technicien)));
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
@@ -234,7 +280,7 @@ class CalendarController extends Controller {
         $calendarData = array();
 
         foreach ($rdvs as $rdv) {
-            $calendarData[] = $rdv->getEventJson($technicien->getCouleur());
+            $calendarData[] = $this->buildEventObjCalendar($rdv,$technicien);
         }
 
         $response = new Response(json_encode($calendarData));
@@ -267,7 +313,7 @@ class CalendarController extends Controller {
 
         if(!$edition && !$request->get('forceEdition', false)) {
 
-            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv));
+            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'service' => $request->get('service')));
         }
 
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
@@ -281,14 +327,13 @@ class CalendarController extends Controller {
 
         if (!$form->isSubmitted() || !$form->isValid()) {
 
-            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
+            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView(), 'service' => $request->get('service')));
         }
 
         if(!$rdv->getId()) {
             $dm->persist($rdv);
             if($rdv->getPassage()) {
                 $rdv->pushToPassage();
-              //  $pm->updateNextPassageAPlannifier($rdv->getPassage());
             }
         }
 
@@ -311,7 +356,29 @@ class CalendarController extends Controller {
 
         $dm->flush();
 
+        if($request->get('service')) {
+
+            return $this->redirect($request->get('service'));
+        }
+
         return $this->redirect($this->generateUrl('calendarManuel'));
+    }
+
+    public function buildEventObjCalendar($rdv,$technicien){
+      $event = $rdv->getEventJson($technicien->getCouleur());
+      $em = $this->get('etablissement.Manager');
+      if($rdv->getPassage() && $rdv->getPassage()->getEtablissement()){
+        $passageCoord = $rdv->getPassage()->getEtablissement()->getAdresse()->getCoordonnees();
+        $secteur = EtablissementManager::getRegion($rdv->getPassage()->getEtablissement()->getAdresse()->getCodePostal());
+        if(!$secteur){ $secteur = EtablissementManager::SECTEUR_PARIS; }
+        $z = ($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE)? '10' : '15';
+        $dateRetour = $rdv->getPassage()->getDatePrevision()->format('Ym');
+        if($rdv->getPassage()->getDateDebut()){
+            $dateRetour = $rdv->getPassage()->getDateDebut()->format('Ym');
+        }
+        $event->retourMap = $this->generateUrl('passage',array('secteur' => $secteur, 'mois' => $dateRetour,'lat' => $passageCoord->getLat(),'lon' => $passageCoord->getLon(),'zoom' => $z));
+      }
+      return $event;
     }
 
 }

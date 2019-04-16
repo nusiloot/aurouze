@@ -31,6 +31,7 @@ class ContratManager implements MouvementManagerInterface {
     const MOYEN_PIGEONS = 'MOYEN_PIGEONS';
     const MOYEN_BOIS = 'MOYEN_BOIS';
     const MOYEN_VO = 'MOYEN_VO';
+    const FREQUENCE_PRELEVEMENT = 'PRELEVEMENT';
     const FREQUENCE_RECEPTION = 'RECEPTION';
     const FREQUENCE_30J = '30J';
     const FREQUENCE_30JMOIS = '30JMOIS';
@@ -85,7 +86,8 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_EN_ATTENTE_ACCEPTATION => "en attente d'acceptation",
         self::STATUT_EN_COURS => 'en cours',
         self::STATUT_FINI => 'terminé',
-        self::STATUT_RESILIE => 'résilié'
+        self::STATUT_RESILIE => 'résilié',
+        self::STATUT_ANNULE => 'annulé',
     );
     public static $statuts_couleurs = array(
         self::STATUT_BROUILLON => 'info',
@@ -104,6 +106,7 @@ class ContratManager implements MouvementManagerInterface {
         self::STATUT_ANNULE => 6
     );
     public static $frequences = array(
+        self::FREQUENCE_PRELEVEMENT => 'Par Prélèvement (après 30 jours le 20 du mois)',
         self::FREQUENCE_RECEPTION => 'À réception',
         self::FREQUENCE_30J => '30 jours',
         self::FREQUENCE_30JMOIS => '30 jours fin de mois',
@@ -150,9 +153,11 @@ class ContratManager implements MouvementManagerInterface {
         $contrat = new Contrat();
         $contrat->setSociete($societe);
         $contrat->setDateCreation($dateCreation);
+        $contrat->setDateCreationAuto($dateCreation);
         $contrat->setStatut(self::STATUT_BROUILLON);
         $contrat->addPrestation(new Prestation());
         $contrat->addProduit(new Produit());
+        $contrat->setFrequencePaiement($societe->getFrequencePaiement());
 
         if ($etablissement) {
             $contrat->addEtablissement($etablissement);
@@ -224,6 +229,36 @@ class ContratManager implements MouvementManagerInterface {
         $contrat->reInitContratPassages();
     }
 
+    public function updateInfosPassagePrecedent($contrat, $etablissement = null) {
+        $passagesByEtablissement = $this->getPassagesByNumeroArchiveContrat($contrat, true);
+        foreach($passagesByEtablissement as $etablissementId => $passages) {
+            $passagesNonRealises = array();
+            $dernierPassageRealise = null;
+            if($etablissement && $etablissement->getId() != $etablissementId) {
+                continue;
+            }
+            foreach($passages as $passage)  {
+                if(!$passage->isSousContrat()) {
+                    continue;
+                }
+                if($passage->isAnnule()) {
+                    continue;
+                }
+                if($passage->isRealise()) {
+                    $dernierPassageRealise = $passage;
+                    break;
+                }
+                $passagesNonRealises[] = $passage;
+            }
+            if($dernierPassageRealise) {
+                foreach($passagesNonRealises as $passageNonRealise) {
+                    $passageNonRealise->setDureePrecedente($dernierPassageRealise->getDureeDate());
+                    $passageNonRealise->setDatePrecedente($dernierPassageRealise->getDateDebut());
+                }
+            }
+        }
+    }
+
     public function generateAllPassagesForContrat($contrat) {
         $this->removeAllPassagesForContrat($contrat);
 
@@ -238,7 +273,6 @@ class ContratManager implements MouvementManagerInterface {
         $firstEtb = true;
         foreach ($contrat->getEtablissements() as $etablissement) {
             $cpt = 0;
-        	$firstPass = true;
             foreach ($passagesArray as $datePassage => $passageInfos) {
                 $datePrevision = new \DateTime($datePassage);
                 $passage = new Passage();
@@ -254,6 +288,11 @@ class ContratManager implements MouvementManagerInterface {
                 if ($firstEtb) {
                     $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
                 }
+                if ($audit = $passageInfos->audit) {
+                	$passage->setAudit($audit);
+                }
+
+                $passage->setMultiTechnicien($contrat->getMultiTechnicien());
 
                 $passage->setContrat($contrat);
                 $passage->setTypePassage(PassageManager::TYPE_PASSAGE_CONTRAT);
@@ -269,29 +308,23 @@ class ContratManager implements MouvementManagerInterface {
                     $produitNode = clone $produit;
                     $passage->addProduit($produitNode);
                 }
-				
+
                 if ($passage) {
                     $contrat->addPassage($etablissement, $passage);
                     $this->dm->persist($passage);
-                }
-                if ($firstPass) {
-                	$passagePrec = $this->getPassageManager()->passagePrecedentRealiseSousContrat($passage);
-                	if($passagePrec) {
-                		$passage->setDureePrecedente($passagePrec->getDureeDate());
-                		$passage->setDatePrecedente($passagePrec->getDateDebut());
-                	}
-                	$firstPass = false;
                 }
                 $cpt++;
             }
             $firstEtb = false;
         }
 
+        $this->updateInfosPassagePrecedent($contrat);
+
         $contrat->updateNumeroOrdrePassage();
 
         $this->dm->flush();
     }
-    
+
     public function getPassageManager()
     {
     	return new PassageManager($this->dm, $this);
@@ -397,7 +430,7 @@ class ContratManager implements MouvementManagerInterface {
                     $passagesByNumero[$idEtb] = array();
                 }
                 foreach ($contratPassages->getPassages() as $passage) {
-                    $passagesByNumero[$idEtb][$passage->getDatePrevision()->format('Ymd')] = $passage;
+                    $passagesByNumero[$idEtb][$passage->getDatePrevision()->format('Ymd').uniqid()] = $passage;
                 }
             }
         }
@@ -472,7 +505,7 @@ class ContratManager implements MouvementManagerInterface {
                 $pcaArr[self::EXPORT_PCA_RATIO_FACTURE] = sprintf("%01.02f",($calculPca['ratioFacture'] * 100))."%";
 
                 $pcaArr[self::EXPORT_PCA_NB_PASSAGE] = $contratObj->getNbPassages();
-                $pcaArr[self::EXPORT_PCA_NB_PASSAGE_EFFECTUE] = ($contratObj->getContratPassages()->first())? $contratObj->getContratPassages()->first()->getNbPassagesRealisesOuAnnule() : "pas de passages";
+                $pcaArr[self::EXPORT_PCA_NB_PASSAGE_EFFECTUE] = ($contratObj->getContratPassages()->first())? $contratObj->getContratPassages()->first()->getNbPassagesRealisesOuAnnule(true) : "pas de passages";
                 $pcaArr[self::EXPORT_PCA_RATIO_PASSAGE] = sprintf("%01.02f",($calculPca['ratioActivite'] * 100))."%";
 
                 $pcaArr[self::EXPORT_PCA_PCA_VALEUR] = sprintf("%01.02f",$calculPca['pca']);
@@ -498,36 +531,54 @@ class ContratManager implements MouvementManagerInterface {
       krsort($contratsReconduits);
       return $contratsReconduits;
     }
-    
 
 
-    public function getStatsForCommerciauxForCsv($dateDebut = null, $dateFin = null, $commercial = null){
+
+    public function getStatsForCommerciauxForCsv($dateDebut = null, $dateFin = null, $commercial = null, $statut = null){
     	if(!$dateDebut){
     		$dateDebut = new \DateTime();
     		$dateFin = new \DateTime();
     		$dateFin->modify("+1month");
     	}
-    
-    	$contrats = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
+
+    	$contrats = $this->getRepository()->exportAccepteOrResilieByDates($dateDebut,$dateFin);
     	$csv = array();
     	$cpt = 0;
-    	$csv["AAAaaa_0_0000000000"] = array("Commercial","Client","Contacts", "Num. contrat", "Type contrat","Statut contrat","Montant HT","Facturé HT", "Pourcent. facturé");
+    	$csv["AAAaaa_0_0000000000"] = array("Commercial","Client","Contacts", "Com.", "Num.", "Type", "Presta.", "Statut","Montant HT", "Facturé HT", "% Facturé");
     	foreach ($contrats as $contrat) {
     		if($contrat->getCommercial()){
-    			$commercialFacture = $contrat->getCommercial();
-    			if($commercial && ($commercial != $commercialFacture->getId())) {
+    			$commercialContrat = $contrat->getCommercial();
+    			if($commercial && ($commercial != $commercialContrat->getId())) {
     				continue;
     			}
-    			$identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialFacture->getId())->getIdentite();
+
+    			$identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialContrat->getId())->getIdentite();
     			$arr_ligne = array();
-    			$key = $identite."_".$cpt."_".$contrat->getNumeroArchive();
+                $resiliation = 0;
+                $key = $identite."_0_".$contrat->getDateAcceptation()->format('Ymd');
+                if($contrat->getDateResiliation() && ($contrat->getDateResiliation()->format('Ymd') >= $dateDebut->format('Ymd') && $contrat->getDateResiliation()->format('Ymd') <= $dateFin->format('Ymd'))){
+                    $resiliation = 1;
+                    $key = $identite."_1_".$contrat->getDateResiliation()->format('Ymd');
+                }
     			$keyTotal = $identite."_9_9999999999_TOTAL";
     			$arr_ligne[] = $identite;
     			$arr_ligne[] = $contrat->getSociete()->getRaisonSociale();
     			$arr_ligne[] = str_replace(' / ', "\n", $contrat->getSociete()->getComptesLibelle(true));
+    			$arr_ligne[] = $contrat->getCommentaire();
     			$arr_ligne[] = $contrat->getNumeroArchive();
     			$arr_ligne[] = $contrat->getTypeContratLibelle();
-    			$arr_ligne[] = $contrat->getStatutLibelle();
+    			$arr_ligne[] = implode(', ', $contrat->getUniquePrestations());
+                $changementStatutStr = "";
+                if($contrat->getDateAcceptation()){
+                    $changementStatutStr.=" Accepté le ".$contrat->getDateAcceptation()->format('d/m/Y')."\n";
+                }
+                if($contrat->getDateResiliation()){
+                    $resiliationDate = $contrat->getDateResiliation();
+                    if(($resiliationDate->format('Ymd') >= $dateDebut->format('Ymd')) && ($resiliationDate->format('Ymd') <= $dateFin->format('Ymd'))){
+                        $changementStatutStr.=" Résilié le ".$resiliationDate->format('d/m/Y');
+                    }
+                }
+    			$arr_ligne[] = $changementStatutStr;
     			$arr_ligne[] = number_format($contrat->getPrixHT(), 2, ',', '');
     			$arr_ligne[] = number_format($contrat->getPrixFactures(), 2, ',', '');
     			$arr_ligne[] = ($contrat->getPrixHT() > 0)? round((100 * $contrat->getPrixFactures() / $contrat->getPrixHT())) : 0;
@@ -538,9 +589,11 @@ class ContratManager implements MouvementManagerInterface {
     			$csv[$keyTotal][3] = "";
     			$csv[$keyTotal][4] = "";
     			$csv[$keyTotal][5] = "";
-    			$csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
-    			$csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
-    			$csv[$keyTotal][8] = ($csv[$keyTotal][6] > 0)? round((100 * str_replace(',', '.', $csv[$keyTotal][7]) / str_replace(',', '.', $csv[$keyTotal][6]))) : 0;
+    			$csv[$keyTotal][6] = "";
+    			$csv[$keyTotal][7] = "";
+    			$csv[$keyTotal][8] = (isset($csv[$keyTotal][8]))? number_format(str_replace(',', '.', $csv[$keyTotal][8]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
+    			$csv[$keyTotal][9] = (isset($csv[$keyTotal][9]))? number_format(str_replace(',', '.', $csv[$keyTotal][9]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
+    			$csv[$keyTotal][10] = ($csv[$keyTotal][8] > 0)? round((100 * str_replace(',', '.', $csv[$keyTotal][9]) / str_replace(',', '.', $csv[$keyTotal][8]))) : 0;
     		}else{
     			$arr_ligne = array();
     			$key = "zZ_".$cpt."_". $contrat->getNumeroArchive();
@@ -564,9 +617,11 @@ class ContratManager implements MouvementManagerInterface {
     			$csv[$keyTotal][3] = "";
     			$csv[$keyTotal][4] = "";
     			$csv[$keyTotal][5] = "";
-    			$csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
-    			$csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
-    			$csv[$keyTotal][8] = ($csv[$keyTotal][6] > 0)? round((100 * str_replace(',', '.', $csv[$keyTotal][7]) / str_replace(',', '.', $csv[$keyTotal][6]))) : 0;
+    			$csv[$keyTotal][6] = "";
+    			$csv[$keyTotal][7] = "";
+    			$csv[$keyTotal][8] = (isset($csv[$keyTotal][8]))? number_format(str_replace(',', '.', $csv[$keyTotal][8]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
+    			$csv[$keyTotal][9] = (isset($csv[$keyTotal][9]))? number_format(str_replace(',', '.', $csv[$keyTotal][9]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
+    			$csv[$keyTotal][10] = ($csv[$keyTotal][8] > 0)? round((100 * str_replace(',', '.', $csv[$keyTotal][9]) / str_replace(',', '.', $csv[$keyTotal][8]))) : 0;
     		}
     		$csv['zzzZZZ_TOTAL'][0] = "TOTAL";
     		$csv['zzzZZZ_TOTAL'][1] = "";
@@ -574,25 +629,27 @@ class ContratManager implements MouvementManagerInterface {
     		$csv['zzzZZZ_TOTAL'][3] = "";
     		$csv['zzzZZZ_TOTAL'][4] = "";
     		$csv['zzzZZZ_TOTAL'][5] = "";
-    		$csv['zzzZZZ_TOTAL'][6] = (isset($csv['zzzZZZ_TOTAL'][6]))? number_format(str_replace(',', '.', $csv['zzzZZZ_TOTAL'][6]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
-    		$csv['zzzZZZ_TOTAL'][7] = (isset($csv['zzzZZZ_TOTAL'][7]))? number_format(str_replace(',', '.', $csv['zzzZZZ_TOTAL'][7]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
-    		$csv['zzzZZZ_TOTAL'][8] = ($csv['zzzZZZ_TOTAL'][6] > 0)? round((100 * str_replace(',', '.', $csv['zzzZZZ_TOTAL'][7]) / str_replace(',', '.', $csv['zzzZZZ_TOTAL'][6]))) : 0;
+    		$csv['zzzZZZ_TOTAL'][6] = "";
+    		$csv['zzzZZZ_TOTAL'][7] = "";
+    		$csv['zzzZZZ_TOTAL'][8] = (isset($csv['zzzZZZ_TOTAL'][8]))? number_format(str_replace(',', '.', $csv['zzzZZZ_TOTAL'][8]) + $contrat->getPrixHT(), 2, ',', '') : number_format($contrat->getPrixHT(), 2, ',', '');
+    		$csv['zzzZZZ_TOTAL'][9] = (isset($csv['zzzZZZ_TOTAL'][9]))? number_format(str_replace(',', '.', $csv['zzzZZZ_TOTAL'][9]) + $contrat->getPrixFactures(), 2, ',', '') : number_format($contrat->getPrixFactures(), 2, ',', '');
+    		$csv['zzzZZZ_TOTAL'][10] = ($csv['zzzZZZ_TOTAL'][8] > 0)? round((100 * str_replace(',', '.', $csv['zzzZZZ_TOTAL'][9]) / str_replace(',', '.', $csv['zzzZZZ_TOTAL'][8]))) : 0;
     		$cpt++;
     	}
     	ksort($csv);
     	return $csv;
-    
+
     }
-    
 
 
+/*
     public function getStatsForRentabiliteForCsv($dateDebut = null, $dateFin = null, $client = null){
     	if(!$dateDebut){
     		$dateDebut = new \DateTime();
     		$dateFin = new \DateTime();
     		$dateFin->modify("+1month");
     	}
-    
+
     	$contrats = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
     	$csv = array();
     	$cpt = 0;
@@ -644,6 +701,6 @@ class ContratManager implements MouvementManagerInterface {
     	}
     	ksort($csv);
     	return $csv;
-    }
+    }*/
 
 }

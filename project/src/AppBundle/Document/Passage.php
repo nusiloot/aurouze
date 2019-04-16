@@ -28,7 +28,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
@@ -43,37 +43,37 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $produits;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $societeIdentifiant;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $datePrevision;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateDebut;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateFin;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateRealise;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateModification;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $etablissementIdentifiant;
 
@@ -88,17 +88,17 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $etablissementInfos;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $libelle;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commentaire;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
@@ -108,7 +108,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $techniciens;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $statut;
 
@@ -118,37 +118,37 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $contrat;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroArchive;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroContratArchive;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $mouvement_declenchable;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $mouvement_declenche;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $imprime;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $typePassage;
 
@@ -158,32 +158,32 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $rendezVous;
 
     /**
-     *  @MongoDB\Collection
+     *  @MongoDB\Field(type="collection")
      */
     protected $nettoyages;
 
     /**
-     *  @MongoDB\Collection
+     *  @MongoDB\Field(type="collection")
      */
     protected $applications;
 
     /**
-     *  @MongoDB\Date
+     *  @MongoDB\Field(type="date")
      */
     protected $duree;
 
     /**
-     *  @MongoDB\Date
+     *  @MongoDB\Field(type="date")
      */
     protected $dureePrecedente;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $datePrecedente;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroOrdre;
 
@@ -193,19 +193,44 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $niveauInfestation;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $emailTransmission;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nomTransmission;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $signatureBase64;
+
+    /**
+     * @MongoDB\Field(type="string")
+     */
+    protected $commentaireInterne;
+
+    /**
+     * @MongoDB\Field(type="string")
+     */
+    protected $audit;
+
+    /**
+     * @MongoDB\Field(type="int")
+     */
+    protected $multiTechnicien;
+
+    /**
+     * @MongoDB\Field(type="bool")
+     */
+    protected $saisieTechnicien;
+
+    /**
+     * @MongoDB\Field(type="bool")
+     */
+    protected $pdfNonEnvoye;
 
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
@@ -270,6 +295,19 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $techniciens;
     }
 
+    public function getTechniciensWithout($technicien) {
+        $techniciens = array();
+
+        foreach ($this->getTechniciens() as $t) {
+            if($t->getId() == $technicien->getId()) {
+                continue;
+            }
+            $techniciens[$t->getId()] = $t->getIdentite();
+        }
+
+        return $techniciens;
+    }
+
     public function getTechniciensIds() {
         $techniciens = array();
 
@@ -318,7 +356,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     public function deplanifier() {
-
         $this->setDateDebut($this->getDatePrevision());
         $this->setDateFin(null);
         if($this->isRealise()) {
@@ -621,6 +658,14 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function getDatePrevision() {
         return $this->datePrevision;
+    }
+
+    public function getDateForPlanif() {
+    	$today = new \DateTime();
+    	if ($this->datePrevision && $this->datePrevision->format('Ymd') < $today->format('Ymd')) {
+    		return $today;
+    	}
+    	return $this->datePrevision;
     }
 
     /**
@@ -1135,7 +1180,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
        return $this->duree->format('H').'h'.$this->duree->format('i');
     }
-    
+
     public function getDureeMinute() {
        if($duree = $this->getDuree()) {
        	if (strpos($duree, 'h') !== false) {
@@ -1370,8 +1415,30 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->signatureBase64;
     }
 
+    /**
+     * Set audit
+     *
+     * @param string $audit
+     * @return self
+     */
+    public function setAudit($audit)
+    {
+        $this->audit = $audit;
+        return $this;
+    }
+
+    /**
+     * Get audit
+     *
+     * @return string $audit
+     */
+    public function getAudit()
+    {
+        return $this->audit;
+    }
+
     public function isTransmis(){
-      return boolval($this->signatureBase64);
+      return boolval($this->signatureBase64) || boolval($this->emailTransmission);
     }
 
     /**
@@ -1394,5 +1461,141 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getDateModification()
     {
         return $this->dateModification;
+    }
+
+    /**
+     * Set multiTechnicien
+     *
+     * @param int $multiTechnicien
+     * @return self
+     */
+    public function setMultiTechnicien($multiTechnicien) {
+        $this->multiTechnicien = $multiTechnicien;
+        return $this;
+    }
+
+    /**
+     * Get multiTechnicien
+     *
+     * @return int $multiTechnicien
+     */
+    public function getMultiTechnicien() {
+        return $this->multiTechnicien;
+    }
+
+    public static function triPerHourPrecedente($p_0, $p_1) {
+        if(!$p_0->getDatePrecedente() && !$p_1->getDatePrecedente()){
+          return 0;
+        }
+        if(!$p_0->getDatePrecedente()){
+          return -1;
+        }
+        if(!$p_1->getDatePrecedente()){
+          return +1;
+        }
+        if ($p_0->getDatePrecedente()->format('Hi') == $p_1->getDatePrecedente()->format('Hi')) {
+                return 0;
+        }
+        return ($p_0->getDatePrecedente()->format('Hi') > $p_1->getDatePrecedente()->format('Hi')) ? +1 : -1;
+    }
+
+    /**
+     * Set saisieTechnicien
+     *
+     * @param boolean $saisieTechnicien
+     * @return self
+     */
+    public function setSaisieTechnicien($saisieTechnicien)
+    {
+        $this->saisieTechnicien = $saisieTechnicien;
+        return $this;
+    }
+
+    /**
+     * Get saisieTechnicien
+     *
+     * @return boolean $saisieTechnicien
+     */
+    public function getSaisieTechnicien()
+    {
+        return $this->saisieTechnicien;
+    }
+
+    public function isSaisieTechnicien(){
+      return $this->saisieTechnicien;
+    }
+
+    public function isValideTechnicien()
+    {
+        return $this->getSignatureBase64() || $this->getNomTransmission() || $this->getEmailTransmission();
+    }
+
+    /**
+     * Set pdfNonEnvoye
+     *
+     * @param boolean $pdfNonEnvoye
+     * @return self
+     */
+    public function setPdfNonEnvoye($pdfNonEnvoye)
+    {
+        $this->pdfNonEnvoye = $pdfNonEnvoye;
+        return $this;
+    }
+
+    /**
+     * Get pdfNonEnvoye
+     *
+     * @return boolean $pdfNonEnvoye
+     */
+    public function getPdfNonEnvoye()
+    {
+        return $this->pdfNonEnvoye;
+    }
+
+    public function isPdfNonEnvoye()
+    {
+        return $this->pdfNonEnvoye;
+    }
+
+
+    /**
+     * Set commentaireInterne
+     *
+     * @param string $commentaireInterne
+     * @return self
+     */
+    public function setCommentaireInterne($commentaireInterne)
+    {
+        $this->commentaireInterne = $commentaireInterne;
+        return $this;
+    }
+
+    /**
+     * Get commentaireInterne
+     *
+     * @return string $commentaireInterne
+     */
+    public function getCommentaireInterne()
+    {
+        return $this->commentaireInterne;
+    }
+
+    public function getMouvementFacture(){
+      foreach ($this->getContrat()->getMouvements() as $mouvement) {
+        if($mouvement->getOrigineDocumentGeneration() && ($mouvement->getOrigineDocumentGeneration()->getId() == $this->getId())){
+          return $mouvement;
+        }
+      }
+      return null;
+    }
+
+    public function isMouvementAlreadyFacture(){
+      $mvtPassage = $this->getMouvementFacture();
+      if(!$mvtPassage) { return false; }
+      return $mvtPassage->getFacture();
+    }
+
+    public function getWordingsArrFacturant(){
+      return ($this->getMouvementDeclenchable())? array("facturant") : array("nonfacturant");
     }
 }

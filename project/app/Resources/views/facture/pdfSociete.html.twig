@@ -2,10 +2,13 @@
 
 {% block body %}
 {% set facture = null %}
-{% for factureObj in facturesArray %}
-  {% if factureObj.facture %}
-    {% set facture = factureObj.facture %}
-  {% endif %}
+
+{% for facturesPages in facturesForPdf %}
+  {% for facturesObj in facturesPages %}
+    {% if facturesObj.facture %}
+      {% set facture = facturesObj.facture %}
+    {% endif %}
+  {% endfor %}
 {% endfor %}
 <div class="row">
     <div class="col-xs-6">
@@ -35,6 +38,8 @@
 <br/>
 <h4>Export des Factures de la société {{ societe.raisonSociale }} du {{ dateDebut | date('d/m/Y') }} au {{ dateFin | date('d/m/Y') }}</h4>
 
+
+{% for facturePages in facturesForPdf %}
 <table class="table table-bordered table-condensed" style="border-bottom: 0 !important; border-right: 0 !important;  border-left: 0 !important;">
     <thead>
         <tr>
@@ -48,7 +53,7 @@
         </tr>
     </thead>
     <tbody>
-    {% for factureRow in facturesArray %}
+    {% for factureRow in facturePages %}
         {% if factureRow.facture %}
          	<tr style="page-break-inside: avoid;" class="active">
             {% for field in factureRow.row %}
@@ -61,46 +66,63 @@
         {% endif %}
       </tbody>
     {% endfor %}
-    {% for factureRow in facturesArray %}
-      {% if loop.last %}
-        <tfoot class="lead">
-            <tr rowspan="3" >
-                <td colspan="3" style="height: 15px; border: 0 !important;"></td>
-                <td colspan="4" style="height: 15px; border: 0 !important;"></td>
-            </tr>
-            <tr >
-                <td colspan="3" style="border: 0 !important; padding: 0;">
-                <p class="well" style="padding: 5px; margin-bottom: 0; line-height: 10px; width: 92%;">
-                <small>
-                  <small style="font-size: 60%;">
-                La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l'obligation de vous indiquer :<br />
-                Application du taux minimum de pénalités de retard : trois fois le taux d'intérêt légal en vigueur (art. L. 441-6 du C.Cce)<br />
-                Indemnité forfaitaire pour frais de recouvrement : 40 euros (art. D. 441-5 du C.Cce)<br />
-                Sanction en cas de non respect des modalités ci-dessus :<br />
-                 - amende de 75 000 euros pour les personnes physiques / 375 000 euros pour les personnes morales.
-                  </small>
-                </small>
-              </p>
-                </td>
-                <td style="border: 0 !important; padding: 0;" class="text-right">Total</td>
-                <td style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.4 }} €</td>
-                <td style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.5 }} €</td>
+    {% if loop.last %}
+    <tfoot class="lead">
+    {% for factureRow in facturePages %}
+      {% if loop.last or loop.index == loop.length - 1 %}
+            <tr>
+                <td style="border: 0 !important; padding: 0;"></td>
+                <td style="border: 0 !important; padding: 0;"></td>
+                {% if not loop.last %}
+                  <td style="border: 0 !important; padding: 0;"></td>
+                {% endif %}
+
+                <td {% if loop.last %} colspan="2"  {% endif %} style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.3 }}</td>
+                <td style="border: 0 !important; padding: 0;" class="text-right">{{ factureRow.row.4|number_format(2, ',', ' ') }} €</td>
+                <td style="border: 0 !important; padding: 0;" class="text-right">{% if factureRow.row.5 %}{{ factureRow.row.5|number_format(2, ',', ' ') }} €{% endif %}</td>
                 <td style="border: 0 !important; padding: 0;"></td>
             </tr>
-            <tr></
-        </tfoot>
       {% endif %}
    {% endfor %}
+    </tfoot>
+{% endif %}
  </table>
+ {% if not loop.last %}
+     <div style="page-break-after: always;"></div>
+ {% endif %}
+  {% endfor %}
 
- <small>
- <p class="text-center" style="line-height: 13px;">
-     <small>
-     {{ parameters.emetteur.infos }}<br />
-     {{ parameters.emetteur.banque }}<br />
-     {{ parameters.emetteur.virement }}<br />
-     Agrément du Ministère de l'Agriculture A. I. F. 00131<br />
-     </small>
- </p>
- </small>
+<table class="table table-bordered table-condensed" style="border: 0 !important;">
+    <tbody class="lead">
+      <tr style="page-break-inside: avoid;" >
+        <td style="border: 0 !important; padding: 0;">
+         <p class="well" style="padding: 5px; margin-bottom: 0; line-height: 10px; width: 92%;">
+         <small>
+           <small style="font-size: 60%;">
+         La loi n°2012-387 du 22 mars 2012 (art. L. 441-3 du C.Cce) nous fait l'obligation de vous indiquer :<br />
+         Application du taux minimum de pénalités de retard : trois fois le taux d'intérêt légal en vigueur (art. L. 441-6 du C.Cce)<br />
+         Indemnité forfaitaire pour frais de recouvrement : 40 euros (art. D. 441-5 du C.Cce)<br />
+         Sanction en cas de non respect des modalités ci-dessus :<br />
+          - amende de 75 000 euros pour les personnes physiques / 375 000 euros pour les personnes morales.
+           </small>
+         </small>
+         </p>
+       </td>
+     </tr>
+     <tr style="page-break-inside: avoid;" >
+       <td style="border: 0 !important; padding: 0;">
+         <small>
+         <p class="text-center" style="line-height: 13px;">
+             <small>
+             {{ parameters.emetteur.infos }}<br />
+             {{ parameters.emetteur.banque }}<br />
+             {{ parameters.emetteur.virement }}<br />
+             Agrément du Ministère de l'Agriculture A. I. F. 00131<br />
+             </small>
+         </p>
+         </small>
+       </td>
+     </tr>
+   </tbody>
+ </table>
 {% endblock %}

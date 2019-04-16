@@ -9,37 +9,37 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 class FactureLigne {
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $libelle;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixUnitaire;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $tauxTaxe;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $quantite;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantHT;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantTaxe;
 
@@ -49,12 +49,12 @@ class FactureLigne {
     protected $origineDocument;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $origineMouvement;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $referenceClient;
 
@@ -64,6 +64,15 @@ class FactureLigne {
     public function update() {
         $this->montantHT = round($this->getQuantite() * $this->getPrixUnitaire(), 2);
         $this->montantTaxe = round($this->getMontantHT() * $this->getTauxTaxe(), 2);
+    }
+
+    public function updateMouvementContrat() {
+        if(!$this->isOrigineContrat() || !$this->getMouvement()) {
+            return;
+        }
+
+        $this->getMouvement()->setPrixUnitaire($this->getPrixUnitaire());
+        $this->getMouvement()->setTauxTaxe($this->getTauxTaxe());
     }
 
     public function isOrigineContrat() {
@@ -105,7 +114,8 @@ class FactureLigne {
 				return $mvt;
 			}
 		}
-        throw new \Exception("Mouvement non trouvé");
+
+        return null;
     }
 
     /**

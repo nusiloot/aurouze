@@ -19,12 +19,12 @@ class Paiements {
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateCreation;
 
@@ -34,14 +34,25 @@ class Paiements {
     protected $paiement;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroRemise;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $imprime;
+
+    /**
+     * @MongoDB\Field(type="bool")
+     */
+    protected $prelevement;
+
+    /**
+     * @MongoDB\Field(type="string")
+     *
+     */
+    protected $xmlbase64;
 
     public function __construct() {
         $this->paiement = new ArrayCollection();
@@ -122,6 +133,41 @@ class Paiements {
      */
     public function getPaiement() {
         return $this->paiement;
+    }
+
+    public function getAggregatePaiements($societe = null) {
+    	$result = array();
+    	foreach ($this->getPaiement() as $paiement) {
+    		if ($societe && $paiement->getFacture()->getSociete()->getId() != $societe->getId()) {
+    			continue;
+    		}
+    		$k = ($paiement->getMoyenPaiement())? $paiement->getMoyenPaiement() : md5(microtime().rand());
+    		if (!isset($result[$k])) {
+    			$result[$k] = array();
+    			$result[$k]['items'] = array();
+    			$result[$k]['montant'] = 0;
+    			$result[$k]['factures'] = 0;
+    		}
+
+    		$result[$k]['libelle'] = ($paiement->getMoyenPaiement())? PaiementsManager::$moyens_paiement_libelles[$k] : '';
+    		$result[$k]['factures'] += 1;
+    		$result[$k]['montant'] += $paiement->getMontant();
+
+    		$key = ($paiement->getLibelle())? Transliterator::urlize($paiement->getLibelle()) : md5(microtime().rand());
+    		if (!isset($result[$k]['items'][$key])) {
+    			$result[$k]['items'][$key] = array();
+    			$result[$k]['items'][$key]['items'] = array();
+    			$result[$k]['items'][$key]['montant'] = 0;
+    			$result[$k]['items'][$key]['factures'] = 0;
+    		}
+
+    		$result[$k]['items'][$key]['libelle'] = $paiement->getLibelle();
+    		$result[$k]['items'][$key]['montant'] += $paiement->getMontant();
+    		$result[$k]['items'][$key]['factures'] += 1;
+
+    		$result[$k]['items'][$key]['items'][] = $paiement;
+    	}
+    	return $result;
     }
 
     /**
@@ -235,7 +281,9 @@ class Paiements {
     public function getFacturesArray() {
         $factureArray = array();
         foreach ($this->getPaiement() as $paiement) {
-            $factureArray[$paiement->getFacture()->getId()] = $paiement->getFacture();
+        	if ($p = $paiement->getFacture()) {
+        		$factureArray[$p->getId()] = $p;
+        	}
         }
         return $factureArray;
     }
@@ -261,5 +309,49 @@ class Paiements {
     public function getNumeroRemise()
     {
         return $this->numeroRemise;
+    }
+
+    /**
+     * Set prelevement
+     *
+     * @param boolean $prelevement
+     * @return $this
+     */
+    public function setPrelevement($prelevement)
+    {
+        $this->prelevement = $prelevement;
+        return $this;
+    }
+
+    /**
+     * Get prelevement
+     *
+     * @return boolean $prelevement
+     */
+    public function getPrelevement()
+    {
+        return $this->prelevement;
+    }
+
+    /**
+     * Set xmlbase64
+     *
+     * @param string $xmlbase64
+     * @return $this
+     */
+    public function setXmlbase64($xmlbase64)
+    {
+        $this->xmlbase64 = $xmlbase64;
+        return $this;
+    }
+
+    /**
+     * Get xmlbase64
+     *
+     * @return string $xmlbase64
+     */
+    public function getXmlbase64()
+    {
+        return $this->xmlbase64;
     }
 }

@@ -39,52 +39,52 @@ class Facture implements DocumentSocieteInterface {
     protected $destinataire;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateEmission;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateFacturation;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateDevis;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $datePaiement;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateLimitePaiement;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantHT;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantTTC;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantTaxe;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantPaye;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $montantAPayer;
 
@@ -94,27 +94,27 @@ class Facture implements DocumentSocieteInterface {
     protected $lignes;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroFacture;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroDevis;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $avoir;
 
@@ -129,24 +129,44 @@ class Facture implements DocumentSocieteInterface {
     protected $paiements;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $frequencePaiement;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $cloture;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $nbRelance;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\EmbedMany(targetDocument="Relance")
+     */
+    protected $relances;
+
+    /**
+     * @MongoDB\Field(type="string")
      */
     protected $relanceCommentaire;
+
+    /**
+     * @MongoDB\Field(type="bool")
+     */
+    protected $avoirPartielRemboursementCheque;
+
+    /**
+     * @MongoDB\EmbedOne(targetDocument="Sepa")
+     */
+    protected $sepa;
+
+    /**
+     * @MongoDB\Field(type="date")
+     */
+    protected $inPrelevement;
 
     public function __construct() {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
@@ -154,11 +174,12 @@ class Facture implements DocumentSocieteInterface {
         $this->destinataire = new FactureSoussigne();
         $this->paiements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cloture = false;
+        $this->avoirPartielRemboursementCheque = false;
     }
 
     /** @MongoDB\PreUpdate */
     public function preUpdate() {
-        if ($this->getMontantTTC() == $this->getMontantPaye()) {
+        if (round($this->getMontantTTC() - $this->getMontantPaye(), 2) <= 0) {
             $this->cloture = true;
         } else {
             $this->cloture = false;
@@ -182,6 +203,14 @@ class Facture implements DocumentSocieteInterface {
         $this->updateCalcul();
         $this->storeDestinataire();
         $this->setDateLimitePaiement($this->calculDateLimitePaiement());
+        $this->updateMouvementsContrat();
+        $this->updateMontantPaye();
+    }
+
+    public function updateMouvementsContrat() {
+        foreach ($this->getLignes() as $ligne) {
+            $ligne->updateMouvementContrat();
+        }
     }
 
     public function storeDestinataire() {
@@ -387,10 +416,14 @@ class Facture implements DocumentSocieteInterface {
      * @param AppBundle\Document\Societe $societe
      * @return self
      */
-    public function setSociete(\AppBundle\Document\Societe $societe) {
+    public function setSociete(\AppBundle\Document\Societe $societe, $store = true) {
         $this->societe = $societe;
-        $this->storeDestinataire();
-
+        if($store) {
+            $this->storeDestinataire();
+        }
+        if($this->societe->getSepa()){
+            $this->setSepa($this->societe->getSepa());
+        }
         return $this;
     }
 
@@ -567,6 +600,30 @@ class Facture implements DocumentSocieteInterface {
     }
 
     /**
+     * Get sepa
+     *
+     * @return AppBundle\Document\Sepa $sepa
+     */
+    public function getSepa() {
+        $sepa = $this->sepa;
+        if(!$sepa){
+            $sepa = $this->getSociete()->getSepa();
+        }
+        return $sepa;
+    }
+
+    /**
+     * Set sepa
+     *
+     * @param AppBundle\Document\Sepa $sepa
+     * @return self
+     */
+    public function setSepa(\AppBundle\Document\Sepa $sepa) {
+        $this->sepa = $sepa;
+        return $this;
+    }
+
+    /**
      * Get avoir
      *
      * @return string $avoir
@@ -622,6 +679,13 @@ class Facture implements DocumentSocieteInterface {
         $date = ($date) ? $date : clone $this->getDateEmission();
         $date = ($date) ? $date : new \DateTime();
         switch ($frequence) {
+            case ContratManager::FREQUENCE_PRELEVEMENT :
+                $date->modify('+1 month');
+                if($date->format('d') > 20){
+                    $date->modify('+1 month');
+                }
+                $date->modify('first day of')->modify('+19 day');
+                break;
             case ContratManager::FREQUENCE_30J :
                 $date->modify('+30 day');
                 break;
@@ -715,6 +779,16 @@ class Facture implements DocumentSocieteInterface {
         return "N°" . $this->getNumeroFacture() . " " . $this->getDestinataire()->getNom() . " (" . $this->getMontantAPayer() . "€ / " . $this->getMontantTTC() . "€ TTC)";
     }
 
+    public function __clone() {
+        $this->removeId();
+
+        $lignes = $this->lignes;
+        $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
+        foreach($lignes as $ligne) {
+            $this->lignes[] = clone $ligne;
+        }
+    }
+
     /**
      * Set montantPaye
      *
@@ -748,12 +822,14 @@ class Facture implements DocumentSocieteInterface {
         $this->setMontantPaye(0.0);
         foreach ($this->getPaiements() as $paiements) {
             foreach ($paiements->getPaiement() as $paiement) {
-                if ($paiement->getFacture()->getId() == $this->getId()) {
+            	if ($p = $paiement->getFacture()) {
+                if ($p->getId() == $this->getId()) {
                     if ($output) {
                         $output->writeln(sprintf("<comment>Ajout d'un paiement de %s euros HT pour facture d'id %s </comment>", $paiement->getMontant(), $this->getId()));
                     }
                     $this->ajoutMontantPaye($paiement->getMontant());
                 }
+            	}
             }
         }
     }
@@ -869,6 +945,11 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function isEnRetardPaiement() {
+        if($this->isDevis()) {
+
+            return false;
+        }
+
         if (!$this->isCloture() && ($this->getDateLimitePaiement()->format('Ymd') < (new \DateTime())->format('Ymd'))) {
             return true;
         }
@@ -908,7 +989,6 @@ class Facture implements DocumentSocieteInterface {
 
     public function genererAvoir(){
         $avoir = clone $this;
-        $avoir->removeId();
         $avoir->removeNumeroFacture();
         $avoir->setCloture(true);
         $avoir->setOrigineAvoir($this);
@@ -1024,8 +1104,91 @@ class Facture implements DocumentSocieteInterface {
      *
      * @return string $relanceCommentaire
      */
-    public function getRelanceCommentaire()
+      public function getRelanceCommentaire()
     {
         return $this->relanceCommentaire;
+    }
+
+    /**
+     * Set avoirPartielRemboursementCheque
+     *
+     * @param boolean $avoirPartielRemboursementCheque
+     * @return self
+     */
+    public function setAvoirPartielRemboursementCheque($avoirPartielRemboursementCheque)
+    {
+        $this->avoirPartielRemboursementCheque = $avoirPartielRemboursementCheque;
+        return $this;
+    }
+
+    /**
+     * Get avoirPartielRemboursementCheque
+     *
+     * @return boolean $avoirPartielRemboursementCheque
+     */
+    public function getAvoirPartielRemboursementCheque()
+    {
+        return $this->avoirPartielRemboursementCheque;
+    }
+
+    /**
+     * Add relance
+     *
+     * @param AppBundle\Document\Relance $relance
+     */
+    public function addRelance(\AppBundle\Document\Relance $relance)
+    {
+        $this->relances[] = $relance;
+    }
+
+    /**
+     * Remove relance
+     *
+     * @param AppBundle\Document\Relance $relance
+     */
+    public function removeRelance(\AppBundle\Document\Relance $relance)
+    {
+        $this->relances->removeElement($relance);
+    }
+
+    /**
+     * Get relances
+     *
+     * @return \Doctrine\Common\Collections\Collection $relances
+     */
+    public function getRelances()
+    {
+        return $this->relances;
+    }
+
+    public function getRelanceObjNumero($numeroRelance){
+      foreach ($this->getRelances() as $relanceObj) {
+        if($numeroRelance == $relanceObj->getNumeroRelance()){
+          return $relanceObj;
+        }
+      }
+      return null;
+    }
+
+    /**
+     * Set inPrelevement
+     *
+     * @param date $inPrelevement
+     * @return $this
+     */
+    public function setInPrelevement($inPrelevement)
+    {
+        $this->inPrelevement = $inPrelevement;
+        return $this;
+    }
+
+    /**
+     * Get inPrelevement
+     *
+     * @return date $inPrelevement
+     */
+    public function getInPrelevement()
+    {
+        return $this->inPrelevement;
     }
 }

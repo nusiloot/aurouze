@@ -18,23 +18,23 @@ class RendezVous {
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $titre;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      * @Assert\NotBlank()
      */
     protected $dateDebut;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      * @Assert\NotBlank()
      * @Assert\Expression(
      *     "this.getDateDebut() <= this.getDateFin()",
@@ -49,7 +49,7 @@ class RendezVous {
     protected $participants;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $lieu;
 
@@ -101,20 +101,27 @@ class RendezVous {
     }
 
     public function getTextColor() {
-        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime()) {
+
+       if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise()) && !$this->getPassage()->isSaisieTechnicien()) {
 
             return "#31708f";
         }
 
-        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime() && !$this->getPassage()->isSaisieTechnicien()) {
 
-            return "#8a6d3b";
+          return "#8a6d3b";
         }
 
-        if($this->getPassage() && $this->getPassage()->isRealise()) {
+        if($this->getPassage() && ($this->getPassage()->isSaisieTechnicien() && $this->getPassage()->isPdfNonEnvoye())) {
 
-            return "#3c763d";
+          return "#7D5E09";
         }
+
+        if($this->getPassage() && ($this->getPassage()->isSaisieTechnicien() && !$this->getPassage()->isPdfNonEnvoye())) {
+
+          return "#3c763d";
+        }
+
 
         if($this->getPassage() && $this->getPassage()->isAnnule()) {
 
@@ -125,19 +132,24 @@ class RendezVous {
     }
 
     public function getStatusColor() {
-        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime()) {
+
+        if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise()) && !$this->getPassage()->isSaisieTechnicien()) {
 
             return "#d9edf7";
         }
 
-        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime() && !$this->getPassage()->isSaisieTechnicien()) {
 
-            return "#fcf8e3";
+          return "#fcf8e3";
         }
 
-        if($this->getPassage() && $this->getPassage()->isRealise()) {
+        if($this->getPassage() && ($this->getPassage()->isSaisieTechnicien() && $this->getPassage()->isPdfNonEnvoye())) {
+          return "#FFD55F";
+        }
 
-            return "#dff0d8";
+        if($this->getPassage() && ($this->getPassage()->isSaisieTechnicien() && !$this->getPassage()->isPdfNonEnvoye())) {
+
+          return "#dff0d8";
         }
 
         if($this->getPassage() && $this->getPassage()->isAnnule()) {

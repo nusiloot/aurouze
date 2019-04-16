@@ -54,7 +54,7 @@
     </tbody>
 </table>
 <strong>Détail de la prestation : </strong>
-<p style="line-height: 15px;margin-top: 10px;">{{ passage.contrat.nomenclature | nl2br }}</p>
+<p style="line-height: 15px;margin-top: 10px;">{{ passage.contrat.getHtmlNomenclature() | raw | nl2br }}</p>
 
 <h5 style="margin-bottom: 10px; margin-top: 40px;"><strong>Historique des passages</strong></h5>
 <hr style="border-color: #ddd; margin-bottom: 5px; margin-top: 0px;" />

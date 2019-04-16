@@ -1,0 +1,90 @@
+{% set _menu_active = 'configuration' %}
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+        {{ form_start(form) }}
+        <ol class="breadcrumb">
+  		      <li><a href="{{ path('configuration') }}">Configuration</a></li>
+            <li><a href="{{ path('configuration_modification_produit',{'identifiant': produit.identifiant }) }}">{{ produit.nom }}</a></li>
+  	   </ol>
+
+       <br/>
+        <h3 style="margin-top: 10px;">Modification du produit</h3>
+       <br/>
+
+        <div class="panel panel-default" style="margin-bottom: 0;">
+            <div class="panel-heading">
+              <div class="row">
+              <div class="col-xs-3">
+                  Nom du produit
+              </div>
+              <div class="col-xs-3">
+                  Conditionnement
+              </div>
+              <div class="col-xs-6">
+              <div class="row">
+              <div class="col-xs-2">
+                Prix d'achat
+            </div>
+            <div class="col-xs-2">
+              Prix prestation
+            </div>
+            <div class="col-xs-2">
+              Prix de vente
+            </div>
+            <div class="col-xs-2">
+              Ordre
+            </div>
+          </div>
+            </div>
+            </div>
+          </div>
+          <div class="panel-body">
+                <div class="row form-group">
+                    <div class="col-xs-12 text-right">
+                      <div class="row form-group" id="configuration_produit">
+                          <div class="col-xs-3">
+                              {{ form_widget(form.nom) }}
+                          </div>
+                          <div class="col-xs-3">
+                              {{ form_widget(form.conditionnement) }}
+                          </div>
+                           <div class="col-xs-6">
+                                <div class="row">
+                          <div class="col-xs-2">
+                  			{{ form_errors(form.prixHt) }}
+                  				{{ form_widget(form.prixHt) }}
+                    </div>
+                        <div class="col-xs-2">
+                      {{ form_errors(form.prixPrestation) }}
+                        {{ form_widget(form.prixPrestation) }}
+                    </div>
+                      <div class="col-xs-2">
+                    {{ form_errors(form.prixVente) }}
+                      {{ form_widget(form.prixVente) }}
+                  </div>
+                  <div class="col-xs-2">
+                    {{ form_errors(form.ordre) }}
+                      {{ form_widget(form.ordre) }}
+                  </div>
+                  <div class="col-xs-2 text-right">
+                    <div class="pull-left">{{ form_row(form.actif) }}</div>
+                    <!-- <button type="button" tabindex="-1" class="btn btn-default dynamic-collection-remove"><span class="glyphicon glyphicon-remove"></span></button> -->
+                  </div>
+                  </div>
+                  </div>
+                  </div>
+                  </div>
+                </div>
+                <div class="row form-group">
+                  <div class="col-xs-12 text-right">
+                    {{ form_row(form.save) }}
+                  </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        {{ form_end(form) }}
+{% endblock %}

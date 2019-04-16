@@ -1,0 +1,57 @@
+<div class="row">
+    <div class="col-xs-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="col-xs-2">Date</th>
+                    <th class="col-xs-3">Titre</th>
+                    <th class="col-xs-4">Société/Lieu</th>
+                    <th class="col-xs-1">Document</th>
+                    <th class="col-xs-1 text-center"><span class="glyphicon glyphicon-user"></th>
+                    <th class="col-xs-1 text-center"></th>
+                </tr>
+            </thead>
+            {% for attachement in attachements %}
+            <tr>
+                <td>
+                    {{ attachement.updatedAt | localizeddate("medium", "none", null, null, "dd MMMM yyyy HH:mm") }}
+                </td>
+                <td>
+                    <a style="cursor:pointer;" href="{{ attachement.getBase64Src() }}" download="{{ attachement.getBase64Src() }}">
+                        <p><span class="glyphicon glyphicon-download-alt"></span>&nbsp;{% if attachement.titre %}{{ attachement.titre }}{% else %}{{ attachement.originalName }}{% endif %}</p>
+                    </a>
+                </td>
+                <td>
+                {% if attachement.societe %}
+                    <a href="{{ path('attachements_entite',{ 'id' : attachement.societe.id }) }}">
+            		      <strong>Société&nbsp;:&nbsp;</strong><small>{{ attachement.societe.raisonSociale }}</small>
+            		</a>
+                {% endif %}
+                {% if attachement.etablissement %}
+                    <a href="{{ path('attachements_entite',{ 'id' : attachement.etablissement.id }) }}">
+            			<strong>Lieu&nbsp;:&nbsp;</strong><small>{{ attachement.etablissement.adresse.intitule }}</small>
+                    </a>
+                {% endif %}
+                </td>
+                <td>
+                    {{ include('attachement/attachementItem.html.twig', {'attachement' : attachement}) }}
+                </td>
+                <td class="text-center">
+                    {% if attachement.visibleTechnicien %}<span class="glyphicon glyphicon-ok"></span>{% endif %}
+                </td>
+                <td class="text-center">
+                    <a href="{{ path('attachement_delete', {'id': attachement.id }) }}" onclick="return confirm('Êtes vous sûr de vouloir supprimer ce document?')" class="attachement-remove btn btn-default btn-xs" style="border-radius: 10%; z-index: 10; cursor:pointer;" ><span class="glyphicon glyphicon-remove"></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+      </div>
+  </div>
+{% for attachement in attachements %}
+  <!-- The Modal -->
+  <div id="modal-viewer-{{attachement.id }}" class="modalViewer">
+    <span class="modalViewerClose">&times;</span>
+    <img class="modalViewerContent" id="img" />
+  </div>
+{% endfor %}

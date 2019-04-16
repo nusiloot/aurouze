@@ -45,6 +45,11 @@
                         {{ form_row(form.tags) }}
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-xs-10">
+                        {{ form_row(form.frequencePaiement) }}
+                    </div>
+                </div>
             </div>
         </div>
         <div class="panel panel-default">
@@ -61,6 +66,39 @@
                     </div>
                     <div class="col-xs-7">
                         {{ form_row(form.adresse.commune) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Sepa</strong><div class="pull-right">{{ form_row(form.sepa.actif) }}</div></div>
+            <div class="panel-body col-xs-offset-2">
+                <div class="row">
+                    <div class="col-xs-10">
+                        {{ form_row(form.sepa.nomBancaire) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        {{ form_row(form.sepa.bic) }}
+                    </div>
+                    <div class="col-xs-6">
+                        {{ form_row(form.sepa.iban) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <div class="form-group">
+	    	                {{ form_errors(form.sepa.date) }}
+	                        {{ form_label(form.sepa.date, "Date SEPA :", {'label_attr': {'class': 'control-label'}}) }}
+	        	            <div class="input-group">
+	        	                {{ form_widget(form.sepa.date) }}
+	        	            	<div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+	        	        	</div>
+	    	            </div>
+                    </div>
+                    <div class="col-xs-6">
+                        {{ form_row(form.sepa.rum,{attr: { "readonly" : "readonly"}}) }}
                     </div>
                 </div>
             </div>

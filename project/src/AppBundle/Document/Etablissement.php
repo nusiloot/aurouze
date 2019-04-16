@@ -10,6 +10,7 @@ use AppBundle\Model\InterlocuteurInterface;
 use AppBundle\Document\Adresse;
 use AppBundle\Manager\EtablissementManager;
 use AppBundle\Document\Contrat;
+use AppBundle\Document\Attachement;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\EtablissementRepository") @HasLifecycleCallbacks
@@ -24,7 +25,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $id;
 
     /**
-     * @MongoDB\string
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
@@ -34,7 +35,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $societe;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nom;
 
@@ -49,12 +50,12 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $contactCoordonnee;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $type;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
@@ -69,19 +70,29 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     protected $passages;
 
     /**
-     * @MongoDB\Increment
+     * @MongoDB\Field(type="increment")
      */
     protected $numeroPassageIncrement;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commentaire;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="string")
+     */
+    protected $commentairePlanification;
+
+    /**
+     * @MongoDB\Field(type="bool")
      */
     protected $actif;
+
+    /**
+     *  @MongoDB\ReferenceMany(targetDocument="Attachement", mappedBy="etablissement")
+     */
+    protected $attachements;
 
     public function __construct() {
         $this->adresse = new Adresse();
@@ -105,6 +116,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     }
 
     public function updatePassages() {
+        if(count($this->getPassages()))
         foreach($this->getPassages() as $passage) {
             if($passage->isRealise() || $passage->isAnnule()) {
                 continue;
@@ -506,5 +518,62 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     public function getRegion() {
 
         return EtablissementManager::getRegion($this->getAdresse()->getCodePostal());
+    }
+
+    /**
+     * Set commentairePlanification
+     *
+     * @param string $commentairePlanification
+     * @return self
+     */
+    public function setCommentairePlanification($commentairePlanification)
+    {
+        $this->commentairePlanification = $commentairePlanification;
+        return $this;
+    }
+
+    public function getAdresseComplete()
+    {
+    	return $this->getAdresse()->getLibelleComplet();
+    }
+
+    /**
+     * Get commentairePlanification
+     *
+     * @return string $commentairePlanification
+     */
+    public function getCommentairePlanification()
+    {
+        return $this->commentairePlanification;
+    }
+
+    /**
+     * Add attachement
+     *
+     * @param AppBundle\Document\Attachement $attachement
+     */
+    public function addAttachement(\AppBundle\Document\Attachement $attachement)
+    {
+        $this->attachements[] = $attachement;
+    }
+
+    /**
+     * Remove attachement
+     *
+     * @param AppBundle\Document\Attachement $attachement
+     */
+    public function removeAttachement(\AppBundle\Document\Attachement $attachement)
+    {
+        $this->attachements->removeElement($attachement);
+    }
+
+    /**
+     * Get attachements
+     *
+     * @return \Doctrine\Common\Collections\Collection $attachements
+     */
+    public function getAttachements()
+    {
+        return $this->attachements;
     }
 }

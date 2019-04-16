@@ -12,6 +12,7 @@
         $.initQueryHash();
         $.initDynamicCollection();
         $.initDatePicker();
+        $.initPeriodePicker();
         $.initTimePicker();
         $.initFormEventAjax();
         $.initSwitcher();
@@ -22,18 +23,62 @@
         $.initLinkInPanels();
         $.initRdvLink();
         $.initSearchActif();
-        $.initListingPassage();
         $.initLinkCalendar();
         $.initMap();
         $.initTypeheadFacture();
         $.initTypeheadSearchable();
+        $.initTypeheadSearchableCheckbox();
         $.initSomme();
         $.initReconduction();
         $.initRelance();
         $.initButtonLoading();
         $.initPopupRelancePdf();
+        $.initModificationContrat();
         $.initAcceptationContrat();
+        $.initAllFactureSearch();
+        $.initTrCollapse();
+        $.initTourneeDatepicker();
+        $.initAttachements();
+        $.initMoreInfo();
+        $.initTransfertContrat();
     });
+
+    $.initTrCollapse = function() {
+    	$('.tr-collapse').click(function(){
+    		if ($($(this).data('show')).is(':visible')) {
+    			$($(this).data('hide')).hide();
+    			$(this).find('.glyphicon').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+    		} else {
+    			$($(this).data('show')).show();
+    			$(this).find('.glyphicon').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+    		}
+    	});
+    }
+
+    $.initAllFactureSearch = function() {
+    	$('body').on('click', '.all-factures', function(){
+    		var parent = $(this).parent().siblings('.select2-ajax');
+    		if($(this).prop('checked')) {
+    			parent.attr('data-url', parent.attr('data-url').replace('facture/rechercher', 'facture/all/rechercher'));
+    		} else {
+    			parent.attr('data-url', parent.attr('data-url').replace('facture/all/rechercher', 'facture/rechercher'));
+    		}
+    		$.initSelect2Ajax();
+    	});
+    }
+
+    $.initModificationContrat = function() {
+        $('#contrat_commanditaire').on('change', function (e) {
+            if($(this).val()) {
+                $('#contrat_devisInterlocuteur').attr('disabled', 'disabled');
+                $('#row_contrat_devisInterlocuteur').css('opacity', '0.2');
+            } else {
+                $('#contrat_devisInterlocuteur').removeAttr('disabled', 'disabled');
+                $('#row_contrat_devisInterlocuteur').css('opacity', '1');
+            }
+        });
+        $('#contrat_commanditaire').change();
+    }
 
     $.initAcceptationContrat = function() {
     	 $.updateAcceptationContratButton();
@@ -150,20 +195,21 @@
                 $(this).html(content);
             }
         });
+        $('.fc-time-grid-event .fc-bg').each(function(){
+
+          console.log(this);
+        });
     };
 
-    $.initListingPassage = function () {
-        $('.calendar_lien').click(function (event) {
-            event.preventDefault();
-            var url = $(this).attr('data-url');
-            window.location.href = url;
+    $.callbackCalendarDynamicButton = function(){
+        $("#calendrier").find('.fc-event-container').each(function(){
+          $(this).mouseover(function(){
+           $(this).find('.fc-content .fc-title a').css('opacity',1);
+         }).mouseout(function(){
+             $(this).find('.fc-content .fc-title a').css('opacity',0.2);
+           });
         });
-        $('.commentaire_lien').click(function (event) {
-            event.preventDefault();
-            var url = $(this).attr('data-url');
-            window.location.href = url;
-        });
-    };
+    }
 
     $.initSearchActif = function () {
         $('form input[type="checkbox"][data-search-actif="1"]').each(function () {
@@ -242,7 +288,18 @@
     }
 
     $.initDatePicker = function () {
-        $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "right"});
+        $('.datepicker').datepicker({autoclose: true, todayHighlight: true, toggleActive: true, language: "fr"});
+    }
+
+    $.initPeriodePicker = function () {
+        var periodePicker = $('.periodepicker').datepicker({format: "mm/yyyy", viewMode: "months", minViewMode: "months", autoclose: true, todayHighlight: true, toggleActive: true, language: "fr", orientation: "right"});
+        periodePicker
+	        .on('changeDate', function(e) {
+	            $('.periodepicker').parent('form').submit();
+	        })
+	        .on('clearDate', function(e) {
+	            $('.periodepicker').parent('form').submit();
+	        });
     }
 
     $.initTimePicker = function () {
@@ -260,12 +317,11 @@
     }
 
     $.initDynamicCollection = function () {
-        var addLink = $('.dynamic-collection-add');
         $('.dynamic-collection-item').on('click', '.dynamic-collection-remove', function (e) {
             e.preventDefault();
             $(e.delegateTarget).remove();
         });
-        addLink.on('click', function (e) {
+        $('body').on('click', '.dynamic-collection-add', function (e) {
             e.preventDefault();
             var collectionTarget = $(this).data('collection-target');
             var collectionHolder = $(collectionTarget);
@@ -329,7 +385,7 @@
     }
 
     $.initTooltips = function () {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"], .toggle-tooltip').tooltip({ 'html' : true });
     }
 
     $.initAjaxPost = function ()
@@ -433,7 +489,7 @@
             minLength: 1
         },
         {
-            limit: 10,
+            limit: 9,
             name: 'produits',
             display: 'libelle',
             source: produitsSource,
@@ -453,14 +509,26 @@
         });
     }
 
+    $.initTypeheadSearchableCheckbox = function () {
+        if (!$('#searchable').length || !$('#searchable').find("input[type=checkbox]").length) {
+            return;
+        }
+
+        $('#searchable').find("input[type=checkbox]").on('click', function() {
+            $('#searchable .typeahead').typeahead('destroy');
+            $.initTypeheadSearchable();
+        });
+    }
+
     $.initTypeheadSearchable = function () {
         if (!$('#searchable').length) {
             return;
         }
-        var url = $('#searchable').data('url')+"?q=%QUERY&inactif="+((checkbox && checkbox.is(':checked'))? "1" : "0");
+
+        var checkbox = $('#searchable').find("input[type=checkbox]");
+        var url = $('#searchable').data('url')+"?q=%QUERY&inactif="+((checkbox && checkbox.prop('checked'))? "1" : "0");
         var type = $('#searchable').data('type');
         var target = $('#searchable').data('target');
-        var checkbox = $('#searchable').find("input[type=checkbox]");
 
         $('#searchable .typeahead').typeahead({
     	  hint: false,
@@ -468,7 +536,7 @@
     	  minLength: 1
     	},
     	{
-          limit: 5,
+          limit: 9,
     	  source: new Bloodhound({
               datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
               queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -487,7 +555,7 @@
 	            		  result = result+' <small><label class="label label-xs label-danger">SUSPENDU</label></small>';
 	            	  }
 	            	  if (target) {
-	            		  return $('<div class="searchable_result"><a href="'+target.replace('_id_', e.id)+'">'+result+'</a></div>');
+	            		  return $('<div class="searchable_result"><a href="'+(target.replace('_id_', e.id)).replace('_object_', e.object)+'">'+result+'</a></div>');
 	            	  } else {
 	            		  return $('<div class="searchable_result">'+result+'</div>');
 	            	  }
@@ -504,13 +572,13 @@
               },
               notFound: function(query) {
             	  if (target) {
-            		  return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</a></div>";
+            		  return "<div class=\"searchable_result tt-suggestion tt-selectable\"><span class=\"glyphicon glyphicon-search\"></span> <a id=\"search_more_submit\" href=\"\">Cliquez ici pour optimiser la recherche \""+query.query+"\" dans la recherche avancée</a></div>";
             	  }
 
               },
               footer: function(query, suggestions) {
             	  if (target) {
-	                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><a id=\"search_more_submit\" href=\"\">Rechercher \""+query.query+"\" dans les sociétés, les établissements, les interlocuteurs, les factures et les contrats</div></a>";
+	                return "<div class=\"searchable_result tt-suggestion tt-selectable\"><span class=\"glyphicon glyphicon-search\"></span> <a id=\"search_more_submit\" href=\"\">Cliquez ici pour optimiser la recherche \""+query.query+"\" dans la recherche avancée</div></a>";
 	              }
               }
           }
@@ -531,7 +599,7 @@
 
         $('#searchable .typeahead').bind('typeahead:select', function(ev, suggestion) {
         	if (target) {
-        		document.location.href=target.replace('_id_', suggestion.id);
+        		document.location.href=(target.replace('_id_', suggestion.id)).replace('_object_', suggestion.object);
         	}
         });
 
@@ -568,6 +636,7 @@
                     data.push({id: words[key] + "", text: (words[key] + "")});
                 }
             }
+
 
             select2.select2({
                 theme: 'bootstrap',
@@ -607,6 +676,7 @@
                     select2Data.push(filtres[key]);
                 }
 
+                $(document).find('.hamzastyle').trigger("change");
                 $(document).find('.hamzastyle').val(select2Data).trigger("change");
                 $(document).find('.hamzastyle-item').each(function () {
                     var words = JSON.parse($(this).attr('data-words'));
@@ -640,12 +710,16 @@
         if ($('#map').length) {
             var lat = 48.8593829;
             var lon = 2.347227;
+            var zoom = 0;
             if ($('#map').attr('data-lat') && $('#map').attr('data-lon')) {
                 lat = $('#map').data('lat');
                 lon = $('#map').data('lon');
             }
+            if($('#map').attr('data-zoom')){
+                zoom = $('#map').data('zoom');
+            }
 
-            var map = L.map('map').setView([lat, lon], 2);
+            var map = L.map('map').setView([lat, lon], zoom);
 
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -654,7 +728,10 @@
             var geojson = JSON.parse($('#map').attr('data-geojson'));
             var markers = [];
             var hoverTimeout = null;
-
+            var hasHistoryRewrite = false;
+            if ($('#map').attr('data-historyrewrite')){
+              hasHistoryRewrite = $('#map').data('historyrewrite');
+            }
             L.geoJson(geojson,
                     {
                         onEachFeature: function (feature, layer) {
@@ -667,7 +744,7 @@
                                         clearTimeout(hoverTimeout);
                                     }
                                     hoverTimeout = setTimeout(function () {
-                                        $('#liste_passage .list-group-item').blur();
+                                        $('#liste_passage .panel').blur();
                                         var element = $('#' + e.target.feature.properties._id);
                                         var list = $('#liste_passage');
                                         list.scrollTop(0);
@@ -685,7 +762,7 @@
                                 });
 
                                 layer.on('click', function (e) {
-                                    document.location.href = $('#' + e.target.feature.properties._id).attr('href');
+                                    document.location.href = $('#' + e.target.feature.properties._id).data('url');
                                 });
                             }
                         },
@@ -704,45 +781,184 @@
                     }
             ).addTo(map);
 
-            var markersArr = [];
-            for (id in markers) {
-                var latlng = markers[id]._latlng;
-                markersArr.push(latlng);
+            var refreshListFromMapBounds = function(){
+              var filtre = window.location.hash;
+              if(!filtre){
+                var excludeListNoMarkers = (map.getZoom() > 11);
+                $('div#liste_passage div.panel').each(function(){
+                    var hasMarker = markers[$(this).attr('id')] != undefined ;
+                    if(!hasMarker){
+                      if(excludeListNoMarkers){
+                        $(this).hide();
+                      }else{
+                        $(this).show();
+                      }
+                    }
+                });
+                for (var id in markers) {
+                  var marker = markers[id];
+                  if(map.getBounds().contains(marker._latlng)){
+                    $('div#liste_passage div#'+id).show();
+                  }else{
+                    $('div#liste_passage div#'+id).hide();
+                  }
+                }
+              }
             }
-            var bounds = new L.LatLngBounds(markersArr);
 
-            map.fitBounds(bounds);
+            if(!zoom){
+              var markersArr = [];
+              for (id in markers) {
+                  var latlng = markers[id]._latlng;
+                  markersArr.push(latlng);
+              }
+              var bounds = new L.LatLngBounds(markersArr);
+              map.fitBounds(bounds);
+            }else{
+              refreshListFromMapBounds();
+            }
 
-            $('#liste_passage .list-group-item').hover(function () {
+            $('#liste_passage .panel').hover(function () {
                 var marker = markers[$(this).attr('id')];
-                $('.leaflet-marker-icon').css('opacity', '0.3');
-                $(marker._icon).css('opacity', '1');
-                marker.setZIndexOffset(1001);
+                if(typeof marker != 'undefined' && marker){
+                  $('.leaflet-marker-icon').css('opacity', '0.3');
+                  $(marker._icon).css('opacity', '1');
+                  marker.setZIndexOffset(1001);
+                }
             }, function () {
                 var marker = markers[$(this).attr('id')];
-                marker.setZIndexOffset(900);
-                $('.leaflet-marker-icon').css('opacity', '1');
+                if(typeof marker != 'undefined' && marker){
+                  marker.setZIndexOffset(900);
+                  $('.leaflet-marker-icon').css('opacity', '1');
+                }
             });
 
+            if(hasHistoryRewrite){
+              map.on('moveend', function(){
+                var center = map.getCenter();
+                var hash = window.location.hash;
+                history.pushState(null, null, "?lat="+center.lat+"&lon="+center.lng+"&zoom="+ map.getZoom()+hash);
+                refreshListFromMapBounds();
+              });
+            }
+
+
             $(window).on('hashchange', function () {
-                $('#liste_passage .list-group-item').each(function () {
+                $('#liste_passage .panel').each(function () {
                     if (!$(this).is(':visible')) {
                         var marker = markers[$(this).attr('id')];
-                        $(marker._icon).css('opacity', '0');
-                        $(marker._icon).addClass('hidden');
-                        $(marker._shadow).addClass('hidden');
-                        marker.setZIndexOffset(1001);
+                        if(typeof marker != 'undefined' && marker){
+                          $(marker._icon).css('opacity', '0');
+                          $(marker._icon).addClass('hidden');
+                          $(marker._shadow).addClass('hidden');
+                          marker.setZIndexOffset(1001);
+                        }
                     } else {
                         var marker = markers[$(this).attr('id')];
-                        $(marker._icon).css('opacity', '1');
-                        $(marker._icon).removeClass('hidden');
-                        $(marker._shadow).removeClass('hidden');
-                        marker.setZIndexOffset(900);
+                        if(typeof marker != 'undefined' && marker){
+                          $(marker._icon).css('opacity', '1');
+                          $(marker._icon).removeClass('hidden');
+                          $(marker._shadow).removeClass('hidden');
+                          marker.setZIndexOffset(900);
+                        }
                     }
 
                 });
             });
         }
+    }
+
+    $.initMoreInfo = function () {
+      $(".btn-more-info").on("click", function () {
+        var button = $(this);
+        var icon = button.children('i').first();
+        var div = button.prev();
+
+	if (div.children().length > 0) {
+            div.empty();
+            icon.addClass('mdi-vertical-align-bottom');
+            icon.removeClass('mdi-vertical-align-top');
+	} else {
+            div.html("<pre>Chargement...</pre>");
+
+            $.get(div.data('url'), function (result) {
+                div.html(result);
+                icon.removeClass('mdi-vertical-align-bottom');
+                icon.addClass('mdi-vertical-align-top');
+            })
+            .fail(function () {
+                div.html("<pre>Erreur lors du chargement des informations</pre>");
+                button.text(' Réessayer');
+            });
+	}
+      });
+    }
+
+    $.initTourneeDatepicker = function () {
+      $("#tournees-choice-datetimepicker").change(function(){
+        var url = $(this).find('input').attr('data-url');
+        var date = $(this).find('input').val();
+        var dateiso = date.split('/').reverse().join('-');
+        window.location = url+'/'+dateiso;
+      });
+    }
+
+    $.initAttachements = function(){
+
+        $('.thumbnail').each(function(){
+            var modal = $('#'+$(this).data('cible'));
+            var img = $(this).find('img');
+            var modalImg = modal.find("#img");
+            var captionText = modal.find(".caption");
+            var close = modal.find(".modal-viewer-close");
+            $(this).click(function(){
+
+                if(modal.css("display") == "none"){
+                    modal.css("display", "block");
+                    modalImg.attr('src',img.attr('src'));
+                }else{
+                    modal.css("display", "none");
+                }
+            });
+
+            modal.click(function(){
+                if($(this).css("display") != "none"){
+                    $(this).css("display", "none");
+                }
+            });
+
+            close.click(function() {
+                modal.css("display", "none");
+            });
+
+        });
+    }
+    
+    $.initTransfertContrat = function() {
+        $('#contrat_transfert_societe').on('change', function (e) {
+        	var societe = $(this).val();
+        	var url = $(this).data('etablissements');
+            if(societe) {
+            	url = url.replace('__societe_id__', societe);
+            	var opts = '<option value="" selected="selected"></option>';
+                $('#input-etablissements .select2-selection__rendered').attr('title', '');
+                $('#input-etablissements .select2-selection__rendered').html('');
+            	$.get(url, function (result) {
+            		for(i in result) {
+            			console.log(i+' '+result[i]);
+            			opts += '<option value="'+i+'">'+result[i]+'</option>';
+            		}
+                	$('.select2-etablissements').html(opts);
+                    $('.select2-etablissements').removeAttr('disabled', 'disabled');
+                });
+            } else {
+            	$('.select2-etablissements').html('<option value="" selected="selected"></option>');
+                $('.select2-etablissements').attr('disabled', 'disabled');
+                $('#input-etablissements .select2-selection__rendered').attr('title', '');
+                $('#input-etablissements .select2-selection__rendered').html('');
+            }
+        });
+        $('#contrat_transfert_societe').change();
     }
 
 }

@@ -53,52 +53,62 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $societe;
 
     /**
+     * @MongoDB\ReferenceOne(targetDocument="Societe", simple=true)
+     */
+    protected $commanditaire;
+
+    /**
      * @MongoDB\ReferenceOne()
      */
     protected $devisInterlocuteur;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $numeroArchive;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="int")
      */
     protected $multiTechnicien;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $reconduit;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $typeContrat;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
+     */
+    protected $typeContratOriginal;
+
+    /**
+     * @MongoDB\Field(type="string")
      */
     protected $nomenclature;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $commentaire;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $markdown;
 
@@ -113,63 +123,68 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $produits;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateCreation;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
+     */
+    protected $dateCreationAuto;
+
+    /**
+     * @MongoDB\Field(type="date")
      */
     protected $dateDebut;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateFin;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateAcceptation;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateResiliation;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Field(type="date")
      */
     protected $dateReconduction;
 
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $duree;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $dureeGarantie;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $nbPassages;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $dureePassage;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     protected $nbFactures;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixHt;
 
@@ -179,44 +194,49 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     protected $mouvements;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $statut;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiantReprise;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     protected $tvaReduite;
 
     /**
-     * @MongoDB\Collection
+     * @MongoDB\Field(type="collection")
      */
     protected $moyens;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $conditionsParticulieres;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $referenceClient;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $factureDestinataire;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $frequencePaiement;
+
+    /**
+     * @MongoDB\Field(type="int")
+     */
+    protected $auditPassage;
 
     public function __construct() {
         $this->etablissements = new ArrayCollection();
@@ -290,6 +310,28 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     /**
+     * Set typeContratOriginal
+     *
+     * @param string $typeContratOriginal
+     * @return self
+     */
+    public function setTypeContratOriginal($typeContrat) {
+        $this->typeContratOriginal = $typeContrat;
+
+        return $this;
+    }
+
+    /**
+     * Get typeContrat
+     *
+     * @return string $typeContratOriginal
+     */
+    public function getTypeContratOriginal() {
+
+        return $this->typeContratOriginal;
+    }
+
+    /**
      * Set nomenclature
      *
      * @param string $nomenclature
@@ -307,6 +349,17 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getNomenclature() {
         return $this->nomenclature;
+    }
+
+
+
+    /**
+     * Get nomenclature
+     *
+     * @return string $nomenclature
+     */
+    public function getHtmlNomenclature() {
+    	return preg_replace('/\*\*(.+)\*\*/', '<strong>$1</strong>', $this->nomenclature);
     }
 
     /**
@@ -423,6 +476,26 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getDateCreation() {
         return $this->dateCreation;
+    }
+
+    /**
+     * Set dateCreationAuto
+     *
+     * @param date $dateCreationAuto
+     * @return self
+     */
+    public function setDateCreationAuto($dateCreationAuto) {
+        $this->dateCreationAuto = $dateCreationAuto;
+        return $this;
+    }
+
+    /**
+     * Get dateCreationAuto
+     *
+     * @return date $dateCreationAuto
+     */
+    public function getDateCreationAuto() {
+        return $this->dateCreationAuto;
     }
 
     /**
@@ -558,6 +631,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 $this->setNbPassages(0);
             }
         }
+
         return $this->nbPassages;
     }
 
@@ -648,6 +722,26 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->statut;
     }
 
+    /**
+     * Set auditPassage
+     *
+     * @param int $auditPassage
+     * @return self
+     */
+    public function setAuditPassage($auditPassage) {
+        $this->auditPassage = $auditPassage;
+        return $this;
+    }
+
+    /**
+     * Get auditPassage
+     *
+     * @return int $auditPassage
+     */
+    public function getAuditPassage() {
+        return $this->auditPassage;
+    }
+
     public function updateObject() {
             $max = 0;
             foreach ($this->getPrestations() as $prestation) {
@@ -656,6 +750,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 }
             }
             $this->setNbPassages($max);
+    }
+
+    public function updatePassages() {
+
     }
 
     public function updatePrestations($dm) {
@@ -882,6 +980,14 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             }
             $cpt++;
         }
+        $cpt = 0;
+        foreach ($passagesDatesArray as $date => $passage) {
+        	$passagesDatesArray[$date]->audit = 0;
+        	if ($cpt == ($this->getAuditPassage()-1)) {
+        		$passagesDatesArray[$date]->audit = ($this->getCommercial()->getIdentite())? $this->getCommercial()->getIdentite() : 'Commercial';
+        	}
+        	$cpt++;
+        }
         krsort($passagesDatesArray);
         return $passagesDatesArray;
     }
@@ -891,6 +997,13 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
             return "";
         }
         return ContratManager::$types_contrat_libelles[$this->getTypeContrat()];
+    }
+
+    public function getTypeContratOriginalLibelle() {
+        if (!$this->getTypeContratOriginal()) {
+            return "";
+        }
+        return ContratManager::$types_contrat_libelles[$this->getTypeContratOriginal()];
     }
 
     public function getStatutLibelle() {
@@ -912,20 +1025,21 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
             return "en cours réalisé";
         }
-        
+
         return ContratManager::$statuts_libelles_long[$this->getStatut()];
     }
 
     public function getStatutCouleur() {
+        if ($this->isAnnule()) {
+            return ContratManager::$statuts_couleurs[$this->getTypeContrat()];
+        }
       $today = new \DateTime();
       if($this->isEnCours() && $this->getDateDebut() && ($today->format("Ymd") < $this->getDateDebut()->format("Ymd"))){
         return "default";
       }elseif($this->isFini() && $this->getDateFin() && ($today->format("Ymd") < $this->getDateFin()->format("Ymd"))){
         return "info";
       }
-        if ($this->isAnnule()) {
-            return ContratManager::$statuts_couleurs[$this->getTypeContrat()];
-        }
+
         return ContratManager::$statuts_couleurs[$this->getStatut()];
     }
 
@@ -1150,7 +1264,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     /**
      * Set multiTechnicien
      *
-     * @param boolean $multiTechnicien
+     * @param int $multiTechnicien
      * @return self
      */
     public function setMultiTechnicien($multiTechnicien) {
@@ -1161,7 +1275,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     /**
      * Get multiTechnicien
      *
-     * @return boolean $multiTechnicien
+     * @return int $multiTechnicien
      */
     public function getMultiTechnicien() {
         return $this->multiTechnicien;
@@ -1283,6 +1397,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return (($this->isEnCours()  || $this->isFini()) && !$this->isAnnule());
     }
 
+    public function isReactivable() {
+        return ($this->isAnnule() && $this->getTypeContratOriginal());
+    }
+
     /*
      * Fonction à retiré => un contrat ne doit pas être resilié sous forme de statut mais sous forme de type
      */
@@ -1334,6 +1452,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateDebut(null);
         $contrat->setDateFin(null);
         $contrat->setDateCreation(new \DateTime());
+        $contrat->setDateCreationAuto(new \DateTime());
         $contrat->setStatut(ContratManager::STATUT_EN_ATTENTE_ACCEPTATION);
         $contrat->contratPassages = array();
         $contrat->cleanMouvements();
@@ -1362,17 +1481,18 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
 
         $dateDebut = clone $contrat->getDateDebut();
-        $dateAcceptation = clone $contrat->getDateDebut();
+        $dateAcceptation = clone $contrat->getDateAcceptation();
         $dateFin= clone $contrat->getDateFin();
         $nbMois = $contrat->getDuree();
 
         $dateDebut = $dateDebut->modify("+" . $nbMois . " month");
-        $dateAcceptation = $dateAcceptation->modify("+" . $nbMois . " month");
         $dateFin = $dateFin->modify("+" . $nbMois . " month");
 
         $contrat->setDateDebut($dateDebut);
         $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
+        $contrat->setDateCreationAuto(new \DateTime());
+        $contrat->setAuditPassage(null);
 
         if($contrat->isTypeReconductionTacite()){
           $contrat->setStatut(ContratManager::STATUT_EN_COURS);
@@ -1393,7 +1513,10 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateReconduction(new \DateTime());
         $contrat->setReferenceClient(null);
         if(!$contrat->getTechnicien()){
-          $contrat->setTechnicien($this->getTechnicienPlusUtilise());
+            $technicien = $this->getTechnicienPlusUtilise();
+            if($technicien) {
+                $contrat->setTechnicien($technicien);
+            }
         }
         $contrat->updateObject();
         return $contrat;
@@ -1410,7 +1533,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
     public function isCopiable() {
 
-        return (!$this->isBrouillon());
+        return true;
     }
 
     public function isTypeReconductionTacite() {
@@ -1688,6 +1811,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
      */
     public function getDevisInterlocuteur()
     {
+        if($this->getCommanditaire()) {
+
+            return $this->getCommanditaire();
+        }
+
         if(is_null($this->devisInterlocuteur)) {
 
             return $this->getSociete();
@@ -1711,9 +1839,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function updateNumeroOrdrePassage() {
+        $this->nbPassages = null;
+        $this->getNbPassages();
         foreach($this->getContratPassages() as $etablissementPassages) {
             $numero = 1;
-            foreach ($etablissementPassages->getPassagesSorted() as $passage) {
+            foreach ($etablissementPassages->getPassagesDateSorted() as $passage) {
                 if ($passage->isControle()) {
                     $passage->setNumeroOrdre("C");
                 } elseif ($passage->isGarantie()) {
@@ -1722,6 +1852,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                     $passage->setNumeroOrdre($numero);
                     $numero++;
                 }
+
+                $passage->setLibelle(null);
                 $passage->getLibelle();
             }
         }
@@ -1760,7 +1892,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
       if(!$this->getContratPassages()->first()){
         return array('pca' => '0', 'ratioFacture' => '0', 'ratioActivite' => '0');
       }
-      $nbPassagesEff = $this->getContratPassages()->first()->getNbPassagesRealisesOuAnnule();
+      $nbPassagesEff = $this->getContratPassages()->first()->getNbPassagesRealisesOuAnnule(true);
       $nbPassageTotal = $this->getNbPassages();
       $nbPassageRestant = $nbPassageTotal - $nbPassagesEff;
       $ratioEffectue = (!$nbPassageTotal)? "0" : (floatval($nbPassagesEff) / floatval($nbPassageTotal));
@@ -1835,7 +1967,35 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->dateReconduction;
     }
 
+    /**
+     * Set commanditaire
+     *
+     * @param AppBundle\Document\Societe $commanditaire
+     * @return self
+     */
+    public function setCommanditaire($commanditaire = null) {
+        $this->commanditaire = $commanditaire;
+        return $this;
+    }
 
+    /**
+     * Get commanditaire
+     *
+     * @return AppBundle\Document\Societe $commanditaire
+     */
+    public function getCommanditaire() {
+        return $this->commanditaire;
+    }
+
+    public function getDestinataireFacturation() {
+
+        if($this->getCommanditaire()) {
+
+            return $this->getCommanditaire();
+        }
+
+        return $this->getSociete();
+    }
 
     public function getNbPassagePrevu() {
     	$nbPrevus = 0;

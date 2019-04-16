@@ -3,7 +3,7 @@
 . bin/config.inc
 
 SYMFODIR=$(pwd);
-DATA_DIR=$TMP/AUROUZE_DATAS
+DATA_DIR=$TMP;
 
 echo -e "\n\nRécupération des contrats"
 
@@ -28,12 +28,10 @@ cat $DATA_DIR/tblPrestation.cleaned.csv | sort -t ";" -k 1,1 > $DATA_DIR/prestat
 cat $DATA_DIR/prestation.sorted.csv | grep -v "RefPrestation;RefEntite;" | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
     contrat_id=$1;
     societe_old_id=$2;
+    societeAdresse_old_id=$3;
     contrat_archivage=$8;
     commercial_id=$5;
     technicien_id=$7;
-#    if(!technicien_id){
-#        technicien_id=$5;
-#    }
     contrat_type=$11;
     prestation_type=$13;
     localisation=$14;
@@ -64,10 +62,7 @@ cat $DATA_DIR/prestation.sorted.csv | grep -v "RefPrestation;RefEntite;" | sed -
     if(!date_creation_contrat){
         next;
     }
-    if(date_creation_contrat < "2013-01-01"){
-        next;
-    }
-
+    
     date_debut=$17;
     date_debut_contrat="";
     if(date_debut) {
@@ -88,7 +83,7 @@ cat $DATA_DIR/prestation.sorted.csv | grep -v "RefPrestation;RefEntite;" | sed -
     garantie=$30;
     prixht=$26;
     tva_reduite=$27;
-    print contrat_id ";" societe_old_id ";" commercial_id ";" technicien_id ";" contrat_type ";" prestation_type ";" localisation ";" date_creation_contrat ";" date_acceptation_contrat ";" date_debut_contrat ";" duree ";" garantie ";" prixht ";" contrat_archivage ";" tva_reduite ";" date_resiliation_contrat;
+    print contrat_id ";" societe_old_id ";" commercial_id ";" technicien_id ";" contrat_type ";" prestation_type ";" localisation ";" date_creation_contrat ";" date_acceptation_contrat ";" date_debut_contrat ";" duree ";" garantie ";" prixht ";" contrat_archivage ";" tva_reduite ";" date_resiliation_contrat ";" societeAdresse_old_id;
 }' > $DATA_DIR/contrats.csv.tmp;
 
 cat $DATA_DIR/tblPrestationProduit.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationProduit.sorted.csv
@@ -132,4 +127,3 @@ join -t ';' -a 1 -1 3 -2 1 $DATA_DIR/contratsPrestationType.tmp.csv $DATA_DIR/pr
 cat $DATA_DIR/contratsPrestationType.csv | sed -r 's/(.*)/\1#/g' | sed -f $DATA_DIR/sed_prestations_utilises > $DATA_DIR/contratsPrestation.csv
 
 php app/console importer:csv contratPrestation.importer $DATA_DIR/contratsPrestation.csv -vvv --no-debug
-

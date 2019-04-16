@@ -13,7 +13,9 @@ use AppBundle\Type\SocieteCommentaireType;
 use AppBundle\Type\RelanceType;
 use AppBundle\Type\FacturesEnRetardFiltresType;
 use AppBundle\Document\Paiements;
+use AppBundle\Document\Paiement;
 use AppBundle\Document\Societe;
+use AppBundle\Tool\PrelevementXml;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
@@ -24,11 +26,12 @@ class PaiementsController extends Controller {
      * @Route("/paiements/liste", name="paiements_liste")
      */
     public function indexAction(Request $request) {
+    	$periode = ($request->get('periode'))? $request->get('periode') : date('m/Y');
 
-        $paiementsDocs = $this->get('paiements.manager')->getRepository()->getLastPaiements(20);
-        
+        $paiementsDocs = $this->get('paiements.manager')->getRepository()->findByPeriode($periode);
+        $paiementsDocsPrelevement = $this->get('paiements.manager')->getRepository()->findByPeriode($periode,true);
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $societe = $dm->getRepository('AppBundle:Societe')->findAurouze();
+        $societe = $dm->getRepository('AppBundle:Societe')->findSocieteMere();
         $form = $this->createForm(new SocieteCommentaireType(), $societe, array(
         		'action' => $this->generateUrl('paiements_liste'),
         		'method' => 'POST',
@@ -36,11 +39,10 @@ class PaiementsController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
         	$dm->flush();
-        
+
         	return $this->redirectToRoute('paiements_liste');
         }
-        
-        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs, 'form' => $form->createView()));
+        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs, 'paiementsDocsPrelevement' => $paiementsDocsPrelevement, 'periode' => $periode, 'form' => $form->createView()));
     }
 
     /**
@@ -50,7 +52,7 @@ class PaiementsController extends Controller {
     public function societeAction(Request $request, Societe $societe) {
 
         $paiementsDocs = $this->get('paiements.manager')->getRepository()->getBySociete($societe);
-        
+
 
         return $this->render('paiements/societe.html.twig', array('paiementsDocs' => $paiementsDocs, 'societe' => $societe));
     }
@@ -100,6 +102,8 @@ class PaiementsController extends Controller {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $paiements = new Paiements();
+
+        $paiements->setPrelevement(false);
 
         $form = $this->createForm(new PaiementsType($this->container, $dm), $paiements, array(
             'action' => $this->generateUrl('paiements_nouveau'),
@@ -211,7 +215,85 @@ class PaiementsController extends Controller {
     }
 
     public function getPdfGenerationOptions() {
-        return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4, 'zoom' => 1);
+        return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4, 'zoom' => 0.7);
+    }
+
+    /**
+     * @Route("/paiements/prelevement", name="paiements_prelevement")
+     */
+    public function paiementPrelevementAction(Request $request) {
+
+        ini_set('memory_limit', '-1');
+        $banqueParameters = $this->getParameter('banque');
+
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+    	$fm = $this->get('facture.manager');
+
+    	$facturesForCsv = $fm->getFacturesPrelevementsForCsv();
+
+        if(count($facturesForCsv)){
+            $prelevement = new PrelevementXml($facturesForCsv,$banqueParameters);
+            $prelevement->createPrelevement();
+            $this->createPaiementsPrelevement($facturesForCsv,$prelevement);
+        }
+
+        return $this->redirectToRoute('paiements_liste');
+
+
+    }
+
+    /**
+     * @Route("/paiements/prelevement-remise-bancaire/{id}", name="paiements_prelevement_remise_fichier")
+     * @ParamConverter("paiements", class="AppBundle:Paiements")
+     */
+    public function paiementPrelevementRemiseFichierAction(Request $request, Paiements $paiements) {
+
+        $filename = "prelevement_banque_".$paiements->getIdentifiant().".xml";
+        return new Response(
+                $paiements->getXmlbase64(), 200, array(
+                'Content-Type' => 'xml',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+                )
+        );
+    }
+
+    private function createPaiementsPrelevement($facturesForCsv,$prelevement){
+        $date = new \DateTime('now');
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $paiements = new Paiements();
+        $paiements->setDateCreation($date);
+        $paiements->setPrelevement(true);
+        $paiements->setImprime(false);
+
+        $societesInFirstPrev = array();
+
+        foreach ($facturesForCsv as $key => $facture) {
+            $paiement = new Paiement();
+            $paiement->setFacture($facture);
+            $paiement->setMoyenPaiement(PaiementsManager::MOYEN_PAIEMENT_PRELEVEMENT_BANQUAIRE);
+            $paiement->setTypeReglement(PaiementsManager::TYPE_REGLEMENT_FACTURE);
+            $paiement->setDatePaiement($date);
+            $paiement->setMontant(0.0);
+            $paiement->setLibelle('FACT '.$facture->getNumeroFacture().' du '.$facture->getDateEmission()->format("d m Y").' '. str_ireplace(array(".",","),"EUR",sprintf("%0.2f",$facture->getMontantAPayer())));
+            $paiement->setVersementComptable(false);
+            $paiements->addPaiement($paiement);
+            if($facture->getSociete()->getSepa()->isFirst()){
+                $societesInFirstPrev[$facture->getSociete()->getId()] = $facture->getSociete();
+            }
+        }
+
+
+        $paiements->setXmlbase64($prelevement->getXml());
+
+
+        foreach ($societesInFirstPrev as $key => $societe) {
+            $societe->getSepa()->setFirst(false);
+        }
+
+        $dm->persist($paiements);
+        $dm->flush();
+        return $paiements;
     }
 
 }

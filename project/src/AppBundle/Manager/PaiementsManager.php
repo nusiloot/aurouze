@@ -14,11 +14,13 @@ class PaiementsManager {
     const TYPE_REGLEMENT_FACTURE = 'FACTURE';
     const TYPE_REGLEMENT_ACCOMPTE_COMMANDE = 'ACCOMPTE_COMMANDE';
     const TYPE_REGLEMENT_REGULARISATION = 'REGULARISATION';
+    const TYPE_REGLEMENT_REGULARISATION_HUISSIER  = 'REGULARISATION_HUISSIER';
     const TYPE_REGLEMENT_REGULARISATION_AVOIR = 'REGULARISATION_AVOIR';
     const TYPE_REGLEMENT_PERTE = 'PERTE';
     const TYPE_REGLEMENT_GAIN = 'GAIN';
     const MOYEN_PAIEMENT_CHEQUE = 'CHEQUE';
     const MOYEN_PAIEMENT_VIREMENT = 'VIREMENT';
+    const MOYEN_PAIEMENT_PRELEVEMENT_BANQUAIRE  = 'PRELEVEMENT_BANQUAIRE';
     const MOYEN_PAIEMENT_ESPECE = 'ESPECE';
     const MOYEN_PAIEMENT_TRAITE = 'TRAITE';
     const MOYEN_PAIEMENT_CB = 'CB';
@@ -44,24 +46,28 @@ class PaiementsManager {
     const EXPORT_TYPE_PIECE_BANQUE = 17;
     const EXPORT_MONTANT_PIECE_BANQUE = 18;
     const EXPORT_MONTANT_CHEQUE = 19;
+    const EXPORT_TYPE_RELANCE = 20;
+    const EXPORT_DATE_RELANCE = 21;
 
     const TYPE_EXPORT_FACTURES = "factures";
     const TYPE_EXPORT_PAIEMENTS = "paiements";
     const TYPE_EXPORT_STATS = "stats";
     const TYPE_EXPORT_PCA = "pca";
-    const TYPE_EXPORT_COMMERCIAUX = "commerciaux";
-    const TYPE_EXPORT_RENTABILITE = "rentabilite";
+    const TYPE_EXPORT_CONTRATS = "contrats";
+    const TYPE_EXPORT_DETAIL_CA = "detailca";
 
     public static $types_reglements_libelles = array(
         self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
         self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",
         self::TYPE_REGLEMENT_REGULARISATION => "Règlement de régularisation",
+        self::TYPE_REGLEMENT_REGULARISATION_HUISSIER => "Commission Huissier",
         self::TYPE_REGLEMENT_REGULARISATION_AVOIR => "Régularisation par avoir",
         self::TYPE_REGLEMENT_PERTE => "Perte",
         self::TYPE_REGLEMENT_GAIN => "Gain");
     public static $nouveau_types_reglements_libelles = array(
         self::TYPE_REGLEMENT_FACTURE => "Règlement de facture",
         self::TYPE_REGLEMENT_ACCOMPTE_COMMANDE => "Acompte à la commande",
+        self::TYPE_REGLEMENT_REGULARISATION_HUISSIER => "Régularisation de commission de huissier",
         self::TYPE_REGLEMENT_REGULARISATION => "Règlement de régularisation");
     public static $types_reglements_index = array(
         "1" => self::TYPE_REGLEMENT_FACTURE,
@@ -73,6 +79,7 @@ class PaiementsManager {
     public static $moyens_paiement_libelles = array(
         self::MOYEN_PAIEMENT_CHEQUE => "Chèque",
         self::MOYEN_PAIEMENT_VIREMENT => "Virement",
+        self::MOYEN_PAIEMENT_PRELEVEMENT_BANQUAIRE => "Prélèvement bancaire",
         self::MOYEN_PAIEMENT_ESPECE => "Espèces",
         self::MOYEN_PAIEMENT_TRAITE => "Traite",
         self::MOYEN_PAIEMENT_CB => "Carte Bleue",
@@ -83,8 +90,9 @@ class PaiementsManager {
         "3" => self::MOYEN_PAIEMENT_ESPECE,
         "4" => self::MOYEN_PAIEMENT_TRAITE,
         "5" => self::MOYEN_PAIEMENT_CB,
-        "6" => self::MOYEN_PAIEMENT_REGULARISATION_COMPTABLE);
-
+        "6" => self::MOYEN_PAIEMENT_REGULARISATION_COMPTABLE,
+        "7" => self::MOYEN_PAIEMENT_PRELEVEMENT_BANQUAIRE
+        );
         public static $export_paiement_libelle = array(
             self::EXPORT_DATE_PAIEMENT => "Date de la pièce de banque",
             self::EXPORT_CODE_COMPTABLE => "Code Client tronqué à 8 caractères",
@@ -105,14 +113,16 @@ class PaiementsManager {
             self::EXPORT_LIBELLE_PIECE_BANQUE => "Libellé de la pièce de banque",
             self::EXPORT_TYPE_PIECE_BANQUE => "Type de la pièce de banque",
             self::EXPORT_MONTANT_PIECE_BANQUE => "Montant de la pièce de banque",
-            self::EXPORT_MONTANT_CHEQUE => "Montant de remise de chèque");
+            self::EXPORT_MONTANT_CHEQUE => "Montant de remise de chèque",
+            self::EXPORT_TYPE_RELANCE => "Type de la dernière relance",
+            self::EXPORT_DATE_RELANCE => "Date de dernière relance");
 
       public static $types_exports = array(self::TYPE_EXPORT_FACTURES => array("libelle" =>  "Export des factures","picto" =>  "glyphicon glyphicon-eur", "pdf" =>  false),
     self::TYPE_EXPORT_PAIEMENTS => array("libelle" =>  "Export des paiements", "picto" =>  "glyphicon glyphicon-th-list", "pdf" =>  false),
-    self::TYPE_EXPORT_STATS  => array("libelle" =>  "Export Statistiques", "picto" =>  "glyphicon glyphicon-stats", "pdf" =>  true),
-    self::TYPE_EXPORT_COMMERCIAUX  => array("libelle" =>  "Export Commerciaux", "picto" =>  "glyphicon glyphicon-user", "pdf" =>  true),
+    self::TYPE_EXPORT_STATS  => array("libelle" =>  "Export Chiffre d'affaire", "picto" =>  "glyphicon glyphicon-stats", "pdf" =>  true),
+    self::TYPE_EXPORT_CONTRATS  => array("libelle" =>  "Export Contrats", "picto" =>  "glyphicon glyphicon-user", "pdf" =>  true),
     self::TYPE_EXPORT_PCA  => array("libelle" =>  "Export PCA", "picto" =>  "glyphicon glyphicon-send", "pdf" =>  false),
-    self::TYPE_EXPORT_RENTABILITE  => array("libelle" =>  "Export Rentabilité", "picto" =>  "glyphicon glyphicon-usd", "pdf" =>  true),
+    self::TYPE_EXPORT_DETAIL_CA  => array("libelle" =>  "Détail du Chiffre d'affaire", "picto" =>  "glyphicon glyphicon-user", "pdf" =>  true),
     );
 
 
@@ -195,6 +205,17 @@ class PaiementsManager {
                       }
                       $paiementArr[self::EXPORT_MONTANT_PIECE_BANQUE] = number_format($paiement->getMontant(), 2, ",", "");
                       $paiementArr[self::EXPORT_MONTANT_CHEQUE] = ($paiement->getMoyenPaiement() == self::MOYEN_PAIEMENT_CHEQUE)? $paiements->getMontantTotalByMoyenPaiement(self::MOYEN_PAIEMENT_CHEQUE) : "";
+
+                      $paiementArr[self::EXPORT_TYPE_RELANCE] = ($paiement->getFacture()->getNbRelance())? FactureManager::$types_nb_relance[$paiement->getFacture()->getNbRelance()] :FactureManager::$types_nb_relance[0];
+                      $paiementArr[self::EXPORT_DATE_RELANCE] = "";
+                      if($paiement->getFacture()->getNbRelance()){
+                        $relanceObj = $paiement->getFacture()->getRelanceObjNumero($paiement->getFacture()->getNbRelance());
+                        if($relanceObj){
+                          $paiementArr[self::EXPORT_DATE_RELANCE] = $relanceObj->getDateRelance()->format('d/m/Y');
+                          $paiementArr[self::EXPORT_DATE_RELANCE] .= "  ";
+                        }
+                      }
+                      $paiementArr[self::EXPORT_DATE_RELANCE].= $paiement->getFacture()->getRelanceCommentaire();
 
 
                 $paiementsArray[] = $paiementArr;

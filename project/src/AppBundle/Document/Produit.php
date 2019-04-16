@@ -14,54 +14,59 @@ class Produit {
     const PRODUIT_INACTIF = "INACTIF";
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nom;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixHt;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixPrestation;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $prixVente;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $conditionnement;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $nbTotalContrat;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $nbUtilisePassage;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\Field(type="float")
      */
     protected $nbPremierPassage;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $statut;
+
+    /**
+     * @MongoDB\Field(type="int")
+     */
+    protected $ordre;
 
     /**
      * Set nom
@@ -297,5 +302,27 @@ class Produit {
          $this->setStatut(self::PRODUIT_INACTIF);
       }
       return $this;
+    }
+
+    /**
+     * Set ordre
+     *
+     * @param int $ordre
+     * @return self
+     */
+    public function setOrdre($ordre)
+    {
+        $this->ordre = $ordre;
+        return $this;
+    }
+
+    /**
+     * Get ordre
+     *
+     * @return int $ordre
+     */
+    public function getOrdre()
+    {
+        return $this->ordre;
     }
 }

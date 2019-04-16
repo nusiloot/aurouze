@@ -21,10 +21,12 @@ class PassageMobileType extends AbstractType
 
     protected $dm;
     protected $passageId;
+    protected $previousPassage;
 
-    public function __construct(DocumentManager $documentManager,$passageId) {
+    public function __construct(DocumentManager $documentManager,$passageId,$previousPassage) {
         $this->dm = $documentManager;
         $this->passageId = $passageId;
+        $this->previousPassage = $previousPassage;
     }
 
     /**
@@ -35,6 +37,7 @@ class PassageMobileType extends AbstractType
     {
         $passageId = $builder->getData()->getId();
         $builder->add('description', TextareaType::class, array('label' => 'Constat :', 'required' => false, "attr" => array("class" => " phoenix", "rows" => 10)))
+        ->add('commentaireInterne', TextareaType::class, array('label' => 'Commentaire Interne :', 'required' => false, "attr" => array("class" => " phoenix", "rows" => 5)))
             ->add('dureeRaw', 'time', array(
             'input' => 'string',
             'widget' => 'single_text',
@@ -67,6 +70,7 @@ class PassageMobileType extends AbstractType
             'allow_delete' => true,
             'delete_empty' => true,
             'label' => '',
+            'attr' => array("placeholder" => 'Produit utilisé'),
         ));
 
         $builder->add('niveauInfestation', CollectionType::class, array(
@@ -75,6 +79,7 @@ class PassageMobileType extends AbstractType
             'allow_delete' => true,
             'delete_empty' => true,
             'label' => '',
+            'attr' => array("placeholder" => 'Niveau d\'infestation'),
         ));
 
 
@@ -84,7 +89,7 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-icon"=>"grid", "data-iconpos"=>"left" ),
+        		'attr' => array("class" => "phoenix ui-li-has-count", "multiple" => "multiple", "data-native-menu" => "false","placeholder" => 'Nettoyage'),
         ));
         //$builder->get('nettoyages')->resetViewTransformers();
 
@@ -94,13 +99,34 @@ class PassageMobileType extends AbstractType
         		'expanded' => false,
         		'multiple' => true,
         		'required' => false,
-        		'attr' => array("class" => "phoenix", "multiple" => "multiple", "data-icon"=>"grid", "data-iconpos"=>"left" ),
+        		'attr' => array("class" => "phoenix ui-li-has-count", "multiple" => "multiple", "data-native-menu" => "false","placeholder" => 'Applications')
         ));
       //  $builder->get('applications')->resetViewTransformers();
+        $defaultEmail = $builder->getData()->getEmailTransmission();
+        if(!$defaultEmail && $this->previousPassage){
+          if($this->previousPassage->getEmailTransmission()){
+            $defaultEmail = $this->previousPassage->getEmailTransmission();
+          }
+        }
+        $defaultNomResp = $builder->getData()->getNomTransmission();
+        if(!$defaultNomResp && $this->previousPassage){
+          if($this->previousPassage->getNomTransmission()){
+            $defaultNomResp = $this->previousPassage->getNomTransmission();
+          }
+        }
+        $builder->add('emailTransmission', EmailType::class, array(
+          'label' => 'Email :',
+          'required' => false,
+          'data' => $defaultEmail,
+          'attr' => array('class' => " phoenix","placeholder" => 'Email de transmission')));
 
-        $builder->add('emailTransmission', EmailType::class, array('label' => 'Email :','required' => false, 'attr' => array('class' => " phoenix")));
-        $builder->add('nomTransmission', TextType::class, array('label' => 'Nom :', 'required' => false, 'attr' => array('class' => " phoenix")));
-        $builder->add('signatureBase64', HiddenType::class, array('attr' => array('class' => "phoenix", "data-cible" => "passage_mobile_".$passageId."_signatureBase64")));
+        $builder->add('nomTransmission', TextType::class, array(
+          'label' => 'Nom :',
+           'required' => false,
+           'data' => $defaultNomResp,
+           'attr' => array('class' => " phoenix","placeholder" => 'Nom du signataire')));
+
+        $builder->add('signatureBase64', HiddenType::class, array('required' => false, 'attr' => array('class' => "phoenix", "data-cible" => "passage_mobile_".$passageId."_signatureBase64")));
     }
 
     /**

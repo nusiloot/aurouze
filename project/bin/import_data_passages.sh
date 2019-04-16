@@ -3,7 +3,7 @@
 . bin/config.inc
 
 SYMFODIR=$(pwd);
-DATA_DIR=$TMP/AUROUZE_DATAS
+DATA_DIR=$TMP;
 
 
 echo -e "\n\nRécupération des passages"
@@ -16,7 +16,7 @@ join -t ';' -1 1 -2 2 $DATA_DIR/passages.cleaned.sorted.csv $DATA_DIR/passageAdr
 
 join -t ";" -1 4 -2 1 -a 1 -o auto $DATA_DIR/passagesadresses.csv $DATA_DIR/utilisateurAutre.csv | sort -r > $DATA_DIR/passagesadressestechniciens.tmp.csv
 
-cat $DATA_DIR/passagesadressestechniciens.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
+cat $DATA_DIR/passagesadressestechniciens.tmp.csv | grep -viE "^RefTechnicien;RefPassage;" | sed -r 's/([a-zA-Z]+)[ ]+([0-9]+)[ ]+([0-9]+)[ ]+([0-9:]+):[0-9]{3}([A-Z]{2})/\1 \2 \3 \4 \5/g' | awk -F ';'  '{
     date_prevision=$6;
     d=$7;
     date_creation=$19;
@@ -41,7 +41,7 @@ cat $DATA_DIR/passagesadressestechniciens.tmp.csv | sed -r 's/([a-zA-Z]+)[ ]+([0
         }
     }
 
-    if(!date_passage_prevision || (date_passage_prevision < "2012-01-01")) {
+    if(!date_passage_prevision) {
         next;
     }
     print $0 ";" cmt ;
@@ -67,7 +67,7 @@ do
    grep -E "^[0-9]+;$IDENTIFIANT;" $DATA_DIR/tblPassagePrestationType.csv.tmp | cut -d ";" -f 3 > $DATA_DIR/prestationTypes.tmp.csv;
    cat $DATA_DIR/prestationTypes.tmp.csv | sort -t ";" -k 1,1  > $DATA_DIR/prestationTypes.tmp.sorted.csv
    PRESTATIONSVAR=$(join -t ';' -1 1 -2 1 $DATA_DIR/prestationTypes.tmp.sorted.csv $DATA_DIR/prestationType.sorted.csv | cut -d ';' -f 6 | tr "\n" "#")
-   
+
 
    grep -E "[0-9]+;$IDENTIFIANT;" $DATA_DIR/passageProduit.sorted.csv | cut -d ';' -f 3,5 > $DATA_DIR/passageProduit.tmp.csv
    cat $DATA_DIR/passageProduit.tmp.csv | sort -t ";" -k 1,1  > $DATA_DIR/passageProduit.tmp.sorted.csv
@@ -148,7 +148,7 @@ cat $DATA_DIR/passagesadressestechniciensprestation.proper.csv | sed -r 's/([a-z
 
     technicien=$1;
     contrat_id=$3;
-    
+
     description=$47;
     prestations=$48;
     produits=$49;
@@ -175,5 +175,3 @@ cat $DATA_DIR/passagesadressestechniciensprestation.proper.csv | sed -r 's/([a-z
 echo -e "\nImport des passages"
 
 php app/console importer:csv passage.importer $DATA_DIR/passages.csv -vvv --no-debug
-
-

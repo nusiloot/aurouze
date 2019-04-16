@@ -25,16 +25,26 @@
             </div>
         </div>
         <br/>  <br/>
+        <hr/>
+        <br/>  <br/>
+          <div class="row">
+              <div class="col-xs-12">
+                  <a href="{{ path('configuration_modification_produit') }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Ajouter un produit</a>
+              </div>
+          </div>
+        <br/>  <br/>
         <div class="panel panel-default" style="margin-bottom: 0;">
             <div class="panel-heading">Liste des Produits </div>
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <td>Nom</td>
-                        <td>Conditionnement</td>
-                        <td>Prix d'achat HT</td>
-                        <td>Prix prestation HT</td>
-                        <td>Prix de vente HT</td>
+                        <th>Nom</th>
+                        <th>Conditionnement</th>
+                        <th>Prix d'achat HT</th>
+                        <th>Prix prestation HT</th>
+                        <th>Prix de vente HT</th>
+                        <th>Ordre</th>
+                        <th class="text-center" >Modification</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,6 +55,12 @@
                         <td class="text-right">{{ produit.prixHt | number_format(2, '.', ' ') }}</td>
                         <td class="text-right">{{ produit.prixPrestation| number_format(2, '.', ' ') }}</td>
                         <td class="text-right">{{ produit.prixVente| number_format(2, '.', ' ') }}</td>
+                        <td class="text-right">{{ produit.ordre }}</td>
+                        <td class="text-center">
+                          <a href="{{ path('configuration_modification_produit',{'identifiant': produit.identifiant }) }}" data-toggle="tooltip" title="Modifier le produit {{ produit.nom }}" class="pull-right btn btn-default">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                          </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -53,27 +69,7 @@
         <br/>
         <div class="row">
             <div class="col-xs-12">
-                <a href="{{ path('configuration_modification_produits') }}" class="pull-right btn btn-warning">Modifier les produits</a>
-            </div>
-        </div>
-        <br/>  <br/>
-        <div class="panel panel-default" style="margin-bottom: 0;">
-            <div class="panel-heading">Liste des Provenances </div>
-            <div class="panel-body">
-                {% for provenance in configuration.provenances %}
-                    <div class="row form-group">
-                        <div class="col-xs-12 text-left">
-                            {{ provenance.nom }}
-                        </div>
-                    </div>
-                {% endfor %}
-
-            </div>
-        </div>
-        <br/>
-        <div class="row">
-            <div class="col-xs-12">
-                <a href="{{ path('configuration_modification_provenances') }}" class="pull-right btn btn-warning">Modifier les provenances</a>
+                <a href="{{ path('configuration_modification_produit') }}" class="pull-right btn btn-warning"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Ajouter un produit</a>
             </div>
         </div>
         <br/>  <br/>

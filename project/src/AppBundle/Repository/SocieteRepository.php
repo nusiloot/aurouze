@@ -15,15 +15,15 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class SocieteRepository extends DocumentRepository {
 
-	public function findAurouze()
+	public function findSocieteMere()
 	{
-		return $this->findOneByRaisonSociale("AUROUZE");
+		return $this->findOneByRaisonSociale("TUENET");
 	}
 
     public function findByTerms($queryString, $withNonActif = false, $limit = 1000, $mixWith = false) {
         $terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $queryString)));
 
-        $results = null;
+        $results = array();
         foreach ($terms as $term) {
             if (strlen($term) < 2) {
                 continue;
@@ -47,38 +47,28 @@ class SocieteRepository extends DocumentRepository {
                 	$currentResults[$societe->getId()] = $societe->getIntitule();
 								}
             }
-						if (!is_null($results)) {
-								$results = array_intersect_assoc($results, $currentResults);
+						if (count($results) > 0) {
+								$results = array_merge($results, $currentResults);
 						} else {
 								$results = $currentResults;
 						}
         }
+        //$etablissements = $this->dm->getRepository('Etablissement')->findByTerms($queryString);
+        //$results = array_merge($results, $etablissements);
         return is_null($results) ? array() : $results;
     }
 
 
-    public function findByQuery($q, $inactif = false, $limit = 100)
+    public function findByQuery($q, $inactif = false, $limit = 150)
     {
-
-    /*	$query = $this->createQueryBuilder();
-    	$expr = $query->expr()->operator('$text', array(
-    			'$search'   => $q
-    	));
-
-
-
-    	$societes = $query->equals($expr->getQuery())->sortMeta('score', 'textScore')->limit(100)->getQuery()->execute();
-    	foreach ($societes as $key => $societe) {
-				$resultSet[] = array("doc" => $societe, "score" => 1, "instance" => "Societe");
-    	}
-		*/
         $q = str_replace(",", "", $q);
         $q = "\"".str_replace(" ", "\" \"", $q)."\"";
 
     	$resultSet = array();
+    	$filter = ($inactif)? ['$text' => ['$search' => $q]] : ['$text' => ['$search' => $q], "actif" => true] ;
     	$itemResultSet = $this->getDocumentManager()->getDocumentDatabase('AppBundle:Societe')->command([
     		'find' => 'Societe',
-    		'filter' => ['$text' => ['$search' => $q]],
+    		'filter' => $filter,
     		'projection' => ['score' => [ '$meta' => "textScore" ]],
     		'sort' => ['score' => [ '$meta' => "textScore" ]],
     		'limit' => $limit
@@ -86,25 +76,52 @@ class SocieteRepository extends DocumentRepository {
         ]);
     	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
 	    	foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
-	    		if (!$inactif && !$itemResult['actif']) {
-	    			continue;
-	    		}
-					$docSoc = $this->uow->getOrCreateDocument('\AppBundle\Document\Societe', $itemResult);
+				$docSoc = $this->uow->getOrCreateDocument('\AppBundle\Document\Societe', $itemResult);
 	    		$resultSet[$docSoc->getId()] = array("doc" => $docSoc, "score" => $itemResult['score'], "instance" => "Societe");
 	    	}
     	}
     	return $resultSet;
     }
 
-    public function getIdsByQuery($q, $inactif = false, $limit = 100)
+
+
+    public function findByElasticQuery($service, $q, $inactif = false, $limit = 150)
+    {
+    	$q = str_replace(",", " ", $q);
+    	$keywords = explode(" ", $q);
+    	$q = '';
+    	foreach ($keywords as $keyword) {
+    		$q .= "$keyword* ";
+    	}
+    	if (!$inactif) {
+    		$q .= "actif:true";
+    	}
+
+    	$query = new \Elastica\Query\QueryString();
+    	$query->setDefaultOperator('AND');
+    	$query->setQuery($q);
+
+    	$resultSet = array();
+    	$results = $service->find($query, $limit);
+    	foreach ($results as $result) {
+    		$resultSet[$result->getId()] = array("doc" => $result, "score" => 1, "instance" => join('', array_slice(explode('\\', get_class($result)), -1)));
+    	}
+    	return $resultSet;
+    }
+
+
+    public function getSocieteIdsWithIban()
     {
     	$ids = array();
-    	$items = $this->findByQuery($q, $inactif, $limit);
-    	foreach ($items as $item) {
-    		$obj = $item["doc"];
-    		$ids[] = $obj->getId();
-    	}
-    	return $ids;
+    	$q = $this->createQueryBuilder();
+        $q->addAnd($q->expr()->field('sepa.iban')->exists(true));
+        $q->addAnd($q->expr()->field('sepa.actif')->equals(true));
+        $query = $q->getQuery();
+        $items = $query->execute();
+        foreach ($items as $item) {
+        	$ids[] = $item->getId();
+        }
+        return $ids;
     }
 
     public function findAllTags() {
@@ -114,6 +131,15 @@ class SocieteRepository extends DocumentRepository {
                 ->getQuery()
                 ->execute();
         return $request->toArray();
+    }
+
+    public function getIdsByIban() {
+    	$ids = array();
+    	foreach ($items as $item) {
+    		$obj = $item["doc"];
+    		$ids[] = $obj->getId();
+    	}
+    	return $ids;
     }
 
     public function findAllPassages($societe) {

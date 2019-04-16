@@ -81,22 +81,22 @@ class ContratPassages {
 
     public static function cmpPassage($a, $b)
     {
-    	$da = ($a->getDatePrevision())? $a->getDatePrevision()->format('Ymd') : 0;
-    	$db = ($b->getDatePrevision())? $b->getDatePrevision()->format('Ymd') : 0;
+    	$da = ($a->getDatePrevision())? $a->getDatePrevision()->format('Ymd').$a->getId() : 0;
+    	$db = ($b->getDatePrevision())? $b->getDatePrevision()->format('Ymd').$b->getId() : 0;
     	if ($da == $db) {
     		return 0;
     	}
-    	return ($da > $db) ? +1 : -1;
+    	return $da > $db? +1 : -1;
     }
 
     public static function cmpInvPassage($a, $b)
     {
-    	$da = ($a->getDatePrevision())? $a->getDatePrevision()->format('Ymd') : 0;
-    	$db = ($b->getDatePrevision())? $b->getDatePrevision()->format('Ymd') : 0;
+    	$da = ($a->getDatePrevision())? $a->getDatePrevision()->format('Ymd').$a->getId() : 0;
+    	$db = ($b->getDatePrevision())? $b->getDatePrevision()->format('Ymd').$b->getId() : 0;
     	if ($da == $db) {
     		return 0;
     	}
-    	return ($da > $db) ? -1 : +1;
+    	return $da < $db;
     }
 
     public function getNbPassagePrevu() {
@@ -139,7 +139,7 @@ class ContratPassages {
         }
         return $nbNonPrevus;
     }
-    
+
     public function getProduitsUtilises()
     {
     	$produits = array();
@@ -169,9 +169,12 @@ class ContratPassages {
         return $realises;
     }
 
-    public function getNbPassagesRealisesOuAnnule() {
+    public function getNbPassagesRealisesOuAnnule($exclude_garanti = false) {
         $realisesOuAnnules = 0;
         foreach ($this->getPassages() as $passage) {
+            if($exclude_garanti && ($passage->isGarantie() || $passage->isControle())){
+              continue;
+            }
             $realisesOuAnnules+=($passage->isRealise() || $passage->isAnnule());
         }
         return $realisesOuAnnules;

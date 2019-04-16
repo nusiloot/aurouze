@@ -1,0 +1,17 @@
+{% set _menu_active = 'attachements' %}
+{% extends 'base.html.twig' %}
+{% block title %}Sociétés{% endblock title %}
+{% block body %}
+	<ol class="breadcrumb">
+		<li><a href="{{ path('attachements_last') }}">Documents</a></li>
+	</ol>
+
+	{{ include('societe/choixForm.html.twig', {'urlTarget': path('societe_visualisation', {'id': '_id_'}), 'autofocus': true })}}
+
+	<div class="row" style="padding: 10px">
+		<h2>10 derniers documents ajoutés</h2>
+	</div>
+
+	{{ include('attachement/attachementList.html.twig', {'attachements' : lastAttachements}) }}
+
+{% endblock %}

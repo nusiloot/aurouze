@@ -22,7 +22,7 @@ class FactureRepository extends DocumentRepository {
                         ->execute();
     }
 
-    public function findByTerms($queryString) {
+    public function findByTerms($queryString, $filter = false, $withCloture = false) {
         $terms = explode(" ", trim(preg_replace("/[ ]+/", " ", $queryString)));
         $results = null;
         foreach ($terms as $term) {
@@ -30,8 +30,9 @@ class FactureRepository extends DocumentRepository {
                 continue;
             }
             $q = $this->createQueryBuilder();
-
-            $q->field('cloture')->equals(false);
+			if (!$withCloture) {
+            	$q->field('cloture')->equals(false);
+			}
             $q->field('numeroFacture')->notEqual(null);
             if (preg_match('/^[0-9]+\.[0-9]+$/', $term)) {
                 $nbInf = $term - 0.0001;
@@ -41,6 +42,9 @@ class FactureRepository extends DocumentRepository {
             } else {
                 $q->addOr($q->expr()->field('destinataire.nom')->equals(new \MongoRegex('/.*' . RechercheTool::getCorrespondances($term) . '.*/i')))
                         ->addOr($q->expr()->field('numeroFacture')->equals(new \MongoRegex('/.*' . $term . '.*/i')));
+            }
+            if($filter && !$withCloture){
+              $q->field('avoir')->equals(null);
             }
             $factures = $q->limit(1000)->getQuery()->execute();
 
@@ -67,6 +71,22 @@ class FactureRepository extends DocumentRepository {
         $query = $q->getQuery();
 
         return $query->execute();
+    }
+
+    public function exportByPrelevements($clients) {
+
+        $date = new \DateTime();
+        $date->modify("-1 year");
+                
+    	$q = $this->createQueryBuilder();
+    	$q->addAnd($q->expr()->field('societe')->in($clients));
+    	$q->addAnd($q->expr()->field('cloture')->equals(false));
+        $q->addAnd($q->expr()->field('montantHT')->gt(0.0));
+        $q->addAnd($q->expr()->field('avoir')->equals(null));
+        $q->addAnd($q->expr()->field('inPrelevement')->equals(null));
+        $q->addAnd($q->expr()->field('dateEmission')->gt($date));
+    	$query = $q->getQuery();
+    	return $query->execute();
     }
 
     public function exportBySocieteAndDate($societe, \DateTime $dateDebut,\DateTime $dateFin) {
@@ -99,7 +119,7 @@ class FactureRepository extends DocumentRepository {
     	return $resultSet;
     }
 
-    public function findFactureRetardDePaiement($dateFactureBasse = null, $dateFactureHaute = null, $nbRelance = null, $societe = null){
+    public function findFactureRetardDePaiement($dateFactureBasse = null, $dateFactureHaute = null, $nbRelance = null, $societe = null, $commercial = null){
       $today = new \DateTime();
       $q = $this->createQueryBuilder();
       $q->field('numeroFacture')->notEqual(null);
@@ -124,20 +144,32 @@ class FactureRepository extends DocumentRepository {
             ->addOr($q->expr()->field('nbRelance')->equals(0));
         }
       }
-      if ($societe) {
-        $societeRepo = $this->getDocumentManager()->getRepository('AppBundle:Societe');
-
-        $q->field('societe')->in($societeRepo->getIdsByQuery($societe));
-      }
+      	if ($societe && !preg_match('/^SOCIETE-[0-9]*$/', $societe)) {
+      		$societeRepo = $this->getDocumentManager()->getRepository('AppBundle:Societe');
+      		$societeTab = explode(', ', $societe);
+      		$societe = $societeRepo->findOneBy(array('identifiant' => $societeTab[count($societeTab)-1]));
+        	$q->field('societe')->equals($societe->getId());
+      	} elseif ($societe) {
+        	$q->field('societe')->equals($societe);
+      	}
         $q->sort('dateFacturation', 'desc')->sort('societe', 'asc');
         $query = $q->getQuery();
         $results = $query->execute();
         $factures = array();
         foreach($results as $facture) {
-            if(round($facture->getMontantTTC() - $facture->getMontantPaye(), 2) <= 0) {
-                continue;
-            }
-
+        	if ($commercial) {
+        		if (!$facture->getContrat()) {
+        			continue;
+        		} else {
+        			if (!$facture->getContrat()->getCommercial()) {
+        				continue;
+        			} else {
+        				if ($facture->getContrat()->getCommercial()->getId() != $commercial->getId()) {
+        					continue;
+        				}
+        			}
+        		}
+        	}
             $factures[$facture->getId()] = $facture;
         }
 

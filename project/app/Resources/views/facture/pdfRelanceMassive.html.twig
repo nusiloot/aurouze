@@ -3,11 +3,11 @@
 {% block body %}
   {% for facture in facturesRelancees %}
     {% if facture.nbRelance == 1 %}
-      {% include 'facture/pdfRelance1.html.twig' with {'facture': facture, 'lignes' : lignesFacturesRelancees[facture.id] } %}
+      {% include 'facture/pdfRelance1.html.twig' with {'facture': facture, 'lignes' : lignesFacturesRelancees[facture.id], 'relance' : facture.relanceObjNumero(facture.nbRelance) } %}
     {% elseif facture.nbRelance == 2 %}
-      {% include 'facture/pdfRelance2.html.twig' with {'facture': facture, 'lignes' : lignesFacturesRelancees[facture.id]} %}
+      {% include 'facture/pdfRelance2.html.twig' with {'facture': facture, 'lignes' : lignesFacturesRelancees[facture.id], 'relance' : facture.relanceObjNumero(facture.nbRelance) } %}
     {% elseif facture.nbRelance == 3 %}
-      {% include 'facture/pdfMiseEnDemeure.html.twig' with {'facture': facture, 'lignes' : lignesFacturesRelancees[facture.id]} %}
+      {% include 'facture/pdfMiseEnDemeure.html.twig' with {'facture': facture, 'lignes' : lignesFacturesRelancees[facture.id], 'relance' : facture.relanceObjNumero(facture.nbRelance) } %}
     {% endif %}
     <div style="page-break-after: always;"></div>
   {% endfor %}

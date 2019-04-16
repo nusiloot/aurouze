@@ -11,22 +11,22 @@ use Behat\Transliterator\Transliterator;
 class Prestation {
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifiant;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nom;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nomCourt;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $nbPassages;
 
@@ -81,7 +81,8 @@ class Prestation {
       $mot_rongeur = array('DERATISATION', 'RONGEURS');
       $mot_puce = array('RAMPANTS');
       $mot_moustique = array('VOLANTS');
-      $mot_cafard = array('BLATTES', 'PUNAISES');
+      $mot_cafard = array('BLATTES');
+      $mot_punaise = array('PUNAISES');
       $mot_chenille = array('CHENILLES');
       $mot_pigeon = array('DEPIGEONNAGE');
       $mot_bois = array('TRAITEMENT', 'BOIS');
@@ -101,12 +102,14 @@ class Prestation {
           if($this->isPictoForLibelles($nom_libelles,array('SURMULOTS'))){
               return "surmulots";
           }
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_cafard)){
+          return 'cafard';
+      }elseif($this->isPictoForLibelles($nom_libelles, $mot_punaise)){
+          return 'punaise';
       }elseif($this->isPictoForLibelles($nom_libelles, $mot_puce)){
           return 'puce';
       }elseif($this->isPictoForLibelles($nom_libelles, $mot_moustique)){
           return 'moustique';
-      }elseif($this->isPictoForLibelles($nom_libelles, $mot_cafard)){
-          return 'cafard';
       }elseif($this->isPictoForLibelles($nom_libelles, $mot_chenille)){
           return 'chenille';
       }elseif($this->isPictoForLibelles($nom_libelles, $mot_pigeon)){
@@ -120,7 +123,7 @@ class Prestation {
       }elseif($this->isPictoForLibelles($nom_libelles, $mot_desinfection)){
           return 'déinfection assainissement';
       }
-      
+
       return "";
     }
 

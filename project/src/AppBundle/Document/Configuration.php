@@ -142,6 +142,21 @@ class Configuration {
         return $produitsType;
     }
 
+    public function getProduitsArrayOrdered() {
+        $produitsArray = $this->getProduitsArray();
+        uasort($produitsArray,array("AppBundle\Document\Configuration", "cmpProduitByOrdre"));
+        return $produitsArray;
+    }
+
+    public static function cmpProduitByOrdre($a, $b) {
+        if ($a->getOrdre() == $b->getOrdre()) {
+                return "0";
+            } else {
+                return ($b->getOrdre() > $a->getOrdre())? "+1" : "-1";
+            }
+    }
+
+
     /**
      * Add provenance
      *

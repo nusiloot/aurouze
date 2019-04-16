@@ -1,28 +1,32 @@
-<html lang="{{ app.request.locale }}" manifest="{% block manifest %}{% endblock manifest %}" class="ui-mobile" >
+<html lang="{{ app.request.locale }}"  class="ui-mobile" >
     <head>
         <meta charset="{{ _charset }}">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" href="../../favicon.ico">
-
+        <link rel="shortcut icon" type="image/ico" href="/favicon.ico?v=20170331" sizes="32x32" >
+        <link rel="shortcut icon" type="image/png" href="/favicon.png?v=20170331" sizes="32x32" >
+        <link rel="apple-touch-icon" sizes="129x129" href="/apple-touch-icon.png?v=20170331">
+        <link rel="icon" type="image/png" href="/favicon192x192.png" sizes="192x192">
         <title>{% block title %}Aurouze{% endblock title %}</title>
 
-        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile-1.4.5.css') }}">
-        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile-1.4.5.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('/component/aurouze/aurouze.css') }}">
-        <link rel="stylesheet" href="{{ asset('/css/main.css') }}" />
-        <link rel="stylesheet" href="{{ asset('/mobile/css/mobile.css') }}">
-        <link rel="stylesheet" media="print" href="{{ asset('/css/print.css') }}" />
+        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile-1.4.5.min.css?20170316') }}">
+        <link rel="stylesheet" href="{{ asset('/component/aurouze/aurouze.css?20170316') }}">
+        <link rel="stylesheet" href="{{ asset('/css/main.css?20170316') }}" />
+        <link rel="stylesheet" href="{{ asset('/mobile/css/mobile.css?20170316') }}">
+        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile.datepicker.css?20170316') }}" />
+        <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile.datepicker.theme.css?20170316') }}" />
+        <link rel="stylesheet" media="print" href="{{ asset('/css/print.css?20170316') }}" />
 
         {% block stylesheets %}{% endblock %}
     </head>
 
     <body>
+
         <div id="ajax_notifications">
-            <div class="alert alert-info text-center" id="ajax_form_progress_notification">
+            <div class="alert alert-info text-center" style="display: none;" id="ajax_form_progress_notification">
                 Traitement en cours...
             </div>
-            <div class="alert alert-danger text-center alert-dismissible" id="ajax_form_error_notification">
+            <div class="alert alert-danger text-center alert-dismissible" style="display: none;" id="ajax_form_error_notification">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 Oops, une erreur est survenue ! <small>Vous pouvez <a href="javascript:location.reload();">recharger la page</a>(ou si le problème persiste contactez le 24eme)</small>
             </div>
@@ -41,8 +45,10 @@
         <script type="text/javascript" src="{{ asset('/mobile/js/jquery.mobile-1.4.5.js') }}"></script>
 
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.phoenix.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/mobile/js/signature_pad.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/mobile/js/mobile.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.phoenix.min.js?20170316') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/datepicker.js?20170316') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/jquery.mobile.datepicker.js?20170316') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/signature_pad.js?20170316') }}"></script>
+        <script type="text/javascript" src="{{ asset('/mobile/js/mobile.js?20180516') }}"></script>
     </body>
 </html>

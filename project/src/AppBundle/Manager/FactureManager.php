@@ -43,9 +43,16 @@ class FactureManager {
     const CODE_TVA_20 = "44571200";
     const CODE_TVA_10 = "44571010";
 
+    const CODE_TVA_196 = "44571190";
+    const CODE_TVA_07 = "44571070";
+
     const CODE_HT_20_PRODUIT = "70732000";
     const CODE_HT_20 = "70612000";
     const CODE_HT_10 = "70631000";
+
+    const CODE_HT_196_PRODUIT = "7061000";
+    const CODE_HT_196 = "7061000";
+    const CODE_HT_07 = "7063000";
 
 
     const EXPORT_STATS_REPRESENTANT = 0 ;
@@ -125,6 +132,16 @@ public static $export_stats_libelle = array(
         return $this->getRepository()->findBy(array('societe' => $societe->getId()), array('dateEmission' => 'desc'));
     }
 
+    public function hasDevisSociete(Societe $societe) {
+        $factures = $this->findBySociete($societe);
+        foreach ($factures as $facture) {
+          if($facture->isDevis()){
+            return true;
+          }
+        }
+        return false;
+    }
+
     public function createVierge(Societe $societe) {
         $facture = new Facture();
         $facture->setSociete($societe);
@@ -135,7 +152,7 @@ public static $export_stats_libelle = array(
         $facture->getEmetteur()->setCommune($this->parameters['emetteur']['commune']);
         $facture->getEmetteur()->setTelephone($this->parameters['emetteur']['telephone']);
         $facture->getEmetteur()->setFax($this->parameters['emetteur']['fax']);
-        $facture->getEmetteur()->setEmail($this->parameters['emetteur']['email']);
+        $facture->getEmetteur()->setEmail($this->parameters['emetteur']['email']);        
 
         return $facture;
     }
@@ -164,6 +181,7 @@ public static $export_stats_libelle = array(
         }
 
         $facture->update();
+        $facture->updateRestantAPayer();
         $facture->facturerMouvements();
 
         return $facture;
@@ -179,13 +197,12 @@ public static $export_stats_libelle = array(
         return $this->mm->getMouvements(true, false);
     }
 
-    public function getStatsForCsv($dateDebut = null, $dateFin = null){
+    public function getStatsForCsv($dateDebut = null, $dateFin = null, $commercialFiltre = null){
       if(!$dateDebut){
         $dateDebut = new \DateTime();
         $dateFin = new \DateTime();
         $dateFin->modify("+1month");
       }
-
       $ca_stats = array();
       $ca_stats["ENTETE_TITRE"] = array("Exports statistiques du ".$dateDebut->format("d/m/Y")." au ".$dateFin->format("d/m/Y"));
       $ca_stats['ENTETE'] = self::$export_stats_libelle;
@@ -197,19 +214,23 @@ public static $export_stats_libelle = array(
         }
       }
 
-
       $facturesObjs = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
 
-      $this->fillCaStatsArray($ca_stats,$facturesObjs);
 
-      $dateDebutMoinsOneYear = \DateTime::createFromFormat('Y-m-d', $dateDebut->format('Y-m-d'));
+      $this->fillCaStatsArray($ca_stats,$facturesObjs, false, $commercialFiltre);
+
+
+      $dateDebutMoinsOneYear = \DateTime::createFromFormat('Y-m-d H:i:s', $dateDebut->format('Y-m-d')." 00:00:00");
       $dateDebutMoinsOneYear->modify("-1 year");
+      $dateDebutMoinsOneYear->modify('first day of this month');
 
-      $dateFinMoinsOneYear = \DateTime::createFromFormat('Y-m-d', $dateFin->format('Y-m-d'));
+
+      $dateFinMoinsOneYear = \DateTime::createFromFormat('Y-m-d H:i:s', $dateFin->format('Y-m-d')." 23:59:59");
       $dateFinMoinsOneYear->modify("-1 year");
-
+      $dateFinMoinsOneYear->modify('last day of this month');
       $facturesLastYearObjs = $this->getRepository()->exportOneMonthByDate($dateDebutMoinsOneYear,$dateFinMoinsOneYear);
-      $this->fillCaStatsArray($ca_stats,$facturesLastYearObjs,true);
+
+      $this->fillCaStatsArray($ca_stats,$facturesLastYearObjs,true, $commercialFiltre);
 
       //Calcul des Totaux
     foreach ($ca_stats as $commercial => $stat_row) {
@@ -252,11 +273,10 @@ public static $export_stats_libelle = array(
       }
     }
     ksort($results);
-
     return array_merge(array('ENTETE_TITRE' => $ca_stats['ENTETE_TITRE']) , array('ENTETE' => $ca_stats['ENTETE']),$results);
   }
 
-  private function fillCaStatsArray(&$ca_stats,$facturesObjs,$last_year = false){
+  private function fillCaStatsArray(&$ca_stats,$facturesObjs,$last_year = false, $commercialFiltre = null){
 
     foreach ($facturesObjs as $facture) {
         if(!$facture->getContrat()){
@@ -266,12 +286,18 @@ public static $export_stats_libelle = array(
             $ca_stats['PAS DE CONTRAT'][$stats_index] = 0.0;
           }
         }
-          $commercial = ($facture->getCommercial())? $facture->getCommercial()->getId() : 'PAS DE CONTRAT';
-          if(!array_key_exists($commercial,$ca_stats)){
-                  foreach (array_keys(self::$export_stats_libelle) as $stats_index) {
+            $commercial = ($facture->getCommercial())? $facture->getCommercial()->getId() : 'PAS DE CONTRAT';
+
+            if(!is_null($commercialFiltre) && $commercial != $commercialFiltre) {
+
+                continue;
+            }
+
+            if(!array_key_exists($commercial,$ca_stats)){
+                foreach (array_keys(self::$export_stats_libelle) as $stats_index) {
                     $ca_stats[$commercial][$stats_index] = 0.0;
-                  }
                 }
+            }
 
           if($last_year){
             $ca_stats[$commercial][self::EXPORT_STATS_PRODUIT_PREC] += $facture->getMontantHT();
@@ -281,6 +307,10 @@ public static $export_stats_libelle = array(
       }else{
 
         $commercial = ($facture->getContrat()->getCommercial()) ? $facture->getContrat()->getCommercial()->getId() : "VIDE";
+
+        if(!is_null($commercialFiltre) && $commercial != $commercialFiltre) {
+            continue;
+        }
 
         if(!array_key_exists($commercial,$ca_stats)){
           foreach (array_keys(self::$export_stats_libelle) as $stats_index) {
@@ -343,6 +373,63 @@ public static $export_stats_libelle = array(
         return $facturesArray;
     }
 
+    public function getFacturesPrelevementsForCsv() {
+    	$clients = $this->dm->getRepository('AppBundle:Societe')->getSocieteIdsWithIban();
+        return $this->getRepository()->exportByPrelevements($clients);
+    }
+
+
+    public function getDetailCaFromFactures($dateDebut = null, $dateFin = null, $commercial = null){
+        if(!$dateDebut){
+          $dateDebut = new \DateTime();
+          $dateFin = new \DateTime();
+          $dateFin->modify("+1 month");
+        }
+        $factures = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
+        $csv = array();
+        $cpt = 0;
+        $csv["AAAaaa_0_0000000000"] = array("Commercial","Client", "Numéro facture", "Type Contrat", "Presta.","Date Facturation", "Montant facturé HT", "Prix integral Contrat HT");
+        foreach ($factures as $facture) {
+            if($facture->getContrat()){
+                $c = $facture->getContrat();
+                $commercialContrat = $c->getCommercial();
+                if($commercial && ($commercial != $commercialContrat->getId())) {
+                    continue;
+                }
+                $identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialContrat->getId())->getIdentite();
+                $arr_ligne = array();
+                $resiliation = 0;
+                $key = $identite."_".$facture->getDateFacturation()->format('Ymd')."_".$facture->getNumeroFacture();
+                $keyTotal = $identite."_9_9999999999_TOTAL";
+                $arr_ligne[] = $identite;
+                $arr_ligne[] = $facture->getSociete()->getRaisonSociale();
+                $arr_ligne[] = $facture->getNumeroFacture();
+                $arr_ligne[] = $c->getTypeContratLibelle();
+                $arr_ligne[] = implode(', ', $facture->getContrat()->getUniquePrestations());
+
+                $arr_ligne[] = $facture->getDateFacturation()->format('d/m/Y');
+                $arr_ligne[] = number_format($facture->getMontantHT(), 2, ',', '');
+
+                $prix_ht = ($c)? $c->getPrixHT() : $facture->getMontantHT();
+                $arr_ligne[] = number_format($prix_ht, 2, ',', '');
+
+                $csv[$key] = $arr_ligne;
+
+                $csv[$keyTotal][0] = $identite;
+                $csv[$keyTotal][1] = "TOTAL";
+                $csv[$keyTotal][2] = "";
+                $csv[$keyTotal][3] = "";
+                $csv[$keyTotal][4] = "";
+                $csv[$keyTotal][5] = "";
+                $csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $facture->getMontantHT(), 2, ',', '') : number_format($facture->getMontantHT(), 2, ',', '');
+                $csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $prix_ht, 2, ',', '') : number_format($facture->getContrat()->getPrixHT(), 2, ',', '');
+            }
+        }
+        ksort($csv);
+        return $csv;
+
+    }
+
     public function getFacturesSocieteForCsv($societe, $dateDebut = null,$dateFin = null) {
         if(!$dateDebut){
           $dateDebut = new \DateTime();
@@ -368,14 +455,24 @@ public static $export_stats_libelle = array(
         $debit = 0;
         $credit = 0;
         foreach ($facturesObjs as $facture) {
+              if($facture->isAvoir() && $facture->getOrigineAvoir()){
+                  $factureOrigine = $facture->getOrigineAvoir();
+                  $facturesArray[$factureOrigine->getId()] = new \stdClass();
+                  $facturesArray[$factureOrigine->getId()]->facture = $factureOrigine;
+                  $facturesArray[$factureOrigine->getId()]->row = $this->buildFactureSocieteLigne($factureOrigine,$debit,$credit);
+              }
               $facturesArray[$facture->getId()] = new \stdClass();
               $facturesArray[$facture->getId()]->facture = $facture;
               $facturesArray[$facture->getId()]->row = $this->buildFactureSocieteLigne($facture,$debit,$credit);
         }
 
-        $facturesArray["Z"] = new \stdClass();
-        $facturesArray["Z"]->facture = null;
-        $facturesArray["Z"]->row = array("","","","Total",$debit,$credit,"");
+        $facturesArray["za"] = new \stdClass();
+        $facturesArray["za"]->facture = null;
+        $facturesArray["za"]->row = array("","","","Total",$debit,$credit,"");
+        $facturesArray["zz"] = new \stdClass();
+        $facturesArray["zz"]->facture = null;
+        $facturesArray["zz"]->row = array("","","","Restant à payer",$debit-$credit,"","");
+        ksort($facturesArray);
         return $facturesArray;
     }
 
@@ -386,11 +483,22 @@ public static $export_stats_libelle = array(
             if ($paiement->getFacture()->getId() == $facture->getId()) {
               $factureLigne[self::EXPORT_SOCIETE_DATE] = $facture->getDateFacturation()->format('d/m/Y');
               $factureLigne[self::EXPORT_SOCIETE_PIECE] =  $facture->getNumeroFacture();
-              $factureLigne[self::EXPORT_SOCIETE_TYPE] =  ($facture->isAvoir())? "Prestation Avoir" : "Prestation Facture" ;
+              if($facture->isAvoir()){
+                $factureLigne[self::EXPORT_SOCIETE_TYPE] =  "Avoir";
+                if($facture->getOrigineAvoir()){
+                  $factureLigne[self::EXPORT_SOCIETE_TYPE] .= " (facture ".$facture->getOrigineAvoir()->getNumeroFacture().')';
+                }
+              }else{
+                $factureLigne[self::EXPORT_SOCIETE_TYPE] = "Prestation Facture" ;
+              }
               $factureLigne[self::EXPORT_SOCIETE_ECHEANCE] =  $facture->getDateLimitePaiement()->format('d/m/Y');
               $factureLigne[self::EXPORT_SOCIETE_DEBIT] =  number_format($facture->getMontantTTC(), 2, ",", "");
               $factureLigne[self::EXPORT_SOCIETE_CREDIT] =  ($facture->isAvoir())? number_format($facture->getMontantTTC() , 2, ",", "") : number_format($paiement->getMontant() , 2, ",", "");
-              $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  $paiement->getMoyenPaiementLibelle();
+              if($facture->isAvoir() && $facture->getAvoirPartielRemboursementCheque()){
+                $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  $paiement->getMoyenPaiementLibelle();
+              }else{
+                $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  $paiement->getMoyenPaiementLibelle();
+              }
               $debit += $facture->getMontantTTC();
               $credit += $paiement->getMontant();
             }
@@ -399,11 +507,18 @@ public static $export_stats_libelle = array(
         if(!count($facture->getPaiements())){
           $factureLigne[self::EXPORT_SOCIETE_DATE] = $facture->getDateFacturation()->format('d/m/Y');
           $factureLigne[self::EXPORT_SOCIETE_PIECE] =  $facture->getNumeroFacture();
-          $factureLigne[self::EXPORT_SOCIETE_TYPE] =  ($facture->isAvoir())? "Prestation Avoir" : "Prestation Facture" ;
+          if($facture->isAvoir()){
+            $factureLigne[self::EXPORT_SOCIETE_TYPE] =  "Avoir";
+            if($facture->getOrigineAvoir()){
+              $factureLigne[self::EXPORT_SOCIETE_TYPE] .= " (facture ".$facture->getOrigineAvoir()->getNumeroFacture().')';
+            }
+          }else{
+            $factureLigne[self::EXPORT_SOCIETE_TYPE] = "Prestation Facture" ;
+          }
           $factureLigne[self::EXPORT_SOCIETE_ECHEANCE] =  $facture->getDateLimitePaiement()->format('d/m/Y');
           $factureLigne[self::EXPORT_SOCIETE_DEBIT] =  number_format($facture->getMontantTTC(), 2, ",", "");
           $factureLigne[self::EXPORT_SOCIETE_CREDIT] =  ($facture->isAvoir())? number_format($facture->getMontantTTC() , 2, ",", "") : "0";
-          $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] =  "-";
+          $factureLigne[self::EXPORT_SOCIETE_MOYEN_REGLEMENT] = ($facture->getAvoirPartielRemboursementCheque())? "Remboursement par chèque le ".$facture->getDateFacturation()->format('d/m/Y') : "-";
           $debit += $facture->getMontantTTC();
           $credit += ($facture->isAvoir())? $facture->getMontantTTC() : 0;
         }
@@ -424,7 +539,12 @@ public static $export_stats_libelle = array(
           $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_20;
       }elseif($facture->getTva() == 0.1){
         $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_10;
+      }elseif($facture->getTva() == 0.196){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_196;
+      }elseif($facture->getTva() == 0.07){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_TVA_07;
       }
+
       $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? (-1*$facture->getMontantTaxe()) : "0", 2, ",", "");
       $factureLigne[self::EXPORT_CREDIT] =  number_format(($facture->isAvoir())? "0" :$facture->getMontantTaxe(), 2, ",", "");
     }elseif($typeLigne == self::EXPORT_LIGNE_HT){
@@ -434,6 +554,12 @@ public static $export_stats_libelle = array(
           $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_20_PRODUIT;
       } elseif($facture->getTva() == 0.1){
         $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_10;
+      } elseif($facture->getTva() == 0.196 && $facture->getContrat()){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_196;
+      } elseif($facture->getTva() == 0.196){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_196_PRODUIT;
+      } elseif($facture->getTva() == 0.07){
+        $factureLigne[self::EXPORT_COMPTE] = self::CODE_HT_07;
       }
       $factureLigne[self::EXPORT_DEBIT] = number_format(($facture->isAvoir())? (-1*$facture->getMontantHt()) : "0", 2, ",", "");
       $factureLigne[self::EXPORT_CREDIT] =  number_format(($facture->isAvoir())? "0" : $facture->getMontantHt(), 2, ",", "");

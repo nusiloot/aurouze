@@ -9,12 +9,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-class PassageCommentaireType extends AbstractType
+class EtablissementCommentaireType extends AbstractType
 {
     protected $dm;
+    protected $options;
 
-    public function __construct(DocumentManager $documentManager) {
+    public function __construct(DocumentManager $documentManager,$options = null) {
         $this->dm = $documentManager;
+        $this->options = $options;
     }
     /**
      * @param FormBuilderInterface $builder
@@ -23,7 +25,8 @@ class PassageCommentaireType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('commentaire', null, array('label' => 'Commentaire :'));
+            ->add('commentairePlanification', TextareaType::class, array('label' => 'Commentaire récurrent planification :', 'required' => false, 'attr' => array('rows' => '3')))
+            ->add('commentaire', TextareaType::class, array('label' => 'Commentaire récurrent techniciens :', 'required' => false , 'attr' => array('rows' => '3')));
 
     }
 
@@ -32,9 +35,7 @@ class PassageCommentaireType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Document\Passage'
-        ));
+        $resolver->setDefaults(array('data_class' => 'AppBundle\Document\Etablissement'));
     }
 
     /**
@@ -42,7 +43,7 @@ class PassageCommentaireType extends AbstractType
      */
     public function getName()
     {
-        return 'passage_commentaire';
+        return 'etablissement_commentaire';
     }
 
 }

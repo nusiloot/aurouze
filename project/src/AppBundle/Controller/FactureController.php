@@ -13,6 +13,7 @@ use AppBundle\Document\FactureLigne;
 use AppBundle\Type\FactureType;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Societe;
+use AppBundle\Document\Relance;
 use AppBundle\Type\FactureChoiceType;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Type\RelanceType;
@@ -70,8 +71,10 @@ class FactureController extends Controller {
             $facture->setDateEmission(new \DateTime());
         }
 
-        $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant('003480005');
-        $facture->setCommercial($commercial);
+        if(!$facture->getCommercial()) {
+            $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant('003480005');
+            $facture->setCommercial($commercial);
+        }
         if ($type == "devis" && !$facture->getDateDevis()) {
             $facture->setDateDevis(new \DateTime());
 
@@ -127,11 +130,12 @@ class FactureController extends Controller {
             'method' => 'GET',
         ));
         $factures = $fm->findBySociete($societe);
+        $hasDevis = $fm->hasDevisSociete($societe);
         $mouvements = $fm->getMouvementsBySociete($societe);
 
         $exportSocieteForm = $this->createExportSocieteForm($societe);
 
-        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements, 'factures' => $factures, 'exportSocieteForm' => $exportSocieteForm->createView()));
+        return $this->render('facture/societe.html.twig', array('societe' => $societe, 'mouvements' => $mouvements,'hasDevis' => $hasDevis,  'factures' => $factures, 'exportSocieteForm' => $exportSocieteForm->createView()));
     }
 
     /**
@@ -183,14 +187,17 @@ class FactureController extends Controller {
     }
 
   /**
-    * @Route("/avoir/{id}/{factureId}/{mouvement}", name="facture_avoir", defaults={"mouvement" = "1"})
+    * @Route("/avoir/{id}/{factureId}/{mouvement}/{remboursement}", name="facture_avoir", defaults={"mouvement" = "1", "remboursement" = "0"})
    * @ParamConverter("societe", class="AppBundle:Societe")
    */
-  public function avoirAction(Request $request, Societe $societe, $factureId,$mouvement) {
+  public function avoirAction(Request $request, Societe $societe, $factureId, $mouvement, $remboursement) {
       $dm = $this->get('doctrine_mongodb')->getManager();
 
       $facture = $this->get('facture.manager')->getRepository()->findOneById($factureId);
       $avoir = $facture->genererAvoir();
+      if($remboursement){
+        $avoir->setAvoirPartielRemboursementCheque(true);
+      }
 
       $dm->persist($avoir);
       $dm->flush();
@@ -441,13 +448,27 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/facture/rechercher", name="facture_search")
+     * @Route("/facture/rechercher/{filter}", name="facture_search", defaults={"filter" = "0"})
      */
-    public function factureSearchAction(Request $request) {
+    public function factureSearchAction(Request $request, $filter) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $response = new Response();
         $facturesResult = array();
-        $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term')), $facturesResult);
+        $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term'),$filter), $facturesResult);
+        $data = json_encode($facturesResult);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setContent($data);
+        return $response;
+    }
+
+    /**
+     * @Route("/facture/all/rechercher/{filter}", name="all_facture_search", defaults={"filter" = "0"})
+     */
+    public function allFactureSearchAction(Request $request, $filter) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $response = new Response();
+        $facturesResult = array();
+        $this->contructSearchResult($dm->getRepository('AppBundle:Facture')->findByTerms($request->get('term'),$filter, true), $facturesResult);
         $data = json_encode($facturesResult);
         $response->headers->set('Content-Type', 'application/json');
         $response->setContent($data);
@@ -468,7 +489,7 @@ class FactureController extends Controller {
      * @Route("/facture/export", name="factures_export")
      */
     public function exportComptableAction(Request $request) {
-
+        ini_set('memory_limit', '-1');
       // $response = new StreamedResponse();
         $formRequest = $request->request->get('form');
 
@@ -501,6 +522,97 @@ class FactureController extends Controller {
 
         return $response;
     }
+    
+
+
+    /**
+     * @Route("/prelevements/export", name="factures_prelevements")
+     */
+    public function exportPrelevementsAction(Request $request) {
+    	ini_set('memory_limit', '-1');
+    
+    	$dm = $this->get('doctrine_mongodb')->getManager();
+    	$fm = $this->get('facture.manager');
+    	
+    	$facturesForCsv = $fm->getFacturesPrelevementsForCsv();
+    	
+    	var_dump(count($facturesForCsv));exit;
+    }
+
+
+
+        /**
+         * @Route("/facture/export-detailca", name="detailca_export")
+         */
+    	public function exportDetailCaAction(Request $request) {
+            ini_set('memory_limit', '256M');
+        	// $response = new StreamedResponse();
+        	$formRequest = $request->request->get('form');
+            $commercial = (isset($formRequest['commercial']) && $formRequest['commercial'] && ($formRequest['commercial']!= ""))?
+            $formRequest['commercial'] : null;
+
+        	$pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
+
+        	$dateDebutString = $formRequest['dateDebut']." 00:00:00";
+        	$dateFinString = $formRequest['dateFin']." 23:59:59";
+
+        	$dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
+        	$dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
+
+        	$fm = $this->get('facture.manager');
+
+        	$detailCaFromFactures = $fm->getDetailCaFromFactures($dateDebut,$dateFin,$commercial);
+
+
+        	if(!$pdf){
+        		$filename = sprintf("export_details_chiffre_affaire_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+        		$handle = fopen('php://memory', 'r+');
+
+        		foreach ($detailCaFromFactures as $stat) {
+        			fputcsv($handle, $stat,';');
+        		}
+
+        		rewind($handle);
+        		$content = stream_get_contents($handle);
+        		fclose($handle);
+
+        		$response = new Response(utf8_decode($content), 200, array(
+        				'Content-Type' => 'text/csv',
+        				'Content-Disposition' => 'attachment; filename=' . $filename,
+        		));
+        		$response->setCharset('UTF-8');
+
+        		return $response;
+        	}else{
+        		$html = $this->renderView('contrat/pdfStatsCommerciaux.html.twig', array(
+        				'statsForCommerciaux' => $detailCaFromFactures,
+        				'dateDebut' => $dateDebut,
+        				'dateFin' => $dateFin
+        		));
+
+
+        		$filename = sprintf("export_stats_rentabilite_du_%s_au_%s.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+
+        		if ($request->get('output') == 'html') {
+
+        			return new Response($html, 200);
+        		}
+
+        		return new Response(
+        				$this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+        						'disable-smart-shrinking' => null,
+        						'encoding' => 'utf-8',
+        						'margin-left' => 10,
+        						'margin-right' => 10,
+        						'margin-top' => 10,
+        						'margin-bottom' => 10),$this->getPdfGenerationOptions()), 200, array(
+        								'Content-Type' => 'application/pdf',
+        								'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+        						));
+        	}
+        }
+
+
 
     /**
      * @Route("/facture/export-client/{societe}", name="factures_export_client")
@@ -523,7 +635,7 @@ class FactureController extends Controller {
         $pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
 
         if(!$pdf){
-          $filename = sprintf("export_%s_factures_du_%s_au_%s.csv",$societe->getRaisonSociale(), $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+          $filename = sprintf("export_%s_factures_du_%s_au_%s.csv",str_replace(array("'"," ",'"'),array('','',''),$societe->getRaisonSociale()), $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
           $handle = fopen('php://memory', 'r+');
 
           foreach ($facturesForCsv as $factureObj) {
@@ -542,16 +654,39 @@ class FactureController extends Controller {
 
           return $response;
       }else{
+
+          $nbPages = 0;
+          $facturesForPdf = array();
+          $currentPage = 0;
+          $cpt = 0;
+          foreach ($facturesForCsv as $key => $factureObj) {
+            if($cpt > 27){
+              $currentPage++;
+              $cpt = 0;
+            }
+            if(!array_key_exists($currentPage,$facturesForPdf)){
+              $facturesForPdf[$currentPage] = array();
+            }
+              $facturesForPdf[$currentPage][$key] = $factureObj;
+            if($factureObj->facture){
+              if($factureObj->facture->getAvoirPartielRemboursementCheque()){
+                $cpt+=2;
+              }else{
+                $cpt++;
+              }
+            }
+          }
+
           $html = $this->renderView('facture/pdfSociete.html.twig', array(
             'societe' => $societe,
-            'facturesArray' => $facturesForCsv,
+            'facturesForPdf' => $facturesForPdf,
             'dateDebut' => $dateDebut,
             'dateFin' => $dateFin,
             'parameters' => $fm->getParameters()
         ));
 
 
-        $filename = sprintf("export_%s_factures_du_%s_au_%s.pdf",$societe->getRaisonSociale(),  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+        $filename = sprintf("export_%s_factures_du_%s_au_%s.pdf",str_replace(array("'"," ",'"'),array('','',''),$societe->getRaisonSociale()), $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
 
         if ($request->get('output') == 'html') {
 
@@ -572,7 +707,7 @@ class FactureController extends Controller {
       }
     }
 
-    public function exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin){
+    public function exportStatsForDates($dateDebutString, $dateFinString, $dateDebut, $dateFin, $commercialFiltre = null){
 
       $dateDebutFirstOfMonth = \DateTime::createFromFormat('d/m/Y H:i:s', $dateDebutString);
       $dateDebutFirstOfMonth->modify('first day of this month');
@@ -607,7 +742,8 @@ class FactureController extends Controller {
 
       $totalArray = array();
       foreach ($arrayOfDates as $dates) {
-          $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin']);
+          $facturesStatsForCsv = $fm->getStatsForCsv($dates['dateDebut'],$dates['dateFin'], $commercialFiltre);
+
           foreach ($facturesStatsForCsv as $rowId => $paiement) {
             if($rowId == "ENTETE_TITRE"){
               $totalArray[$rowId] = array();
@@ -655,6 +791,7 @@ class FactureController extends Controller {
         }
         $completeArray[] =  array("","","","","","","","","","");
       }
+
       return $completeArray;
     }
 
@@ -674,7 +811,7 @@ class FactureController extends Controller {
         $dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
         $dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
 
-        $exportStatsArray = $this->exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin);
+        $exportStatsArray = $this->exportStatsForDates($dateDebutString,$dateFinString,$dateDebut,$dateFin, ($formRequest['commercial']) ? $formRequest['commercial'] : null);
 
         if(!$pdf){
           $handle = fopen('php://memory', 'r+');
@@ -724,44 +861,62 @@ class FactureController extends Controller {
     }
 
     /**
+     * @Route("/retards-de-facture-societe/{id}", name="factures_retard_societe")
+      * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+
+     public function retardsSocieteAction(Request $request, Societe $societe) {
+       $societe = $societe->getId();
+       return $this->retardsFilters($request, $societe);
+     }
+
+
+    /**
      * @Route("/retards-de-facture", name="factures_retard")
      */
     public function retardsAction(Request $request) {
 
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $fm = $this->get('facture.manager');
-        $sm = $this->get('societe.manager');
-        $pdf = $request->get('pdf',null);
-        $dateFactureBasse = null;
-        $dateFactureHaute = null;
-
-
-        $nbRelances = null;
         $societe = null;
+        return $this->retardsFilters($request, $societe);
 
-        $formFacturesEnRetard = $this->createForm(new FacturesEnRetardFiltresType(), null, array(
-            'action' => $this->generateUrl('factures_retard'),
-            'method' => 'post',
-        ));
-        $formFacturesEnRetard->handleRequest($request);
-        if ($formFacturesEnRetard->isSubmitted() && $formFacturesEnRetard->isValid()) {
+    }
 
-          $formValues =  $formFacturesEnRetard->getData();
-          $dateFactureBasse = $formValues["dateFactureBasse"];
-          $dateFactureHaute = $formValues["dateFactureHaute"];
-          $nbRelances = intval($formValues["nbRelances"]) -1;
-          $societe = $formValues["societe"];
+    private function retardsFilters($request, $societe = null, $route = 'factures_retard'){
 
-        }
-        $facturesEnRetard = $fm->getRepository()->findFactureRetardDePaiement($dateFactureBasse, $dateFactureHaute, $nbRelances, $societe);
+      $dm = $this->get('doctrine_mongodb')->getManager();
+      $fm = $this->get('facture.manager');
+      $sm = $this->get('societe.manager');
 
-        $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
-            'action' => $this->generateUrl('factures_relance_massive'),
-            'method' => 'post',
-        ));
+      $pdf = $request->get('pdf',null);
 
-        return $this->render('facture/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(), 'nbRelances' => $nbRelances, 'pdf' => $pdf,
-        'formFacturesARelancer' => $formFacturesEnRetard->createView()));
+      $dateFactureBasse = null;
+      $dateFactureHaute = null;
+      $nbRelances = null;
+      $commercial = null;
+      $formFacturesEnRetard = $this->createForm(new FacturesEnRetardFiltresType($this->container, $this->get('doctrine_mongodb')->getManager()), null, array(
+          'action' => $this->generateUrl('factures_retard'),
+          'method' => 'post',
+      ));
+      $formFacturesEnRetard->handleRequest($request);
+      if ($formFacturesEnRetard->isSubmitted() && $formFacturesEnRetard->isValid()) {
+
+        $formValues =  $formFacturesEnRetard->getData();
+        $dateFactureBasse = $formValues["dateFactureBasse"];
+        $dateFactureHaute = $formValues["dateFactureHaute"];
+        $nbRelances = intval($formValues["nbRelances"]) -1;
+        $societe = $formValues["societe"];
+        $commercial = $formValues["commercial"];
+
+      }
+      $facturesEnRetard = $fm->getRepository()->findFactureRetardDePaiement($dateFactureBasse, $dateFactureHaute, $nbRelances, $societe, $commercial);
+
+      $formRelance = $this->createForm(new RelanceType($facturesEnRetard), null, array(
+          'action' => $this->generateUrl('factures_relance_massive'),
+          'method' => 'post',
+      ));
+
+      return $this->render('facture/retardPaiements.html.twig', array('facturesEnRetard' => $facturesEnRetard, "formRelance" => $formRelance->createView(), 'nbRelances' => $nbRelances, 'pdf' => $pdf,
+      'formFacturesARelancer' => $formFacturesEnRetard->createView(), 'commercial' => $commercial));
     }
 
 
@@ -799,6 +954,12 @@ class FactureController extends Controller {
           }
           $nbRelance = intval($facture->getNbRelance()) + 1;
           $facture->setNbRelance($nbRelance);
+          $dm->flush();
+
+          $relance = new Relance();
+          $relance->setDateRelance(new \DateTime());
+          $relance->setNumeroRelance($nbRelance);
+          $facture->addRelance($relance);
           $dm->flush();
       }
 
@@ -839,16 +1000,23 @@ class FactureController extends Controller {
           $lignes[] = $ligne;
       }
 
+      $relance = $facture->getRelanceObjNumero($numeroRelance);
+      $fileDate = (new \DateTime())->format("Y-m-d_His");
+      if($relance){
+        $fileDate = $relance->getDateRelance()->format("Y-m-d_His");
+      }
+
       $html = $this->renderView('facture/pdfGeneriqueRelance.html.twig', array(
           'facture' => $facture,
           'lignes' => $lignes,
           'numeroRelance' => $numeroRelance,
+          'relance' => $relance,
           'parameters' => $fm->getParameters()
       ));
 
       $terme_relance = FactureManager::$types_nb_relance[$numeroRelance];
 
-      $filename = sprintf("relance_%s_facture_%s_%s.pdf",$terme_relance, $facture->getNumeroFacture(), (new \DateTime())->format("Y-m-d_His"));
+      $filename = sprintf("relance_%s_facture_%s_%s.pdf",$terme_relance, $facture->getNumeroFacture(), $fileDate);
 
       if ($request->get('output') == 'html') {
 
