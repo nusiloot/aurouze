@@ -53,9 +53,10 @@ class ContratCsvImporter {
     const CSV_ARCHIVAGE = 13;
     const CSV_TVA_REDUITE = 14;
     const CSV_DATE_RESILIATION = 15;
-    const CSV_PRODUITS = 16;
-    const CSV_NOM_COMMERCIAL = 17;
-    const CSV_NOM_TECHNICIEN = 18;
+    const CSV_ID_SOCIETEOLDADRESSEID = 16;
+    const CSV_PRODUITS = 17;
+    const CSV_NOM_COMMERCIAL = 18;
+    const CSV_NOM_TECHNICIEN = 19;
 
     public function __construct(DocumentManager $dm, ContratManager $cm, PassageManager $pm, EtablissementManager $em, SocieteManager $sm, CompteManager $um) {
         $this->dm = $dm;
@@ -67,7 +68,7 @@ class ContratCsvImporter {
     }
 
     public function import($file, OutputInterface $output) {
-        $csvFile = new CsvFile($file);
+        $csvFile = new CsvFile($file,1,true);
 
         $progress = new ProgressBar($output, 100);
         $progress->start();
@@ -80,8 +81,11 @@ class ContratCsvImporter {
         $i = 0;
         $cptTotal = 0;
         foreach ($csv as $data) {
-            $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $data[self::CSV_ID_SOCIETE]));
 
+            $societe = $this->sm->getRepository()->findOneBy(array('identifiantAdresseReprise' => $data[self::CSV_ID_SOCIETEOLDADRESSEID]));
+            if (!$societe) {
+              $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $data[self::CSV_ID_SOCIETE]));
+            }
             if (!$societe) {
                 $output->writeln(sprintf("<error>La societe %s n'existe pas</error>", $data[self::CSV_ID_SOCIETE]));
                 continue;
@@ -99,7 +103,11 @@ class ContratCsvImporter {
             $contrat->setDateCreationAuto(new \DateTime($data[self::CSV_DATE_CREATION]));
             $contrat->setSociete($societe);
             $contrat->setTvaReduite(boolval($data[self::CSV_TVA_REDUITE]));
-            $type_contrat = ContratManager::$types_contrat_import_index[$data[self::CSV_TYPE_CONTRAT]];
+            if(isset(ContratManager::$types_contrat_import_index[$data[self::CSV_TYPE_CONTRAT]])){
+              $type_contrat = ContratManager::$types_contrat_import_index[$data[self::CSV_TYPE_CONTRAT]];
+            }else{
+              $output->writeln(sprintf("<comment>Le type de contrat %s n'existe pas dans la liste des types de contrats :[ %s ]</comment>", $data[self::CSV_TYPE_CONTRAT], implode(",",ContratManager::$types_contrat_import_index)));
+            }
             $contrat->setTypeContrat($type_contrat);
             $contrat->setReconduit(false);
 

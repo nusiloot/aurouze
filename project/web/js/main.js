@@ -23,7 +23,6 @@
         $.initLinkInPanels();
         $.initRdvLink();
         $.initSearchActif();
-        $.initListingPassage();
         $.initLinkCalendar();
         $.initMap();
         $.initTypeheadFacture();
@@ -34,6 +33,7 @@
         $.initRelance();
         $.initButtonLoading();
         $.initPopupRelancePdf();
+        $.initModificationContrat();
         $.initAcceptationContrat();
         $.initAllFactureSearch();
         $.initTrCollapse();
@@ -64,6 +64,19 @@
     		}
     		$.initSelect2Ajax();
     	});
+    }
+
+    $.initModificationContrat = function() {
+        $('#contrat_commanditaire').on('change', function (e) {
+            if($(this).val()) {
+                $('#contrat_devisInterlocuteur').attr('disabled', 'disabled');
+                $('#row_contrat_devisInterlocuteur').css('opacity', '0.2');
+            } else {
+                $('#contrat_devisInterlocuteur').removeAttr('disabled', 'disabled');
+                $('#row_contrat_devisInterlocuteur').css('opacity', '1');
+            }
+        });
+        $('#contrat_commanditaire').change();
     }
 
     $.initAcceptationContrat = function() {
@@ -196,19 +209,6 @@
            });
         });
     }
-
-    $.initListingPassage = function () {
-        $('.calendar_lien').click(function (event) {
-            event.preventDefault();
-            var url = $(this).attr('data-url');
-            window.location.href = url;
-        });
-        $('.commentaire_lien').click(function (event) {
-            event.preventDefault();
-            var url = $(this).attr('data-url')+"?service="+encodeURIComponent(window.location.href);
-            window.location.href = url;
-        });
-    };
 
     $.initSearchActif = function () {
         $('form input[type="checkbox"][data-search-actif="1"]').each(function () {

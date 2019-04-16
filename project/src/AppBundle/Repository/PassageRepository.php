@@ -225,7 +225,7 @@ class PassageRepository extends DocumentRepository {
       $regex = $this->getRegexForSeineEtMarne();
       if ($secteur == EtablissementManager::SECTEUR_PARIS) {
          $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->operator('$not', new \MongoRegex($regex)));
-      } else {
+     } elseif($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE) {
          $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex($regex)));
       }
       $query = $q->sort('datePrevision', 'asc')->getQuery();

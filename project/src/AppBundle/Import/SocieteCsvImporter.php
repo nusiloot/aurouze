@@ -25,7 +25,9 @@ class SocieteCsvImporter extends CsvFile {
     protected $dm;
 
     const CSV_ID_SOCIETE = 0;
+    const CSV_ID_ADRESSE_HISTORIQUE = 1;
     const CSV_TYPE_ADRESSE = 2;
+    const CSV_ADRESSE_LIBELLE_1 = 3;
     const CSV_ADRESSE_SOCIETE_1 = 4;
     const CSV_ADRESSE_SOCIETE_2 = 5;
     const CSV_CP = 6;
@@ -75,7 +77,6 @@ class SocieteCsvImporter extends CsvFile {
     }
 
     public function createFromImport($ligne) {
-
         if(!is_numeric($ligne[self::CSV_ID_SOCIETE])) {
 
             return;
@@ -83,10 +84,13 @@ class SocieteCsvImporter extends CsvFile {
 
         $societe = new Societe();
 
-        $societe->setIdentifiant(sprintf("%06d", $ligne[self::CSV_ID_SOCIETE]));
         $societe->setIdentifiantReprise($ligne[self::CSV_ID_SOCIETE]);
 
-        $societe->setRaisonSociale($ligne[self::CSV_RAISON_SOCIALE]);
+        $societe->setIdentifiantAdresseReprise($ligne[self::CSV_ID_ADRESSE_HISTORIQUE]);
+
+        $raisonSociale = $this->createRaisonSociale($ligne[self::CSV_RAISON_SOCIALE],$ligne[self::CSV_ADRESSE_LIBELLE_1]);
+
+        $societe->setRaisonSociale($raisonSociale);
         $societe->setCodeComptable($ligne[self::CSV_CODE_COMPTABLE]);
         $societe->setCommentaire(null);
         $ligne[self::CSV_COMMENTAIRE] = str_replace('"', "", $ligne[self::CSV_COMMENTAIRE]);
@@ -104,17 +108,15 @@ class SocieteCsvImporter extends CsvFile {
 
         $adresse = new Adresse();
 
-        $adresseStr = $ligne[self::CSV_ADRESSE_SOCIETE_1];
-        if ($ligne[self::CSV_ADRESSE_SOCIETE_2]) {
-            $adresseStr .=", " . $ligne[self::CSV_ADRESSE_SOCIETE_2];
-        }
+        $adresseStr = $this->createAdresse($ligne[self::CSV_RAISON_SOCIALE],$ligne[self::CSV_ADRESSE_LIBELLE_1],$ligne[self::CSV_ADRESSE_SOCIETE_1],$ligne[self::CSV_ADRESSE_SOCIETE_2]);
+
         $adresse->setAdresse($adresseStr);
         $adresse->setCodePostal($ligne[self::CSV_CP]);
         $adresse->setCommune($ligne[self::CSV_VILLE]);
 
         $societe->setAdresse($adresse);
 
-         $contactCoordonnee = new ContactCoordonnee();
+        $contactCoordonnee = new ContactCoordonnee();
         $contactCoordonnee->setTelephoneFixe($ligne[self::CSV_TEL_FIXE]);
         $contactCoordonnee->setTelephoneMobile($ligne[self::CSV_TEL_MOBILE]);
         $contactCoordonnee->setFax($ligne[self::CSV_FAX]);
@@ -135,6 +137,39 @@ class SocieteCsvImporter extends CsvFile {
             }
         }
         return $societe;
+    }
+
+    private function createRaisonSociale($rs,$adresseChamp1){
+      if(trim(strtoupper($rs)) == trim(strtoupper($adresseChamp1)) || !trim(strtoupper($adresseChamp1))){
+        return $this->removeTitre($rs);
+      }
+      return $this->removeTitre($rs)." - ".$this->removeTitre($adresseChamp1);
+    }
+
+    private function removeTitre($nom_ou_rs){
+      $nom_ou_rs = preg_replace('/^MONSIEUR\ (.+)/', 'M. $1', $nom_ou_rs);
+      $nom_ou_rs = preg_replace('/^MADAME\ (.+)/', 'Mme. $1', $nom_ou_rs);
+      $nom_ou_rs = preg_replace('/^MADEMOISELLE\ (.+)/', 'Mlle. $1', $nom_ou_rs);
+
+      return trim($nom_ou_rs);
+    }
+
+    private function createAdresse($nom_ou_rs,$adresse_libelle,$adresse_complement1,$adresse_complement2){
+      $adresseStr = "";
+      if(trim($adresse_libelle) && trim(strtoupper($nom_ou_rs)) != trim(strtoupper($adresse_libelle))){
+        $adresseStr.= trim($adresse_libelle).", ";
+      }
+      if(trim($adresse_complement1) && trim(strtoupper($nom_ou_rs)) != trim(strtoupper($adresse_complement1))){
+        $adresseStr.= trim($adresse_complement1).", ";
+      }
+      if(trim($adresse_complement2) && trim(strtoupper($nom_ou_rs)) != trim(strtoupper($adresse_complement2))){
+        $adresseStr.= trim($adresse_complement2).", ";
+      }
+      $adresseStr = preg_replace('/(.+),\ $/', '$1', $adresseStr);
+      $adresseStr = preg_replace('/(.+),\ $/', '$1', $adresseStr);
+      $adresseStr = preg_replace('/(.+),\ $/', '$1', $adresseStr);
+
+      return $adresseStr;
     }
 
 }

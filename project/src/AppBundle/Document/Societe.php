@@ -71,6 +71,11 @@ class Societe implements InterlocuteurInterface {
     protected $identifiantReprise;
 
     /**
+     * @MongoDB\Field(type="string")
+     */
+    protected $identifiantAdresseReprise;
+
+    /**
      * @MongoDB\Field(type="increment")
      */
     protected $etablissementIncrement;
@@ -341,6 +346,28 @@ class Societe implements InterlocuteurInterface {
     public function getIdentifiantReprise() {
         return $this->identifiantReprise;
     }
+
+
+    /**
+     * Set identifiantAdresseReprise
+     *
+     * @param string $identifiantAdresseReprise
+     * @return self
+     */
+    public function setIdentifiantAdresseReprise($identifiantAdresseReprise) {
+        $this->identifiantAdresseReprise = $identifiantAdresseReprise;
+        return $this;
+    }
+
+    /**
+     * Get identifiantAdresseReprise
+     *
+     * @return string $identifiantAdresseReprise
+     */
+    public function getIdentifiantAdresseReprise() {
+        return $this->identifiantAdresseReprise;
+    }
+
 
     /**
      * Set etablissementIncrement
@@ -693,5 +720,10 @@ class Societe implements InterlocuteurInterface {
             throw new sfException("La societe ".$societe->getId()." ne posssède aucun SEPA");
         }
         return $this->sepa->isFirst();
+    }
+
+    public function __toString() {
+
+        return $this->getLibelleComplet();
     }
 }

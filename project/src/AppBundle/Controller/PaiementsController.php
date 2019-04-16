@@ -31,7 +31,7 @@ class PaiementsController extends Controller {
         $paiementsDocs = $this->get('paiements.manager')->getRepository()->findByPeriode($periode);
         $paiementsDocsPrelevement = $this->get('paiements.manager')->getRepository()->findByPeriode($periode,true);
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $societe = $dm->getRepository('AppBundle:Societe')->findAurouze();
+        $societe = $dm->getRepository('AppBundle:Societe')->findSocieteMere();
         $form = $this->createForm(new SocieteCommentaireType(), $societe, array(
         		'action' => $this->generateUrl('paiements_liste'),
         		'method' => 'POST',
@@ -280,7 +280,7 @@ class PaiementsController extends Controller {
             $paiements->addPaiement($paiement);
             if($facture->getSociete()->getSepa()->isFirst()){
                 $societesInFirstPrev[$facture->getSociete()->getId()] = $facture->getSociete();
-            }            
+            }
         }
 
 

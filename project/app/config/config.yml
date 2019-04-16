@@ -2,8 +2,8 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
-    - { resource: aurouze.yml }
     - { resource: elasticsearch.yml }
+    - { resource: app_default.yml }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -43,6 +43,7 @@ twig:
         kernelRootDir: %kernel.root_dir%
         facture_manager: "@facture.manager"
         attachement_manager: "@attachement.manager"
+        instanceapp: %instanceapp%
 
 doctrine_mongodb:
     connections:

@@ -15,9 +15,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class SocieteRepository extends DocumentRepository {
 
-	public function findAurouze()
+	public function findSocieteMere()
 	{
-		return $this->findOneByRaisonSociale("AUROUZE");
+		return $this->findOneByRaisonSociale("TUENET");
 	}
 
     public function findByTerms($queryString, $withNonActif = false, $limit = 1000, $mixWith = false) {
