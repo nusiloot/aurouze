@@ -723,7 +723,6 @@ class Societe implements InterlocuteurInterface {
     }
 
     public function __toString() {
-
         return $this->getLibelleComplet();
     }
 }
