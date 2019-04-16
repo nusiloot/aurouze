@@ -60,15 +60,13 @@
                                     {% set techColor = 'white' %}
                                     {% set techBgColor = 'transparent' %}
                                     {% set techIdentite = "" %}
-                                    {% set urlPlanif = path('calendarManuel',{'passage' : passage.id, 'id': passage.etablissement.id , 'date' : passage.dateForPlanif|date('d-m-Y')}) %}
                                 {% else %}
                                     {% set words = [dptKeyWord, passage.techniciens[0].identite, passage.etablissementInfos.adresse.codePostal | trim, passage.etablissementInfos.adresse.commune | trim, passage.etablissementInfos.type, passage.datePrevision | localizeddate("medium", "none", null, null, "MMMM yyyy") | capitalize, passage.etablissementInfos.nom, passage] | merge(passage.prestationsNom) | merge(passage.wordingsArrFacturant) | json_encode(constant('JSON_UNESCAPED_UNICODE')) %}
                                     {% set techColor = passage.techniciens[0].couleurText %}
                                     {% set techBgColor = passage.techniciens[0].couleur %}
                                     {% set techIdentite = passage.techniciens[0].identiteCourt %}
-                                    {% set urlPlanif = path('calendar', {'passage' : passage.id, 'id': passage.etablissement.id ,'technicien' : passage.techniciens[0].id, 'date' : passage.dateForPlanif|date('d-m-Y')}) %}
                                 {% endif %}
-                                <div data-words='{{ words }}' id="{{ passage.id }}" data-url="{{ path('passage_etablissement', {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant }) }}" style="margin-bottom: 4px" class="panel panel-default hamzastyle-item hide-print">
+                                <div data-words='{{ words }}' id="{{ passage.id }}" style="margin-bottom: 4px" class="panel panel-default hamzastyle-item hide-print">
                                     <div class="panel-heading">
                                         <div class="panel-title">
                                             <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
@@ -102,7 +100,7 @@
                                                     <i class="mdi mdi-group mdi-lg"></i>
                                                 </span>
                                             {% endif %}
-                                            <a href="{{ urlPlanif }}" class="btn btn-link calendar_lien" >
+                                            <a href="{{ path("passage_planifier", {'passage': passage.id}) }}" class="btn btn-link" >
                                                 <i class="mdi mdi-date-range mdi-lg"></i>
                                                 {{ passage.datePrevision | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}
                                             </a>

@@ -23,7 +23,6 @@
         $.initLinkInPanels();
         $.initRdvLink();
         $.initSearchActif();
-        $.initListingPassage();
         $.initLinkCalendar();
         $.initMap();
         $.initTypeheadFacture();
@@ -210,19 +209,6 @@
            });
         });
     }
-
-    $.initListingPassage = function () {
-        $('.calendar_lien').click(function (event) {
-            event.preventDefault();
-            var url = $(this).attr('data-url');
-            window.location.href = url;
-        });
-        $('.commentaire_lien').click(function (event) {
-            event.preventDefault();
-            var url = $(this).attr('data-url')+"?service="+encodeURIComponent(window.location.href);
-            window.location.href = url;
-        });
-    };
 
     $.initSearchActif = function () {
         $('form input[type="checkbox"][data-search-actif="1"]').each(function () {
