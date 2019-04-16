@@ -39,6 +39,8 @@ class FactureCsvImporter {
     const CSV_NUMERO_FACTURE = 1;
     const CSV_IS_AVOIR = 2;
     const CSV_REF_AVOIR = 3;
+
+    const CSV_REF_ADRESSE = 5;
     const CSV_SOCIETE_ID = 6;
     const CSV_CONTRAT_ID = 7;
 
@@ -146,7 +148,6 @@ class FactureCsvImporter {
         }
 
         $ligneFacture = $lignes[0];
-
         $facture = $this->fm->getRepository()->findOneByIdentifiantReprise($ligneFacture[self::CSV_FACTURE_ID]);
         if ($facture) {
             $output->writeln(sprintf("<comment>La facture %s existe déjà avec l'id %s </comment>", $ligneFacture[self::CSV_FACTURE_ID], $facture->getId()));
@@ -158,10 +159,14 @@ class FactureCsvImporter {
         foreach($lignes as $ligne) {
             $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($ligne[self::CSV_CONTRAT_ID]);
             if(!$ligne[self::CSV_CONTRAT_ID] || !$contrat) {
-                $output->writeln(sprintf("<error>Le contrat %s n'existe pas</error>", $ligneFacture[self::CSV_CONTRAT_ID]));
-                return;
+                $output->writeln(sprintf("<comment>Le contrat %s n'existe pas dans la ligne de facture %s </comment>", $ligneFacture[self::CSV_CONTRAT_ID],$ligneFacture[self::CSV_FACTURE_ID]));
+                $societe = $this->sm->getRepository()->findOneBy(array('identifiantAdresseReprise' => $ligne[self::CSV_REF_ADRESSE]));
+                if(!$societe){
+                  $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $ligne[self::CSV_SOCIETE_ID]));
+                }
+            }else{
+              $societe = $contrat->getSociete();
             }
-            $societe = $contrat->getSociete();
             if (!$societe) {
               $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $ligneFacture[self::CSV_SOCIETE_ID]));
               if (!$societe) {
@@ -179,7 +184,7 @@ class FactureCsvImporter {
             $mouvement->setFacture(false);
             $mouvement->setPrixUnitaire($ligne[self::CSV_FACTURE_LIGNE_PUHT] * $coefficient);
             $mouvement->setQuantite($ligne[self::CSV_FACTURE_LIGNE_QTE]);
-            if(!isset($ligne[self::CSV_FACTURE_LIGNE_TVA])){
+            if(!isset($ligne[self::CSV_FACTURE_LIGNE_TVA]) || !$ligne[self::CSV_FACTURE_LIGNE_TVA]){
               $mouvement->setTauxTaxe(0.196);
               if((new \DateTime($ligneFacture[self::CSV_DATE_LIMITE_REGLEMENT]))->format("Ymd") > "20140101"){
                 $mouvement->setTauxTaxe(0.2);

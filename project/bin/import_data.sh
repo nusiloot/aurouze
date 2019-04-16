@@ -137,16 +137,20 @@ gsub(/\\n/,"#",cmt);
 print $0 ";" cmt
 }' > $DATA_DIR/etablissementsCmt.csv.tmp
 
+cat $DATA_DIR/etablissementsCmt.csv.tmp | sed -r 's|;"([a-zA-Z]{3,5} [0-9]{2} [0-9]{4} [0-9]{2}\:[0-9]{2}\:[0-9]{2}\:[0-9]{3}[a-zA-Z]{2})"|;\1|g' | sed -r 's|;"(!;);(!;)";|;"\1 \2";|' | sed "s|Afin de garantir un meilleur traitement de vos factures, nous vous demandons d'inscrire, sur chacune d'elles, nos n° d'ordres de service ; nA l'avenir, nous vous demandons d'exiger de la part de nos équipes un ordre de service écrit et numéroté avant toute intervention ; nA défaut de n° d'OS, nous ne pourrons plus, à présent, procéder au moindre règlement ;|Afin de garantir un meilleur traitement de vos factures, nous vous demandons d'inscrire, sur chacune d'elles, nos n° d'ordres de service nA l'avenir, nous vous demandons d'exiger de la part de nos équipes un ordre de service écrit et numéroté avant toute intervention nA défaut de n° d'OS, nous ne pourrons plus, à présent, procéder au moindre règlement |g" > $DATA_DIR/etablissements.csv.proper
+
 rm $DATA_DIR/etablissements.csv > /dev/null;
 touch $DATA_DIR/etablissements.csv;
+
+cat $DATA_DIR/etablissementsCoordonnees.csv | cut -d ";" -f 1,2,3 | sort | uniq > $DATA_DIR/etablissementsCoordonnees.uniq.csv
 
 while read line
 do
    IDENTIFIANT=`echo $line | cut -d ';' -f 2`;
-   COORDONNEES=`grep "\"$IDENTIFIANT\";" $DATA_DIR/etablissementsCoordonees.csv | cut -d ";" -f 2,3`;
+   COORDONNEES=`grep "^$IDENTIFIANT;" $DATA_DIR/etablissementsCoordonnees.uniq.csv | cut -d ";" -f 2,3`;
    echo $line";"$COORDONNEES >> $DATA_DIR/etablissements.csv;
 
-done < $DATA_DIR/etablissementsCmt.csv.tmp
+done < $DATA_DIR/etablissements.csv.proper
 
 ##### Création d'un fichier de pivot pour connaître l'adresse de facturation des prestations d'un établissement #####
 cat $DATA_DIR/tblPrestationAdresse.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationAdresse.sorted.csv
@@ -165,8 +169,6 @@ cat $DATA_DIR/etablissements.csv | sort -t ";" -k 2,2 > $DATA_DIR/etablissements
 cat $DATA_DIR/prestationSocietesEtbs.csv | sort -t ";" -k 2,2 > $DATA_DIR/prestationSocietesEtbs.csv.sorted.join
 join -t ';' -1 2 -2 2 -o auto -a 1 $DATA_DIR/etablissements.csv.sorted.join $DATA_DIR/prestationSocietesEtbs.csv.sorted.join | sort | uniq > $DATA_DIR/etablissements.csv
 
-cat $DATA_DIR/etablissements.csv | sed -r 's|;"([a-zA-Z]{3,5} [0-9]{2} [0-9]{4} [0-9]{2}\:[0-9]{2}\:[0-9]{2}\:[0-9]{3}[a-zA-Z]{2})"|;\1|g' | sed -r 's|;"(!;);(!;)";|;"\1 \2";|' > $DATA_DIR/etablissements.csv.tmp2
-mv $DATA_DIR/etablissements.csv{.tmp2,}
 
 ##### Récupération des Comptes #####
 
@@ -204,19 +206,19 @@ echo "Import des etablissements"
 
 php app/console importer:csv etablissement.importer $DATA_DIR/etablissements.csv -vvv --no-debug
 
-echo "Import des commerciaux"
+echo -e "\nImport des commerciaux"
 
 php app/console importer:csv compte.importer $DATA_DIR/commerciaux.csv -vvv --no-debug
 
-echo "Import des techniciens"
+echo -e "\nImport des techniciens"
 
 php app/console importer:csv compte.importer $DATA_DIR/techniciens.csv -vvv --no-debug
 
-echo "Import Utilisateurs Autres"
+echo -e "\nImport Utilisateurs Autres"
 
 php app/console importer:csv compte.importer $DATA_DIR/utilisateurAutre.csv -vvv --no-debug
 
-echo "Import des comptes"
+echo -e "\nImport des comptes"
 
 php app/console importer:csv contact.importer $DATA_DIR/contacts.csv -vvv --no-debug
 

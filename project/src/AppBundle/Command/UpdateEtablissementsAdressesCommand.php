@@ -38,9 +38,12 @@ class UpdateEtablissementsAdressesCommand extends ContainerAwareCommand {
         $i=0;
         $j = 0;
         foreach ($this->dm->getRepository('AppBundle:Etablissement')->findAll() as $etablissement) {
-            echo $etablissement->getId()." $j\n";
-
-            $this->getContainer()->get('etablissement.manager')->getOSMAdresse()->calculCoordonnees($etablissement->getAdresse());
+            if(!$etablissement->getAdresse() || !$etablissement->getAdresse()->getCoordonnees() || !$etablissement->getAdresse()->getCoordonnees()->getLat()){
+              echo $etablissement->getId()." $j => Nouvelles coordonnees enregistrées\n";
+              $this->getContainer()->get('etablissement.manager')->getOSMAdresse()->calculCoordonnees($etablissement->getAdresse());
+            }else{
+              echo $etablissement->getId()." $j => existe déjà \n";
+            }
             if($i > 500) {
                 $this->dm->flush();
                 $i=0;
