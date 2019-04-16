@@ -34,6 +34,7 @@
         $.initRelance();
         $.initButtonLoading();
         $.initPopupRelancePdf();
+        $.initModificationContrat();
         $.initAcceptationContrat();
         $.initAllFactureSearch();
         $.initTrCollapse();
@@ -64,6 +65,19 @@
     		}
     		$.initSelect2Ajax();
     	});
+    }
+
+    $.initModificationContrat = function() {
+        $('#contrat_commanditaire').on('change', function (e) {
+            if($(this).val()) {
+                $('#contrat_devisInterlocuteur').attr('disabled', 'disabled');
+                $('#row_contrat_devisInterlocuteur').css('opacity', '0.2');
+            } else {
+                $('#contrat_devisInterlocuteur').removeAttr('disabled', 'disabled');
+                $('#row_contrat_devisInterlocuteur').css('opacity', '1');
+            }
+        });
+        $('#contrat_commanditaire').change();
     }
 
     $.initAcceptationContrat = function() {
