@@ -16,17 +16,6 @@ use AppBundle\Type\CompteType;
 class CompteController extends Controller {
 
     /**
-     * @Route("/comptes", name="comptes")
-     */
-    public function comptesAction(Request $request) {
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $comptes = $dm->getRepository('AppBundle:Compte')->findAllUtilisateurs();
-        $contratManager = $this->get('compte.manager');
-        $passageManager =$this->get('passage.manager');
-        return $this->render('compte/listing.html.twig', array('comptes' => $comptes, 'contratManager' => $contratManager, 'passageManager' => $passageManager));
-    }
-
-    /**
      * @Route("/compte/{societe}/modification/{id}", defaults={"id" = null}, name="compte_modification")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
@@ -78,7 +67,7 @@ class CompteController extends Controller {
                 $dm->flush();
                 return new Response(json_encode(array("success" => true)));
             } catch (\Exception $e) {
-                
+
             }
         }
 
