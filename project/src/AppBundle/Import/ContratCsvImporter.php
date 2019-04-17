@@ -49,6 +49,7 @@ class ContratCsvImporter {
     const CSV_DATE_DEBUT = 9;
     const CSV_DUREE = 10;
     const CSV_GARANTIE = 11;
+
     const CSV_PRIXHT = 12;
     const CSV_ARCHIVAGE = 13;
     const CSV_TVA_REDUITE = 14;
@@ -107,6 +108,7 @@ class ContratCsvImporter {
               $type_contrat = ContratManager::$types_contrat_import_index[$data[self::CSV_TYPE_CONTRAT]];
             }else{
               $output->writeln(sprintf("<comment>Le type de contrat %s n'existe pas dans la liste des types de contrats :[ %s ]</comment>", $data[self::CSV_TYPE_CONTRAT], implode(",",ContratManager::$types_contrat_import_index)));
+              $type_contrat = ContratManager::TYPE_CONTRAT_AUTRE;
             }
             $contrat->setTypeContrat($type_contrat);
             $contrat->setReconduit(false);
@@ -124,10 +126,12 @@ class ContratCsvImporter {
 
             if (!preg_match("/^[0-9+]+$/", $data[self::CSV_DUREE])) {
                 $output->writeln(sprintf("<error>La durée du contrat %s n'est pas correct : %s</error>", $data[self::CSV_ID_CONTRAT], $data[self::CSV_DUREE]));
-                continue;
+                $contrat->setDuree(0);
+
+            }else{
+              $contrat->setDuree($data[self::CSV_DUREE]);
             }
 
-            $contrat->setDuree($data[self::CSV_DUREE]);
             $contrat->setDureeGarantie($data[self::CSV_GARANTIE]);
             $contrat->setDateDebut(new \DateTime($data[self::CSV_DATE_DEBUT]));
             $dateFin = clone $contrat->getDateDebut();
@@ -180,9 +184,9 @@ class ContratCsvImporter {
             $this->dm->persist($contrat);
             $i++;
             $cptTotal++;
-            if ($cptTotal % (count($csv) / 100) == 0) {
+            //if ($cptTotal % (count($csv) / 100) == 0) {
                 $progress->advance();
-            }
+            //}
             if ($i >= 1000) {
                 $this->dm->flush();
                 $this->dm->clear();

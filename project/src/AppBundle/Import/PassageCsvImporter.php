@@ -81,7 +81,6 @@ class PassageCsvImporter {
         $prestationsType = $this->dm->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
 
         foreach ($csv as $data) {
-
             if ($data[self::CSV_ETABLISSEMENT_ID] == "000000") {
                 continue;
             }
@@ -149,7 +148,6 @@ class PassageCsvImporter {
                 $output->writeln(sprintf("<error>Passage dont le numéro %s n'est pas correct</error>", $data[self::CSV_CONTRAT_ID]));
                 continue;
             }
-
 
             if ($data[self::CSV_PRESTATIONS]) {
                 $prestations = explode('#', $data[self::CSV_PRESTATIONS]);
