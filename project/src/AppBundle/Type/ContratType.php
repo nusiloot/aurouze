@@ -23,6 +23,9 @@ use Symfony\Component\Form\CallbackTransformer;
 use AppBundle\Transformer\EtablissementsTransformer;
 use AppBundle\Transformer\InterlocuteurTransformer;
 use AppBundle\Transformer\ProduitTransformer;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class ContratType extends AbstractType {
 
@@ -121,6 +124,34 @@ class ContratType extends AbstractType {
             'format' => 'dd/MM/yyyy',
             'label' => 'Date de création* :',
         ));
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
+    }
+
+    protected function addElement(FormInterface $form, $societe = null)
+    {
+        $form->add('commanditaire', DocumentType::class, array('label' => 'Commanditaire : ',
+            'choices' => ($societe) ? array($societe) : array(),
+            'required' => false,
+            'class' => 'AppBundle\Document\Societe',
+            'attr' => array("class" => "select2 select2-ajax", "data-placeholder" => "Rechercher une société"),
+        ));
+
+    }
+
+    function onPreSubmit(FormEvent $event) {
+        $form = $event->getForm();
+        $values = $event->getData();
+        $societe = (isset($values['commanditaire']) && $values['commanditaire']) ? $this->dm->getRepository('AppBundle:Societe')->find($values['commanditaire']) : null;
+        $this->addElement($form, $societe);
+    }
+
+    function onPreSetData(FormEvent $event) {
+        $form = $event->getForm();
+        $document = $event->getData();
+        $societe = ($document && $document->getCommanditaire())? $document->getCommanditaire() : null;
+        $this->addElement($form, $societe);
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {

@@ -23,7 +23,6 @@
         $.initLinkInPanels();
         $.initRdvLink();
         $.initSearchActif();
-        $.initListingPassage();
         $.initLinkCalendar();
         $.initMap();
         $.initTypeheadFacture();
@@ -34,12 +33,14 @@
         $.initRelance();
         $.initButtonLoading();
         $.initPopupRelancePdf();
+        $.initModificationContrat();
         $.initAcceptationContrat();
         $.initAllFactureSearch();
         $.initTrCollapse();
         $.initTourneeDatepicker();
         $.initAttachements();
         $.initMoreInfo();
+        $.initTransfertContrat();
     });
 
     $.initTrCollapse = function() {
@@ -64,6 +65,19 @@
     		}
     		$.initSelect2Ajax();
     	});
+    }
+
+    $.initModificationContrat = function() {
+        $('#contrat_commanditaire').on('change', function (e) {
+            if($(this).val()) {
+                $('#contrat_devisInterlocuteur').attr('disabled', 'disabled');
+                $('#row_contrat_devisInterlocuteur').css('opacity', '0.2');
+            } else {
+                $('#contrat_devisInterlocuteur').removeAttr('disabled', 'disabled');
+                $('#row_contrat_devisInterlocuteur').css('opacity', '1');
+            }
+        });
+        $('#contrat_commanditaire').change();
     }
 
     $.initAcceptationContrat = function() {
@@ -196,19 +210,6 @@
            });
         });
     }
-
-    $.initListingPassage = function () {
-        $('.calendar_lien').click(function (event) {
-            event.preventDefault();
-            var url = $(this).attr('data-url');
-            window.location.href = url;
-        });
-        $('.commentaire_lien').click(function (event) {
-            event.preventDefault();
-            var url = $(this).attr('data-url')+"?service="+encodeURIComponent(window.location.href);
-            window.location.href = url;
-        });
-    };
 
     $.initSearchActif = function () {
         $('form input[type="checkbox"][data-search-actif="1"]').each(function () {
@@ -931,6 +932,33 @@
             });
 
         });
+    }
+    
+    $.initTransfertContrat = function() {
+        $('#contrat_transfert_societe').on('change', function (e) {
+        	var societe = $(this).val();
+        	var url = $(this).data('etablissements');
+            if(societe) {
+            	url = url.replace('__societe_id__', societe);
+            	var opts = '<option value="" selected="selected"></option>';
+                $('#input-etablissements .select2-selection__rendered').attr('title', '');
+                $('#input-etablissements .select2-selection__rendered').html('');
+            	$.get(url, function (result) {
+            		for(i in result) {
+            			console.log(i+' '+result[i]);
+            			opts += '<option value="'+i+'">'+result[i]+'</option>';
+            		}
+                	$('.select2-etablissements').html(opts);
+                    $('.select2-etablissements').removeAttr('disabled', 'disabled');
+                });
+            } else {
+            	$('.select2-etablissements').html('<option value="" selected="selected"></option>');
+                $('.select2-etablissements').attr('disabled', 'disabled');
+                $('#input-etablissements .select2-selection__rendered').attr('title', '');
+                $('#input-etablissements .select2-selection__rendered').html('');
+            }
+        });
+        $('#contrat_transfert_societe').change();
     }
 
 }

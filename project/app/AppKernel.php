@@ -2,6 +2,8 @@
 
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\HttpKernel\Config\FileLocator;
 
 class AppKernel extends Kernel
 {
@@ -36,6 +38,18 @@ class AppKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load($this->getRootDir().'/config/config_'.$this->getEnvironment().'.yml');
+    }
+
+    protected function buildContainer()
+    {
+        $container = parent::buildContainer();
+
+        if($container->hasParameter('instanceapp') && $container->getParameter('instanceapp')) {
+            $loader = new YamlFileLoader($container, new FileLocator($this));
+            $loader->load($this->getRootDir().'/config/app_'.$container->getParameter('instanceapp').'.yml');
+        }
+
+        return $container;
     }
 
     public function getCacheDir()

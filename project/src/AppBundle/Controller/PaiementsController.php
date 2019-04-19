@@ -31,18 +31,8 @@ class PaiementsController extends Controller {
         $paiementsDocs = $this->get('paiements.manager')->getRepository()->findByPeriode($periode);
         $paiementsDocsPrelevement = $this->get('paiements.manager')->getRepository()->findByPeriode($periode,true);
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $societe = $dm->getRepository('AppBundle:Societe')->findAurouze();
-        $form = $this->createForm(new SocieteCommentaireType(), $societe, array(
-        		'action' => $this->generateUrl('paiements_liste'),
-        		'method' => 'POST',
-        ));
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-        	$dm->flush();
 
-        	return $this->redirectToRoute('paiements_liste');
-        }
-        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs, 'paiementsDocsPrelevement' => $paiementsDocsPrelevement, 'periode' => $periode, 'form' => $form->createView()));
+        return $this->render('paiements/index.html.twig', array('paiementsDocs' => $paiementsDocs, 'paiementsDocsPrelevement' => $paiementsDocsPrelevement, 'periode' => $periode));
     }
 
     /**
@@ -280,7 +270,7 @@ class PaiementsController extends Controller {
             $paiements->addPaiement($paiement);
             if($facture->getSociete()->getSepa()->isFirst()){
                 $societesInFirstPrev[$facture->getSociete()->getId()] = $facture->getSociete();
-            }            
+            }
         }
 
 

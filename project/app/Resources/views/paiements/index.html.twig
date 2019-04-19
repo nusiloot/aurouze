@@ -14,19 +14,7 @@
 		<a class="btn btn-default pull-right" href="{{ path('paiements_nouveau') }}"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span>&nbsp;Nouvelle saisie</a>
 	</h2>
 
-    {{ form_start(form) }}
-    <div class="row">
-		<div class="col-xs-12">
-			{{ form_widget(form.commentaire) }}
-		</div>
-		<div class="col-xs-12 pull-right" style="margin: 10px 0 0 0;">{{ form_widget(form.save) }}</div>
-	</div>
-    {{ form_end(form) }}
-
-
-
-
-	<form action="" method="get" class="form-inline" style="margin: 0 0 10px 0;">
+	<form action="" method="get" class="form-inline" style="margin: 20px 0 10px 0;">
 		<label for="periode">Période : </label>
         <input style="width: auto;" type="text" id="periode" name="periode" class="periodepicker form-control" value="{{ periode }}" placeholder="Sélection période" />
     </form>

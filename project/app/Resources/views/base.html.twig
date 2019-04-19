@@ -4,10 +4,10 @@
         <meta charset="{{ _charset }}">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" type="image/ico" href="/favicon.ico?v=20170331" sizes="32x32" >
-        <link rel="shortcut icon" type="image/png" href="/favicon.png?v=20170331" sizes="32x32" >
-        <link rel="apple-touch-icon" sizes="129x129" href="/apple-touch-icon.png?v=20170331">
-        <link rel="icon" type="image/png" href="/favicon192x192.png" sizes="192x192">
+        <link rel="shortcut icon" type="image/ico" href="/favicon_{{ instanceapp }}.ico?v=20170331" sizes="32x32" >
+        <link rel="shortcut icon" type="image/png" href="/favicon_{{ instanceapp }}.png?v=20170331" sizes="32x32" >
+        <link rel="apple-touch-icon" sizes="129x129" href="/apple-touch-icon_{{ instanceapp }}.png?v=20170331">
+        <link rel="icon" type="image/png" href="/favicon192x192_{{ instanceapp }}.png" sizes="192x192">
 
         <title>{% block title %}Aurouze{% endblock title %}</title>
 
@@ -50,7 +50,8 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a id="logo" href="{{ path('accueil') }}" alt="aurouze"><img src="{{ asset('/images/logo.svg') }}" height="40" style="margin-top: 5px;"  class="hidden-sm" /> <img src="{{ asset('/apple-touch-icon.png') }}" height="40" style="margin-top: 5px;"  class="visible-sm" /></a>
+
+                    <a id="logo" href="{{ path('accueil') }}" alt="aurouze"><img src="{{ asset('/images/logo_'~instanceapp~'.svg') }}" height="40" style="margin-top: 5px;"  class="hidden-sm" /> <img src="{{ asset('/apple-touch-icon_'~instanceapp~'.png') }}" height="40" style="margin-top: 5px;"  class="visible-sm" /></a>
                 </div>
                 {% set retard = 0 %}
                 {% if(app.request.get('societe')) %}
@@ -129,7 +130,7 @@
         <script type="text/javascript" src="{{ asset('/component/typeahead/typeahead.bundle.min.js?date=201712111731') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/calendar-settings.js?date=201703151048') }}"></script>
-        <script type="text/javascript" src="{{ asset('/js/main.js?date=201703141935') }}"></script>
+        <script type="text/javascript" src="{{ asset('/js/main.js?date=201904161718') }}"></script>
 
         {% block javascripts %}{% endblock %}
 

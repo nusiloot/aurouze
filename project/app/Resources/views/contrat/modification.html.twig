@@ -70,11 +70,18 @@
                         </div>
                     </div>
                     </div>
-                <div class="row">
+                    <div class="row">
+                        <div class="col-xs-10">
+                            {{ form_row(form.commanditaire, {'attr': {'data-url' : path('societe_search')}}) }}
+                        </div>
+                    </div>
+                <div class="row" id="row_contrat_devisInterlocuteur">
                     <div class="col-xs-10">
                         {{ form_row(form.devisInterlocuteur) }}
                     </div>
                 </div>
+
+
                 <div class="row">
                     <div class="col-xs-5">
                         {{ form_row(form.commercial) }}

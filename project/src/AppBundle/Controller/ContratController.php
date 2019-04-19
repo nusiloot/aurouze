@@ -17,6 +17,7 @@ use AppBundle\Type\ContratGeneratorType;
 use AppBundle\Type\ContratAcceptationType;
 use AppBundle\Type\SocieteChoiceType;
 use AppBundle\Manager\ContratManager;
+use AppBundle\Manager\EtablissementManager;
 use AppBundle\Manager\PassageManager;
 use Knp\Snappy\Pdf;
 use AppBundle\Type\ContratAnnulationType;
@@ -25,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use AppBundle\Type\ReconductionFiltresType;
+use AppBundle\Type\ContratTransfertType;
 use AppBundle\Type\ReconductionType;
 
 class ContratController extends Controller {
@@ -81,6 +83,77 @@ class ContratController extends Controller {
         $contrat = $this->get('contrat.manager')->createBySociete($etablissement->getSociete(), null, $etablissement);
 
         return $this->modificationAction($request, $contrat);
+    }
+    
+
+
+    /**
+     * @Route("/contrat/{id}/transfert", name="contrat_transfert")
+     * @ParamConverter("contrat", class="AppBundle:Contrat")
+     */
+    public function transfertAction(Request $request, Contrat $contrat) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        
+        $contratManager = new ContratManager($dm);
+        $etablissementRepository = $dm->getRepository('AppBundle:Etablissement');
+        
+        $form = $this->createForm(new ContratTransfertType($contrat, $dm), null, array(
+            'action' => $this->generateUrl('contrat_transfert', array('id' => $contrat->getId())),
+            'method' => 'post',
+        ));
+        $complete = true;
+        $form->handleRequest($request);
+        $factures = $contratManager->getAllFactureForContrat($contrat);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formValues =  $form->getData();
+            foreach ($formValues as $k => $v) {
+                if ($k != 'factures' && $v === null) {
+                    $complete = false;
+                    break;
+                }
+            }
+            
+            if ($complete) {
+                
+                $contrat->setSociete($formValues['societe']);
+                
+                $etablissementsArr = array();
+                
+                foreach ($contrat->getEtablissements() as $oldEtb) {
+                    $etablissementsArr[$oldEtb->getId()] = $oldEtb;
+                }
+                
+                foreach ($etablissementsArr as $oldEtb) {
+                    $etbN = $etablissementRepository->find($formValues[$oldEtb->getId()]);
+                    $contrat->addEtablissement($etbN);
+                }
+                
+                foreach ($etablissementsArr as $oldEtb) {
+                    $contrat->removeEtablissement($oldEtb);
+                }
+                
+                foreach ($contrat->getContratPassages() as $oldId => $contratPassages) {
+                    $etbN = $etablissementRepository->find($formValues[$oldId]);
+                    foreach ($contratPassages->getPassages() as $passage) {
+                        $passage->setEtablissementIdentifiant($formValues[$oldId]);
+                        $passage->setEtablissement($etbN);
+                    }
+                    $contrat->removeContratPassage($contratPassages);
+                    $contrat->addContratPassage($etbN,$contratPassages);
+                }
+                
+                foreach ($factures as $facture) {
+                    $facture->setSociete($formValues['societe']);
+                }
+                
+                $dm->flush();
+                
+                return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
+            }
+        }
+        
+        return $this->render('contrat/transfert.html.twig', array('contrat' => $contrat, 'form' => $form->createView(), 'societe' => $contrat->getSociete(), 'factures' => $factures, 'complete' => $complete));
     }
 
     /**
