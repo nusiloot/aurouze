@@ -762,7 +762,7 @@
                                 });
 
                                 layer.on('click', function (e) {
-                                    document.location.href = $('#' + e.target.feature.properties._id).data('url');
+                                  document.location.href = $('#' + e.target.feature.properties._id).data('url-etablissement');
                                 });
                             }
                         },
@@ -933,7 +933,7 @@
 
         });
     }
-    
+
     $.initTransfertContrat = function() {
         $('#contrat_transfert_societe').on('change', function (e) {
         	var societe = $(this).val();

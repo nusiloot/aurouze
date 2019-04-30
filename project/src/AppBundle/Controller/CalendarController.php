@@ -39,7 +39,7 @@ class CalendarController extends Controller {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
-        
+
         $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
         $techniciensFinal = array();
         $techniciensOnglet = $techniciens;
@@ -48,7 +48,7 @@ class CalendarController extends Controller {
         		$techniciensFinal[$t->getId()] = $t;
         	}
         }
-        
+
         if(count($techniciensFinal) > 0) {
         	$techniciensOnglet = $techniciensFinal;
         }
@@ -377,6 +377,9 @@ class CalendarController extends Controller {
             $dateRetour = $rdv->getPassage()->getDateDebut()->format('Ym');
         }
         $event->retourMap = $this->generateUrl('passage',array('secteur' => $secteur, 'mois' => $dateRetour,'lat' => $passageCoord->getLat(),'lon' => $passageCoord->getLon(),'zoom' => $z));
+        if($secteur){
+          $event->retourMap = $this->generateUrl('passage_secteur',array('secteur' => $secteur, 'mois' => $dateRetour,'lat' => $passageCoord->getLat(),'lon' => $passageCoord->getLon(),'zoom' => $z));
+        }
       }
       return $event;
     }

@@ -137,14 +137,11 @@ $(function () {
         eventRender: function(event, element) {
           if(event.retourMap){
              var url = event.retourMap;
-             var dateObj = new Date();
-             var lastParam = url.substring(url.lastIndexOf('/') + 1);
-             var lastOtherP = lastParam.substring(lastParam.lastIndexOf('?') + 1);
              var dayOfMonth = event.start.format().substr(8,2);
              var month = event.start.format().substr(0,7).replace('-','');
-             url = url.replace(lastParam,month)+"?"+lastOtherP;
              if(dayOfMonth > "20"){
-                 url = url.replace(lastParam,'courant')+"?"+lastOtherP;
+                 var nextMonth = ""+(parseInt(month)+1);
+                 url = url.replace("mois="+month,"mois="+nextMonth);
              }
              element.find(".fc-title").append('<a style="position:absolute; top: 0; right:0; opacity:0.2;" class="btn btn-default btn-xs " href="'+url+'"><span class="mdi mdi-map"></span></a>');
           }
