@@ -39,11 +39,16 @@ class SynchroPassagesAdressesCommand extends ContainerAwareCommand {
         $j = 0;
         foreach ($this->dm->getRepository('AppBundle:Passage')->findAll() as $passage) {
             echo $passage->getId()." $j ";
+            if($passage->getEtablissementInfos() && $passage->getEtablissementInfos()->getAdresse() && $passage->getEtablissementInfos()->getAdresse()->getCoordonnees()){
+              $c = $passage->getEtablissementInfos()->getAdresse()->getCoordonnees();
+                echo $passage->getId()." => pas de mis à jour \n";
+            }else{
+              $etb = $passage->getEtablissement();
+              $passage->getEtablissementInfos()->pull($etb);
+              $c = $passage->getEtablissementInfos()->getAdresse()->getCoordonnees();
+              echo "Mis à jour ".$c->getLat()." x ".$c->getLon()."\n";
+            }
 
-            $etb = $passage->getEtablissement();
-            $passage->getEtablissementInfos()->pull($etb);
-            $c = $passage->getEtablissementInfos()->getAdresse()->getCoordonnees();
-            echo $c->getLat()." x ".$c->getLon()."\n";
             if($i > 500) {
                 $this->dm->flush();
                 $i=0;

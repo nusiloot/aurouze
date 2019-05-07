@@ -394,6 +394,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->prestations;
     }
 
+    public function hasPrestation($part_of_name){
+      foreach ($this->getPrestations() as $prestation) {
+        if(preg_match("/$part_of_name/",$prestation->getNomToString())){
+          return true;
+        }
+      }
+      return false;
+    }
+
     public function getUniquePrestations() {
         $prestations = array();
 
@@ -1739,6 +1748,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getFrequencePaiementLibelle() {
+
+        if(is_null($this->frequencePaiement)) return "N.C.";
 
         return ContratManager::$frequences[$this->frequencePaiement];
     }

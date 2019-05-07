@@ -37,7 +37,7 @@
                     <div class="col-xs-5">
                         Date de création : <strong>{{ contrat.dateCreationAuto() ? contrat.dateCreationAuto()|date("d/m/Y") : contrat.dateCreation()|date("d/m/Y") }}</strong><br />
                         Date d'édition : <strong>{{ contrat.dateCreation()|date("d/m/Y") }}</strong><br />
-                        Date d'acceptation : <strong>{{ contrat.getDateAcceptation()|date("d/m/Y") }}</strong><br /><br />
+                        Date d'acceptation : <strong>{% if(contrat.getDateAcceptation()) %}{{ contrat.getDateAcceptation()|date("d/m/Y") }}{% endif %}</strong><br /><br />
                         Durée d'un passage : <strong>{{ contrat.getHumanDureePassage() }}</strong><br /><br />
                         Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
                         Technicien : <strong>{% if contrat.getTechnicien() %}{{ contrat.getTechnicien().getIdentite() }}{% else %}Non défini{% endif %}</strong><br />

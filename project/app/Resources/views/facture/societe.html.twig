@@ -43,12 +43,16 @@
             </thead>
             <tbody>
                 {% for mouvement in mouvements %}
+                  {% if mouvement.document.id %}
                     <tr>
                         <td><a href="{{ path('contrat_visualisation', {'id': mouvement.document.id })}}">Contrat n° {{ mouvement.document.numeroArchive }}</a></td>
                         <td>{{ mouvement.libelle }}</td>
                         <td class="text-right">{{ "%0.2f" | format(mouvement.prixUnitaire)  }} €</td>
-                        <td class="text-center"><a onclick="return confirm('Êtes vous sûr de vouloir supprimer ce mouvement de facture ?')" href="{{ path('facture_defacturer', {'id': mouvement.document.id, 'identifiant': mouvement.identifiant}) }}"><span class="text-danger glyphicon glyphicon-remove"></span></a></td>
+                        {% if mouvement.identifiant %}
+                          <td class="text-center"><a onclick="return confirm('Êtes vous sûr de vouloir supprimer ce mouvement de facture ?')" href="{{ path('facture_defacturer', {'id': mouvement.document.id, 'identifiant': mouvement.identifiant}) }}"><span class="text-danger glyphicon glyphicon-remove"></span></a></td>
+                        {% endif %}
                     </tr>
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>
