@@ -66,7 +66,7 @@
                                     {% set techBgColor = passage.techniciens[0].couleur %}
                                     {% set techIdentite = passage.techniciens[0].identiteCourt %}
                                 {% endif %}
-                                <div data-words='{{ words }}' id="{{ passage.id }}" style="margin-bottom: 4px" class="panel panel-default hamzastyle-item hide-print">
+                                <div data-words='{{ words }}' id="{{ passage.id }}" data-url-etablissement="{{ path("passage_etablissement", {'id': 'ETABLISSEMENT-'~passage.etablissementIdentifiant}) }}" style="margin-bottom: 4px" class="panel panel-default hamzastyle-item hide-print">
                                     <div class="panel-heading">
                                         <div class="panel-title">
                                             <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i>
