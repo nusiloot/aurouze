@@ -11,7 +11,7 @@
     <div class="row" style="margin-bottom: 5px;">
         <div class="col-xs-7">
             <h3>Contrat de {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") %}&nbsp;à&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% endif %}
-                <small>&nbsp;n° {{ contrat.getNumeroArchive() }}</small>
+                <strong>&nbsp;n° {{ contrat.getNumeroArchive() }}</strong>
                 <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span>
             </h3>
 

@@ -108,13 +108,12 @@
         <div id="contrat-{{ contrat.id }}-passages" class="list-group">
             {% if contrat.previsionnel|length > 0 %}
                     {% for date,passage in contrat.previsionnel %}
-
                         <div class="list-group-item">
                             <div class="row">
                                 <div class="col-xs-1">
                                     <span style="cursor: help;" title=""
                                         data-toggle="tooltip"
-                                        class="badge badge-default {% if(passage.mouvement_declenchable) %}badge-inverse{% endif %} btn-xs">{{ (loop.length - loop.index) + 1 }}</span>
+                                        class="badge badge-default {% if(passage.mouvement_declenchable is defined and passage.mouvement_declenchable) %}badge-inverse{% endif %} btn-xs">{{ (loop.length - loop.index) + 1 }}</span>
                                     {% if(passage.audit) %}&nbsp;<span class="glyphicon glyphicon-user text-danger" data-toggle="tooltip" data-placement="top" title="Audit {{ passage.audit }}">&nbsp;</span>{% endif %}
                                 </div>
                                 <div class="col-xs-3">

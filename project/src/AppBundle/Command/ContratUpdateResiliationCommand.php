@@ -56,7 +56,7 @@ class ContratUpdateResiliationCommand extends ContainerAwareCommand {
                 $contratsByNumero[$numArchive]->contrats = array();
                 $contratsByNumero[$numArchive]->resiliation = false;
             }
-            $dDebut = $contrat->getDateDebut()->format('Ymd');
+            $dDebut = ($contrat->getDateDebut())? $contrat->getDateDebut()->format('Ymd') : $contrat->getDateCreation()->format('Ymd');
             $contratsByNumero[$numArchive]->contrats[$dDebut] = $contrat;
             if ($contrat->isResilie()) {
                 $contratsByNumero[$contrat->getNumeroArchive()]->resiliation = true;
@@ -81,6 +81,7 @@ class ContratUpdateResiliationCommand extends ContainerAwareCommand {
                         if (!$hasAnnules) {
                             $output->writeln(sprintf("\n<comment>CONTRAT : %s ne possède pas de passages Annulé et est résilié</comment>", $contrat->getId()));
                         }
+                        $output->writeln(sprintf("\n<comment>%s => fini et annulé</comment>", $contrat->getId()));
                         $contrat->setTypeContrat(ContratManager::TYPE_CONTRAT_ANNULE);
                         $contrat->setStatut(ContratManager::STATUT_FINI);
                     }
@@ -90,6 +91,7 @@ class ContratUpdateResiliationCommand extends ContainerAwareCommand {
                         if ($hasAnnules) {
                             $output->writeln(sprintf("\n<comment>CONTRAT : %s a de passages Annulés et semble FINI?</comment>", $contrat->getId()));
                         }
+                        $output->writeln(sprintf("\n<comment>%s => fini</comment>", $contrat->getId()));
                         $contrat->setStatut(ContratManager::STATUT_FINI);
                     }
                     $contrat->setReconduit(true);
@@ -110,6 +112,6 @@ class ContratUpdateResiliationCommand extends ContainerAwareCommand {
         $progress->finish();
     }
 
-   
+
 
 }

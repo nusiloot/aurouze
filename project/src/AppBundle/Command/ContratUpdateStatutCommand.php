@@ -57,6 +57,7 @@ class ContratUpdateStatutCommand extends ContainerAwareCommand {
         $progress = new ProgressBar($output, 100);
         $progress->start();
         foreach ($allContratsNonAcceptes as $contrat) {
+            $contrat->cleanMouvements();
             foreach ($contrat->getContratPassages() as $contratPassages) {
                 foreach ($contratPassages->getPassages() as $passage) {
                     $this->dm->getRepository('AppBundle:Passage')->createQueryBuilder('Passage')

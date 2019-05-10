@@ -20,7 +20,7 @@
         <div class="row" style="margin-bottom: 5px;">
             <div class="col-xs-8">
                 <h3 style="margin-top: 0;">Acceptation du contrat de {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% if(contrat.dateDebut | localizeddate("medium", "none", null, null, "MMM yyyy")) != contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") %}&nbsp;à&nbsp;{{ contrat.dateFin | localizeddate("medium", "none", null, null, "MMM yyyy") | capitalize }}{% endif %}
-                    <small>&nbsp;n° {{ contrat.getNumeroArchive() }}</small> <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span></h3>
+                    <strong>&nbsp;n° {{ contrat.getNumeroArchive() }}</strong> <span class="btn btn-sm btn-{{ contrat.statutCouleur }}">{{ contrat.getStatutLibelleLong | capitalize }}</span></h3>
             </div>
             <div class="col-xs-4 text-right">
                 {%  if (contrat.isCopiable) %}

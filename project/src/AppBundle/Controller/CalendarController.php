@@ -372,6 +372,9 @@ class CalendarController extends Controller {
         $secteur = EtablissementManager::getRegion($rdv->getPassage()->getEtablissement()->getAdresse()->getCodePostal());
         if(!$secteur){ $secteur = EtablissementManager::SECTEUR_PARIS; }
         $z = ($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE)? '10' : '15';
+        if(!$this->getParameter('secteurs')){
+          $secteur = "0";
+        }
         $dateRetour = $rdv->getPassage()->getDatePrevision()->format('Ym');
         if($rdv->getPassage()->getDateDebut()){
             $dateRetour = $rdv->getPassage()->getDateDebut()->format('Ym');

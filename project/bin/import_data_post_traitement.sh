@@ -7,7 +7,7 @@ DATA_DIR=$TMP;
 
 
 echo -e "\n****************************************************\n"
-echo -e "\n Mis en cohérence des contrats et des passages au sein des contrats...\n";
+echo -e "\n Mis en cohérence des contrats et des passages au sein des contrats : \n";
 echo -e "\n I - On vire l'ensemble des passages appartenant aux contrats non acceptés...\n";
 echo -e "\n II - On annule l'ensemble des passages des contrats résiliés ayant lieux après la date de résilition...\n";
 echo -e "\n III - Recherche du passage le plus avancé dans le temps 'planifié' ou 'réalisé' => tout les passages précédents sont passé en réalisé\n";
