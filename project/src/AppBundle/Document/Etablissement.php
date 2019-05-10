@@ -347,7 +347,7 @@ class Etablissement implements DocumentSocieteInterface, EtablissementInfosInter
     }
 
     public function getIcon() {
-
+        if(!$this->getType()){ return ""; }
         return EtablissementManager::$type_icon[$this->getType()];
     }
 

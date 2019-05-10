@@ -37,7 +37,7 @@
                     <div class="col-xs-5">
                         Date de création : <strong>{{ contrat.dateCreationAuto() ? contrat.dateCreationAuto()|date("d/m/Y") : contrat.dateCreation()|date("d/m/Y") }}</strong><br />
                         Date d'édition : <strong>{{ contrat.dateCreation()|date("d/m/Y") }}</strong><br />
-                        Date d'acceptation : <strong>{{ contrat.getDateAcceptation()|date("d/m/Y") }}</strong><br /><br />
+                        Date d'acceptation : <strong>{% if(contrat.getDateAcceptation()) %}{{ contrat.getDateAcceptation()|date("d/m/Y") }}{% endif %}</strong><br /><br />
                         Durée d'un passage : <strong>{{ contrat.getHumanDureePassage() }}</strong><br /><br />
                         Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
                         Technicien : <strong>{% if contrat.getTechnicien() %}{{ contrat.getTechnicien().getIdentite() }}{% else %}Non défini{% endif %}</strong><br />
@@ -108,13 +108,12 @@
         <div id="contrat-{{ contrat.id }}-passages" class="list-group">
             {% if contrat.previsionnel|length > 0 %}
                     {% for date,passage in contrat.previsionnel %}
-
                         <div class="list-group-item">
                             <div class="row">
                                 <div class="col-xs-1">
                                     <span style="cursor: help;" title=""
                                         data-toggle="tooltip"
-                                        class="badge badge-default {% if(passage.mouvement_declenchable) %}badge-inverse{% endif %} btn-xs">{{ (loop.length - loop.index) + 1 }}</span>
+                                        class="badge badge-default {% if(passage.mouvement_declenchable is defined and passage.mouvement_declenchable) %}badge-inverse{% endif %} btn-xs">{{ (loop.length - loop.index) + 1 }}</span>
                                     {% if(passage.audit) %}&nbsp;<span class="glyphicon glyphicon-user text-danger" data-toggle="tooltip" data-placement="top" title="Audit {{ passage.audit }}">&nbsp;</span>{% endif %}
                                 </div>
                                 <div class="col-xs-3">

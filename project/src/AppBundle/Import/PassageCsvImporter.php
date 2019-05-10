@@ -113,6 +113,7 @@ class PassageCsvImporter {
 
             $passage = new Passage();
             $passage->setEtablissement($etablissement);
+            $passage->getEtablissementInfos()->pull($etablissement);
             if (!$data[self::CSV_DATE_PREVISION]) {
                 $output->writeln(sprintf("<error>Le passage %s ne possède aucune date de prévision!</error>", $data[self::CSV_OLD_ID]));
                 continue;

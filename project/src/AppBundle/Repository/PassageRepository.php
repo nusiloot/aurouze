@@ -111,7 +111,7 @@ class PassageRepository extends DocumentRepository {
                 ->getQuery();
         return$query->execute();
     }
-    
+
     public function findLastPassage($etablissement, $passage = null) {
         $query = $this->createQueryBuilder('Passage')
                 ->field('dateFin')->exists(true)
@@ -124,11 +124,11 @@ class PassageRepository extends DocumentRepository {
             $query->field('dateFin')->lte($mongoStartDate);
             $query->field('_id')->notEqual($passage->getId());
         }
-        
+
         $query = $query->getQuery();
-        
+
         return $query->execute()->getSingleResult();
-        
+
     }
 
     public function findPassagesForEtablissementSortedByContrat($etablissementIdentifiant) {
@@ -202,7 +202,7 @@ class PassageRepository extends DocumentRepository {
         $regex = $this->getRegexForSeineEtMarne();
         if ($secteur == EtablissementManager::SECTEUR_PARIS) {
            $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->operator('$not', new \MongoRegex($regex)));
-        } else {
+        } elseif($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE) {
            $q->addAnd($q->expr()->field('etablissementInfos.adresse.codePostal')->equals(new \MongoRegex($regex)));
         }
         $query = $q->sort('etablissementInfos.adresse.codePostal', 'asc')->getQuery();

@@ -8,11 +8,6 @@ use AppBundle\Manager\CompteManager;
 
 class CompteRepository extends DocumentRepository {
 
-    public function findAllUtilisateurs() {
-        $societe = $this->dm->getRepository('AppBundle:Societe')->findSocieteMere();
-        return $this->findBy(array('societe' => $societe->getId()));
-    }
-
     public function findAllUtilisateursTechnicien() {
         return $this->findAllUtilisateursHasTag(CompteManager::TYPE_TECHNICIEN);
     }
@@ -26,25 +21,8 @@ class CompteRepository extends DocumentRepository {
     }
 
     public function findAllUtilisateursHasTag($tag) {
-        $compteUtilisateurs = $this->findAllUtilisateurs();
-        $utilisateurs = array();
-        foreach ($compteUtilisateurs as $utilisateur) {
-            if ($utilisateur->hasTag($tag)) {
-                $utilisateurs[$utilisateur->getId()] = $utilisateur;
-            }
-        }
-        return $utilisateurs;
-    }
 
-    public function findAllUtilisateursActif() {
-        $compteUtilisateurs = $this->findAllUtilisateurs();
-        $utilisateurs = array();
-        foreach ($compteUtilisateurs as $utilisateur) {
-            if ($utilisateur->isActif()) {
-                $utilisateurs[$utilisateur->getId()] = $utilisateur;
-            }
-        }
-        return $utilisateurs;
+        return $this->findBy(array('tags.identifiant' => $tag));
     }
 
     public function findByQuery($q, $inactif = false)

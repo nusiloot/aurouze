@@ -394,6 +394,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->prestations;
     }
 
+    public function hasPrestation($part_of_name){
+      foreach ($this->getPrestations() as $prestation) {
+        if(preg_match("/$part_of_name/",$prestation->getNomToString())){
+          return true;
+        }
+      }
+      return false;
+    }
+
     public function getUniquePrestations() {
         $prestations = array();
 
@@ -962,18 +971,22 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 }
             }
         }
-
-        $facturationInterval = (floatval($maxNbPrestations) / floatval($this->getNbFactures()));
+        $facturationInterval = 0;
+        if(floatval($this->getNbFactures())){
+          $facturationInterval = (floatval($maxNbPrestations) / floatval($this->getNbFactures()));
+        }
         $compteurFacturation = $facturationInterval;
         $cpt = 0;
 
         foreach ($passagesDatesArray as $date => $passage) {
             if ($cpt < 1) {
+                $passagesDatesArray[$date]->mouvement_declenchable = boolval($this->getNbFactures());
+                $compteurFacturation--;
                 $cpt++;
                 continue;
             }
             if ($cpt >= $compteurFacturation) {
-                $passagesDatesArray[$date]->mouvement_declenchable = 1;
+                $passagesDatesArray[$date]->mouvement_declenchable = boolval($this->getNbFactures());
                 $compteurFacturation+=$facturationInterval;
             } else {
                 $passagesDatesArray[$date]->mouvement_declenchable = 0;
@@ -1372,6 +1385,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isModifiable() {
+
         if($this->hasMouvements()) {
 
             return false;
@@ -1739,6 +1753,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getFrequencePaiementLibelle() {
+
+        if(is_null($this->frequencePaiement)) return "N.C.";
 
         return ContratManager::$frequences[$this->frequencePaiement];
     }

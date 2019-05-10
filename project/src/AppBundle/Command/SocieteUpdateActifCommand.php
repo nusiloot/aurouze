@@ -21,6 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Manager\PassageManager;
 use Symfony\Component\Console\Helper\ProgressBar;
 use AppBundle\Manager\ContratManager;
+use Symfony\Component\Debug\Exception\UndefinedMethodException;
 
 class SocieteUpdateActifCommand extends ContainerAwareCommand {
 
@@ -29,36 +30,33 @@ class SocieteUpdateActifCommand extends ContainerAwareCommand {
     protected function configure() {
         $this
                 ->setName('update:societe-update-actif')
-                ->setDescription('Societe update actif');
+                ->setDescription('Societe update actif')
+                ->addArgument('date', InputArgument::REQUIRED, "Date d'ancienneté à partir de laquel on va fermer le societes et établissements (Y-m-d)");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
 
         $this->dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
-
+        $date = \DateTime::createFromFormat('Y-m-d',$input->getArgument("date"));
         echo "\nMis à jour des etablissements actifs...\n";
-        $this->updateEtablissementActif($output);
+        $this->updateEtablissementActif($output, $date);
 
         echo "\nMis à jour des societes actives...\n";
-        $this->updateSocieteActif($output);
+        $this->updateSocieteActif($output, $date);
     }
 
-    public function updateEtablissementActif($output) {
+    public function updateEtablissementActif($output, $date) {
 
         $allPassages = $this->dm->getRepository('AppBundle:Passage')->findAll();
 
         $allEtbWithPassage = array();
 
-        foreach ($allPassages as $passage) {
-            $allEtbWithPassage[$passage->getEtablissement()->getId()] = $passage->getEtablissement()->getId();
-        }
-
         $allContrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
 
         foreach ($allContrats as $contrat) {
-            if($contrat->dateFin() && ($contrat->dateFin()->format("Ymd") > "20090101")){
+            if(($contrat->getDateFin() && ($contrat->getDateFin()->format("Ymd") > $date->format('Ymd'))) || $contrat->hasPrestation("TRAITEMENT DES BOIS")){
               foreach ($contrat->getContratPassages() as $contratPassage) {
-                  $allEtbWithPassage[$contratPassage->getEtablissement()->getId()] = $contratPassage->getEtablissement()->getId();
+                $allEtbWithPassage[$contratPassage->getEtablissement()->getId()] = $contratPassage->getEtablissement()->getId();
               }
             }
         }
@@ -75,6 +73,7 @@ class SocieteUpdateActifCommand extends ContainerAwareCommand {
                 $etablissement->setActif(true);
             } else {
                 $etablissement->setActif(false);
+                echo "L'établissement ".$etablissement->getId()." a été suspendu \n";
             }
             $cptTotal++;
             if ($cptTotal % (count($allPassages) / 100) == 0) {
@@ -90,13 +89,13 @@ class SocieteUpdateActifCommand extends ContainerAwareCommand {
         $progress->finish();
     }
 
-    public function updateSocieteActif($output) {
+    public function updateSocieteActif($output, $date) {
         $allContrats = $this->dm->getRepository('AppBundle:Contrat')->findAll();
 
         $allSocWithContrat = array();
 
         foreach ($allContrats as $contrat) {
-            if($contrat->dateFin() && ($contrat->dateFin()->format("Ymd") > "20090101")){
+            if(($contrat->getDateFin() && ($contrat->getDateFin()->format("Ymd") > $date->format('Ymd'))) || $contrat->hasPrestation("TRAITEMENT DES BOIS")){
               if (!array_key_exists($contrat->getSociete()->getId(), $allSocWithContrat)) {
                   $allSocWithContrat[$contrat->getSociete()->getId()] = $contrat->getSociete()->getId();
               }
@@ -114,6 +113,7 @@ class SocieteUpdateActifCommand extends ContainerAwareCommand {
                 $societe->setActif(true);
             } else {
                 $societe->setActif(false);
+                echo "La société ".$societe->getId()." a été suspendue \n";
             }
 
             $cptTotal++;
