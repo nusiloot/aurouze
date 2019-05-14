@@ -39,6 +39,7 @@ class EtablissementManager {
     const TYPE_ETB_CAFE_BRASSERIE = "CAFE_BRASSERIE";
     const TYPE_ETB_AUTRE = "AUTRE";
     const TYPE_ETB_HOTEL = "HOTEL";
+    const TYPE_ETB_IMMEUBLE = "IMMEUBLE";
     const TYPE_ETB_NON_SPECIFIE = "NON_SPECIFIE";
 
     public static $type_libelles = array(
@@ -54,6 +55,7 @@ class EtablissementManager {
         self::TYPE_ETB_CAFE_BRASSERIE => "Café brasserie",
         self::TYPE_ETB_AUTRE => "Autre",
         self::TYPE_ETB_HOTEL => "Hôtel",
+        self::TYPE_ETB_IMMEUBLE => "Immeuble",
         self::TYPE_ETB_NON_SPECIFIE => "Non spécifié");
     public static $type_icon = array(
         self::TYPE_ETB_BOULANGERIE => "cake",
@@ -68,6 +70,7 @@ class EtablissementManager {
         self::TYPE_ETB_CAFE_BRASSERIE => "local-cafe",
         self::TYPE_ETB_AUTRE => "place",
         self::TYPE_ETB_HOTEL => "local-hotel",
+        self::TYPE_ETB_IMMEUBLE => "location-city",
         self::TYPE_ETB_NON_SPECIFIE => "do-not-disturb");
     public static $secteurs_departements = array(
         self::SECTEUR_PARIS => array('75','94'),
@@ -121,7 +124,7 @@ class EtablissementManager {
 
             return null;
         }
-        
+
         return self::$secteurs[$secteur];
     }
 
