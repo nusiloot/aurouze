@@ -50,6 +50,8 @@ class AttachementController extends Controller {
      */
     public function visualisationSocieteAction(Request $request, $societe, $all = null) {
 
+
+      ini_set('memory_limit', '-1');
       $dm = $this->get('doctrine_mongodb')->getManager();
       $attachement = new Attachement();
       $attachementRepository = $this->get('attachement.manager')->getRepository();
@@ -75,6 +77,7 @@ class AttachementController extends Controller {
      */
     public function visualisationEtablissementAction(Request $request, $etablissement) {
 
+      ini_set('memory_limit', '-1');
       $dm = $this->get('doctrine_mongodb')->getManager();
       $attachement = new Attachement();
       $attachementRepository = $this->get('attachement.manager')->getRepository();
