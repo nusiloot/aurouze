@@ -70,6 +70,13 @@ echo -e "\nCompilation des fichiers liés aux contacts / établissements et soci
 
 . bin/import_data_contacts.sh
 
+
+echo -e "\n****************************************************\n"
+echo -e "\n    Les etablissements dont le nom est 'Immeuble' deviennent de type Immeuble...\n";
+echo -e "\n****************************************************\n";
+
+php app/console etablissements:etablissements-update-type "IMMEUBLE" -vvv --no-debug
+
 #### Récupération et import des contrats ####
 
 . bin/import_data_contrats.sh
