@@ -382,6 +382,7 @@
         $.initTimePicker();
         $.initFormEventAjax();
         $.initRdvLink();
+        $.initMoreInfo();
     }
 
     $.initTooltips = function () {
@@ -873,7 +874,6 @@
         var button = $(this);
         var icon = button.children('i').first();
         var div = button.prev();
-
 	if (div.children().length > 0) {
             div.empty();
             icon.addClass('mdi-vertical-align-bottom');
