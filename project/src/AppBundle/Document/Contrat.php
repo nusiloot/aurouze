@@ -1506,7 +1506,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
         $contrat->setDateCreationAuto(new \DateTime());
-        $contrat->setAuditPassage(null);
 
         if($contrat->isTypeReconductionTacite()){
           $contrat->setStatut(ContratManager::STATUT_EN_COURS);
