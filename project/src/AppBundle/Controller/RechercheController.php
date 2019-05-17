@@ -73,7 +73,8 @@ class RechercheController extends Controller {
 
         $inactif = $request->get('inactif', false);
         $inactif = ($inactif)? true : false;
-		$result = $dm->getRepository('AppBundle:Societe')->findByElasticQuery($this->container->get('fos_elastica.finder.tuenet_preprod'), $query, $inactif, 10);
+				$serviceName = 'fos_elastica.finder.'.$this->container->getParameter('database_elasticsearch_name');
+				$result = $dm->getRepository('AppBundle:Societe')->findByElasticQuery($this->container->get($serviceName), $query, $inactif, 10);
 
         $result = $this->contructSearchResultSociete($result);
 

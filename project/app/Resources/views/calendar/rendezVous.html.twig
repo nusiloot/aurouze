@@ -109,6 +109,8 @@
                             </p>
                         </div>
                     </div>
+                    <div data-url="{{ path('ajax_more_infos_passage', {'passage': rdv.passage.id }) }}"></div>
+                    <button type="button" class="btn-more-info btn btn-block btn-secondary"><i class="mdi mdi-lg mdi-vertical-align-bottom"></i> Plus d'informations</button>
                     {% if rdv.passage and rdv.passage.realise and form is not defined %}
                         <div class="form-group" style="margin-bottom: 0">
                             <label class="control-label col-xs-2">Technicien</label>
