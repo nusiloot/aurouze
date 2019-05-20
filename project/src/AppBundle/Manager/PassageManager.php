@@ -62,8 +62,8 @@ class PassageManager {
     }
 
     public function getParameters() {
-
-        return $this->parameters->getParameter('application.passage');
+        $parameters = $this->parameters->getParameter('application');
+        return $parameters['passage'];
     }
 
     function create(Etablissement $etablissement, Contrat $contrat) {
