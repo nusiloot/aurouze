@@ -43,6 +43,7 @@ twig:
         facture_manager: "@facture.manager"
         attachement_manager: "@attachement.manager"
         instanceapp: %instanceapp%
+        application: "%application%"
 
 doctrine_mongodb:
     connections:

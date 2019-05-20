@@ -7,7 +7,7 @@
         <link rel="shortcut icon" type="image/png" href="/favicon.png?v=20170331" sizes="32x32" >
         <link rel="apple-touch-icon" sizes="129x129" href="/apple-touch-icon.png?v=20170331">
         <link rel="icon" type="image/png" href="/favicon192x192.png" sizes="192x192">
-        <title>{% block title %}Aurouze{% endblock title %}</title>
+        <title>{% block title %}{{ application.shortname }}{% endblock title %}</title>
 
         <link rel="stylesheet" href="{{ asset('/mobile/css/jquery.mobile-1.4.5.min.css?20170316') }}">
         <link rel="stylesheet" href="{{ asset('/component/aurouze/aurouze.css?20170316') }}">

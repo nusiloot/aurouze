@@ -1,7 +1,7 @@
 <h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Bon de passage du {{ passage.dateDebut | localizeddate("full", "none") }} à {{ passage.dateDebut | date("H") }}h{{ passage.dateDebut | date("i") }}</strong> n° {{ passage.numeroArchive }}
 </h2>
 <hr style="border-color: #ddd; margin-bottom: 30px;" />
-{% set emetteur = parameters.emetteur %}
+{% set emetteur = parameters.application.emetteur %}
 {% if parameters["emetteur_"~passage.region] is defined %}
     {% set emetteur = parameters["emetteur_"~passage.region] %}
 {% endif %}

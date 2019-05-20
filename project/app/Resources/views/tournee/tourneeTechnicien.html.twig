@@ -1,7 +1,7 @@
 {% set _menu_active = 'tournee' %}
 {% extends 'base_mobile.html.twig' %}
 
-{% block title %}Aurouze - {{ technicien.identite }} {% endblock title %}
+{% block title %}{{ application.shortname }} - {{ technicien.identite }} {% endblock title %}
 {% block body %}
 <div id="version" data-version="{{version}}" data-url="{{ path('tournee_version',{ 'technicien' : technicien.id }) }}" ></div>
 <div class="tournee_accueil" data-role="page" id="tournee_accueil">

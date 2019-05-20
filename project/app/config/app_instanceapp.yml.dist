@@ -1,0 +1,56 @@
+parameters:
+    application:
+        name: "XXXXXXXXXXX"
+        shortname: "XXX"
+        secteurs: true
+        adresse_libelle: ""
+        adresse_adresse: ""
+        adresse_commune: ""
+        banque:
+            creditorId: 'XXXXXXXXXXX'
+            creditorName: 'ETABLISSEMENTS XXXX XXXXXXXXX'
+            creditorAccountIBAN: 'FRXXXXXXXXXXXXXXXXXXXXXXX'
+            creditorAgentBIC: 'XXXXXXX'
+        passage:
+          coordonnees:
+            email : "emailTransmission@dns.fr"
+            nom : 'Nom du mail'
+            numero : '00000000'
+            replyemail : "emailReplyTransmission@dns.fr"
+        facture:
+            emetteur:
+                nom: ""
+                adresse: ""
+                code_postal: ""
+                commune: ""
+                telephone: ""
+                fax: ""
+                email: ""
+                infos: ""
+                banque: ""
+                virement: ""
+                numero_compte: ""
+                numero_compte_especes: ""
+            emetteur_SEINE_ET_MARNE:
+                nom: ""
+                adresse: ""
+                code_postal: ""
+                commune: ""
+                telephone: ""
+                fax: ""
+                email: ""
+                infos: ""
+                banque: ""
+                virement: ""
+                numero_compte: ""
+                numero_compte_especes: ""
+            banque:
+                nom: ""
+                adresse: ""
+                code_postal: ""
+                commune: ""
+            banqueEspece:
+                nom: ""
+                adresse: ""
+                code_postal: ""
+                commune: ""

@@ -9,7 +9,7 @@
         <link rel="apple-touch-icon" sizes="129x129" href="/apple-touch-icon_{{ instanceapp }}.png?v=20170331">
         <link rel="icon" type="image/png" href="/favicon192x192_{{ instanceapp }}.png" sizes="192x192">
 
-        <title>{% block title %}Aurouze{% endblock title %}</title>
+        <title>{% block title %}{{ application.shortname }}{% endblock title %}</title>
 
         <link rel="stylesheet" href="{{ asset('/component/bootstrap/css/bootstrap.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('/component/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" />
@@ -51,7 +51,7 @@
                         <span class="icon-bar"></span>
                     </button>
 
-                    <a id="logo" href="{{ path('accueil') }}" alt="aurouze"><img src="{{ asset('/images/logo_'~instanceapp~'.svg') }}" height="40" style="margin-top: 5px;"  class="hidden-sm" /> <img src="{{ asset('/apple-touch-icon_'~instanceapp~'.png') }}" height="40" style="margin-top: 5px;"  class="visible-sm" /></a>
+                    <a id="logo" href="{{ path('accueil') }}" alt="{{ application.shortname }}"><img src="{{ asset('/images/logo_'~instanceapp~'.svg') }}" height="40" style="margin-top: 5px;"  class="hidden-sm" /> <img src="{{ asset('/apple-touch-icon_'~instanceapp~'.png') }}" height="40" style="margin-top: 5px;"  class="visible-sm" /></a>
                 </div>
                 {% set retard = 0 %}
                 {% if(app.request.get('societe')) %}

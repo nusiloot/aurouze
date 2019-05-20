@@ -5,11 +5,11 @@
         <div class="col-xs-6">
             <br />
             <p>
-                <span class="lead">{{ parameters.emetteur.nom }}</span><br />
-                {{ parameters.emetteur.adresse }}<br />
-                {{ parameters.emetteur.code_postal }} {{ parameters.emetteur.commune }}<br />
-                Tél. : {{ parameters.emetteur.telephone }}<br />
-                Fax : {{ parameters.emetteur.fax }}
+                <span class="lead">{{ parameters.application.emetteur.nom }}</span><br />
+                {{ parameters.application.emetteur.adresse }}<br />
+                {{ parameters.application.emetteur.code_postal }} {{ parameters.application.emetteur.commune }}<br />
+                Tél. : {{ parameters.application.emetteur.telephone }}<br />
+                Fax : {{ parameters.application.emetteur.fax }}
             </p>
         </div>
 
@@ -23,13 +23,13 @@
                 <br />
                 <br />
                 {% if(paiements.isRemiseEspece) %}
-                <strong>{{ parameters.banqueEspece.nom }}</strong><br />
-                {{ parameters.banqueEspece.adresse }}<br />
-                {{ parameters.banqueEspece.code_postal }} {{ parameters.banqueEspece.commune }}<br />
+                <strong>{{ parameters.application.banqueEspece.nom }}</strong><br />
+                {{ parameters.application.banqueEspece.adresse }}<br />
+                {{ parameters.application.banqueEspece.code_postal }} {{ parameters.application.banqueEspece.commune }}<br />
                 {% else %}
-                <strong>{{ parameters.banque.nom }}</strong><br />
-                {{ parameters.banque.adresse }}<br />
-                {{ parameters.banque.code_postal }} {{ parameters.banque.commune }}<br />
+                <strong>{{ parameters.application.banque.nom }}</strong><br />
+                {{ parameters.application.banque.adresse }}<br />
+                {{ parameters.application.banque.code_postal }} {{ parameters.application.banque.commune }}<br />
                 {% endif %}
             </div>
             <br />
@@ -143,17 +143,17 @@
                 <br />
                 <br />
                 {% if(paiements.isRemiseEspece) %}
-                Banque : <strong>{{ parameters.banqueEspece.nom }}</strong>
+                Banque : <strong>{{ parameters.application.banqueEspece.nom }}</strong>
                 <br />
-                A déposer sur le compte : <strong>{{ parameters.emetteur.numero_compte_especes }}</strong>
+                A déposer sur le compte : <strong>{{ parameters.application.emetteur.numero_compte_especes }}</strong>
                 <br />
-                Titulaire du compte : <strong>{{ parameters.emetteur.nom | upper }}</strong>
+                Titulaire du compte : <strong>{{ parameters.application.emetteur.nom | upper }}</strong>
                   {% else %}
-                Banque : <strong>{{ parameters.banque.nom }}</strong>
+                Banque : <strong>{{ parameters.application.banque.nom }}</strong>
                 <br />
-                A déposer sur le compte : <strong>{{ parameters.emetteur.numero_compte }}</strong>
+                A déposer sur le compte : <strong>{{ parameters.application.emetteur.numero_compte }}</strong>
                 <br />
-                Titulaire du compte : <strong>{{ parameters.emetteur.nom | upper }}</strong>
+                Titulaire du compte : <strong>{{ parameters.application.emetteur.nom | upper }}</strong>
                 {% endif %}
             </div>
         </div>
@@ -163,13 +163,13 @@
             <hr style="border-color: #ddd; margin-bottom: 30px;" />
 
             <div class="text-center">
-                <strong>{{ parameters.emetteur.infos  }}</strong>
+                <strong>{{ parameters.application.emetteur.infos  }}</strong>
                 <br />
-                <strong>{{ parameters.emetteur.banque }}</strong>
+                <strong>{{ parameters.application.emetteur.banque }}</strong>
                 <br />
-                <strong>{{ parameters.emetteur.virement  }}</strong>
+                <strong>{{ parameters.application.emetteur.virement  }}</strong>
                 <br />
-                Agrément du Ministère de l'Agriculture A.I.F. 00131
+                Agrément du Ministère de l'Agriculture A.I.F. {{ parameters.application.emetteur.numero_agrement  }}
             </div>
             <hr style="border-color: #ddd; margin-bottom: 30px;" />
         </div>
