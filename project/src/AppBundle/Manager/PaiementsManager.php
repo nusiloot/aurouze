@@ -138,8 +138,8 @@ class PaiementsManager {
     }
 
     public function getParameters() {
-
-        return $this->parameters->getParameter('application.facture');
+        $parameters = $this->parameters->getParameter('application');
+        return $parameters['facture'];
     }
 
     public function createByDateCreation(\DateTime $dateCreation) {
