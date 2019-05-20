@@ -119,7 +119,7 @@ public static $export_stats_libelle = array(
 
     public function getParameters() {
 
-        return $this->parameters->get('application.facture');
+        return $this->parameters->getParameter('application.facture');
     }
 
     public function getRepository() {
