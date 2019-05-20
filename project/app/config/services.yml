@@ -43,7 +43,7 @@ services:
 
     passage.manager:
         class: AppBundle\Manager\PassageManager
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, "%passage%"]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @contrat.manager, "%application.passage%"]
 
     rendezvous.manager:
         class: AppBundle\Manager\RendezVousManager
@@ -55,7 +55,7 @@ services:
 
     paiements.manager:
         class: AppBundle\Manager\PaiementsManager
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @facture.manager, "%facture%"]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @facture.manager, "%application.facture%"]
 
     societe.importer:
         class: AppBundle\Import\SocieteCsvImporter
@@ -87,7 +87,7 @@ services:
 
     facture.manager:
         class: AppBundle\Manager\FactureManager
-        arguments: [@doctrine_mongodb.odm.default_document_manager, @mouvement.manager, "%facture%"]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, @mouvement.manager, "%application.facture%"]
 
     facture.importer:
         class: AppBundle\Import\FactureCsvImporter
