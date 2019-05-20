@@ -51,10 +51,10 @@ class TourneeController extends Controller {
         }
         $pm = $this->get('passage.manager');
         $parameters = $pm->getParameters();
-        if(!$parameters['application']['coordonnees'] || !$parameters['application']['coordonnees']['numero']){
+        if(!$parameters['coordonnees'] || !$parameters['coordonnees']['numero']){
           throw new Exception("Le paramétrage du numéro de téléphone n'est pas correct.");
         }
-        $telephoneSecretariat = $parameters['application']['coordonnees']['numero'];
+        $telephoneSecretariat = $parameters['coordonnees']['numero'];
 
         $rendezVousByTechnicien = $this->get('rendezvous.manager')->getRepository()->findByDateDebutAndParticipant($date->format('Y-m-d'),$technicienObj);
 
