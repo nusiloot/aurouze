@@ -126,10 +126,10 @@ class PaiementsManager {
     );
 
 
-    function __construct(DocumentManager $dm, FactureManager $fm, $parameters) {
+    function __construct(DocumentManager $dm, FactureManager $fm, $service_container) {
         $this->dm = $dm;
         $this->fm = $fm;
-        $this->parameters = $parameters;
+        $this->parameters = $service_container;
     }
 
     public function getRepository() {
@@ -139,7 +139,7 @@ class PaiementsManager {
 
     public function getParameters() {
 
-        return $this->parameters;
+        return $this->parameters->get('application.facture');
     }
 
     public function createByDateCreation(\DateTime $dateCreation) {

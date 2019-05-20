@@ -55,15 +55,15 @@ class PassageManager {
     protected $cm;
     protected $parameters;
 
-    function __construct(DocumentManager $dm, ContratManager $cm, $parameters) {
+    function __construct(DocumentManager $dm, ContratManager $cm, $service_container) {
         $this->dm = $dm;
         $this->cm = $cm;
-        $this->parameters = $parameters;
+        $this->parameters = $service_container;
     }
 
     public function getParameters() {
 
-        return $this->parameters;
+        return $this->parameters->get('application.passage');
     }
 
     function create(Etablissement $etablissement, Contrat $contrat) {

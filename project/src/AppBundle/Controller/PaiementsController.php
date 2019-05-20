@@ -214,8 +214,7 @@ class PaiementsController extends Controller {
     public function paiementPrelevementAction(Request $request) {
 
         ini_set('memory_limit', '-1');
-        $banqueParameters = $this->getParameter('banque');
-        $banqueParameters = $banqueParameters['application'];
+        $banqueParameters = $this->getParameter('application.banque');
 
     	$dm = $this->get('doctrine_mongodb')->getManager();
     	$fm = $this->get('facture.manager');
