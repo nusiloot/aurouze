@@ -3,7 +3,7 @@
   <h2 style="margin-bottom: 10px; font-size: 21px;" class="text-center"><strong>Rapport de visite du {{ passage.dateDebut | localizeddate("full", "none") }} </strong> n° {{ passage.numeroArchive }}
   </h2>
   <hr style="border-color: #ddd; margin-bottom: 30px;" />
-  {% set emetteur = parameters.application.emetteur %}
+  {% set emetteur = parameters.emetteur %}
   {% if parameters["emetteur_"~passage.region] is defined %}
       {% set emetteur = parameters["emetteur_"~passage.region] %}
   {% endif %}
