@@ -12,12 +12,12 @@ class SocieteCorrectionEtablissementCommand extends ContainerAwareCommand {
 
     protected function configure() {
         $this
-                ->setName('societe:correction-etablissements')
+                ->setName('societe:correction-comptes')
                 ->setDescription("Tache liée à la mis en conformité de l'import")
                 ->addArgument(
                     'societe', InputArgument::REQUIRED, "Société à corriger"
                 )->addArgument(
-                    'file', InputArgument::REQUIRED, 'fichier source des Etablissements'
+                    'file', InputArgument::REQUIRED, 'fichier source des Comptes'
                 );
     }
 
@@ -39,23 +39,32 @@ class SocieteCorrectionEtablissementCommand extends ContainerAwareCommand {
             throw new \Exception("Société non trouvé");
         }
 
-        foreach($societe->getEtablissements() as $etablissement) {
-          $r = $etablissement->getIdentifiantReprise();
-          echo $etablissement->getId()." (r=".$r.") déplacement | ";
-          $socG = null;
-          foreach ($csvFile->getCsv() as $data) {
-            if($r == $data[0]){
-              $rs = $data[1];
-              echo " vers société de reprise $rs | ";
-              $socG = $sm->getRepository()->findOneByIdentifiantReprise($rs);
-              $etbIdentite = str_replace('ASSOCIATION DES CITES DU SECOURS CATHOLIQUES CITE "ROSIER ROUGE" - ',"",$etablissement->getNom());
-              echo $socG->getId()." ".$socG->getRaisonSociale()." | $etbIdentite \n";
-            }
-          }
-          if($socG){
-            $etablissement->setSociete($socG);
-          }
-          $dm->flush();
+        foreach($societe->getComptes() as $compte) {
+          $r = $compte->getIdentifiantReprise();
+          $log = $compte->getId()." ".$compte->getNom()." (r=".$r.") déplacement | ";
+          $oldSocId = $compte->getSociete()->getId();
+           foreach ($csvFile->getCsv() as $data) {
+             if($r == $data[1]){
+               $idetb = $data[0];
+               $etbG = $em->getRepository()->findOneByIdentifiantReprise($idetb);
+               if($etbG){
+                 $nom = $etbG->getNom();
+                 echo $log." vers etablissement de reprise $idetb | $nom \n";
+                 $compte->setSociete($etbG->getSociete());
+               }else{
+                 $socG = $sm->getRepository()->findOneByIdentifiantReprise($data[22]);
+                 if($socG){
+                   $rs = $socG->getRaisonSociale();
+                   $compte->setSociete($socG);
+                   echo $log." pas etb | vers $rs \n";
+                 }else{
+                   echo $log." pas soc ! \n";
+                 }
+               }
+               echo $oldSocId." => ".$compte->getSociete()->getId()."\n";
+               $dm->flush();
+             }
+           }
         }
     }
 }
