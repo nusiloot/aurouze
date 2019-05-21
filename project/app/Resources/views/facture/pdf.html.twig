@@ -12,7 +12,9 @@
             {{ facture.emetteur.codePostal }}, {{ facture.emetteur.commune }}<br />
             {% endif %}
             Tél : {{ facture.emetteur.telephone }}<br />
+            {% if(facture.emetteur.email) %}
             E-mail: {{ facture.emetteur.email }}
+            {% endif %}
         </p>
     </div>
     <div class="col-xs-6">
