@@ -111,7 +111,6 @@
         </div>
 
         <div class="modal" id="modal-calendrier-infos" tabindex="-1" role="dialog"></div>
-
         <script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -127,6 +126,12 @@
         <script type="text/javascript" src="{{ asset('/component/leaflet/leaflet.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/leaflet-extra-markers/js/leaflet.extra-markers.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/typeahead/typeahead.bundle.min.js?date=201712111731') }}"></script>
+		<script>
+            var params = params || {};
+            $.extend(params, {
+            	calendarExtra: '{{ calendar_extra }}'
+            });
+        </script>
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/calendar-settings.js?date=201904301219') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/main.js?date=201904301219') }}"></script>

@@ -1,2 +1,3 @@
 parameters:
     secteurs: true
+    calendar_extra: false
