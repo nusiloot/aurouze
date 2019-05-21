@@ -2,8 +2,6 @@
 /app/bootstrap.php.cache
 /app/cache/*
 /app/config/parameters.yml
-/app/config/app_tuenet.yml
-/app/config/app_aurouze.yml
 /app/logs/*
 !app/cache/.gitkeep
 !app/logs/.gitkeep
