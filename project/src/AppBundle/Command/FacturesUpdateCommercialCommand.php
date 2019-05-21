@@ -38,7 +38,7 @@ class FacturesUpdateCommercialCommand extends ContainerAwareCommand {
         $dm = $this->getContainer()->get('doctrine_mongodb.odm.default_document_manager');
 
         $factures = $fm->getRepository()->findAll();
-        $defaultCom = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant('003480005');
+        $defaultCom = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant($this->getContainer()->getParameter('application.commercial'));
 
         if(!$factures) {
             return;
