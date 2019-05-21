@@ -6,10 +6,11 @@ class CalendarDateTool
 	const MODE_DAY = 'JOUR';
 	const MODE_WEEK = 'SEMAINE';
 	const MODE_MONTH = 'MOIS';
-	const NB_DAY_IN_WEEK = 5;
 
 	protected $date;
 	protected $mode;
+	protected $nb_day_in_week;
+	
 	public static $libellesMois = array(
 			'janv.',
 			'févr.',
@@ -33,10 +34,11 @@ class CalendarDateTool
 			'sam.',
 			'dim.',
 	);
-	public function __construct($date = null, $mode = self::MODE_WEEK)
+	public function __construct($date = null, $mode = self::MODE_WEEK, $extra = false)
 	{
 		$this->setDate($date);
 		$this->mode = $mode;
+		$this->nb_day_in_week = ($extra)? 6 : 5;
 	}
 
 	public function getDate()
@@ -113,7 +115,7 @@ class CalendarDateTool
 	public function getDateFinSemaine($format = null)
 	{
 		$ds = clone $this->date;
-		$ds->modify('+'.(self::NB_DAY_IN_WEEK - $ds->format('N')).' day');
+		$ds->modify('+'.($this->nb_day_in_week - $ds->format('N')).' day');
 		return ($format)? $ds->format($format) : $ds;
 	}
 

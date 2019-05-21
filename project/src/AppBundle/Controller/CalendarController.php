@@ -68,7 +68,8 @@ class CalendarController extends Controller {
         }
 
         $date = $request->get('date', new \DateTime());
-        $calendarTool = new CalendarDateTool($date, $request->get('mode', CalendarDateTool::MODE_WEEK));
+        
+        $calendarTool = new CalendarDateTool($date, $request->get('mode', CalendarDateTool::MODE_WEEK), $this->container->getParameter('calendar_extra'));
 
         $etablissement = null;
         if ($passage) {
@@ -89,7 +90,7 @@ class CalendarController extends Controller {
             $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
         }
 
-        $calendarTool = new CalendarDateTool($request->get('date'), $request->get('mode'));
+        $calendarTool = new CalendarDateTool($request->get('date'), $request->get('mode'), $this->container->getParameter('calendar_extra'));
 
         $periodeStart = $calendarTool->getDateDebutSemaine('Y-m-d');
         $periodeEnd = $calendarTool->getDateFinSemaine('Y-m-d');
@@ -114,9 +115,12 @@ class CalendarController extends Controller {
             }
         }
 
-        if(count($techniciensFinal) > 0) {
-            $techniciens = $techniciensFinal;
+        if(!count($techniciensFinal) > 0) {
+            foreach($techniciens as $technicien) {
+                $techniciensFinal[$technicien->getId()] = $technicien;
+            }
         }
+        $techniciens = $techniciensFinal;
         $techniciensOnglet = $techniciens;
 
         $passagesCalendar = array();
@@ -176,7 +180,6 @@ class CalendarController extends Controller {
                 }
             }
         }
-
         return $this->render('calendar/calendarManuel.html.twig', array('calendarTool' => $calendarTool, 'eventsDates' => $eventsDates, 'nbTechniciens' => count($techniciens), 'techniciens' => $techniciens, 'techniciensOnglet' => $techniciensOnglet, 'technicien' => null, 'allTechniciens' => $allTechniciens, 'passage' => $passage, 'date' => $request->get('date')), $response);
     }
 
