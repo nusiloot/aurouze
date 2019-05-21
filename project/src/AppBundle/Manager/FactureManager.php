@@ -111,15 +111,14 @@ public static $export_stats_libelle = array(
   self::EXPORT_STATS_TOTAL => "Total {X}"
 );
 
-    function __construct(DocumentManager $dm, MouvementManager $mm, $service_container) {
+    function __construct(DocumentManager $dm, MouvementManager $mm, $parameters) {
         $this->dm = $dm;
         $this->mm = $mm;
-        $this->parameters = $service_container;
+        $this->parameters = $parameters;
     }
 
     public function getParameters() {
-        $parameters = $this->parameters->getParameter('application');
-        return $parameters['facture'];
+        return $this->parameters;
     }
 
     public function getRepository() {

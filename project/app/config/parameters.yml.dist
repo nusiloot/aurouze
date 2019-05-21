@@ -23,7 +23,68 @@ parameters:
 
     osm.url_search: "http://URL_DE_RECUPERATION"
     osm.return_format: "json"
-    
 
     knp_snappy_pdfbinary: xvfb-run wkhtmltopdf
     knp_snappy_imagebinary: xvfb-run wkhtmltoimage
+    
+    banque:
+        creditorId: 'XXXXXXXXXXX'
+        creditorName: 'ETABLISSEMENTS XXXX XXXXXXXXX'
+        creditorAccountIBAN: 'FRXXXXXXXXXXXXXXXXXXXXXXX'
+        creditorAgentBIC: 'XXXXXXX'
+
+    application:
+        name: ""
+        shortname: ""
+        adresse_libelle: ""
+        adresse_adresse: ""
+        adresse_commune: ""
+        commercial: ""
+    passage:
+      coordonnees:
+        email : "emailTransmission@dns.fr"
+        nom : 'Nom du mail'
+        numero : '00000000'
+        replyemail : "emailReplyTransmission@dns.fr"
+    facture:
+        emetteur:
+            nom: ""
+            adresse: ""
+            code_postal: ""
+            commune: ""
+            telephone: ""
+            fax: ""
+            email: ""
+            infos: ""
+            banque: ""
+            virement: ""
+            numero_compte: ""
+            numero_compte_especes: ""
+        emetteur_SEINE_ET_MARNE:
+            nom: ""
+            adresse: ""
+            code_postal: ""
+            commune: ""
+            telephone: ""
+            fax: ""
+            email: ""
+            infos: ""
+            banque: ""
+            virement: ""
+            numero_compte: ""
+            numero_compte_especes: ""
+        banque:
+            nom: ""
+            adresse: ""
+            code_postal: ""
+            commune: ""
+        banqueEspece:
+            nom: ""
+            adresse: ""
+            code_postal: ""
+            commune: ""
+    banque:
+        creditorId: ""
+        creditorName: ""
+        creditorAccountIBAN: ""
+        creditorAgentBIC: ""
