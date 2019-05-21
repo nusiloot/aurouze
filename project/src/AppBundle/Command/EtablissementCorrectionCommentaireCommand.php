@@ -8,16 +8,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Import\CsvFile;
 
-class SocieteCorrectionEtablissementCommand extends ContainerAwareCommand {
+class EtablissementCorrectionCommentaireCommand extends ContainerAwareCommand {
 
     protected function configure() {
         $this
-                ->setName('societe:correction-factures')
+                ->setName('etablissement:correction-commentaire')
                 ->setDescription("Tache liée à la mis en conformité de l'import")
                 ->addArgument(
-                    'societe', InputArgument::REQUIRED, "Société à corriger"
-                )->addArgument(
-                    'file', InputArgument::REQUIRED, 'fichier source des Facture'
+                    'file', InputArgument::REQUIRED, 'fichier source des etablissement'
                 );
     }
 
@@ -33,27 +31,19 @@ class SocieteCorrectionEtablissementCommand extends ContainerAwareCommand {
         $csvFile = new CsvFile($input->getArgument('file'));
 
 
-        $factures = $fm->getRepository()->findBy(array('societe' => $input->getArgument('societe')));
 
-
-
-        foreach($factures as $facture) {
-           $r = $facture->getIdentifiantReprise();
-           $log = $facture->getId()." (r=".$r.") déplacement | ";
-          // $oldSocId = $compte->getSociete()->getId();
             foreach ($csvFile->getCsv() as $data) {
-              if($r == $data[0]){
-                $socG = $sm->getRepository()->findOneByIdentifiantReprise($data[6]);
+                $etbs = $em->getRepository()->findByIdentifiantReprise($data[0]);
           //      $idetb = $data[0];
           //      $etbG = $em->getRepository()->findOneByIdentifiantReprise($idetb);
-               if($socG){
-                  $rs = $socG->getRaisonSociale();
-                  echo $log." vers société  $rs \n";
-                  $socG->setActif(true);
-                  foreach ($socG->getEtablissements() as $key => $etb) {
-                    $etb->setActif(true);
-                  }
-                  $facture->setSociete($socG);
+          foreach ($etbs as $etb) {
+
+               if($etb){
+                 $id= $etb->getId();
+                  $com = $etb->getCommentaire();
+                  $comBon = $data[14];
+                  echo "$id => \"$com\" devient \"$comBon\"\n";
+                  $etb->setCommentaire($comBon);
                }else{
           //        $socG = $sm->getRepository()->findOneByIdentifiantReprise($data[22]);
           //        if($socG){
@@ -61,13 +51,12 @@ class SocieteCorrectionEtablissementCommand extends ContainerAwareCommand {
           //          $compte->setSociete($socG);
           //          echo $log." pas etb | vers $rs \n";
           //        }else{
-                    echo $log." pas soc ! \n";
+                    echo $data[0]." pas etb ! \n";
           //        }
                }
+               $dm->flush();
+             }
           //      echo $oldSocId." => ".$compte->getSociete()->getId()."\n";
-                $dm->flush();
-              }
-          }
         }
     }
 }
