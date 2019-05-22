@@ -4,7 +4,7 @@
 >{{ contrat.devisAdresse.adresseFormatee | nl2br|trim|raw }}  
 >{{ contrat.devisAdresse.codePostal }} {{ contrat.devisAdresse.commune|trim|raw }}
 
-# PROPOSITION DE PREVENTION ET LUTTE CONTRE LES NUISIBLES ET PARASITES
+# PROPOSITION {% if certification_bois and constant('AppBundle\\Manager\\ContratManager::MOYEN_3D') not in contrat.moyens %}COMMERCIALE{% else %}DE PREVENTION ET LUTTE CONTRE LES NUISIBLES ET PARASITES{% endif %}
 
 entre
 
@@ -55,7 +55,9 @@ et
 {{  prestation.nbPassages }} passage{% if prestation.nbPassages > 1 %}s{% endif %} concernant : {{  prestation.nom|trim }}  
 {% endfor %}
 
+{% if contrat.moyens|length > 0 %}
 ## Moyens de mise en œuvre
+{% endif %}
 {% if constant('AppBundle\\Manager\\ContratManager::MOYEN_3D') in contrat.moyens %}
 **3D**
 
