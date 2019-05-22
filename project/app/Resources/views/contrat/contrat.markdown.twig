@@ -103,7 +103,7 @@ Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{%
 | TTC                                                       | {{ ((1+contrat.tva) * contrat.prixHt)|number_format(2, ',', ' ') }}€ |
 
 
-Devis valable {{ contrat.duree }} mois à compter de la date d'édition.
+Devis valable 2 mois à compter de la date d'édition.
 Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% endif %}.
 Délai de paiement des factures : {{ contratManager.getFrequence(contrat.frequencePaiement) }}.
 
