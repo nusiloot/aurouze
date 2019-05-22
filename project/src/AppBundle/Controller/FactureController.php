@@ -71,7 +71,7 @@ class FactureController extends Controller {
             $facture->setDateEmission(new \DateTime());
         }
         
-        $appConf = $this->getContainer()->getParameter('application');
+        $appConf = $this->container->getParameter('application');
 
         if(!$facture->getCommercial()) {
             $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant($appConf['commercial']);
