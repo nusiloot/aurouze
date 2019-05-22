@@ -32,6 +32,10 @@ et
 {{  prestation.nom|trim }}  
 {% endfor %}
 
+{% if constant('AppBundle\\Manager\\ContratManager::MOYEN_BOIS') in contrat.moyens and certification_bois %}
+***Entreprise certifiée par le CTBA+ sous le numéro d'identification 255 pour les traitements curatifs et préventifs contre les insectes à larve xylophage (capricornes, hespérophanes, lyctus et vrillettes), les termites, et les traitements fongicides.***
+{% endif %}
+
 ## Dans le{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}locaux{% else %}local{% endif %} situé{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}aux adresses{% else %}à l'adresse{% endif %}
 
 {% for etablissement in contrat.etablissements %}
