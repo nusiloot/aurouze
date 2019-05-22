@@ -33,12 +33,12 @@ class PassagesRealisesFuturCommand extends ContainerAwareCommand {
                   $ps->setDateRealise(null);
                   $ps->setDateFin(null);
                   $ps->setStatut(PassageManager::STATUT_A_PLANIFIER);
-                  $dm->flush();
                 }
           //      $idetb = $data[0];
           //      $etbG = $em->getRepository()->findOneByIdentifiantReprise($idetb);
 
           //      echo $oldSocId." => ".$compte->getSociete()->getId()."\n";
         }
+        $dm->flush();
     }
 }
