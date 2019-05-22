@@ -285,7 +285,7 @@ class ContratManager implements MouvementManagerInterface {
                 if (!$cpt) {
                     $passage->setDateDebut($datePrevision);
                 }
-                if ($firstEtb) {
+                if ($firstEtb && $passageInfos->mouvement_declenchable) {
                     $passage->setMouvementDeclenchable($passageInfos->mouvement_declenchable);
                 }
                 if ($audit = $passageInfos->audit) {
