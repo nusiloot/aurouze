@@ -1,4 +1,4 @@
-PARIS, le {{ contrat.dateCreation|date("d/m/Y") }}
+{{ application.adresse_commune }}, le {{ contrat.dateCreation|date("d/m/Y") }}
 
 >{{ contrat.devisDestinataire|trim|raw }}  
 >{{ contrat.devisAdresse.adresseFormatee | nl2br|trim|raw }}  
@@ -12,7 +12,7 @@ entre
 
 {{ application.adresse_libelle }}
 {{ application.adresse_adresse }}
-{{ application.adresse_commune }}
+{{ application.adresse_cp }} {{ application.adresse_commune }}
 
 ```
 
@@ -31,6 +31,10 @@ et
 {% for prestation in contrat.prestations %}
 {{  prestation.nom|trim }}  
 {% endfor %}
+
+{% if constant('AppBundle\\Manager\\ContratManager::MOYEN_BOIS') in contrat.moyens and certification_bois %}
+***Entreprise certifiée par le CTBA+ sous le numéro d'identification 255 pour les traitements curatifs et préventifs contre les insectes à larve xylophage (capricornes, hespérophanes, lyctus et vrillettes), les termites, et les traitements fongicides.***
+{% endif %}
 
 ## Dans le{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}locaux{% else %}local{% endif %} situé{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}aux adresses{% else %}à l'adresse{% endif %}
 
@@ -103,7 +107,7 @@ Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{%
 | TTC                                                       | {{ ((1+contrat.tva) * contrat.prixHt)|number_format(2, ',', ' ') }}€ |
 
 
-Devis valable {{ contrat.duree }} mois à compter de la date d'édition.
+Devis valable 2 mois à compter de la date d'édition.
 Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% endif %}.
 Délai de paiement des factures : {{ contratManager.getFrequence(contrat.frequencePaiement) }}.
 
