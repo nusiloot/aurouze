@@ -26,7 +26,7 @@ parameters:
 
     knp_snappy_pdfbinary: xvfb-run wkhtmltopdf
     knp_snappy_imagebinary: xvfb-run wkhtmltoimage
-
+    
     banque:
         creditorId: 'XXXXXXXXXXX'
         creditorName: 'ETABLISSEMENTS XXXX XXXXXXXXX'
@@ -38,7 +38,9 @@ parameters:
         shortname: ""
         adresse_libelle: ""
         adresse_adresse: ""
+        adresse_cp: ""
         adresse_commune: ""
+        commercial: ""
     passage:
       coordonnees:
         email : "emailTransmission@dns.fr"

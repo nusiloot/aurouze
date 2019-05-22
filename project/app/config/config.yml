@@ -44,6 +44,7 @@ twig:
         attachement_manager: "@attachement.manager"
         instanceapp: %instanceapp%
         application: "%application%"
+        calendar_extra: "%calendar_extra%"
 
 doctrine_mongodb:
     connections:

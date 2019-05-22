@@ -70,9 +70,11 @@ class FactureController extends Controller {
         if(!$facture->getId()) {
             $facture->setDateEmission(new \DateTime());
         }
+        
+        $appConf = $this->container->getParameter('application');
 
         if(!$facture->getCommercial()) {
-            $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant('003480005');
+            $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant($appConf['commercial']);
             $facture->setCommercial($commercial);
         }
         if ($type == "devis" && !$facture->getDateDevis()) {
@@ -87,7 +89,7 @@ class FactureController extends Controller {
             $produitsSuggestion[] = array("libelle" => $produit->getNom(), "conditionnement" => $produit->getConditionnement(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
         }
 
-        $form = $this->createForm(new FactureType($dm, $cm, $facture->isDevis()), $facture, array(
+        $form = $this->createForm(new FactureType($dm, $cm, $appConf['commercial'], $facture->isDevis()), $facture, array(
             'action' => "",
             'method' => 'POST',
         ));
