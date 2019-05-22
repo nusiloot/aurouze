@@ -33,7 +33,7 @@ et
 {% endfor %}
 
 {% if constant('AppBundle\\Manager\\ContratManager::MOYEN_BOIS') in contrat.moyens and certification_bois %}
-***Entreprise certifiée par le CTBA+ sous le numéro d'identification 255 pour les traitements curatifs et préventifs contre les insectes à larve xylophage (capricornes, hespérophanes, lyctus et vrillettes), les termites, et les traitements fongicides.***
+***Entreprise certifiée CTBA+ sous le numéro d'identification 255 pour les traitements curatifs et préventifs contre les insectes à larve xylophage (capricornes, hespérophanes, lyctus et vrillettes), les termites, et les traitements fongicides.***
 {% endif %}
 
 ## Dans le{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}locaux{% else %}local{% endif %} situé{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}aux adresses{% else %}à l'adresse{% endif %}
@@ -41,6 +41,7 @@ et
 {% for etablissement in contrat.etablissements %}
 {{  etablissement.getNom(false)|trim }} {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}  
 {% endfor %}
+___
 
 ## Nomenclature des locaux à traiter
 {{ contrat.nomenclature | nl2br }}
@@ -85,9 +86,16 @@ Pour l'exécution de la prestation, le client s'engage à nous fournir l'eau et 
 
 Pour l'exécution de la prestation, le client s'engage à nous fournir l'électricité et l'eau en quantité suffisante, la place nécessaire au stationnement des moyens et le libre accès aux parties à traiter. Le nettoyage et le lavage sera effectué avec du matériel type haute pression et des détergents appropriés et homologués à cette prestation. Les fiches techniques et sécurités des produits employés vous seront fournies sur demande.
 {% endif %}
+___
+
 ## Engagement d'exécution de nos prestations
 Nos prestations sont exécutées par un personnel qualifié et certifié Certibiocide. Le matériel et l'outillage sont adaptés et en quantité suffisante pour la bonne exécution des prestations mentionnées et conformes à la législation en vigueur.
 
+{% if constant('AppBundle\\Manager\\ContratManager::MOYEN_BOIS') in contrat.moyens and certification_bois %}
+## Garantie
+Une clause de garantie est accordée pour une période de 10 ans.
+
+{% else %}
 {% if contrat.dureeGarantie %}
 ## Garantie
 Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accordée pour la durée de la proposition{% else %}de {{ contrat.dureeGarantie }} mois est accordée{% endif %} pour {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %}&nbsp;:
@@ -97,8 +105,12 @@ Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accord
 {% endfor %}
 
 {% endif %}
+{% endif %}
+{% if contrat.duree %}
+
 ## Durée
 Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{% if contrat.tacite %}{% if contrat.societe.raisonSociale matches '/mairie/i' %}{% else %}, renouvelable par tacite reconduction. Elle peut être dénoncée par les deux parties à chaque date anniversaire par lettre recommandée avec accusé de réception en respectant un préavis de deux mois{% endif %}{% endif %}.
+{% endif %}
 
 ## Montant forfaitaire
 
