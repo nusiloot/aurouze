@@ -38,6 +38,7 @@ parameters:
         shortname: ""
         adresse_libelle: ""
         adresse_adresse: ""
+        adresse_cp: ""
         adresse_commune: ""
         commercial: ""
     passage:

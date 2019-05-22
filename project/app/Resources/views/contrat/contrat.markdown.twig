@@ -1,4 +1,4 @@
-PARIS, le {{ contrat.dateCreation|date("d/m/Y") }}
+{{ application.adresse_commune }}, le {{ contrat.dateCreation|date("d/m/Y") }}
 
 >{{ contrat.devisDestinataire|trim|raw }}  
 >{{ contrat.devisAdresse.adresseFormatee | nl2br|trim|raw }}  
@@ -12,7 +12,7 @@ entre
 
 {{ application.adresse_libelle }}
 {{ application.adresse_adresse }}
-{{ application.adresse_commune }}
+{{ application.adresse_cp }} {{ application.adresse_commune }}
 
 ```
 
