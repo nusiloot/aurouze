@@ -114,7 +114,11 @@
             </div>
             <div id="contrat_acceptation_button_row" class="col-xs-4 text-right">
                 {% if contrat.isEnAttenteAcceptation %}
-                <button id="contrat_acceptation_save" onclick="return confirm('Êtes vous sûr de vouloir accepter ce contrat ?');" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Accepter le contrat</button>
+                  {% if contrat.previsionnel|length > 0 %}
+                    <button id="contrat_acceptation_save" onclick="return confirm('Êtes vous sûr de vouloir accepter ce contrat ?');" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Accepter le contrat</button>
+                  {% else %}
+                    <button disabled="disabled" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Accepter le contrat</button>
+                  {% endif %}
                 {% else %}
                 <button id="contrat_acceptation_save" type="submit" class="btn btn-default">Modifier</button>
                 {% endif %}

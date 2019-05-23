@@ -141,7 +141,8 @@
                         </div>
                     {% endfor %}
             {% else %}
-                <p class="bg-warning" style="padding: 15px;">Attention, la saisie ne permet pas d'établir un prévisionnel d'intervention pour ce contrat.</p>
+                <p class="bg-danger" style="padding: 15px;">La saisie ne permet pas d'établir un prévisionnel d'intervention pour ce contrat, veuillez choisir un nombre de prestations <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default btn-xs pull-right">modifier</a>
+                </p>
             {% endif %}
         </div>
     </div>
