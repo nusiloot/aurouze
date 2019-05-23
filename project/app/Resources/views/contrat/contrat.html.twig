@@ -54,7 +54,7 @@
                 <div class="row">
                     <div class="col-xs-7">
                         <p class="lead text-center">{{ contrat.getPrixHt()|number_format(2, ',', ' ') }} € HT <small>soit {{ ((1+contrat.tva) * contrat.getPrixHt)|number_format(2, ',', ' ') }} € TTC (TVA à {{ contrat.tva * 100 | number_format(2, ',', ' ') }}%)</small></p>
-                        <p class="text-center lead">{{ contrat.nbFactures }} facture(s)</p>
+                        <p class="lead text-center">{{ contrat.nbFactures }} facture(s)<small style="font-size:small">&nbsp;(associés à un passage)</small></p>
                     </div>
                     <div class="col-xs-5">
                         Fréquence de paiement : <strong>{{ contrat.frequencePaiementLibelle }}</strong><br />
