@@ -779,11 +779,14 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $cm = new ConfigurationManager($dm);
         $configuration = $cm->getRepository()->findOneById(Configuration::PREFIX);
         $produitsArray = $configuration->getProduitsArray();
+
         foreach ($this->getProduits() as $produit) {
+          if($produit->getIdentifiant()){
             $produitConf = $produitsArray[$produit->getIdentifiant()];
             $produit->setNom($produitConf->getNom());
             $produit->setPrixHt($produitConf->getPrixHt());
             $produit->setPrixPrestation($produitConf->getPrixPrestation());
+          }
         }
     }
 
