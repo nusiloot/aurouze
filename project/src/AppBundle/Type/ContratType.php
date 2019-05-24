@@ -49,7 +49,7 @@ class ContratType extends AbstractType {
                 ->add('auditPassage', TextType::class, array('label' => 'Audit commercial au passage n° :', 'required' => false))
                 ->add('multiTechnicien', TextType::class, array('label' => 'Nombre de techniciens :', 'required' => false))
                 ->add('duree_garantie', TextType::class, array('required' => false, 'label' => 'Durée de la garantie :'))
-                ->add('nbFactures', TextType::class, array('label' => 'Nombre de factures* :'))
+                ->add('nbFactures', TextType::class, array('label' => 'Nombre de factures (associés à un passage)* :'))
                 ->add('dureePassage', TextType::class, array('label' => 'Durée estimative d\'un passage* :', 'attr' => array('class' => 'input-timepicker')))
                 ->add('prixHt', NumberType::class, array('label' => 'Prix HT* :', 'scale' => 2))
                 ->add('tvaReduite', CheckboxType::class, array('label' => 'Tva réduite', 'required' => false, 'label_attr' => array('class' => 'control-label')));
