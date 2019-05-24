@@ -2083,4 +2083,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	}
     	return $total;
     }
+
+    public function getIntitule(){
+      return $this->getSociete()->getRaisonSociale()." contrat ".strtolower($this->getTypeContratLibelle())." n° ".$this->getNumeroArchive();
+    }
 }

@@ -203,7 +203,7 @@
 
 {% if(factureMode is defined) %}
 <div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title">Factures</h3></div>
+    <div class="panel-heading"><h3 class="panel-title">Factures {% if contrat.nbFactures == 0 %}à créer manuellement car <strong>non rattachées aux passages</strong>{% endif %}</h3></div>
     <table class="table table-bordered table-condensed table-stripped">
         <thead>
             <tr>
@@ -214,7 +214,7 @@
             </tr>
         </thead>
         <tbody>
-        {% if(not contrat.mouvements | length and not factures | length) %}
+        {% if(not contrat.mouvements | length and not factures | length and contrat.nbFactures) %}
         <tr>
             <td colspan="4"><em>Aucune facture</em></td>
         </tr>
@@ -247,6 +247,16 @@
                 <td class="text-center"><a onclick="return confirm('Etes vous sûr de forcer la genération d\'un mouvement de facture directement (sans le faire via un passage) ?');" href="{{ path('contrat_generation_mouvement', {'id': contrat.id})}}">Générer un mouvement</a></td>
                 <td class="text-right">{{ "%0.2f" | format(mouvement.prixUnitaire) }} €</td>
             </tr>
+        </tfoot>
+        {% endif %}
+        {% if contrat.nbFactures == 0 %}
+        <tfoot>
+          <tr>
+            <td>Facture à créer</td>
+            <td class="text-right"></td>
+            <td class="text-center"><a onclick="return confirm('Etes vous sûr de vouloir préparer une facture qui sera à envoyer plus tard ? ');" href="{{ path('facture_creation', {'societe': contrat.societe.id,'type': 'facture', 'contratId' : contrat.id})}}">Préparer une facture</a></td>
+            <td class="text-right"></td>
+          </tr>
         </tfoot>
         {% endif %}
     </table>
