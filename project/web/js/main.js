@@ -3,6 +3,7 @@
 
     $(document).ready(function ()
     {
+        $.initClickInputAddon();
         $.initAjaxPost();
         $.initSelect2();
         $.initSelect2Ajax();
@@ -42,6 +43,13 @@
         $.initMoreInfo();
         $.initTransfertContrat();
     });
+
+    $.initClickInputAddon = function(){
+      $(".input-group-addon").click(function(e){
+        $(this).prev().click();
+        $(this).prev().focus();
+      });
+    }
 
     $.initTrCollapse = function() {
     	$('.tr-collapse').click(function(){
