@@ -31,32 +31,29 @@ class EtablissementCorrectionCommentaireCommand extends ContainerAwareCommand {
         $csvFile = new CsvFile($input->getArgument('file'));
 
 
-
+          $i=0;
             foreach ($csvFile->getCsv() as $data) {
                 $etbs = $em->getRepository()->findByIdentifiantReprise($data[0]);
           //      $idetb = $data[0];
           //      $etbG = $em->getRepository()->findOneByIdentifiantReprise($idetb);
           foreach ($etbs as $etb) {
-
+              $i++;
                if($etb){
                  $id= $etb->getId();
                   $com = $etb->getCommentaire();
                   $comBon = $data[14];
                   echo "$id => \"$com\" devient \"$comBon\"\n";
-                  $etb->setCommentaire($comBon);
+                  $etb->setCommentaire(str_replace("\n","\\n",$comBon));
                }else{
-          //        $socG = $sm->getRepository()->findOneByIdentifiantReprise($data[22]);
-          //        if($socG){
-          //          $rs = $socG->getRaisonSociale();
-          //          $compte->setSociete($socG);
-          //          echo $log." pas etb | vers $rs \n";
-          //        }else{
                     echo $data[0]." pas etb ! \n";
-          //        }
                }
-               $dm->flush();
              }
-          //      echo $oldSocId." => ".$compte->getSociete()->getId()."\n";
+             if($i > 10) {
+                 $dm->flush();
+                 $i=0;
+             }
+
         }
+        $dm->flush();
     }
 }

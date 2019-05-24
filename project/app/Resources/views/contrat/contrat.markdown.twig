@@ -4,7 +4,7 @@
 >{{ contrat.devisAdresse.adresseFormatee | nl2br|trim|raw }}  
 >{{ contrat.devisAdresse.codePostal }} {{ contrat.devisAdresse.commune|trim|raw }}
 
-# PROPOSITION DE PREVENTION ET LUTTE CONTRE LES NUISIBLES ET PARASITES
+# PROPOSITION {% if certification_bois and constant('AppBundle\\Manager\\ContratManager::MOYEN_3D') not in contrat.moyens %}COMMERCIALE{% else %}DE PREVENTION ET LUTTE CONTRE LES NUISIBLES ET PARASITES{% endif %}
 
 entre
 
@@ -32,11 +32,16 @@ et
 {{  prestation.nom|trim }}  
 {% endfor %}
 
+{% if constant('AppBundle\\Manager\\ContratManager::MOYEN_BOIS') in contrat.moyens and certification_bois %}
+***Entreprise certifiée CTBA+ sous le numéro d'identification 255 pour les traitements curatifs et préventifs contre les insectes à larve xylophage (capricornes, hespérophanes, lyctus et vrillettes), les termites, et les traitements fongicides.***
+{% endif %}
+
 ## Dans le{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}locaux{% else %}local{% endif %} situé{% if contrat.etablissements|length > 1 %}s{% endif %} {% if contrat.etablissements|length > 1 %}aux adresses{% else %}à l'adresse{% endif %}
 
 {% for etablissement in contrat.etablissements %}
 {{  etablissement.getNom(false)|trim }} {{ etablissement.adresse.adresse|trim }} {{ etablissement.adresse.codePostal|trim }} {{ etablissement.adresse.commune|trim }}  
 {% endfor %}
+___
 
 ## Nomenclature des locaux à traiter
 {{ contrat.nomenclature | nl2br }}
@@ -51,7 +56,9 @@ et
 {{  prestation.nbPassages }} passage{% if prestation.nbPassages > 1 %}s{% endif %} concernant : {{  prestation.nom|trim }}  
 {% endfor %}
 
+{% if contrat.moyens|length > 0 %}
 ## Moyens de mise en œuvre
+{% endif %}
 {% if constant('AppBundle\\Manager\\ContratManager::MOYEN_3D') in contrat.moyens %}
 **3D**
 
@@ -79,9 +86,16 @@ Pour l'exécution de la prestation, le client s'engage à nous fournir l'eau et 
 
 Pour l'exécution de la prestation, le client s'engage à nous fournir l'électricité et l'eau en quantité suffisante, la place nécessaire au stationnement des moyens et le libre accès aux parties à traiter. Le nettoyage et le lavage sera effectué avec du matériel type haute pression et des détergents appropriés et homologués à cette prestation. Les fiches techniques et sécurités des produits employés vous seront fournies sur demande.
 {% endif %}
+___
+
 ## Engagement d'exécution de nos prestations
 Nos prestations sont exécutées par un personnel qualifié et certifié Certibiocide. Le matériel et l'outillage sont adaptés et en quantité suffisante pour la bonne exécution des prestations mentionnées et conformes à la législation en vigueur.
 
+{% if constant('AppBundle\\Manager\\ContratManager::MOYEN_BOIS') in contrat.moyens and certification_bois %}
+## Garantie
+Une clause de garantie est accordée pour une période de 10 ans.
+
+{% else %}
 {% if contrat.dureeGarantie %}
 ## Garantie
 Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accordée pour la durée de la proposition{% else %}de {{ contrat.dureeGarantie }} mois est accordée{% endif %} pour {% if contrat.prestations|length > 1 %}les{% else %}la{% endif %} prestation{% if contrat.prestations|length > 1 %}s{% endif %} suivante{% if contrat.prestations|length > 1 %}s{% endif %}&nbsp;:
@@ -91,8 +105,12 @@ Une clause de garantie {% if contrat.dureeGarantie == contrat.duree %}est accord
 {% endfor %}
 
 {% endif %}
+{% endif %}
+{% if contrat.duree %}
+
 ## Durée
 Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{% if contrat.tacite %}{% if contrat.societe.raisonSociale matches '/mairie/i' %}{% else %}, renouvelable par tacite reconduction. Elle peut être dénoncée par les deux parties à chaque date anniversaire par lettre recommandée avec accusé de réception en respectant un préavis de deux mois{% endif %}{% endif %}.
+{% endif %}
 
 ## Montant forfaitaire
 
@@ -103,7 +121,7 @@ Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{%
 | TTC                                                       | {{ ((1+contrat.tva) * contrat.prixHt)|number_format(2, ',', ' ') }}€ |
 
 
-Devis valable {{ contrat.duree }} mois à compter de la date d'édition.
+Devis valable 2 mois à compter de la date d'édition.
 Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% endif %}.
 Délai de paiement des factures : {{ contratManager.getFrequence(contrat.frequencePaiement) }}.
 
@@ -148,3 +166,60 @@ Un exemplaire à nous retourner.
 
 ## Conditions générales
 Voir annexe.
+{% if contrat.tvaReduite  %}
+___
+
+<br />
+<br />
+<br />
+  
+>**ATTESTATION POUR APPLICATION TVA 10%**
+>(Locaux à usage d'habitation)
+
+<br />
+<br />
+<br />
+
+Je soussigné,
+
+<br />
+<br />
+<br />
+<br />
+
+Certifie par la présente que l'immeuble situé :
+
+<br />
+<br />
+<br />
+<br />
+
+est achevé depuis plus de 2 ans, qu'il est composé de locaux affectés à usage d'habitation dans une proportion d'au moins 50%, avec une TVA non récupérable.
+
+<br />
+
+La présente attestation est établie pour servir et valoir ce que de droit.
+
+<br />
+
+Fait à :  
+Le :
+
+<br />
+<br />
+<br />
+
+Signature
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+{% else %}
+<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+{% endif %}
