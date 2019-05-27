@@ -3,7 +3,7 @@
     {% elseif(facture.isEnRetardPaiement()) %} danger {% endif %}">
             <td>{{ ((facture.isDevis) ? facture.dateDevis : facture.dateFacturation) | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</td>
             <td><a href="{{ path('facture_pdf', {'id': facture.id })}}">
-                    <span class="glyphicon glyphicon-file"></span> {% if facture.isDevis %}Devis n° {{ facture.numeroDevis }}{% elseif(facture.isAvoir) %}Avoir n° {{ facture.numeroFacture }}{% elseif(facture.numeroFacture) %}Facture n° {{ facture.numeroFacture }}{% else %}Facture prévue<a class="btn btn-link btn-xs" href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}"><span class="glyphicon glyphicon-pencil"></span>
+                    <span class="glyphicon glyphicon-file"></span> {% if facture.isDevis %}Devis n° {{ facture.numeroDevis }}{% elseif(facture.isAvoir) %}Avoir n° {{ facture.numeroFacture }}{% elseif(facture.numeroFacture) %}Facture n° {{ facture.numeroFacture }}{% else %}Facture prévue<a class="btn btn-link btn-xs" href="{{ path('facture_creation', { 'societe': facture.societe.id, 'type': 'facture', 'id': facture.id })}}"><span class="glyphicon glyphicon-pencil"></span>
                 </a>
         {% endif %}</a></td>
             <td>
