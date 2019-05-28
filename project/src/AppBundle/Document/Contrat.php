@@ -862,7 +862,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $mouvement->setFacturable(true);
         $mouvement->setFacture(false);
         $mouvement->setSociete($this->getSociete());
-        $mouvement->setLibelle(sprintf("Facture %s/%s - Proposition n° %s du %s au %s", count($this->getMouvements()) + 1, $this->getNbFactures(), $this->getNumeroArchive(), $this->getDateDebut()->format('m/Y'), $this->getDateFin()->format('m/Y')));
+        $mouvement->setLibelle($this->getLibelleMouvement());
 
         $mouvement->setDocument($this);
         if ($origineDocumentGeneration) {
@@ -870,6 +870,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
 
         return $mouvement;
+    }
+    
+    public function getLibelleMouvement() {
+        $nbFactures = $this->getNbFactures();
+        $nbMvts = count($this->getMouvements()) + 1;
+        if ($nbMvts > $nbFactures) {
+            $nbFactures = $nbMvts;
+        }
+        return sprintf("Facture %s/%s - Proposition n° %s du %s au %s", count($this->getMouvements()) + 1, $nbFactures, $this->getNumeroArchive(), $this->getDateDebut()->format('m/Y'), $this->getDateFin()->format('m/Y'));
     }
 
     public function restaureMouvements($documentGenere = null) {
