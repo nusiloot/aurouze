@@ -240,6 +240,14 @@ class CalendarController extends Controller {
 
             return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
         }
+        
+        if ($form->get("all")->getData()) {
+            $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
+            $rdv->removeAllParticipants();
+            foreach ($techniciens as $technicien) {
+                $rdv->addParticipant($technicien);
+            }
+        }
 
         $dm->persist($rdv);
 
