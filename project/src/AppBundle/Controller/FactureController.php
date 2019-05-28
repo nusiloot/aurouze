@@ -60,10 +60,19 @@ class FactureController extends Controller {
             throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("La facture %s n'a pas été trouvé", $request->get('id')));
         }
 
+        $contrat = null;
+        if($contratId) {
+            $contrat = $contratManager->getRepository()->findOneById($contratId);
+        }
+
         if (!isset($facture)) {
             $facture = $fm->createVierge($societe);
             $factureLigne = new FactureLigne();
             $factureLigne->setTauxTaxe(0.2);
+            $factureLigne->setQuantite(1);
+            if ($contrat) {
+                $factureLigne->setLibelle($contrat->getLibelleMouvement());
+            }
             $facture->addLigne($factureLigne);
         }
 
@@ -84,11 +93,6 @@ class FactureController extends Controller {
 
         } elseif ($type == "facture" && !$facture->getDateFacturation()) {
             $facture->setDateFacturation(new \DateTime());
-        }
-
-        $contrat = null;
-        if($contratId) {
-            $contrat = $contratManager->getRepository()->findOneById($contratId);
         }
 
         $produitsSuggestion = array();

@@ -7,7 +7,7 @@
     {% set readOnly = (form.vars.data and form.vars.data.origineDocument and form.vars.data.quantite > 0) %}
     <tr class="dynamic-collection-item">
         <td>
-            {{ form_widget(form.libelle, {'attr': {'readonly': (readOnly) ? "readonly": false }}) }}
+            {{ form_widget(form.libelle) }}
         </td>
         <td >
             {{ form_widget(form.quantite, {'attr': {'readonly': (readOnly) ? "readonly": false }}) }}
