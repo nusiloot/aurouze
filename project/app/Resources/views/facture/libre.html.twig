@@ -145,7 +145,7 @@
                 <button type="submit" name="previsualiser" value="previsualiser" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Prévisualiser {% if(facture.isDevis) %}le devis{% else %}la facture{% endif %}</button>
             </div>
             <div class="col-xs-4 text-right">
-                <button type="submit" class="btn btn-success">{% if(facture.isDevis and not facture.numeroDevis) %}Générer le devis{% elseif(facture.numeroFacture) %}Modifier la facture{% elseif(facture.isDevis) %}Modifier le devis{% else %}Générer la facture{% endif %}</button>
+                <button type="submit" class="btn btn-success">{% if(facture.isDevis and not facture.numeroDevis) %}Générer le devis{% elseif(not facture.numeroFacture and facture.getContrat()) %}Modifier la facture prévue{% elseif(facture.numeroFacture) %}Modifier la facture{% elseif(facture.isDevis) %}Modifier le devis{% else %}Générer la facture{% endif %}</button>
             </div>
         </div>
         {{ form_end(form) }}

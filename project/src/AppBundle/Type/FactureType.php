@@ -66,7 +66,7 @@ class FactureType extends AbstractType
         ;
 
         if($this->contrat){
-          $builder->add('contrat', TextType::class, array('disabled' => true, "attr" => array('placeholder' => $this->contrat->getIntitule())));
+          $builder->add('contrat', TextType::class, array('disabled' => true, "mapped" => false, "attr" => array('placeholder' => $this->contrat->getIntitule())));
         }
 
         if($this->devis) {

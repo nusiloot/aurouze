@@ -83,7 +83,6 @@ class FactureController extends Controller {
         }
 
         $appConf = $this->container->getParameter('application');
-
         if(!$facture->getCommercial()) {
             $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant($appConf['commercial']);
             $facture->setCommercial($commercial);
@@ -104,7 +103,7 @@ class FactureController extends Controller {
             'action' => "",
             'method' => 'POST',
         ));
-
+        
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
