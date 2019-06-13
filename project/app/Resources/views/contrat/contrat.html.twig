@@ -162,7 +162,9 @@
                         </div>
                     </div>
                 </div>
+                {% if contrat.getPassagesEtablissementNode(etablissement) %}
                 {{ include('passage/listingPassages.html.twig', { 'passages': contrat.getPassagesEtablissementNode(etablissement).getPassagesDateSorted(true), 'origine': "contrat" }) }}
+                {% endif %}
             {% endfor %}
         </ul>
     </div>
