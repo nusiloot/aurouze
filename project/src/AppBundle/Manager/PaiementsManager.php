@@ -138,7 +138,6 @@ class PaiementsManager {
     }
 
     public function getParameters() {
-
         return $this->parameters;
     }
 

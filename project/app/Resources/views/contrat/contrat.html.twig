@@ -37,7 +37,7 @@
                     <div class="col-xs-5">
                         Date de création : <strong>{{ contrat.dateCreationAuto() ? contrat.dateCreationAuto()|date("d/m/Y") : contrat.dateCreation()|date("d/m/Y") }}</strong><br />
                         Date d'édition : <strong>{{ contrat.dateCreation()|date("d/m/Y") }}</strong><br />
-                        Date d'acceptation : <strong>{{ contrat.getDateAcceptation()|date("d/m/Y") }}</strong><br /><br />
+                        Date d'acceptation : <strong>{% if(contrat.getDateAcceptation()) %}{{ contrat.getDateAcceptation()|date("d/m/Y") }}{% endif %}</strong><br /><br />
                         Durée d'un passage : <strong>{{ contrat.getHumanDureePassage() }}</strong><br /><br />
                         Commercial : <strong>{{ contrat.getCommercial().getIdentite() }}</strong><br />
                         Technicien : <strong>{% if contrat.getTechnicien() %}{{ contrat.getTechnicien().getIdentite() }}{% else %}Non défini{% endif %}</strong><br />
@@ -53,8 +53,8 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-xs-7">
-                        <p class="lead text-center">{{ contrat.getPrixHt()|number_format(2, ',', ' ') }} € HT <small>soit {{ ((1+contrat.tva) * contrat.getPrixHt)|number_format(2, ',', ' ') }} € TTC (TVA à {{ contrat.tva | number_format(2, ',', ' ') }} %)</small></p>
-                        <p class="text-center lead">{{ contrat.nbFactures }} facture(s)</p>
+                        <p class="lead text-center">{{ contrat.getPrixHt()|number_format(2, ',', ' ') }} € HT <small>soit {{ ((1+contrat.tva) * contrat.getPrixHt)|number_format(2, ',', ' ') }} € TTC (TVA à {{ contrat.tva * 100 | number_format(2, ',', ' ') }}%)</small></p>
+                        <p class="lead text-center">{{ contrat.nbFactures }} facture(s)<small style="font-size:small">&nbsp;(associés à un passage)</small></p>
                     </div>
                     <div class="col-xs-5">
                         Fréquence de paiement : <strong>{{ contrat.frequencePaiementLibelle }}</strong><br />
@@ -108,13 +108,12 @@
         <div id="contrat-{{ contrat.id }}-passages" class="list-group">
             {% if contrat.previsionnel|length > 0 %}
                     {% for date,passage in contrat.previsionnel %}
-
                         <div class="list-group-item">
                             <div class="row">
                                 <div class="col-xs-1">
                                     <span style="cursor: help;" title=""
                                         data-toggle="tooltip"
-                                        class="badge badge-default {% if(passage.mouvement_declenchable) %}badge-inverse{% endif %} btn-xs">{{ (loop.length - loop.index) + 1 }}</span>
+                                        class="badge badge-default {% if(passage.mouvement_declenchable is defined and passage.mouvement_declenchable) %}badge-inverse{% endif %} btn-xs">{{ (loop.length - loop.index) + 1 }}</span>
                                     {% if(passage.audit) %}&nbsp;<span class="glyphicon glyphicon-user text-danger" data-toggle="tooltip" data-placement="top" title="Audit {{ passage.audit }}">&nbsp;</span>{% endif %}
                                 </div>
                                 <div class="col-xs-3">
@@ -142,7 +141,8 @@
                         </div>
                     {% endfor %}
             {% else %}
-                <p class="bg-warning" style="padding: 15px;">Attention, la saisie ne permet pas d'établir un prévisionnel d'intervention pour ce contrat.</p>
+                <p class="bg-danger" style="padding: 15px;">La saisie ne permet pas d'établir un prévisionnel d'intervention pour ce contrat, veuillez choisir un nombre de prestations <a href="{{ path('contrat_modification', {'id': contrat.getId()}) }}" class="btn btn-default btn-xs pull-right">modifier</a>
+                </p>
             {% endif %}
         </div>
     </div>
@@ -162,7 +162,9 @@
                         </div>
                     </div>
                 </div>
+                {% if contrat.getPassagesEtablissementNode(etablissement) %}
                 {{ include('passage/listingPassages.html.twig', { 'passages': contrat.getPassagesEtablissementNode(etablissement).getPassagesDateSorted(true), 'origine': "contrat" }) }}
+                {% endif %}
             {% endfor %}
         </ul>
     </div>
@@ -203,7 +205,7 @@
 
 {% if(factureMode is defined) %}
 <div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title">Factures</h3></div>
+    <div class="panel-heading"><h3 class="panel-title">Factures {% if contrat.nbFactures == 0 %}à créer manuellement car <strong>non rattachées aux passages</strong>{% endif %}</h3></div>
     <table class="table table-bordered table-condensed table-stripped">
         <thead>
             <tr>
@@ -214,7 +216,7 @@
             </tr>
         </thead>
         <tbody>
-        {% if(not contrat.mouvements | length and not factures | length) %}
+        {% if(not contrat.mouvements | length and not factures | length and contrat.nbFactures) %}
         <tr>
             <td colspan="4"><em>Aucune facture</em></td>
         </tr>
@@ -247,6 +249,16 @@
                 <td class="text-center"><a onclick="return confirm('Etes vous sûr de forcer la genération d\'un mouvement de facture directement (sans le faire via un passage) ?');" href="{{ path('contrat_generation_mouvement', {'id': contrat.id})}}">Générer un mouvement</a></td>
                 <td class="text-right">{{ "%0.2f" | format(mouvement.prixUnitaire) }} €</td>
             </tr>
+        </tfoot>
+        {% endif %}
+        {% if contrat.nbFactures == 0 %}
+        <tfoot>
+          <tr>
+            <td>Facture à créer</td>
+            <td class="text-right"></td>
+            <td class="text-center"><a onclick="return confirm('Etes vous sûr de vouloir préparer une facture qui sera à envoyer plus tard ? ');" href="{{ path('facture_creation', {'societe': contrat.societe.id,'type': 'facture', 'contratId' : contrat.id})}}">Préparer une facture</a></td>
+            <td class="text-right"></td>
+          </tr>
         </tfoot>
         {% endif %}
     </table>

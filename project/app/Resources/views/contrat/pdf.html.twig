@@ -59,7 +59,7 @@
 			width: 25%;
 		}
 		body  {
-			background: transparent url("file://{{ kernelRootDir }}/../web/images/bg-body-pdf-contrat.jpg") repeat-y left top;
+			background: transparent url("file://{{ kernelRootDir }}/../web/images/bg-body-pdf-contrat-{{ instanceapp }}.jpg") repeat-y left top;
 			background-size: auto 21.6cm;
 			margin: 0;
 			padding: 0;
@@ -81,7 +81,6 @@
 		}
 		</style>
 	<div id="pdf-contrat">
-	{{ contrat.markdown|markdown }}	
-	<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+	{{ contrat.markdown|markdown }}
 	</div>
 {% endblock %}

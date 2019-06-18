@@ -52,6 +52,7 @@ class FactureCsvImporter {
     const CSV_FACTURE_LIGNE_LIBELLE = 30;
     const CSV_FACTURE_LIGNE_PUHT = 31;
     const CSV_FACTURE_LIGNE_QTE = 32;
+    const CSV_FACTURE_TVA = 20;
     const CSV_FACTURE_LIGNE_TVA = 33;
     const CSV_DATE_FACTURATION = 8;
     const CSV_DATE_LIMITE_REGLEMENT = 9;
@@ -121,8 +122,8 @@ class FactureCsvImporter {
         $this->dm->clear();
         $progress->finish();
 
-        foreach($this->facturesRedressees as $identifiantFacture => $idAvoir) {
-            $facture = $this->fm->getRepository()->findOneByIdentifiantReprise($identifiantFacture);
+        foreach($this->facturesRedressees as $idAvoir => $identifiantFacture) {
+            $facture = $this->fm->getRepository()->findOneById($identifiantFacture);
             if(!$facture) {
                 $output->writeln(sprintf("<error>La facture %s de l'avoir %s n'a pas été trouvé</error>", $identifiantFacture, $idAvoir));
                 continue;
@@ -157,22 +158,21 @@ class FactureCsvImporter {
 
         $mouvements = array();
         foreach($lignes as $ligne) {
+            $tvaReduite = false;
+            $societe = null;
             $contrat = $this->cm->getRepository()->findOneByIdentifiantReprise($ligne[self::CSV_CONTRAT_ID]);
-            if(!$ligne[self::CSV_CONTRAT_ID] || !$contrat) {
-                $output->writeln(sprintf("<comment>Le contrat %s n'existe pas dans la ligne de facture %s </comment>", $ligneFacture[self::CSV_CONTRAT_ID],$ligneFacture[self::CSV_FACTURE_ID]));
+            if((!$ligne[self::CSV_CONTRAT_ID] || !$contrat) && (trim($ligne[self::CSV_REF_ADRESSE] || trim($ligne[self::CSV_SOCIETE_ID])))){
                 $societe = $this->sm->getRepository()->findOneBy(array('identifiantAdresseReprise' => $ligne[self::CSV_REF_ADRESSE]));
-                if(!$societe){
+                if(!$societe && trim($ligne[self::CSV_SOCIETE_ID])){
                   $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $ligne[self::CSV_SOCIETE_ID]));
+                  if($societe){
+                    $output->writeln(sprintf("<comment>Facture %s attachée à la société %s sans contrat </comment>", $ligne[self::CSV_FACTURE_ID],$societe->getId()));
+                  }
                 }
             }else{
               $societe = $contrat->getSociete();
             }
-            if (!$societe) {
-              $societe = $this->sm->getRepository()->findOneBy(array('identifiantReprise' => $ligneFacture[self::CSV_SOCIETE_ID]));
-              if (!$societe) {
-                  $output->writeln(sprintf("<error>La societe %s n'existe pas</error>", $ligneFacture[self::CSV_SOCIETE_ID]));
-                  return;
-              }
+            if(!$societe){
               $output->writeln(sprintf("<error>La societe %s n'existe pas</error>", $ligneFacture[self::CSV_SOCIETE_ID]));
               return;
             }
@@ -184,21 +184,38 @@ class FactureCsvImporter {
             $mouvement->setFacture(false);
             $mouvement->setPrixUnitaire($ligne[self::CSV_FACTURE_LIGNE_PUHT] * $coefficient);
             $mouvement->setQuantite($ligne[self::CSV_FACTURE_LIGNE_QTE]);
-            if(!isset($ligne[self::CSV_FACTURE_LIGNE_TVA]) || !$ligne[self::CSV_FACTURE_LIGNE_TVA]){
+
+            if(!isset($ligne[self::CSV_FACTURE_TVA]) || !array_key_exists(self::CSV_FACTURE_TVA, $ligne)  || !$ligne[self::CSV_FACTURE_TVA]){
               $mouvement->setTauxTaxe(0.196);
               if((new \DateTime($ligneFacture[self::CSV_DATE_LIMITE_REGLEMENT]))->format("Ymd") > "20140101"){
                 $mouvement->setTauxTaxe(0.2);
               }
-            }elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 1) {
-                $mouvement->setTauxTaxe(0.055);
-            } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 2) {
-                $mouvement->setTauxTaxe(0.196);
-            } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 3) {
-                $mouvement->setTauxTaxe(0.07);
-            } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 4) {
-                $mouvement->setTauxTaxe(0.2);
-            } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 5) {
+            }elseif($ligne[self::CSV_FACTURE_TVA] == "100") {
+              $tvaReduite = true;
+              $mouvement->setTauxTaxe(0.055);
+              if((new \DateTime($ligneFacture[self::CSV_DATE_LIMITE_REGLEMENT]))->format("Ymd") > "20140101"){
                 $mouvement->setTauxTaxe(0.1);
+              }
+            } else{
+              if($ligne[self::CSV_FACTURE_LIGNE_TVA] == 1) {
+                  $tvaReduite = true;
+                  $mouvement->setTauxTaxe(0.055);
+              } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 2) {
+                  $mouvement->setTauxTaxe(0.196);
+              } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 3) {
+                  $mouvement->setTauxTaxe(0.07);
+              } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 4) {
+                  $mouvement->setTauxTaxe(0.2);
+              } elseif($ligne[self::CSV_FACTURE_LIGNE_TVA] == 5) {
+                  $tvaReduite = true;
+                  $mouvement->setTauxTaxe(0.1);
+              }else{
+                $mouvement->setTauxTaxe(0.196);
+                if((new \DateTime($ligneFacture[self::CSV_DATE_LIMITE_REGLEMENT]))->format("Ymd") > "20140101"){
+                  $mouvement->setTauxTaxe(0.2);
+                }
+                $output->writeln(sprintf("<comment>La ligne de facture %s a une TVA de %s determiné par default </comment>", $ligneFacture[self::CSV_FACTURE_ID],$mouvement->getTauxTaxe()));
+              }
             }
             $mouvement->setIdentifiant($ligne[self::CSV_FACTURE_LIGNE_ID]);
             $mouvement->setSociete($societe);
@@ -208,7 +225,7 @@ class FactureCsvImporter {
                 $passage = $this->dm->getRepository('AppBundle:Passage')->findOneByIdentifiantReprise($ligne[self::CSV_FACTURE_LIGNE_PASSAGE]);
                 if (!$passage) {
                     if(($contrat && !$contrat->isEnAttenteAcceptation()) || !$contrat) {
-                        $output->writeln(sprintf("<comment>Le passage d'identifiant de reprise %s n'est pas trouvé dans la base (%s)</comment>", $ligne[self::CSV_FACTURE_LIGNE_PASSAGE], $societe->getIdentifiant()));
+                        $output->writeln(sprintf("<comment>Le passage d'identifiant de reprise %s n'est pas trouvé dans la base (%s)</comment>", $ligne[self::CSV_FACTURE_LIGNE_PASSAGE], $societe->getId()));
                     }
                 } else {
                     $passage->setMouvementDeclenchable(true);
@@ -218,6 +235,7 @@ class FactureCsvImporter {
 
             if($contrat) {
                 $mouvement->setDocument($contrat);
+                $contrat->setTvaReduite($tvaReduite);
             }
 
             if($contrat && !array_key_exists($contrat->getId(), $this->contratsNbFactures)) {
@@ -234,6 +252,7 @@ class FactureCsvImporter {
 
             if($mouvement->isFacturable() && $contrat) {
                 $contrat->addMouvement($mouvement);
+
             }
 
             $mouvements[] = $mouvement;
@@ -244,7 +263,6 @@ class FactureCsvImporter {
         }
 
         $facture = $this->fm->create($societe, $mouvements, new \DateTime($ligneFacture[self::CSV_DATE_FACTURATION]));
-
         $facture->getDestinataire()->setNom($ligneFacture[self::CSV_NOM]);
         $adresse = "";
         if(trim($ligneFacture[self::CSV_NOM_DESTINATAIRE])) {

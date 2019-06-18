@@ -159,7 +159,7 @@ class ConfigurationController extends Controller {
 
 
 
-        $fileName = "AUROUZE_Prestations.csv";
+        $fileName = "Prestations.csv";
         return new Response($content, 200, array(
             'Content-Type' => 'application/force-download',
             'Content-Disposition' => 'attachment; filename="' . $fileName . '"'

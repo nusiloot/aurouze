@@ -39,6 +39,8 @@ class Prestation {
      */
     public function setNom($nom) {
         $this->nom = $nom;
+        $this->setIdentifiant($nom);
+        $this->setNomCourt($nom);
         return $this;
     }
 
@@ -137,7 +139,7 @@ class Prestation {
         $mot_chenille = array('CHENILLES');
         $mot_pigeon = array('DEPIGEONNAGE');
         $mot_bois = array('TRAITEMENT', 'BOIS');
-        $mot_travaux = array('TRAVAUX', 'DIVERS');
+        $mot_travaux = array('TRAVAUX', 'DIVERS', 'TRAVAUX DIVERS');
         $mot_DEIV = array('MAINTENANCE', 'D.E.I.V');
         $mot_desinfection = array('DESINFECTION','ASSAINISSEMENT');
         if($this->isPictoForLibelles($nom_libelles, $mot_rongeur)){

@@ -40,16 +40,22 @@ class UpdateRendezVousByPassageCommand extends ContainerAwareCommand {
         $i = 0;
 
         foreach($passages as $passage) {
-            if($passage->getDateDebut() && $passage->getDateFin() && !$passage->getRendezVous()) {
-              $rdv = $rvm->createFromPassage($passage);
-              $this->dm->persist($rdv);
-
-              if ($i >= 1000) {
-                  $this->dm->flush();
-                  $i = 0;
-              }
-              $i++;
+            if($passage->getDateDebut() && $passage->getDateFin()){
+              if(!$passage->getRendezVous()) {
+                $rdv = $rvm->createFromPassage($passage);
+                $this->dm->persist($rdv);
+                $idRdv = $rdv->getId();
+                echo "Création du rendez-vous $idRdv \n";
+                if ($i >= 100) {
+                    $this->dm->flush();
+                    $i = 0;
+                }
+                $i++;
+            }else{
+              $idRdv = $passage->getRendezVous()->getId();
+              echo "Le rendez-vous $idRdv existe déjà\n";
             }
+          }
         }
 
         $this->dm->flush();

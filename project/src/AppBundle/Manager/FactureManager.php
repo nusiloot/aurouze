@@ -118,7 +118,6 @@ public static $export_stats_libelle = array(
     }
 
     public function getParameters() {
-
         return $this->parameters;
     }
 
@@ -146,13 +145,14 @@ public static $export_stats_libelle = array(
         $facture = new Facture();
         $facture->setSociete($societe);
         $facture->setDateEmission(new \DateTime());
-        $facture->getEmetteur()->setNom($this->parameters['emetteur']['nom']);
-        $facture->getEmetteur()->setAdresse($this->parameters['emetteur']['adresse']);
-        $facture->getEmetteur()->setCodePostal($this->parameters['emetteur']['code_postal']);
-        $facture->getEmetteur()->setCommune($this->parameters['emetteur']['commune']);
-        $facture->getEmetteur()->setTelephone($this->parameters['emetteur']['telephone']);
-        $facture->getEmetteur()->setFax($this->parameters['emetteur']['fax']);
-        $facture->getEmetteur()->setEmail($this->parameters['emetteur']['email']);        
+        $parameters = $this->getParameters();
+        $facture->getEmetteur()->setNom($parameters['emetteur']['nom']);
+        $facture->getEmetteur()->setAdresse($parameters['emetteur']['adresse']);
+        $facture->getEmetteur()->setCodePostal($parameters['emetteur']['code_postal']);
+        $facture->getEmetteur()->setCommune($parameters['emetteur']['commune']);
+        $facture->getEmetteur()->setTelephone($parameters['emetteur']['telephone']);
+        $facture->getEmetteur()->setFax($parameters['emetteur']['fax']);
+        $facture->getEmetteur()->setEmail($parameters['emetteur']['email']);        
 
         return $facture;
     }
@@ -162,14 +162,14 @@ public static $export_stats_libelle = array(
         $facture->setSociete($societe);
         $facture->setDateFacturation($dateFacturation);
         $facture->setDateEmission(new \DateTime());
-
-        $facture->getEmetteur()->setNom($this->parameters['emetteur']['nom']);
-        $facture->getEmetteur()->setAdresse($this->parameters['emetteur']['adresse']);
-        $facture->getEmetteur()->setCodePostal($this->parameters['emetteur']['code_postal']);
-        $facture->getEmetteur()->setCommune($this->parameters['emetteur']['commune']);
-        $facture->getEmetteur()->setTelephone($this->parameters['emetteur']['telephone']);
-        $facture->getEmetteur()->setFax($this->parameters['emetteur']['fax']);
-        $facture->getEmetteur()->setEmail($this->parameters['emetteur']['email']);
+        $parameters = $this->getParameters();
+        $facture->getEmetteur()->setNom($parameters['emetteur']['nom']);
+        $facture->getEmetteur()->setAdresse($parameters['emetteur']['adresse']);
+        $facture->getEmetteur()->setCodePostal($parameters['emetteur']['code_postal']);
+        $facture->getEmetteur()->setCommune($parameters['emetteur']['commune']);
+        $facture->getEmetteur()->setTelephone($parameters['emetteur']['telephone']);
+        $facture->getEmetteur()->setFax($parameters['emetteur']['fax']);
+        $facture->getEmetteur()->setEmail($parameters['emetteur']['email']);
 
         foreach($mouvements as $mouvement) {
             if(!$mouvement->isFacturable() || $mouvement->isFacture()) {

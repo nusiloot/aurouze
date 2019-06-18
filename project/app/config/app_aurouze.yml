@@ -1,2 +1,4 @@
 parameters:
-    instanceapp: aurouze
+    secteurs: true
+    calendar_extra: false
+    certification_bois: false

@@ -2,7 +2,13 @@
     {% elseif(facture.isRedressee()) %} warning
     {% elseif(facture.isEnRetardPaiement()) %} danger {% endif %}">
             <td>{{ ((facture.isDevis) ? facture.dateDevis : facture.dateFacturation) | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</td>
-            <td><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span> {% if facture.isDevis %}Devis n° {{ facture.numeroDevis }}{% elseif(facture.isAvoir) %}Avoir n° {{ facture.numeroFacture }}{% else %}Facture n° {{ facture.numeroFacture }}{% endif %}</a></td>
+            <td><a href="{{ path('facture_pdf', {'id': facture.id })}}">
+                    <span class="glyphicon glyphicon-file"></span> {% if facture.isDevis %}Devis n° {{ facture.numeroDevis }}{% elseif(facture.isAvoir) %}Avoir n° {{ facture.numeroFacture }}{% elseif(facture.numeroFacture) %}Facture n° {{ facture.numeroFacture }}{% else %}Facture prévue<a class="btn btn-link btn-xs"
+                    href="{% if facture.getContrat() %}{{ path('facture_creation', {'societe': facture.societe.id,'type': 'facture', 'id': facture.id, 'contratId' : facture.getContrat().id}) }}
+                          {% else %}{{ path('facture_creation', { 'societe': facture.societe.id, 'type': 'facture', 'id': facture.id })}}
+                          {% endif %}"><span class="glyphicon glyphicon-pencil"></span>
+                </a>
+        {% endif %}</a></td>
             <td>
                 <a data-toggle="tooltip" title="{% for ligne in facture.lignes %}{{ (ligne.libelle) ? ligne.libelle~"\n" : "Aucun" }}{% endfor %}" href="{{ path('facture_pdf', {'id': facture.id })}}">{{ facture.lignes | length}} ligne(s)</a>
                 {% for origine in facture.origines %}
@@ -38,8 +44,8 @@
             {% endif %}
           </td>
             <td class="text-left">
-              {% if facture.isDevis or (facture.numeroFacture and facture.isEditable) or (not facture.isAvoir and not facture.isRedressee) %}
-              <div class="btn-group">
+              {% if facture.isDevis or (facture.numeroFacture and facture.isEditable) or (not facture.isAvoir and not facture.isRedressee and facture.numeroFacture) %}
+                <div class="btn-group">
                 <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="actionButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                   Actions
                   <span class="caret"></span>
@@ -70,6 +76,9 @@
                     {% endif %}
                   </ul>
                 </div>
-                {% endif %}
+              {% endif %}
+              {% if not facture.numeroFacture %}
+                <a class="btn btn-default btn-xs " href="{% if societe is defined %}{{ path('facture_en_attente_facturer', { 'factureId': facture.id, 'retour' : societe.id })}}{% else %}{{ path('facture_en_attente_facturer', { 'factureId': facture.id })}}{% endif %}">Facturer</a>
+              {% endif %}
             </td>
         </tr>

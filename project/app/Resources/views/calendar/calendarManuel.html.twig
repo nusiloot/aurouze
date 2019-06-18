@@ -119,7 +119,12 @@
 						<tbody class="fc-body">
 							<tr>
 								<td class="fc-widget-content">
-									<div class="fc-time-grid-container" style="height: 680px; overflow: hidden;">
+									{% if calendar_extra %}
+									{% set height = 915 %}
+									{% else %}
+									{% set height = 810 %}
+									{% endif %}
+									<div class="fc-time-grid-container" style="height: {{ height }}px; overflow: hidden;">
 										<div class="fc-time-grid">
 											<div class="fc-bg">
 												<table>
@@ -136,7 +141,12 @@
 											<div class="fc-slats">
 												<table>
 													<tbody>
-														{% for i in 6..19 %}
+														{% if calendar_extra %}
+														{% set to = 22 %}
+														{% else %}
+														{% set to = 20 %}
+														{% endif %}
+														{% for i in 5..to %}
 															<tr data-time="{{ "%02d:00:00"|format(i) }}">
 																<td class="fc-axis fc-time fc-widget-content" style="width: 17px;"><span>{{ "%02d"|format(i) }}</span></td>
 																<td class="fc-widget-content"></td>
@@ -184,7 +194,7 @@
                                                                                 top: -10px;
 																				z-index: {{ index - 1 }};
                                                                                 border-radius: 0;
-                                                                                bottom: -800px;
+                                                                                bottom: -{{ height }}px;
                                                                                 left: {{ ((100 / nbTechniciens) * index)|round(0, 'floor') }}%;
                                                                                 background-color: {{ techniciens["COMPTE-"~technicien].couleur }};
                                                                                 border: 0;

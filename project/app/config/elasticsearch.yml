@@ -2,7 +2,7 @@ fos_elastica:
     clients:
         default: { host: localhost, port: 9200 }
     indexes:
-        aurouze_prod:
+        %database_elasticsearch_name%:
           finder: ~
           client: default
           types:

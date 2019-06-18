@@ -1,4 +1,8 @@
 $(function () {
+	
+	params = params || false;
+	calendarExtra = params.calendarExtra || false;
+	
     /**
      * Dropping Elements
      */
@@ -31,10 +35,11 @@ $(function () {
     /**
      * FullCalendar Settings
      */
+    var doubleClick = false;
     $('#calendrier').fullCalendar({
         minTime: '05:00:00',
-        maxTime: '20:00:00',
-        height: 810,
+        maxTime:(calendarExtra)? '22:00:00' : '20:00:00',
+        height: (calendarExtra)? 915 : 810,
         customButtons: {
             prevButton: {
                 text: '',
@@ -59,11 +64,11 @@ $(function () {
         defaultDate: $('#calendrier').data('gotoDate'),
         timeFormat: 'H:mm',
         allDaySlot: false,
+        hiddenDays: (calendarExtra)? [0] : [6,0],
         eventBackgroundColor: "#fff",
         editable: true,
         droppable: true,
         slotEventOverlap: false,
-        weekends:  $('#calendrier').data('weekends'),
         defaultView: $('#calendrier').data('view'),
         eventSources: [
             {
@@ -87,17 +92,22 @@ $(function () {
             );
         },
         dayClick: function(date, jsEvent, view) {
+          if(!doubleClick) {
+            doubleClick = true;
             $.get(
                 $('#calendrier').data('urlAddLibre'), {'start': date.format()}
-             , function (response) {
-                $('#modal-calendrier-infos').html(response);
-                $('#modal-calendrier-infos').on('shown.bs.modal', function() {
-                    $('#modal-calendrier-infos').find('[autofocus="autofocus"]').focus();
-                    $.callbackEventForm();
-                });
-                $('#modal-calendrier-infos').modal();
-            }
+                 , function (response) {
+                    $('#modal-calendrier-infos').html(response);
+                    $('#modal-calendrier-infos').on('shown.bs.modal', function() {
+                        $('#modal-calendrier-infos').find('[autofocus="autofocus"]').focus();
+                        $.callbackEventForm();
+                        $(this).prop('disabled', false);
+                    });
+                    $('#modal-calendrier-infos').modal();
+                }
             );
+            setTimeout(function() { doubleClick = false; }, 1000);
+            }
         },
         eventReceive: function (event) {
             $('#retour_technicien_btn').removeClass('hidden');

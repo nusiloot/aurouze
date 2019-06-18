@@ -12,18 +12,25 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class FactureType extends AbstractType
 {
 
     protected $dm = null;
     protected $cm = null;
+    protected $com = null;
     protected $devis = false;
+    protected $contrat = null;
 
-    public function __construct($dm, $cm, $devis = false) {
+    public function __construct($dm, $cm, $commercial, $devis = false, $contrat = null) {
         $this->dm = $dm;
         $this->cm = $cm;
+        $this->com = $commercial;
         $this->devis = $devis;
+        if($contrat){
+          $this->contrat = $contrat;
+        }
     }
 
     /**
@@ -57,6 +64,10 @@ class FactureType extends AbstractType
                 'multiple' => false,
                 "attr" => array("class" => "select2 select2-simple"))))
         ;
+
+        if($this->contrat){
+          $builder->add('contrat', TextType::class, array('disabled' => true, "mapped" => false, "attr" => array('placeholder' => $this->contrat->getIntitule())));
+        }
 
         if($this->devis) {
             $builder->add('dateDevis', DateType::class, array(
@@ -111,6 +122,6 @@ class FactureType extends AbstractType
     }
 
     public function getDefaultCommercial() {
-        return $this->dm->getRepository('AppBundle:Compte')->findOneByIdentifiant('003480005');
+        return $this->dm->getRepository('AppBundle:Compte')->findOneByIdentifiant($this->com);
     }
 }

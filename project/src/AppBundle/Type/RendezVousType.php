@@ -64,6 +64,8 @@ class RendezVousType extends AbstractType {
         		'multiple' => true,
         		'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")
         ));
+        
+        $builder->add('all', CheckboxType::class, array('label' => 'Appliquer à tous les calendriers', 'required' => false, 'label_attr' => array('class' => 'control-label'), 'empty_data' => null, 'mapped' => false, 'data' => false));
     }
 
     /**

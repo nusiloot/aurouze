@@ -467,7 +467,7 @@ class PassageController extends Controller
 
         $replyEmail = $parameters['coordonnees']['replyEmail'];
 
-        $suject = "Aurouze - Rapport de visite du ".$passage->getDateDebut()->format("d/m/Y")." à ".$passage->getDateDebut()->format("H\hi");
+        $suject = $parameters["shortname"]." - Rapport de visite du ".$passage->getDateDebut()->format("d/m/Y")." à ".$passage->getDateDebut()->format("H\hi");
         $body = $this->renderView(
             'passage/rapportEmail.html.twig',
             array('passage' => $passage)

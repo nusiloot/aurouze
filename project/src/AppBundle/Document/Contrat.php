@@ -394,6 +394,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         return $this->prestations;
     }
 
+    public function hasPrestation($part_of_name){
+      foreach ($this->getPrestations() as $prestation) {
+        if(preg_match("/$part_of_name/",$prestation->getNomToString())){
+          return true;
+        }
+      }
+      return false;
+    }
+
     public function getUniquePrestations() {
         $prestations = array();
 
@@ -770,11 +779,14 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $cm = new ConfigurationManager($dm);
         $configuration = $cm->getRepository()->findOneById(Configuration::PREFIX);
         $produitsArray = $configuration->getProduitsArray();
+
         foreach ($this->getProduits() as $produit) {
+          if($produit->getIdentifiant()){
             $produitConf = $produitsArray[$produit->getIdentifiant()];
             $produit->setNom($produitConf->getNom());
             $produit->setPrixHt($produitConf->getPrixHt());
             $produit->setPrixPrestation($produitConf->getPrixPrestation());
+          }
         }
     }
 
@@ -850,7 +862,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $mouvement->setFacturable(true);
         $mouvement->setFacture(false);
         $mouvement->setSociete($this->getSociete());
-        $mouvement->setLibelle(sprintf("Facture %s/%s - Proposition n° %s du %s au %s", count($this->getMouvements()) + 1, $this->getNbFactures(), $this->getNumeroArchive(), $this->getDateDebut()->format('m/Y'), $this->getDateFin()->format('m/Y')));
+        $mouvement->setLibelle($this->getLibelleMouvement());
 
         $mouvement->setDocument($this);
         if ($origineDocumentGeneration) {
@@ -858,6 +870,15 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         }
 
         return $mouvement;
+    }
+    
+    public function getLibelleMouvement() {
+        $nbFactures = $this->getNbFactures();
+        $nbMvts = count($this->getMouvements()) + 1;
+        if ($nbMvts > $nbFactures) {
+            $nbFactures = $nbMvts;
+        }
+        return sprintf("Facture %s/%s - Proposition n° %s du %s au %s", count($this->getMouvements()) + 1, $nbFactures, $this->getNumeroArchive(), $this->getDateDebut()->format('m/Y'), $this->getDateFin()->format('m/Y'));
     }
 
     public function restaureMouvements($documentGenere = null) {
@@ -927,7 +948,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         foreach ($this->getPrestations() as $prestation) {
             if ($prestation->getNbPassages() > 0) {
                 $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->prestations[] = $prestation;
-                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->mouvement_declenchable = 1;
+                $passagesDatesArray[$dateLastPassage->format('Y-m-d')]->mouvement_declenchable = boolval(floatval($this->getNbFactures()));
+
             }
         }
 
@@ -962,18 +984,26 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
                 }
             }
         }
+        $facturationInterval = 0;
 
-        $facturationInterval = (floatval($maxNbPrestations) / floatval($this->getNbFactures()));
+        if(floatval($this->getNbFactures())){
+          $facturationInterval = (floatval($maxNbPrestations) / floatval($this->getNbFactures()));
+        }
+
+        if(floatval($this->getNbFactures()) > 1){
+          $facturationInterval = (floatval($maxNbPrestations -1) / floatval($this->getNbFactures()-1));
+        }
         $compteurFacturation = $facturationInterval;
         $cpt = 0;
-
         foreach ($passagesDatesArray as $date => $passage) {
             if ($cpt < 1) {
+                $passagesDatesArray[$date]->mouvement_declenchable = boolval($this->getNbFactures());
+                $compteurFacturation--;
                 $cpt++;
                 continue;
             }
             if ($cpt >= $compteurFacturation) {
-                $passagesDatesArray[$date]->mouvement_declenchable = 1;
+                $passagesDatesArray[$date]->mouvement_declenchable = boolval($this->getNbFactures() && (floatval($this->getNbFactures()) > 1));
                 $compteurFacturation+=$facturationInterval;
             } else {
                 $passagesDatesArray[$date]->mouvement_declenchable = 0;
@@ -1372,6 +1402,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function isModifiable() {
+
         if($this->hasMouvements()) {
 
             return false;
@@ -1492,7 +1523,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->setDateFin($dateFin);
         $contrat->setDateCreation(new \DateTime());
         $contrat->setDateCreationAuto(new \DateTime());
-        $contrat->setAuditPassage(null);
 
         if($contrat->isTypeReconductionTacite()){
           $contrat->setStatut(ContratManager::STATUT_EN_COURS);
@@ -1739,6 +1769,8 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getFrequencePaiementLibelle() {
+
+        if(is_null($this->frequencePaiement)) return "N.C.";
 
         return ContratManager::$frequences[$this->frequencePaiement];
     }
@@ -2062,5 +2094,9 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     		$total += $produit[3];
     	}
     	return $total;
+    }
+
+    public function getIntitule(){
+      return $this->getSociete()->getRaisonSociale()." contrat ".strtolower($this->getTypeContratLibelle())." n° ".$this->getNumeroArchive();
     }
 }

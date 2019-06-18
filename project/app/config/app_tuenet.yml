@@ -1,2 +1,4 @@
 parameters:
     secteurs: false
+    calendar_extra: true
+    certification_bois: true

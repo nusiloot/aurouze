@@ -13,6 +13,12 @@
       {{ societe.raisonsociale }}
     </a>
   </h5>
+  <h5>
+    <i class="mdi mdi-{{ passage.etablissementInfos.icon }} mdi-lg"></i> Lieu d'application :
+    <a href="{{path("passage_etablissement", {'id': passage.etablissement.id})}}">
+      {{ etablissement.adresse.getIntitule() }}
+    </a>
+  </h5>
   <ul class="list-inline">
     {% if etablissement.contactCoordonnee.libelle %}
       <li class="list-inline-item"><i class="mdi mdi-contacts mdi-lg"></i> {{ etablissement.contactCoordonnee.libelle }}</li>
@@ -34,14 +40,16 @@
     <li class="list-inline-item">
     	Contrat n°{{ contrat.numeroArchive }} du {{ contrat.dateDebut | localizeddate("medium", "none", null, null, "d MMMM yyyy") | capitalize }} au {{ contrat.dateFin | localizeddate("medium", "none", null, null, "d MMMM yyyy") | capitalize }}
     </li>
-    {% set tech = passage.techniciens[0] %}
-    <li class="list-inline-item">
-    	Dernier passage : 
-    	<span class="label" style="background-color: {{ tech.couleur }};color: {{ tech.couleurText }};">
-            <small>{{ tech.identiteCourt }}</small> 
-        </span>&nbsp;
-         à {{ lastPassage.getDateDebut()|date("H:i") }}
-    </li>
+    {% if passage.techniciens|length > 0 %}
+      {% set tech = passage.techniciens[0] %}
+      <li class="list-inline-item">
+        Dernier passage :
+        <span class="label" style="background-color: {{ tech.couleur }};color: {{ tech.couleurText }};">
+              <small>{{ tech.identiteCourt }}</small>
+          </span>&nbsp;
+           à {{ lastPassage.getDateDebut()|date("H:i") }}
+      </li>
+      {% endif %}
     {% endif %}
   </ul>
   <br />
@@ -51,7 +59,7 @@
       {{ contrat.nomenclature | nl2br }}
     </div>
     <div class="col-xs-6 commentaires">
-      <h5><i class="mdi mdi-lg mdi-comment"></i> Commentaires :</h5>
+      <h5 style="cursor:pointer;" class="text-primary commentaire_lien" data-url="{{ path('etablissement_commentaire', {'id': passage.etablissement.id , 'passageId': passage.id}) }}" ><i class="mdi mdi-lg mdi-comment" ></i> Commentaires :</h5>
         {% if passage.commentaire %}
             <div title="Commentaire du passage">{{ passage.commentaire | nl2br }}</div>
         {% endif %}

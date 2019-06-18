@@ -4,12 +4,12 @@
         <meta charset="{{ _charset }}">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" type="image/ico" href="/favicon_{{ instanceapp }}.ico?v=20170331" sizes="32x32" >
-        <link rel="shortcut icon" type="image/png" href="/favicon_{{ instanceapp }}.png?v=20170331" sizes="32x32" >
+        <link rel="shortcut icon" type="image/ico" href="/favicon_{{ instanceapp }}.ico?v=20190528" sizes="32x32" >
+        <link rel="shortcut icon" type="image/png" href="/favicon_{{ instanceapp }}.png?v=20190528" sizes="32x32" >
         <link rel="apple-touch-icon" sizes="129x129" href="/apple-touch-icon_{{ instanceapp }}.png?v=20170331">
-        <link rel="icon" type="image/png" href="/favicon192x192_{{ instanceapp }}.png" sizes="192x192">
+        <link rel="icon" type="image/png" href="/favicon192x192_{{ instanceapp }}.png?v=20190528" sizes="192x192">
 
-        <title>{% block title %}Aurouze{% endblock title %}</title>
+        <title>{% block title %}{{ application.shortname }}{% endblock title %}</title>
 
         <link rel="stylesheet" href="{{ asset('/component/bootstrap/css/bootstrap.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('/component/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" />
@@ -51,7 +51,7 @@
                         <span class="icon-bar"></span>
                     </button>
 
-                    <a id="logo" href="{{ path('accueil') }}" alt="aurouze"><img src="{{ asset('/images/logo_'~instanceapp~'.svg') }}" height="40" style="margin-top: 5px;"  class="hidden-sm" /> <img src="{{ asset('/apple-touch-icon_'~instanceapp~'.png') }}" height="40" style="margin-top: 5px;"  class="visible-sm" /></a>
+                    <a id="logo" href="{{ path('accueil') }}" alt="{{ application.shortname }}"><img src="{{ asset('/images/logo_'~instanceapp~'.svg') }}" height="40" style="margin-top: 5px;"  class="hidden-sm" /> <img src="{{ asset('/apple-touch-icon_'~instanceapp~'.png') }}" height="40" style="margin-top: 5px;"  class="visible-sm" /></a>
                 </div>
                 {% set retard = 0 %}
                 {% if(app.request.get('societe')) %}
@@ -87,19 +87,18 @@
                     {% if(app.request.get('etablissement')) %}<!--<p id="nav_nom_etablissement" class="navbar-text truncate visible-lg-block"><strong>{{ app.request.get('etablissement').societe.raisonSociale }}</strong></p>-->{% endif %}
 
                     <ul class="nav navbar-nav pull-right">
-                        <li class="{%if (_menu_active == 'recherche') %}active{% endif %}"><a href="{{ path('recherche')}}"><span class="glyphicon glyphicon-search"></span><span class="hidden-lg hidden-md hidden-sm"> Recherche</span></a></li>
-                        <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}"><span class="glyphicon glyphicon-calendar"></span><span class="hidden-md hidden-sm"> Calendrier</a></span></li>
-                        <li class="{%if (_menu_active == 'statistiques') %}active{% endif %}"><a href="{{ path('statistiques') }}"><span class="glyphicon glyphicon-stats"></span><span class="hidden-lg hidden-md hidden-sm"> Statistiques</span></a></li>
-                        <li class="{%if (_menu_active == 'tournee') %}active{% endif %}"><a href="{{ path('tournees') }}"><span class="glyphicon glyphicon-road"></span><span class="hidden-lg hidden-md hidden-sm"> Tournées</span></a></li>
+                        <li class="{%if (_menu_active == 'recherche') %}active{% endif %}"><a href="{{ path('recherche')}}" title="Recherche"><span class="glyphicon glyphicon-search"></span><span class="hidden-lg hidden-md hidden-sm"> Recherche</span></a></li>
+                        <li class="{%if (_menu_active == 'calendar') %}active{% endif %}"><a href="{{ path('calendarManuel') }}" title="Calendrier"><span class="glyphicon glyphicon-calendar"></span><span class="hidden-lg hidden-md hidden-sm"> Calendrier</a></span></li>
+                        <li class="{%if (_menu_active == 'statistiques') %}active{% endif %}"><a href="{{ path('statistiques') }}" title="Statistiques"><span class="glyphicon glyphicon-stats"></span><span class="hidden-lg hidden-md hidden-sm"> Statistiques</span></a></li>
+                        <li class="{%if (_menu_active == 'tournee') %}active{% endif %}"><a href="{{ path('tournees') }}" title="Tournées"><span class="glyphicon glyphicon-road"></span><span class="hidden-lg hidden-md hidden-sm"> Tournées</span></a></li>
                         <li class="dropdown {%if (_menu_active == 'configuration' or _menu_active == 'erreurs' ) %}active{% endif %}">
-                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" ></span><span class="hidden-lg hidden-md hidden-sm">  Paramètres</span></a>
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Plus"><span class="glyphicon glyphicon-option-horizontal" ></span><span class="hidden-lg hidden-md hidden-sm"> Paramètres</span></a>
                           <ul class="dropdown-menu dropdown-menu-right">
                             <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Paramètres</a></li>
                             <li class="{%if (_menu_active == 'erreurs') %}active{% endif %}"><a href="{{ path('passage_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Passages en erreur</li>
                             <li class="{%if (_menu_active == 'contrat_erreurs') %}active{% endif %}"><a href="{{ path('contrats_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Contrats en erreur</li>
                               <li class="{%if (_menu_active == 'contrat_decalage') %}active{% endif %}"><a href="{{ path('contrats_decalage') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Contrats décalés</li>
                             <li><a href="{{ path('contrats_reconduction_massive') }}" ><span class="glyphicon glyphicon-refresh"></span>&nbsp;Reconduction massive</a></li>
-                             <li class="{%if (_menu_active == 'tournee') %}active{% endif %}"><a href="{{ path('tournees') }}"><span class="glyphicon glyphicon-road" data-toggle="tooltip" title="Tournées"></span>&nbsp;Tournées</a></li>
                           </ul>
                     </li>
                   </ul>
@@ -112,7 +111,6 @@
         </div>
 
         <div class="modal" id="modal-calendrier-infos" tabindex="-1" role="dialog"></div>
-
         <script type="text/javascript" src="{{ asset('/component/jquery/js/jquery.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/jquery-ui/js/jquery-ui.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -128,9 +126,15 @@
         <script type="text/javascript" src="{{ asset('/component/leaflet/leaflet.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/leaflet-extra-markers/js/leaflet.extra-markers.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/component/typeahead/typeahead.bundle.min.js?date=201712111731') }}"></script>
+		<script>
+            var params = params || {};
+            $.extend(params, {
+            	calendarExtra: '{{ calendar_extra }}'
+            });
+        </script>
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/calendar-settings.js?date=201904301219') }}"></script>
-        <script type="text/javascript" src="{{ asset('/js/main.js?date=201904301219') }}"></script>
+        <script type="text/javascript" src="{{ asset('/js/main.js?date=2019052401219') }}"></script>
 
         {% block javascripts %}{% endblock %}
 

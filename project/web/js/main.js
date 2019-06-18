@@ -3,6 +3,7 @@
 
     $(document).ready(function ()
     {
+        $.initClickInputAddon();
         $.initAjaxPost();
         $.initSelect2();
         $.initSelect2Ajax();
@@ -41,7 +42,16 @@
         $.initAttachements();
         $.initMoreInfo();
         $.initTransfertContrat();
+        $.initPaiementsAutoSave();
+        $.initCommentairesPlanif();
     });
+
+    $.initClickInputAddon = function(){
+      $(".input-group-addon").click(function(e){
+        $(this).prev().click();
+        $(this).prev().focus();
+      });
+    }
 
     $.initTrCollapse = function() {
     	$('.tr-collapse').click(function(){
@@ -63,7 +73,7 @@
     		} else {
     			parent.attr('data-url', parent.attr('data-url').replace('facture/all/rechercher', 'facture/rechercher'));
     		}
-    		$.initSelect2Ajax();
+        $.initSelect2Ajax();
     	});
     }
 
@@ -382,6 +392,7 @@
         $.initTimePicker();
         $.initFormEventAjax();
         $.initRdvLink();
+        $.initMoreInfo();
     }
 
     $.initTooltips = function () {
@@ -873,7 +884,6 @@
         var button = $(this);
         var icon = button.children('i').first();
         var div = button.prev();
-
 	if (div.children().length > 0) {
             div.empty();
             icon.addClass('mdi-vertical-align-bottom');
@@ -959,6 +969,49 @@
             }
         });
         $('#contrat_transfert_societe').change();
+    }
+
+    $.initPaiementsAutoSave = function() {
+        $(document).on('blur','.paiement_row input', function(){
+          var row = $(this).parents(".paiement_row");
+          var type_reglement = row.find("select[id$='typeReglement']");
+          var moyen_paiement = row.find("select[id$='moyenPaiement']");
+          var libelle = row.find("input[id$='libelle']");
+          var facture = row.find("select[id$='facture']");
+          var date_paiement = row.find("input[id$='datePaiement']");
+          var montant = row.find("input[id$='montant']");
+
+          var numLigne = row.parent().index();
+
+          if(type_reglement.val() && moyen_paiement.val() && libelle.val() && facture.val() && date_paiement.val() && montant.val()){
+            console.log(numLigne);
+            var form = $(this).parents('form[name="paiements"]');
+            var url = form.attr('data-url-ajax-row');
+            var id = form.data('id');
+            $.ajax({
+              type: "POST",
+              url: url,
+              data: {
+                      idLigne: numLigne,
+                      type_reglement : type_reglement.val(),
+                      moyen_paiement : moyen_paiement.val(),
+                      libelle : libelle.val(),
+                      facture : facture.val(),
+                      date_paiement : date_paiement.val(),
+                      montant : montant.val()
+                    }
+            });
+          }
+        });
+    }
+
+    $.initCommentairesPlanif = function() {
+      $('body').on('click',".commentaire_lien",function (event) {
+          event.preventDefault();
+          var url = $(this).attr('data-url')+"?service="+encodeURIComponent(window.location.href);
+          window.location.href = url;
+        });
+
     }
 
 }

@@ -8,7 +8,9 @@
             {{ facture.emetteur.codePostal }}, {{ facture.emetteur.commune }}<br />
             {% endif %}
             Tél : {{ facture.emetteur.telephone }}<br />
+            {% if(facture.emetteur.email) %}
             E-mail: {{ facture.emetteur.email }}
+            {% endif %}
         </p>
     </div>
     <div class="col-xs-6">
@@ -127,7 +129,7 @@
     {{ parameters.emetteur.infos }}<br />
     {{ parameters.emetteur.banque }}<br />
     {{ parameters.emetteur.virement }}<br />
-    Agrément du Ministère de l'Agriculture A. I. F. 00131<br />
+    Agrément du Ministère de l'Agriculture A. I. F. {{ parameters.emetteur.numero_agrement }}<br />
     </small>
 </p>
 </small>
