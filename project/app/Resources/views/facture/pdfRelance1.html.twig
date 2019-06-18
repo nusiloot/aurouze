@@ -139,7 +139,7 @@
     {{ parameters.emetteur.infos }}<br />
     {{ parameters.emetteur.banque }}<br />
     {{ parameters.emetteur.virement }}<br />
-    Agrément du Ministère de l'Agriculture A. I. F. {{ parameters.emetteur.numero_agrement }}<br />
+    {% if parameters.emetteur.numero_agrement is defined %}Agrément du Ministère de l'Agriculture A. I. F. {{ parameters.emetteur.numero_agrement }}<br />{% endif %}
     </small>
 </p>
 </small>
