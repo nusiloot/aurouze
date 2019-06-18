@@ -89,7 +89,7 @@
 <br/>
 <div class="row">
 	{% if commercial %}<h3 class="show-print">Clients {{ commercial.identite }}</h3>{% endif %}
-	{% for factureEnRetard in facturesEnRetard %}      
+	{% for factureEnRetard in facturesEnRetard %}
     	<div class="row show-print">
         	<div class="col-sm-3">
         		{{ factureEnRetard.dateFacturation | localizeddate("medium", "none", null, null, "d MMM yyyy") | capitalize }}<br />
@@ -116,7 +116,7 @@
         </div>
 	{% endfor %}
 </div>
-	
+
   <div class="row hide-print">
     <div class="col-xs-12">
         <table class="table table-bordered">
@@ -132,7 +132,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for factureEnRetard in facturesEnRetard %}           
+            {% for factureEnRetard in facturesEnRetard %}
             {% set idCheckbox = factureEnRetard.id %}
             <tr style="{{ factureEnRetard.getRelanceColor }}" >
               {{factureEnRetard.isDevis }}
@@ -174,7 +174,7 @@
 								{% endif %}
 								{% if factureEnRetard.has3emeRelance %}
 									<a data-toggle="tooltip"
-									title="{% if(factureEnRetard.getRelanceObjNumero(3)) %}mise en demeure avec AR du {{ factureEnRetard.getRelanceObjNumero(3).dateRelance | localizeddate("medium", "none", null, null,  "dd/MM/yyyy") }}{% else %}mise en demeure avec AR (non datée){% endif %}" 
+									title="{% if(factureEnRetard.getRelanceObjNumero(3)) %}mise en demeure avec AR du {{ factureEnRetard.getRelanceObjNumero(3).dateRelance | localizeddate("medium", "none", null, null,  "dd/MM/yyyy") }}{% else %}mise en demeure avec AR (non datée){% endif %}"
 									href="{{ path('facture_relance_pdf', {'id': factureEnRetard.id , 'numeroRelance': 3 })}}"><span class="glyphicon glyphicon-file text-danger"></span></a>&nbsp;
 								{% endif %}
 							</td>
@@ -188,6 +188,7 @@
 	                    {{ form_widget(fieldFrom) }}
 										</div>
 								</div>
+								{% if factureEnRetard.inPrelevement %}<br/><span class="label label-warning">Prélèvement bancaire</span>{% endif %}
               </td>
             </tr>
             {% endfor %}
