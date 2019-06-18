@@ -43,6 +43,7 @@
         $.initMoreInfo();
         $.initTransfertContrat();
         $.initPaiementsAutoSave();
+        $.initCommentairesPlanif();
     });
 
     $.initClickInputAddon = function(){
@@ -1002,6 +1003,15 @@
             });
           }
         });
+    }
+
+    $.initCommentairesPlanif = function() {
+      $('body').on('click',".commentaire_lien",function (event) {
+          event.preventDefault();
+          var url = $(this).attr('data-url')+"?service="+encodeURIComponent(window.location.href);
+          window.location.href = url;
+        });
+
     }
 
 }
