@@ -169,7 +169,7 @@
                 <br />
                 <strong>{{ parameters..emetteur.virement  }}</strong>
                 <br />
-                Agrément du Ministère de l'Agriculture A.I.F. {{ parameters..emetteur.numero_agrement  }}
+                {% if parameters.emetteur.numero_agrement is defined %}Agrément du Ministère de l'Agriculture A. I. F. {{ parameters.emetteur.numero_agrement }}<br />{% endif %}
             </div>
             <hr style="border-color: #ddd; margin-bottom: 30px;" />
         </div>
