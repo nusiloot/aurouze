@@ -31,6 +31,7 @@
                 {% else %}
                 <a href="{{ path('contrat_visualisation', {'id': contrat.getId()}) }}" class="btn btn-link">Retour à la visualisation du contrat</a>
                 {% endif %}
+                <a href="{{ path('contrat_transfert', {'id': contrat.getId()}) }}" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-refresh"></span> Transférer</a>
             </div>
         </div>
 
