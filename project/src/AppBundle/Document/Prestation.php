@@ -39,7 +39,6 @@ class Prestation {
      */
     public function setNom($nom) {
         $this->nom = $nom;
-        $this->setIdentifiant($nom);
         $this->setNomCourt($nom);
         return $this;
     }
