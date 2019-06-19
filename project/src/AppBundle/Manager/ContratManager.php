@@ -555,7 +555,10 @@ class ContratManager implements MouvementManagerInterface {
     			$identite = $this->dm->getRepository('AppBundle:Compte')->findOneById($commercialContrat->getId())->getIdentite();
     			$arr_ligne = array();
                 $resiliation = 0;
-                $key = $identite."_0_".$contrat->getDateAcceptation()->format('Ymd');
+                $key = $identite."_0_".$contrat->getDateCreation()->format('Ymd');
+                if($contrat->getDateAcceptation()){
+                  $key = $identite."_0_".$contrat->getDateAcceptation()->format('Ymd');
+                }
                 if($contrat->getDateResiliation() && ($contrat->getDateResiliation()->format('Ymd') >= $dateDebut->format('Ymd') && $contrat->getDateResiliation()->format('Ymd') <= $dateFin->format('Ymd'))){
                     $resiliation = 1;
                     $key = $identite."_1_".$contrat->getDateResiliation()->format('Ymd');

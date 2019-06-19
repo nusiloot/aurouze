@@ -450,13 +450,17 @@ public static $export_stats_libelle = array(
                     $p = $presta;
                   }
                 }
-                if($prestation && $p) {
+                if($prestation && !$p) {
+                  continue;
+                }
                 foreach ($prestationsContrat as $presta) {
                   $arr_ligne = array();
                   $resiliation = 0;
                   $p_id = $presta->getIdentifiant();
-                  $key = $p_id."_".$facture->getDateFacturation()->format('Ymd')."_".$facture->getNumeroFacture();
-                  $keyTotal = $p_id."_9_9999999999_TOTAL";
+                  $categorie = self::getCategoriePrestationFromId($p_id);
+                  $key = $categorie."_".$facture->getDateFacturation()->format('Ymd')."_".$facture->getNumeroFacture();
+                  $keyTotal = $categorie."_9_9999999999_TOTAL";
+
                   $arr_ligne[] = $presta->getNom();
                   $arr_ligne[] = $facture->getSociete()->getRaisonSociale();
                   $arr_ligne[] = $facture->getNumeroFacture();
@@ -469,9 +473,9 @@ public static $export_stats_libelle = array(
                   $prix_ht = ($c)? $c->getPrixHT() : $facture->getMontantHT();
                   $arr_ligne[] = number_format($prix_ht, 2, ',', '');
 
-                  $csv[$key] = $arr_ligne;
+                //  $csv[$key] = $arr_ligne;
 
-                  $csv[$keyTotal][0] = $presta->getNom();
+                  $csv[$keyTotal][0] = $categorie;
                   $csv[$keyTotal][1] = "TOTAL";
                   $csv[$keyTotal][2] = "";
                   $csv[$keyTotal][3] = "";
@@ -480,7 +484,6 @@ public static $export_stats_libelle = array(
                   $csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $facture->getMontantHT(), 2, ',', '') : number_format($facture->getMontantHT(), 2, ',', '');
                   $csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $prix_ht, 2, ',', '') : number_format($facture->getContrat()->getPrixHT(), 2, ',', '');
                 }
-              }
             }
 
         }
@@ -633,5 +636,66 @@ public static $export_stats_libelle = array(
 
     public function getRetardDePaiementBySociete(Societe $societe, $nbJourSeuil = 0){
       return $this->getRepository()->findRetardDePaiementBySociete($societe, $nbJourSeuil);
+    }
+
+    public static function getCategoriePrestationFromId($idPrestation){
+      if(preg_match("/^DESINSECTISATION-/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+      if(preg_match("/^DERATISATION-/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+      if(preg_match("/^DESINFECTION-/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+      if(preg_match("/^PUNAISE-VAPEUR/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+      if(preg_match("/^POISSON-ARGENT/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+      if(preg_match("/^DESTRUCTION-/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+
+
+
+      if(preg_match("/^ASSAINISSEMENT-/",$idPrestation)){
+        return "ASSAINISSEMENT";
+      }
+
+      if(preg_match("/^DEPIGEONNAGE-/",$idPrestation)){
+        return "PIGEONS";
+      }
+
+      if(preg_match("/^TRAITEMENT-DES-BOIS-BOIS-SENTRI-TECH/",$idPrestation)){
+        return "SENTRI TECH";
+      }
+      if(preg_match("/^TRAVAUX-DIVERS-SERVICE-MISE-EN-CONFORMITE-SENTRI-TECH/",$idPrestation)){
+        return "SENTRI TECH";
+      }
+
+      if(preg_match("/^TRAITEMENT-DES-BOIS-/",$idPrestation)){
+        return "BOIS";
+      }
+
+      if(preg_match("/^DEBOUCHAGE-VIDE-ORDURE-DIVERS/",$idPrestation)){
+        return "VO";
+      }
+
+      if(preg_match("/^TRAVAUX-DIVERS-SERVICE-VENTE-DE-PRODUITS/",$idPrestation)){
+        return "VENTE DE PRODUIT";
+      }
+
+      if(preg_match("/^CABLE-BIRD-WIRE-DOUBLE/",$idPrestation)){
+        return "VENTE DE PRODUIT";
+      }
+
+
+      if(preg_match("/^TRAVAUX-DIVERS/",$idPrestation)){
+        return "TRAVAUX DIVERS AUTRES";
+      }
+      return $idPrestation;
+
     }
 }
