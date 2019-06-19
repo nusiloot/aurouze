@@ -68,6 +68,15 @@
                             </div>
                         </div>
                         {% endif %}
+                        {% if exportForm.form.prestation is defined %}
+                        <div class="form-group">
+                            {{ form_errors(exportForm.form.prestation) }}
+                            {{ form_label(exportForm.form.prestation, "Choix d'une prestation", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+                            <div class="col-xs-8">
+                                {{ form_widget(exportForm.form.prestation) }}
+                            </div>
+                        </div>
+                        {% endif %}
                         {% if exportForm.form.societe is defined %}
                         <div class="form-group" id="searchable" data-type="societe" data-url="{{ path('recherche_societe')  }}" data-target="0">
                             {{ form_errors(exportForm.form.societe) }}
