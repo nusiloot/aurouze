@@ -639,13 +639,13 @@ public static $export_stats_libelle = array(
     }
 
     public static function getCategoriePrestationFromId($idPrestation){
-      if(preg_match("/^DESINSECTISATION-/",$idPrestation)){
+      if(preg_match("/^DESINSECTISATION/",$idPrestation)){
         return "PRESTATIONS 3D";
       }
-      if(preg_match("/^DERATISATION-/",$idPrestation)){
+      if(preg_match("/^DERATISATION/",$idPrestation)){
         return "PRESTATIONS 3D";
       }
-      if(preg_match("/^DESINFECTION-/",$idPrestation)){
+      if(preg_match("/^DESINFECTION/",$idPrestation)){
         return "PRESTATIONS 3D";
       }
       if(preg_match("/^PUNAISE-VAPEUR/",$idPrestation)){
