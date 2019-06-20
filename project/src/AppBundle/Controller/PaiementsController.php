@@ -79,6 +79,10 @@ class PaiementsController extends Controller {
                $dm->flush();
             }
 
+            if($form['save']->isClicked()) {
+                return $this->redirectToRoute('paiements_modification', array('id' => $paiements->getId()));
+            }
+
             return $this->redirectToRoute('paiements_liste');
         }
 
