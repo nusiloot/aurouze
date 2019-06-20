@@ -47,8 +47,8 @@ class PaiementsType extends AbstractType {
         		'label' => ' '
         	)
         );
-        $builder->add('save_back', SubmitType::class, array('label' => 'Enregistrer et quitter', "attr" => array("class" => "btn btn-default")));
-        $builder->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success", "tabindex" => -1)));
+        $builder->add('save_back', SubmitType::class, array('label' => 'Enregistrer et quitter', "attr" => array("class" => "btn btn-default", "tabindex" => -1)));
+        $builder->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success")));
         $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
     }
 
