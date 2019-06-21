@@ -5,11 +5,11 @@
         <div class="col-xs-6">
             <br />
             <p>
-                <span class="lead">{{ parameters..emetteur.nom }}</span><br />
-                {{ parameters..emetteur.adresse }}<br />
-                {{ parameters..emetteur.code_postal }} {{ parameters..emetteur.commune }}<br />
-                Tél. : {{ parameters..emetteur.telephone }}<br />
-                Fax : {{ parameters..emetteur.fax }}
+                <span class="lead">{{ parameters.emetteur.nom }}</span><br />
+                {{ parameters.emetteur.adresse }}<br />
+                {{ parameters.emetteur.code_postal }} {{ parameters..emetteur.commune }}<br />
+                Tél. : {{ parameters.emetteur.telephone }}<br />
+                Fax : {{ parameters.emetteur.fax }}
             </p>
         </div>
 
@@ -23,13 +23,13 @@
                 <br />
                 <br />
                 {% if(paiements.isRemiseEspece) %}
-                <strong>{{ parameters..banqueEspece.nom }}</strong><br />
-                {{ parameters..banqueEspece.adresse }}<br />
-                {{ parameters..banqueEspece.code_postal }} {{ parameters..banqueEspece.commune }}<br />
+                <strong>{{ parameters.banqueEspece.nom }}</strong><br />
+                {{ parameters.banqueEspece.adresse }}<br />
+                {{ parameters.banqueEspece.code_postal }} {{ parameters..banqueEspece.commune }}<br />
                 {% else %}
-                <strong>{{ parameters..banque.nom }}</strong><br />
-                {{ parameters..banque.adresse }}<br />
-                {{ parameters..banque.code_postal }} {{ parameters..banque.commune }}<br />
+                <strong>{{ parameters.banque.nom }}</strong><br />
+                {{ parameters.banque.adresse }}<br />
+                {{ parameters.banque.code_postal }} {{ parameters..banque.commune }}<br />
                 {% endif %}
             </div>
             <br />
