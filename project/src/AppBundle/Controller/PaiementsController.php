@@ -79,7 +79,7 @@ class PaiementsController extends Controller {
                $dm->flush();
             }
 
-            return $this->redirectToRoute('paiements_liste');
+            return $this->redirectToRoute('paiements_modification', array('id' => $paiements->getId()));
         }
 
         return $this->render('paiements/modification.html.twig', array('paiements' => $paiements, 'form' => $form->createView(), 'facturesArray' => $facturesArray));
