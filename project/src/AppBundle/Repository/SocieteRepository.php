@@ -128,6 +128,18 @@ class SocieteRepository extends DocumentRepository {
         return $request->toArray();
     }
 
+    public function findByTag($tag)
+    {
+        $request = $this->createQueryBuilder('Societe')
+                        ->field('tags')->in([$tag])
+                        ->select('identifiant', 'adresse', 'type', 'raisonSociale', 'contactCoordonnee')
+                        ->readOnly()
+                        ->getQuery()
+                        ->execute();
+
+        return $request->toArray();
+    }
+
     public function getIdsByIban() {
     	$ids = array();
     	foreach ($items as $item) {

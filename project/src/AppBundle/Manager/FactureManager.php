@@ -440,6 +440,7 @@ public static $export_stats_libelle = array(
         $csv = array();
         $cpt = 0;
         $csv["AAAaaa_0_0000000000"] = array("Prestation","Client", "Numéro facture", "Type Contrat", "Presta.","Date Facturation", "Montant facturé HT", "Prix integral Contrat HT");
+        $unicite = array();
         foreach ($factures as $facture) {
             if($facture->getContrat()){
                 $c = $facture->getContrat();
@@ -454,26 +455,25 @@ public static $export_stats_libelle = array(
                   continue;
                 }
                 foreach ($prestationsContrat as $presta) {
-                  $arr_ligne = array();
                   $resiliation = 0;
                   $p_id = $presta->getIdentifiant();
                   $categorie = self::getCategoriePrestationFromId($p_id);
-                  $key = $categorie."_".$facture->getDateFacturation()->format('Ymd')."_".$facture->getNumeroFacture();
+                  $keyFacture = $categorie.$facture->getId();
+
+                  if($c && !isset($unicite[$categorie.$c->getId()])) {
+                      $prixContrat = $c->getPrixHT();
+                      $unicite[$categorie.$c->getId()] = true;
+                  } elseif($c && isset($unicite[$categorie.$c->getId()])) {
+                      $prixContrat = 0;
+                  } else {
+                      $prixContrat = $facture->getMontantHT();
+                  }
+
+                  if($keyFacture && isset($unicite[$keyFacture]])) {
+                      continue;
+                  }
+
                   $keyTotal = $categorie."_9_9999999999_TOTAL";
-
-                  $arr_ligne[] = $presta->getNom();
-                  $arr_ligne[] = $facture->getSociete()->getRaisonSociale();
-                  $arr_ligne[] = $facture->getNumeroFacture();
-                  $arr_ligne[] = $c->getTypeContratLibelle();
-                  $arr_ligne[] = implode(', ', $facture->getContrat()->getUniquePrestations());
-
-                  $arr_ligne[] = $facture->getDateFacturation()->format('d/m/Y');
-                  $arr_ligne[] = number_format($facture->getMontantHT(), 2, ',', '');
-
-                  $prix_ht = ($c)? $c->getPrixHT() : $facture->getMontantHT();
-                  $arr_ligne[] = number_format($prix_ht, 2, ',', '');
-
-                //  $csv[$key] = $arr_ligne;
 
                   $csv[$keyTotal][0] = $categorie;
                   $csv[$keyTotal][1] = "TOTAL";
@@ -482,7 +482,11 @@ public static $export_stats_libelle = array(
                   $csv[$keyTotal][4] = "";
                   $csv[$keyTotal][5] = "";
                   $csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $facture->getMontantHT(), 2, ',', '') : number_format($facture->getMontantHT(), 2, ',', '');
-                  $csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $prix_ht, 2, ',', '') : number_format($facture->getContrat()->getPrixHT(), 2, ',', '');
+                  $csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $prixContrat, 2, ',', '') : number_format($prixContrat, 2, ',', '');
+
+                  if($keyFacture) {
+                      $unicite[$keyFacture] = true;
+                  }
                 }
             }
 

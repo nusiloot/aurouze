@@ -104,6 +104,19 @@ class RechercheController extends Controller {
         return $response;
 	}
 
+    /**
+     * @Route("/recherche/tag", name="recherche_tag", defaults={"q": ""})
+     */
+    public function tagAction(Request $request)
+    {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $query = $request->get('q');
+
+        $results = $dm->getRepository('AppBundle:Societe')->findByTag($query);
+
+        return $this->render('recherche/parTag.html.twig', ['resultats' => $results, 'query' => $query]);
+    }
+
 	public static function cmpContacts($a, $b)
 	{
 		return ($a['score'] > $b['score']) ? false : true;
