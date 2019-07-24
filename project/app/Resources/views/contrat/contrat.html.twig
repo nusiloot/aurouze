@@ -203,6 +203,25 @@
     {% endif %}
 </div>
 
+{% if (contrat.isFini) %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Récapitulatif passage</h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-xs-6">
+        Temps de passage prévu : {{ contrat.getDureeFormatee(contrat.getDureePassage * contrat.getNbPassagesPrevu) }}<br/>
+        Temps de passage effectué : {{ contrat.getDureePassagePrevu }}
+      </div>
+      <div class="col-xs-6">
+        Produits
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 {% if(factureMode is defined) %}
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Factures {% if contrat.nbFactures == 0 %}à créer manuellement car <strong>non rattachées aux passages</strong>{% endif %}</h3></div>
