@@ -469,7 +469,7 @@ public static $export_stats_libelle = array(
                       $prixContrat = $facture->getMontantHT();
                   }
 
-                  if($keyFacture && isset($unicite[$keyFacture]])) {
+                  if($keyFacture && isset($unicite[$keyFacture])) {
                       continue;
                   }
 
