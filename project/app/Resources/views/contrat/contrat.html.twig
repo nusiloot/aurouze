@@ -211,8 +211,19 @@
   <div class="panel-body">
     <div class="row">
       <div class="col-xs-6">
-        Temps de passage prévu : {{ contrat.getDureeFormatee(contrat.getDureePassage * contrat.getNbPassagesPrevu) }}<br/>
-        Temps de passage effectué : {{ contrat.getDureePassagePrevu }}
+        <table class="table">
+          <thead><tr><th class="col-xs-10">Type</th><th class="col-xs-2 text-right">Durée</th></tr></thead>
+          <tbody>
+              <tr>
+                <td>Temps de passage prévu</td>
+                <td class="text-right">{{ contrat.getDureeFormatee(contrat.getDureePassage * contrat.getNbPassagesPrevu) }}</td>
+              </tr>
+              <tr>
+                <td>Temps de passage effectué</td>
+                <td class="text-right">{{ contrat.getDureePassagePrevu }}</td>
+              </tr>
+          </tbody>
+        </table>
       </div>
       <div class="col-xs-6">
         <table class="table">
