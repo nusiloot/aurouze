@@ -215,7 +215,18 @@
         Temps de passage effectué : {{ contrat.getDureePassagePrevu }}
       </div>
       <div class="col-xs-6">
-        Produits
+        <table class="table">
+          <thead><tr><th class="col-xs-8">Produit</th><th class="col-xs-2 text-right">Prévu</th><th class="col-xs-2 text-right">Utilisé</th></tr></thead>
+          <tbody>
+            {% for produit in recapProduits %}
+              <tr>
+                <td>{{ produit.nom }}</td>
+                <td class="text-right">{{ produit.prevu }}</td>
+                <td class="text-right">{{ produit.utilise }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
