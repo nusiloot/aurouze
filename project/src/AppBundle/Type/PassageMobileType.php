@@ -108,6 +108,14 @@ class PassageMobileType extends AbstractType
             $defaultEmail = $this->previousPassage->getEmailTransmission();
           }
         }
+
+        $defaultSecondEmail = $builder->getData()->getSecondEmailTransmission();
+        if(!$defaultSecondEmail && $this->previousPassage){
+          if($this->previousPassage->getSecondEmailTransmission()){
+            $defaultSecondEmail = $this->previousPassage->getSecondEmailTransmission();
+          }
+        }
+
         $defaultNomResp = $builder->getData()->getNomTransmission();
         if(!$defaultNomResp && $this->previousPassage){
           if($this->previousPassage->getNomTransmission()){
@@ -119,6 +127,12 @@ class PassageMobileType extends AbstractType
           'required' => false,
           'data' => $defaultEmail,
           'attr' => array('class' => " phoenix","placeholder" => 'Email de transmission')));
+
+        $builder->add('secondEmailTransmission', EmailType::class, array(
+          'label' => 'Second email :',
+          'required' => false,
+          'data' => $defaultSecondEmail,
+          'attr' => array('class' => " phoenix","placeholder" => 'Email supplémentaire de transmission')));
 
         $builder->add('nomTransmission', TextType::class, array(
           'label' => 'Nom :',
