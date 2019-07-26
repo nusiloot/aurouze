@@ -404,6 +404,14 @@ class ContratController extends Controller {
             $recapProduits[$id]['utilise'] = $produit[1];
         }
 
+        if (empty($produitsPassages)) {
+            foreach ($produitsContrat as $id => $produit) {
+                $recapProduits[$id]['nom'] = $produit->getNom();
+                $recapProduits[$id]['prevu'] = $produit->getNbTotalContrat();
+                $recapProduits[$id]['utilise'] = 0;
+            }
+        }
+
         return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat, 'factures' => $factures, 'societe' => $contrat->getSociete(), 'recapProduits' => $recapProduits));
     }
 
