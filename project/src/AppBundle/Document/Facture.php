@@ -606,7 +606,7 @@ class Facture implements DocumentSocieteInterface {
      */
     public function getSepa() {
         $sepa = $this->sepa;
-        if(!$sepa){
+        if(!$sepa || !$sepa->getIban() || !$sepa->getBic()){
             $sepa = $this->getSociete()->getSepa();
         }
         return $sepa;
