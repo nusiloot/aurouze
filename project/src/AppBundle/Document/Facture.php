@@ -680,10 +680,7 @@ class Facture implements DocumentSocieteInterface {
         $date = ($date) ? $date : new \DateTime();
         switch ($frequence) {
             case ContratManager::FREQUENCE_PRELEVEMENT :
-                $date->modify('+1 month');
-                if($date->format('d') > 20){
-                    $date->modify('+1 month');
-                }
+                $date->modify('+2 month');
                 $date->modify('first day of')->modify('+19 day');
                 break;
             case ContratManager::FREQUENCE_30J :

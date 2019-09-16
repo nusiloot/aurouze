@@ -71,7 +71,7 @@
                     {% if(societe.tags | length > 0) %}
                         <div class="list-group-item">
                             {% for tag in societe.tags %}
-                                <span type="button" class="btn btn-info btn-xs">{{ tag }}</span>
+                                <a href="{{ path('recherche_tag', {'q': tag}) }}" class="btn btn-info btn-xs">{{ tag }}</a>
                             {% endfor %}
                         </div>
                     {% endif %}

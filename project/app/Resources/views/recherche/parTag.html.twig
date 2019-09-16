@@ -1,0 +1,86 @@
+{% set _menu_active = 'recherche' %}
+{% extends 'base.html.twig' %}
+{% block title %}Recherche{% endblock title %}
+{% block body %}
+	<ol class="breadcrumb">
+		<li><a href="{{ path('recherche_tag') }}">Recherche</a></li>
+	</ol>
+
+	<h3 style="margin-top: 20px;">Recherche par tag</h3>
+
+	<form action="{{ path('recherche_tag') }}" method="get" class="form-horizontal" style="margin-top: 20px; margin-bottom: 20px;">
+		<div class="form-group">
+			<div class="col-xs-12">
+				<div class="input-group">
+					<input autofocus="autofocus" type="text" name="q" placeholder="Rechercher un tag" class="form-control input-lg" id="q" value="{{ query }}" />
+		 			<span class="input-group-btn">
+						<button type="submit" class="btn btn-default btn-lg">Rechercher</button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</form>
+
+
+	{% if resultats is defined and resultats | length %}
+  <table class="table table-striped table-hover">
+    {% for resultat in resultats %}
+    <tr>
+      <td>Société<br/><small>{{ resultat.identifiant }}</small></td>
+      <td>
+        <a href="{{ path('societe_visualisation', {'id': resultat.id}) }}">
+          {{ resultat.raisonSociale }} — {{ resultat.adresse.adresse }}, {{ resultat.adresse.codePostal }} {{ resultat.adresse.commune }}
+        </a>
+        <br />
+        <ul class="list-inline">
+          <li>
+            <i class="glyphicon glyphicon-earphone"></i>
+            {% if resultat.contactCoordonnee.telephoneFixe %}
+              {{ resultat.contactCoordonnee.telephoneFixe }}
+            {% else %}
+              –
+            {% endif %}
+          </li>
+          <li>
+            <i class="glyphicon glyphicon-phone"></i>
+            {% if resultat.contactCoordonnee.telephoneMobile %}
+              {{ resultat.contactCoordonnee.telephoneMobile }}
+            {% else %}
+              –
+            {% endif %}
+          </li>
+          <li>
+            <i class="glyphicon glyphicon-print"></i>
+            {% if resultat.contactCoordonnee.fax %}
+              {{ resultat.contactCoordonnee.fax }}
+            {% else %}
+              –
+            {% endif %}
+          </li>
+          <li>
+            <i class="glyphicon glyphicon-envelope"></i>
+            {% if resultat.contactCoordonnee.email %}
+              {{ resultat.contactCoordonnee.email }}
+            {% else %}
+              –
+            {% endif %}
+          </li>
+          <li>
+            <i class="glyphicon glyphicon-globe"></i>
+            {% if resultat.contactCoordonnee.siteInternet %}
+              {{ resultat.contactCoordonnee.siteInternet }}
+            {% else %}
+              –
+            {% endif %}
+          </li>
+        </ul>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+	{% if resultats is defined and not resultats | length %}
+		Aucun résultat trouvé
+	{% endif %}
+{% endblock %}
