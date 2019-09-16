@@ -253,6 +253,23 @@ class PaiementsController extends Controller {
     }
 
     /**
+     * @Route("/paiements/previsualisation-remise-bancaire", name="paiements_prelevement_previsualisation")
+     */
+    public function paiementPrelevementPrevisualisationFichierAction(Request $request)
+    {
+        $fm = $this->get('facture.manager');
+        $facturesForCsv = $fm->getFacturesPrelevementsForCsv();
+
+        $prelevements = [];
+        foreach ($facturesForCsv as $facture) {
+            $datefacturation = $facture->getDateLimitePaiement();
+            $prelevements[$datefacturation->format('d M Y')][] = $facture;
+        }
+
+        return $this->render('paiements/listePrelevements.html.twig', compact('prelevements'));
+    }
+
+    /**
      * @Route("/paiements/prelevement", name="paiements_prelevement")
      */
     public function paiementPrelevementAction(Request $request) {

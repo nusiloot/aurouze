@@ -666,9 +666,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
     public function getDureePassageFormat() {
         $minute = $this->getDureePassage();
-        $heure = intval(abs($minute / 60));
-        $minute = $minute - ($heure * 60);
-        return sprintf("%02dh%02d", $heure, $minute);
+        return $this->getDureeFormatee($minute);
     }
 
     /**
@@ -792,8 +790,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
     public function getHumanDureePassage() {
         $duree = $this->getDureePassage();
-        $heure = floor($duree / 60);
-        return sprintf('%02d', $heure) . 'h' . sprintf('%02d', ((($duree / 60) - $heure) * 60));
+        return $this->getDureeFormatee($duree);
     }
 
     public function getPrixMouvements() {
@@ -2051,9 +2048,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	foreach ($this->getContratPassages() as $passage){
     			$nbPrevus += $passage->getDureePassagePrevu();
     	}
-    	$h = floor($nbPrevus/60);
-    	$m = round(($nbPrevus/60 - $h) * 60);
-    	return sprintf("%02dh%02d", $h, $m);
+        return $this->getDureeFormatee($nbPrevus);
     }
 
     public function getDureePassageNonPrevu() {
@@ -2061,9 +2056,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     	foreach ($this->getContratPassages() as $passage){
     			$nbNonPrevus += $passage->getDureePassageNonPrevu();
     	}
-    	$h = floor($nbNonPrevus/60);
-    	$m = round(($nbNonPrevus/60 - $h) * 60);
-    	return sprintf("%02dh%02d", $h, $m);
+        return $this->getDureeFormatee($nbNonPrevus);
     }
 
     public function getProduitsUtilises()
@@ -2098,5 +2091,12 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
     public function getIntitule(){
       return $this->getSociete()->getRaisonSociale()." contrat ".strtolower($this->getTypeContratLibelle())." n° ".$this->getNumeroArchive();
+    }
+
+    public function getDureeFormatee($duree)
+    {
+        $h = floor($duree/60);
+        $m = round(($duree/60 - $h) * 60);
+        return sprintf("%02dh%02d", $h, $m);
     }
 }

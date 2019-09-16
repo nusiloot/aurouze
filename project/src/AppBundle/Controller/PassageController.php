@@ -480,6 +480,13 @@ class PassageController extends Controller
             ->setReplyTo($replyEmail)
             ->setBody($body,'text/plain');
 
+        if ($passage->getSecondEmailTransmission()) {
+            $to = [];
+            $to[] = $passage->getEmailTransmission();
+            $to[] = $passage->getSecondEmailTransmission();
+            $message->setTo($to);
+        }
+
         $attachment = \Swift_Attachment::newInstance($this->get('knp_snappy.pdf')->getOutputFromHtml($rapportVisitePdf->html, $this->getPdfGenerationOptions()), $rapportVisitePdf->filename, 'application/pdf');
         $message->attach($attachment);
 

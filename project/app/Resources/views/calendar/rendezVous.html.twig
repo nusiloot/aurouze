@@ -148,13 +148,14 @@
                               </div>
                           </div>
                         {% endif %}
-                        {% if(rdv.passage.nomTransmission or rdv.passage.emailTransmission) %}
+                        {% if(rdv.passage.nomTransmission or rdv.passage.emailTransmission or rdv.passage.secondEmailTransmission) %}
                           <div class="form-group" style="margin-bottom: 0">
                               <label class="control-label col-xs-2">Nom / Email</label>
                               <div class="col-xs-10">
                                   <p class="form-control-static">
                                     {% if(rdv.passage.nomTransmission) %}{{ rdv.passage.nomTransmission }}{% else %}pas de nom{% endif %}&nbsp;/&nbsp;
-                                      {% if(rdv.passage.emailTransmission) %}{{ rdv.passage.emailTransmission }}{% else %}pas d'email{% endif %}
+                                    {% if(rdv.passage.emailTransmission) %}{{ rdv.passage.emailTransmission }}{% else %}pas d'email{% endif %}&nbsp;/&nbsp;
+                                    {% if(rdv.passage.secondEmailTransmission) %}{{ rdv.passage.secondEmailTransmission }}{% else %}pas de second email{% endif %}
                                   </p>
                               </div>
                           </div>
@@ -275,7 +276,19 @@
                             <a class="btn btn-sm {% if (rdv.passage.emailTransmission) %}btn-default{% else %}btn-success{% endif %}" href="{{ path('passage_pdf_rapport', {'id': rdv.passage.id, 'service': service })}}" title="Pdf du rapport de visite"
                                   data-toggle="tooltip" ><span class="glyphicon glyphicon-file"></span></a>
                             {% if (rdv.passage.emailTransmission) %}
-                            <a onclick="return confirm('Êtes vous de vouloir envoyer le rapport de visite à l\'email suivant : {{rdv.passage.emailTransmission}}  ?')" class="btn btn-sm {% if rdv.passage.isPdfNonEnvoye() %}btn-success{% else %}btn-default{% endif %}" href="{{ path('passage_transmission_email', {'id': rdv.passage.id, 'service': service })}}"><span class="glyphicon glyphicon-send"></span> Envoyer mail</a>
+                            {% set msgconfirm %}
+                              {% if (rdv.passage.secondEmailTransmission) %}
+                                Êtes vous sûr de vouloir envoyer le rapport de visite aux personnes suivantes : {{ rdv.passage.emailTransmission }} et {{ rdv.passage.secondEmailTransmission }} ?
+                              {% else %}
+                                Êtes vous sûr de vouloir envoyer le rapport de visite à la personne suivante : {{ rdv.passage.emailTransmission }} ?
+                              {% endif %}
+                            {% endset %}
+                            <a
+                              onclick="return confirm('{{ msgconfirm | spaceless }}')"
+                              class="btn btn-sm {% if rdv.passage.isPdfNonEnvoye() %}btn-success{% else %}btn-default{% endif %}"
+                              href="{{ path('passage_transmission_email', {'id': rdv.passage.id, 'service': service })}}">
+                                <span class="glyphicon glyphicon-send"></span> Envoyer mail
+                            </a>
                             {% endif %}
                           </div>
                         {% endif %}

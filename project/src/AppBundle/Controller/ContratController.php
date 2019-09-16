@@ -393,7 +393,26 @@ class ContratController extends Controller {
 
         $factures = $dm->getRepository('AppBundle:Facture')->findAllByContrat($contrat);
 
-        return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat, 'factures' => $factures, 'societe' => $contrat->getSociete()));
+        $produitsContrat = $contrat->getProduits();
+        $produitsPassages = $contrat->getProduitsUtilises();
+
+        $recapProduits = [];
+        foreach ($produitsPassages as $id => $produit) {
+            $p = $contrat->getProduit($id);
+            $recapProduits[$id]['nom'] = ($p) ? $p->getNom() : $id;
+            $recapProduits[$id]['prevu'] = ($p) ? $p->getNbTotalContrat() : 0;
+            $recapProduits[$id]['utilise'] = $produit[1];
+        }
+
+        if (empty($produitsPassages)) {
+            foreach ($produitsContrat as $id => $produit) {
+                $recapProduits[$id]['nom'] = $produit->getNom();
+                $recapProduits[$id]['prevu'] = $produit->getNbTotalContrat();
+                $recapProduits[$id]['utilise'] = 0;
+            }
+        }
+
+        return $this->render('contrat/visualisation.html.twig', array('contrat' => $contrat, 'factures' => $factures, 'societe' => $contrat->getSociete(), 'recapProduits' => $recapProduits));
     }
 
     /**

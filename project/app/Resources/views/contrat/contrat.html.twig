@@ -203,6 +203,47 @@
     {% endif %}
 </div>
 
+{% if (contrat.isFini) %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Récapitulatif passage</h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-xs-6">
+        <table class="table">
+          <thead><tr><th class="col-xs-10">Type</th><th class="col-xs-2 text-right">Durée</th></tr></thead>
+          <tbody>
+              <tr>
+                <td>Temps de passage prévu</td>
+                <td class="text-right">{{ contrat.getDureeFormatee(contrat.getDureePassage * contrat.getNbPassagesPrevu) }}</td>
+              </tr>
+              <tr>
+                <td>Temps de passage effectué</td>
+                <td class="text-right">{{ contrat.getDureePassagePrevu }}</td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-xs-6">
+        <table class="table">
+          <thead><tr><th class="col-xs-8">Produit</th><th class="col-xs-2 text-right">Prévu</th><th class="col-xs-2 text-right">Utilisé</th></tr></thead>
+          <tbody>
+            {% for produit in recapProduits %}
+              <tr>
+                <td>{{ produit.nom }}</td>
+                <td class="text-right">{{ produit.prevu }}</td>
+                <td class="text-right">{{ produit.utilise }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 {% if(factureMode is defined) %}
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Factures {% if contrat.nbFactures == 0 %}à créer manuellement car <strong>non rattachées aux passages</strong>{% endif %}</h3></div>

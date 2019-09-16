@@ -23,10 +23,10 @@
     <div id="wrapper">
     {{ include('paiements/paiementsTableau.html.twig', {'paiementsDocs': paiementsDocs, 'prelevement' : false }) }}
     </div>
-    <br/>
-    <h2>
-        Prélévements bancaires
-        <a class="btn btn-default pull-right" href="{{ path('paiements_prelevement') }}" onclick="return confirm('Voulez vous générer le fichier bancaire?');" >&nbsp;Créer un export pour la banque</a>
+    <hr>
+    <h2 class="clearfix">
+        Prélèvements bancaires
+        <a class="btn btn-default pull-right" href="{{ path('paiements_prelevement_previsualisation') }}">Créer un export pour la banque</a>
     </h2>
     <div id="wrapper">
     {{ include('paiements/paiementsTableau.html.twig', {'paiementsDocs': paiementsDocsPrelevement, 'prelevement' : true }) }}
