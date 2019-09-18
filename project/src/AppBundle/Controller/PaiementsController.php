@@ -262,7 +262,7 @@ class PaiementsController extends Controller {
 
         $prelevements = [];
         foreach ($facturesForCsv as $facture) {
-            $datefacturation = $facture->getDateLimitePaiement();
+            $datefacturation = $facture->getPrelevementDate();
             $prelevements[$datefacturation->format('d M Y')][] = $facture;
         }
 

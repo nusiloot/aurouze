@@ -1188,4 +1188,23 @@ class Facture implements DocumentSocieteInterface {
     {
         return $this->inPrelevement;
     }
+
+    public function getPrelevementDate(){
+      $dateEmission = clone $this->getDateEmission();
+      if($dateEmission->format('m') > 20){
+          $dateEmission->modify("+2 month");
+      }else{
+          $dateEmission->modify("+1 month");
+      }
+      $dueDate = \DateTime::createFromFormat("Ymd",$dateEmission->format("Y").$dateEmission->format("m")."20");
+      $now = new \DateTime();
+      if($dueDate < $now){
+          if($now->format('m') > 20){
+              $now->modify("+1 month");
+          }
+          $dueDate = \DateTime::createFromFormat("Ymd",$now->format("Y").$now->format("m")."20");
+      }
+      return $dueDate;
+    }
+
 }
