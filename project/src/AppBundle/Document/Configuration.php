@@ -152,7 +152,7 @@ class Configuration {
         if ($a->getOrdre() == $b->getOrdre()) {
                 return "0";
             } else {
-                return ($b->getOrdre() > $a->getOrdre())? "+1" : "-1";
+                return ($b->getOrdre() > $a->getOrdre()) ? 1 : -1;
             }
     }
 
