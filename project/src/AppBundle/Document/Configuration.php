@@ -149,10 +149,16 @@ class Configuration {
     }
 
     public static function cmpProduitByOrdre($a, $b) {
-        if ($a->getOrdre() == $b->getOrdre()) {
-                return "0";
+        $aOrdre = $a->getOrdre();
+        $bOrdre = $b->getOrdre();
+
+        if (! $aOrdre) $aOrdre = 1000;
+        if (! $bOrdre) $bOrdre = 1000;
+
+        if ($aOrdre == $bOrdre) {
+                return 0;
             } else {
-                return ($b->getOrdre() > $a->getOrdre()) ? 1 : -1;
+                return ($bOrdre > $aOrdre) ? -1 : 1;
             }
     }
 
