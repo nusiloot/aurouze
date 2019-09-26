@@ -107,6 +107,13 @@ class Configuration {
     public function addProduit(\AppBundle\Document\Produit $produit) {
         $this->produits[] = $produit;
     }
+    /**
+     * Sort all produits first by order attribut then by alphabetical order
+     */
+    public function sortProduits() {
+        $this->produits = $this->getProduitsArrayOrdered();
+    }
+
 
     /**
      * Remove produit
@@ -147,16 +154,23 @@ class Configuration {
         uasort($produitsArray,array("AppBundle\Document\Configuration", "cmpProduitByOrdre"));
         return $produitsArray;
     }
-
+    /**
+    * Compare by order attribut or by name attribut
+    * @param \AppBundle\Document\Produit $a
+    * @param \AppBundle\Document\Produit $b
+    */
     public static function cmpProduitByOrdre($a, $b) {
         $aOrdre = $a->getOrdre();
         $bOrdre = $b->getOrdre();
 
-        if (! $aOrdre) $aOrdre = 1000;
-        if (! $bOrdre) $bOrdre = 1000;
+        if (! $aOrdre) $aOrdre = 1000; //No order id
+        if (! $bOrdre) $bOrdre = 1000; //No order id 
 
         if ($aOrdre == $bOrdre) {
-                return 0;
+                //No order id 
+                $aName = $a->getNom();
+                $bName = $b->getNom();
+                return strcasecmp($aName, $bName) < 0? -1 : 1;
             } else {
                 return ($bOrdre > $aOrdre) ? -1 : 1;
             }

@@ -19,12 +19,14 @@ class ConfigurationController extends Controller {
      * @Route("/configuration", name="configuration")
      */
     public function configurationAction(Request $request) {
+
         $dm = $this->get('doctrine_mongodb')->getManager();
         $configuration = $dm->getRepository('AppBundle:Configuration')->findConfiguration();
         if (!$configuration) {
             $configuration = new Configuration();
             $configuration->setId(Configuration::PREFIX);
         }
+        $configuration->sortProduits();
         return $this->render('configuration/visualisation.html.twig', array('configuration' => $configuration));
     }
 
@@ -63,6 +65,7 @@ class ConfigurationController extends Controller {
             $dm->flush();
             return $this->redirectToRoute('configuration');
         }
+
         return $this->render('configuration/modificationProduit.html.twig', array('configuration' => $configuration,'produit' => $configurationProduit, 'form' => $form->createView()));
     }
 
