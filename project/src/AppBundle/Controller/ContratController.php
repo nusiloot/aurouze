@@ -383,6 +383,7 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function visualisationAction(Request $request, Contrat $contrat) {
+
         if($contrat->isEnAttenteAcceptation()) {
 
             return $this->redirectToRoute('contrat_acceptation', array('id' => $contrat->getId()));
@@ -423,7 +424,7 @@ class ContratController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $cm = $this->get('contrat.manager');
         if (!$contrat->getMarkdown()) {
-            $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat, 'contratManager' => $cm)));
+            $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat, 'societe' => $contrat->getSociete(), 'contratManager' => $cm)));
             $dm->persist($contrat);
             $dm->flush();
         }
@@ -453,8 +454,7 @@ class ContratController extends Controller {
             $dm->flush();
         }
 
-
-        return $this->render('contrat/visualisation.markdown.twig', array('contrat' => $contrat, 'formMarkdown' => $formMarkdown->createView(), 'formGenerator' => $formGenerator->createView()));
+        return $this->render('contrat/visualisation.markdown.twig', array('contrat' => $contrat, 'societe' => $contrat->getSociete(), 'formMarkdown' => $formMarkdown->createView(), 'formGenerator' => $formGenerator->createView()));
     }
 
     /**

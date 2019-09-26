@@ -2,7 +2,13 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 	{{ include('contrat/conditionsTextesModal.html.twig') }}
+	<ol class="breadcrumb" style="margin-bottom: 0;">
+        <li><a href="{{ path('contrat') }}">Contrat</a></li>
+        <li><a href="{{ path('contrats_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+        <li><a href="{{ path('contrat_modification',{ 'id' : contrat.id }) }}">&nbsp;Contrat&nbsp;{{ contrat.numeroArchive }}</a></li>
+    </ol>
 	<div id="visu-markdown">
+
 		<h3>Prévisualisation</h3>
 		{{ form_start(formGenerator) }}
 		<div class="row">
