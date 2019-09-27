@@ -78,6 +78,10 @@ class SocieteRepository extends DocumentRepository {
     	return $resultSet;
     }
 
+    public function findByIdentifiantReprises(int $idReprise){
+        return $this->findBy(array('identifiantReprise' => $idReprise));
+    }
+
 
 
     public function findByElasticQuery($service, $q, $inactif = false, $limit = 150)
