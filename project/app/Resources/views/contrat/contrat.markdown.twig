@@ -123,7 +123,7 @@ Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{%
 
 Devis valable 2 mois à compter de la date d'édition.
 Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% endif %}.
-Délai de paiement des factures : {{ contratManager.getFrequence(contrat.frequencePaiement)}}.
+Délai de paiement des factures : {%if (contrat.frequencePaiement)%} {{ contratManager.getFrequence(contrat.frequencePaiement)}}{% endif %} .
 
 ## Responsabilité civile
 La société {{ application.name }} est assurée en responsabilité civile pour les dommages causés aux tiers du fait de son activité auprès de la compagnie ALLIANZ EUROCOURTAGE par la police n° RC 86.560.041.
