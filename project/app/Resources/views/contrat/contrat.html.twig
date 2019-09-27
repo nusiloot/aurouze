@@ -262,13 +262,16 @@
             <td colspan="4"><em>Aucune facture</em></td>
         </tr>
         {% endif %}
+        {% set total=0 %}
         {% for facture in factures %}
             {% for mouvement in facture.lignes %}
                 <tr>
                     <td>{% if mouvement.quantite < 0 %}{{ mouvement.libelle|replace({'Facture': 'Avoir'}) }}{% else %}{{ mouvement.libelle }}{% endif %}</td>
                     <td class="text-right">{{ facture.dateFacturation | localizeddate("medium", "none", null, null, "d MMM yyyy") }}</td>
                     <td class="text-center"><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;{{ facture.numeroFacture }}</a></td>
-                    <td class="text-right">{{ "%0.2f" | format(mouvement.montantHT * mouvement.quantite) }} €</td>
+                    {% set montant = mouvement.montantHT * mouvement.quantite %}
+                    {% set total = total + montant %}
+                    <td class="text-right">{{ "%0.2f" | format(montant) }} €</td>
                 </tr>
             {% endfor %}
         {% endfor %}
@@ -277,7 +280,9 @@
                 <td>{{ mouvement.libelle }}</td>
                 <td class="text-right"></td>
                 <td class="text-center">En attente de génération</td>
-                <td class="text-right">{{ "%0.2f" | format(mouvement.prixUnitaire) }} €</td>
+                {% set montant = mouvement.prixUnitaire %}
+                {% set total = total + montant %}
+                <td class="text-right">{{ "%0.2f" | format(montant) }} €</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -302,6 +307,10 @@
           </tr>
         </tfoot>
         {% endif %}
+        <td>Total </td>
+        <td></td>
+        <td></td>
+        <td class="text-right">{{ "%0.2f" | format(total) }} €</td>
     </table>
 </div>
 {% endif %}
