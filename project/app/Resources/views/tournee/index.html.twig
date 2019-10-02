@@ -57,8 +57,9 @@
                     <span class="badge badge-warning">{% if(passage.isGarantie) %}ganrantie{% elseif(passage.isControle) %}contrôle{% endif %}</span>
                   {% endif %}
                   {% if(passage.mouvementDeclenchable) %}
-                  <a href="{{ path('facture_societe', { 'id': passage.societe.id }) }}" class="deco-none"><span class="badge{% if (passage.isMouvementAlreadyFacture) %} badge-success  {% else %} badge-inverse {% endif %}">{% if (passage.isMouvementAlreadyFacture) %}facturé{% else %}facturant{% endif %}</span></a>
+                  <a href="{{ path('facture_societe', { 'id': passage.societe.id }) }}" class="deco-none"><span class="badge{% if (passage.isMouvementAlreadyFacture or passage.getContrat.getNbFacturesRestantes == 0) %} badge-success  {% else %} badge-inverse {% endif %}">{% if (passage.isMouvementAlreadyFacture or passage.getContrat.getNbFacturesRestantes == 0) %}facturé{% else %}facturant{% endif %}</span></a>
                   {% endif %}
+
                 </div>
                 <div class="col-xs-7">
                   {% for prestation in passage.prestations %}
