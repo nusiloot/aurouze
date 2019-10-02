@@ -72,7 +72,7 @@ class SocieteUpdateFrequenceCommand extends ContainerAwareCommand {
 
     }
 
-    public function getCsvToArray(string $filename){
+    public function getCsvToArray($filename){
         $dataArray = [];
         $row = 1;
         if (($handle = fopen($filename, "r")) !== FALSE) {
