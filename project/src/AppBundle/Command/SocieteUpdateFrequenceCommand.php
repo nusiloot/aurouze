@@ -29,14 +29,16 @@ class SocieteUpdateFrequenceCommand extends ContainerAwareCommand {
 
         $filename = $input->getArgument("pathfilename");
 
-        
+        $filename = getcwd()."/src/AppBundle/Command/".$filename;
+
+
         if(is_file($filename)){
 
             $listOldSocieties = $this->getCsvToArray($filename);
 
             foreach ($listOldSocieties as $key => $oldSociety) {
 
-                [$society,] = $this->dm->getRepository('AppBundle:Societe')->findByIdentifiantReprise($oldSociety["id"]);
+                list($society) = $this->dm->getRepository('AppBundle:Societe')->findByIdentifiantReprise($oldSociety["id"]);
 
                 if(!$society->getFrequencePaiement()){
 
@@ -49,11 +51,10 @@ class SocieteUpdateFrequenceCommand extends ContainerAwareCommand {
                     $this->dm->flush();
                 }
             }
-        }
-        
         $listSocietiesEmptyFreq = $this->dm->getRepository('AppBundle:Societe')->findAllFrequencePaiement(null);
-        echo count($listSocietiesEmptyFreq);
+
         $frequence = "RECEPTION";
+
         foreach ($listSocietiesEmptyFreq as $key => $society) {
 
             echo " Society id: ".$society->getId()." Old = null  affected = ".$frequence."\n";
@@ -64,6 +65,9 @@ class SocieteUpdateFrequenceCommand extends ContainerAwareCommand {
             
             $this->dm->flush();
         } 
+        }
+        
+        
 
 
     }
