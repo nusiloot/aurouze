@@ -164,5 +164,8 @@ class SocieteRepository extends DocumentRepository {
         }
         return $passagesArray;
     }
+    public function findAllFrequencePaiement($value){
+        return $this->findBy(array('frequencePaiement' => $value));
+    }
 
 }
