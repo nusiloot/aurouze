@@ -35,18 +35,20 @@ class FactureController extends Controller {
     public function indexAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $contratManager = $this->get('contrat.manager');
+        $factureManager = $this->get('facture.manager');
         $contratsFactureAEditer = $contratManager->getRepository()->findContratWithFactureAFacturer(50);
-
-        return $this->render('facture/index.html.twig',array('contratsFactureAEditer' => $contratsFactureAEditer));
+        $facturesEnAttente = $factureManager->getRepository()->findBy(array('numeroFacture' => null, 'numeroDevis' => null), array('dateFacturation' => 'desc'));
+        return $this->render('facture/index.html.twig',array('contratsFactureAEditer' => $contratsFactureAEditer, 'facturesEnAttente' => $facturesEnAttente));
     }
 
     /**
-     * @Route("/societe/{societe}/creation/{type}", name="facture_creation")
+     * @Route("/societe/{societe}/creation/{type}/{contratId}", name="facture_creation", defaults={"contratId" = "0"})
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function creationAction(Request $request, Societe $societe, $type) {
+    public function creationAction(Request $request, Societe $societe, $type, $contratId) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $cm = $this->get('configuration.manager');
+        $contratManager = $this->get('contrat.manager');
         $fm = $this->get('facture.manager');
 
         if ($request->get('id')) {
@@ -58,10 +60,19 @@ class FactureController extends Controller {
             throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("La facture %s n'a pas été trouvé", $request->get('id')));
         }
 
+        $contrat = null;
+        if($contratId) {
+            $contrat = $contratManager->getRepository()->findOneById($contratId);
+        }
+
         if (!isset($facture)) {
             $facture = $fm->createVierge($societe);
             $factureLigne = new FactureLigne();
             $factureLigne->setTauxTaxe(0.2);
+            $factureLigne->setQuantite(1);
+            if ($contrat) {
+                $factureLigne->setLibelle($contrat->getLibelleMouvement());
+            }
             $facture->addLigne($factureLigne);
         }
 
@@ -70,9 +81,8 @@ class FactureController extends Controller {
         if(!$facture->getId()) {
             $facture->setDateEmission(new \DateTime());
         }
-        
-        $appConf = $this->container->getParameter('application');
 
+        $appConf = $this->container->getParameter('application');
         if(!$facture->getCommercial()) {
             $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant($appConf['commercial']);
             $facture->setCommercial($commercial);
@@ -89,7 +99,7 @@ class FactureController extends Controller {
             $produitsSuggestion[] = array("libelle" => $produit->getNom(), "conditionnement" => $produit->getConditionnement(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
         }
 
-        $form = $this->createForm(new FactureType($dm, $cm, $appConf['commercial'], $facture->isDevis()), $facture, array(
+        $form = $this->createForm(new FactureType($dm, $cm, $appConf['commercial'], $facture->isDevis(), $contrat), $facture, array(
             'action' => "",
             'method' => 'POST',
         ));
@@ -109,8 +119,14 @@ class FactureController extends Controller {
         }
 
         if (!$facture->getId()) {
+            if($contrat){
+              foreach ($facture->getLignes() as $ligne) {
+                $ligne->setOrigineDocument($contrat);
+              }
+              $contrat->generateMouvement($facture);
+            }
             $dm->persist($facture);
-        } elseif ($facture->isFacture() && !$facture->getNumeroFacture()) {
+        } elseif ($facture->isFacture() && !$facture->getNumeroFacture() && !$contrat) {
             $fm->getRepository()->getClassMetadata()->idGenerator->generateNumeroFacture($dm, $facture);
         }
 
@@ -187,6 +203,26 @@ class FactureController extends Controller {
         }
         return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
     }
+
+    /**
+     * @Route("/facture-en-attente/{factureId}/facturer", name="facture_en_attente_facturer")
+     */
+    public function facturesEnAttenteAction(Request $request, $factureId) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
+        $facture = $fm->getRepository()->findOneById($factureId);
+        $fm->getRepository()->getClassMetadata()->idGenerator->generateNumeroFacture($dm, $facture);
+        $dm->persist($facture);
+        $dm->flush();
+        $retour = ($request->get('retour', null));
+
+        if($retour){
+          return $this->redirectToRoute('facture_societe', array('id' => $retour));
+        }
+        return $this->redirectToRoute('facture');
+    }
+
+
 
   /**
     * @Route("/avoir/{id}/{factureId}/{mouvement}/{remboursement}", name="facture_avoir", defaults={"mouvement" = "1", "remboursement" = "0"})
@@ -524,7 +560,7 @@ class FactureController extends Controller {
 
         return $response;
     }
-    
+
 
 
     /**
@@ -532,12 +568,12 @@ class FactureController extends Controller {
      */
     public function exportPrelevementsAction(Request $request) {
     	ini_set('memory_limit', '-1');
-    
+
     	$dm = $this->get('doctrine_mongodb')->getManager();
     	$fm = $this->get('facture.manager');
-    	
+
     	$facturesForCsv = $fm->getFacturesPrelevementsForCsv();
-    	
+
     	var_dump(count($facturesForCsv));exit;
     }
 
@@ -613,6 +649,78 @@ class FactureController extends Controller {
         						));
         	}
         }
+
+        /**
+         * @Route("/facture/export-detailcapresta", name="detailcapresta_export")
+         */
+      public function exportDetailCaPrestaAction(Request $request) {
+            ini_set('memory_limit', '256M');
+          // $response = new StreamedResponse();
+          $formRequest = $request->request->get('form');
+            $prestation = (isset($formRequest['prestation']) && $formRequest['prestation'] && ($formRequest['prestation']!= ""))?
+            $formRequest['prestation'] : null;
+
+          $pdf = (isset($formRequest["pdf"]) && $formRequest["pdf"]);
+
+          $dateDebutString = $formRequest['dateDebut']." 00:00:00";
+          $dateFinString = $formRequest['dateFin']." 23:59:59";
+
+          $dateDebut = \DateTime::createFromFormat('d/m/Y H:i:s',$dateDebutString);
+          $dateFin = \DateTime::createFromFormat('d/m/Y H:i:s',$dateFinString);
+
+          $fm = $this->get('facture.manager');
+
+          $detailCaFromFactures = $fm->getDetailCaFromFacturesByPrestation($dateDebut,$dateFin,$prestation);
+
+
+          if(!$pdf){
+            $filename = sprintf("export_details_chiffre_affaire_par_prestation_du_%s_au_%s.csv", $dateDebut->format("Y-m-d"),$dateFin->format("Y-m-d"));
+            $handle = fopen('php://memory', 'r+');
+
+            foreach ($detailCaFromFactures as $stat) {
+              fputcsv($handle, $stat,';');
+            }
+
+            rewind($handle);
+            $content = stream_get_contents($handle);
+            fclose($handle);
+
+            $response = new Response(utf8_decode($content), 200, array(
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename=' . $filename,
+            ));
+            $response->setCharset('UTF-8');
+
+            return $response;
+          }else{
+            $html = $this->renderView('contrat/pdfStatsCommerciaux.html.twig', array(
+                'statsForCommerciaux' => $detailCaFromFactures,
+                'dateDebut' => $dateDebut,
+                'dateFin' => $dateFin
+            ));
+
+
+            $filename = sprintf("export_stats_rentabilite_du_%s_au_%s.pdf",  $dateDebut->format("Y-m-d"), $dateFin->format("Y-m-d"));
+
+            if ($request->get('output') == 'html') {
+
+              return new Response($html, 200);
+            }
+
+            return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array(
+                    'disable-smart-shrinking' => null,
+                    'encoding' => 'utf-8',
+                    'margin-left' => 10,
+                    'margin-right' => 10,
+                    'margin-top' => 10,
+                    'margin-bottom' => 10),$this->getPdfGenerationOptions()), 200, array(
+                        'Content-Type' => 'application/pdf',
+                        'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+                    ));
+          }
+        }
+
 
 
 

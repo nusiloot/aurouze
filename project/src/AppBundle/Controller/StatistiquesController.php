@@ -69,6 +69,14 @@ class StatistiquesController extends Controller
                 'multiple' => false,
                 "attr" => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner un commercial", "style"=> "width:100%;")));
         	}
+					if(in_array($exporttype, array(PaiementsManager::TYPE_EXPORT_DETAIL_CA_PRESTA))) {
+						$prestations = $this->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:Configuration')->findConfiguration()->getPrestationsArray();
+						$formBuilder->add('prestation', ChoiceType::class, array(
+							'required' => false,
+							'choices'  => array_merge(array('' => ''), $prestations),
+							'label' => 'Prestation :',
+							"attr" => array("class" => "select2 select2-simple","data-placeholder" => 'Prestation', "style"=> "width:100%;")));
+					}
           if($type_export['pdf']){
             $formBuilder->add('pdf', CheckboxType::class, array('label' => 'PDF', 'required' => false, 'label_attr' => array('class' => 'small')));
           }

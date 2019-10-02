@@ -86,6 +86,50 @@ class PaiementsController extends Controller {
     }
 
     /**
+     * @Route("/paiements-ligne/{id}/modification", name="paiements_modification_ligne")
+     * @ParamConverter("paiements", class="AppBundle:Paiements")
+     */
+    public function paiementsModificationLigneAction(Request $request, $paiements) {
+
+      $dm = $this->get('doctrine_mongodb')->getManager();
+
+      if ($request->isXmlHttpRequest()) {
+        $cpt = 0;
+        $idLigne = $request->request->get('idLigne');
+        foreach ($paiements->getPaiement() as $paiement) {
+          if($cpt == $idLigne){
+            $f = $dm->getRepository('AppBundle:Facture')->findOneById($request->request->get('facture'));
+            $paiement->setTypeReglement($request->request->get('type_reglement'));
+            $paiement->setMoyenPaiement($request->request->get('moyen_paiement'));
+            $paiement->setLibelle($request->request->get('libelle'));
+            $paiement->setFacture($f);
+            $paiement->setDatePaiement(\DateTime::createFromFormat('d/m/Y',$request->request->get('date_paiement')));
+            $paiement->setMontant($request->request->get('montant'));
+            $dm->persist($paiements);
+            $dm->flush();
+            return new Response(json_encode(array("success" => true)));
+          }
+          $cpt++;
+        }
+        $paiement = new Paiement();
+        $f = $dm->getRepository('AppBundle:Facture')->findOneById($request->request->get('facture'));
+        $paiement->setTypeReglement($request->request->get('type_reglement'));
+        $paiement->setMoyenPaiement($request->request->get('moyen_paiement'));
+        $paiement->setLibelle($request->request->get('libelle'));
+        $paiement->setFacture($f);
+        $paiement->setVersementComptable(false);
+        $paiement->setDatePaiement(\DateTime::createFromFormat('d/m/Y',$request->request->get('date_paiement')));
+        $paiement->setMontant($request->request->get('montant'));
+        $paiements->addPaiement($paiement);
+        $dm->persist($paiements);
+        $dm->flush();
+        return new Response(json_encode(array("success" => true)));
+      }
+
+      return new Response(json_encode(array("success" => false)));
+    }
+
+    /**
      * @Route("/paiements/nouveau", name="paiements_nouveau")
      */
     public function nouveauAction(Request $request) {
@@ -206,6 +250,23 @@ class PaiementsController extends Controller {
 
     public function getPdfGenerationOptions() {
         return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4, 'zoom' => 0.7);
+    }
+
+    /**
+     * @Route("/paiements/previsualisation-remise-bancaire", name="paiements_prelevement_previsualisation")
+     */
+    public function paiementPrelevementPrevisualisationFichierAction(Request $request)
+    {
+        $fm = $this->get('facture.manager');
+        $facturesForCsv = $fm->getFacturesPrelevementsForCsv();
+
+        $prelevements = [];
+        foreach ($facturesForCsv as $facture) {
+            $datefacturation = $facture->getPrelevementDate();
+            $prelevements[$datefacturation->format('d M Y')][] = $facture;
+        }
+
+        return $this->render('paiements/listePrelevements.html.twig', compact('prelevements'));
     }
 
     /**

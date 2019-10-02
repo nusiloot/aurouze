@@ -27,7 +27,16 @@ class FactureGenerator extends AbstractIdGenerator
 
         $id = sprintf("%s-%s", "FACTURE", $document->getIdentifiant());
 
-        if($document->getNumeroFacture()) {
+        $hasNumero = true;
+        if(!$document->isDevis()){
+          foreach ($document->getLignes() as $ligne) {
+            if($ligne->getOrigineDocument()){
+              $hasNumero = boolval($ligne->getOrigineDocument()->getNbFactures());
+            }
+          }
+        }
+        
+        if($document->getNumeroFacture() || !$hasNumero) {
 
         	return $id;
         }
@@ -64,7 +73,7 @@ class FactureGenerator extends AbstractIdGenerator
         if($document->getNumeroFacture()) {
             return;
         }
-        
+
         $className = get_class($document);
         $db = $dm->getDocumentDatabase($className);
 

@@ -50,7 +50,7 @@ class PaiementsType extends AbstractType {
         $builder->add('save', SubmitType::class, array('label' => 'Enregistrer', "attr" => array("class" => "btn btn-success")));
         $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
     }
-    
+
     function onPreSetData(FormEvent $event) {
     	$form = $event->getForm();
     	$document = $event->getData();

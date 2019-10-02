@@ -53,7 +53,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-xs-7">
-                        <p class="lead text-center">{{ contrat.getPrixHt()|number_format(2, ',', ' ') }} € HT <small>soit {{ ((1+contrat.tva) * contrat.getPrixHt)|number_format(2, ',', ' ') }} € TTC (TVA à {{ contrat.tva * 100 | number_format(2, ',', ' ') }}%)</small></p>
+                        <p class="lead text-center">{{ contrat.getPrixHt()|number_format(2, ',', ' ') }} € HT <small>soit {{ ((1+contrat.tva) * contrat.getPrixHt)|number_format(2, ',', ' ') }} € TTC (TVA à {{ (contrat.tva * 100) | number_format(2, ',', ' ') }}%)</small></p>
                         <p class="lead text-center">{{ contrat.nbFactures }} facture(s)<small style="font-size:small">&nbsp;(associés à un passage)</small></p>
                     </div>
                     <div class="col-xs-5">
@@ -162,7 +162,9 @@
                         </div>
                     </div>
                 </div>
+                {% if contrat.getPassagesEtablissementNode(etablissement) %}
                 {{ include('passage/listingPassages.html.twig', { 'passages': contrat.getPassagesEtablissementNode(etablissement).getPassagesDateSorted(true), 'origine': "contrat" }) }}
+                {% endif %}
             {% endfor %}
         </ul>
     </div>
@@ -201,9 +203,50 @@
     {% endif %}
 </div>
 
+{% if (contrat.isFini) %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Récapitulatif passage</h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-xs-6">
+        <table class="table">
+          <thead><tr><th class="col-xs-10">Type</th><th class="col-xs-2 text-right">Durée</th></tr></thead>
+          <tbody>
+              <tr>
+                <td>Temps de passage prévu</td>
+                <td class="text-right">{{ contrat.getDureeFormatee(contrat.getDureePassage * contrat.getNbPassagesPrevu) }}</td>
+              </tr>
+              <tr>
+                <td>Temps de passage effectué</td>
+                <td class="text-right">{{ contrat.getDureePassagePrevu }}</td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-xs-6">
+        <table class="table">
+          <thead><tr><th class="col-xs-8">Produit</th><th class="col-xs-2 text-right">Prévu</th><th class="col-xs-2 text-right">Utilisé</th></tr></thead>
+          <tbody>
+            {% for produit in recapProduits %}
+              <tr>
+                <td>{{ produit.nom }}</td>
+                <td class="text-right">{{ produit.prevu }}</td>
+                <td class="text-right">{{ produit.utilise }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 {% if(factureMode is defined) %}
 <div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title">Factures</h3></div>
+    <div class="panel-heading"><h3 class="panel-title">Factures {% if contrat.nbFactures == 0 %}à créer manuellement car <strong>non rattachées aux passages</strong>{% endif %}</h3></div>
     <table class="table table-bordered table-condensed table-stripped">
         <thead>
             <tr>
@@ -214,18 +257,21 @@
             </tr>
         </thead>
         <tbody>
-        {% if(not contrat.mouvements | length and not factures | length) %}
+        {% if(not contrat.mouvements | length and not factures | length and contrat.nbFactures) %}
         <tr>
             <td colspan="4"><em>Aucune facture</em></td>
         </tr>
         {% endif %}
+        {% set total=0 %}
         {% for facture in factures %}
             {% for mouvement in facture.lignes %}
                 <tr>
                     <td>{% if mouvement.quantite < 0 %}{{ mouvement.libelle|replace({'Facture': 'Avoir'}) }}{% else %}{{ mouvement.libelle }}{% endif %}</td>
                     <td class="text-right">{{ facture.dateFacturation | localizeddate("medium", "none", null, null, "d MMM yyyy") }}</td>
                     <td class="text-center"><a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span>&nbsp;{{ facture.numeroFacture }}</a></td>
-                    <td class="text-right">{{ "%0.2f" | format(mouvement.montantHT * mouvement.quantite) }} €</td>
+                    {% set montant = mouvement.montantHT * mouvement.quantite %}
+                    {% set total = total + montant %}
+                    <td class="text-right">{{ "%0.2f" | format(montant) }} €</td>
                 </tr>
             {% endfor %}
         {% endfor %}
@@ -234,7 +280,9 @@
                 <td>{{ mouvement.libelle }}</td>
                 <td class="text-right"></td>
                 <td class="text-center">En attente de génération</td>
-                <td class="text-right">{{ "%0.2f" | format(mouvement.prixUnitaire) }} €</td>
+                {% set montant = mouvement.prixUnitaire %}
+                {% set total = total + montant %}
+                <td class="text-right">{{ "%0.2f" | format(montant) }} €</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -249,6 +297,20 @@
             </tr>
         </tfoot>
         {% endif %}
+        {% if contrat.nbFactures == 0 %}
+        <tfoot>
+          <tr>
+            <td>Facture à créer</td>
+            <td class="text-right"></td>
+            <td class="text-center"><a onclick="return confirm('Etes vous sûr de vouloir préparer une facture qui sera à envoyer plus tard ? ');" href="{{ path('facture_creation', {'societe': contrat.societe.id,'type': 'facture', 'contratId' : contrat.id})}}">Préparer une facture</a></td>
+            <td class="text-right"></td>
+          </tr>
+        </tfoot>
+        {% endif %}
+        <td>Total </td>
+        <td></td>
+        <td></td>
+        <td class="text-right">{{ "%0.2f" | format(total) }} €</td>
     </table>
 </div>
 {% endif %}

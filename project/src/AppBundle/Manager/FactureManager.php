@@ -152,7 +152,7 @@ public static $export_stats_libelle = array(
         $facture->getEmetteur()->setCommune($parameters['emetteur']['commune']);
         $facture->getEmetteur()->setTelephone($parameters['emetteur']['telephone']);
         $facture->getEmetteur()->setFax($parameters['emetteur']['fax']);
-        $facture->getEmetteur()->setEmail($parameters['emetteur']['email']);        
+        $facture->getEmetteur()->setEmail($parameters['emetteur']['email']);
 
         return $facture;
     }
@@ -430,6 +430,72 @@ public static $export_stats_libelle = array(
 
     }
 
+    public function getDetailCaFromFacturesByPrestation($dateDebut = null, $dateFin = null, $prestation = null){
+        if(!$dateDebut){
+          $dateDebut = new \DateTime();
+          $dateFin = new \DateTime();
+          $dateFin->modify("+1 month");
+        }
+        $factures = $this->getRepository()->exportOneMonthByDate($dateDebut,$dateFin);
+        $csv = array();
+        $cpt = 0;
+        $csv["AAAaaa_0_0000000000"] = array("Prestation","Client", "Numéro facture", "Type Contrat", "Presta.","Date Facturation", "Montant facturé HT", "Prix integral Contrat HT");
+        $unicite = array();
+        foreach ($factures as $facture) {
+            if($facture->getContrat()){
+                $c = $facture->getContrat();
+                $prestationsContrat = $c->getPrestations();
+                $p = null;
+                foreach ($prestationsContrat as $presta) {
+                  if($prestation == $presta->getIdentifiant()){
+                    $p = $presta;
+                  }
+                }
+                if($prestation && !$p) {
+                  continue;
+                }
+                foreach ($prestationsContrat as $presta) {
+                  $resiliation = 0;
+                  $p_id = $presta->getIdentifiant();
+                  $categorie = self::getCategoriePrestationFromId($p_id);
+                  $keyFacture = $categorie.$facture->getId();
+
+                  if($c && !isset($unicite[$categorie.$c->getId()])) {
+                      $prixContrat = $c->getPrixHT();
+                      $unicite[$categorie.$c->getId()] = true;
+                  } elseif($c && isset($unicite[$categorie.$c->getId()])) {
+                      $prixContrat = 0;
+                  } else {
+                      $prixContrat = $facture->getMontantHT();
+                  }
+
+                  if($keyFacture && isset($unicite[$keyFacture])) {
+                      continue;
+                  }
+
+                  $keyTotal = $categorie."_9_9999999999_TOTAL";
+
+                  $csv[$keyTotal][0] = $categorie;
+                  $csv[$keyTotal][1] = "TOTAL";
+                  $csv[$keyTotal][2] = "";
+                  $csv[$keyTotal][3] = "";
+                  $csv[$keyTotal][4] = "";
+                  $csv[$keyTotal][5] = "";
+                  $csv[$keyTotal][6] = (isset($csv[$keyTotal][6]))? number_format(str_replace(',', '.', $csv[$keyTotal][6]) + $facture->getMontantHT(), 2, ',', '') : number_format($facture->getMontantHT(), 2, ',', '');
+                  $csv[$keyTotal][7] = (isset($csv[$keyTotal][7]))? number_format(str_replace(',', '.', $csv[$keyTotal][7]) + $prixContrat, 2, ',', '') : number_format($prixContrat, 2, ',', '');
+
+                  if($keyFacture) {
+                      $unicite[$keyFacture] = true;
+                  }
+                }
+            }
+
+        }
+        ksort($csv);
+        return $csv;
+
+    }
+
     public function getFacturesSocieteForCsv($societe, $dateDebut = null,$dateFin = null) {
         if(!$dateDebut){
           $dateDebut = new \DateTime();
@@ -574,5 +640,66 @@ public static $export_stats_libelle = array(
 
     public function getRetardDePaiementBySociete(Societe $societe, $nbJourSeuil = 0){
       return $this->getRepository()->findRetardDePaiementBySociete($societe, $nbJourSeuil);
+    }
+
+    public static function getCategoriePrestationFromId($idPrestation){
+      if(preg_match("/^DESINSECTISATION/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+      if(preg_match("/^DERATISATION/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+      if(preg_match("/^DESINFECTION/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+      if(preg_match("/^PUNAISE-VAPEUR/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+      if(preg_match("/^POISSON-ARGENT/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+      if(preg_match("/^DESTRUCTION-/",$idPrestation)){
+        return "PRESTATIONS 3D";
+      }
+
+
+
+      if(preg_match("/^ASSAINISSEMENT-/",$idPrestation)){
+        return "ASSAINISSEMENT";
+      }
+
+      if(preg_match("/^DEPIGEONNAGE-/",$idPrestation)){
+        return "PIGEONS";
+      }
+
+      if(preg_match("/^TRAITEMENT-DES-BOIS-BOIS-SENTRI-TECH/",$idPrestation)){
+        return "SENTRI TECH";
+      }
+      if(preg_match("/^TRAVAUX-DIVERS-SERVICE-MISE-EN-CONFORMITE-SENTRI-TECH/",$idPrestation)){
+        return "SENTRI TECH";
+      }
+
+      if(preg_match("/^TRAITEMENT-DES-BOIS-/",$idPrestation)){
+        return "BOIS";
+      }
+
+      if(preg_match("/^DEBOUCHAGE-VIDE-ORDURE-DIVERS/",$idPrestation)){
+        return "VO";
+      }
+
+      if(preg_match("/^TRAVAUX-DIVERS-SERVICE-VENTE-DE-PRODUITS/",$idPrestation)){
+        return "VENTE DE PRODUIT";
+      }
+
+      if(preg_match("/^CABLE-BIRD-WIRE-DOUBLE/",$idPrestation)){
+        return "VENTE DE PRODUIT";
+      }
+
+
+      if(preg_match("/^TRAVAUX-DIVERS/",$idPrestation)){
+        return "TRAVAUX DIVERS AUTRES";
+      }
+      return $idPrestation;
+
     }
 }

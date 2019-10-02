@@ -76,10 +76,12 @@ class PassageManager {
             $passage->addPrestation($prestation);
         }
         $previousPassage = null;
-        foreach ($contrat->getPassagesEtablissementNode($etablissement)->getPassagesSorted(true) as $p) {
-            if (($p->getId() != $passage->getId()) && count($p->getTechniciens())) {
-                $previousPassage = $p;
-                break;
+        if ($contrat->getPassagesEtablissementNode($etablissement)) {
+            foreach ($contrat->getPassagesEtablissementNode($etablissement)->getPassagesSorted(true) as $p) {
+                if (($p->getId() != $passage->getId()) && count($p->getTechniciens())) {
+                    $previousPassage = $p;
+                    break;
+                }
             }
         }
         if ($previousPassage) {

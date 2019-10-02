@@ -7,7 +7,7 @@
     {% set readOnly = (form.vars.data and form.vars.data.origineDocument and form.vars.data.quantite > 0) %}
     <tr class="dynamic-collection-item">
         <td>
-            {{ form_widget(form.libelle, {'attr': {'readonly': (readOnly) ? "readonly": false }}) }}
+            {{ form_widget(form.libelle) }}
         </td>
         <td >
             {{ form_widget(form.quantite, {'attr': {'readonly': (readOnly) ? "readonly": false }}) }}
@@ -91,7 +91,6 @@
                     </div>
                 </div>
                 {% endif %}
-
             </div>
             <div class="col-xs-5 col-xs-offset-2">
                 <span class="lead">{{ facture.destinataire.nom }}</span><br />
@@ -99,6 +98,19 @@
                 {{ facture.destinataire.codePostal }} {{ facture.destinataire.commune }}<br />
             </div>
         </div>
+        {% if (form.contrat is defined) %}
+        <div class="row">
+            <div class="col-xs-12">
+              <div class="form-group">
+                {{ form_errors(form.contrat) }}
+                {{ form_label(form.contrat, "Contrat", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
+                <div class="col-xs-10">
+                  {{ form_widget(form.contrat) }}
+                </div>
+              </div>
+            </div>
+        </div>
+        {% endif %}
 
         <table class="table table-bordered">
             <thead>
@@ -133,7 +145,7 @@
                 <button type="submit" name="previsualiser" value="previsualiser" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Prévisualiser {% if(facture.isDevis) %}le devis{% else %}la facture{% endif %}</button>
             </div>
             <div class="col-xs-4 text-right">
-                <button type="submit" class="btn btn-success">{% if(facture.isDevis and not facture.numeroDevis) %}Générer le devis{% elseif(facture.numeroFacture) %}Modifier la facture{% elseif(facture.isDevis) %}Modifier le devis{% else %}Générer la facture{% endif %}</button>
+                <button type="submit" class="btn btn-success">{% if(facture.isDevis and not facture.numeroDevis) %}Générer le devis{% elseif(not facture.numeroFacture and facture.getContrat()) %}Modifier la facture prévue{% elseif(facture.numeroFacture) %}Modifier la facture{% elseif(facture.isDevis) %}Modifier le devis{% else %}Générer la facture{% endif %}</button>
             </div>
         </div>
         {{ form_end(form) }}

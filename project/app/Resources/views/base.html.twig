@@ -4,10 +4,10 @@
         <meta charset="{{ _charset }}">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" type="image/ico" href="/favicon_{{ instanceapp }}.ico?v=20170331" sizes="32x32" >
-        <link rel="shortcut icon" type="image/png" href="/favicon_{{ instanceapp }}.png?v=20170331" sizes="32x32" >
+        <link rel="shortcut icon" type="image/ico" href="/favicon_{{ instanceapp }}.ico?v=20190528" sizes="32x32" >
+        <link rel="shortcut icon" type="image/png" href="/favicon_{{ instanceapp }}.png?v=20190528" sizes="32x32" >
         <link rel="apple-touch-icon" sizes="129x129" href="/apple-touch-icon_{{ instanceapp }}.png?v=20170331">
-        <link rel="icon" type="image/png" href="/favicon192x192_{{ instanceapp }}.png" sizes="192x192">
+        <link rel="icon" type="image/png" href="/favicon192x192_{{ instanceapp }}.png?v=20190528" sizes="192x192">
 
         <title>{% block title %}{{ application.shortname }}{% endblock title %}</title>
 
@@ -95,7 +95,7 @@
                           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Plus"><span class="glyphicon glyphicon-option-horizontal" ></span><span class="hidden-lg hidden-md hidden-sm"> Paramètres</span></a>
                           <ul class="dropdown-menu dropdown-menu-right">
                             <li class="{%if (_menu_active == 'configuration') %}active{% endif %}"><a href="{{ path('configuration') }}"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Paramètres</a></li>
-                            <li class="{%if (_menu_active == 'erreurs') %}active{% endif %}"><a href="{{ path('passage_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Passages en erreur</li>
+                            <li class="{%if (_menu_active == 'erreurs') %}active{% endif %}"><a href="{{ path('passage_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Passages non réalisés</li>
                             <li class="{%if (_menu_active == 'contrat_erreurs') %}active{% endif %}"><a href="{{ path('contrats_erreurs') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Contrats en erreur</li>
                               <li class="{%if (_menu_active == 'contrat_decalage') %}active{% endif %}"><a href="{{ path('contrats_decalage') }}"><span class="mdi mdi-lg mdi-announcement"></span>&nbsp;Contrats décalés</li>
                             <li><a href="{{ path('contrats_reconduction_massive') }}" ><span class="glyphicon glyphicon-refresh"></span>&nbsp;Reconduction massive</a></li>
@@ -134,7 +134,7 @@
         </script>
         <script type="text/javascript" src="{{ asset('/js/functions.js') }}"></script>
         <script type="text/javascript" src="{{ asset('/js/calendar-settings.js?date=201904301219') }}"></script>
-        <script type="text/javascript" src="{{ asset('/js/main.js?date=201904301219') }}"></script>
+        <script type="text/javascript" src="{{ asset('/js/main.js?date=201906201754') }}"></script>
 
         {% block javascripts %}{% endblock %}
 

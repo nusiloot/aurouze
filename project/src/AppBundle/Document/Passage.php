@@ -200,6 +200,11 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /**
      * @MongoDB\Field(type="string")
      */
+    protected $secondEmailTransmission;
+
+    /**
+     * @MongoDB\Field(type="string")
+     */
     protected $nomTransmission;
 
     /**
@@ -1369,6 +1374,28 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function getEmailTransmission()
     {
         return $this->emailTransmission;
+    }
+
+    /**
+     * Set secondEmailTransmission
+     *
+     * @param string $secondEmailTransmission
+     * @return self
+     */
+    public function setSecondEmailTransmission($secondEmailTransmission)
+    {
+        $this->secondEmailTransmission = $secondEmailTransmission;
+        return $this;
+    }
+
+    /**
+     * Get secondEmailTransmission
+     *
+     * @return string $secondEmailTransmission
+     */
+    public function getSecondEmailTransmission()
+    {
+        return $this->secondEmailTransmission;
     }
 
     /**

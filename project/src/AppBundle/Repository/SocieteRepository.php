@@ -78,6 +78,10 @@ class SocieteRepository extends DocumentRepository {
     	return $resultSet;
     }
 
+    public function findByIdentifiantReprises(int $idReprise){
+        return $this->findBy(array('identifiantReprise' => $idReprise));
+    }
+
 
 
     public function findByElasticQuery($service, $q, $inactif = false, $limit = 150)
@@ -125,6 +129,18 @@ class SocieteRepository extends DocumentRepository {
                 ->hydrate(false)
                 ->getQuery()
                 ->execute();
+        return $request->toArray();
+    }
+
+    public function findByTag($tag)
+    {
+        $request = $this->createQueryBuilder('Societe')
+                        ->field('tags')->in([$tag])
+                        ->select('identifiant', 'adresse', 'type', 'raisonSociale', 'contactCoordonnee')
+                        ->readOnly()
+                        ->getQuery()
+                        ->execute();
+
         return $request->toArray();
     }
 

@@ -1,0 +1,50 @@
+{% set _menu_active = 'paiements' %}
+{% extends 'base.html.twig' %}
+{% block title %}Prélèvements à venir{% endblock title %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('paiements_liste') }}">Paiements</a></li>
+        <li>Prélèvements</li>
+    </ol>
+
+    <h2>Prélèvements bancaires</h2>
+    <div id="wrapper">
+      {% for date, factures in prelevements %}
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th class="col-xs-3">Prélèvement : {{ date | localizeddate('medium', 'none') }}</th>
+              <th class="col-xs-7"></th>
+              <th class="col-xs-2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for facture in factures %}
+              <tr>
+                <td>
+                  <a href="{{ path('societe_visualisation', {id: facture.societe.id}) }}">{{ facture.destinataire.raisonSociale }}</a>
+                </td>
+                <td> N°&nbsp;{{ facture.getNumeroFacture }}</td>
+                <td>{{ facture.montantTTC }} €</td>
+              </tr>
+              {% for ligne in facture.lignes %}
+                <tr>
+                  <td></td>
+                  <td>
+                    <a href="{{ path('facture_pdf', {id: facture.id}) }}">{{ ligne.libelle }}</a>
+                  </td>
+                  <td>{{ ligne.montantHT + ligne.montantTaxe }} €</td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endfor %}
+    </div>
+
+    <div class="text-center">
+      <a href="{{ path('paiements_liste') }}" class="btn btn-default">Ne pas générer</a>
+      <a href="{{ path('paiements_prelevement') }}" onclick="return confirm('Voulez vous générer le fichier bancaire ?')" class="btn btn-primary">Générer un export pour la banque</a>
+    </div>
+{% endblock %}

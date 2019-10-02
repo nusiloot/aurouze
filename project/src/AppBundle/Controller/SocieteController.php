@@ -63,7 +63,7 @@ class SocieteController extends Controller {
     	$isNew = ($id)? false : true;
     	$societe = (!$isNew)? $this->get('societe.manager')->getRepository()->find($id) : new Societe();
         if(!$isNew){
-            $societe->preInitRum();
+            $societe->preInitRum($this->container->getParameter('instanceapp'));
         }
 
     	$form = $this->createForm(new SocieteType($this->container, $dm, $isNew), $societe, array(
@@ -75,7 +75,7 @@ class SocieteController extends Controller {
     		$societe = $form->getData();
     		$dm->persist($societe);
             if ($isNew) {
-                $societe->preInitRum();
+                $societe->preInitRum($this->container->getParameter('instanceapp'));
             }
     		$dm->flush();
     		if ($isNew && $form->get("generer")->getData()) {
@@ -84,6 +84,7 @@ class SocieteController extends Controller {
     			 $etablissement->setNom($societe->getRaisonSociale());
     			 $etablissement->setType($societe->getType());
     			 $etablissement->setCommentaire($societe->getCommentaire());
+           $this->get('etablissement.manager')->getOSMAdresse()->calculCoordonnees($etablissement->getAdresse());
     			 $dm->persist($etablissement);
     			 $dm->flush();
     		} elseif (!$societe->getActif()) {

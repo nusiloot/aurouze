@@ -39,13 +39,14 @@
 				{% else %}
 					{{ passage.dateDebut| localizeddate('full', 'none') | capitalize }}
 			  {% endif %}
-				{% if passage.duree %} à {{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}{% endif %} </a>
-
+				{% if passage.duree %} à {{passage.dateDebut | date("H") }}h{{passage.dateDebut | date("i") }}{% endif %}
 				{% if (not passage.isRealise and origine is defined and origine == "contrat") %}
-				<a class="btn btn-link btn-xs" href="{{ path('passage_modification', {'id': passage.id, 'service': path('contrat_visualisation', { 'id': contrat.id }) ~ "#" ~ passage.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+				<a class="btn btn-link btn-xs" href="{{ path('passage_modification', {'id': passage.id, 'service': path('contrat_visualisation', { 'id': contrat.id }) ~ "#" ~ passage.id }) }}">
 				{% elseif(not passage.isRealise) %}
-					<a class="btn btn-link btn-xs" href="{{ path('passage_modification', {'id': passage.id}) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+					<a class="btn btn-link btn-xs" href="{{ path('passage_modification', {'id': passage.id}) }}">
 				{% endif %}
+				<span class="glyphicon glyphicon-pencil"></span>
+				</a>
 			{% if(passage.audit) %} <span class="glyphicon glyphicon-user text-danger" data-toggle="tooltip" data-placement="top" title="Audit {{ passage.audit }}">&nbsp;</span>{% endif %}
 		</div>
 		<div class="col-xs-2">

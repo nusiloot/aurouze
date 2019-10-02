@@ -606,7 +606,7 @@ class Facture implements DocumentSocieteInterface {
      */
     public function getSepa() {
         $sepa = $this->sepa;
-        if(!$sepa){
+        if(!$sepa || !$sepa->getIban() || !$sepa->getBic()){
             $sepa = $this->getSociete()->getSepa();
         }
         return $sepa;
@@ -680,10 +680,7 @@ class Facture implements DocumentSocieteInterface {
         $date = ($date) ? $date : new \DateTime();
         switch ($frequence) {
             case ContratManager::FREQUENCE_PRELEVEMENT :
-                $date->modify('+1 month');
-                if($date->format('d') > 20){
-                    $date->modify('+1 month');
-                }
+                $date->modify('+2 month');
                 $date->modify('first day of')->modify('+19 day');
                 break;
             case ContratManager::FREQUENCE_30J :
@@ -1191,4 +1188,23 @@ class Facture implements DocumentSocieteInterface {
     {
         return $this->inPrelevement;
     }
+
+    public function getPrelevementDate(){
+      $dateEmission = clone $this->getDateEmission();
+      if($dateEmission->format('m') > 20){
+          $dateEmission->modify("+2 month");
+      }else{
+          $dateEmission->modify("+1 month");
+      }
+      $dueDate = \DateTime::createFromFormat("Ymd",$dateEmission->format("Y").$dateEmission->format("m")."20");
+      $now = new \DateTime();
+      if($dueDate < $now){
+          if($now->format('m') > 20){
+              $now->modify("+1 month");
+          }
+          $dueDate = \DateTime::createFromFormat("Ymd",$now->format("Y").$now->format("m")."20");
+      }
+      return $dueDate;
+    }
+
 }

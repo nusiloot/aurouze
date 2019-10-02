@@ -43,7 +43,7 @@ class EtablissementCorrectionCommentaireCommand extends ContainerAwareCommand {
                   $com = $etb->getCommentaire();
                   $comBon = $data[14];
                   echo "$id => \"$com\" devient \"$comBon\"\n";
-                  $etb->setCommentaire(str_replace("\n","\\n",$comBon));
+                  $etb->setCommentaire($comBon);
                }else{
                     echo $data[0]." pas etb ! \n";
                }

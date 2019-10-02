@@ -142,7 +142,9 @@ class EtablissementInfos implements EtablissementInfosInterface {
     }
 
     public function getIcon() {
-
+        if(!array_key_exists($this->getType(),EtablissementManager::$type_icon)){
+          return "";
+        }
         return EtablissementManager::$type_icon[$this->getType()];
     }
 
