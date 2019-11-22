@@ -3,11 +3,14 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\Common\Collections\ArrayCollection;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Manager\PaiementsManager;
+use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PaiementsRepository")
+ * @HasLifecycleCallbacks
  */
 class Paiements {
 
@@ -17,6 +20,11 @@ class Paiements {
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\PaiementsGenerator"})
      */
     protected $id;
+
+    /**
+     * @MongoDB\Field(type="string")
+     */
+    protected $version;
 
     /**
      * @MongoDB\Field(type="string")
@@ -53,10 +61,13 @@ class Paiements {
      *
      */
     protected $xmlbase64;
+    
+    protected $drm;
 
-    public function __construct() {
+    public function __construct(DocumentManager $dm) {
         $this->paiement = new ArrayCollection();
         $this->imprime = false;
+        $this->dm = $dm;
     }
 
     /**
@@ -86,6 +97,26 @@ class Paiements {
      */
     public function getIdentifiant() {
         return $this->identifiant;
+    }
+
+    /**
+     * Set version
+     *
+     * @param string $version
+     * @return self
+     */
+    public function setVersion($version) {
+        $this->version = $version;
+        return $this;
+    }
+
+    /**
+     * Get version
+     *
+     * @return string $version
+     */
+    public function getVersion() {
+        return $this->version;
     }
 
     /**
@@ -353,5 +384,33 @@ class Paiements {
     public function getXmlbase64()
     {
         return $this->xmlbase64;
+    }
+
+    public function getRepository() {
+        return $this->dm->getRepository('AppBundle:Paiements');
+    }
+
+    /** @MongoDB\PreUpdate */
+    public function preUpdate() {
+        $this->manageVersion();
+    }
+    
+    /** @MongoDB\PrePersist */
+    public function prePersist() {
+        $this->manageVersion();
+    }
+    
+    private function manageVersion() {
+        if (!$this->getId()) {
+            return;
+        }
+        $recDoc = $this->getRepository()->find($this->getId());
+        if (!$recDoc || !$recDoc->getVersion()) {
+            return;
+        }
+        if ($recDoc->getVersion() == $this->getVersion()) {
+            $this->setVersion(md5(serialize($this)));
+        }
+        throw new \Exception("Document update conflict");
     }
 }

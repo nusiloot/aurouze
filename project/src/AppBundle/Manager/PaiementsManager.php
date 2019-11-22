@@ -144,7 +144,7 @@ class PaiementsManager {
     }
 
     public function createByDateCreation(\DateTime $dateCreation) {
-        $paiements = new Paiements();
+        $paiements = new Paiements($this->dm);
         $paiements->setDateCreation($dateCreation);
         return $paiements;
     }
