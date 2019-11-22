@@ -84,7 +84,7 @@ class ContratController extends Controller {
 
         return $this->modificationAction($request, $contrat);
     }
-    
+
 
 
     /**
@@ -93,10 +93,10 @@ class ContratController extends Controller {
      */
     public function transfertAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         $contratManager = new ContratManager($dm);
         $etablissementRepository = $dm->getRepository('AppBundle:Etablissement');
-        
+
         $form = $this->createForm(new ContratTransfertType($contrat, $dm), null, array(
             'action' => $this->generateUrl('contrat_transfert', array('id' => $contrat->getId())),
             'method' => 'post',
@@ -104,7 +104,7 @@ class ContratController extends Controller {
         $complete = true;
         $form->handleRequest($request);
         $factures = $contratManager->getAllFactureForContrat($contrat);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             $formValues =  $form->getData();
             foreach ($formValues as $k => $v) {
@@ -113,26 +113,26 @@ class ContratController extends Controller {
                     break;
                 }
             }
-            
+
             if ($complete) {
-                
+
                 $contrat->setSociete($formValues['societe']);
-                
+
                 $etablissementsArr = array();
-                
+
                 foreach ($contrat->getEtablissements() as $oldEtb) {
                     $etablissementsArr[$oldEtb->getId()] = $oldEtb;
                 }
-                
+
                 foreach ($etablissementsArr as $oldEtb) {
                     $etbN = $etablissementRepository->find($formValues[$oldEtb->getId()]);
                     $contrat->addEtablissement($etbN);
                 }
-                
+
                 foreach ($etablissementsArr as $oldEtb) {
                     $contrat->removeEtablissement($oldEtb);
                 }
-                
+
                 foreach ($contrat->getContratPassages() as $oldId => $contratPassages) {
                     $etbN = $etablissementRepository->find($formValues[$oldId]);
                     foreach ($contratPassages->getPassages() as $passage) {
@@ -142,17 +142,17 @@ class ContratController extends Controller {
                     $contrat->removeContratPassage($contratPassages);
                     $contrat->addContratPassage($etbN,$contratPassages);
                 }
-                
+
                 foreach ($factures as $facture) {
                     $facture->setSociete($formValues['societe']);
                 }
-                
+
                 $dm->flush();
-                
+
                 return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
             }
         }
-        
+
         return $this->render('contrat/transfert.html.twig', array('contrat' => $contrat, 'form' => $form->createView(), 'societe' => $contrat->getSociete(), 'factures' => $factures, 'complete' => $complete));
     }
 
@@ -226,7 +226,7 @@ class ContratController extends Controller {
                 }
                 if ($contrat->getDateDebut()) {
                 	$dateFinCalcule = \DateTime::createFromFormat('Y-m-d H:i:s',$contrat->getDateDebut()->format('Y-m-d')." 00:00:00");
-                	$contrat->setDateFin($dateFinCalcule->modify("+" . $contrat->getDuree() . " month"));
+                	$contrat->setDateFin($dateFinCalcule->modify("+" . $contrat->getDuree() . " month -1 second"));
                 }
                 $dm->persist($contrat);
                 $dm->flush();
@@ -383,6 +383,7 @@ class ContratController extends Controller {
      * @ParamConverter("contrat", class="AppBundle:Contrat")
      */
     public function visualisationAction(Request $request, Contrat $contrat) {
+
         if($contrat->isEnAttenteAcceptation()) {
 
             return $this->redirectToRoute('contrat_acceptation', array('id' => $contrat->getId()));
@@ -423,7 +424,7 @@ class ContratController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $cm = $this->get('contrat.manager');
         if (!$contrat->getMarkdown()) {
-            $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat, 'contratManager' => $cm)));
+            $contrat->setMarkdown($this->renderView('contrat/contrat.markdown.twig', array('contrat' => $contrat, 'societe' => $contrat->getSociete(), 'contratManager' => $cm)));
             $dm->persist($contrat);
             $dm->flush();
         }
@@ -453,8 +454,7 @@ class ContratController extends Controller {
             $dm->flush();
         }
 
-
-        return $this->render('contrat/visualisation.markdown.twig', array('contrat' => $contrat, 'formMarkdown' => $formMarkdown->createView(), 'formGenerator' => $formGenerator->createView()));
+        return $this->render('contrat/visualisation.markdown.twig', array('contrat' => $contrat, 'societe' => $contrat->getSociete(), 'formMarkdown' => $formMarkdown->createView(), 'formGenerator' => $formGenerator->createView()));
     }
 
     /**

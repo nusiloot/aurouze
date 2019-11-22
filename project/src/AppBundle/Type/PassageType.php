@@ -40,6 +40,7 @@ class PassageType extends AbstractType
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
+            'required' => false,
             'label' => '',
         ));
 
