@@ -458,6 +458,8 @@ class PassageController extends Controller
         $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('passage.manager');
         $parameters = $pm->getParameters();
+        $appname = $this->container->getParameter('instanceapp');
+
         if(!$parameters['coordonnees'] || !$parameters['coordonnees']['email'] || !$parameters['coordonnees']['nom']){
             throw new Exception("Le paramétrage pour le mail d'envoie n'est pas correct.");
         }
@@ -465,9 +467,9 @@ class PassageController extends Controller
         $fromEmail = $parameters['coordonnees']['email'];
         $fromName = $parameters['coordonnees']['nom'];
 
-        $replyEmail = $parameters['coordonnees']['replyEmail'];
+        $replyEmail = $parameters['coordonnees']['replyemail'];
 
-        $suject = $parameters["shortname"]." - Rapport de visite du ".$passage->getDateDebut()->format("d/m/Y")." à ".$passage->getDateDebut()->format("H\hi");
+        $suject = "[".ucfirst($appname)."] - Rapport de visite du ".$passage->getDateDebut()->format("d/m/Y")." à ".$passage->getDateDebut()->format("H\hi");
         $body = $this->renderView(
             'passage/rapportEmail.html.twig',
             array('passage' => $passage)
