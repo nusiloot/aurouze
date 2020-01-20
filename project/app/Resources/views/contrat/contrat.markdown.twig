@@ -122,7 +122,7 @@ Cette proposition a été établie pour une durée de {{ contrat.duree }} mois{%
 
 
 Devis valable 2 mois à compter de la date d'édition.
-Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% endif %}.
+{% if contrat.nbFactures > 0 %}Payable en {{ contrat.nbFactures }} facture{% if contrat.nbFactures > 1 %}s{% endif %}.{% endif %}
 Délai de paiement des factures : {%if (contrat.frequencePaiement)%} {{ contratManager.getFrequence(contrat.frequencePaiement)}}{% endif %} .
 
 ## Responsabilité civile
