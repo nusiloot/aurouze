@@ -52,7 +52,7 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="actionButton">
                     {% if facture.isDevis %}
-                        <li><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis', 'id': facture.id })}}" class="btn btn-default btn-xs">Modifier {% if(facture.isAvoir) %}l'avoir{% else %}la facture{% endif %}</a></li>
+                        <li><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'devis', 'id': facture.id })}}">Modifier le devis</a></li>
                         <li><a href="{{ path('facture_creation', { 'societe': societe.id, 'type': 'facture', 'id': facture.id })}}">Créer la facture</a></li>
                     {% else %}
                             {% if(facture.numeroFacture and facture.isEditable) %}
