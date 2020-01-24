@@ -58,9 +58,16 @@ class RendezVous {
      */
     protected $passage;
 
+
+  /**
+   * @MongoDB\Field(type="bool")
+   */
+   protected $rendezVousConfirme;
+
     public function __construct()
     {
         $this->participants = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->rendezVousConfirme = true;
     }
 
     public function getEventJson($backgroundColor) {
@@ -72,7 +79,7 @@ class RendezVous {
         $event->textColor = $this->getTextColor();
         $event->backgroundColor =  $this->getStatusColor();
         $event->borderColor = $this->getBorderColor();
-
+        $event->rendezVousConfirme = $this->getRendezVousConfirme();
         return $event;
     }
 
@@ -261,6 +268,27 @@ class RendezVous {
     public function getTitre()
     {
         return $this->titre;
+    }
+
+
+    /**
+     * Set rendezVousConfirme
+     *
+     * @param boolean $rendezVousConfirme
+     * @return self
+     */
+    public function setRendezVousConfirme($rendezVousConfirme) {
+        $this->rendezVousConfirme = $rendezVousConfirme;
+        return $this;
+    }
+
+    /**
+     * Get rendezVousConfirme
+     *
+     * @return boolean $rendezVousConfirme
+     */
+    public function getRendezVousConfirme() {
+        return $this->rendezVousConfirme;
     }
 
     /**
