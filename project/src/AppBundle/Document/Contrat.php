@@ -868,7 +868,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
         return $mouvement;
     }
-    
+
     public function getLibelleMouvement() {
         $nbFactures = $this->getNbFactures();
         $nbMvts = count($this->getMouvements()) + 1;
@@ -1514,7 +1514,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $nbMois = $contrat->getDuree();
 
         $dateDebut = $dateDebut->modify("+" . $nbMois . " month");
-        $dateFin = $dateFin->modify("+" . $nbMois . " month");
+        $dateFin = $dateFin->modify("+" . $nbMois . " month -1 second ");
 
         $contrat->setDateDebut($dateDebut);
         $contrat->setDateFin($dateFin);

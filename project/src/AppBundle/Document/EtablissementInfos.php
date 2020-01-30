@@ -36,6 +36,11 @@ class EtablissementInfos implements EtablissementInfosInterface {
      */
     protected $type;
 
+    /**
+     * @MongoDB\Field(type="bool")
+     */
+    protected $mauvaisPayeur;
+
     public function __construct() {
         $this->adresse = new Adresse();
     }
@@ -104,6 +109,29 @@ class EtablissementInfos implements EtablissementInfosInterface {
     public function getType()
     {
         return $this->type;
+    }
+
+
+    /**
+     * Set mauvaisPayeur
+     *
+     * @param string $mauvaisPayeur
+     * @return self
+     */
+    public function setMauvaisPayeur($mauvaisPayeur)
+    {
+        $this->mauvaisPayeur = $mauvaisPayeur;
+        return $this;
+    }
+
+    /**
+     * Get mauvaisPayeur
+     *
+     * @return string $mauvaisPayeur
+     */
+    public function getMauvaisPayeur()
+    {
+        return $this->mauvaisPayeur;
     }
 
     public function getLibelle() {

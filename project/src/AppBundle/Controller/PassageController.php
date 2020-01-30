@@ -23,6 +23,7 @@ use AppBundle\Type\InterventionRapideCreationType;
 use AppBundle\Manager\ContratManager;
 use AppBundle\Document\Prestation;
 use AppBundle\Manager\EtablissementManager;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class PassageController extends Controller
 {
@@ -36,20 +37,19 @@ class PassageController extends Controller
     public function showInformationsAction(Passage $passage)
     {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        
+
         $etablissement = $passage->getEtablissement();
         $contrat = $passage->getContrat();
         $societe = $contrat->getSociete();
         $facture = $this->get('facture.manager');
         $lastPassage = $dm->getRepository('AppBundle:Passage')->findLastPassage($etablissement, $passage);
-        
+
         return $this->render('passage/infossupplementaires.html.twig',
             [
                 'passage' => $passage,
                 'etablissement' => $etablissement,
                 'contrat' => $contrat,
                 'societe' => $societe,
-                'retard' => count($facture->getRetardDePaiementBySociete($societe)) > 0,
                 'lastPassage' => $lastPassage
             ]
         );
@@ -68,8 +68,8 @@ class PassageController extends Controller
         if($this->getParameter('secteurs')) {
             $secteur = 'PARIS';
         }
-
-        return $this->redirectToRoute('passage_secteur', array('secteur' => $secteur));
+        $passagesFiltreExportForm = $this->getPassagesFiltreExportForm();
+        return $this->redirectToRoute('passage_secteur', array('secteur' => $secteur,'passagesFiltreExportForm' => $passagesFiltreExportForm->createView()));
     }
 
     /**
@@ -122,6 +122,7 @@ class PassageController extends Controller
         $coordinatesCenter->setLon($lon);
         $coordinatesCenter->setZoom($zoom);
         $geojson = $this->buildGeoJson($passages);
+        $passagesFiltreExportForm = $this->getPassagesFiltreExportForm();
 
         return $this->render('passage/index.html.twig', array('passages' => $passages,
             'anneeMois' => $anneeMois,
@@ -133,8 +134,53 @@ class PassageController extends Controller
             'passageManager' => $passageManager,
             'etablissementManager' => $this->get('etablissement.manager'),
             'secteur' => $secteur,
-            'coordinatesCenter' => $coordinatesCenter));
+            'coordinatesCenter' => $coordinatesCenter,
+            'passagesFiltreExportForm' => $passagesFiltreExportForm->createView()));
     }
+
+
+    public function getPassagesFiltreExportForm(){
+      $formBuilder = $this->createFormBuilder();
+      $formBuilder->add('filtre', HiddenType::class, array());
+      $formBuilder->setAction($this->generateUrl('passages_filtre_export'));
+      return $formBuilder->getForm();
+    }
+
+    /**
+     * @Route("/passages-filtre-export", name="passages_filtre_export")
+     */
+    public function passagesFiltreExportAction(Request $request) {
+        $passagesFiltreExportForm = $this->getPassagesFiltreExportForm();
+        $passagesFiltreExportForm->handleRequest($request);
+        if ($passagesFiltreExportForm->isSubmitted() && $passagesFiltreExportForm->isValid()) {
+          $datas = $passagesFiltreExportForm->getData();
+          $passagesIds = json_decode($datas['filtre']);
+          $dm = $this->get('doctrine_mongodb')->getManager();
+          $pm = $this->get('passage.manager');
+          $passagesForCsv = $pm->getPassagesForCsv($passagesIds);
+
+          $handle = fopen('php://memory', 'r+');
+
+          foreach ($passagesForCsv as $passage) {
+              fputcsv($handle, $passage,';');
+          }
+
+          rewind($handle);
+          $content = stream_get_contents($handle);
+          fclose($handle);
+
+          $response = new Response(utf8_decode($content), 200, array(
+              'Content-Type' => 'text/csv',
+              'Content-Disposition' => 'attachment; filename="export_passages.csv"',
+          ));
+          $response->setCharset('UTF-8');
+
+          return $response;
+        }
+
+        return $this->redirectToRoute('passage_secteur', array('secteur' => $secteur));
+    }
+
 
     /**
      * @Route("/passage/{id_etablissement}/{id_contrat}/creer", name="passage_creation")

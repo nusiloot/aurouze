@@ -1,10 +1,4 @@
 <div class="well">
-  {% if retard  %}
-    <div class="alert alert-danger" role="alert">
-      <i class="mdi mdi-lg mdi-money-off"></i>
-      <strong>Attention !</strong> Mauvais payeur.
-    </div>
-  {% endif %}
   <a class="btn btn-default" href="{{ path("passage_etablissement", {'id': etablissement.id}) }}">Voir l'établissement</a>
   <a class="btn btn-primary" href="{{ path("passage_planifier", {'passage': passage.id}) }}">Planifier</a>
   <h5>
