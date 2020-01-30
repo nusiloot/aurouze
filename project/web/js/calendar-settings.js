@@ -157,6 +157,7 @@ $(function () {
           }
 					if(event.rendezVousConfirme === false){
 						element.find(".fc-title").append('<span class="text-muted" style="position:absolute; bottom: -10px; right: 0px;" ><span class="mdi mdi-add-alert"></span>&nbsp;N.C.</span>');
+						element.find(".fc-event.fc-bg").css("border", "1px solid red");
 					}
         },
         eventAfterRender: function(event, element) {
