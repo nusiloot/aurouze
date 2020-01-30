@@ -178,16 +178,17 @@ class PassageManager {
         $prixUnitaire = ($contrat->getNbPassages())? round($contrat->getPrixHt() / $contrat->getNbPassages(),2) : 0;
         $prixUnitaireTotal += $prixUnitaire;
 
+
+
+        $restantAuContrat = $contrat->getPrixRestant();
+        $restantTotalDesContrats += $restantAuContrat;
+
         $prixFacture = 0;
         if($passage->getMouvementDeclenchable()){
           $mvt = $contrat->generateMouvement($passage);
           $prixFacture = $mvt->getPrixUnitaire();
         }
         $prixFactureTotal+= $prixFacture;
-
-
-        $restantAuContrat = $contrat->getPrixRestant();
-        $restantTotalDesContrats += $restantAuContrat;
 
         $passageRow[] = $passage->getDatePrevision()->format('Y-m-d');
         $passageRow[] = $passage->getEtablissementInfos()->getNom();
