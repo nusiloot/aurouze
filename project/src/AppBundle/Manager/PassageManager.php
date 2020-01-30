@@ -156,4 +156,59 @@ class PassageManager {
       }
       return self::$typesInfestationLibelles[$infestation];
     }
+
+    public function getPassagesForCsv($passageIds){
+      $pr = $this->dm->getRepository('AppBundle:Passage');
+      $resultCsv = array();
+
+      $passageEntete[] = "Date de prévision";
+      $passageEntete[] = "Nom";
+      $passageEntete[] = "Adresse";
+      $passageEntete[] = "Type";
+      $passageEntete[] = "Numéro Contrat";
+      $passageEntete[] = "Prix estimatif unitaire du passage";
+      $passageEntete[] = "Prix estimatif de la facture du passage";
+      $passageEntete[] = "Restant à facturer dans le contrat";
+      $prixUnitaireTotal = $restantTotalDesContrats = $prixFactureTotal = 0;
+      $resultCsv[] = $passageEntete;
+      foreach ($passageIds as $passageId) {
+        $passageRow = array();
+        $passage = $pr->findOneById($passageId);
+        $contrat = $passage->getContrat();
+        $prixUnitaire = ($contrat->getNbPassages())? round($contrat->getPrixHt() / $contrat->getNbPassages(),2) : 0;
+        $prixUnitaireTotal += $prixUnitaire;
+
+        $prixFacture = 0;
+        if($passage->getMouvementDeclenchable()){
+          $mvt = $contrat->generateMouvement($passage);
+          $prixFacture = $mvt->getPrixUnitaire();
+        }
+        $prixFactureTotal+= $prixFacture;
+
+
+        $restantAuContrat = $contrat->getPrixRestant();
+        $restantTotalDesContrats += $restantAuContrat;
+
+        $passageRow[] = $passage->getDatePrevision()->format('Y-m-d');
+        $passageRow[] = $passage->getEtablissementInfos()->getNom();
+        $passageRow[] = $passage->getEtablissementInfos()->getAdresse()->getLibelleComplet();
+        $passageRow[] = $passage->getEtablissementInfos()->getType();
+        $passageRow[] = $contrat->getNumeroArchive();
+        $passageRow[] = $prixUnitaire;
+        $passageRow[] = $prixFacture;
+        $passageRow[] = $restantAuContrat;
+        $resultCsv[] = $passageRow;
+      }
+      $totaux = array();
+      $totaux[] = "TOTAL";
+      $totaux[] = "";
+      $totaux[] = "";
+      $totaux[] = "";
+      $totaux[] = "";
+      $totaux[] = $prixUnitaireTotal;
+      $totaux[] = $prixFactureTotal;
+      $totaux[] = $restantTotalDesContrats;
+      $resultCsv[] = $totaux;
+      return $resultCsv;
+    }
 }

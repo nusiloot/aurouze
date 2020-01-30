@@ -68,7 +68,7 @@ class CalendarController extends Controller {
         }
 
         $date = $request->get('date', new \DateTime());
-        
+
         $calendarTool = new CalendarDateTool($date, $request->get('mode', CalendarDateTool::MODE_WEEK), $this->container->getParameter('calendar_extra'));
 
         $etablissement = null;
@@ -240,7 +240,7 @@ class CalendarController extends Controller {
 
             return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView()));
         }
-        
+
         if ($form->get("all")->getData()) {
             $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
             $rdv->removeAllParticipants();
@@ -318,6 +318,13 @@ class CalendarController extends Controller {
 
         if(!$rdv) {
             throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("Le rendez-vous \"%s\" n'a pas été trouvé", $request->get('id')));
+        }
+
+        $edition = (!$rdv->getPassage() || (!$rdv->getPassage()->isRealise()));
+
+        if(!$edition && !$request->get('forceEdition', false)) {
+
+            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'service' => $request->get('service')));
         }
 
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(

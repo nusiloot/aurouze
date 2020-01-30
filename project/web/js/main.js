@@ -453,7 +453,7 @@
             }
             $(this).select2({
                 theme: 'bootstrap',
-                minimumInputLength: 3,
+                minimumInputLength: 2,
                 allowClear: true,
                 ajax: {
                     type: "GET",
@@ -689,6 +689,8 @@
 
                 $(document).find('.hamzastyle').trigger("change");
                 $(document).find('.hamzastyle').val(select2Data).trigger("change");
+                var exportfiltre = $(document).find('.hamzastyle').attr('data-hamzastyle-export');
+                var ids = [];
                 $(document).find('.hamzastyle-item').each(function () {
                     var words = JSON.parse($(this).attr('data-words'));
                     var find = true;
@@ -700,10 +702,16 @@
                     }
                     if (find) {
                         $(this).show();
+                        if(exportfiltre && !$(this).hasClass('show-print')){
+                          ids.push($(this).attr('id'));
+                        }
                     } else {
                         $(this).hide();
                     }
                 });
+                if(exportfiltre){
+                  $(exportfiltre).val(JSON.stringify(ids));
+                }
             }
             if ($(document).find('.nav.nav-tabs').length) {
                 var params = jQuery.parseParams(location.hash.replace("#", ""));

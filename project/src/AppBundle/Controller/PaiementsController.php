@@ -135,7 +135,7 @@ class PaiementsController extends Controller {
     public function nouveauAction(Request $request) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $paiements = new Paiements();
+        $paiements = new Paiements($this->get('doctrine_mongodb')->getManager());
 
         $paiements->setPrelevement(false);
 
@@ -312,7 +312,7 @@ class PaiementsController extends Controller {
         $date = new \DateTime('now');
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $paiements = new Paiements();
+        $paiements = new Paiements($this->get('doctrine_mongodb')->getManager());
         $paiements->setDateCreation($date);
         $paiements->setPrelevement(true);
         $paiements->setImprime(false);
