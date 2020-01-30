@@ -813,8 +813,6 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     public function getPrixRestant() {
-        $prixMouvement = $this->getPrixMouvements();
-
         return $this->getPrixHt() - $this->getPrixMouvements();
     }
 
