@@ -404,6 +404,9 @@ class Paiements {
         if (!$this->getId()) {
             return;
         }
+        if (!$this->getRepository()) {
+            return;
+        }
         $recDoc = $this->getRepository()->find($this->getId());
         if (!$recDoc || !$recDoc->getVersion()) {
             return;
