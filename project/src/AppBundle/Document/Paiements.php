@@ -62,7 +62,7 @@ class Paiements {
      */
     protected $xmlbase64;
     
-    protected $drm;
+    protected $dm;
 
     public function __construct(DocumentManager $dm) {
         $this->paiement = new ArrayCollection();
