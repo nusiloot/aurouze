@@ -136,7 +136,7 @@ class PaiementsManager {
 
     public function getRepository() {
 
-        return ($this->dm)? $this->dm->getRepository('AppBundle:Paiements') : null;
+        return $this->dm->getRepository('AppBundle:Paiements');
     }
 
     public function getParameters() {

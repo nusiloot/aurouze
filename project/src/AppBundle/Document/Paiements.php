@@ -387,7 +387,7 @@ class Paiements {
     }
 
     public function getRepository() {
-        return $this->dm->getRepository('AppBundle:Paiements');
+        return ($this->dm)? $this->dm->getRepository('AppBundle:Paiements') : null;
     }
 
     /** @MongoDB\PreUpdate */
