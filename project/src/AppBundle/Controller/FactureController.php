@@ -136,6 +136,20 @@ class FactureController extends Controller {
     }
 
     /**
+     * @Route("/societe/{societe}/facture/{id}/suppression", name="facture_suppression")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     * @ParamConverter("facture", class="AppBundle:Facture")
+     */
+    public function suppressionAction(Request $request, Societe $societe, Facture $facture) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        if (!$facture->getNumeroFacture() && $facture->getContrat() && !$facture->isDevis() && !$facture->isAvoir()) {
+            $dm->remove($facture);
+            $dm->flush();
+        }
+        return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
+    }
+
+    /**
      * @Route("/societe/{id}", name="facture_societe")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
