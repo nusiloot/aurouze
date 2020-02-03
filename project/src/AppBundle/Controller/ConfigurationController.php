@@ -89,6 +89,11 @@ class ConfigurationController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $configuration = $form->getData();
+            foreach ($configuration->getPrestations() as $prestation) {
+                if (! $prestation->getIdentifiant()) {
+                    $prestation->setIdentifiant(strtoupper(Transliterator::urlize(trim($prestation->getNom()))));
+                }
+            }
             $dm->persist($configuration);
             $dm->flush();
             return $this->redirectToRoute('configuration');
