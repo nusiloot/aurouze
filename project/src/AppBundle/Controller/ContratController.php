@@ -219,6 +219,9 @@ class ContratController extends Controller {
                 $contrat->setStatut(ContratManager::STATUT_EN_COURS);
                 $dm->persist($contrat);
                 $dm->flush();
+
+                $this->sendContratEmail('accepte', $contrat);
+
                 return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
             } elseif(!$isBrouillon) {
                 if ((!$oldTechnicien) || $oldTechnicien->getId() != $contrat->getTechnicien()->getId()) {
@@ -339,6 +342,8 @@ class ContratController extends Controller {
             $commentaire.= $form['commentaireResiliation']->getData();
             $contrat->setCommentaire($commentaire);
             $dm->flush();
+
+            $this->sendContratEmail('resilie', $contrat);
 
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
@@ -754,6 +759,46 @@ class ContratController extends Controller {
 
     public function getPdfGenerationOptions() {
     	return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4);
+    }
+
+    private function sendContratEmail($etat, $contrat)
+    {
+        if (! in_array($etat, ['accepte', 'resilie'])) {
+            return;
+        }
+
+        switch ($etat) {
+            case 'accepte':
+                $subject = "Contrat $contrat->getNumeroArchive() accepte";
+                $template = 'contrat/emailAcceptation';
+                break;
+            case 'resilie':
+                $subject = "Contrat $contrat->getNumeroArchive() resilié";
+                $template = 'contrat/emailResiliation';
+                break;
+        }
+
+        $emailCommercial = $contrat->getCommercial()->getContactCoordonnee()->getEmail();
+        $parameters = $this->get('contrat.manager')->getParameters();
+
+        if ($emailCommercial) {
+            $message = \Swift_Message::newInstance()
+                ->setSubject($subject)
+                ->setFrom([
+                    $parameters['coordonnees']['email'] => $parameters['coordonnees']['nom']
+                ])
+                ->setTo($contrat->getCommercial()->getEmail())
+                ->setBody(
+                    $this->renderView($template, compact($contrat)),
+                    'text/plain'
+                );
+
+            try {
+                $this->get('mailer')->send($message);
+            }
+            catch(Exception $e) {
+            }
+        }
     }
 
 }
