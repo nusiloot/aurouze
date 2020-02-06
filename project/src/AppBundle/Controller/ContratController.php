@@ -327,7 +327,7 @@ class ContratController extends Controller {
                         continue;
                     }
                     $passage->setStatut(PassageManager::STATUT_ANNULE);
-                    $passage->setCommentaire("Annuler suite à l'annulation du contrat");
+                    $passage->setCommentaire("Annulé suite à l'annulation du contrat");
                 }
             }
             foreach ($contrat->getMouvements() as $mouvement) {
