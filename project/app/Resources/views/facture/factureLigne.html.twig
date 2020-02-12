@@ -78,7 +78,7 @@
                 </div>
               {% endif %}
               {% if not facture.numeroFacture and not facture.isDevis %}
-                <a class="btn btn-default btn-xs " href="{% if societe is defined %}{{ path('facture_en_attente_facturer', { 'factureId': facture.id, 'retour' : societe.id })}}{% else %}{{ path('facture_en_attente_facturer', { 'factureId': facture.id })}}{% endif %}">Facturer</a>
+                <a class="btn btn-default btn-xs " href="{{ path('facture_en_attente_facturer', { 'factureId': facture.id }) }}">Facturer</a>
               {% endif %}
             </td>
         </tr>

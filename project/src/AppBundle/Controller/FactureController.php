@@ -228,12 +228,8 @@ class FactureController extends Controller {
         $fm->getRepository()->getClassMetadata()->idGenerator->generateNumeroFacture($dm, $facture);
         $dm->persist($facture);
         $dm->flush();
-        $retour = ($request->get('retour', null));
 
-        if($retour){
-          return $this->redirectToRoute('facture_societe', array('id' => $retour));
-        }
-        return $this->redirectToRoute('facture');
+        return $this->redirectToRoute('facture_societe', array('id' => $facture->getSociete()->getId()));
     }
 
 
