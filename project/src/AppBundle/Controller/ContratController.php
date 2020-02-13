@@ -787,7 +787,7 @@ class ContratController extends Controller {
                 ->setFrom([
                     $parameters['coordonnees']['email'] => $parameters['coordonnees']['nom']
                 ])
-                ->setTo($contrat->getCommercial()->getEmail())
+                ->setTo($contrat->getCommercial()->getContactCoordonnee()->getEmail())
                 ->setBody(
                     $this->renderView($template, compact($contrat)),
                     'text/plain'
