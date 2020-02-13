@@ -1,4 +1,4 @@
 Le client {{ contrat.societe.raison_sociale }} a résilié le contrat {{ contrat.numeroArchive }}.
 
 Vous pouvez le visualiser ici :
-{{ path('contrat_visualisation', {contrat: contrat}) }}
+{{ path('contrat_visualisation', {'id': contrat.id}) }}
