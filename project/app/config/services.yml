@@ -39,7 +39,7 @@ services:
 
     contrat.manager:
         class: AppBundle\Manager\ContratManager
-        arguments: [@doctrine_mongodb.odm.default_document_manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, "%passage%"]
 
     passage.manager:
         class: AppBundle\Manager\PassageManager
