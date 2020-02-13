@@ -94,7 +94,7 @@ class ContratController extends Controller {
     public function transfertAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contratManager = new ContratManager($dm);
+        $contratManager = $this->get('contrat.manager');
         $etablissementRepository = $dm->getRepository('AppBundle:Etablissement');
 
         $form = $this->createForm(new ContratTransfertType($contrat, $dm), null, array(
@@ -163,7 +163,7 @@ class ContratController extends Controller {
     public function modificationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contratManager = new ContratManager($dm);
+        $contratManager = $this->get('contrat.manager');
 
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
             'action' => "",
@@ -196,7 +196,7 @@ class ContratController extends Controller {
     public function acceptationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contratManager = new ContratManager($dm);
+        $contratManager = $this->get('contrat.manager');
         $oldTechnicien = $contrat->getTechnicien();
         $isBrouillon = $request->get('brouillon');
         $form = $this->createForm(new ContratAcceptationType($dm, $contrat), $contrat, array(
@@ -263,7 +263,7 @@ class ContratController extends Controller {
     public function reconductionHistoriqueAction(Request $request) {
       $dm = $this->get('doctrine_mongodb')->getManager();
 
-      $contratManager = new ContratManager($dm);
+      $contratManager = $this->get('contrat.manager');;
       $listeReconductions = $contratManager->getNbContratsReconduitByDateReconduction();
       return $this->render('contrat/reconduction_historique.html.twig',array('listeReconductions' => $listeReconductions));
 
@@ -769,11 +769,11 @@ class ContratController extends Controller {
 
         switch ($etat) {
             case 'accepte':
-                $subject = "Contrat $contrat->getNumeroArchive() accepte";
+                $subject = "Contrat ".$contrat->getNumeroArchive()." accepte";
                 $template = 'contrat/emailAcceptation';
                 break;
             case 'resilie':
-                $subject = "Contrat $contrat->getNumeroArchive() resilié";
+                $subject = "Contrat ".$contrat->getNumeroArchive()." resilié";
                 $template = 'contrat/emailResiliation';
                 break;
         }
