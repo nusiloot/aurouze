@@ -996,7 +996,7 @@ class FactureController extends Controller {
      */
     public function retardsAction(Request $request) {
 
-        return $this->retardsFilters($request, $societe);
+        return $this->retardsFilters($request);
 
     }
 
