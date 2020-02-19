@@ -789,7 +789,7 @@ class ContratController extends Controller {
                 ])
                 ->setTo($contrat->getCommercial()->getContactCoordonnee()->getEmail())
                 ->setBody(
-                    $this->renderView($template.'.html.twig', compact($contrat)),
+                    $this->renderView($template.'.html.twig', array('contrat' => $contrat)),
                     'text/plain'
                 );
 
