@@ -186,7 +186,9 @@ class PassageManager {
         $prixFacture = 0;
         if($passage->getMouvementDeclenchable()){
           $mvt = $contrat->generateMouvement($passage);
-          $prixFacture = $mvt->getPrixUnitaire();
+          if($mvt){
+            $prixFacture = $mvt->getPrixUnitaire();
+          }
         }
         $prixFactureTotal+= $prixFacture;
 
