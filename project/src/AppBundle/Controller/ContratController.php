@@ -94,7 +94,7 @@ class ContratController extends Controller {
     public function transfertAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contratManager = new ContratManager($dm);
+        $contratManager = $this->get('contrat.manager');
         $etablissementRepository = $dm->getRepository('AppBundle:Etablissement');
 
         $form = $this->createForm(new ContratTransfertType($contrat, $dm), null, array(
@@ -163,7 +163,7 @@ class ContratController extends Controller {
     public function modificationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contratManager = new ContratManager($dm);
+        $contratManager = $this->get('contrat.manager');
 
         $form = $this->createForm(new ContratType($this->container, $dm), $contrat, array(
             'action' => "",
@@ -196,7 +196,7 @@ class ContratController extends Controller {
     public function acceptationAction(Request $request, Contrat $contrat) {
         $dm = $this->get('doctrine_mongodb')->getManager();
 
-        $contratManager = new ContratManager($dm);
+        $contratManager = $this->get('contrat.manager');
         $oldTechnicien = $contrat->getTechnicien();
         $isBrouillon = $request->get('brouillon');
         $form = $this->createForm(new ContratAcceptationType($dm, $contrat), $contrat, array(
@@ -219,6 +219,9 @@ class ContratController extends Controller {
                 $contrat->setStatut(ContratManager::STATUT_EN_COURS);
                 $dm->persist($contrat);
                 $dm->flush();
+
+                $this->sendContratEmail('accepte', $contrat);
+
                 return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
             } elseif(!$isBrouillon) {
                 if ((!$oldTechnicien) || $oldTechnicien->getId() != $contrat->getTechnicien()->getId()) {
@@ -260,7 +263,7 @@ class ContratController extends Controller {
     public function reconductionHistoriqueAction(Request $request) {
       $dm = $this->get('doctrine_mongodb')->getManager();
 
-      $contratManager = new ContratManager($dm);
+      $contratManager = $this->get('contrat.manager');;
       $listeReconductions = $contratManager->getNbContratsReconduitByDateReconduction();
       return $this->render('contrat/reconduction_historique.html.twig',array('listeReconductions' => $listeReconductions));
 
@@ -324,7 +327,7 @@ class ContratController extends Controller {
                         continue;
                     }
                     $passage->setStatut(PassageManager::STATUT_ANNULE);
-                    $passage->setCommentaire("Annuler suite à l'annulation du contrat");
+                    $passage->setCommentaire("Annulé suite à l'annulation du contrat");
                 }
             }
             foreach ($contrat->getMouvements() as $mouvement) {
@@ -339,6 +342,8 @@ class ContratController extends Controller {
             $commentaire.= $form['commentaireResiliation']->getData();
             $contrat->setCommentaire($commentaire);
             $dm->flush();
+
+            $this->sendContratEmail('resilie', $contrat);
 
             return $this->redirectToRoute('contrat_visualisation', array('id' => $contrat->getId()));
         }
@@ -754,6 +759,46 @@ class ContratController extends Controller {
 
     public function getPdfGenerationOptions() {
     	return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4);
+    }
+
+    private function sendContratEmail($etat, $contrat)
+    {
+        if (! in_array($etat, ['accepte', 'resilie'])) {
+            return;
+        }
+
+        switch ($etat) {
+            case 'accepte':
+                $subject = "Contrat ".$contrat->getNumeroArchive()." accepte";
+                $template = 'contrat/emailAcceptation';
+                break;
+            case 'resilie':
+                $subject = "Contrat ".$contrat->getNumeroArchive()." resilié";
+                $template = 'contrat/emailResiliation';
+                break;
+        }
+
+        $emailCommercial = $contrat->getCommercial()->getContactCoordonnee()->getEmail();
+        $parameters = $this->get('contrat.manager')->getParameters();
+
+        if ($emailCommercial) {
+            $message = \Swift_Message::newInstance()
+                ->setSubject($subject)
+                ->setFrom([
+                    $parameters['coordonnees']['email'] => $parameters['coordonnees']['nom']
+                ])
+                ->setTo($contrat->getCommercial()->getContactCoordonnee()->getEmail())
+                ->setBody(
+                    $this->renderView($template.'.html.twig', array('contrat' => $contrat)),
+                    'text/plain'
+                );
+
+            try {
+                $this->get('mailer')->send($message);
+            }
+            catch(Exception $e) {
+            }
+        }
     }
 
 }

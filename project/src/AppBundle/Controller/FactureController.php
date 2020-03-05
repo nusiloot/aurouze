@@ -136,6 +136,20 @@ class FactureController extends Controller {
     }
 
     /**
+     * @Route("/societe/{societe}/facture/{id}/suppression", name="facture_suppression")
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     * @ParamConverter("facture", class="AppBundle:Facture")
+     */
+    public function suppressionAction(Request $request, Societe $societe, Facture $facture) {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        if (!$facture->getNumeroFacture() && $facture->getContrat() && !$facture->isDevis() && !$facture->isAvoir()) {
+            $dm->remove($facture);
+            $dm->flush();
+        }
+        return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
+    }
+
+    /**
      * @Route("/societe/{id}", name="facture_societe")
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
@@ -214,12 +228,8 @@ class FactureController extends Controller {
         $fm->getRepository()->getClassMetadata()->idGenerator->generateNumeroFacture($dm, $facture);
         $dm->persist($facture);
         $dm->flush();
-        $retour = ($request->get('retour', null));
 
-        if($retour){
-          return $this->redirectToRoute('facture_societe', array('id' => $retour));
-        }
-        return $this->redirectToRoute('facture');
+        return $this->redirectToRoute('facture_societe', array('id' => $facture->getSociete()->getId()));
     }
 
 
@@ -986,7 +996,7 @@ class FactureController extends Controller {
      */
     public function retardsAction(Request $request) {
 
-        return $this->retardsFilters($request, $societe);
+        return $this->retardsFilters($request);
 
     }
 

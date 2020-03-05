@@ -1236,6 +1236,23 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
     }
 
     /**
+     * Remove contratPassage
+     *
+     * @param AppBundle\Document\Passage $passage
+     */
+    public function removePassage(Passage $passage) {
+        $contratPassagesToUnset = new ContratPassages();
+        foreach ($this->getContratPassages() as $contratPassages) {
+            foreach ($contratPassages->getPassages() as $p) {
+                if ($p->getId() == $passage->getId()) {
+                    $contratPassagesToUnset = $contratPassages;
+                }
+            }
+        }
+        $contratPassagesToUnset->removePassage($passage);
+    }
+
+    /**
      * Add contratPassage
      *
      * @param AppBundle\Document\ContratPassages $contratPassage

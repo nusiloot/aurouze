@@ -136,10 +136,18 @@ class ContratManager implements MouvementManagerInterface {
       self::EXPORT_PCA_CONTROLE => "Contrôle"
 
     );
-    protected $dm;
 
-    public function __construct(DocumentManager $dm) {
+    protected $dm;
+    protected $parameters;
+
+    public function __construct(DocumentManager $dm, $parameters) {
         $this->dm = $dm;
+        $this->parameters = $parameters;
+    }
+
+    public function getParameters()
+    {
+        return $this->parameters;
     }
 
     public function getFrequence($freq){

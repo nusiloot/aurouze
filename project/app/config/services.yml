@@ -39,7 +39,7 @@ services:
 
     contrat.manager:
         class: AppBundle\Manager\ContratManager
-        arguments: [@doctrine_mongodb.odm.default_document_manager]
+        arguments: [@doctrine_mongodb.odm.default_document_manager, "%passage%"]
 
     passage.manager:
         class: AppBundle\Manager\PassageManager
@@ -120,3 +120,9 @@ services:
     contact.importer:
         class: AppBundle\Import\ContactCsvImporter
         arguments: [@doctrine_mongodb.odm.default_document_manager]
+
+    app.twig_extension:
+        class: AppBundle\Twig\FacturesExtension
+        public: false
+        tags:
+            - { name: twig.extension }

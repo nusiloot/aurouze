@@ -1,0 +1,4 @@
+Le client {{ contrat.societe.raisonSociale }} a accepté le contrat {{ contrat.numeroArchive }}.
+
+Vous pouvez le visualiser ici :
+{{ absolute_url(path('contrat_visualisation', {'id': contrat.id})) }}

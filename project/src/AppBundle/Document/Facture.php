@@ -671,6 +671,11 @@ class Facture implements DocumentSocieteInterface {
     }
 
     public function calculDateLimitePaiement() {
+        if($this->getSepa() && $this->getSepa()->getActif()) {
+
+            return $this->getPrelevementDate();
+        }
+
         $frequence = $this->getFrequencePaiement();
         $date = null;
         if($this->getDateFacturation()) {
