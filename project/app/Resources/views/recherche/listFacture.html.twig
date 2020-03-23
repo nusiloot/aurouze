@@ -16,7 +16,8 @@
             <td>{{ ((facture.isDevis) ? facture.dateDevis : facture.dateFacturation) | localizeddate("medium", "none", null, null, "d MMMM yyyy") }}</td>
             <td>
               <a href="{{ path('facture_pdf', {'id': facture.id })}}"><span class="glyphicon glyphicon-file"></span> {% if facture.isDevis %}Devis n° {{ facture.numeroDevis }}{% elseif(facture.isAvoir) %}Avoir n° {{ facture.numeroFacture }}{% else %}Facture n° {{ facture.numeroFacture }}{% endif %}</a>
-              {% if facture.hasDevis %}
+              {% if facture.isFacture && facture.hasDevis %}
+                <br/>
                 Devis n°: {{ facture.numeroDevis }}
               {% endif %}
             </td>

@@ -915,7 +915,7 @@ class Facture implements DocumentSocieteInterface {
 
     public function hasDevis()
     {
-        return $this->getNumeroDevis();
+        return (bool) $this->getNumeroDevis();
     }
 
     public function isFacture() {
