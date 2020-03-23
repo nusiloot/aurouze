@@ -913,6 +913,11 @@ class Facture implements DocumentSocieteInterface {
         return $this->getDateDevis() && !$this->isFacture();
     }
 
+    public function hasDevis()
+    {
+        return (bool) $this->getNumeroDevis();
+    }
+
     public function isFacture() {
 
         return ($this->getDateFacturation() || $this->getNumeroFacture());

@@ -1501,6 +1501,7 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
         $contrat->cleanMouvements();
         $contrat->setReconduit(false);
         $contrat->updateObject();
+        $contrat->setTypeContrat(null);
 
         return $contrat;
     }
