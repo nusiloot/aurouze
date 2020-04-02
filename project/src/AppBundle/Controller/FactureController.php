@@ -85,6 +85,9 @@ class FactureController extends Controller {
         $appConf = $this->container->getParameter('application');
         if(!$facture->getCommercial()) {
             $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant($appConf['commercial']);
+            if ($commercial === null) {
+                throw new \LogicException("Il n'y a pas de commercial dans la config.");
+            }
             $facture->setCommercial($commercial);
         }
         if ($type == "devis" && !$facture->getDateDevis()) {

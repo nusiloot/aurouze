@@ -992,10 +992,14 @@
           var numLigne = row.parent().index();
 
           if(type_reglement.val() && moyen_paiement.val() && libelle.val() && facture.val() && date_paiement.val() && montant.val()){
-            console.log(numLigne);
             var form = $(this).parents('form[name="paiements"]');
             var url = form.attr('data-url-ajax-row');
             var id = form.data('id');
+            if(parseFloat(montant.val().replace(',','.')) > 0.0 ){
+              row.parent().addClass("alert-success");
+            }else{
+              row.parent().removeClass("alert-success");
+            }
             $.ajax({
               type: "POST",
               url: url,

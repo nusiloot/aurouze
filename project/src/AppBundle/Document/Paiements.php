@@ -61,7 +61,7 @@ class Paiements {
      *
      */
     protected $xmlbase64;
-    
+
     protected $dm;
 
     public function __construct(DocumentManager $dm) {
@@ -319,6 +319,20 @@ class Paiements {
         return $factureArray;
     }
 
+    public function getNbPaiementsSaisis(){
+      $cpt = 0;
+      foreach ($this->getPaiement() as $paiement) {
+        	if ($paiement->getFacture() && ($paiement->getMontant() > 0.0) && $paiement->getMoyenPaiement() && $paiement->getTypeReglement()) {
+        		$cpt++;
+        	}
+        }
+        return $cpt;
+    }
+
+    public function isAllSaisis(){
+        return ($this->getNbPaiementsSaisis() == count($this->getPaiement()));
+    }
+
 
     /**
      * Set numeroRemise
@@ -394,12 +408,12 @@ class Paiements {
     public function preUpdate() {
         $this->manageVersion();
     }
-    
+
     /** @MongoDB\PrePersist */
     public function prePersist() {
         $this->manageVersion();
     }
-    
+
     private function manageVersion() {
         if (!$this->getId()) {
             return;
