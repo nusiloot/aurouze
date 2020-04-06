@@ -39,15 +39,15 @@ class DevisGenerator extends AbstractIdGenerator
 
         $className = get_class($document);
         $db = $dm->getDocumentDatabase($className);
+        $annee = $document->getDateEmission()->format('Y');
 
         $command = array();
         $command['findandmodify'] = 'doctrine_increment_ids';
         $command['query'] = array('_id' => "DevisArchive");
-        $command['update'] = array('$inc' => array('current_id' => 1));
+        $command['update'] = array('$inc' => array($annee => 1));
         $command['upsert'] = true;
         $command['new'] = true;
         $result = $db->command($command);
-
-        $document->setNumeroDevis($result['value']['current_id']);
+        $document->setNumeroDevis(sprintf("%s%04d", $annee, $result['value'][$annee]));
     }
 }
