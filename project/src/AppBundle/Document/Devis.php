@@ -49,6 +49,16 @@ class Devis implements DocumentSocieteInterface {
     protected $dateSignature;
 
     /**
+     * @MongoDB\ReferenceOne(targetDocument="Passage", inversedBy="devis", simple=true)
+     */
+    protected $passage;
+
+    /**
+     * @MongoDB\Field(type="string")
+     */
+    protected $signatureBase64;
+
+    /**
      * @MongoDB\Field(type="float")
      */
     protected $montantHT;
@@ -364,5 +374,27 @@ class Devis implements DocumentSocieteInterface {
     public function getLignes()
     {
         return $this->lignes;
+    }
+
+    /**
+     * Set signatureBase64
+     *
+     * @param string $signatureBase64
+     * @return self
+     */
+    public function setSignatureBase64($signatureBase64)
+    {
+        $this->signatureBase64 = $signatureBase64;
+        return $this;
+    }
+
+    /**
+     * Get signatureBase64
+     *
+     * @return string $signatureBase64
+     */
+    public function getSignatureBase64()
+    {
+        return $this->signatureBase64;
     }
 }
