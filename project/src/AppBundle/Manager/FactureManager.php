@@ -4,7 +4,7 @@ namespace AppBundle\Manager;
 
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use AppBundle\Document\Facture;
-use AppBundle\Document\FactureLigne;
+use AppBundle\Document\LigneFacturable;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Adresse;
 use AppBundle\Manager\MouvementManager;
@@ -175,7 +175,7 @@ public static $export_stats_libelle = array(
             if(!$mouvement->isFacturable() || $mouvement->isFacture()) {
                 continue;
             }
-            $ligne = new FactureLigne();
+            $ligne = new LigneFacturable();
             $ligne->pullFromMouvement($mouvement);
             $facture->addLigne($ligne);
         }
@@ -366,9 +366,9 @@ public static $export_stats_libelle = array(
         $facturesArray[] = self::$export_factures_libelle;
 
         foreach ($facturesObjs as $facture) {
-              $facturesArray[] =  $this->buildFactureLigne($facture,self::EXPORT_LIGNE_GENERALE);
-              $facturesArray[] =  $this->buildFactureLigne($facture,self::EXPORT_LIGNE_TVA);
-              $facturesArray[] =  $this->buildFactureLigne($facture,self::EXPORT_LIGNE_HT);
+              $facturesArray[] =  $this->buildLigneFacturable($facture,self::EXPORT_LIGNE_GENERALE);
+              $facturesArray[] =  $this->buildLigneFacturable($facture,self::EXPORT_LIGNE_TVA);
+              $facturesArray[] =  $this->buildLigneFacturable($facture,self::EXPORT_LIGNE_HT);
         }
         return $facturesArray;
     }
@@ -591,7 +591,7 @@ public static $export_stats_libelle = array(
       return $factureLigne;
     }
 
-    public function buildFactureLigne($facture,$typeLigne = self::EXPORT_LIGNE_GENERALE){
+    public function buildLigneFacturable($facture,$typeLigne = self::EXPORT_LIGNE_GENERALE){
     $factureLigne = array();
     $factureLigne[self::EXPORT_DATE] = $facture->getDateFacturation()->format('d/m/Y');
     $factureLigne[self::EXPORT_JOURNAL] =  "VENTES" ;

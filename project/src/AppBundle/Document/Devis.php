@@ -29,12 +29,12 @@ class Devis implements DocumentSocieteInterface {
     protected $commercial;
 
     /**
-     * @MongoDB\EmbedOne(targetDocument="FactureSoussigne")
+     * @MongoDB\EmbedOne(targetDocument="Soussigne")
      */
     protected $emetteur;
 
     /**
-     * @MongoDB\EmbedOne(targetDocument="FactureSoussigne")
+     * @MongoDB\EmbedOne(targetDocument="Soussigne")
      */
     protected $destinataire;
 
@@ -42,7 +42,6 @@ class Devis implements DocumentSocieteInterface {
      * @MongoDB\Field(type="date")
      */
     protected $dateEmission;
-
 
     /**
      * @MongoDB\Field(type="date")
@@ -75,19 +74,14 @@ class Devis implements DocumentSocieteInterface {
     protected $numeroDevis;
 
     /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $statut;
-
-    /**
-     * @MongoDB\EmbedMany(targetDocument="FactureLigne")
+     * @MongoDB\EmbedMany(targetDocument="LigneFacturable")
      */
     protected $lignes;
 
 
     public function __construct() {
-        $this->emetteur = new FactureSoussigne();
-        $this->destinataire = new FactureSoussigne();
+        $this->emetteur = new Soussigne();
+        $this->destinataire = new Soussigne();
         $this->statut = "NOUVEAU";
     }
 
@@ -147,10 +141,10 @@ class Devis implements DocumentSocieteInterface {
     /**
      * Set emetteur
      *
-     * @param AppBundle\Document\FactureSoussigne $emetteur
+     * @param AppBundle\Document\Soussigne $emetteur
      * @return self
      */
-    public function setEmetteur(\AppBundle\Document\FactureSoussigne $emetteur) {
+    public function setEmetteur(\AppBundle\Document\Soussigne $emetteur) {
         $this->emetteur = $emetteur;
         return $this;
     }
@@ -158,7 +152,7 @@ class Devis implements DocumentSocieteInterface {
     /**
      * Get emetteur
      *
-     * @return AppBundle\Document\FactureSoussigne $emetteur
+     * @return AppBundle\Document\Soussigne $emetteur
      */
     public function getEmetteur() {
         return $this->emetteur;
@@ -167,10 +161,10 @@ class Devis implements DocumentSocieteInterface {
     /**
      * Set destinataire
      *
-     * @param AppBundle\Document\FactureSoussigne $destinataire
+     * @param AppBundle\Document\Soussigne $destinataire
      * @return $this
      */
-    public function setDestinataire(\AppBundle\Document\FactureSoussigne $destinataire)
+    public function setDestinataire(\AppBundle\Document\Soussigne $destinataire)
     {
         $this->destinataire = $destinataire;
         return $this;
@@ -179,7 +173,7 @@ class Devis implements DocumentSocieteInterface {
     /**
      * Get destinataire
      *
-     * @return AppBundle\Document\FactureSoussigne $destinataire
+     * @return AppBundle\Document\Soussigne $destinataire
      */
     public function getDestinataire()
     {
@@ -341,34 +335,13 @@ class Devis implements DocumentSocieteInterface {
         return $this->numeroDevis;
     }
 
-    /**
-     * Set statut
-     *
-     * @param string $statut
-     * @return $this
-     */
-    public function setStatut($statut)
-    {
-        $this->statut = $statut;
-        return $this;
-    }
-
-    /**
-     * Get statut
-     *
-     * @return string $statut
-     */
-    public function getStatut()
-    {
-        return $this->statut;
-    }
 
     /**
      * Add ligne
      *
-     * @param AppBundle\Document\FactureLigne $ligne
+     * @param AppBundle\Document\LigneFacturable $ligne
      */
-    public function addLigne(\AppBundle\Document\FactureLigne $ligne)
+    public function addLigne(\AppBundle\Document\LigneFacturable $ligne)
     {
         $this->lignes[] = $ligne;
     }
@@ -376,9 +349,9 @@ class Devis implements DocumentSocieteInterface {
     /**
      * Remove ligne
      *
-     * @param AppBundle\Document\FactureLigne $ligne
+     * @param AppBundle\Document\LigneFacturable $ligne
      */
-    public function removeLigne(\AppBundle\Document\FactureLigne $ligne)
+    public function removeLigne(\AppBundle\Document\LigneFacturable $ligne)
     {
         $this->lignes->removeElement($ligne);
     }

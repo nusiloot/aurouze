@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Manager\FactureManager;
 use AppBundle\Document\Facture;
-use AppBundle\Document\FactureLigne;
+use AppBundle\Document\LigneFacturable;
 use AppBundle\Type\FactureType;
 use AppBundle\Document\Contrat;
 use AppBundle\Document\Societe;
@@ -71,7 +71,7 @@ class FactureController extends Controller {
 
         if (!isset($facture)) {
             $facture = $fm->createVierge($societe);
-            $factureLigne = new FactureLigne();
+            $factureLigne = new LigneFacturable();
             $factureLigne->setTauxTaxe(0.2);
             $factureLigne->setQuantite(1);
             if ($contrat) {

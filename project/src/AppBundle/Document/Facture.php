@@ -29,12 +29,12 @@ class Facture implements DocumentSocieteInterface {
     protected $commercial;
 
     /**
-     * @MongoDB\EmbedOne(targetDocument="FactureSoussigne")
+     * @MongoDB\EmbedOne(targetDocument="Soussigne")
      */
     protected $emetteur;
 
     /**
-     * @MongoDB\EmbedOne(targetDocument="FactureSoussigne")
+     * @MongoDB\EmbedOne(targetDocument="Soussigne")
      */
     protected $destinataire;
 
@@ -89,7 +89,7 @@ class Facture implements DocumentSocieteInterface {
     protected $montantAPayer;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="FactureLigne")
+     * @MongoDB\EmbedMany(targetDocument="LigneFacturable")
      */
     protected $lignes;
 
@@ -170,8 +170,8 @@ class Facture implements DocumentSocieteInterface {
 
     public function __construct() {
         $this->lignes = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->emetteur = new FactureSoussigne();
-        $this->destinataire = new FactureSoussigne();
+        $this->emetteur = new Soussigne();
+        $this->destinataire = new Soussigne();
         $this->paiements = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cloture = false;
         $this->avoirPartielRemboursementCheque = false;
@@ -266,18 +266,18 @@ class Facture implements DocumentSocieteInterface {
     /**
      * Add ligne
      *
-     * @param AppBundle\Document\FactureLigne $ligne
+     * @param AppBundle\Document\LigneFacturable $ligne
      */
-    public function addLigne(\AppBundle\Document\FactureLigne $ligne) {
+    public function addLigne(\AppBundle\Document\LigneFacturable $ligne) {
         $this->lignes[] = $ligne;
     }
 
     /**
      * Remove ligne
      *
-     * @param AppBundle\Document\FactureLigne $ligne
+     * @param AppBundle\Document\LigneFacturable $ligne
      */
-    public function removeLigne(\AppBundle\Document\FactureLigne $ligne) {
+    public function removeLigne(\AppBundle\Document\LigneFacturable $ligne) {
         $this->lignes->removeElement($ligne);
     }
 
@@ -491,10 +491,10 @@ class Facture implements DocumentSocieteInterface {
     /**
      * Set emetteur
      *
-     * @param AppBundle\Document\FactureSoussigne $emetteur
+     * @param AppBundle\Document\Soussigne $emetteur
      * @return self
      */
-    public function setEmetteur(\AppBundle\Document\FactureSoussigne $emetteur) {
+    public function setEmetteur(\AppBundle\Document\Soussigne $emetteur) {
         $this->emetteur = $emetteur;
         return $this;
     }
@@ -502,7 +502,7 @@ class Facture implements DocumentSocieteInterface {
     /**
      * Get emetteur
      *
-     * @return AppBundle\Document\FactureSoussigne $emetteur
+     * @return AppBundle\Document\Soussigne $emetteur
      */
     public function getEmetteur() {
         return $this->emetteur;
@@ -511,10 +511,10 @@ class Facture implements DocumentSocieteInterface {
     /**
      * Set destinataire
      *
-     * @param AppBundle\Document\FactureSoussigne $destinataire
+     * @param AppBundle\Document\Soussigne $destinataire
      * @return self
      */
-    public function setDestinataire(\AppBundle\Document\FactureSoussigne $destinataire) {
+    public function setDestinataire(\AppBundle\Document\Soussigne $destinataire) {
         $this->destinataire = $destinataire;
         return $this;
     }
@@ -522,7 +522,7 @@ class Facture implements DocumentSocieteInterface {
     /**
      * Get destinataire
      *
-     * @return AppBundle\Document\FactureSoussigne $destinataire
+     * @return AppBundle\Document\Soussigne $destinataire
      */
     public function getDestinataire() {
         return $this->destinataire;
