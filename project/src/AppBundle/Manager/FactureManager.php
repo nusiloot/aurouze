@@ -4,6 +4,7 @@ namespace AppBundle\Manager;
 
 use Doctrine\ODM\MongoDB\DocumentManager as DocumentManager;
 use AppBundle\Document\Facture;
+use AppBundle\Document\Devis;
 use AppBundle\Document\LigneFacturable;
 use AppBundle\Document\Societe;
 use AppBundle\Document\Adresse;
@@ -153,6 +154,27 @@ public static $export_stats_libelle = array(
         $facture->getEmetteur()->setTelephone($parameters['emetteur']['telephone']);
         $facture->getEmetteur()->setFax($parameters['emetteur']['fax']);
         $facture->getEmetteur()->setEmail($parameters['emetteur']['email']);
+
+        return $facture;
+    }
+
+    public function createFromDevis(Devis $devis)
+    {
+        $facture = new Facture();
+        $facture->setSociete($devis->getSociete());
+        $facture->setCommercial($devis->getCommercial());
+        $facture->setEmetteur($devis->getEmetteur());
+        $facture->setDestinataire($devis->getDestinataire());
+
+        $facture->setDateEmission(new \DateTime());
+
+        $facture->setMontantHT($devis->getMontantHT());
+        $facture->setMontantTTC($devis->getMontantTTC());
+        $facture->setMontantTaxe($devis->getMontantTaxe());
+
+        $facture->setNumeroDevis($devis->getNumeroDevis());
+        $facture->setDescription($devis->getDescription());
+        $facture->setLignes($devis->getLignes());
 
         return $facture;
     }
