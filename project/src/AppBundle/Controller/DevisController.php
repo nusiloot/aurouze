@@ -78,11 +78,11 @@ class DevisController extends Controller {
 
         $devis->update();
 
-        if ($request->get('previsualiser')) {
-
-            return $this->pdfAction($request, $devis);
-        }
-
+        // if ($request->get('previsualiser')) {
+        //
+        //     return $this->pdfAction($request, $devis);
+        // }
+        $dm->persist($devis);
         $dm->flush();
 
         return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));

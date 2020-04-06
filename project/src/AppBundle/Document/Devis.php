@@ -127,6 +127,26 @@ class Devis implements DocumentSocieteInterface {
     }
 
     /**
+     * Set identifiant
+     *
+     * @param string $identifiant
+     * @return self
+     */
+    public function setIdentifiant($identifiant) {
+        $this->identifiant = $identifiant;
+        return $this;
+    }
+
+    /**
+     * Get identifiant
+     *
+     * @return string $identifiant
+     */
+    public function getIdentifiant() {
+        return $this->identifiant;
+    }
+
+    /**
      * Set commercial
      *
      * @param AppBundle\Document\Compte $commercial
@@ -396,5 +416,39 @@ class Devis implements DocumentSocieteInterface {
     public function getSignatureBase64()
     {
         return $this->signatureBase64;
+    }
+
+    public function updateCalcul() {
+        $montant = 0;
+        $montantTaxe = 0;
+        if($this->getLignes()){
+          foreach ($this->getLignes() as $ligne) {
+              $ligne->update();
+              $montant = $montant + $ligne->getMontantHT();
+              $montantTaxe = $montantTaxe + $ligne->getMontantTaxe();
+          }
+        }
+        $this->setMontantHT(round($montant, 2));
+        $this->setMontantTaxe(round($montantTaxe, 2));
+        $this->setMontantTTC(round($montant + $montantTaxe, 2));
+    }
+
+    public function update() {
+        $this->updateCalcul();
+        $this->storeDestinataire();
+    }
+
+    public function storeDestinataire() {
+        $societe = $this->getSociete();
+        $destinataire = $this->getDestinataire();
+
+        $nom = $societe->getRaisonSociale();
+
+        $destinataire->setRaisonSociale($societe->getRaisonSociale());
+        $destinataire->setNom($nom);
+        $destinataire->setAdresse($societe->getAdresse()->getAdresseFormatee());
+        $destinataire->setCodePostal($societe->getAdresse()->getCodePostal());
+        $destinataire->setCommune($societe->getAdresse()->getCommune());
+        $destinataire->setCodeComptable($societe->getCodeComptable());
     }
 }
