@@ -17,8 +17,37 @@ use AppBundle\Type\DevisType;
  *
  * @Route("/devis")
  */
-class DevisController extends Controller {
+class DevisController extends Controller
+{
+    /**
+     * @Route("/", name="devis")
+     */
+    public function indexAction()
+    {
+        $devisManager = $this->get('devis.manager');
 
+        $devisEnAttente = $devisManager->getRepository('AppBundle:Devis')->findBy(
+            ['dateSignature' => null], ['dateEmission' => 'desc']
+        );
+
+        return $this->render('devis/index.html.twig', compact('devisEnAttente'));
+    }
+
+    /**
+     * @Route("/societe/{id}", name="devis_societe")
+     *
+     * @ParamConverter("societe", class="AppBundle:Societe")
+     */
+    public function societeAction(Societe $societe)
+    {
+        $devisManager = $this->get('devis.manager');
+
+        $devis = $devisManager->findBySociete($societe);
+
+        return $this->render('devis/societe.html.twig',
+            compact('societe', 'devis')
+        );
+    }
 
     /**
      * @Route("/societe/{societe}/creation-devis", name="devis_creation")
@@ -99,4 +128,19 @@ class DevisController extends Controller {
         return $this->redirectToRoute('devis_societe', array('id' => $societe->getId()));
     }
 
+    /**
+     * @Route("/{id}/edit", name="devis_modification")
+     */
+    public function editAction(Devis $devis)
+    {
+
+    }
+
+    /**
+     * @Route("/{id}/pdf", name="devis_pdf")
+     */
+    public function pdfAction(Devis $devis)
+    {
+
+    }
 }

@@ -1,0 +1,31 @@
+{% set _menu_active = 'Devis' %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Devis{% endblock title %}
+
+{% block body %}
+	<ol class="breadcrumb">
+		<li><a href="{{ path('devis') }}">Devis</a></li>
+	</ol>
+
+	{{ include('societe/choixForm.html.twig', {'urlTarget': path('devis_societe', {'id': '_id_'}), 'autofocus': true }) }}
+
+{% if devisEnAttente | length %}
+	<h3>Liste des devis <strong>en attente</strong></h3>
+	<table class="table table-bordered table-striped">
+			<thead>
+					<tr>
+							<th class="col-xs-2">Date</th>
+							<th class="col-xs-2">Document</th>
+							<th class="col-xs-4">Client</th>
+							<th class="col-xs-1 text-right">Montant&nbsp;HT</th>
+							<th class="col-xs-1 text-right">Montant&nbsp;TTC</th>
+					</tr>
+			</thead>
+			<tbody>
+				{{ include('devis/devisEnAttente.html.twig', {'devis': devisEnAttente}) }}
+			</tbody>
+		</table>
+{% endif %}
+
+{% endblock %}
