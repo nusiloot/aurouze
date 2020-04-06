@@ -2,7 +2,7 @@
 {% extends 'base.html.twig' %}
 {% form_theme form _self %}
 
-{% block _facture_lignes_entry_row %}
+{% block _devis_lignes_entry_row %}
     {% set readOnly = (form.vars.data and form.vars.data.origineDocument and form.vars.data.quantite > 0) %}
     <tr class="dynamic-collection-item">
         <td>
@@ -29,14 +29,14 @@
 {% block body %}
 
     <ol class="breadcrumb">
-        <li><a href="{{ path('facture') }}">Facture</a></li>
-        <li><a href="{{ path('facture_societe',{ 'id' : societe.id }) }}">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
-        <li><a href="">{% if(facture.isDevis) %}Création d'un devis{% elseif(facture.numeroFacture) %}Modification de la facture n°{{ facture.numeroFacture }}{% else %}Création d'une facture{% endif %}</a></li>
+        <li><a href="">Facture</a></li>
+        <li><a href="">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
+        <li><a href="">{% if(not devis.id) %}Création d'un devis{% elseif(devis.numeroDevis) %}Modification du devis n°{{ devis.devis }}{% else %}Création d'un devis{% endif %}</a></li>
     </ol>
 
     <div id="factureLibre" class="form-horizontal" data-produits="{{ produitsSuggestion | json_encode }}">
         {{ form_start(form) }}
-        <h3>{% if(not facture.id and facture.isDevis) %}Création d'un devis{% elseif(facture.id and not facture.numeroFacture and facture.isFacture) %}Transformation du devis n°{{ facture.numeroDevis }} en facture{% elseif(facture.numeroFacture) %}Modification de {% if (facture.isAvoir) %}l'avoir{% else %}la facture{% endif %} n°{{ facture.numeroFacture }}{% elseif(facture.isDevis) %}Modification du devis n°{{ facture.numeroDevis }}{% else %}Création d'une facture{% endif %}</h3>
+        <h3>{% if(not devis.id) %}Création d'un devis{% elseif(devis.id and not devis.facture) %}Transformation du devis n°{{ devis.facture }} en facture{% else %}Modification du devis n°{{ devis.numeroDevis }}{% endif %}</h3>
         <hr />
         <div class="row">
             <div class="col-xs-5">
@@ -65,13 +65,6 @@
                 </div>
                 {% endif %}
 
-                <div class="form-group">
-                    {{ form_errors(form.frequencePaiement) }}
-                    {{ form_label(form.frequencePaiement, "Fréquence de paiement", {'label_attr': {'class': 'col-xs-5 control-label'}}) }}
-                    <div class="col-xs-7">
-                        {{ form_widget(form.frequencePaiement) }}
-                    </div>
-                </div>
                 {% if (form.commercial is defined) %}
                 <div class="form-group">
                     {{ form_errors(form.commercial) }}
@@ -80,21 +73,21 @@
                         {{ form_widget(form.commercial) }}
                     </div>
                 </div>
-                {% elseif(facture.commercial is defined and not (facture.commercial is null)) %}
+                {% elseif(devis.commercial is defined and not (devis.commercial is null)) %}
                 <div class="form-group">
                   <label class="col-xs-5 control-label control-label" for="facture_frequencePaiement">Commercial</label>
                     <div class="col-xs-7">
                       <div class="input-group">
-                      {{ facture.commercial.identite }}
+                      {{ devis.commercial.identite }}
                         </div>
                     </div>
                 </div>
                 {% endif %}
             </div>
             <div class="col-xs-5 col-xs-offset-2">
-                <span class="lead">{{ facture.destinataire.nom }}</span><br />
-                {{ facture.destinataire.adresseFormatee }}<br />
-                {{ facture.destinataire.codePostal }} {{ facture.destinataire.commune }}<br />
+                <span class="lead">{{ devis.destinataire.nom }}</span><br />
+                {{ devis.destinataire.adresseFormatee }}<br />
+                {{ devis.destinataire.codePostal }} {{ devis.destinataire.commune }}<br />
             </div>
         </div>
         {% if (form.contrat is defined) %}
@@ -141,13 +134,13 @@
                 <a class="btn btn-default" href="{{ path('facture_societe',{ 'id' : societe.id }) }}">Retour</a>
             </div>
             <div class="col-xs-4 text-center">
-            	{% if (not facture.numeroFacture and facture.getContrat() and not facture.isDevis() and not facture.isAvoir()) %}
-            	<a class="btn btn-danger" href="{{ path('facture_suppression',{ 'societe' : societe.id, 'id' : facture.id }) }}" onclick="return confirm('Etes-vous sûr de vouloir supprimer cette facture ?')"><span class="glyphicon glyphicon-remove"></span> Supprimer la facture</a>
+            	{% if (devis.numeroDevis) %}
+            	<a class="btn btn-danger" href="{{ path('facture_suppression',{ 'societe' : societe.id, 'id' : devis.id }) }}" onclick="return confirm('Etes-vous sûr de vouloir supprimer ce devis ?')"><span class="glyphicon glyphicon-remove"></span> Supprimer le devis</a>
             	{% endif %}
-                <button type="submit" name="previsualiser" value="previsualiser" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Prévisualiser {% if(facture.isDevis) %}le devis{% else %}la facture{% endif %}</button>
+                <button type="submit" name="previsualiser" value="previsualiser" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Prévisualiser le devis</button>
             </div>
             <div class="col-xs-4 text-right">
-                <button type="submit" class="btn btn-success">{% if(facture.isDevis and not facture.numeroDevis) %}Générer le devis{% elseif(not facture.numeroFacture and facture.getContrat()) %}Modifier la facture prévue{% elseif(facture.numeroFacture) %}Modifier la facture{% elseif(facture.isDevis) %}Modifier le devis{% else %}Générer la facture{% endif %}</button>
+                <button type="submit" class="btn btn-success">{% if(devis.numeroDevis) %}Générer le devis{% else %}Modifier le devis{% endif %}</button>
             </div>
         </div>
         {{ form_end(form) }}

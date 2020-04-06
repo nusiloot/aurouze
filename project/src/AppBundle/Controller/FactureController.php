@@ -42,14 +42,18 @@ class FactureController extends Controller {
     }
 
     /**
-     * @Route("/societe/{societe}/creation/{type}/{contratId}", name="facture_creation", defaults={"contratId" = "0"})
+     * @Route("/societe/{societe}/creation-facture/{contratId}", name="facture_creation", defaults={"contratId" = "0"})
      * @ParamConverter("societe", class="AppBundle:Societe")
      */
-    public function creationAction(Request $request, Societe $societe, $type, $contratId) {
+    public function creationAction(Request $request, Societe $societe, $contratId) {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $cm = $this->get('configuration.manager');
         $contratManager = $this->get('contrat.manager');
         $fm = $this->get('facture.manager');
+
+        if($type=="devis"){
+          var_dump("devis"); exit;
+        }
 
         if ($request->get('id')) {
             $facture = $fm->getRepository()->findOneById($request->get('id'));
