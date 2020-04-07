@@ -34,16 +34,12 @@
           <th class="col-xs-2">Date</th>
           <th class="col-xs-2">Document</th>
           <th class="col-xs-3">Contenu</th>
-          <th class="col-xs-1">Écheance</th>
-          <th class="col-xs-1 text-right">Montant&nbsp;TTC</th>
-          <th class="col-xs-1 text-right">Montant&nbsp;payé</th>
-          <th class="col-xs-1 text-right">Restant</th>
-          <th class="col-xs-1 text-right"></th>
+          <th class="col-xs-1 text-right">Montant TTC</th>
         </tr>
       </thead>
       <tbody>
         {% for document in devis %}
-          {# {{ include('devis/ligne.html.twig', {'facture': devis, 'societe' : societe}) }} #}
+          {{ include('devis/ligne.html.twig', {'devis': devis, 'societe' : societe}) }}
         {% endfor %}
       </tbody>
     </table>
