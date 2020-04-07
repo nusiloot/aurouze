@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use AppBundle\Manager\DevisManager;
 use AppBundle\Document\Devis;
 use AppBundle\Document\Societe;
@@ -60,13 +61,11 @@ class DevisController extends Controller
 
         if ($request->get('id')) {
             $devis = $devism->getRepository()->findOneById($request->get('id'));
+
+            if (! $devis) {
+                throw new NotFoundHttpException(sprintf("Le devis %s n'a pas été trouvé", $request->get('id')));
+            }
         }
-
-        if ($request->get('id') && !$devis) {
-
-            throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("Le devis %s n'a pas été trouvé", $request->get('id')));
-        }
-
 
         if (!isset($devis)) {
             $devis = $devism->createVierge($societe);
@@ -87,11 +86,7 @@ class DevisController extends Controller
             $devis->setCommercial($commercial);
         }
 
-
-        $produitsSuggestion = array();
-        foreach ($cm->getConfiguration()->getProduits() as $produit) {
-            $produitsSuggestion[] = array("libelle" => $produit->getNom(), "conditionnement" => $produit->getConditionnement(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
-        }
+        $produitsSuggestion = $this->getProduitsSuggestion($cm->getConfiguration()->getProduits());
 
         $form = $this->createForm(new DevisType($dm, $cm, $appConf['commercial']), $devis, array(
             'action' => "",
@@ -114,7 +109,7 @@ class DevisController extends Controller
         $dm->persist($devis);
         $dm->flush();
 
-        return $this->redirectToRoute('facture_societe', array('id' => $societe->getId()));
+        return $this->redirectToRoute('devis_societe', array('id' => $societe->getId()));
     }
 
     /**
@@ -131,9 +126,34 @@ class DevisController extends Controller
     /**
      * @Route("/{id}/edit", name="devis_modification")
      */
-    public function editAction(Devis $devis)
+    public function editAction(Request $request, Devis $devis)
     {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $cm = $this->get('configuration.manager');
+        $appConf = $this->container->getParameter('application');
 
+        $produitsSuggestion = $this->getProduitsSuggestion($cm->getConfiguration()->getProduits());
+
+        $form = $this->createForm(new DevisType($dm, $cm, $appConf['commercial']), $devis, array(
+            'action' => "",
+            'method' => 'POST',
+        ));
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $devis->update();
+            $dm->persist($devis);
+            $dm->flush();
+
+            return $this->redirectToRoute('devis_societe', ['id' => $devis->getSociete()->getId()]);
+        }
+
+        return $this->render('devis/modification.html.twig', [
+            'devis' => $devis,
+            'form' => $form->createView(),
+            'produitsSuggestion' => $produitsSuggestion
+        ]);
     }
 
     /**
@@ -142,5 +162,16 @@ class DevisController extends Controller
     public function pdfAction(Devis $devis)
     {
 
+    }
+
+    private function getProduitsSuggestion($produits)
+    {
+        $produitsSuggestion = [];
+
+        foreach ($produits as $produit) {
+            $produitsSuggestion[] = array("libelle" => $produit->getNom(), "conditionnement" => $produit->getConditionnement(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
+        }
+
+        return $produitsSuggestion;
     }
 }

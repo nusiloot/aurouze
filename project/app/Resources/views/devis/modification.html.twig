@@ -29,14 +29,14 @@
 {% block body %}
 
     <ol class="breadcrumb">
-        <li><a href="">Facture</a></li>
-        <li><a href="">&nbsp;{{ societe.raisonSociale }}&nbsp;<small>{{societe.adresse.intitule }}</small></a></li>
-        <li><a href="">{% if(not devis.id) %}Création d'un devis{% elseif(devis.numeroDevis) %}Modification du devis n°{{ devis.devis }}{% else %}Création d'un devis{% endif %}</a></li>
+        <li><a href="">Devis</a></li>
+        <li><a href=""> {{ devis.societe.raisonSociale }} <small>{{devis.societe.adresse.intitule }}</small></a></li>
+        <li><a href=""> {% if(not devis.id) %}Création d'un devis{% elseif(devis.numeroDevis) %}Modification du devis n°{{ devis.numeroDevis }}{% else %}Création d'un devis{% endif %}</a></li>
     </ol>
 
     <div id="factureLibre" class="form-horizontal" data-produits="{{ produitsSuggestion | json_encode }}">
         {{ form_start(form) }}
-        <h3>{% if(not devis.id) %}Création d'un devis{% elseif(devis.id and not devis.facture) %}Transformation du devis n°{{ devis.facture }} en facture{% else %}Modification du devis n°{{ devis.numeroDevis }}{% endif %}</h3>
+        <h3>{% if(not devis.id) %}Création d'un devis{% else %}Modification du devis n°{{ devis.numeroDevis }}{% endif %}</h3>
         <hr />
         <div class="row">
             <div class="col-xs-5">
@@ -110,7 +110,7 @@
                     <th class="col-xs-7">Libellé</th>
                     <th class="col-xs-2">Quantité</th>
                     <th class="col-xs-2">Prix Unitaire</th>
-                    <th class="col-xs-1">Taux&nbsp;de&nbsp;TVA</th>
+                    <th class="col-xs-1">Taux de TVA</th>
                     <th style="width: 0;"></th>
                 </tr>
             </thead>
@@ -131,16 +131,16 @@
         <hr />
         <div class="row form-group">
             <div class="col-xs-4 text-left">
-                <a class="btn btn-default" href="{{ path('facture_societe',{ 'id' : societe.id }) }}">Retour</a>
+                <a class="btn btn-default" href="{{ path('devis_societe',{ 'id' : devis.societe.id }) }}">Retour</a>
             </div>
             <div class="col-xs-4 text-center">
-            	{% if (devis.numeroDevis) %}
-            	<a class="btn btn-danger" href="{{ path('facture_suppression',{ 'societe' : societe.id, 'id' : devis.id }) }}" onclick="return confirm('Etes-vous sûr de vouloir supprimer ce devis ?')"><span class="glyphicon glyphicon-remove"></span> Supprimer le devis</a>
-            	{% endif %}
+              {% if (devis.numeroDevis) %}
+                <a class="btn btn-danger" href="{{ path('devis_suppression',{ 'societe' : devis.societe.id, 'id' : devis.id }) }}" onclick="return confirm('Etes-vous sûr de vouloir supprimer ce devis ?')"><span class="glyphicon glyphicon-remove"></span> Supprimer le devis</a>
+              {% endif %}
                 <button type="submit" name="previsualiser" value="previsualiser" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Prévisualiser le devis</button>
             </div>
             <div class="col-xs-4 text-right">
-                <button type="submit" class="btn btn-success">{% if(devis.numeroDevis) %}Générer le devis{% else %}Modifier le devis{% endif %}</button>
+                <button type="submit" class="btn btn-success">{% if not devis.numeroDevis %}Générer le devis{% else %}Modifier le devis{% endif %}</button>
             </div>
         </div>
         {{ form_end(form) }}

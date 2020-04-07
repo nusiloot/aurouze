@@ -13,4 +13,7 @@
     </a>
   </td>
   <td class="text-right">{{ "%0.2f" | format(document.montantTTC)  }} €</td>
+  <td>
+    <a href="{{ path('devis_modification', {'id': document.id}) }}">Modifier</a>
+  </td>
 </tr>
