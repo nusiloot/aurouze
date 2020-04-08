@@ -24,9 +24,19 @@ class Devis implements DocumentSocieteInterface {
     protected $societe;
 
     /**
+     * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="devis", simple=true)
+     */
+    protected $etablissement;
+
+    /**
      * @MongoDB\ReferenceOne(targetDocument="Compte", inversedBy="devis")
      */
     protected $commercial;
+
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="Compte", inversedBy="devis")
+     */
+    protected $technicien;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="Soussigne")
@@ -42,6 +52,11 @@ class Devis implements DocumentSocieteInterface {
      * @MongoDB\Field(type="date")
      */
     protected $dateEmission;
+
+    /**
+     * @MongoDB\Field(type="date")
+     */
+    protected $datePrevision;
 
     /**
      * @MongoDB\Field(type="date")
@@ -490,5 +505,61 @@ class Devis implements DocumentSocieteInterface {
 
     public function getEtablissementInfos() {
         return $this->getEtablissement();
+    }
+
+    /**
+     * Set etablissement
+     *
+     * @param AppBundle\Document\Etablissement $etablissement
+     * @return $this
+     */
+    public function setEtablissement(\AppBundle\Document\Etablissement $etablissement)
+    {
+        $this->etablissement = $etablissement;
+        return $this;
+    }
+
+    /**
+     * Set technicien
+     *
+     * @param AppBundle\Document\Compte $technicien
+     * @return $this
+     */
+    public function setTechnicien(\AppBundle\Document\Compte $technicien)
+    {
+        $this->technicien = $technicien;
+        return $this;
+    }
+
+    /**
+     * Get technicien
+     *
+     * @return AppBundle\Document\Compte $technicien
+     */
+    public function getTechnicien()
+    {
+        return $this->technicien;
+    }
+
+    /**
+     * Set datePrevision
+     *
+     * @param date $datePrevision
+     * @return $this
+     */
+    public function setDatePrevision($datePrevision)
+    {
+        $this->datePrevision = $datePrevision;
+        return $this;
+    }
+
+    /**
+     * Get datePrevision
+     *
+     * @return date $datePrevision
+     */
+    public function getDatePrevision()
+    {
+        return $this->datePrevision;
     }
 }
