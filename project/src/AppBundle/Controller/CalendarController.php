@@ -33,6 +33,11 @@ class CalendarController extends Controller {
             $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
         }
 
+        $devis = null;
+        if ($request->get('devis')) {
+            $devis = $dm->getRepository('AppBundle:Devis')->findOneById($request->get('devis'));
+        }
+
         $technicien = $request->get('technicien');
         $technicienObj = null;
         if ($technicien) {
@@ -76,7 +81,7 @@ class CalendarController extends Controller {
             $etablissement = $passage->getEtablissement();
         }
 
-        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciensOnglet' => $techniciensOnglet, 'techniciens' => $techniciens, 'passage' => $passage, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement, 'date' => $date, 'mode' => $request->get('mode')));
+        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciensOnglet' => $techniciensOnglet, 'techniciens' => $techniciens, 'passage' => $passage, 'devis' => $devis, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement, 'date' => $date, 'mode' => $request->get('mode')));
     }
 
     /**

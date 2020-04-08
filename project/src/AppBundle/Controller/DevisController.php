@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use AppBundle\Manager\DevisManager;
 use AppBundle\Document\Devis;
 use AppBundle\Document\Societe;
+use AppBundle\Document\RendezVous;
 use AppBundle\Type\DevisType;
 
 /**
@@ -101,20 +102,18 @@ class DevisController extends Controller
         }
 
         $devis->update();
+        $dm->persist($devis);
+
         if(!$devis->getRendezvous()){
           $rdv = new RendezVous();
           $rdv->setDateDebut($devis->getDateEmission());
           $devis->setRendezvous($rdv);
         }
 
-        // if ($request->get('previsualiser')) {
-        //
-        //     return $this->pdfAction($request, $devis);
-        // }
-        $dm->persist($devis);
+        $dm->persist($rdv);
         $dm->flush();
-        
-        return $this->redirectToRoute('calendar', array('passage' => $passage->getId(),'id' => $passage->getSociete()->getEtablissement()->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
+
+        return $this->redirectToRoute('calendar', array('devis' => $devis->getId(), 'id' => $devis->getSociete()->getId(), 'technicien' => $devis->getCommercial()->getId()));
         return $this->redirectToRoute('devis_societe', array('id' => $societe->getId()));
     }
 

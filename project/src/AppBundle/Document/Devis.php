@@ -435,7 +435,7 @@ class Devis implements DocumentSocieteInterface {
 
     public function update() {
         $this->updateCalcul();
-        $this->storeDestinataire();       
+        $this->storeDestinataire();
 
     }
 
@@ -473,5 +473,22 @@ class Devis implements DocumentSocieteInterface {
     public function getRendezvous()
     {
         return $this->rendezvous;
+    }
+
+
+// A partir de là => a mutualiser avec les passages
+
+    public function getEtablissement()
+    {
+        return $this->getSociete()->getEtablissements()->first();
+    }
+
+
+    public function getDureePrevisionnelle(){
+      return 1;
+    }
+
+    public function getEtablissementInfos() {
+        return $this->getEtablissement();
     }
 }
