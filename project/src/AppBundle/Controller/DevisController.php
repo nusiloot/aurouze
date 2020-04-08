@@ -101,6 +101,11 @@ class DevisController extends Controller
         }
 
         $devis->update();
+        if(!$devis->getRendezvous()){
+          $rdv = new RendezVous();
+          $rdv->setDateDebut($devis->getDateEmission());
+          $devis->setRendezvous($rdv);
+        }
 
         // if ($request->get('previsualiser')) {
         //
@@ -108,7 +113,8 @@ class DevisController extends Controller
         // }
         $dm->persist($devis);
         $dm->flush();
-
+        
+        return $this->redirectToRoute('calendar', array('passage' => $passage->getId(),'id' => $passage->getSociete()->getEtablissement()->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
         return $this->redirectToRoute('devis_societe', array('id' => $societe->getId()));
     }
 

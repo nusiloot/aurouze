@@ -435,7 +435,8 @@ class Devis implements DocumentSocieteInterface {
 
     public function update() {
         $this->updateCalcul();
-        $this->storeDestinataire();
+        $this->storeDestinataire();       
+
     }
 
     public function storeDestinataire() {
@@ -450,5 +451,27 @@ class Devis implements DocumentSocieteInterface {
         $destinataire->setCodePostal($societe->getAdresse()->getCodePostal());
         $destinataire->setCommune($societe->getAdresse()->getCommune());
         $destinataire->setCodeComptable($societe->getCodeComptable());
+    }
+
+    /**
+     * Set rendezvous
+     *
+     * @param AppBundle\Document\RendezVous $rendezvous
+     * @return $this
+     */
+    public function setRendezvous(\AppBundle\Document\RendezVous $rendezvous)
+    {
+        $this->rendezvous = $rendezvous;
+        return $this;
+    }
+
+    /**
+     * Get rendezvous
+     *
+     * @return AppBundle\Document\RendezVous $rendezvous
+     */
+    public function getRendezvous()
+    {
+        return $this->rendezvous;
     }
 }
