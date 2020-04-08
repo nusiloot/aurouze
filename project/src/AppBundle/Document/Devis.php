@@ -5,6 +5,7 @@ namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Document\RendezVous;
 use AppBundle\Model\DocumentSocieteInterface;
+use AppBundle\Model\AbstractDocumentPlannifiable;
 use AppBundle\Manager\DevisManager;
 use AppBundle\Manager\ContratManager;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
@@ -12,7 +13,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\DevisRepository") @HasLifecycleCallbacks
  */
-class Devis implements DocumentSocieteInterface {
+class Devis extends AbstractDocumentPlannifiable implements DocumentSocieteInterface {
 
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\DevisGenerator"})
@@ -500,6 +501,10 @@ class Devis implements DocumentSocieteInterface {
 
     public function getDureePrevisionnelle(){
       return 1;
+    }
+
+    public function setDureePrevisionnelle($dureePrevisionnelle)
+    {
     }
 
     public function getEtablissementInfos() {

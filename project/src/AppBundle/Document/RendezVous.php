@@ -54,7 +54,7 @@ class RendezVous {
     protected $lieu;
 
     /**
-    * @MongoDB\ReferenceOne(targetDocument="Passage", simple=true)
+    * @MongoDB\ReferenceOne(targetDocument="AbstractDocumentPlannifiable", simple=true)
      */
     protected $passage;
 

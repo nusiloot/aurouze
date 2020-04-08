@@ -6,19 +6,21 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\PreUpdate;
 use Doctrine\Common\Collections\ArrayCollection;
+use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
-use AppBundle\Document\EtablissementInfos;
 use AppBundle\Model\DocumentEtablissementInterface;
 use AppBundle\Model\DocumentSocieteInterface;
+use AppBundle\Model\AbstractDocumentPlannifiable;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
 use AppBundle\Document\RendezVous;
-use AppBundle\Manager\ContratManager;
+use AppBundle\Document\EtablissementInfos;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
  */
-class Passage implements DocumentEtablissementInterface, DocumentSocieteInterface {
+class Passage extends AbstractDocumentPlannifiable implements DocumentEtablissementInterface, DocumentSocieteInterface
+{
 
     const PREFIX = "PASSAGE";
 
