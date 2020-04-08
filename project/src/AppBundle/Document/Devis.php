@@ -49,9 +49,9 @@ class Devis implements DocumentSocieteInterface {
     protected $dateSignature;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Passage", inversedBy="devis", simple=true)
+    * @MongoDB\ReferenceOne(targetDocument="RendezVous", simple=true)
      */
-    protected $passage;
+    protected $rendezvous;
 
     /**
      * @MongoDB\Field(type="string")
