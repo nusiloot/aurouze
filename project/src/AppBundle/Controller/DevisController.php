@@ -119,6 +119,8 @@ class DevisController extends Controller
      */
     public function suppressionAction(Request $request, Societe $societe, Devis $devis) {
         $dm = $this->get('doctrine_mongodb')->getManager();
+        $dm->remove($devis);
+        $dm->flush();
 
         return $this->redirectToRoute('devis_societe', array('id' => $societe->getId()));
     }
