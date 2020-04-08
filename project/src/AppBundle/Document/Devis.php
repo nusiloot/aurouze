@@ -3,6 +3,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use AppBundle\Document\RendezVous;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Manager\DevisManager;
 use AppBundle\Manager\ContratManager;
@@ -456,10 +457,10 @@ class Devis implements DocumentSocieteInterface {
     /**
      * Set rendezvous
      *
-     * @param AppBundle\Document\RendezVous $rendezvous
+     * @param RendezVous $rendezvous
      * @return $this
      */
-    public function setRendezvous(\AppBundle\Document\RendezVous $rendezvous)
+    public function setRendezvous(RendezVous $rendezvous)
     {
         $this->rendezvous = $rendezvous;
         return $this;
@@ -468,13 +469,12 @@ class Devis implements DocumentSocieteInterface {
     /**
      * Get rendezvous
      *
-     * @return AppBundle\Document\RendezVous $rendezvous
+     * @return RendezVous $rendezvous
      */
     public function getRendezvous()
     {
         return $this->rendezvous;
     }
-
 
 // A partir de là => a mutualiser avec les passages
 
@@ -482,7 +482,6 @@ class Devis implements DocumentSocieteInterface {
     {
         return $this->getSociete()->getEtablissements()->first();
     }
-
 
     public function getDureePrevisionnelle(){
       return 1;

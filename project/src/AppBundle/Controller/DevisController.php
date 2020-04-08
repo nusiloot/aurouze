@@ -60,32 +60,16 @@ class DevisController extends Controller
         $cm = $this->get('configuration.manager');
         $devism = $this->get('devis.manager');
 
-        if ($request->get('id')) {
-            $devis = $devism->getRepository()->findOneById($request->get('id'));
-
-            if (! $devis) {
-                throw new NotFoundHttpException(sprintf("Le devis %s n'a pas été trouvé", $request->get('id')));
-            }
-        }
-
-        if (!isset($devis)) {
-            $devis = $devism->createVierge($societe);
-        }
-
+        $devis = $devism->createVierge($societe);
         $devis->setSociete($societe);
-
-        if(!$devis->getId()) {
-            $devis->setDateEmission(new \DateTime());
-        }
+        $devis->setDateEmission(new \DateTime());
 
         $appConf = $this->container->getParameter('application');
-        if(!$devis->getCommercial()) {
-            $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant($appConf['commercial']);
-            if ($commercial === null) {
-                throw new \LogicException("Il n'y a pas de commercial dans la config.");
-            }
-            $devis->setCommercial($commercial);
+        $commercial = $dm->getRepository('AppBundle:Compte')->findOneByIdentifiant($appConf['commercial']);
+        if ($commercial === null) {
+            throw new \LogicException("Il n'y a pas de commercial dans la config.");
         }
+        $devis->setCommercial($commercial);
 
         $produitsSuggestion = $this->getProduitsSuggestion($cm->getConfiguration()->getProduits());
 
@@ -96,25 +80,22 @@ class DevisController extends Controller
 
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+            $rdv = new RendezVous();
+            $rdv->setDateDebut($devis->getDateEmission());
+            $devis->setRendezvous($rdv);
 
-            return $this->render('devis/modification.html.twig', array('form' => $form->createView(), 'produitsSuggestion' => $produitsSuggestion, 'societe' => $societe, 'devis' => $devis));
+            $devis->update();
+
+            $dm->persist($rdv);
+            $dm->persist($devis);
+            $dm->flush();
+
+            //return $this->redirectToRoute('calendar', array('devis' => $devis->getId(), 'id' => $devis->getSociete()->getId(), 'technicien' => $devis->getCommercial()->getId()));
+            return $this->redirectToRoute('devis_societe', array('id' => $societe->getId()));
         }
 
-        $devis->update();
-        $dm->persist($devis);
-
-        if(!$devis->getRendezvous()){
-          $rdv = new RendezVous();
-          $rdv->setDateDebut($devis->getDateEmission());
-          $devis->setRendezvous($rdv);
-        }
-
-        $dm->persist($rdv);
-        $dm->flush();
-
-        return $this->redirectToRoute('calendar', array('devis' => $devis->getId(), 'id' => $devis->getSociete()->getId(), 'technicien' => $devis->getCommercial()->getId()));
-        return $this->redirectToRoute('devis_societe', array('id' => $societe->getId()));
+        return $this->render('devis/modification.html.twig', array('form' => $form->createView(), 'produitsSuggestion' => $produitsSuggestion, 'societe' => $societe, 'devis' => $devis));
     }
 
     /**
