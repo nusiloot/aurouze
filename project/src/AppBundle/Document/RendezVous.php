@@ -54,10 +54,14 @@ class RendezVous {
     protected $lieu;
 
     /**
-    * @MongoDB\ReferenceOne(targetDocument="AbstractDocumentPlannifiable", simple=true)
+    * @MongoDB\ReferenceOne(targetDocument="Passage", simple=true)
      */
     protected $passage;
 
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="Devis", simple=true)
+     */
+    protected $devis;
 
   /**
    * @MongoDB\Field(type="bool")
@@ -443,4 +447,13 @@ class RendezVous {
         return $this->passage;
     }
 
+    public function setDevis(Devis $devis)
+    {
+        $this->devis = $devis;
+    }
+
+    public function getDevis()
+    {
+        return $this->devis;
+    }
 }
