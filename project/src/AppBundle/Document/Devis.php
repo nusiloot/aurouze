@@ -505,7 +505,7 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface {
     }
 
     public function getDureePrevisionnelle(){
-      return 1;
+      return '01:00';
     }
 
     public function setDureePrevisionnelle($dureePrevisionnelle)

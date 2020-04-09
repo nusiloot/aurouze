@@ -84,13 +84,13 @@ class DevisController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $rdv = new RendezVous();
-            $rdv->setDateDebut($devis->getDateEmission());
-            $devis->setRendezvous($rdv);
+            /* $rdv = new RendezVous(); */
+            /* $rdv->setDateDebut($devis->getDateEmission()); */
+            /* $devis->setRendezvous($rdv); */
 
             $devis->update();
 
-            $dm->persist($rdv);
+            /* $dm->persist($rdv); */
             $dm->persist($devis);
             $dm->flush();
 
