@@ -3,7 +3,7 @@
 namespace AppBundle\Manager;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use AppBundle\Document\Passage;
+use AppBundle\Model\DocumentPlannifiableInterface;
 use AppBundle\Document\RendezVous;
 
 class RendezVousManager {
@@ -13,7 +13,7 @@ class RendezVousManager {
         $this->dm = $dm;
     }
 
-    public function createFromPassage(Passage $passage) {
+    public function createFromPassage(DocumentPlannifiableInterface $passage) {
         $rdv = $passage->getRendezVous();
 
         if($rdv) {
@@ -22,7 +22,14 @@ class RendezVousManager {
         }
 
         $rdv = new RendezVous();
-        $rdv->setPassage($passage);
+        switch (get_class($passage)) {
+            case Devis::class:
+                $rdv->setDevis($passage);
+                break;
+            case Passage::class:
+                $rdv->setPassage($passage);
+                break;
+        }
 
         $rdv->setTitre(sprintf("%s (%s %s)",
                 $passage->getEtablissementInfos()->getNom(),
@@ -42,10 +49,10 @@ class RendezVousManager {
 
         $passage->setRendezVous($rdv);
 
-        if($passage->getDateDebut() && $passage->getDateFin()) {
-            $rdv->setDateDebut($passage->getDateDebut());
-            $rdv->setDateFin($passage->getDateFin());
-        }
+        /* if($passage->getDateDebut() && $passage->getDateFin()) { */
+        /*     $rdv->setDateDebut($passage->getDateDebut()); */
+        /*     $rdv->setDateFin($passage->getDateFin()); */
+        /* } */
 
         $rdv->setDescription($passage->getEtablissement()->getCommentaire());
 

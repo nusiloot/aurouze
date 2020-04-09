@@ -189,7 +189,9 @@ class CalendarController extends Controller {
         $pm = $this->get('passage.manager');
         $rvm = $this->get('rendezvous.manager');
 
-        $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        $passage = $request->get('passage');
+        $type_passage = ucfirst(strtolower(strtok($passage, '-')));
+        $passage = $dm->getRepository('AppBundle:'.$type_passage)->findOneById($passage);
 
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
         $rdv = $rvm->createFromPassage($passage);
