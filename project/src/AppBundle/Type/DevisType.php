@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use AppBundle\Document\Compte;
 
 
 class DevisType extends AbstractType
@@ -43,14 +44,6 @@ class DevisType extends AbstractType
                 'delete_empty' => true,
                 'label' => '',
             ))
-            // ->add('frequencePaiement', ChoiceType::class, array(
-            //         'label' => 'Fréquence de paiement',
-            //         'choices' => $this->getFrequences(),
-            //         'expanded' => false,
-            //         'multiple' => false,
-            //         'required' => false,
-            //         'attr' => array("class" => "select2 select2-simple", "data-placeholder" => "Séléctionner une fréquence de paiement"),
-            // ))
             ->add('description', TextareaType::class, array('label' => 'Informations complémentaires :', 'required' => false, "attr" => array("class" => "form-control", "rows" => 3)))
             ->add('commercial', DocumentType::class, array_merge(array('required' => false), array(
                 "choices" => $this->getCommerciaux(),
@@ -59,17 +52,22 @@ class DevisType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 "attr" => array("class" => "select2 select2-simple"))))
-        ;
-
-            $builder->add('dateEmission', DateType::class, array(
-            'label' => 'Date du devis',
-            "attr" => array(
-                'class' => 'input-inline datepicker',
-                'data-provide' => 'datepicker',
-                'data-date-format' => 'dd/mm/yyyy'
-            ),
-            'widget' => 'single_text',
-            'format' => 'dd/MM/yyyy'
+            ->add('datePrevision', DateType::class, array(
+                'label' => 'Date du devis',
+                "attr" => array(
+                    'class' => 'input-inline datepicker',
+                    'data-provide' => 'datepicker',
+                    'data-date-format' => 'dd/mm/yyyy'
+                ),
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy'
+            ))
+            ->add('techniciens', DocumentType::class, array(
+                'choices' => $this->getParticipants(),
+                'class' => Compte::class,
+                'expanded' => false,
+                'multiple' => true,
+                'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")
             ));
     }
 
@@ -102,5 +100,9 @@ class DevisType extends AbstractType
 
     public function getDefaultCommercial() {
         return $this->dm->getRepository('AppBundle:Compte')->findOneByIdentifiant($this->com);
+    }
+
+    public function getParticipants() {
+        return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
     }
 }

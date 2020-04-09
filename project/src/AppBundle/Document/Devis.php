@@ -38,9 +38,9 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface {
     protected $commercial;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Compte", inversedBy="devis")
+     * @MongoDB\ReferenceMany(targetDocument="Compte", inversedBy="techniciens", simple=true)
      */
-    protected $technicien;
+    protected $techniciens;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="Soussigne")
@@ -113,6 +113,8 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface {
         $this->emetteur = new Soussigne();
         $this->destinataire = new Soussigne();
         $this->statut = "NOUVEAU";
+        $this->dateEmission = new \DateTime();
+        $this->datePrevision = new \DateTime();
     }
 
     /**
