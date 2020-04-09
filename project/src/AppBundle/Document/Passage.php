@@ -10,7 +10,7 @@ use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Model\DocumentEtablissementInterface;
 use AppBundle\Model\DocumentSocieteInterface;
-use AppBundle\Model\AbstractDocumentPlannifiable;
+use AppBundle\Model\DocumentPlannifiableInterface;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
 use AppBundle\Document\RendezVous;
@@ -19,7 +19,7 @@ use AppBundle\Document\EtablissementInfos;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
  */
-class Passage extends AbstractDocumentPlannifiable implements DocumentEtablissementInterface, DocumentSocieteInterface
+class Passage implements DocumentEtablissementInterface, DocumentSocieteInterface, DocumentPlannifiableInterface
 {
 
     const PREFIX = "PASSAGE";
@@ -404,6 +404,8 @@ class Passage extends AbstractDocumentPlannifiable implements DocumentEtablissem
 		}
         return '01:00';
     }
+
+    public function setDureePrevisionnelle($dureePrevisionnelle){}
 
     public function getPassageIdentifiant() {
         return $this->identifiant;
@@ -1627,4 +1629,19 @@ class Passage extends AbstractDocumentPlannifiable implements DocumentEtablissem
     public function getWordingsArrFacturant(){
       return ($this->getMouvementDeclenchable())? array("facturant") : array("nonfacturant");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function plannifie(){}
+
+    /**
+     * {@inheritDoc}
+     */
+    public function termine(){}
+
+    /**
+     * {@inheritDoc}
+     */
+    public function annule(){}
 }

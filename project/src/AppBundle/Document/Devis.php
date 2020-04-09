@@ -4,16 +4,18 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Document\RendezVous;
+use AppBundle\Document\Compte;
 use AppBundle\Model\DocumentSocieteInterface;
-use AppBundle\Model\AbstractDocumentPlannifiable;
+use AppBundle\Model\DocumentPlannifiableInterface;
 use AppBundle\Manager\DevisManager;
 use AppBundle\Manager\ContratManager;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\DevisRepository") @HasLifecycleCallbacks
  */
-class Devis extends AbstractDocumentPlannifiable implements DocumentSocieteInterface {
+class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface {
 
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\DevisGenerator"})
@@ -107,6 +109,7 @@ class Devis extends AbstractDocumentPlannifiable implements DocumentSocieteInter
 
 
     public function __construct() {
+        $this->techniciens = new ArrayCollection();
         $this->emetteur = new Soussigne();
         $this->destinataire = new Soussigne();
         $this->statut = "NOUVEAU";
@@ -524,25 +527,27 @@ class Devis extends AbstractDocumentPlannifiable implements DocumentSocieteInter
     }
 
     /**
-     * Set technicien
+     * Add technicien
      *
      * @param AppBundle\Document\Compte $technicien
      * @return $this
      */
-    public function setTechnicien(\AppBundle\Document\Compte $technicien)
+    public function addTechnicien(Compte $technicien)
     {
-        $this->technicien = $technicien;
+        if (! $this->techniciens->contains($technicien)) {
+            $this->techniciens[] = $technicien;
+        }
         return $this;
     }
 
     /**
      * Get technicien
      *
-     * @return AppBundle\Document\Compte $technicien
+     * @return Collection $techniciens
      */
-    public function getTechnicien()
+    public function getTechniciens()
     {
-        return $this->technicien;
+        return $this->techniciens;
     }
 
     /**
@@ -566,4 +571,19 @@ class Devis extends AbstractDocumentPlannifiable implements DocumentSocieteInter
     {
         return $this->datePrevision;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function plannifie(){}
+
+    /**
+     * {@inheritDoc}
+     */
+    public function termine(){}
+
+    /**
+     * {@inheritDoc}
+     */
+    public function annule(){}
 }
