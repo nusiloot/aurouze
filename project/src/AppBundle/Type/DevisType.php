@@ -25,11 +25,12 @@ class DevisType extends AbstractType
     protected $com = null;
     protected $societe = null;
 
-    public function __construct($dm, $cm, $commercial, $societe) {
+    public function __construct($dm, $cm, $societe, $commercial) {
         $this->dm = $dm;
         $this->cm = $cm;
         $this->com = $commercial;
         $this->societe = $societe;
+
     }
 
     /**
@@ -38,7 +39,13 @@ class DevisType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
+        $builder->add('etablissement', DocumentType::class, array('label' => 'Lieux de livraison : ',
+                'choices' => $this->getEtablissements(),
+                'class' => 'AppBundle\Document\Etablissement',
+                'expanded' => false,
+                'multiple' => false,
+                'attr' => array("class" => "select2 select2-simple"),
+            ))
             ->add('lignes', CollectionType::class, array(
                 'entry_type' => new DevisLigneType($this->cm),
                 'allow_add' => true,
@@ -55,7 +62,7 @@ class DevisType extends AbstractType
                 'multiple' => false,
                 "attr" => array("class" => "select2 select2-simple"))))
             ->add('datePrevision', DateType::class, array(
-                'label' => 'Date du devis',
+                'label' => 'Date prévu de la signature',
                 "attr" => array(
                     'class' => 'input-inline datepicker',
                     'data-provide' => 'datepicker',
@@ -96,6 +103,12 @@ class DevisType extends AbstractType
     public function getName()
     {
         return 'devis';
+    }
+
+    public function getEtablissements() {
+
+      return $this->dm->getRepository('AppBundle:Etablissement')->findAllOrderedByIdentifiantSociete($this->societe);
+
     }
 
     public function getFrequences() {

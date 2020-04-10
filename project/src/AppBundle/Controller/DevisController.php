@@ -73,13 +73,10 @@ class DevisController extends Controller
 
         $produitsSuggestion = $this->getProduitsSuggestion($cm->getConfiguration()->getProduits());
 
-        $form = $this->createForm(new DevisType($dm, $cm, $appConf['commercial'], $societe),
-                                  $devis,
-                                  array(
-                                    'action' => "",
-                                    'method' => 'POST',
-                                  )
-        );
+        $form = $this->createForm(new DevisType($dm, $cm, $societe,  $appConf['commercial']), $devis, array(
+            'action' => "",
+            'method' => 'POST',
+        ));
 
         $form->handleRequest($request);
 
@@ -129,7 +126,7 @@ class DevisController extends Controller
 
         $produitsSuggestion = $this->getProduitsSuggestion($cm->getConfiguration()->getProduits());
 
-        $form = $this->createForm(new DevisType($dm, $cm, $appConf['commercial'], $devis->getSociete()), $devis, array(
+        $form = $this->createForm(new DevisType($dm, $cm, $devis->getSociete(), $appConf['commercial']), $devis, array(
             'action' => "",
             'method' => 'POST',
         ));
@@ -140,7 +137,7 @@ class DevisController extends Controller
             $devis->update();
             $dm->persist($devis);
             $dm->flush();
-
+              return $this->redirectToRoute('calendar', array('devis' => $devis->getId(), 'id' => $devis->getSociete()->getId(), 'technicien' => $devis->getTechniciens()->first()->getId()));
             return $this->redirectToRoute('devis_societe', ['id' => $devis->getSociete()->getId()]);
         }
 

@@ -34,76 +34,61 @@
         <li><a href=""> {% if(not devis.id) %}Création d'un devis{% elseif(devis.numeroDevis) %}Modification du devis n°{{ devis.numeroDevis }}{% else %}Création d'un devis{% endif %}</a></li>
     </ol>
 
-    <div id="factureLibre" class="form-horizontal" data-produits="{{ produitsSuggestion | json_encode }}">
+    <div id="formProduitsSuggested" class="form-horizontal" data-produits="{{ produitsSuggestion | json_encode }}">
         {{ form_start(form) }}
         <h3>{% if(not devis.id) %}Création d'un devis{% else %}Modification du devis n°{{ devis.numeroDevis }}{% endif %}</h3>
         <hr />
-        <div class="row">
-            <div class="col-xs-5">
-                {% if (form.dateFacturation is defined) %}
-                <div class="form-group">
-                    {{ form_errors(form.dateFacturation) }}
-                    {{ form_label(form.dateFacturation, "Date de facturation", {'label_attr': {'class': 'col-xs-5 control-label'}}) }}
-                    <div class="col-xs-7">
-                        <div class="input-group">
-                            {{ form_widget(form.dateFacturation) }}
-                            <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-                {% if (form.dateDevis is defined) %}
-                <div class="form-group">
-                    {{ form_errors(form.dateDevis) }}
-                    {{ form_label(form.dateDevis, "Date du devis", {'label_attr': {'class': 'col-xs-5 control-label'}}) }}
-                    <div class="col-xs-7">
-                        <div class="input-group">
-                            {{ form_widget(form.dateDevis) }}
-                            <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if (form.commercial is defined) %}
-                <div class="form-group">
-                    {{ form_errors(form.commercial) }}
-                    {{ form_label(form.commercial, "Commercial", {'label_attr': {'class': 'col-xs-5 control-label'}}) }}
-                    <div class="col-xs-7">
-                        {{ form_widget(form.commercial) }}
-                    </div>
-                </div>
-                {% elseif(devis.commercial is defined and not (devis.commercial is null)) %}
-                <div class="form-group">
-                  <label class="col-xs-5 control-label control-label" for="facture_frequencePaiement">Commercial</label>
-                    <div class="col-xs-7">
-                      <div class="input-group">
-                      {{ devis.commercial.identite }}
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-            <div class="col-xs-5 col-xs-offset-2">
+          <div class="row">
+            <div class="col-xs-12 col-xs-offset-2">
+              {% if devis.destinataire.nom %}
                 <span class="lead">{{ devis.destinataire.nom }}</span><br />
                 {{ devis.destinataire.adresseFormatee }}<br />
                 {{ devis.destinataire.codePostal }} {{ devis.destinataire.commune }}<br />
+              {% else %}
+                <span class="lead">{{ societe.raisonSociale }}</span><br />
+                {{ societe.adresse.adresseFormatee }}<br />ttt
+                {{ societe.adresse.codePostal }} {{ societe.adresse.commune }}<br />
+              {% endif %}
             </div>
         </div>
-        {% if (form.contrat is defined) %}
+        <hr />
+        <br/>
         <div class="row">
-            <div class="col-xs-12">
-              <div class="form-group">
-                {{ form_errors(form.contrat) }}
-                {{ form_label(form.contrat, "Contrat", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
-                <div class="col-xs-10">
-                  {{ form_widget(form.contrat) }}
+            <div class="col-xs-9">
+                <div class="form-group">
+                    {{ form_errors(form.commercial) }}
+                    {{ form_label(form.commercial, "Commercial", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+                    <div class="col-xs-8">
+                        {{ form_widget(form.commercial) }}
+                    </div>
                 </div>
-              </div>
             </div>
         </div>
-        {% endif %}
-
+        <br/>
+        <div class="row">
+          <div class="col-xs-9">
+              <div class="form-group">
+                    {{ form_errors(form.etablissement) }}
+                    {{ form_label(form.etablissement, "Lieux de livraison", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+                    <div class="col-xs-8">
+                      {{ form_widget(form.etablissement) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-9">
+            <div class="form-group">
+                {{ form_errors(form.description) }}
+                {{ form_label(form.description, "Informations complémentaires", {'label_attr': {'class': 'col-xs-4 control-label'}}) }}
+                <div class="col-xs-8">
+                    {{ form_widget(form.description) }}
+                </div>
+            </div>
+          </div>
+      </div>
+<br/>
+<h4>Liste de produits</h4>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -121,15 +106,34 @@
                 <th colspan="5" class="text-right"><a href="javascript:void(0);" data-collection-target="#facture_lignes_collection"  class="btn btn-primary dynamic-collection-add"><span class="glyphicon glyphicon-plus-sign"></span></a></th>
             </tfoot>
         </table>
-        <div class="form-group">
-            {{ form_errors(form.description) }}
-            {{ form_label(form.description, "Informations complémentaires", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
-            <div class="col-xs-10">
-                {{ form_widget(form.description) }}
+
+        <hr />
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="form-group">
+                {{ form_errors(form.techniciens) }}
+                {{ form_label(form.techniciens, "Techniciens", {'label_attr': {'class': 'col-xs-2 control-label'}}) }}
+                <div class="col-xs-10">
+                    {{ form_widget(form.techniciens) }}
+                </div>
             </div>
         </div>
-        <hr />
-        <div class="row form-group">
+        <div class="col-xs-6">
+            <div class="form-group">
+                {{ form_errors(form.datePrevision) }}
+                {{ form_label(form.datePrevision, "Date prévue pour signature", {'label_attr': {'class': 'col-xs-5 control-label'}}) }}
+                <div class="col-xs-7">
+                    <div class="input-group">
+                        {{ form_widget(form.datePrevision) }}
+                        <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+     <hr />
+     <br/>
+      <div class="row form-group">
             <div class="col-xs-4 text-left">
                 <a class="btn btn-default" href="{{ path('devis_societe',{ 'id' : devis.societe.id }) }}">Retour</a>
             </div>

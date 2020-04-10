@@ -483,10 +483,10 @@
     });
 
     $.initTypeheadFacture = function () {
-        if (!$('#factureLibre').length) {
+        if (!$('#formProduitsSuggested').length) {
             return;
         }
-        var produits = $('#factureLibre').data('produits');
+        var produits = $('#formProduitsSuggested').data('produits');
 
         var produitsSource = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('libelle'),
@@ -613,11 +613,6 @@
         		document.location.href=(target.replace('_id_', suggestion.id)).replace('_object_', suggestion.object);
         	}
         });
-
-    }
-
-    $.initFactureLibre = function () {
-
 
     }
 
