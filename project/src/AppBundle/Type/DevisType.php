@@ -77,14 +77,7 @@ class DevisType extends AbstractType
                 'expanded' => false,
                 'multiple' => true,
                 'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")
-            ))
-            ->add('etablissement', DocumentType::class, [
-                'choices' => $this->getEtablissements($this->societe),
-                'class' => Etablissement::class,
-                'expanded' => false,
-                'multiple' => false,
-                'choice_label' => 'nom'
-            ]);
+            ));
     }
 
     /**
@@ -128,8 +121,4 @@ class DevisType extends AbstractType
         return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
     }
 
-    public function getEtablissements(Societe $societe)
-    {
-        return $this->dm->getRepository('AppBundle:Etablissement')->findAllOrderedByIdentifiantSocieteArray($societe);
-    }
 }
