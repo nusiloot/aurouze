@@ -331,7 +331,7 @@ class CalendarController extends Controller {
             'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'passage' => ($rdv->getPassage()) ? $rdv->getPassage()->getId() : null, "forceEdition" => true)),
             'method' => 'POST',
             'attr' => array('id' => 'eventForm'),
-            'rdv_libre' => !$rdv->getPassage(),
+            'rdv_libre' => (!$rdv->getPassage() && !$rdv->getDevis()),
         ));
 
         $form->handleRequest($request);

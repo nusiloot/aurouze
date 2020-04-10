@@ -86,6 +86,19 @@ class TourneeController extends Controller {
                   'method' => 'POST',
               ))->createView(),
               'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId, 'retour' => 'passage_visualisation_'.$passage->getId())));
+          }elseif($devis = $rendezVous->getDevis()){
+
+            $passagesForms[$devis->getId()] = $this->createForm(new DevisMobileType($dm, $devis->getId()), $devis, array(
+              'action' => $this->generateUrl('tournee_passage_rapport', array('devis' => $devis->getId(),'technicien' => $technicienObj->getId())),
+              'method' => 'POST',
+              ))->createView();
+
+            $etbId = $devis->getEtablissement()->getId();
+            $attachementsForms[$etbId] = array('form' => $this->createForm(new AttachementType($dm, false), new Attachement(), array(
+                  'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId,'retour' => 'passage_visualisation_'.$devis->getId())),
+                  'method' => 'POST',
+              ))->createView(),
+              'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId, 'retour' => 'passage_visualisation_'.$devis->getId())));
           }
         }
 
