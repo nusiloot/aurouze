@@ -34,7 +34,7 @@
         <li><a href="">{% if(facture.isDevis) %}Création d'un devis{% elseif(facture.numeroFacture) %}Modification de la facture n°{{ facture.numeroFacture }}{% else %}Création d'une facture{% endif %}</a></li>
     </ol>
 
-    <div id="factureLibre" class="form-horizontal" data-produits="{{ produitsSuggestion | json_encode }}">
+    <div id="formProduitsSuggested" class="form-horizontal" data-produits="{{ produitsSuggestion | json_encode }}">
         {{ form_start(form) }}
         <h3>{% if(not facture.id and facture.isDevis) %}Création d'un devis{% elseif(facture.id and not facture.numeroFacture and facture.isFacture) %}Transformation du devis n°{{ facture.numeroDevis }} en facture{% elseif(facture.numeroFacture) %}Modification de {% if (facture.isAvoir) %}l'avoir{% else %}la facture{% endif %} n°{{ facture.numeroFacture }}{% elseif(facture.isDevis) %}Modification du devis n°{{ facture.numeroDevis }}{% else %}Création d'une facture{% endif %}</h3>
         <hr />

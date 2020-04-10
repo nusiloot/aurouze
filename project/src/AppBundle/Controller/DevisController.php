@@ -73,7 +73,7 @@ class DevisController extends Controller
 
         $produitsSuggestion = $this->getProduitsSuggestion($cm->getConfiguration()->getProduits());
 
-        $form = $this->createForm(new DevisType($dm, $cm, $appConf['commercial']), $devis, array(
+        $form = $this->createForm(new DevisType($dm, $cm, $societe,  $appConf['commercial']), $devis, array(
             'action' => "",
             'method' => 'POST',
         ));
@@ -91,8 +91,8 @@ class DevisController extends Controller
             $dm->persist($devis);
             $dm->flush();
 
-            //return $this->redirectToRoute('calendar', array('devis' => $devis->getId(), 'id' => $devis->getSociete()->getId(), 'technicien' => $devis->getCommercial()->getId()));
-            return $this->redirectToRoute('devis_societe', array('id' => $societe->getId()));
+            return $this->redirectToRoute('calendar', array('devis' => $devis->getId(), 'id' => $devis->getSociete()->getId(), 'technicien' => $devis->getCommercial()->getId()));
+            //return $this->redirectToRoute('devis_societe', array('id' => $societe->getId()));
         }
 
         return $this->render('devis/modification.html.twig', array('form' => $form->createView(), 'produitsSuggestion' => $produitsSuggestion, 'societe' => $societe, 'devis' => $devis));
@@ -122,7 +122,7 @@ class DevisController extends Controller
 
         $produitsSuggestion = $this->getProduitsSuggestion($cm->getConfiguration()->getProduits());
 
-        $form = $this->createForm(new DevisType($dm, $cm, $appConf['commercial']), $devis, array(
+        $form = $this->createForm(new DevisType($dm, $cm, $devis->getSociete(), $appConf['commercial']), $devis, array(
             'action' => "",
             'method' => 'POST',
         ));
@@ -133,7 +133,7 @@ class DevisController extends Controller
             $devis->update();
             $dm->persist($devis);
             $dm->flush();
-
+              return $this->redirectToRoute('calendar', array('devis' => $devis->getId(), 'id' => $devis->getSociete()->getId(), 'technicien' => $devis->getTechniciens()->first()->getId()));
             return $this->redirectToRoute('devis_societe', ['id' => $devis->getSociete()->getId()]);
         }
 

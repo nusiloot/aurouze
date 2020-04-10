@@ -112,9 +112,12 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface {
         $this->techniciens = new ArrayCollection();
         $this->emetteur = new Soussigne();
         $this->destinataire = new Soussigne();
-        $this->statut = "NOUVEAU";
         $this->dateEmission = new \DateTime();
         $this->datePrevision = new \DateTime();
+        if(!$this->getLignes() || !count($this->getLignes())){
+          $l = new LigneFacturable();
+          $this->addLigne($l);
+        }
     }
 
     /**
