@@ -22,11 +22,11 @@ class RendezVousManager {
         }
 
         $rdv = new RendezVous();
-        switch (get_class($passage)) {
-            case Devis::class:
+        switch ($passage::DOCUMENT_TYPE) {
+            case 'Devis':
                 $rdv->setDevis($passage);
                 break;
-            case Passage::class:
+            case 'Passage':
                 $rdv->setPassage($passage);
                 break;
         }

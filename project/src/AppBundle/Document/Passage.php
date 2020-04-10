@@ -23,6 +23,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 {
 
     const PREFIX = "PASSAGE";
+    const DOCUMENT_TYPE = 'Passage';
 
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\PassageGenerator"})

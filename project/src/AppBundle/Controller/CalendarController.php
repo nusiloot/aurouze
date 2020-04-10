@@ -307,13 +307,17 @@ class CalendarController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $pm = $this->get('passage.manager');
         $rvm = $this->get('rendezvous.manager');
-
         $technicien = $request->get('technicien');
+
         if($request->get('passage') && !$request->get('id')) {
-            $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+            $passage = $request->get('passage');
+            $type_passage = ucfirst(strtolower(strtok($passage, '-')));
+            $passage = $dm->getRepository('AppBundle:'.$type_passage)->findOneById($passage);
             $rdv = $rvm->createFromPassage($passage);
+            $rdv_libre_func = 'get'.$type_passage;
         } elseif($request->get('id')) {
             $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
+            $rdv_libre_func = ($rdv->getPassage()) ? 'getPassage' : 'getDevis';
         }
 
         if(!$rdv) {
@@ -327,11 +331,12 @@ class CalendarController extends Controller {
             return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'service' => $request->get('service')));
         }
 
+
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
             'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'passage' => ($rdv->getPassage()) ? $rdv->getPassage()->getId() : null, "forceEdition" => true)),
             'method' => 'POST',
             'attr' => array('id' => 'eventForm'),
-            'rdv_libre' => !$rdv->getPassage(),
+            'rdv_libre' => !$rdv->$rdv_libre_func(),
         ));
 
         $form->handleRequest($request);

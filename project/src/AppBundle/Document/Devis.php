@@ -15,7 +15,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\DevisRepository") @HasLifecycleCallbacks
  */
-class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface {
+class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
+{
+    const DOCUMENT_TYPE = 'Devis';
 
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\DevisGenerator"})
