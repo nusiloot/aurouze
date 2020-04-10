@@ -68,7 +68,7 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface {
     protected $dateSignature;
 
     /**
-    * @MongoDB\ReferenceOne(targetDocument="RendezVous", simple=true)
+    * @MongoDB\ReferenceOne(targetDocument="RendezVous", simple=true, cascade={"remove"})
      */
     protected $rendezvous;
 
