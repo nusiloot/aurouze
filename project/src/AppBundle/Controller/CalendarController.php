@@ -27,61 +27,54 @@ class CalendarController extends Controller {
      */
     public function calendarAction(Request $request, Etablissement $etablissement = null) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-
-        $passage = null;
-        if ($request->get('passage')) {
-            $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
-        }
-
-        $devis = null;
-        if ($request->get('devis')) {
-            $devis = $dm->getRepository('AppBundle:Devis')->findOneById($request->get('devis'));
-        }
-
+        $passage = $request->get('passage', null);
         $technicien = $request->get('technicien');
+        $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
+        $date = $request->get('date', new \DateTime());
+        $calendarTool = new CalendarDateTool(
+            $date,
+            $request->get('mode', CalendarDateTool::MODE_WEEK),
+            $this->container->getParameter('calendar_extra')
+        );
+
+        if ($passage) {
+            $type_passage = ucfirst(strtolower(strtok($passage, '-')));
+            $passage = $dm->getRepository('AppBundle:'.$type_passage)->findOneById($passage);
+        }
+
         $technicienObj = null;
         if ($technicien) {
             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
         }
+
         $techniciens = $dm->getRepository('AppBundle:Compte')->findAllUtilisateursCalendrier();
-
-        $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
         $techniciensFinal = array();
         $techniciensOnglet = $techniciens;
         foreach($techniciens as $t) {
-        	if(in_array($t->getId(), $techniciensFiltre)) {
-        		$techniciensFinal[$t->getId()] = $t;
-        	}
+            if(in_array($t->getId(), $techniciensFiltre)) {
+                $techniciensFinal[$t->getId()] = $t;
+            }
         }
 
         if(count($techniciensFinal) > 0) {
-        	$techniciensOnglet = $techniciensFinal;
+            $techniciensOnglet = $techniciensFinal;
         }
 
-
-        $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
-        $techniciensFinal = array();
-        $techniciensOnglet = $techniciens;
-        foreach($techniciens as $t) {
-        	if(in_array($t->getId(), $techniciensFiltre)) {
-        		$techniciensFinal[$t->getId()] = $t;
-        	}
-        }
-
-        if(count($techniciensFinal) > 0) {
-        	$techniciensOnglet = $techniciensFinal;
-        }
-
-        $date = $request->get('date', new \DateTime());
-
-        $calendarTool = new CalendarDateTool($date, $request->get('mode', CalendarDateTool::MODE_WEEK), $this->container->getParameter('calendar_extra'));
-
-        $etablissement = null;
-        if ($passage) {
+        if (! $etablissement) {
             $etablissement = $passage->getEtablissement();
         }
 
-        return $this->render('calendar/calendar.html.twig', array('calendarTool' => $calendarTool, 'techniciensOnglet' => $techniciensOnglet, 'techniciens' => $techniciens, 'passage' => $passage, 'devis' => $devis, 'technicien' => $technicien, 'technicienObj' => $technicienObj, 'etablissement' => $etablissement, 'date' => $date, 'mode' => $request->get('mode')));
+        return $this->render('calendar/calendar.html.twig', [
+            'calendarTool' => $calendarTool,
+            'techniciensOnglet' => $techniciensOnglet,
+            'techniciens' => $techniciens,
+            'passage' => $passage,
+            'technicien' => $technicien,
+            'technicienObj' => $technicienObj,
+            'etablissement' => $etablissement,
+            'date' => $date,
+            'mode' => $request->get('mode')
+        ]);
     }
 
     /**
@@ -196,7 +189,9 @@ class CalendarController extends Controller {
         $pm = $this->get('passage.manager');
         $rvm = $this->get('rendezvous.manager');
 
-        $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
+        $passage = $request->get('passage');
+        $type_passage = ucfirst(strtolower(strtok($passage, '-')));
+        $passage = $dm->getRepository('AppBundle:'.$type_passage)->findOneById($passage);
 
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
         $rdv = $rvm->createFromPassage($passage);

@@ -14,7 +14,8 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use AppBundle\Document\Compte;
-
+use AppBundle\Document\Etablissement;
+use AppBundle\Document\Societe;
 
 class DevisType extends AbstractType
 {
@@ -76,7 +77,14 @@ class DevisType extends AbstractType
                 'expanded' => false,
                 'multiple' => true,
                 'attr' => array("class" => "select2 select2-simple", "multiple" => "multiple", "style" => "width:100%;")
-            ));
+            ))
+            ->add('etablissement', DocumentType::class, [
+                'choices' => $this->getEtablissements($this->societe),
+                'class' => Etablissement::class,
+                'expanded' => false,
+                'multiple' => false,
+                'choice_label' => 'nom'
+            ]);
     }
 
     /**
@@ -118,5 +126,10 @@ class DevisType extends AbstractType
 
     public function getParticipants() {
         return $this->dm->getRepository('AppBundle:Compte')->findAllUtilisateursTechnicien();
+    }
+
+    public function getEtablissements(Societe $societe)
+    {
+        return $this->dm->getRepository('AppBundle:Etablissement')->findAllOrderedByIdentifiantSocieteArray($societe);
     }
 }

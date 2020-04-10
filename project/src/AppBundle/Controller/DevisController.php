@@ -81,18 +81,22 @@ class DevisController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $rdv = new RendezVous();
-            $rdv->setDateDebut($devis->getDateEmission());
-            $devis->setRendezvous($rdv);
+            /* $rdv = new RendezVous(); */
+            /* $rdv->setDateDebut($devis->getDateEmission()); */
+            /* $devis->setRendezvous($rdv); */
 
             $devis->update();
 
-            $dm->persist($rdv);
+            /* $dm->persist($rdv); */
             $dm->persist($devis);
             $dm->flush();
 
-            return $this->redirectToRoute('calendar', array('devis' => $devis->getId(), 'id' => $devis->getSociete()->getId(), 'technicien' => $devis->getCommercial()->getId()));
-            //return $this->redirectToRoute('devis_societe', array('id' => $societe->getId()));
+            return $this->redirectToRoute('calendar', array(
+                'passage' => $devis->getId(),
+                'date' => $devis->getDatePrevision()->format('d-m-Y'),
+                'id' => $devis->getEtablissement()->getId(),
+                'technicien' => $devis->getTechniciens()[0]->getId()
+            ));
         }
 
         return $this->render('devis/modification.html.twig', array('form' => $form->createView(), 'produitsSuggestion' => $produitsSuggestion, 'societe' => $societe, 'devis' => $devis));
