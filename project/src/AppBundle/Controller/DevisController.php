@@ -82,7 +82,7 @@ class DevisController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             /* $rdv = new RendezVous(); */
-            /* $rdv->setDateDebut($devis->getDatePrevision()); */ 
+            /* $rdv->setDateDebut($devis->getDateEmission()); */
             /* $devis->setRendezvous($rdv); */
 
             $devis->update();
