@@ -183,24 +183,26 @@ class RendezVous {
         return $participants;
     }
 
-    public function pushToPassage() {
-        if(!$this->getPassage()) {
-
+    public function pushToPlanifiable() {
+        if(!$this->getPlanifiable()) {
             return;
         }
-
-        if(count(array_diff($this->getParticipantsIds(), $this->getPassage()->getTechniciensIds())) > 0 || count(array_diff($this->getPassage()->getTechniciensIds(), $this->getParticipantsIds())) > 0) {
-            $this->getPassage()->removeAllTechniciens();
+        
+        if(count(array_diff($this->getParticipantsIds(), $this->getPlanifiable()->getTechniciensIds())) > 0 || count(array_diff($this->getPlanifiable()->getTechniciensIds(), $this->getParticipantsIds())) > 0) {
+            $this->getPlanifiable()->removeAllTechniciens();
 
             foreach($this->getParticipants() as $participant) {
-                $this->getPassage()->addTechnicien($participant);
+                $this->getPlanifiable()->addTechnicien($participant);
             }
         }
 
-        $this->getPassage()->setCommentaire($this->getDescription());
-        $this->getPassage()->setDateDebut($this->getDateDebut());
-        $this->getPassage()->setDateFin($this->getDateFin());
+        $this->getPlanifiable()->setCommentaire($this->getDescription());
+        $this->getPlanifiable()->setDateDebut($this->getDateDebut());
+        $this->getPlanifiable()->setDateFin($this->getDateFin());
     }
+
+
+
 
     public function setTimeDebut($time) {
         $dateTime = $this->getDateDebut();
@@ -229,16 +231,16 @@ class RendezVous {
 
     /** @MongoDB\PreFlush */
     public function preFlush() {
-        $this->pushToPassage();
+        $this->pushToPlanifiable();
     }
 
     /** @MongoDB\PreRemove */
     public function preRemove()
     {
-        if(!$this->getPassage()) {
+        if(!$this->getPlanifiable()) {
             return;
         }
-        $this->getPassage()->deplanifier();
+        $this->getPlanifiable()->deplanifier();
         $this->removePassage();
     }
 
@@ -437,6 +439,17 @@ class RendezVous {
         return $this;
     }
 
+    public function getPlanifiable()
+    {
+        if($this->getPassage()){
+          return $this->getPassage();
+        }
+        if($this->getDevis()){
+          return $this->getDevis();
+        }
+        return null;
+    }
+
     /**
      * Get passage
      *
@@ -452,6 +465,11 @@ class RendezVous {
         $this->devis = $devis;
     }
 
+    /**
+     * Get passage
+     *
+     * @return AppBundle\Document\Devis $devis
+     */
     public function getDevis()
     {
         return $this->devis;

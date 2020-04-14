@@ -27,7 +27,7 @@ class CalendarController extends Controller {
      */
     public function calendarAction(Request $request, Etablissement $etablissement = null) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $passage = $request->get('passage', null);
+        $planifiable = $request->get('planifiable', null);
         $technicien = $request->get('technicien');
         $techniciensFiltre = $request->get("techniciens", unserialize($request->cookies->get('techniciens', serialize(array()))));
         $date = $request->get('date', new \DateTime());
@@ -37,9 +37,9 @@ class CalendarController extends Controller {
             $this->container->getParameter('calendar_extra')
         );
 
-        if ($passage) {
-            $type_passage = ucfirst(strtolower(strtok($passage, '-')));
-            $passage = $dm->getRepository('AppBundle:'.$type_passage)->findOneById($passage);
+        if ($planifiable) {
+            $type_planifiable = ucfirst(strtolower(strtok($planifiable, '-')));
+            $planifiable = $dm->getRepository('AppBundle:'.$type_planifiable)->findOneById($planifiable);
         }
 
         $technicienObj = null;
@@ -60,15 +60,15 @@ class CalendarController extends Controller {
             $techniciensOnglet = $techniciensFinal;
         }
 
-        if (! $etablissement) {
-            $etablissement = $passage->getEtablissement();
+        if (!$etablissement && $planifiable) {
+            $etablissement = $planifiable->getEtablissement();
         }
 
         return $this->render('calendar/calendar.html.twig', [
             'calendarTool' => $calendarTool,
             'techniciensOnglet' => $techniciensOnglet,
             'techniciens' => $techniciens,
-            'passage' => $passage,
+            'planifiable' => $planifiable,
             'technicien' => $technicien,
             'technicienObj' => $technicienObj,
             'etablissement' => $etablissement,
@@ -189,12 +189,12 @@ class CalendarController extends Controller {
         $pm = $this->get('passage.manager');
         $rvm = $this->get('rendezvous.manager');
 
-        $passage = $request->get('passage');
-        $type_passage = ucfirst(strtolower(strtok($passage, '-')));
-        $passage = $dm->getRepository('AppBundle:'.$type_passage)->findOneById($passage);
+        $planifiable = $request->get('planifiable');
+        $type_passage = ucfirst(strtolower(strtok($planifiable, '-')));
+        $planifiable = $dm->getRepository('AppBundle:'.$type_passage)->findOneById($planifiable);
 
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
-        $rdv = $rvm->createFromPassage($passage);
+        $rdv = $rvm->createFromPlanifiable($planifiable);
 
         $rdv->setDateDebut(new \DateTime($request->get('start')));
         $rdv->setDateFin(new \DateTime($request->get('end')));
@@ -202,7 +202,7 @@ class CalendarController extends Controller {
         $rdv->addParticipant($technicien);
 
         $dm->persist($rdv);
-        $rdv->pushToPassage();
+        $rdv->pushToPlanifiable();
       //  $pm->updateNextPassageAPlannifier($rdv->getPassage());
         $dm->flush();
 
@@ -311,7 +311,7 @@ class CalendarController extends Controller {
         $technicien = $request->get('technicien');
         if($request->get('passage') && !$request->get('id')) {
             $passage = $dm->getRepository('AppBundle:Passage')->findOneById($request->get('passage'));
-            $rdv = $rvm->createFromPassage($passage);
+            $rdv = $rvm->createFromPlanifiable($passage);
         } elseif($request->get('id')) {
             $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
         }
@@ -343,8 +343,8 @@ class CalendarController extends Controller {
 
         if(!$rdv->getId()) {
             $dm->persist($rdv);
-            if($rdv->getPassage()) {
-                $rdv->pushToPassage();
+            if($rdv->getPlanifiable()) {
+                $rdv->pushToPlanifiable();
             }
         }
 

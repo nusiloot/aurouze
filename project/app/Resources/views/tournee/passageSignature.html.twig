@@ -1,23 +1,23 @@
-<div class="passage_signature" data-role="page" id="passage_signature_{{ passage.id }}" data-id="{{ passage.id }}">
+<div class="passage_signature" data-role="page" id="passage_signature_{{ planifiable.id }}" data-id="{{ planifiable.id }}">
   <div data-role="header" style="overflow:hidden;" data-position="fixed">
     <h1>Tournée {{ technicien.identite }}</h1>
-    <a href="#passage_rapport_{{ passage.id }}" class="passage_signature_valider ui-btn ui-icon-arrow-l ui-btn-icon-left" data-id="{{ passage.id }}" >
+    <a href="#passage_rapport_{{ planifiable.id }}" class="passage_signature_valider ui-btn ui-icon-arrow-l ui-btn-icon-left" data-id="{{ planifiable.id }}" >
           &nbsp;Retour
     </a>
-    <a data-id="{{ passage.id }}" class="passage_signature_vider ui-btn ui-icon-recycle ui-btn-icon-right" data-id="{{ passage.id }}" >
+    <a data-id="{{ planifiable.id }}" class="passage_signature_vider ui-btn ui-icon-recycle ui-btn-icon-right" data-id="{{ planifiable.id }}" >
       vider&nbsp;
     </a>
     <div class="reloadWarning ui-bar ui-bar-b" style="display:none;"></div>
   </div>
     <div data-role="main" class="ui-content" style="padding:3px">
     {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
-    {% set passageId = passage.id %}
-      <div class="signature-pad ui-body ui-body-a ui-corner-all" id="signature_pad_content_{{ passage.id }}">
+    {% set passageId = planifiable.id %}
+      <div class="signature-pad ui-body ui-body-a ui-corner-all" id="signature_pad_content_{{ planifiable.id }}">
           {{ form_errors(form.signatureBase64) }}
           {{ form_widget(form.signatureBase64) }}
-          <canvas id="signature_pad_{{ passage.id }}"></canvas>
+          <canvas id="signature_pad_{{ planifiable.id }}"></canvas>
       </div>
-      <a  class="passage_signature_valider ui-btn ui-icon-check ui-btn-icon-right passage_rapport"  href="#passage_rapport_{{ passage.id }}" data-id="{{ passage.id }}" >
+      <a  class="passage_signature_valider ui-btn ui-icon-check ui-btn-icon-right passage_rapport"  href="#passage_rapport_{{ planifiable.id }}" data-id="{{ planifiable.id }}" >
           Valider la saisie&nbsp;
       </a>
     </form>
