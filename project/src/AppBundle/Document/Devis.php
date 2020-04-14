@@ -7,6 +7,7 @@ use AppBundle\Document\RendezVous;
 use AppBundle\Document\Compte;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Model\DocumentPlannifiableInterface;
+use AppBundle\Model\DocumentPlanifiableTrait;
 use AppBundle\Manager\DevisManager;
 use AppBundle\Manager\ContratManager;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
@@ -17,6 +18,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
 {
+    use DocumentPlanifiableTrait;
+
     const DOCUMENT_TYPE = 'Devis';
 
     /**
@@ -30,19 +33,9 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
     protected $societe;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="devis", simple=true)
-     */
-    protected $etablissement;
-
-    /**
      * @MongoDB\ReferenceOne(targetDocument="Compte", inversedBy="devis")
      */
     protected $commercial;
-
-    /**
-     * @MongoDB\ReferenceMany(targetDocument="Compte", inversedBy="techniciens", simple=true)
-     */
-    protected $techniciens;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="Soussigne")
@@ -62,48 +55,12 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
     /**
      * @MongoDB\Field(type="date")
      */
-    protected $dateDebut;
-
-    /**
-     * @MongoDB\Field(type="date")
-     */
-    protected $dateFin;
-
-    /**
-     * @MongoDB\Field(type="date")
-     */
-    protected $datePrevision;
-
-    /**
-     * @MongoDB\Field(type="date")
-     */
     protected $dateSignature;
-
-    /**
-    * @MongoDB\ReferenceOne(targetDocument="RendezVous", simple=true, cascade={"remove"})
-     */
-    protected $rendezvous;
 
     /**
      * @MongoDB\Field(type="string")
      */
     protected $signatureBase64;
-
-    /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $emailTransmission;
-
-    /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $secondEmailTransmission;
-
-    /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $nomTransmission;
-
 
     /**
      * @MongoDB\Field(type="float")
@@ -119,11 +76,6 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
      * @MongoDB\Field(type="float")
      */
     protected $montantTaxe;
-
-    /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $description;
 
     /**
      * @MongoDB\Field(type="string")
@@ -374,27 +326,6 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
         return $this->montantTaxe;
     }
 
-    /**
-     * Set description
-     *
-     * @param string $description
-     * @return $this
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-        return $this;
-    }
-
-    /**
-     * Get description
-     *
-     * @return string $description
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
 
     /**
      * Set numeroDevis
@@ -506,34 +437,8 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
         $destinataire->setCodeComptable($societe->getCodeComptable());
     }
 
-    /**
-     * Set rendezvous
-     *
-     * @param RendezVous $rendezvous
-     * @return $this
-     */
-    public function setRendezvous(RendezVous $rendezvous)
-    {
-        $this->rendezvous = $rendezvous;
-        return $this;
-    }
-
-    /**
-     * Get rendezvous
-     *
-     * @return RendezVous $rendezvous
-     */
-    public function getRendezvous()
-    {
-        return $this->rendezvous;
-    }
 
 // A partir de là => a mutualiser avec les passages
-
-    public function getEtablissement()
-    {
-        return $this->getSociete()->getEtablissements()->first();
-    }
 
     public function getDureePrevisionnelle(){
       return '01:00';
@@ -556,75 +461,8 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
         return $this->getEtablissement();
     }
 
-    /**
-     * Set etablissement
-     *
-     * @param AppBundle\Document\Etablissement $etablissement
-     * @return $this
-     */
-    public function setEtablissement(\AppBundle\Document\Etablissement $etablissement)
-    {
-        $this->etablissement = $etablissement;
-        return $this;
-    }
 
-    /**
-     * Add technicien
-     *
-     * @param AppBundle\Document\Compte $technicien
-     * @return $this
-     */
-    public function addTechnicien(Compte $technicien)
-    {
-        if (! $this->techniciens->contains($technicien)) {
-            $this->techniciens[] = $technicien;
-        }
-        return $this;
-    }
 
-    /**
-     * Get technicien
-     *
-     * @return Collection $techniciens
-     */
-    public function getTechniciens()
-    {
-        return $this->techniciens;
-    }
-
-    public function getTechniciensIds() {
-        $techniciens = array();
-
-        foreach ($this->getTechniciens() as $technicien) {
-            $techniciens[] = $technicien->getId();
-        }
-
-        sort($techniciens);
-
-        return $techniciens;
-    }
-
-    /**
-     * Set datePrevision
-     *
-     * @param date $datePrevision
-     * @return $this
-     */
-    public function setDatePrevision($datePrevision)
-    {
-        $this->datePrevision = $datePrevision;
-        return $this;
-    }
-
-    /**
-     * Get datePrevision
-     *
-     * @return date $datePrevision
-     */
-    public function getDatePrevision()
-    {
-        return $this->datePrevision;
-    }
 
     /**
      * {@inheritDoc}
@@ -641,125 +479,7 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
      */
     public function annule(){}
 
-    /**
-     * Remove technicien
-     *
-     * @param AppBundle\Document\Compte $technicien
-     */
-    public function removeTechnicien(\AppBundle\Document\Compte $technicien)
-    {
-        $this->techniciens->removeElement($technicien);
-    }
 
-    /**
-     * Set emailTransmission
-     *
-     * @param string $emailTransmission
-     * @return $this
-     */
-    public function setEmailTransmission($emailTransmission)
-    {
-        $this->emailTransmission = $emailTransmission;
-        return $this;
-    }
-
-    /**
-     * Get emailTransmission
-     *
-     * @return string $emailTransmission
-     */
-    public function getEmailTransmission()
-    {
-        return $this->emailTransmission;
-    }
-
-    /**
-     * Set secondEmailTransmission
-     *
-     * @param string $secondEmailTransmission
-     * @return $this
-     */
-    public function setSecondEmailTransmission($secondEmailTransmission)
-    {
-        $this->secondEmailTransmission = $secondEmailTransmission;
-        return $this;
-    }
-
-    /**
-     * Get secondEmailTransmission
-     *
-     * @return string $secondEmailTransmission
-     */
-    public function getSecondEmailTransmission()
-    {
-        return $this->secondEmailTransmission;
-    }
-
-    /**
-     * Set nomTransmission
-     *
-     * @param string $nomTransmission
-     * @return $this
-     */
-    public function setNomTransmission($nomTransmission)
-    {
-        $this->nomTransmission = $nomTransmission;
-        return $this;
-    }
-
-    /**
-     * Get nomTransmission
-     *
-     * @return string $nomTransmission
-     */
-    public function getNomTransmission()
-    {
-        return $this->nomTransmission;
-    }
-
-    /**
-     * Set dateDebut
-     *
-     * @param date $dateDebut
-     * @return $this
-     */
-    public function setDateDebut($dateDebut)
-    {
-        $this->dateDebut = $dateDebut;
-        return $this;
-    }
-
-    /**
-     * Get dateDebut
-     *
-     * @return date $dateDebut
-     */
-    public function getDateDebut()
-    {
-        return $this->dateDebut;
-    }
-
-    /**
-     * Set dateFin
-     *
-     * @param date $dateFin
-     * @return $this
-     */
-    public function setDateFin($dateFin)
-    {
-        $this->dateFin = $dateFin;
-        return $this;
-    }
-
-    /**
-     * Get dateFin
-     *
-     * @return date $dateFin
-     */
-    public function getDateFin()
-    {
-        return $this->dateFin;
-    }
 
     public function getTypePlanifiable() {
         return 'Devis';
