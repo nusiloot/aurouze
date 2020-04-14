@@ -1645,4 +1645,8 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * {@inheritDoc}
      */
     public function annule(){}
+
+      public function getTypePlanifiable() {
+          return 'Passage';
+      }
 }

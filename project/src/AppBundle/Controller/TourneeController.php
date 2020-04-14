@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Document\Passage;
 use AppBundle\Document\Attachement;
 use AppBundle\Type\PassageMobileType;
+use AppBundle\Type\DevisMobileType;
 use AppBundle\Type\AttachementType;
 
 class TourneeController extends Controller {
@@ -76,7 +77,7 @@ class TourneeController extends Controller {
             }
 
             $passagesForms[$passage->getId()] = $this->createForm(new PassageMobileType($dm, $passage->getId(), $previousPassage), $passage, array(
-              'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
+              'action' => $this->generateUrl('tournee_planifiable_rapport', array('planifiable' => $passage->getId(),'technicien' => $technicienObj->getId())),
               'method' => 'POST',
               ))->createView();
 
@@ -89,7 +90,7 @@ class TourneeController extends Controller {
           }elseif($devis = $rendezVous->getDevis()){
 
             $passagesForms[$devis->getId()] = $this->createForm(new DevisMobileType($dm, $devis->getId()), $devis, array(
-              'action' => $this->generateUrl('tournee_passage_rapport', array('devis' => $devis->getId(),'technicien' => $technicienObj->getId())),
+              'action' => $this->generateUrl('tournee_planifiable_rapport', array('planifiable' => $devis->getId(),'technicien' => $technicienObj->getId())),
               'method' => 'POST',
               ))->createView();
 
@@ -132,6 +133,28 @@ class TourneeController extends Controller {
          $version = $this->getVersionManifest($technicienObj->getId(),$date);
 
          return new Response(json_encode(array("success" => true,"version" => $version)));
+     }
+
+     /**
+      * @Route("/tournee-technicien/planifiable-rapport/{planifiable}/{technicien}", name="tournee_planifiable_rapport")
+      */
+     public function tourneePlanifiableRapportAction(Request $request, $planifiable) {
+
+         $dm = $this->get('doctrine_mongodb')->getManager();
+         $technicien = $request->get('technicien');
+         $technicienObj = null;
+         if ($technicien) {
+             $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
+         }
+
+         $planifiable = $request->get('planifiable');
+         switch (get_class($planifiable)) {
+             case Devis::class:
+                 return $this->redirectToRoute('tournee_planifiable_rapport', array("technicien" => $technicienObj->getId(), "devis" => $planifiable));
+             case Passage::class:
+                 return $this->redirectToRoute('tournee_passage_rapport', array("technicien" => $technicienObj->getId(), "passage" => $planifiable));
+         }
+         return null;
      }
 
     /**
