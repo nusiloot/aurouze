@@ -31,8 +31,9 @@
   {% for rendezvous in rendezVousByTechnicien %}
       {% if rendezvous.planifiable %}
         {% set planifiable = rendezvous.planifiable %}
+        {% set type = planifiable.getTypePlanifiable|lower %}
         <li>
-        <a class="tournee_passage_visualisation anchor-link {% if( planifiable.isTransmis ) %}transmis{% endif %}" href="#passage_visualisation_{{ planifiable.id }}"  >
+        <a class="tournee_visualisation anchor-link {% if( planifiable.isTransmis ) %}transmis{% endif %}" href="#visualisation_{{ planifiable.id }}"  >
           <h2>{% if(planifiable.dateDebut | date('Ymd') < date | date('Ymd')) %}Début le {{planifiable.dateDebut | localizeddate("medium", "none", null, null, "dd MMMM")}}
               {% else %}{{planifiable.dateDebut | date("H") }}h{{planifiable.dateDebut | date("i") }}
               {% endif %}
@@ -68,6 +69,7 @@
             <div class="col-xs-12">
               {{rendezvous.description | nl2br }}
             </div>
+          </div>
         </li>
       {% endif %}
   {% endfor %}
@@ -77,15 +79,19 @@
 {% for rendezvous in rendezVousByTechnicien %}
   {% if rendezvous.planifiable %}
     {% set planifiable = rendezvous.planifiable %}
-    {% set type = planifiable.getTypePlanifiable %}
+    {% set type = planifiable.getTypePlanifiable|lower %}
 
-    <div class="{{ type }}_visualisation" data-role="page" id="{{ type }}_visualisation_{{ planifiable.id }}">
+    <div class="visualisation" data-role="page" id="visualisation_{{ planifiable.id }}">
       <div data-role="main" class="ui-content">
-        {{ include('tournee/{{ type }}Visualisation.html.twig', { 'planifiable' : planifiable, "technicien" : technicien, "historiquePassages" : historiqueAllPassages[planifiable.id],'telephoneSecretariat' : telephoneSecretariat}) }}
+        {% set historiquePassages = [] %}
+        {% if historiqueAllPassages[planifiable.id] is defined %}
+          {% set historiquePassages = historiqueAllPassages[planifiable.id] %}
+        {% endif %}
+          {{ include('tournee/'~type~'Visualisation.html.twig', { 'planifiable' : planifiable, "technicien" : technicien, "historiquePassages" : historiquePassages,'telephoneSecretariat' : telephoneSecretariat}) }}
       </div>
     </div>
-  {{ include('tournee/{{ type }}Rapport.html.twig', { 'planifiable' : planifiable, "technicien" : technicien, "form" : passagesForms[planifiable.id]}) }}
-  {{ include('tournee/{{ type }}Signature.html.twig', { 'planifiable' : planifiable, "technicien" : technicien, "form" : passagesForms[planifiable.id]}) }}
+  {{ include('tournee/'~type~'Rapport.html.twig', { 'planifiable' : planifiable, "technicien" : technicien, "form" : planifiableForms[planifiable.id]}) }}
+  {{ include('tournee/'~type~'Signature.html.twig', { 'planifiable' : planifiable, "technicien" : technicien, "form" : planifiableForms[planifiable.id]}) }}
   {{ include('tournee/attachementAjout.html.twig', { 'planifiable' : planifiable, "technicien" : technicien, "attachementform" : attachementsForms[planifiable.etablissement.id]}) }}
   {% endif %}
 
