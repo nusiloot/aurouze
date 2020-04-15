@@ -34,6 +34,11 @@ trait DocumentPlanifiablePropertiesTrait
     protected $datePrevision;
 
     /**
+     * @MongoDB\Field(type="date")
+     */
+    protected $dateRealise;
+
+    /**
     * @MongoDB\ReferenceOne(targetDocument="RendezVous", simple=true, cascade={"remove"})
      */
     protected $rendezVous;
@@ -57,4 +62,9 @@ trait DocumentPlanifiablePropertiesTrait
      * @MongoDB\Field(type="string")
      */
     protected $description;
+
+    /**
+     * @MongoDB\Field(type="string")
+     */
+    protected $statut;
 }

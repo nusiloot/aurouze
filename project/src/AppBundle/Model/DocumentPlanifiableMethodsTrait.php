@@ -5,6 +5,7 @@ namespace AppBundle\Model;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\Compte;
 use AppBundle\Document\RendezVous;
+use AppBundle\Manager\PassageManager;
 
 trait DocumentPlanifiableMethodsTrait
 {
@@ -143,6 +144,26 @@ trait DocumentPlanifiableMethodsTrait
     }
 
     /**
+     * Set dateRealise
+     *
+     * @param date $dateRealise
+     * @return self
+     */
+    public function setDateRealise($dateRealise) {
+        $this->dateRealise = $dateRealise;
+        return $this;
+    }
+
+    /**
+     * Get dateRealise
+     *
+     * @return date $dateRealise
+     */
+    public function getDateRealise() {
+        return $this->dateRealise;
+    }
+
+    /**
      * Set rendezvous
      *
      * @param RendezVous $rendezvous
@@ -162,6 +183,14 @@ trait DocumentPlanifiableMethodsTrait
     public function getRendezvous()
     {
         return $this->rendezVous;
+    }
+
+    public function removeRendezVous()
+    {
+        $this->rendezVous = null;
+        unset($this->rendezVous);
+
+        return $this;
     }
 
     /**
@@ -250,5 +279,76 @@ trait DocumentPlanifiableMethodsTrait
     public function getDescription()
     {
         return $this->description;
+    }
+
+    public function deplanifier() {
+        $this->setDateDebut($this->getDatePrevision());
+        $this->setDateFin(null);
+        if($this->isRealise()) {
+            $this->setDateRealise(null);
+        }
+        $this->removeRendezVous();
+
+        $this->updateStatut();
+    }
+
+    public function getDescriptionTransformed() {
+        return str_replace('\n', "\n", $this->description);
+    }
+
+    public function isRealise() {
+        return $this->statut == PassageManager::STATUT_REALISE;
+    }
+
+    public function isPlanifie() {
+        return $this->statut == PassageManager::STATUT_PLANIFIE;
+    }
+
+    public function isAPlanifie() {
+        return $this->statut == PassageManager::STATUT_A_PLANIFIER;
+    }
+
+    public function isAnnule() {
+        return $this->statut == PassageManager::STATUT_ANNULE;
+    }
+
+    /**
+     * Set statut
+     *
+     * @param string $statut
+     * @return self
+     */
+    public function setStatut($statut) {
+        $this->statut = $statut;
+        return $this;
+    }
+
+    /**
+     * Get statut
+     *
+     * @return string $statut
+     */
+    public function getStatut() {
+        return $this->statut;
+    }
+
+    public function updateStatut() {
+        if (!$this->isAnnule()) {
+            if ($this->getDatePrevision() && !boolval($this->getDateFin()) && !boolval($this->getDateDebut()) && !boolval($this->getDateRealise())) {
+                $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
+                return;
+            }
+            if (boolval($this->getDateDebut()) && !boolval($this->getDateFin()) && !boolval($this->getDateRealise())) {
+                $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
+                return;
+            }
+            if (boolval($this->getDateDebut()) && boolval($this->getDateFin()) && !boolval($this->getDateRealise())) {
+                $this->setStatut(PassageManager::STATUT_PLANIFIE);
+                return;
+            }
+            if (boolval($this->getDateRealise())) {
+                $this->setStatut(PassageManager::STATUT_REALISE);
+            }
+        }
     }
 }

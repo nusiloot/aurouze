@@ -87,7 +87,6 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
      */
     protected $lignes;
 
-
     public function __construct() {
         $this->techniciens = new ArrayCollection();
         $this->emetteur = new Soussigne();
