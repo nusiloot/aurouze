@@ -11,6 +11,7 @@ use AppBundle\Manager\PassageManager;
 use AppBundle\Model\DocumentEtablissementInterface;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Model\DocumentPlannifiableInterface;
+use AppBundle\Model\DocumentPlanifiableTrait;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
 use AppBundle\Document\RendezVous;
@@ -21,6 +22,7 @@ use AppBundle\Document\EtablissementInfos;
  */
 class Passage implements DocumentEtablissementInterface, DocumentSocieteInterface, DocumentPlannifiableInterface
 {
+    use DocumentPlanifiableTrait;
 
     const PREFIX = "PASSAGE";
     const DOCUMENT_TYPE = 'Passage';
@@ -53,21 +55,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /**
      * @MongoDB\Field(type="date")
      */
-    protected $datePrevision;
-
-    /**
-     * @MongoDB\Field(type="date")
-     */
-    protected $dateDebut;
-
-    /**
-     * @MongoDB\Field(type="date")
-     */
-    protected $dateFin;
-
-    /**
-     * @MongoDB\Field(type="date")
-     */
     protected $dateRealise;
 
     /**
@@ -79,11 +66,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @MongoDB\Field(type="string")
      */
     protected $etablissementIdentifiant;
-
-    /**
-     * @MongoDB\ReferenceOne(targetDocument="Etablissement", inversedBy="passages", simple=true)
-     */
-    protected $etablissement;
 
     /**
      * @MongoDB\EmbedOne(targetDocument="AppBundle\Document\EtablissementInfos")
@@ -99,16 +81,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @MongoDB\Field(type="string")
      */
     protected $commentaire;
-
-    /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $description;
-
-    /**
-     * @MongoDB\ReferenceMany(targetDocument="Compte", inversedBy="techniciens", simple=true)
-     */
-    protected $techniciens;
 
     /**
      * @MongoDB\Field(type="string")
@@ -156,11 +128,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     protected $typePassage;
 
     /**
-    * @MongoDB\ReferenceOne(targetDocument="RendezVous", simple=true)
-     */
-    protected $rendezVous;
-
-    /**
      *  @MongoDB\Field(type="collection")
      */
     protected $nettoyages;
@@ -194,21 +161,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @MongoDB\EmbedMany(targetDocument="NiveauInfestation")
      */
     protected $niveauInfestation;
-
-    /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $emailTransmission;
-
-    /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $secondEmailTransmission;
-
-    /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $nomTransmission;
 
     /**
      * @MongoDB\Field(type="string")
@@ -477,53 +429,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->societeIdentifiant;
     }
 
-    /**
-     * Set dateDebut
-     *
-     * @param date $dateDebut
-     * @return self
-     */
-    public function setDateDebut($dateDebut) {
-        $this->setDateModification(new \DateTime());
-        if ($this->dateDebut && $dateDebut != $this->dateDebut) {
-            $this->setImprime(false);
-        }
-        $this->dateDebut = $dateDebut;
-        return $this;
-    }
-
-    /**
-     * Get dateDebut
-     *
-     * @return date $dateDebut
-     */
-    public function getDateDebut() {
-        return $this->dateDebut;
-    }
-
-    /**
-     * Set dateFin
-     *
-     * @param date $dateFin
-     * @return self
-     */
-    public function setDateFin($dateFin) {
-        $this->setDateModification(new \DateTime());
-        if ($this->dateFin && $dateFin != $this->dateFin) {
-            $this->setImprime(false);
-        }
-        $this->dateFin = $dateFin;
-        return $this;
-    }
-
-    /**
-     * Get dateFin
-     *
-     * @return date $dateFin
-     */
-    public function getDateFin() {
-        return $this->dateFin;
-    }
 
     /**
      * Set etablissementIdentifiant
@@ -610,26 +515,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     }
 
     /**
-     * Set description
-     *
-     * @param string $description
-     * @return self
-     */
-    public function setDescription($description) {
-        $this->description = $description;
-        return $this;
-    }
-
-    /**
-     * Get description
-     *
-     * @return string $description
-     */
-    public function getDescription() {
-        return $this->description;
-    }
-
-    /**
      * Set statut
      *
      * @param string $statut
@@ -650,25 +535,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->statut;
     }
 
-    /**
-     * Set datePrevision
-     *
-     * @param date $datePrevision
-     * @return self
-     */
-    public function setDatePrevision($datePrevision) {
-        $this->datePrevision = $datePrevision;
-        return $this;
-    }
-
-    /**
-     * Get datePrevision
-     *
-     * @return date $datePrevision
-     */
-    public function getDatePrevision() {
-        return $this->datePrevision;
-    }
 
     public function getDateForPlanif() {
     	$today = new \DateTime();
@@ -788,40 +654,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->numeroContratArchive;
     }
 
-    /**
-     * Add technicien
-     *
-     * @param AppBundle\Document\Compte $technicien
-     */
-    public function addTechnicien(\AppBundle\Document\Compte $technicien) {
-        $this->setDateModification(new \DateTime());
-        foreach ($this->getTechniciens() as $tech) {
-            if ($tech->getIdentifiant() == $technicien->getIdentifiant()) {
-                return;
-            }
-        }
-        $this->setImprime(false);
-        $this->techniciens[] = $technicien;
-    }
-
-    /**
-     * Get techniciens
-     *
-     * @return \Doctrine\Common\Collections\Collection $techniciens
-     */
-    public function getTechniciens() {
-        return $this->techniciens;
-    }
-
-    /**
-     * Remove technicien
-     *
-     * @param AppBundle\Document\Compte $technicien
-     */
-    public function removeTechnicien(\AppBundle\Document\Compte $technicien) {
-        $this->setDateModification(new \DateTime());
-        $this->techniciens->removeElement($technicien);
-    }
 
     public function removeAllTechniciens() {
         $this->setDateModification(new \DateTime());
@@ -1357,72 +1189,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
           }
         }
         return $this->niveauInfestation;
-    }
-
-    /**
-     * Set emailTransmission
-     *
-     * @param string $emailTransmission
-     * @return self
-     */
-    public function setEmailTransmission($emailTransmission)
-    {
-        $this->emailTransmission = $emailTransmission;
-        return $this;
-    }
-
-    /**
-     * Get emailTransmission
-     *
-     * @return string $emailTransmission
-     */
-    public function getEmailTransmission()
-    {
-        return $this->emailTransmission;
-    }
-
-    /**
-     * Set secondEmailTransmission
-     *
-     * @param string $secondEmailTransmission
-     * @return self
-     */
-    public function setSecondEmailTransmission($secondEmailTransmission)
-    {
-        $this->secondEmailTransmission = $secondEmailTransmission;
-        return $this;
-    }
-
-    /**
-     * Get secondEmailTransmission
-     *
-     * @return string $secondEmailTransmission
-     */
-    public function getSecondEmailTransmission()
-    {
-        return $this->secondEmailTransmission;
-    }
-
-    /**
-     * Set nomTransmission
-     *
-     * @param string $nomTransmission
-     * @return self
-     */
-    public function setNomTransmission($nomTransmission)
-    {
-        $this->nomTransmission = $nomTransmission;
-        return $this;
-    }
-
-    /**
-     * Get nomTransmission
-     *
-     * @return string $nomTransmission
-     */
-    public function getNomTransmission()
-    {
-        return $this->nomTransmission;
     }
 
     /**

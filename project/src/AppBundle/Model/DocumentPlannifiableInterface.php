@@ -35,7 +35,7 @@ interface DocumentPlannifiableInterface
      *
      * @param Compte
      */
-    public function addTechnicien(Compte $techniciens);
+    public function addTechnicien(Compte $technicien);
 
     /**
      * Get DatePrevision
