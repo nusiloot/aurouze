@@ -1647,6 +1647,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     public function annule(){}
 
       public function getTypePlanifiable() {
-          return 'Passage';
+          return self::DOCUMENT_TYPE;
       }
 }

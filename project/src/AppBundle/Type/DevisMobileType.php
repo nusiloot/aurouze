@@ -22,7 +22,7 @@ class DevisMobileType extends AbstractType
     protected $dm;
     protected $devisId;
 
-    public function __construct(DocumentManager $documentManager,$devisId) {
+    public function __construct(DocumentManager $documentManager, $devisId, $previousDevis = null) {
         $this->dm = $documentManager;
         $this->devisId = $devisId;
     }
@@ -61,7 +61,7 @@ class DevisMobileType extends AbstractType
         //     ;
 
 
-        // 
+        //
         // $builder->add('produits', CollectionType::class, array(
         //     'entry_type' => new ProduitPassageMobileType($this->dm),
         //     'allow_add' => true,
@@ -100,29 +100,29 @@ class DevisMobileType extends AbstractType
         // 		'attr' => array("class" => "phoenix ui-li-has-count", "multiple" => "multiple", "data-native-menu" => "false","placeholder" => 'Applications')
         // ));
       //  $builder->get('applications')->resetViewTransformers();
-        // $defaultEmail = $builder->getData()->getEmailTransmission();
-        // $defaultSecondEmail = $builder->getData()->getSecondEmailTransmission();
-        // $defaultNomResp = $builder->getData()->getNomTransmission();
-        //
-        // $builder->add('emailTransmission', EmailType::class, array(
-        //   'label' => 'Email :',
-        //   'required' => false,
-        //   'data' => $defaultEmail,
-        //   'attr' => array('class' => " phoenix","placeholder" => 'Email de transmission')));
-        //
-        // $builder->add('secondEmailTransmission', EmailType::class, array(
-        //   'label' => 'Second email :',
-        //   'required' => false,
-        //   'data' => $defaultSecondEmail,
-        //   'attr' => array('class' => " phoenix","placeholder" => 'Email supplémentaire de transmission')));
+         $defaultEmail = $builder->getData()->getEmailTransmission();
+         $defaultSecondEmail = $builder->getData()->getSecondEmailTransmission();
+         $defaultNomResp = $builder->getData()->getNomTransmission();
 
-        // $builder->add('nomTransmission', TextType::class, array(
-        //   'label' => 'Nom :',
-        //    'required' => false,
-        //    'data' => $defaultNomResp,
-        //    'attr' => array('class' => " phoenix","placeholder" => 'Nom du signataire')));
+        $builder->add('emailTransmission', EmailType::class, array(
+          'label' => 'Email :',
+          'required' => false,
+          'data' => $defaultEmail,
+          'attr' => array('class' => " phoenix","placeholder" => 'Email de transmission')));
 
-        $builder->add('signatureBase64', HiddenType::class, array('required' => false, 'attr' => array('class' => "phoenix", "data-cible" => "devis_mobile_".$devisId."_signatureBase64")));
+        $builder->add('secondEmailTransmission', EmailType::class, array(
+          'label' => 'Second email :',
+          'required' => false,
+          'data' => $defaultSecondEmail,
+          'attr' => array('class' => " phoenix","placeholder" => 'Email supplémentaire de transmission')));
+
+        $builder->add('nomTransmission', TextType::class, array(
+          'label' => 'Nom :',
+           'required' => false,
+           'data' => $defaultNomResp,
+           'attr' => array('class' => " phoenix","placeholder" => 'Nom du signataire')));
+
+        $builder->add('signatureBase64', HiddenType::class, array('required' => false, 'attr' => array('class' => "phoenix", "data-cible" => "mobile_".$devisId."_signatureBase64")));
     }
 
     /**
@@ -140,7 +140,7 @@ class DevisMobileType extends AbstractType
      */
     public function getName()
     {
-        return 'deviq_mobile_'.str_replace("-","_",$this->devisId);
+        return 'mobile_'.str_replace("-","_",$this->devisId);
     }
 
     public function getTechniciens() {

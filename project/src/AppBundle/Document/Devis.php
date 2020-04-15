@@ -604,6 +604,19 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
         return $techniciens;
     }
 
+    public function getTechniciensWithout($technicien) {
+        $techniciens = array();
+
+        foreach ($this->getTechniciens() as $t) {
+            if($t->getId() == $technicien->getId()) {
+                continue;
+            }
+            $techniciens[$t->getId()] = $t->getIdentite();
+        }
+
+        return $techniciens;
+    }
+
     /**
      * Set datePrevision
      *
@@ -762,6 +775,6 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
     }
 
     public function getTypePlanifiable() {
-        return 'Devis';
+        return self::DOCUMENT_TYPE;
     }
 }

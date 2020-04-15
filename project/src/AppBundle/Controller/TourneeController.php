@@ -7,7 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Document\Passage;
+use AppBundle\Document\Passage as Passage;
+use AppBundle\Document\Devis as Devis;
 use AppBundle\Document\Attachement;
 use AppBundle\Type\PassageMobileType;
 use AppBundle\Type\DevisMobileType;
@@ -60,56 +61,49 @@ class TourneeController extends Controller {
         $rendezVousByTechnicien = $this->get('rendezvous.manager')->getRepository()->findByDateDebutAndParticipant($date->format('Y-m-d'),$technicienObj);
 
         $historiqueAllPassages = array();
-        $passagesForms = array();
+        $planifiableForms = array();
         $attachementsForms = array();
 
         $version = $this->getVersionManifest($technicienObj->getId(),$date->format('Y-m-d'));
 
         foreach ($rendezVousByTechnicien as $rendezVous) {
-          if($passage = $rendezVous->getPassage()){
-            $historiqueAllPassages[$passage->getId()] = $this->get('contrat.manager')->getHistoriquePassagesByNumeroArchive($passage, 2);
-            $previousPassage = null;
-            foreach ($historiqueAllPassages[$passage->getId()] as $hPassage) {
-              $this->get('passage.manager')->synchroniseProduitsWithConfiguration($hPassage);
-              if(!$previousPassage || !$previousPassage->getDateDebut() || ($previousPassage->getDateDebut() < $hPassage->getDateDebut())){
-                  $previousPassage = $hPassage;
+          $planifiable = $rendezVous->getPlanifiable();
+          $previousPlanifiable = null;
+          if($planifiable){
+            if($planifiable->getTypePlanifiable() == Passage::DOCUMENT_TYPE){
+              $historiqueAllPassages[$planifiable->getId()] = $this->get('contrat.manager')->getHistoriquePassagesByNumeroArchive($planifiable, 2);
+              $previousPlanifiable = null;
+              foreach ($historiqueAllPassages[$planifiable->getId()] as $hPassage) {
+                $this->get('passage.manager')->synchroniseProduitsWithConfiguration($hPassage);
+                if(!$previousPlanifiable || !$previousPlanifiable->getDateDebut() || ($previousPlanifiable->getDateDebut() < $hPassage->getDateDebut())){
+                    $previousPlanifiable = $hPassage;
+                }
               }
             }
+            $planifiableTypeName = "AppBundle\Type\\".$planifiable->getTypePlanifiable()."MobileType";
+            $formPlanifiable = new $planifiableTypeName($dm, $planifiable->getId(), $previousPlanifiable);
 
-            $passagesForms[$passage->getId()] = $this->createForm(new PassageMobileType($dm, $passage->getId(), $previousPassage), $passage, array(
-              'action' => $this->generateUrl('tournee_planifiable_rapport', array('planifiable' => $passage->getId(),'technicien' => $technicienObj->getId())),
+            $planifiableForms[$planifiable->getId()] = $this->createForm($formPlanifiable, $planifiable, array(
+              'action' => $this->generateUrl('tournee_planifiable_rapport', array('planifiable' => $planifiable->getId(),'technicien' => $technicienObj->getId())),
               'method' => 'POST',
               ))->createView();
 
-            $etbId = $passage->getEtablissement()->getId();
+            $etbId = $planifiable->getEtablissement()->getId();
+
             $attachementsForms[$etbId] = array('form' => $this->createForm(new AttachementType($dm, false), new Attachement(), array(
-                  'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId,'retour' => 'passage_visualisation_'.$passage->getId())),
+                  'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId,'retour' => 'passage_visualisation_'.$planifiable->getId())),
                   'method' => 'POST',
               ))->createView(),
-              'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId, 'retour' => 'passage_visualisation_'.$passage->getId())));
-          }elseif($devis = $rendezVous->getDevis()){
-
-            $passagesForms[$devis->getId()] = $this->createForm(new DevisMobileType($dm, $devis->getId()), $devis, array(
-              'action' => $this->generateUrl('tournee_planifiable_rapport', array('planifiable' => $devis->getId(),'technicien' => $technicienObj->getId())),
-              'method' => 'POST',
-              ))->createView();
-
-            $etbId = $devis->getEtablissement()->getId();
-            $attachementsForms[$etbId] = array('form' => $this->createForm(new AttachementType($dm, false), new Attachement(), array(
-                  'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId,'retour' => 'passage_visualisation_'.$devis->getId())),
-                  'method' => 'POST',
-              ))->createView(),
-              'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId, 'retour' => 'passage_visualisation_'.$devis->getId())));
+              'action' => $this->generateUrl('tournee_attachement_upload', array('technicien' => $technicien, 'date' => $date->format('Y-m-d'),'idetablissement' => $etbId, 'retour' => 'passage_visualisation_'.$planifiable->getId())));
+            }
           }
-        }
-
         return $this->render('tournee/tourneeTechnicien.html.twig', array('rendezVousByTechnicien' => $rendezVousByTechnicien,
                                                                           "technicien" => $technicienObj,
                                                                           "date" => $date,
                                                                           "version" => $version,
                                                                           "historiqueAllPassages" => $historiqueAllPassages,
                                                                           'telephoneSecretariat' => $telephoneSecretariat,
-                                                                          "passagesForms" => $passagesForms,
+                                                                          "planifiableForms" => $planifiableForms,
                                                                           "attachementsForms" => $attachementsForms));
     }
 
@@ -148,11 +142,20 @@ class TourneeController extends Controller {
          }
 
          $planifiable = $request->get('planifiable');
+         if(is_string($planifiable)){
+           $planifiableFound = $dm->getRepository('AppBundle:Passage')->findOneById($planifiable);
+           if(!$planifiableFound){
+             $planifiableFound = $dm->getRepository('AppBundle:Devis')->findOneById($planifiable);
+           }
+           if($planifiableFound){
+             $planifiable = $planifiableFound;
+           }
+         }
          switch (get_class($planifiable)) {
              case Devis::class:
-                 return $this->redirectToRoute('tournee_planifiable_rapport', array("technicien" => $technicienObj->getId(), "devis" => $planifiable));
+                 return $this->redirectToRoute('tournee_devis_rapport', array("technicien" => $technicienObj->getId(), "devis" => $planifiable->getId()));
              case Passage::class:
-                 return $this->redirectToRoute('tournee_passage_rapport', array("technicien" => $technicienObj->getId(), "passage" => $planifiable));
+                 return $this->redirectToRoute('tournee_passage_rapport', array("technicien" => $technicienObj->getId(), "passage" => $planifiable->getId()));
          }
          return null;
      }
@@ -214,6 +217,54 @@ class TourneeController extends Controller {
         $dm->flush();
 
         return $this->redirectToRoute('tournee_technicien', array("technicien" => $technicienObj->getId(), "date" => $passage->getDateDebut()->format("Y-m-d")));
+    }
+
+    /**
+     * @Route("/tournee-technicien/devis-rapport/{devis}/{technicien}", name="tournee_devis_rapport")
+     * @ParamConverter("devis", class="AppBundle:Devis")
+     */
+    public function tourneeDevisRapportAction(Request $request, Devis $devis) {
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $technicien = $request->get('technicien');
+        $technicienObj = null;
+        if ($technicien) {
+            $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
+        }
+
+
+        $form = $this->createForm(new DevisMobileType($dm, $devis->getId()), $devis, array(
+            'action' => $this->generateUrl('tournee_devis_rapport', array('devis' => $devis->getId(),'technicien' => $technicienObj->getId())),
+            'method' => 'POST',
+        ));
+
+        $form->handleRequest($request);
+        if (!$form->isSubmitted() || !$form->isValid()) {
+
+        }
+        $devisManager = $this->get('devis.manager');
+
+
+
+        // if ($passage->getMouvementDeclenchable() && !$passage->getMouvementDeclenche()) {
+        //     if ($contrat->generateMouvement($passage)) {
+        //         $passage->setMouvementDeclenche(true);
+        //     }
+        // }
+
+        // $devis->setDateRealise($devis->getDateDebut());
+
+        // $devis->setSaisieTechnicien(($devis->getEmailTransmission() || $devis->getNomTransmission() || $devis->getSignatureBase64()) && $devis->getDescription());
+
+        // if(!$devis->getPdfNonEnvoye()){
+        //   $devis->setPdfNonEnvoye(true);
+        // }
+        $dm->persist($devis);
+        $dm->flush();
+
+        $devis->getDateDebut()->format("Y-m-d");
+
+        return $this->redirectToRoute('tournee_technicien', array("technicien" => $technicienObj->getId(), "date" => $devis->getDateDebut()->format("Y-m-d")));
     }
 
     /**

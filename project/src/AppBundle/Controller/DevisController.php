@@ -137,8 +137,7 @@ class DevisController extends Controller
             $devis->update();
             $dm->persist($devis);
             $dm->flush();
-              return $this->redirectToRoute('calendar', array('planifiable' => $devis->getId(), 'id' => $devis->getSociete()->getId(), 'technicien' => $devis->getTechniciens()->first()->getId()));
-            return $this->redirectToRoute('devis_societe', ['id' => $devis->getSociete()->getId()]);
+            return $this->redirectToRoute('calendar', array('planifiable' => $devis->getId(), 'id' => $devis->getSociete()->getId(), 'technicien' => $devis->getTechniciens()->first()->getId()));
         }
 
         return $this->render('devis/modification.html.twig', [
