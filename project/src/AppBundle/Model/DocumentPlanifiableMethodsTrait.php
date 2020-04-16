@@ -188,8 +188,6 @@ trait DocumentPlanifiableMethodsTrait
     public function removeRendezVous()
     {
         $this->rendezVous = null;
-        unset($this->rendezVous);
-
         return $this;
     }
 
