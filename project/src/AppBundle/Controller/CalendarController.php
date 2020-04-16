@@ -361,7 +361,6 @@ class CalendarController extends Controller {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $technicien = $request->get('technicien');
 
-        $rdv->getPlanifiable()->removeRendezVous();
         $dm->remove($rdv);
 
         $dm->flush();

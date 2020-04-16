@@ -46,7 +46,7 @@
             </div>
         </div>
         <div class="col-sm-4 text-center">
-            {% if planifiable and not planifiable.rendezvous %}
+            {% if planifiable and not planifiable.rendezVous %}
                 <div id="fc-events">
                     <div class="event" data-planifiable="{{ planifiable.id }}" data-duration="{{ planifiable.dureePrevisionnelle }}" data-title="{{ planifiable.etablissementInfos.nom }} ({{ planifiable.etablissementInfos.adresse.codePostal }})">
                         <span class="btn btn-info">
