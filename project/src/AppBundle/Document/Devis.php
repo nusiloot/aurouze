@@ -58,11 +58,6 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
     protected $dateSignature;
 
     /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $signatureBase64;
-
-    /**
      * @MongoDB\Field(type="float")
      */
     protected $montantHT;
@@ -379,27 +374,6 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
         return $this->lignes;
     }
 
-    /**
-     * Set signatureBase64
-     *
-     * @param string $signatureBase64
-     * @return self
-     */
-    public function setSignatureBase64($signatureBase64)
-    {
-        $this->signatureBase64 = $signatureBase64;
-        return $this;
-    }
-
-    /**
-     * Get signatureBase64
-     *
-     * @return string $signatureBase64
-     */
-    public function getSignatureBase64()
-    {
-        return $this->signatureBase64;
-    }
 
     public function updateCalcul() {
         $montant = 0;
@@ -476,28 +450,6 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
     }
 
     /**
-     * Set datePrevision
-     *
-     * @param date $datePrevision
-     * @return $this
-     */
-    public function setDatePrevision($datePrevision)
-    {
-        $this->datePrevision = $datePrevision;
-        return $this;
-    }
-
-    /**
-     * Get datePrevision
-     *
-     * @return date $datePrevision
-     */
-    public function getDatePrevision()
-    {
-        return $this->datePrevision;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function plannifie(){}
@@ -512,10 +464,10 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
      */
     public function annule(){}
 
-      public function isValideTechnicien()
-      {
-          return $this->getSignatureBase64() || $this->getNomTransmission() || $this->getEmailTransmission();
-      }
+    public function isValideTechnicien()
+    {
+        return $this->getSignatureBase64() || $this->getNomTransmission() || $this->getEmailTransmission();
+    }
 
     public function getTypePlanifiable() {
         return self::DOCUMENT_TYPE;

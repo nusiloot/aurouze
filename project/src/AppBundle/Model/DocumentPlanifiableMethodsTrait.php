@@ -279,6 +279,7 @@ trait DocumentPlanifiableMethodsTrait
         return $this->description;
     }
 
+
     public function deplanifier() {
         $this->setDateDebut($this->getDatePrevision());
         $this->setDateFin(null);
@@ -318,10 +319,11 @@ trait DocumentPlanifiableMethodsTrait
      */
     public function setStatut($statut) {
         $this->statut = $statut;
+
         return $this;
     }
 
-    /**
+    /*
      * Get statut
      *
      * @return string $statut
@@ -349,4 +351,26 @@ trait DocumentPlanifiableMethodsTrait
             }
         }
     }
-}
+
+    /*
+    * Get description
+    *
+    * @return string $signatureBase64
+    */
+   public function getSignatureBase64()
+   {
+       return $this->signatureBase64;
+   }
+
+   /*
+   * Set signatureBase64
+   *
+   * @return string $setSignatureBase64
+   */
+  public function setSignatureBase64($signatureBase64)
+  {
+      $this->signatureBase64 = $signatureBase64;
+      return $this;
+  }
+
+ }
