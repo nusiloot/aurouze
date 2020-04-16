@@ -251,4 +251,27 @@ trait DocumentPlanifiableMethodsTrait
     {
         return $this->description;
     }
+
+    /**
+     * Set description
+     *
+     * @param string $signatureBase64
+     * @return $this
+     */
+    public function setSignatureBase64($signatureBase64)
+    {
+        $this->signatureBase64 = $signatureBase64;
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string $signatureBase64
+     */
+    public function getSignatureBase64()
+    {
+        return $this->signatureBase64;
+    }
+
 }

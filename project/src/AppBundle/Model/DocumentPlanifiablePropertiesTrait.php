@@ -57,4 +57,9 @@ trait DocumentPlanifiablePropertiesTrait
      * @MongoDB\Field(type="string")
      */
     protected $description;
+
+    /**
+     * @MongoDB\Field(type="string")
+     */
+    protected $signatureBase64;
 }
