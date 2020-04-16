@@ -257,29 +257,6 @@ trait DocumentPlanifiableMethodsTrait
         return $this->nomTransmission;
     }
 
-    /**
-     * Set description
-     *
-     * @param string $description
-     * @return $this
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-        return $this;
-    }
-
-    /**
-     * Get description
-     *
-     * @return string $description
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-
     public function deplanifier() {
         $this->setDateDebut($this->getDatePrevision());
         $this->setDateFin(null);
@@ -291,8 +268,52 @@ trait DocumentPlanifiableMethodsTrait
         $this->updateStatut();
     }
 
-    public function getDescriptionTransformed() {
-        return str_replace('\n', "\n", $this->description);
+    /**
+     * Set commentaireInterne
+     *
+     * @param string $commentaireInterne
+     * @return self
+     */
+    public function setCommentaireInterne($commentaireInterne)
+    {
+        $this->commentaireInterne = $commentaireInterne;
+        return $this;
+    }
+
+    /**
+     * Get commentaireInterne
+     *
+     * @return string $commentaireInterne
+     */
+    public function getCommentaireInterne()
+    {
+        return $this->commentaireInterne;
+    }
+
+    /**
+     * Set saisieTechnicien
+     *
+     * @param boolean $saisieTechnicien
+     * @return self
+     */
+    public function setSaisieTechnicien($saisieTechnicien)
+    {
+        $this->saisieTechnicien = $saisieTechnicien;
+        return $this;
+    }
+
+    /**
+     * Get saisieTechnicien
+     *
+     * @return boolean $saisieTechnicien
+     */
+    public function getSaisieTechnicien()
+    {
+        return $this->saisieTechnicien;
+    }
+
+    public function isSaisieTechnicien(){
+      return $this->saisieTechnicien;
     }
 
     public function isRealise() {

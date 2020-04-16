@@ -61,7 +61,12 @@ trait DocumentPlanifiablePropertiesTrait
     /**
      * @MongoDB\Field(type="string")
      */
-    protected $description;
+    protected $commentaireInterne;
+
+    /**
+     * @MongoDB\Field(type="bool")
+     */
+    protected $saisieTechnicien;
 
     /**
      * @MongoDB\Field(type="string")

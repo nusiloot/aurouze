@@ -88,22 +88,22 @@ class RendezVous {
     }
 
     public function getBorderColor() {
-        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime()) {
+        if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie() && !$this->getPlanifiable()->isImprime()) {
 
             return "#bce8f1";
         }
 
-        if($this->getPassage() && $this->getPassage()->isPlanifie()) {
+        if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie()) {
 
             return "#faebcc";
         }
 
-        if($this->getPassage() && $this->getPassage()->isRealise()) {
+        if($this->getPlanifiable() && $this->getPlanifiable()->isRealise()) {
 
             return "#d6e9c6";
         }
 
-        if($this->getPassage() && $this->getPassage()->isAnnule()) {
+        if($this->getPlanifiable() && $this->getPlanifiable()->isAnnule()) {
 
             return "#ebccd1";
         }
@@ -113,28 +113,28 @@ class RendezVous {
 
     public function getTextColor() {
 
-       if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise()) && !$this->getPassage()->isSaisieTechnicien()) {
+       if($this->getPlanifiable() && ($this->getPlanifiable()->isPlanifie() || $this->getPlanifiable()->isRealise()) && !$this->getPlanifiable()->isSaisieTechnicien()) {
 
             return "#31708f";
         }
 
-        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime() && !$this->getPassage()->isSaisieTechnicien()) {
+        if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie() && !$this->getPlanifiable()->isImprime() && !$this->getPlanifiable()->isSaisieTechnicien()) {
 
           return "#8a6d3b";
         }
 
-        if($this->getPassage() && ($this->getPassage()->isSaisieTechnicien() && $this->getPassage()->isPdfNonEnvoye())) {
+        if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && $this->getPlanifiable()->isPdfNonEnvoye())) {
 
           return "#7D5E09";
         }
 
-        if($this->getPassage() && ($this->getPassage()->isSaisieTechnicien() && !$this->getPassage()->isPdfNonEnvoye())) {
+        if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && !$this->getPlanifiable()->isPdfNonEnvoye())) {
 
           return "#3c763d";
         }
 
 
-        if($this->getPassage() && $this->getPassage()->isAnnule()) {
+        if($this->getPlanifiable() && $this->getPlanifiable()->isAnnule()) {
 
             return "#a94442";
         }
@@ -144,26 +144,26 @@ class RendezVous {
 
     public function getStatusColor() {
 
-        if($this->getPassage() && ($this->getPassage()->isPlanifie() || $this->getPassage()->isRealise()) && !$this->getPassage()->isSaisieTechnicien()) {
+        if($this->getPlanifiable() && ($this->getPlanifiable()->isPlanifie() || $this->getPlanifiable()->isRealise()) && !$this->getPlanifiable()->isSaisieTechnicien()) {
 
             return "#d9edf7";
         }
 
-        if($this->getPassage() && $this->getPassage()->isPlanifie() && !$this->getPassage()->isImprime() && !$this->getPassage()->isSaisieTechnicien()) {
+        if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie() && !$this->getPlanifiable()->isImprime() && !$this->getPlanifiable()->isSaisieTechnicien()) {
 
           return "#fcf8e3";
         }
 
-        if($this->getPassage() && ($this->getPassage()->isSaisieTechnicien() && $this->getPassage()->isPdfNonEnvoye())) {
+        if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && $this->getPlanifiable()->isPdfNonEnvoye())) {
           return "#FFD55F";
         }
 
-        if($this->getPassage() && ($this->getPassage()->isSaisieTechnicien() && !$this->getPassage()->isPdfNonEnvoye())) {
+        if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && !$this->getPlanifiable()->isPdfNonEnvoye())) {
 
           return "#dff0d8";
         }
 
-        if($this->getPassage() && $this->getPassage()->isAnnule()) {
+        if($this->getPlanifiable() && $this->getPlanifiable()->isAnnule()) {
 
             return "#f2dede";
         }
