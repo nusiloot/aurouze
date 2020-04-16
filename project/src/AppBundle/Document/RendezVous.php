@@ -12,6 +12,26 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class RendezVous {
 
+    const COLOR_BORDER_BLUE = '#bce8f1';
+    const COLOR_BORDER_YELLOW = '#faebcc';
+    const COLOR_BORDER_GREEN = '#d6e9c6';
+    const COLOR_BORDER_RED = '#ebccd1';
+    const COLOR_BORDER_GREY = '#e1e1e8';
+
+    const COLOR_TEXT_BLUE = '#31708f';
+    const COLOR_TEXT_MAROON = '#8a6d3b';
+    const COLOR_TEXT_BROWN = '#7d5e09';
+    const COLOR_TEXT_GREEN = '#3c763d';
+    const COLOR_TEXT_RED = '#a94442';
+    const COLOR_TEXT_BLACK = '#333';
+
+    const COLOR_STATUS_BLUE = '#d9edf7';
+    const COLOR_STATUS_YELLOW = '#fcf8e3';
+    const COLOR_STATUS_GOLD = '#ffd55f';
+    const COLOR_STATUS_GREEN = '#dff0d8';
+    const COLOR_STATUS_RED = '#f2dede';
+    const COLOR_STATUS_WHITE = '#f7f7f9';
+
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\RendezVousGenerator"})
      */
@@ -90,85 +110,85 @@ class RendezVous {
     public function getBorderColor() {
         if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie() && !$this->getPlanifiable()->isImprime()) {
 
-            return "#bce8f1";
+            return self::COLOR_BORDER_BLUE;
         }
 
         if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie()) {
 
-            return "#faebcc";
+            return self::COLOR_BORDER_YELLOW;
         }
 
         if($this->getPlanifiable() && $this->getPlanifiable()->isRealise()) {
 
-            return "#d6e9c6";
+            return self::COLOR_BORDER_GREEN;
         }
 
         if($this->getPlanifiable() && $this->getPlanifiable()->isAnnule()) {
 
-            return "#ebccd1";
+            return self::COLOR_BORDER_RED;
         }
 
-        return '#e1e1e8';
+        return self::COLOR_BORDER_GREY;
     }
 
     public function getTextColor() {
 
        if($this->getPlanifiable() && ($this->getPlanifiable()->isPlanifie() || $this->getPlanifiable()->isRealise()) && !$this->getPlanifiable()->isSaisieTechnicien()) {
 
-            return "#31708f";
+            return self::COLOR_TEXT_BLUE;
         }
 
         if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie() && !$this->getPlanifiable()->isImprime() && !$this->getPlanifiable()->isSaisieTechnicien()) {
 
-          return "#8a6d3b";
+          return self::COLOR_TEXT_MAROON;
         }
 
         if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && $this->getPlanifiable()->isPdfNonEnvoye())) {
 
-          return "#7D5E09";
+          return self::COLOR_TEXT_BROWN;
         }
 
         if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && !$this->getPlanifiable()->isPdfNonEnvoye())) {
 
-          return "#3c763d";
+          return self::COLOR_TEXT_GREEN;
         }
 
 
         if($this->getPlanifiable() && $this->getPlanifiable()->isAnnule()) {
 
-            return "#a94442";
+            return self::COLOR_TEXT_RED;
         }
 
-        return '#333';
+        return self::COLOR_TEXT_BLACK;
     }
 
     public function getStatusColor() {
 
         if($this->getPlanifiable() && ($this->getPlanifiable()->isPlanifie() || $this->getPlanifiable()->isRealise()) && !$this->getPlanifiable()->isSaisieTechnicien()) {
 
-            return "#d9edf7";
+            return self::COLOR_STATUS_BLUE;
         }
 
         if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie() && !$this->getPlanifiable()->isImprime() && !$this->getPlanifiable()->isSaisieTechnicien()) {
 
-          return "#fcf8e3";
+          return self::COLOR_STATUS_YELLOW;
         }
 
         if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && $this->getPlanifiable()->isPdfNonEnvoye())) {
-          return "#FFD55F";
+          return self::COLOR_STATUS_GOLD;
         }
 
         if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && !$this->getPlanifiable()->isPdfNonEnvoye())) {
 
-          return "#dff0d8";
+          return self::COLOR_STATUS_GREEN;
         }
 
         if($this->getPlanifiable() && $this->getPlanifiable()->isAnnule()) {
 
-            return "#f2dede";
+            return self::COLOR_STATUS_RED;
         }
 
-        return '#f7f7f9';
+        return self::COLOR_STATUS_WHITE;
     }
 
     public function getParticipantsIds() {
