@@ -5,6 +5,7 @@ namespace AppBundle\Repository;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use AppBundle\Tool\RechercheTool;
 use AppBundle\Document\societe;
+use MongoDate as MongoDate;
 
 /**
  * DevisRepository
@@ -14,5 +15,22 @@ use AppBundle\Document\societe;
  */
 class DevisRepository extends DocumentRepository {
 
+
+  public function findAllDevisForTechnicien(\DateTime $date, $technicien = null)
+  {
+    $mongoStartDate = new MongoDate(strtotime($date->format("Y-m-d") . " 00:00:00"));
+    $mongoEndDate = new MongoDate(strtotime($date->format("Y-m-d") . " 23:59:59"));
+    $queryBuilder = $this->createQueryBuilder('Passage');
+    $query = $queryBuilder->field('dateFin')->notEqual(null)
+            ->field('dateDebut')->gte($mongoStartDate)
+            ->field('dateDebut')->lte($mongoEndDate);
+    if($technicien){
+        $queryBuilder->field('techniciens')->equals($technicien->getId());
+    }
+    $queryBuilder->sort('dateDebut', 'asc');
+    $query = $queryBuilder->getQuery();
+
+    return $query->execute();
+  }
 
 }

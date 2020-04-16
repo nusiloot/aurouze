@@ -30,8 +30,12 @@ class TourneeController extends Controller {
 
         $passageManager = $this->get('passage.manager');
         $passagesForAllTechniciens = $passageManager->getRepository()->findAllPassagesForTechnicien($date);
-        $passagesByTechniciens = $passageManager->sortPassagesByTechnicien($passagesForAllTechniciens);
-        return $this->render('tournee/index.html.twig', array('passagesByTechniciens' => $passagesByTechniciens, "date" => $date));
+
+        $passageManager = $this->get('devis.manager');
+        $devisForAllTechniciens = $passageManager->getRepository()->findAllDevisForTechnicien($date);
+
+        $planifiablesByTechniciens = $this->sortPlanifiablesByTechnicien(array_merge($passagesForAllTechniciens->toArray(),$devisForAllTechniciens->toArray()));
+        return $this->render('tournee/index.html.twig', array('planifiablesByTechniciens' => $planifiablesByTechniciens, "date" => $date));
     }
 
     /**
@@ -299,6 +303,24 @@ class TourneeController extends Controller {
            return $this->redirect($urlRetour);
        }
    }
+
+
+   public function sortPlanifiablesByTechnicien($planifiablesForAllTechniciens){
+       $planifiablesByTechniciens = array();
+       foreach ($planifiablesForAllTechniciens as $planifiable) {
+         foreach ($planifiable->getTechniciens() as $technicien) {
+           if(!array_key_exists($technicien->getId(),$planifiablesByTechniciens)){
+             $planifiablesByTechniciens[$technicien->getId()] = new \stdClass();
+             $planifiablesByTechniciens[$technicien->getId()]->technicien = $technicien;
+             $planifiablesByTechniciens[$technicien->getId()]->planifiables = array();
+
+           }
+           $planifiablesByTechniciens[$technicien->getId()]->planifiables[$planifiable->getId()] = $planifiable;
+         }
+       }
+       return $planifiablesByTechniciens;
+   }
+
 
     /**
      * @Route("/tournee-technicien/manifest/{technicien}", name="manifest")

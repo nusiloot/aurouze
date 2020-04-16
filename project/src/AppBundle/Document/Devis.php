@@ -512,7 +512,10 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
      */
     public function annule(){}
 
-
+      public function isValideTechnicien()
+      {
+          return $this->getSignatureBase64() || $this->getNomTransmission() || $this->getEmailTransmission();
+      }
 
     public function getTypePlanifiable() {
         return self::DOCUMENT_TYPE;
