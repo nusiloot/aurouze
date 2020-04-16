@@ -55,11 +55,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /**
      * @MongoDB\Field(type="date")
      */
-    protected $dateRealise;
-
-    /**
-     * @MongoDB\Field(type="date")
-     */
     protected $dateModification;
 
     /**
@@ -81,11 +76,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @MongoDB\Field(type="string")
      */
     protected $commentaire;
-
-    /**
-     * @MongoDB\Field(type="string")
-     */
-    protected $statut;
 
     /**
      * @MongoDB\ReferenceOne(targetDocument="Contrat", simple=true)
@@ -280,28 +270,9 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $techniciens;
     }
 
-    public function getDescriptionTransformed() {
-        return str_replace('\n', "\n", $this->description);
-    }
-
-    public function isRealise() {
-        return $this->statut == PassageManager::STATUT_REALISE;
-    }
-
-    public function isPlanifie() {
-        return $this->statut == PassageManager::STATUT_PLANIFIE;
-    }
-
-    public function isAPlanifie() {
-        return $this->statut == PassageManager::STATUT_A_PLANIFIER;
-    }
-
-    public function isAnnule() {
-        return $this->statut == PassageManager::STATUT_ANNULE;
-    }
-
     /** @MongoDB\PreUpdate */
     public function preUpdate() {
+        $this->setDateModification(new \DateTime());
         $this->updateStatut();
         $this->getLibelle();
         $this->getNumeroOrdre();
@@ -313,37 +284,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /** @MongoDB\PrePersist */
     public function prePersist() {
         $this->updateStatut();
-    }
-
-    public function deplanifier() {
-        $this->setDateDebut($this->getDatePrevision());
-        $this->setDateFin(null);
-        if($this->isRealise()) {
-            $this->setDateRealise(null);
-        }
-        $this->removeRendezVous();
-
-        $this->updateStatut();
-    }
-
-    public function updateStatut() {
-        if (!$this->isAnnule()) {
-            if ($this->getDatePrevision() && !boolval($this->getDateFin()) && !boolval($this->getDateDebut()) && !boolval($this->getDateRealise())) {
-                $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
-                return;
-            }
-            if (boolval($this->getDateDebut()) && !boolval($this->getDateFin()) && !boolval($this->getDateRealise())) {
-                $this->setStatut(PassageManager::STATUT_A_PLANIFIER);
-                return;
-            }
-            if (boolval($this->getDateDebut()) && boolval($this->getDateFin()) && !boolval($this->getDateRealise())) {
-                $this->setStatut(PassageManager::STATUT_PLANIFIE);
-                return;
-            }
-            if (boolval($this->getDateRealise())) {
-                $this->setStatut(PassageManager::STATUT_REALISE);
-            }
-        }
     }
 
     public function getIntitule() {
@@ -514,28 +454,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->getEtablissement()->getRegion();
     }
 
-    /**
-     * Set statut
-     *
-     * @param string $statut
-     * @return self
-     */
-    public function setStatut($statut) {
-        $this->setDateModification(new \DateTime());
-        $this->statut = $statut;
-        return $this;
-    }
-
-    /**
-     * Get statut
-     *
-     * @return string $statut
-     */
-    public function getStatut() {
-        return $this->statut;
-    }
-
-
     public function getDateForPlanif() {
     	$today = new \DateTime();
     	if ($this->datePrevision && $this->datePrevision->format('Ymd') < $today->format('Ymd')) {
@@ -656,7 +574,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
 
     public function removeAllTechniciens() {
-        $this->setDateModification(new \DateTime());
         $this->techniciens = new ArrayCollection();
         $this->setImprime(false);
     }
@@ -765,26 +682,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
     public function getStatutLibelleActions() {
         return PassageManager::$statutsLibellesActions[$this->getStatut()];
-    }
-
-    /**
-     * Set dateRealise
-     *
-     * @param date $dateRealise
-     * @return self
-     */
-    public function setDateRealise($dateRealise) {
-        $this->dateRealise = $dateRealise;
-        return $this;
-    }
-
-    /**
-     * Get dateRealise
-     *
-     * @return date $dateRealise
-     */
-    public function getDateRealise() {
-        return $this->dateRealise;
     }
 
     /**
@@ -974,36 +871,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     public function getImprime() {
         return $this->imprime;
-    }
-
-    /**
-     * Set rendezVous
-     *
-     * @param AppBundle\Document\RendezVous $rendezVous
-     * @return self
-     */
-    public function setRendezVous(\AppBundle\Document\RendezVous $rendezVous)
-    {
-        $this->rendezVous = $rendezVous;
-        return $this;
-    }
-
-    public function removeRendezVous()
-    {
-        $this->rendezVous = null;
-        unset($this->rendezVous);
-
-        return $this;
-    }
-
-    /**
-     * Get rendezVous
-     *
-     * @return AppBundle\Document\RendezVous $rendezVous
-     */
-    public function getRendezVous()
-    {
-        return $this->rendezVous;
     }
 
    /**

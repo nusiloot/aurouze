@@ -186,7 +186,6 @@ class CalendarController extends Controller {
      */
     public function calendarAddAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $pm = $this->get('passage.manager');
         $rvm = $this->get('rendezvous.manager');
 
         $planifiable = $request->get('planifiable');
@@ -203,7 +202,6 @@ class CalendarController extends Controller {
 
         $dm->persist($rdv);
         $rdv->pushToPlanifiable();
-      //  $pm->updateNextPassageAPlannifier($rdv->getPassage());
         $dm->flush();
 
         $response = new Response(json_encode($this->buildEventObjCalendar($rdv,$technicien)));
@@ -305,26 +303,23 @@ class CalendarController extends Controller {
      */
     public function calendarReadAction(Request $request) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $pm = $this->get('passage.manager');
         $rvm = $this->get('rendezvous.manager');
         $technicien = $request->get('technicien');
 
-        if($request->get('passage') && !$request->get('id')) {
-            $passage = $request->get('passage');
-            $type_passage = ucfirst(strtolower(strtok($passage, '-')));
-            $passage = $dm->getRepository('AppBundle:'.$type_passage)->findOneById($passage);
-            $rdv = $rvm->createFromPassage($passage);
-            $rdv_libre_func = 'get'.$type_passage;
+        if($request->get('planifiable') && !$request->get('id')) {
+            $planifiable = $request->get('planifiable');
+            $type_planifiable = ucfirst(strtolower(strtok($planifiable, '-')));
+            $planifiable = $dm->getRepository('AppBundle:'.$type_planifiable)->findOneById($planifiable);
+            $rdv = $rvm->createFromPassage($planifiable);
         } elseif($request->get('id')) {
             $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
-            $rdv_libre_func = ($rdv->getPassage()) ? 'getPassage' : 'getDevis';
         }
 
         if(!$rdv) {
             throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("Le rendez-vous \"%s\" n'a pas été trouvé", $request->get('id')));
         }
 
-        $edition = (!$rdv->getPassage() || (!$rdv->getPassage()->isRealise()));
+        $edition = (!$rdv->getPlanifiable() || (!$rdv->getPlanifiable()->isRealise()));
 
         if(!$edition && !$request->get('forceEdition', false)) {
 
@@ -333,10 +328,10 @@ class CalendarController extends Controller {
 
 
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
-            'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'passage' => ($rdv->getPassage()) ? $rdv->getPassage()->getId() : null, "forceEdition" => true)),
+            'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'planifiable' => ($rdv->getPlanifiable()) ? $rdv->getPlanifiable()->getId() : null, "forceEdition" => true)),
             'method' => 'POST',
             'attr' => array('id' => 'eventForm'),
-            'rdv_libre' => !$rdv->$rdv_libre_func(),
+            'rdv_libre' => !$rdv->getPlanifiable(),
         ));
 
         $form->handleRequest($request);
@@ -364,9 +359,7 @@ class CalendarController extends Controller {
      */
     public function calendarDeleteAction(Request $request, RendezVous $rdv) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $pm = $this->get('passage.manager');
         $technicien = $request->get('technicien');
-
 
         $dm->remove($rdv);
 
