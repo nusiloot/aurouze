@@ -95,100 +95,61 @@ class RendezVous {
     }
 
     public function getEventJson($backgroundColor) {
+        $colors = $this->calculateTilesColors();
+
         $event = new \stdClass();
         $event->id = $this->getId();
         $event->title = $this->getTitre();
         $event->start = $this->getDateDebut()->format('c');
         $event->end = $this->getDateFin()->format('c');
-        $event->textColor = $this->getTextColor();
-        $event->backgroundColor =  $this->getStatusColor();
-        $event->borderColor = $this->getBorderColor();
+        $event->textColor = $colors['text'];
+        $event->backgroundColor = $colors['background'];
+        $event->borderColor = $colors['border'];
         $event->rendezVousConfirme = $this->getRendezVousConfirme();
         return $event;
     }
 
-    public function getBorderColor() {
-        if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie() && !$this->getPlanifiable()->isImprime()) {
+    public function calculateTilesColors()
+    {
+        $planifiable = $this->getPlanifiable();
+        $colors = [
+            'border' => self::COLOR_BORDER_GREY,
+            'text' => self::COLOR_TEXT_BLACK,
+            'background' => self::COLOR_STATUS_WHITE
+        ];
 
-            return self::COLOR_BORDER_BLUE;
+        if (! $planifiable) { return $colors; }
+
+        if ($planifiable->isAnnule()) {
+            return $colors = [
+                'border' => self::COLOR_BORDER_RED,
+                'text' => self::COLOR_TEXT_RED,
+                'background' => self::COLOR_STATUS_RED
+            ];
         }
 
-        if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie()) {
-
-            return self::COLOR_BORDER_YELLOW;
+        if ($planifiable->isPlanifie()) {
+            $colors['border'] = self::COLOR_BORDER_BLUE;
         }
 
-        if($this->getPlanifiable() && $this->getPlanifiable()->isRealise()) {
-
-            return self::COLOR_BORDER_GREEN;
+        if ($planifiable->isRealise()) {
+            $colors['border'] = self::COLOR_BORDER_GREEN;
         }
 
-        if($this->getPlanifiable() && $this->getPlanifiable()->isAnnule()) {
-
-            return self::COLOR_BORDER_RED;
+        if ($planifiable->isSaisieTechnicien()) {
+            if ($planifiable->isPdfNonEnvoye()) {
+                $colors['text'] = self::COLOR_TEXT_BROWN;
+                $colors['background'] = self::COLOR_STATUS_GOLD;
+            } else {
+                $colors['text'] = self::COLOR_TEXT_GREEN;
+                $colors['background'] = self::COLOR_STATUS_GREEN;
+            }
+        } else {
+            $colors['text'] = self::COLOR_TEXT_BLUE;
+            $colors['background'] = self::COLOR_STATUS_BLUE;
         }
 
-        return self::COLOR_BORDER_GREY;
-    }
-
-    public function getTextColor() {
-
-       if($this->getPlanifiable() && ($this->getPlanifiable()->isPlanifie() || $this->getPlanifiable()->isRealise()) && !$this->getPlanifiable()->isSaisieTechnicien()) {
-
-            return self::COLOR_TEXT_BLUE;
-        }
-
-        if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie() && !$this->getPlanifiable()->isImprime() && !$this->getPlanifiable()->isSaisieTechnicien()) {
-
-          return self::COLOR_TEXT_MAROON;
-        }
-
-        if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && $this->getPlanifiable()->isPdfNonEnvoye())) {
-
-          return self::COLOR_TEXT_BROWN;
-        }
-
-        if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && !$this->getPlanifiable()->isPdfNonEnvoye())) {
-
-          return self::COLOR_TEXT_GREEN;
-        }
-
-
-        if($this->getPlanifiable() && $this->getPlanifiable()->isAnnule()) {
-
-            return self::COLOR_TEXT_RED;
-        }
-
-        return self::COLOR_TEXT_BLACK;
-    }
-
-    public function getStatusColor() {
-
-        if($this->getPlanifiable() && ($this->getPlanifiable()->isPlanifie() || $this->getPlanifiable()->isRealise()) && !$this->getPlanifiable()->isSaisieTechnicien()) {
-
-            return self::COLOR_STATUS_BLUE;
-        }
-
-        if($this->getPlanifiable() && $this->getPlanifiable()->isPlanifie() && !$this->getPlanifiable()->isImprime() && !$this->getPlanifiable()->isSaisieTechnicien()) {
-
-          return self::COLOR_STATUS_YELLOW;
-        }
-
-        if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && $this->getPlanifiable()->isPdfNonEnvoye())) {
-          return self::COLOR_STATUS_GOLD;
-        }
-
-        if($this->getPlanifiable() && ($this->getPlanifiable()->isSaisieTechnicien() && !$this->getPlanifiable()->isPdfNonEnvoye())) {
-
-          return self::COLOR_STATUS_GREEN;
-        }
-
-        if($this->getPlanifiable() && $this->getPlanifiable()->isAnnule()) {
-
-            return self::COLOR_STATUS_RED;
-        }
-
-        return self::COLOR_STATUS_WHITE;
+        return $colors;
     }
 
     public function getParticipantsIds() {
