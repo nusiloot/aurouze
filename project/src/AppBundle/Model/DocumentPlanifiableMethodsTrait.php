@@ -279,6 +279,11 @@ trait DocumentPlanifiableMethodsTrait
         return $this->description;
     }
 
+    /** @MongoDB\PrePersist */
+    public function prePersist() {
+        $this->updateStatut();
+    }
+
 
     public function deplanifier() {
         $this->setDateDebut($this->getDatePrevision());
@@ -287,7 +292,6 @@ trait DocumentPlanifiableMethodsTrait
             $this->setDateRealise(null);
         }
         $this->removeRendezVous();
-
         $this->updateStatut();
     }
 

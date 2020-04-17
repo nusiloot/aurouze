@@ -281,10 +281,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         }
     }
 
-    /** @MongoDB\PrePersist */
-    public function prePersist() {
-        $this->updateStatut();
-    }
 
     public function getIntitule() {
 
