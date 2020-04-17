@@ -374,26 +374,31 @@ class CalendarController extends Controller {
     }
 
     public function buildEventObjCalendar($rdv,$technicien){
-      $event = $rdv->getEventJson($technicien->getCouleur());
-      $em = $this->get('etablissement.Manager');
-      if($rdv->getPassage() && $rdv->getPassage()->getEtablissement()){
-        $passageCoord = $rdv->getPassage()->getEtablissement()->getAdresse()->getCoordonnees();
-        $secteur = EtablissementManager::getRegion($rdv->getPassage()->getEtablissement()->getAdresse()->getCodePostal());
-        if(!$secteur){ $secteur = EtablissementManager::SECTEUR_PARIS; }
-        $z = ($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE)? '10' : '15';
-        if(!$this->getParameter('secteurs')){
-          $secteur = "0";
-        }
-        $dateRetour = $rdv->getPassage()->getDatePrevision()->format('Ym');
-        if($rdv->getPassage()->getDateDebut()){
-            $dateRetour = $rdv->getPassage()->getDateDebut()->format('Ym');
-        }
-        $event->retourMap = $this->generateUrl('passage',array('secteur' => $secteur, 'mois' => $dateRetour,'lat' => $passageCoord->getLat(),'lon' => $passageCoord->getLon(),'zoom' => $z));
-        if($secteur){
-          $event->retourMap = $this->generateUrl('passage_secteur',array('secteur' => $secteur, 'mois' => $dateRetour,'lat' => $passageCoord->getLat(),'lon' => $passageCoord->getLon(),'zoom' => $z));
-        }
-      }
-      return $event;
-    }
+        $event = $rdv->getEventJson($technicien->getCouleur());
+        $em = $this->get('etablissement.Manager');
 
+        if ($rdv->getPlanifiable() && $rdv->getPlanifiable()->getEtablissement()) {
+            $planifiableCoord = $rdv->getPlanifiable()->getEtablissement()->getAdresse()->getCoordonnees();
+            $dateRetour = $rdv->getPlanifiable()->getDatePrevision()->format('Ym');
+            $secteur = EtablissementManager::getRegion($rdv->getPlanifiable()->getEtablissement()->getAdresse()->getCodePostal());
+
+            if(! $secteur) { $secteur = EtablissementManager::SECTEUR_PARIS; }
+            $z = ($secteur == EtablissementManager::SECTEUR_SEINE_ET_MARNE)? '10' : '15';
+            if (! $this->getParameter('secteurs')) {
+                $secteur = "0";
+            }
+
+            if ($rdv->getPlanifiable()->getDateDebut()) {
+                $dateRetour = $rdv->getPlanifiable()->getDateDebut()->format('Ym');
+            }
+
+            $event->retourMap = $this->generateUrl('passage', array('secteur' => $secteur, 'mois' => $dateRetour,'lat' => $planifiableCoord->getLat(),'lon' => $planifiableCoord->getLon(),'zoom' => $z));
+
+            if ($secteur) {
+                $event->retourMap = $this->generateUrl('passage_secteur',array('secteur' => $secteur, 'mois' => $dateRetour,'lat' => $planifiableCoord->getLat(),'lon' => $planifiableCoord->getLon(),'zoom' => $z));
+            }
+        }
+
+        return $event;
+    }
 }

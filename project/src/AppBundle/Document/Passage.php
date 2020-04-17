@@ -160,7 +160,7 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     /**
      * @MongoDB\Field(type="string")
      */
-    protected $commentaireInterne;
+    protected $description;
 
     /**
      * @MongoDB\Field(type="string")
@@ -171,11 +171,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      * @MongoDB\Field(type="int")
      */
     protected $multiTechnicien;
-
-    /**
-     * @MongoDB\Field(type="bool")
-     */
-    protected $saisieTechnicien;
 
     /**
      * @MongoDB\Field(type="bool")
@@ -1160,32 +1155,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return ($p_0->getDatePrecedente()->format('Hi') > $p_1->getDatePrecedente()->format('Hi')) ? +1 : -1;
     }
 
-    /**
-     * Set saisieTechnicien
-     *
-     * @param boolean $saisieTechnicien
-     * @return self
-     */
-    public function setSaisieTechnicien($saisieTechnicien)
-    {
-        $this->saisieTechnicien = $saisieTechnicien;
-        return $this;
-    }
-
-    /**
-     * Get saisieTechnicien
-     *
-     * @return boolean $saisieTechnicien
-     */
-    public function getSaisieTechnicien()
-    {
-        return $this->saisieTechnicien;
-    }
-
-    public function isSaisieTechnicien(){
-      return $this->saisieTechnicien;
-    }
-
     public function isValideTechnicien()
     {
         return $this->getSignatureBase64() || $this->getNomTransmission() || $this->getEmailTransmission();
@@ -1220,25 +1189,29 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
 
 
     /**
-     * Set commentaireInterne
+     * Set description
      *
-     * @param string $commentaireInterne
-     * @return self
+     * @param string $description
+     * @return $this
      */
-    public function setCommentaireInterne($commentaireInterne)
+    public function setDescription($description)
     {
-        $this->commentaireInterne = $commentaireInterne;
+        $this->description = $description;
         return $this;
     }
 
     /**
-     * Get commentaireInterne
+     * Get description
      *
-     * @return string $commentaireInterne
+     * @return string $description
      */
-    public function getCommentaireInterne()
+    public function getDescription()
     {
-        return $this->commentaireInterne;
+        return $this->description;
+    }
+
+    public function getDescriptionTransformed() {
+        return str_replace('\n', "\n", $this->description);
     }
 
     public function getMouvementFacture(){

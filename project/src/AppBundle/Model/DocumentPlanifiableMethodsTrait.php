@@ -257,28 +257,40 @@ trait DocumentPlanifiableMethodsTrait
         return $this->nomTransmission;
     }
 
+    public function deplanifier() {
+        $this->setDateDebut($this->getDatePrevision());
+        $this->setDateFin(null);
+        if($this->isRealise()) {
+            $this->setDateRealise(null);
+        }
+        $this->removeRendezVous();
+
+        $this->updateStatut();
+    }
+
     /**
-     * Set description
+     * Set commentaireInterne
      *
-     * @param string $description
-     * @return $this
+     * @param string $commentaireInterne
+     * @return self
      */
-    public function setDescription($description)
+    public function setCommentaireInterne($commentaireInterne)
     {
-        $this->description = $description;
+        $this->commentaireInterne = $commentaireInterne;
         return $this;
     }
 
     /**
-     * Get description
+     * Get commentaireInterne
      *
-     * @return string $description
+     * @return string $commentaireInterne
      */
-    public function getDescription()
+    public function getCommentaireInterne()
     {
-        return $this->description;
+        return $this->commentaireInterne;
     }
 
+<<<<<<< HEAD
     /** @MongoDB\PrePersist */
     public function prePersist() {
         $this->updateStatut();
@@ -293,10 +305,32 @@ trait DocumentPlanifiableMethodsTrait
         }
         $this->removeRendezVous();
         $this->updateStatut();
+=======
+    /**
+     * Set saisieTechnicien
+     *
+     * @param boolean $saisieTechnicien
+     * @return self
+     */
+    public function setSaisieTechnicien($saisieTechnicien)
+    {
+        $this->saisieTechnicien = $saisieTechnicien;
+        return $this;
     }
 
-    public function getDescriptionTransformed() {
-        return str_replace('\n', "\n", $this->description);
+    /**
+     * Get saisieTechnicien
+     *
+     * @return boolean $saisieTechnicien
+     */
+    public function getSaisieTechnicien()
+    {
+        return $this->saisieTechnicien;
+>>>>>>> 80c3a38fa1175194e05ce35e217eb3f72634029c
+    }
+
+    public function isSaisieTechnicien(){
+      return $this->saisieTechnicien;
     }
 
     public function isRealise() {
