@@ -257,17 +257,6 @@ trait DocumentPlanifiableMethodsTrait
         return $this->nomTransmission;
     }
 
-    public function deplanifier() {
-        $this->setDateDebut($this->getDatePrevision());
-        $this->setDateFin(null);
-        if($this->isRealise()) {
-            $this->setDateRealise(null);
-        }
-        $this->removeRendezVous();
-
-        $this->updateStatut();
-    }
-
     /**
      * Set commentaireInterne
      *
@@ -290,7 +279,7 @@ trait DocumentPlanifiableMethodsTrait
         return $this->commentaireInterne;
     }
 
-<<<<<<< HEAD
+
     /** @MongoDB\PrePersist */
     public function prePersist() {
         $this->updateStatut();
@@ -305,28 +294,7 @@ trait DocumentPlanifiableMethodsTrait
         }
         $this->removeRendezVous();
         $this->updateStatut();
-=======
-    /**
-     * Set saisieTechnicien
-     *
-     * @param boolean $saisieTechnicien
-     * @return self
-     */
-    public function setSaisieTechnicien($saisieTechnicien)
-    {
-        $this->saisieTechnicien = $saisieTechnicien;
-        return $this;
-    }
 
-    /**
-     * Get saisieTechnicien
-     *
-     * @return boolean $saisieTechnicien
-     */
-    public function getSaisieTechnicien()
-    {
-        return $this->saisieTechnicien;
->>>>>>> 80c3a38fa1175194e05ce35e217eb3f72634029c
     }
 
     public function isSaisieTechnicien(){

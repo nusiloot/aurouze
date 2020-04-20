@@ -281,9 +281,9 @@ class PassageController extends Controller
             return $this->redirectToRoute('calendarManuel', array('passage' => $passage->getId()));
         }
         if ($date = $passage->getDateForPlanif()) {
-            return $this->redirectToRoute('calendar', array('passage' => $passage->getId(),'id' => $passage->getEtablissement()->getId(), 'date' => $date->format('d-m-Y'), 'technicien' => $passage->getTechniciens()->first()->getId()));
+            return $this->redirectToRoute('calendar', array('planifiable' => $passage->getId(),'id' => $passage->getEtablissement()->getId(), 'date' => $date->format('d-m-Y'), 'technicien' => $passage->getTechniciens()->first()->getId()));
         } else {
-            return $this->redirectToRoute('calendar', array('passage' => $passage->getId(),'id' => $passage->getEtablissement()->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
+            return $this->redirectToRoute('calendar', array('planifiable' => $passage->getId(),'id' => $passage->getEtablissement()->getId(), 'technicien' => $passage->getTechniciens()->first()->getId()));
         }
     }
 

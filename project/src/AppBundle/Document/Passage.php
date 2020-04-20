@@ -1251,4 +1251,26 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
       public function getTypePlanifiable() {
           return self::DOCUMENT_TYPE;
       }
+
+    /**
+     * Set saisieTechnicien
+     *
+     * @param bool $saisieTechnicien
+     * @return $this
+     */
+    public function setSaisieTechnicien($saisieTechnicien)
+    {
+        $this->saisieTechnicien = $saisieTechnicien;
+        return $this;
+    }
+
+    /**
+     * Get saisieTechnicien
+     *
+     * @return bool $saisieTechnicien
+     */
+    public function getSaisieTechnicien()
+    {
+        return $this->saisieTechnicien;
+    }
 }

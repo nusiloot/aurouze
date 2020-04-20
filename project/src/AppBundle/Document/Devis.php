@@ -78,6 +78,11 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
     protected $numeroDevis;
 
     /**
+     * @MongoDB\Field(type="string")
+     */
+    protected $description;
+
+    /**
      * @MongoDB\EmbedMany(targetDocument="LigneFacturable")
      */
     protected $lignes;
@@ -471,5 +476,49 @@ class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
 
     public function getTypePlanifiable() {
         return self::DOCUMENT_TYPE;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return $this
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string $description
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set saisieTechnicien
+     *
+     * @param bool $saisieTechnicien
+     * @return $this
+     */
+    public function setSaisieTechnicien($saisieTechnicien)
+    {
+        $this->saisieTechnicien = $saisieTechnicien;
+        return $this;
+    }
+
+    /**
+     * Get saisieTechnicien
+     *
+     * @return bool $saisieTechnicien
+     */
+    public function getSaisieTechnicien()
+    {
+        return $this->saisieTechnicien;
     }
 }

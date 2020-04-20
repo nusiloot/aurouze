@@ -256,9 +256,9 @@ class TourneeController extends Controller {
         //     }
         // }
 
-        // $devis->setDateRealise($devis->getDateDebut());
+         $devis->setDateRealise($devis->getDateDebut());
 
-        // $devis->setSaisieTechnicien(($devis->getEmailTransmission() || $devis->getNomTransmission() || $devis->getSignatureBase64()) && $devis->getDescription());
+         $devis->setSaisieTechnicien($devis->getSignatureBase64() || $devis->getDescription());
 
         // if(!$devis->getPdfNonEnvoye()){
         //   $devis->setPdfNonEnvoye(true);
