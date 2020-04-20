@@ -38,8 +38,7 @@ class CalendarController extends Controller {
         );
 
         if ($planifiable) {
-            $type_planifiable = ucfirst(strtolower(strtok($planifiable, '-')));
-            $planifiable = $dm->getRepository('AppBundle:'.$type_planifiable)->findOneById($planifiable);
+            $planifiable = $this->guessTypePlanifiable($planifiable, $dm);
         }
 
         $technicienObj = null;
@@ -189,8 +188,7 @@ class CalendarController extends Controller {
         $rvm = $this->get('rendezvous.manager');
 
         $planifiable = $request->get('planifiable');
-        $type_passage = ucfirst(strtolower(strtok($planifiable, '-')));
-        $planifiable = $dm->getRepository('AppBundle:'.$type_passage)->findOneById($planifiable);
+        $planifiable = $this->guessTypePlanifiable($planifiable, $dm);
 
         $technicien = $dm->getRepository('AppBundle:Compte')->findOneById($request->get('technicien'));
         $rdv = $rvm->createFromPlanifiable($planifiable);
@@ -308,8 +306,7 @@ class CalendarController extends Controller {
 
         if($request->get('planifiable') && !$request->get('id')) {
             $planifiable = $request->get('planifiable');
-            $type_planifiable = ucfirst(strtolower(strtok($planifiable, '-')));
-            $planifiable = $dm->getRepository('AppBundle:'.$type_planifiable)->findOneById($planifiable);
+            $planifiable = $this->guessTypePlanifiable($planifiable, $dm);
             $rdv = $rvm->createFromPassage($planifiable);
         } elseif($request->get('id')) {
             $rdv = $dm->getRepository('AppBundle:RendezVous')->findOneById($request->get('id'));
@@ -400,5 +397,11 @@ class CalendarController extends Controller {
         }
 
         return $event;
+    }
+
+    private function guessTypePlanifiable($planifiable, $dm)
+    {
+        $type_planifiable = ucfirst(strtolower(strtok($planifiable, '-')));
+        return $dm->getRepository('AppBundle:'.$type_planifiable)->findOneById($planifiable);
     }
 }
