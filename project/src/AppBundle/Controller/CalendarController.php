@@ -12,6 +12,8 @@ use AppBundle\Document\Compte;
 use AppBundle\Document\Etablissement;
 use AppBundle\Document\RendezVous;
 use AppBundle\Document\CompteInfos;
+use AppBundle\Document\Passage;
+use AppBundle\Document\Devis;
 use AppBundle\Manager\EtablissementManager;
 use Behat\Transliterator\Transliterator;
 use AppBundle\Type\PassageCreationType;
@@ -323,7 +325,6 @@ class CalendarController extends Controller {
             return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'service' => $request->get('service')));
         }
 
-
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
             'action' => $this->generateUrl('calendarRead', array('id' => ($rdv->getId()) ? $rdv->getId() : null, 'planifiable' => ($rdv->getPlanifiable()) ? $rdv->getPlanifiable()->getId() : null, "forceEdition" => true)),
             'method' => 'POST',
@@ -334,8 +335,16 @@ class CalendarController extends Controller {
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
+            switch ($rdv->getPlanifiable()->getTypePlanifiable()) {
+                case Devis::DOCUMENT_TYPE:
+                    $template = 'calendar/rendezVousDevis.html.twig';
+                    break;
+                default:
+                    $template = 'calendar/rendezVous.html.twig';
+                    break;
+            }
 
-            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'form' => $form->createView(), 'service' => $request->get('service')));
+            return $this->render($template, array('rdv' => $rdv, 'form' => $form->createView(), 'service' => $request->get('service')));
         }
 
         if(!$rdv->getId()) {

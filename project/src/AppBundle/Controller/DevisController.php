@@ -155,6 +155,11 @@ class DevisController extends Controller
 
     }
 
+    /**
+     * @Route("/{id}/send", name="devis_pdf_envoi")
+     */
+    public function sendPdfAction(Devis $devis) {}
+
     private function getProduitsSuggestion($produits)
     {
         $produitsSuggestion = [];
