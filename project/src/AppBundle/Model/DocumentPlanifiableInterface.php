@@ -7,7 +7,7 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\RendezVous;
 use Doctrine\Common\Collections\Collection;
 
-interface DocumentPlannifiableInterface
+interface DocumentPlanifiableInterface
 {
     /**
      * Get etablissement

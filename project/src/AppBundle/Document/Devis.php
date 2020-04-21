@@ -6,7 +6,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Document\RendezVous;
 use AppBundle\Document\Compte;
 use AppBundle\Model\DocumentSocieteInterface;
-use AppBundle\Model\DocumentPlannifiableInterface;
+use AppBundle\Model\DocumentPlanifiableInterface;
 use AppBundle\Model\DocumentPlanifiableTrait;
 use AppBundle\Manager\DevisManager;
 use AppBundle\Manager\ContratManager;
@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\DevisRepository") @HasLifecycleCallbacks
  */
-class Devis implements DocumentSocieteInterface, DocumentPlannifiableInterface
+class Devis implements DocumentSocieteInterface, DocumentPlanifiableInterface
 {
     use DocumentPlanifiableTrait;
 

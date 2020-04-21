@@ -10,7 +10,7 @@ use AppBundle\Manager\ContratManager;
 use AppBundle\Manager\PassageManager;
 use AppBundle\Model\DocumentEtablissementInterface;
 use AppBundle\Model\DocumentSocieteInterface;
-use AppBundle\Model\DocumentPlannifiableInterface;
+use AppBundle\Model\DocumentPlanifiableInterface;
 use AppBundle\Model\DocumentPlanifiableTrait;
 use AppBundle\Document\Prestation;
 use AppBundle\Document\Produit;
@@ -20,7 +20,7 @@ use AppBundle\Document\EtablissementInfos;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\PassageRepository") @HasLifecycleCallbacks
  */
-class Passage implements DocumentEtablissementInterface, DocumentSocieteInterface, DocumentPlannifiableInterface
+class Passage implements DocumentEtablissementInterface, DocumentSocieteInterface, DocumentPlanifiableInterface
 {
     use DocumentPlanifiableTrait;
 
