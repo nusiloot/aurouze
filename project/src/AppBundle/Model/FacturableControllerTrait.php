@@ -18,6 +18,10 @@ trait FacturableControllerTrait
         $repository = $manager->getRepository('AppBundle:'.ucfirst($type));
         $document = $repository->findOneById($document);
 
+        if (! $document instanceof FacturableInterface) {
+            throw new \Exception($type." n'est pas de type FacturableInterface");
+        }
+
         $pages = [];
 
         $nbLigneMaxPourPageVierge = 50;
