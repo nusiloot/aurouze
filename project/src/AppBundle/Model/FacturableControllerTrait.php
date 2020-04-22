@@ -106,17 +106,17 @@ trait FacturableControllerTrait
             return new Response($html, 200);
         }
 
-        if ($facture->isDevis() && $facture->getNumeroDevis()) {
-            $filename = "devis_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateDevis()->format('Ymd') . "_N" . $facture->getNumeroDevis() . ".pdf";
-        } elseif ($facture->isFacture() && $facture->getNumeroFacture()) {
-            $prefix = ($facture->isAvoir())? 'avoir' : 'facture';
-            $filename = $prefix."_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateFacturation()->format('Ymd') . "_N" . $facture->getNumeroFacture() . ".pdf";
-        } elseif ($facture->isDevis()) {
-            $filename = "devis_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateDevis()->format('Ymd') . "_brouillon.pdf";
-        } else {
-            $prefix = ($facture->isAvoir())? 'avoir' : 'facture';
-            $filename = $prefix."_" . $facture->getSociete()->getIdentifiant() . "_" . $facture->getDateFacturation()->format('Ymd') . "_brouillon.pdf";
-        }
+        $suffix = ($document->getNumero()) ? 'N'.$document->getNumero()
+                                           : 'brouillon';
+
+        $filename = implode('_', [
+            $type,
+            $document->getSociete()->getIdentifiant(),
+            $document->getDateEmission()->format('Ymd'),
+            $document->getNumero(),
+            $suffix
+        ]);
+        $filename .= '.pdf';
 
         return new Response(
                 $this->get('knp_snappy.pdf')->getOutputFromHtml($html, $this->getPdfGenerationOptions()), 200, array(
@@ -193,4 +193,9 @@ trait FacturableControllerTrait
 
         return array($ligne, $ligneSplitted);
     }
+
+    public function getPdfGenerationOptions() {
+        return array('disable-smart-shrinking' => null, 'encoding' => 'utf-8', 'margin-left' => 3, 'margin-right' => 3, 'margin-top' => 4, 'margin-bottom' => 4);
+    }
+
 }
