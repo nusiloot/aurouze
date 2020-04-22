@@ -8,6 +8,7 @@ use AppBundle\Document\Compte;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Model\DocumentPlanifiableInterface;
 use AppBundle\Model\DocumentPlanifiableTrait;
+use AppBundle\Model\FacturableInterface;
 use AppBundle\Manager\DevisManager;
 use AppBundle\Manager\ContratManager;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
@@ -16,7 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\DevisRepository") @HasLifecycleCallbacks
  */
-class Devis implements DocumentSocieteInterface, DocumentPlanifiableInterface
+class Devis implements DocumentSocieteInterface, DocumentPlanifiableInterface, FacturableInterface
 {
     use DocumentPlanifiableTrait;
 
@@ -379,6 +380,10 @@ class Devis implements DocumentSocieteInterface, DocumentPlanifiableInterface
         return $this->lignes;
     }
 
+    public function getNumero()
+    {
+        return $this->getNumeroDevis();
+    }
 
     public function updateCalcul() {
         $montant = 0;
@@ -472,6 +477,10 @@ class Devis implements DocumentSocieteInterface, DocumentPlanifiableInterface
     public function isValideTechnicien()
     {
         return $this->getSignatureBase64() || $this->getNomTransmission() || $this->getEmailTransmission();
+    }
+
+    public function getDocumentType() {
+        return self::DOCUMENT_TYPE;
     }
 
     public function getTypePlanifiable() {

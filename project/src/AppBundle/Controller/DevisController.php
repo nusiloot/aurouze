@@ -13,6 +13,7 @@ use AppBundle\Document\Devis;
 use AppBundle\Document\Societe;
 use AppBundle\Document\RendezVous;
 use AppBundle\Type\DevisType;
+use AppBundle\Model\FacturableControllerTrait;
 
 /**
  * Devis controller.
@@ -21,6 +22,8 @@ use AppBundle\Type\DevisType;
  */
 class DevisController extends Controller
 {
+    use FacturableControllerTrait;
+
     /**
      * @Route("/", name="devis")
      */
@@ -153,17 +156,11 @@ class DevisController extends Controller
     }
 
     /**
-     * @Route("/{id}/pdf", name="devis_pdf")
-     */
-    public function pdfAction(Devis $devis)
-    {
-
-    }
-
-    /**
      * @Route("/{id}/send", name="devis_pdf_envoi")
      */
-    public function sendPdfAction(Devis $devis) {}
+    public function sendPdfAction(Devis $devis)
+    {
+    }
 
     private function getProduitsSuggestion($produits)
     {
