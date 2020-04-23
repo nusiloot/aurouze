@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 trait FacturableControllerTrait
 {
     /**
-     * @Route("/{document}/pdf", name="devis_pdf")
+     * @Route("/{document}/pdf", name="facturable_pdf")
      */
     public function pdfAction(Request $request, $document)
     {

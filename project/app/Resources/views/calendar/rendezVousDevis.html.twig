@@ -242,7 +242,7 @@
               {% if (rdv.planifiable and rdv.planifiable.isValideTechnicien and rdv.planifiable.isSaisieTechnicien) %}
               <div class="btn-group">
                 <a class="btn btn-sm {% if (rdv.planifiable.emailTransmission) %}btn-default{% else %}btn-success{% endif %}"
-                   href="{{ path('devis_pdf', {'id': rdv.passage.id, 'service': service })}}"
+                   href="{{ path('facturable_pdf', {'id': rdv.planifiable.id, 'service': service })}}"
                    title="Pdf du devis"
                    data-toggle="tooltip" >
                       <span class="glyphicon glyphicon-file"></span>

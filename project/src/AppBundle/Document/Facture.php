@@ -6,12 +6,15 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use AppBundle\Model\DocumentSocieteInterface;
 use AppBundle\Manager\FactureManager;
 use AppBundle\Manager\ContratManager;
+use AppBundle\Model\FacturableInterface;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\HasLifecycleCallbacks;
 
 /**
  * @MongoDB\Document(repositoryClass="AppBundle\Repository\FactureRepository") @HasLifecycleCallbacks
  */
-class Facture implements DocumentSocieteInterface {
+class Facture implements DocumentSocieteInterface, FacturableInterface
+{
+    const DOCUMENT_TYPE = 'Facture';
 
     /**
      * @MongoDB\Id(strategy="CUSTOM", type="string", options={"class"="AppBundle\Document\Id\FactureGenerator"})
@@ -1215,6 +1218,16 @@ class Facture implements DocumentSocieteInterface {
           $dueDate = \DateTime::createFromFormat("Ymd",$now->format("Y").$now->format("m")."20");
       }
       return $dueDate;
+    }
+
+    public function getDocumentType()
+    {
+        return self::DOCUMENT_TYPE;
+    }
+
+    public function getNumero()
+    {
+        return $this->getNumeroFacture();
     }
 
 }
