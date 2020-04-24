@@ -335,13 +335,11 @@ class CalendarController extends Controller {
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
-            switch ($rdv->getPlanifiable()->getTypePlanifiable()) {
-                case Devis::DOCUMENT_TYPE:
-                    $template = 'calendar/rendezVousDevis.html.twig';
-                    break;
-                default:
-                    $template = 'calendar/rendezVous.html.twig';
-                    break;
+            if ($rdv->getPlanifiable()
+                && $rdv->getPlanifiable()->getTypePlanifiable() === Devis::DOCUMENT_TYPE) {
+                $template = 'calendar/rendezVousDevis.html.twig';
+            } else {
+                $template = 'calendar/rendezVous.html.twig';
             }
 
             return $this->render($template, array('rdv' => $rdv, 'form' => $form->createView(), 'service' => $request->get('service')));
