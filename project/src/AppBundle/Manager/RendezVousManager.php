@@ -3,7 +3,7 @@
 namespace AppBundle\Manager;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use AppBundle\Model\DocumentPlannifiableInterface;
+use AppBundle\Model\DocumentPlanifiableInterface;
 use AppBundle\Document\RendezVous;
 use AppBundle\Document\Devis as Devis;
 use AppBundle\Document\Passage as Passage;
@@ -15,7 +15,7 @@ class RendezVousManager {
         $this->dm = $dm;
     }
 
-    public function createFromPlanifiable(DocumentPlannifiableInterface $planifiable) {
+    public function createFromPlanifiable(DocumentPlanifiableInterface $planifiable) {
         $rdv = $planifiable->getRendezVous();
 
         if($rdv) {
