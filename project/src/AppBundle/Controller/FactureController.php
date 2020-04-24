@@ -54,10 +54,6 @@ class FactureController extends Controller
         $contratManager = $this->get('contrat.manager');
         $fm = $this->get('facture.manager');
 
-        if($type=="devis"){
-          var_dump("devis"); exit;
-        }
-
         if ($request->get('id')) {
             $facture = $fm->getRepository()->findOneById($request->get('id'));
         }
