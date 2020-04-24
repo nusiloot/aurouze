@@ -338,6 +338,10 @@ trait DocumentPlanifiableMethodsTrait
         return $this->statut;
     }
 
+    public function getStatutLibelle() {
+        return PassageManager::$statutsLibelles[$this->getStatut()];
+    }
+
     public function updateStatut() {
         if (!$this->isAnnule()) {
             if ($this->getDatePrevision() && !boolval($this->getDateFin()) && !boolval($this->getDateDebut()) && !boolval($this->getDateRealise())) {
