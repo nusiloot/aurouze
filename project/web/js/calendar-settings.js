@@ -156,7 +156,7 @@ $(function () {
              element.find(".fc-title").append('<a style="position:absolute; top: 0; right:0; opacity:0.2;" class="btn btn-default btn-xs " href="'+url+'"><span class="mdi mdi-map"></span></a>');
           }
 					if(event.livraison){
-						element.find(".fc-title").append('<i class="mdi mdi-local-shipping"></i>');
+						element.find(".fc-title").append('<span style="position:absolute; top: 0; right:0; font-size: 14pt" ><i class="mdi mdi-local-shipping"></i></span>');
 					}
 					if(event.rendezVousConfirme === false){
 						element.find(".fc-title").append('<span class="text-muted" style="position:absolute; bottom: -10px; right: 0px;" ><span class="mdi mdi-add-alert"></span>&nbsp;N.C.</span>');
