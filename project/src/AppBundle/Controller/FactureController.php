@@ -93,10 +93,8 @@ class FactureController extends Controller
             }
             $facture->setCommercial($commercial);
         }
-        if ($type == "devis" && !$facture->getDateDevis()) {
-            $facture->setDateDevis(new \DateTime());
 
-        } elseif ($type == "facture" && !$facture->getDateFacturation()) {
+        if (! $facture->getDateFacturation()) {
             $facture->setDateFacturation(new \DateTime());
         }
 
@@ -105,7 +103,7 @@ class FactureController extends Controller
             $produitsSuggestion[] = array("libelle" => $produit->getNom(), "conditionnement" => $produit->getConditionnement(), "identifiant" => $produit->getIdentifiant(), "prix" => $produit->getPrixVente());
         }
 
-        $form = $this->createForm(new FactureType($dm, $cm, $appConf['commercial'], $facture->isDevis(), $contrat), $facture, array(
+        $form = $this->createForm(new FactureType($dm, $cm, $appConf['commercial'], $contrat), $facture, array(
             'action' => "",
             'method' => 'POST',
         ));
@@ -148,7 +146,7 @@ class FactureController extends Controller
      */
     public function suppressionAction(Request $request, Societe $societe, Facture $facture) {
         $dm = $this->get('doctrine_mongodb')->getManager();
-        if (!$facture->getNumeroFacture() && $facture->getContrat() && !$facture->isDevis() && !$facture->isAvoir()) {
+        if (!$facture->getNumeroFacture() && $facture->getContrat() && !$facture->isAvoir()) {
             $dm->remove($facture);
             $dm->flush();
         }

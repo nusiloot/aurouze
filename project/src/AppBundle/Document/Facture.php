@@ -911,9 +911,13 @@ class Facture implements DocumentSocieteInterface, FacturableInterface
         return $this->dateDevis;
     }
 
+    /**
+     * @deprecated Devis déplacés dans un doc différent
+     */
     public function isDevis() {
 
-        return $this->getDateDevis() && !$this->isFacture();
+        return false;
+        /* return $this->getDateDevis() && !$this->isFacture(); */
     }
 
     public function hasDevis()
