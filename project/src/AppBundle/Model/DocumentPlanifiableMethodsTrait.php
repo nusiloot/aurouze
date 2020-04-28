@@ -383,4 +383,31 @@ trait DocumentPlanifiableMethodsTrait
       return $this;
   }
 
+    /**
+     * Set pdfNonEnvoye
+     *
+     * @inheritDoc
+     */
+    public function setPdfNonEnvoye($pdfNonEnvoye)
+    {
+        $this->pdfNonEnvoye = $pdfNonEnvoye;
+        return $this;
+    }
+
+    /**
+     * Get pdfNonEnvoye
+     *
+     * @inheritDoc
+     */
+    public function getPdfNonEnvoye()
+    {
+        return $this->pdfNonEnvoye;
+    }
+
+    public function isPdfNonEnvoye()
+    {
+        return $this->pdfNonEnvoye;
+    }
+
+
  }

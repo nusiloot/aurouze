@@ -77,4 +77,9 @@ trait DocumentPlanifiablePropertiesTrait
      * @MongoDB\Field(type="string")
      */
     protected $statut;
+
+    /**
+     * @MongoDB\Field(type="bool")
+     */
+    protected $pdfNonEnvoye;
 }
