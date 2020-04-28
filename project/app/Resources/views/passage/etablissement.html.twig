@@ -103,7 +103,7 @@
 
                                 {% endfor %}
                                 <span class="pull-right"><span class="glyphicon glyphicon-chevron-down"></span></span>
-                               <span class="pull-right"><div title="Garantie initiale de {{ contrat.dureeGarantie }} mois<br />(expire le {{ contrat.dateExpirationGarantie|date("d/m/Y") }})" data-html="true" data-toggle="tooltip">{% if(contrat.isSousGarantie) %}Garantie{% else %}<s>Garantie</s>{% endif %}&nbsp;&nbsp;&nbsp;</div></span>
+                               <span class="pull-right"><div title="Garantie initiale de {{ contrat.dureeGarantie }} mois<br />(expire le {% if contrat.dateExpirationGarantie.timestamp is defined %}{{ contrat.dateExpirationGarantie|date("d/m/Y") }}{% else %}{{ contrat.dateExpirationGarantie }}{% endif %})" data-html="true" data-toggle="tooltip">{% if(contrat.isSousGarantie) %}Garantie{% else %}<s>Garantie</s>{% endif %}&nbsp;&nbsp;&nbsp;</div></span>
                                 <span class="pull-right">{% if(contratManager.isContratEnRetardPaiement(contrat)) %}<span class="glyphicon glyphicon-warning-sign" title="En retard de paiement" data-html="true" data-toggle="tooltip"></span>{% endif %}&nbsp;&nbsp;&nbsp;</span>
                             </h4>
                         </div>
