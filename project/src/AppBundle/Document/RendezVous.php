@@ -180,10 +180,11 @@ class RendezVous {
         $this->getPlanifiable()->setCommentaire($this->getDescription());
         $this->getPlanifiable()->setDateDebut($this->getDateDebut());
         $this->getPlanifiable()->setDateFin($this->getDateFin());
+
+        if ($this->getPlanifiable()->getTypePlanifiable() === Devis::DOCUMENT_TYPE) {
+            $this->getPlanifiable()->setDatePrevision($this->getDateDebut());
+        }
     }
-
-
-
 
     public function setTimeDebut($time) {
         $dateTime = $this->getDateDebut();
