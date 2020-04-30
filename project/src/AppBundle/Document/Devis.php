@@ -100,6 +100,11 @@ class Devis implements DocumentSocieteInterface, DocumentPlanifiableInterface, F
         }
     }
 
+    /** @MongoDB\PreUpdate */
+    public function preUpdate() {
+        $this->updateStatut();
+    }
+
     /**
      * Set societe
      *

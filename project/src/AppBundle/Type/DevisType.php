@@ -39,6 +39,11 @@ class DevisType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
+        $datePrevisionModifiable = true;
+        if($builder->getData()->getRendezvous() && $builder->getData()->getRendezvous()->getDateFin()){
+          $datePrevisionModifiable = false;
+        }
         $builder->add('etablissement', DocumentType::class, array('label' => 'Lieux de livraison : ',
                 'choices' => $this->getEtablissements(),
                 'class' => 'AppBundle\Document\Etablissement',
@@ -60,17 +65,21 @@ class DevisType extends AbstractType
                 'class' => 'AppBundle\Document\Compte',
                 'expanded' => false,
                 'multiple' => false,
-                "attr" => array("class" => "select2 select2-simple"))))
-            ->add('datePrevision', DateType::class, array(
-                'label' => 'Date prévu de la signature',
-                "attr" => array(
-                    'class' => 'input-inline datepicker',
-                    'data-provide' => 'datepicker',
-                    'data-date-format' => 'dd/mm/yyyy'
-                ),
-                'widget' => 'single_text',
-                'format' => 'dd/MM/yyyy'
-            ))
+                "attr" => array("class" => "select2 select2-simple"))));
+              $datePrevisionInput =  array(
+                    'label' => 'Date prévu de la signature',
+                    "attr" => array(
+                        'class' => 'input-inline datepicker',
+                        'data-provide' => 'datepicker',
+                        'data-date-format' => 'dd/mm/yyyy'
+                    ),
+                    'widget' => 'single_text',
+                    'format' => 'dd/MM/yyyy'
+                );
+                if(!$datePrevisionModifiable){
+                  $datePrevisionInput=array_merge($datePrevisionInput,array('disabled' => 'disabled'));
+                }
+            $builder->add('datePrevision', DateType::class, $datePrevisionInput)
             ->add('techniciens', DocumentType::class, array(
                 'choices' => $this->getParticipants(),
                 'class' => Compte::class,
