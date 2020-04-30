@@ -261,7 +261,7 @@ class TourneeController extends Controller {
          $devis->setSaisieTechnicien($devis->getSignatureBase64() || $devis->getDescription());
 
         // if(!$devis->getPdfNonEnvoye()){
-        //   $devis->setPdfNonEnvoye(true);
+           $devis->setPdfNonEnvoye(true);
         // }
         $dm->persist($devis);
         $dm->flush();
