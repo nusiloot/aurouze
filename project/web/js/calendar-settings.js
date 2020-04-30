@@ -121,6 +121,7 @@ $(function () {
                 event.backgroundColor = data.backgroundColor;
                 event.textColor = data.textColor;
                 event.retourMap = data.retourMap;
+								event.livraison = data.livraison;
                 $('#calendrier').fullCalendar('updateEvent', event);
             }
             );

@@ -56,6 +56,9 @@
 
               {% endfor %}
             {% endif %}
+            {% if planifiable.getTypePlanifiable and planifiable.getTypePlanifiable == constant('AppBundle\\Document\\Devis::DOCUMENT_TYPE') %}
+              <span  class="step size-18" ><i class="mdi mdi-local-shipping" style="cursor: pointer;"></i></span>
+            {% endif %}
             </p>
         </a>
         </li>
