@@ -55,6 +55,32 @@
     <br/><br/>
     <span><strong>Commercial : {{ planifiable.commercial.identite }}</strong></span>
   </div>
+  <hr/>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a">
+      <h3>Produits</h3>
+    </div>
+    <div class="ui-body ui-body-a">
+      <table data-role="table" class="ui-responsive table-stroke">
+        <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Quantité</th>
+            <th>Prix HT</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for produit in planifiable.lignes %}
+          <tr>
+            <td>{{ produit.libelle }}</td>
+            <td>{{ produit.quantite }}</td>
+            <td class="text-right">{{ produit.montantHT }} € HT</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
   <div class="ui-body ui-body-a">
     <p>
       <a class="rapport_saisie ui-link ui-btn ui-shadow ui-corner-all" href="#rapport_{{ planifiable.id }}" >SAISIR LE RAPPORT</a>
