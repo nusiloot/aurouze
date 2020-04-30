@@ -172,4 +172,17 @@ class DevisController extends Controller
 
         return $produitsSuggestion;
     }
+
+    /**
+     * @Route("/visualisation/{id}", name="devis_visualisation")
+     * @ParamConverter("devis", class="AppBundle:Devis")
+     */
+    public function visualisationAction(Request $request, Devis $devis)
+    {
+        if ($devis->getRendezVous()) {
+            return $this->redirectToRoute('calendarRead', array('id' => $devis->getRendezVous()->getId(), 'service' => $request->get('service')));
+        }
+
+        return $this->forward('AppBundle:Calendar:calendarRead', array('planifiable' => $devis->getId(), 'service' => $request->get('service')));
+    }
 }
