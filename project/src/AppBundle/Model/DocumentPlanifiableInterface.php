@@ -80,6 +80,21 @@ interface DocumentPlanifiableInterface
     public function setDureePrevisionnelle($dureePrevisionnelle);
 
     /**
+     * Set pdfNonEnvoye
+     *
+     * @param boolean $pdfNonEnvoye
+     * @return self
+     */
+    public function setPdfNonEnvoye($pdfNonEnvoye);
+
+    /**
+     * Get pdfNonEnvoye
+     *
+     * @return boolean $pdfNonEnvoye
+     */
+    public function getPdfNonEnvoye();
+
+    /**
      * Fonction appellé lorsque l'objet arrive dans le calendrier
      *
      */

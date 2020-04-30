@@ -172,11 +172,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
      */
     protected $multiTechnicien;
 
-    /**
-     * @MongoDB\Field(type="bool")
-     */
-    protected $pdfNonEnvoye;
-
     public function __construct() {
         $this->etablissementInfos = new EtablissementInfos();
         $this->prestations = new ArrayCollection();
@@ -1155,34 +1150,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
     {
         return $this->getSignatureBase64() || $this->getNomTransmission() || $this->getEmailTransmission();
     }
-
-    /**
-     * Set pdfNonEnvoye
-     *
-     * @param boolean $pdfNonEnvoye
-     * @return self
-     */
-    public function setPdfNonEnvoye($pdfNonEnvoye)
-    {
-        $this->pdfNonEnvoye = $pdfNonEnvoye;
-        return $this;
-    }
-
-    /**
-     * Get pdfNonEnvoye
-     *
-     * @return boolean $pdfNonEnvoye
-     */
-    public function getPdfNonEnvoye()
-    {
-        return $this->pdfNonEnvoye;
-    }
-
-    public function isPdfNonEnvoye()
-    {
-        return $this->pdfNonEnvoye;
-    }
-
 
     /**
      * Set description
