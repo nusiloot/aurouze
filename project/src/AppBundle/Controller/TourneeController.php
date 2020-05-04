@@ -84,7 +84,7 @@ class TourneeController extends Controller {
                 }
               }
             }
-            $planifiableTypeName = "AppBundle\Type\\".$planifiable->getTypePlanifiable()."MobileType";
+            $planifiableTypeName = "AppBundle\\Type\\".$planifiable->getTypePlanifiable()."MobileType";
             $formPlanifiable = new $planifiableTypeName($dm, $planifiable->getId(), $previousPlanifiable);
 
             $planifiableForms[$planifiable->getId()] = $this->createForm($formPlanifiable, $planifiable, array(
@@ -261,7 +261,7 @@ class TourneeController extends Controller {
          $devis->setSaisieTechnicien($devis->getSignatureBase64() || $devis->getDescription());
 
         // if(!$devis->getPdfNonEnvoye()){
-        //   $devis->setPdfNonEnvoye(true);
+           $devis->setPdfNonEnvoye(true);
         // }
         $dm->persist($devis);
         $dm->flush();

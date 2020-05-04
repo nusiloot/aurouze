@@ -390,7 +390,7 @@ class PassageController extends Controller
             return $this->redirectToRoute('calendarRead', array('id' => $passage->getRendezVous()->getId(), 'service' => $request->get('service')));
         }
 
-        return $this->forward('AppBundle:Calendar:calendarRead', array('passage' => $passage->getId(), 'service' => $request->get('service')));
+        return $this->forward('AppBundle:Calendar:calendarRead', array('planifiable' => $passage->getId(), 'service' => $request->get('service')));
     }
 
     /**
