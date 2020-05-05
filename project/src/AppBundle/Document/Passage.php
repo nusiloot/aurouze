@@ -558,12 +558,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->numeroContratArchive;
     }
 
-
-    public function removeAllTechniciens() {
-        $this->techniciens = new ArrayCollection();
-        $this->setImprime(false);
-    }
-
     /**
      * Add prestation
      *
@@ -1084,10 +1078,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
         return $this->audit;
     }
 
-    public function isTransmis(){
-      return boolval($this->signatureBase64) || boolval($this->emailTransmission);
-    }
-
     /**
      * Set dateModification
      *
@@ -1144,11 +1134,6 @@ class Passage implements DocumentEtablissementInterface, DocumentSocieteInterfac
                 return 0;
         }
         return ($p_0->getDatePrecedente()->format('Hi') > $p_1->getDatePrecedente()->format('Hi')) ? +1 : -1;
-    }
-
-    public function isValideTechnicien()
-    {
-        return $this->getSignatureBase64() || $this->getNomTransmission() || $this->getEmailTransmission();
     }
 
     /**

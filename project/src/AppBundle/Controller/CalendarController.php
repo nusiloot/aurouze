@@ -318,11 +318,19 @@ class CalendarController extends Controller {
             throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf("Le rendez-vous \"%s\" n'a pas été trouvé", $request->get('id')));
         }
 
+        if ($rdv->getPlanifiable() && $rdv->getPlanifiable()->getTypePlanifiable() === Devis::DOCUMENT_TYPE) {
+            $template = 'calendar/rendezVousDevis.html.twig';
+        } else {
+            $template = 'calendar/rendezVous.html.twig';
+        }
+
         $edition = (!$rdv->getPlanifiable() || (!$rdv->getPlanifiable()->isRealise()));
 
         if(!$edition && !$request->get('forceEdition', false)) {
-
-            return $this->render('calendar/rendezVous.html.twig', array('rdv' => $rdv, 'service' => $request->get('service')));
+            return $this->render($template, array(
+                'rdv' => $rdv,
+                'service' => $request->get('service')
+            ));
         }
 
         $form = $this->createForm(new RendezVousType($dm), $rdv, array(
@@ -335,12 +343,7 @@ class CalendarController extends Controller {
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
-            if ($rdv->getPlanifiable()
-                && $rdv->getPlanifiable()->getTypePlanifiable() === Devis::DOCUMENT_TYPE) {
-                $template = 'calendar/rendezVousDevis.html.twig';
-            } else {
-                $template = 'calendar/rendezVous.html.twig';
-            }
+            
 
             return $this->render($template, array('rdv' => $rdv, 'form' => $form->createView(), 'service' => $request->get('service')));
         }

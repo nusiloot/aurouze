@@ -6,6 +6,7 @@ use AppBundle\Document\Etablissement;
 use AppBundle\Document\Compte;
 use AppBundle\Document\RendezVous;
 use AppBundle\Manager\PassageManager;
+use Doctrine\Common\Collections\ArrayCollection;
 
 trait DocumentPlanifiableMethodsTrait
 {
@@ -75,6 +76,13 @@ trait DocumentPlanifiableMethodsTrait
     public function removeTechnicien(Compte $technicien)
     {
         $this->techniciens->removeElement($technicien);
+    }
+
+    public function removeAllTechniciens() {
+        $this->techniciens = new ArrayCollection();
+        if (property_exists($this, 'imprime')) {
+            $this->setImprime(false);
+        }
     }
 
     /**
@@ -301,6 +309,15 @@ trait DocumentPlanifiableMethodsTrait
       return $this->saisieTechnicien;
     }
 
+    public function isTransmis(){
+      return boolval($this->signatureBase64) || boolval($this->emailTransmission);
+    }
+
+    public function isValideTechnicien()
+    {
+        return $this->getSignatureBase64() || $this->getNomTransmission() || $this->getEmailTransmission();
+    }
+
     public function isRealise() {
         return $this->statut == PassageManager::STATUT_REALISE;
     }
@@ -409,5 +426,16 @@ trait DocumentPlanifiableMethodsTrait
         return $this->pdfNonEnvoye;
     }
 
+    public function getColors()
+    {
+        $rdv = $this->rendezVous;
 
+        if (! $rdv || ! $this->isSaisieTechnicien()) {
+            return '';
+        }
+
+        $colors = $rdv->calculateTilesColors();
+
+        return "background: " . $colors['background'] . "; color: " . $colors['text'] . ";";
+    }
  }

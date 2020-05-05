@@ -35,7 +35,7 @@
         </div>
     		<div class="col-xs-8">
           {% for planifiable in planifiablesTechnicien.planifiables %}
-            <div class="list-group-item" {% if planifiable.isValideTechnicien() and planifiable.isSaisieTechnicien() %} style="background-color:{{ planifiable.rendezVous.getStatusColor() }}; color:{{ planifiable.rendezVous.getTextColor() }}" {% endif %}>
+          <div class="list-group-item" style="{{ planifiable.getColors }}">
               <a data-toggle="modal" data-remote="false"
               data-target="#modal-calendrier-infos"
               href="{{ path(planifiable.typeplanifiable|lower ~ '_visualisation', { 'id': planifiable.id, 'service': app.request.uri }) }}" class="deco-none">
