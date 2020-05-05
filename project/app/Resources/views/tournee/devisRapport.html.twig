@@ -18,7 +18,7 @@
   </div>
   <div data-role="main" class="ui-content">
   {{ form_start(form, { 'attr': { 'class': 'form-horizontal'} }) }}
-        <h2>Rapport de visite</h2>
+        <h2>Livraison</h2>
         <h3><strong>{% if planifiable.etablissement.societe.raisonSociale != planifiable.etablissementInfos.nom %}{{ planifiable.etablissement.societe.raisonSociale }}, {% endif %}{{ planifiable.etablissementInfos.nom }}</strong></h3>
         <h4><strong>{{ planifiable.etablissementInfos.adresse.adresse }}&nbsp;{{ planifiable.etablissementInfos.adresse.codePostal }}&nbsp;{{ planifiable.etablissementInfos.adresse.commune }}
         </strong>

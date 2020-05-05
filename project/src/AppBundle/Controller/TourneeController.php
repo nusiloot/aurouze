@@ -156,27 +156,19 @@ class TourneeController extends Controller {
            }
          }
          switch (get_class($planifiable)) {
-             case Devis::class:
-                 return $this->redirectToRoute('tournee_devis_rapport', array("technicien" => $technicienObj->getId(), "devis" => $planifiable->getId()));
+             case Devis::class:{
+               return $this->postTourneeDevisRapport($request, $planifiable, $technicienObj);
+             }
              case Passage::class:
-                 return $this->redirectToRoute('tournee_passage_rapport', array("technicien" => $technicienObj->getId(), "passage" => $planifiable->getId()));
+                 return $this->postTourneePassageRapport($request, $planifiable, $technicienObj);
          }
          return null;
      }
 
-    /**
-     * @Route("/tournee-technicien/passage-rapport/{passage}/{technicien}", name="tournee_passage_rapport")
-     * @ParamConverter("passage", class="AppBundle:Passage")
-     */
-    public function tourneePassageRapportAction(Request $request, Passage $passage) {
+
+    protected function postTourneePassageRapport($request,$passage, $technicienObj) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $technicien = $request->get('technicien');
-        $technicienObj = null;
-        if ($technicien) {
-            $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
-        }
-
         $historiqueAllPassages[$passage->getId()] = $this->get('contrat.manager')->getHistoriquePassagesByNumeroArchive($passage, 2);
         $previousPassage = null;
         foreach ($historiqueAllPassages[$passage->getId()] as $hPassage) {
@@ -187,7 +179,7 @@ class TourneeController extends Controller {
         }
 
         $form = $this->createForm(new PassageMobileType($dm, $passage->getId(), $previousPassage), $passage, array(
-            'action' => $this->generateUrl('tournee_passage_rapport', array('passage' => $passage->getId(),'technicien' => $technicienObj->getId())),
+            'action' => $this->generateUrl('tournee_planifiable_rapport', array('planifiable' => $passage->getId(),'technicien' => $technicienObj->getId())),
             'method' => 'POST',
         ));
 
@@ -195,7 +187,6 @@ class TourneeController extends Controller {
         if (!$form->isSubmitted() || !$form->isValid()) {
 
         }
-        $passageManager = $this->get('passage.manager');
 
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
 
@@ -223,30 +214,16 @@ class TourneeController extends Controller {
         return $this->redirectToRoute('tournee_technicien', array("technicien" => $technicienObj->getId(), "date" => $passage->getDateDebut()->format("Y-m-d")));
     }
 
-    /**
-     * @Route("/tournee-technicien/devis-rapport/{devis}/{technicien}", name="tournee_devis_rapport")
-     * @ParamConverter("devis", class="AppBundle:Devis")
-     */
-    public function tourneeDevisRapportAction(Request $request, Devis $devis) {
+    protected function postTourneeDevisRapport($request, $devis, $technicienObj) {
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $technicien = $request->get('technicien');
-        $technicienObj = null;
-        if ($technicien) {
-            $technicienObj = $dm->getRepository('AppBundle:Compte')->findOneById($technicien);
-        }
-
 
         $form = $this->createForm(new DevisMobileType($dm, $devis->getId()), $devis, array(
-            'action' => $this->generateUrl('tournee_devis_rapport', array('devis' => $devis->getId(),'technicien' => $technicienObj->getId())),
+            'action' => $this->generateUrl('tournee_planifiable_rapport', array('planifiable' => $devis->getId(),'technicien' => $technicienObj->getId())),
             'method' => 'POST',
         ));
 
         $form->handleRequest($request);
-        if (!$form->isSubmitted() || !$form->isValid()) {
-
-        }
-        $devisManager = $this->get('devis.manager');
 
 
 
@@ -257,7 +234,6 @@ class TourneeController extends Controller {
         // }
 
          $devis->setDateRealise($devis->getDateDebut());
-
          $devis->setSaisieTechnicien($devis->getSignatureBase64() || $devis->getDescription());
 
         // if(!$devis->getPdfNonEnvoye()){
@@ -266,7 +242,6 @@ class TourneeController extends Controller {
         $dm->persist($devis);
         $dm->flush();
 
-        $devis->getDateDebut()->format("Y-m-d");
 
         return $this->redirectToRoute('tournee_technicien', array("technicien" => $technicienObj->getId(), "date" => $devis->getDateDebut()->format("Y-m-d")));
     }
