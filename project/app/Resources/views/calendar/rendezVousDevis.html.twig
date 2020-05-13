@@ -54,7 +54,7 @@
             <p class="form-control-static">
             <a title="Voir la société" href="{{ path('societe_visualisation', {'id': rdv.planifiable.etablissement.societe.id })}}">
               {% if rdv.planifiable.etablissement.societe.raisonSociale != rdv.planifiable.etablissementInfos.nom %}
-                {{ rdv.planifiable.etablissement.societe.raisonSociale }}, 
+                {{ rdv.planifiable.etablissement.societe.raisonSociale }},
               {% endif %}
               {{ rdv.planifiable.etablissementInfos.nom }},
               {{ rdv.planifiable.etablissementInfos.adresse.adresse }}
@@ -68,10 +68,31 @@
           <label class="control-label col-xs-2">Prestations</label>
           <div class="col-xs-10">
             <p class="form-control-static">
-              Livraison
+              Livraison de produits&nbsp;<span><i class="mdi mdi-local-shipping"></i></span>
             </p>
-          </div>
-        </div>
+            <div class="form-control-static">
+                <h3>Produits</h3>
+            </div>
+            <table class="table table-bordered">
+                  <thead>
+                      <tr>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                        <th>Prix HT</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  {% for produit in rdv.planifiable.lignes %}
+                    <tr>
+                      <td>{{ produit.libelle }}</td>
+                      <td>{{ produit.quantite }}</td>
+                      <td class="text-right">{{ produit.montantHT }} € HT</td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+            </table>
+              </div>
+            </div>
         {% if rdv.planifiable and rdv.planifiable.realise %}
           <div class="form-group" style="margin-bottom: 0">
             <label class="control-label col-xs-2">Technicien</label>
@@ -232,7 +253,7 @@
                 {% endif %}
 
                 {% if (rdv.id and rdv.planifiable) %}
-                  <a class="btn btn-sm btn-default" href="{{ path('devis_modification', {'id': rdv.devis.id, 'service': service })}}"><span class="glyphicon glyphicon-pencil"></span> Rapport visite</a>
+                  <a class="btn btn-sm btn-default" href="{{ path('devis_modification', {'id': rdv.devis.id, 'service': service })}}"></span> Modification du devis</a>
                 {% endif %}
 
                 {% if (rdv.planifiable and not rdv.id) %}
@@ -244,19 +265,20 @@
               <button data-loading-text="En cours ..." autocomplete="off" class="btn btn-primary btn-block" type="submit">Modifier</button>
               {% if (rdv.planifiable and rdv.planifiable.isValideTechnicien and rdv.planifiable.isSaisieTechnicien) %}
               <div class="btn-group">
+                {{ rdv.planifiable.id }}
                 <a class="btn btn-sm {% if (rdv.planifiable.emailTransmission) %}btn-default{% else %}btn-success{% endif %}"
-                   href="{{ path('facturable_pdf', {'id': rdv.planifiable.id, 'service': service })}}"
+                   href="{{ path('facturable_pdf', {'document': rdv.planifiable.id, 'service': service })}}"
                    title="Pdf du devis"
                    data-toggle="tooltip" >
                       <span class="glyphicon glyphicon-file"></span>
                 </a>
 
-                {% if (rdv.passage.emailTransmission) %}
+                {% if (rdv.planifiable.emailTransmission) %}
                   {% set msgconfirm %}
                     {% if (rdv.planifiable.secondEmailTransmission) %}
-                      Êtes vous sûr de vouloir envoyer le rapport de visite aux personnes suivantes : {{ rdv.passage.emailTransmission }} et {{ rdv.passage.secondEmailTransmission }} ?
+                      Êtes vous sûr de vouloir envoyer le rapport de visite aux personnes suivantes : {{ rdv.planifiable.emailTransmission }} et {{ rdv.planifiable.secondEmailTransmission }} ?
                     {% else %}
-                      Êtes vous sûr de vouloir envoyer le rapport de visite à la personne suivante : {{ rdv.passage.emailTransmission }} ?
+                      Êtes vous sûr de vouloir envoyer le rapport de visite à la personne suivante : {{ rdv.planifiable.emailTransmission }} ?
                     {% endif %}
                   {% endset %}
                   <a

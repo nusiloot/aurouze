@@ -184,9 +184,6 @@ class TourneeController extends Controller {
         ));
 
         $form->handleRequest($request);
-        if (!$form->isSubmitted() || !$form->isValid()) {
-
-        }
 
         $contrat = $dm->getRepository('AppBundle:Contrat')->findOneById($passage->getContrat()->getId());
 
