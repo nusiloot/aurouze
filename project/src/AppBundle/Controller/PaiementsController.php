@@ -106,6 +106,7 @@ class PaiementsController extends Controller {
             $paiement->setDatePaiement(\DateTime::createFromFormat('d/m/Y',$request->request->get('date_paiement')));
             $paiement->setMontant($request->request->get('montant'));
             $dm->persist($paiements);
+            $f->updateMontantPaye();
             $dm->flush();
             return new Response(json_encode(array("success" => true)));
           }
@@ -122,6 +123,7 @@ class PaiementsController extends Controller {
         $paiement->setMontant($request->request->get('montant'));
         $paiements->addPaiement($paiement);
         $dm->persist($paiements);
+        $f->updateMontantPaye();
         $dm->flush();
         return new Response(json_encode(array("success" => true)));
       }
