@@ -256,6 +256,7 @@ public static $export_stats_libelle = array(
 
 
       $dateFinMoinsOneYear = \DateTime::createFromFormat('Y-m-d H:i:s', $dateFin->format('Y-m-d')." 23:59:59");
+      $dateFinMoinsOneYear->modify('first day of this month');
       $dateFinMoinsOneYear->modify("-1 year");
       $dateFinMoinsOneYear->modify('last day of this month');
       $facturesLastYearObjs = $this->getRepository()->exportOneMonthByDate($dateDebutMoinsOneYear,$dateFinMoinsOneYear);

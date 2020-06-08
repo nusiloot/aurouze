@@ -1803,10 +1803,11 @@ class Contrat implements DocumentSocieteInterface, DocumentFacturableInterface {
 
     public function getDateExpirationGarantie() {
 		$mois = ($this->getDureeGarantie()) ? $this->getDureeGarantie() : 0;
+    
     	if ($this->getDateDebut()) {
     		$date = clone $this->getDateDebut();
     	} elseif ($this->getDateAcceptation()) {
-    		$date = clone $$this->getDateAcceptation();
+    		$date = clone $this->getDateAcceptation();
     	} else {
     		$date = clone $this->getDateCreation();
     	}

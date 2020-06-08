@@ -983,7 +983,10 @@
           var facture = row.find("select[id$='facture']");
           var date_paiement = row.find("input[id$='datePaiement']");
           var montant = row.find("input[id$='montant']");
-
+          var hiddenFactureMontantTTC = row.find("input[id$='factureMontantTTC']");
+          if(!montant.val()){
+            montant.val(0.0);
+          }
           var numLigne = row.parent().index();
 
           if(type_reglement.val() && moyen_paiement.val() && libelle.val() && facture.val() && date_paiement.val() && montant.val()){
@@ -991,9 +994,16 @@
             var url = form.attr('data-url-ajax-row');
             var id = form.data('id');
             if(parseFloat(montant.val().replace(',','.')) > 0.0 ){
-              row.parent().addClass("alert-success");
+              if(parseFloat(montant.val().replace(',','.')) == parseFloat(hiddenFactureMontantTTC.val().replace(',','.'))){
+                row.parent().addClass("alert-success");
+                row.parent().removeClass("alert-warning");
+              }else{
+                row.parent().addClass("alert-warning");
+                row.parent().removeClass("alert-success");
+              }
             }else{
               row.parent().removeClass("alert-success");
+              row.parent().removeClass("alert-warning");
             }
             $.ajax({
               type: "POST",
