@@ -160,6 +160,11 @@ public static $export_stats_libelle = array(
 
     public function createFromDevis(Devis $devis)
     {
+        if(!$devis->getPdfNonEnvoye()){
+          var_dump($devis->getFacture()->getId()); exit;
+          return null;
+        }
+
         $facture = new Facture();
         $facture->setSociete($devis->getSociete());
         $facture->setCommercial($devis->getCommercial());
@@ -167,6 +172,7 @@ public static $export_stats_libelle = array(
         $facture->setDestinataire($devis->getDestinataire());
 
         $facture->setDateEmission(new \DateTime());
+        $facture->setDateFacturation(new \DateTime());
 
         $facture->setMontantHT($devis->getMontantHT());
         $facture->setMontantTTC($devis->getMontantTTC());
@@ -174,7 +180,9 @@ public static $export_stats_libelle = array(
 
         $facture->setNumeroDevis($devis->getNumeroDevis());
         $facture->setDescription($devis->getDescription());
-        $facture->setLignes($devis->getLignes());
+        foreach ($devis->getLignes() as $ligne) {
+          $facture->addLigne($ligne);
+        }
 
         return $facture;
     }

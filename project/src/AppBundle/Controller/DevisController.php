@@ -152,6 +152,21 @@ class DevisController extends Controller
     }
 
     /**
+     * @Route("/{id}/create-facture", name="devis_create-facture")
+     */
+    public function createFactureAction(Request $request, Devis $devis)
+    {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $fm = $this->get('facture.manager');
+        $appConf = $this->container->getParameter('application');
+        $facture = $fm->createFromDevis($devis);
+        $devis->setPdfNonEnvoye(false);
+        $dm->persist($facture);
+        $dm->flush();
+        return $this->redirectToRoute('facture_societe', array('id' => $facture->getSociete()->getId()));
+    }
+
+    /**
      * @Route("/{id}/send", name="devis_pdf_envoi")
      */
     public function sendPdfAction(Devis $devis)
