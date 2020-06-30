@@ -93,11 +93,12 @@ class PaiementsRepository extends DocumentRepository {
     			'limit' => 100
 
     	]);
-    	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
-    		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
-    			$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Paiements', $itemResult), "score" => $itemResult['score']);
+    	if (isset($itemResultSet)) {
+    		foreach ($itemResultSet as $itemResult) {
+				$docSoc = $this->uow->getOrCreateDocument('\AppBundle\Document\Paiements', $itemResult);
+	    		$resultSet[$docSoc->getId()] = array("doc" => $docSoc, "score" => $itemResult['score'], "instance" => "Paiement");
     		}
-        if(!count($itemResultSet['cursor']['firstBatch'])){
+        if(!count($itemResultSet)){
           $itemResultSet = $this->createQueryBuilder()
                           ->field('paiement.libelle')->equals(new \MongoRegex('/' . $q . '.*/i'))
                           ->getQuery()
