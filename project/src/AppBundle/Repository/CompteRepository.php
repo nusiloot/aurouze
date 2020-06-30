@@ -38,8 +38,8 @@ class CompteRepository extends DocumentRepository {
     			'limit' => 50
 
     	]);
-    	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
-    		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
+    	if (isset($itemResultSet)) {
+    		foreach ($itemResultSet as $itemResult) {
     			if (!$inactif && !$itemResult['actif']) {
     				continue;
     			}
