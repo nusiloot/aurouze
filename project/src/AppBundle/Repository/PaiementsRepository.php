@@ -95,7 +95,8 @@ class PaiementsRepository extends DocumentRepository {
     	]);
     	if (isset($itemResultSet)) {
     		foreach ($itemResultSet as $itemResult) {
-    			$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Paiements', $itemResult), "score" => $itemResult['score']);
+				$docSoc = $this->uow->getOrCreateDocument('\AppBundle\Document\Paiements', $itemResult);
+	    		$resultSet[$docSoc->getId()] = array("doc" => $docSoc, "score" => $itemResult['score'], "instance" => "Paiement");
     		}
         if(!count($itemResultSet)){
           $itemResultSet = $this->createQueryBuilder()
