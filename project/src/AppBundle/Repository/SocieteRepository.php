@@ -69,8 +69,8 @@ class SocieteRepository extends DocumentRepository {
     		'limit' => $limit
 
         ]);
-    	if (isset($itemResultSet)) {
-	    	foreach ($itemResultSet as $itemResult) {
+    	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
+	    	foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
 				$docSoc = $this->uow->getOrCreateDocument('\AppBundle\Document\Societe', $itemResult);
 	    		$resultSet[$docSoc->getId()] = array("doc" => $docSoc, "score" => $itemResult['score'], "instance" => "Societe");
 	    	}
