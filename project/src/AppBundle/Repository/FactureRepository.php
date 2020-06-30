@@ -115,8 +115,8 @@ class FactureRepository extends DocumentRepository {
     			'limit' => 100
 
     	]);
-    	if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
-    		foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
+    	if (isset($itemResultSet)) {
+    		foreach ($itemResultSet as $itemResult) {
     			$resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Facture', $itemResult), "score" => $itemResult['score']);
     		}
     	}
