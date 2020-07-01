@@ -152,8 +152,8 @@ class PassageRepository extends DocumentRepository {
                 'limit' => 100
 
         ]);
-        if (isset($itemResultSet)) {
-            foreach ($itemResultSet as $itemResult) {
+        if (isset($itemResultSet['cursor']) && isset($itemResultSet['cursor']['firstBatch'])) {
+            foreach ($itemResultSet['cursor']['firstBatch'] as $itemResult) {
                 $resultSet[] = array("doc" => $this->uow->getOrCreateDocument('\AppBundle\Document\Passage', $itemResult), "score" => $itemResult['score']);
             }
         }
